@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "${DATABASE_URL}"
+      ]
+    },
+    "playwright-browser": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "."]
+    }
+  }
+}
+

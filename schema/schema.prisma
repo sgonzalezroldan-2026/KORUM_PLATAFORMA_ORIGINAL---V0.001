@@ -1,0 +1,614 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrganizationVertical {
+  SCHOOL
+  SPORTS_CLUB
+  CULTURAL
+}
+
+enum UserRole {
+  FAMILY
+  MERCHANT
+  DIRECTOR
+  AFA_PRESIDENT
+  GATEKEEPER
+  SUPERADMIN
+}
+
+enum InitiativeFormat {
+  BUDGET
+  TICKETING
+}
+
+enum TicketSubtype {
+  EVENT
+  RAFFLE
+}
+
+enum TicketFeeMode {
+  ADD
+  INC
+}
+
+enum CategoryRuleType {
+  EXEMPT
+  BRACKETS
+}
+
+enum SponsorCategoryLevel {
+  ORO
+  PLATA
+  BRONCE
+}
+
+enum SponsorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CREDIT_POOL
+  REFUNDED
+}
+
+enum SponsorRenewalRule {
+  SOONEST
+  PROPORTIONAL
+  MANUAL
+}
+
+enum SignatureStatus {
+  VERIFIED
+  SUSPICIOUS
+}
+
+enum IdeaPhase {
+  PHASE0_MOD
+  PUBLIC_VOTING
+  DOUBLE_CHECK
+  CONVERTED
+  REJECTED
+}
+
+enum DoubleCheckTargetType {
+  IDEA_APPROVAL
+  ESCROW_PAYOUT
+}
+
+enum ContributionType {
+  DONATION
+  TICKET
+  SPONSORSHIP
+  SELF_BOOST
+  MATCHING_FUND
+}
+
+enum WalletTxType {
+  INSTANT_TOPUP
+  MONTHLY_TOPUP
+  CONTRIBUTION_DEBIT
+  REFUND_TO_ORIGIN
+}
+
+enum LedgerEntryType {
+  PAYIN_DONATION
+  PAYIN_TICKET
+  PAYIN_SPONSOR
+  PAYIN_HUCHA_TOPUP
+  HUCHA_SPEND
+  HUCHA_REFUND_ORIGIN
+  SELF_BOOST_INJECTION
+  MATCHING_RELEASE
+  SPLIT_PAYOUT_SCHOOL
+  SPLIT_PAYOUT_PROVIDER
+  FEE_KORUM_REVENUE
+  ESCROW_REFUND_DONOR
+}
+
+model GlobalConfig {
+  id                     String   @id @default("GLOBAL")
+  exemptLimitCents       Int      @default(100000)
+  t1Bps                  Int      @default(500)
+  t2Bps                  Int      @default(400)
+  t3Bps                  Int      @default(300)
+  sponsorFeeBps          Int      @default(1500)
+  fullIntegrityCheckCents Int     @default(180)
+  tipPresetsCents        Int[]    @default([0, 100, 200, 400])
+  defaultTipIdx          Int      @default(2)
+  gatewayPctBps          Int      @default(100)
+  gatewayFixedCents      Int      @default(9)
+  topupFeeCents          Int      @default(25)
+  ticketFeeFixedCents    Int      @default(45)
+  ticketFeeBps           Int      @default(200)
+  maintActive            Boolean  @default(false)
+  maintPerInitCents      Int      @default(4900)
+  maintAnnualCapCents    Int      @default(14700)
+  updatedAt              DateTime @updatedAt
+}
+
+model MedalTierConfig {
+  key               String   @id
+  name              String
+  icon              String
+  rank              Int      @unique
+  campaignsRequired Int
+  grantCents        Int
+  updatedAt         DateTime @updatedAt
+}
+
+model GlobalCategory {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  icon      String           @default("✨")
+  rule      CategoryRuleType @default(BRACKETS)
+  sortOrder Int              @default(0)
+  createdAt DateTime         @default(now())
+}
+
+model User {
+  id                    String               @id @default(cuid())
+  email                 String               @unique
+  canonicalEmail        String               @unique
+  emailVerified         DateTime?
+  passwordHash          String?
+  twoFactorSecret       String?
+  twoFactorEnabled      Boolean              @default(false)
+  fullName              String?
+  nif                   String?
+  postalCode            String?
+  walletBalanceCents    Int                  @default(0)
+  activeOrganizationId  String?
+  paycometIdUser        String?
+  paycometTokenUser     String?
+  gdprAnonymizedAt      DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  memberships           OrganizationMember[]
+  contributions         Contribution[]
+  walletTransactions    WalletTransaction[]
+  walletSubscriptions   WalletSubscription[]
+  doubleCheckSignatures DoubleCheckSignature[]
+}
+
+model Organization {
+  id                       String                 @id
+  slug                     String                 @unique
+  name                     String
+  vertical                 OrganizationVertical   @default(SCHOOL)
+  orgType                  String                 @default("Comunidad Escolar × AFA")
+  province                 String
+  director                 String
+  afaPresident             String
+  phone                    String
+  cif                      String                 @default("G-00000000")
+  iban                     String
+  walletId                 String                 @unique
+  paycometSubmerchantId    String?
+  kybValidated             Boolean                @default(true)
+  kybDocsJson              Json?
+  gatekeeperPinHash        String?
+  gatekeeperPinExpiresAt   DateTime?
+  health                   String                 @default("OK")
+  completedThisYear        Int                    @default(0)
+  completedHistorical      Int                    @default(0)
+  activeSponsorsCount      Int                    @default(0)
+  historicalSponsorsCount  Int                    @default(0)
+  medal                    String                 @default("🥈 Plata")
+  medalRank                Int                    @default(2)
+  ley49                    Boolean                @default(false)
+  customRules              Boolean                @default(false)
+  exemptLimitCents         Int                    @default(100000)
+  exemptRemainingCents     Int                    @default(100000)
+  medalGrantAvailableCents Int                    @default(100000)
+  medalGrantUsedInTitle    String?
+  t1Bps                    Int                    @default(500)
+  t2Bps                    Int                    @default(400)
+  t3Bps                    Int                    @default(300)
+  sponsorFeeBps            Int                    @default(1500)
+  fullIntegrityCheckCents  Int                    @default(180)
+  ticketFeeFixedCents      Int                    @default(45)
+  ticketFeeBps             Int                    @default(200)
+  maintActive              Boolean                @default(false)
+  maintPerInitCents        Int                    @default(4900)
+  maintAnnualCapCents      Int                    @default(14700)
+  maintPaidCents           Int                    @default(0)
+  donationPresetsCents     Int[]                  @default([1000, 2500, 5000])
+  defaultDonationIdx       Int                    @default(1)
+  sponsorTiersCents        Int[]                  @default([10000, 25000, 50000])
+  sponsorRenewalRule       SponsorRenewalRule     @default(SOONEST)
+  participationGroupsJson  Json?
+  minVotes                 Int                    @default(30)
+  maxIdeaDays              Int                    @default(45)
+  brandPrimary             String                 @default("#FF5A43")
+  brandSecondary           String                 @default("#FFB800")
+  logoUrl                  String?
+  bannerUrl                String?
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+  members                  OrganizationMember[]
+  categories               OrganizationCategory[]
+  initiatives              Initiative[]
+  ideas                    Idea[]
+  sponsors                 Sponsor[]
+  contributions            Contribution[]
+  ledgerEntries            EscrowLedgerEntry[]
+  walletTransactions       WalletTransaction[]
+  walletSubscriptions      WalletSubscription[]
+  payouts                  EscrowPayout[]
+  doubleCheckSignatures    DoubleCheckSignature[]
+  invoices                 Invoice[]
+  supportTickets           SupportTicket[]
+}
+
+model OrganizationMember {
+  id             Int          @id @default(autoincrement())
+  userId         String
+  organizationId String
+  role           UserRole
+  createdAt      DateTime     @default(now())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId, role])
+}
+
+model OrganizationCategory {
+  id             Int              @id @default(autoincrement())
+  organizationId String
+  name           String
+  icon           String           @default("🌟")
+  rule           CategoryRuleType @default(BRACKETS)
+  isCustom       Boolean          @default(true)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, name])
+}
+
+model Initiative {
+  id                         Int                        @id @default(autoincrement())
+  walletEscrowId             String                     @unique
+  paycometEscrowOrderId      String?
+  format                     InitiativeFormat           @default(BUDGET)
+  organizationId             String
+  academicYear               String                     @default("2026-2027")
+  title                      String
+  category                   String
+  stage                      String
+  status                     String                     @default("Recaudando")
+  stepIndex                  Int                        @default(4)
+  closesAt                   DateTime
+  quarter                    String                     @default("2026-Q4")
+  raisedCents                Int                        @default(0)
+  goalCents                  Int
+  totalContributions         Int                        @default(0)
+  costMatCents               Int                        @default(0)
+  costInstCents              Int                        @default(0)
+  contingencyBps             Int                        @default(1000)
+  showPublicBreakdown        Boolean                    @default(true)
+  defaultExemptAppliedCents  Int                        @default(0)
+  medalExemptAppliedCents    Int                        @default(0)
+  medalNameApplied           String                     @default("Ninguna")
+  bracketRateAppliedBps      Int                        @default(0)
+  bracketFeeCents            Int                        @default(0)
+  maintFeeCents              Int                        @default(0)
+  gatewayFeeCents            Int                        @default(0)
+  absorbsGatewayCostByKorum  Boolean                    @default(false)
+  matchingPoolTotalCents     Int                        @default(0)
+  matchingPoolRemainingCents Int                        @default(0)
+  matchingSponsorName        String?
+  ticketSubtype              TicketSubtype?
+  ticketPriceCents           Int?
+  ticketMax                  Int?
+  ticketsSold                Int                        @default(0)
+  ticketFeeMode              TicketFeeMode?
+  ticketVenue                String?
+  plaqueEnabled              Boolean                    @default(true)
+  rewardEnabled              Boolean                    @default(true)
+  targetFamiliesPerCourse    Int                        @default(35)
+  rewardText                 String?
+  description                String
+  thanksMessage              String?
+  coverImage                 String?
+  beforeImage                String?
+  afterImage                 String?
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
+  organization               Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  courses                    InitiativeCourseProgress[]
+  sponsors                   Sponsor[]
+  contributions              Contribution[]
+  ticketPasses               TicketPass[]
+  ledgerEntries              EscrowLedgerEntry[]
+  payout                     EscrowPayout?
+  resizePoll                 ResizePoll?
+}
+
+model InitiativeCourseProgress {
+  id            Int        @id @default(autoincrement())
+  initiativeId  Int
+  groupName     String
+  familiesCount Int        @default(0)
+  initiative    Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+
+  @@unique([initiativeId, groupName])
+}
+
+model Sponsor {
+  id                Int                  @id @default(autoincrement())
+  organizationId    String
+  initiativeId      Int?
+  name              String
+  cif               String
+  contactPerson     String
+  phone             String
+  email             String
+  logoUrl           String?
+  sector            String
+  categoryLevel     SponsorCategoryLevel @default(PLATA)
+  tierRank          Int                  @default(2)
+  tierLabel         String
+  amountCents       Int
+  feeGeneratedCents Int
+  isMatchingPool    Boolean              @default(false)
+  promo             String
+  code              String
+  autoRenew         Boolean              @default(true)
+  paycometIdUser    String?
+  paycometToken     String?
+  status            SponsorStatus        @default(PENDING)
+  expiresAt         DateTime
+  createdAt         DateTime             @default(now())
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  initiative        Initiative?          @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  invoices          Invoice[]
+}
+
+model Idea {
+  id                    Int                    @id @default(autoincrement())
+  organizationId        String
+  alias                 String
+  authorCanonicalEmail  String
+  title                 String
+  category              String
+  description           String
+  phase                 IdeaPhase              @default(PHASE0_MOD)
+  votes                 Int                    @default(1)
+  verifiedVotes         Int                    @default(1)
+  suspiciousVotes       Int                    @default(0)
+  expiresAt             DateTime
+  createdAt             DateTime               @default(now())
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  signatures            IdeaSignatureAudit[]
+  messages              IdeaMessage[]
+  doubleCheckSignatures DoubleCheckSignature[]
+}
+
+model IdeaSignatureAudit {
+  id                Int             @id @default(autoincrement())
+  ideaId            Int
+  userEmail         String
+  canonicalEmail    String
+  deviceFingerprint String
+  ipSubnetHash      String?
+  accountOrder      Int             @default(1)
+  status            SignatureStatus @default(VERIFIED)
+  reason            String
+  createdAt         DateTime        @default(now())
+  idea              Idea            @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@unique([ideaId, canonicalEmail])
+}
+
+model IdeaMessage {
+  id          Int      @id @default(autoincrement())
+  ideaId      Int
+  senderRole  String
+  senderLabel String
+  body        String
+  createdAt   DateTime @default(now())
+  idea        Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+}
+
+model DoubleCheckSignature {
+  id             Int                   @id @default(autoincrement())
+  organizationId String
+  targetType     DoubleCheckTargetType
+  ideaId         Int?
+  payoutId       Int?
+  signerUserId   String
+  signerRole     UserRole
+  signerIp       String?
+  signedAt       DateTime              @default(now())
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+  signer         User                  @relation(fields: [signerUserId], references: [id], onDelete: Restrict)
+
+  @@unique([targetType, ideaId, signerRole])
+  @@unique([targetType, payoutId, signerRole])
+}
+
+model Contribution {
+  id                 Int                 @id @default(autoincrement())
+  organizationId     String
+  initiativeId       Int
+  userId             String?
+  guestEmail         String?
+  canonicalEmail     String?
+  fiscalYear         String              @default("2026")
+  type               ContributionType    @default(DONATION)
+  groupName          String?
+  amountCents        Int
+  guaranteeTipCents  Int                 @default(0)
+  matchedBonusCents  Int                 @default(0)
+  totalChargedCents  Int
+  isTaxDeductible    Boolean             @default(false)
+  paymentMethod      String
+  paycometOrder      String?             @unique
+  paycometAuthCode   String?
+  status             String              @default("COMPLETED")
+  createdAt          DateTime            @default(now())
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  initiative         Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  user               User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ticketPass         TicketPass?
+  ledgerEntries      EscrowLedgerEntry[]
+}
+
+model TicketPass {
+  id              Int           @id @default(autoincrement())
+  uuid            String        @unique @default(uuid())
+  contributionId  Int           @unique
+  initiativeId    Int
+  serialCode      String        @unique
+  subtype         TicketSubtype @default(EVENT)
+  holderEmail     String
+  quantity        Int           @default(1)
+  checkedInCount  Int           @default(0)
+  raffleNumbers   Int[]         @default([])
+  qrHmacSignature String
+  lastCheckedInAt DateTime?
+  isWinner        Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  contribution    Contribution  @relation(fields: [contributionId], references: [id], onDelete: Cascade)
+  initiative      Initiative    @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+}
+
+model EscrowLedgerEntry {
+  id                Int             @id @default(autoincrement())
+  idempotencyKey    String          @unique
+  organizationId    String
+  initiativeId      Int?
+  contributionId    Int?
+  walletTxId        Int?
+  entryType         LedgerEntryType
+  amountCents       Int
+  currency          String          @default("EUR")
+  paycometReference String?
+  metadataJson      Json?
+  createdAt         DateTime        @default(now())
+  organization      Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  initiative        Initiative?     @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  contribution      Contribution?   @relation(fields: [contributionId], references: [id], onDelete: SetNull)
+  walletTransaction WalletTransaction? @relation(fields: [walletTxId], references: [id], onDelete: SetNull)
+}
+
+model WalletTransaction {
+  id                       Int                 @id @default(autoincrement())
+  userId                   String
+  organizationId           String
+  txType                   WalletTxType
+  amountCents              Int
+  feeCents                 Int                 @default(0)
+  remainingRefundableCents Int                 @default(0)
+  paycometOrder            String?             @unique
+  refundedFromOrder        String?
+  status                   String              @default("COMPLETED")
+  createdAt                DateTime            @default(now())
+  user                     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization             Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ledgerEntries            EscrowLedgerEntry[]
+}
+
+model WalletSubscription {
+  id                 Int          @id @default(autoincrement())
+  userId             String
+  organizationId     String
+  monthlyAmountCents Int
+  feePerMonthCents   Int          @default(25)
+  totalMonths        Int          @default(9)
+  executedMonths     Int          @default(1)
+  active             Boolean      @default(true)
+  nextChargeAt       DateTime
+  paycometIdUser     String
+  paycometTokenUser  String
+  createdAt          DateTime     @default(now())
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model EscrowPayout {
+  id                    Int                    @id @default(autoincrement())
+  organizationId        String
+  initiativeId          Int                    @unique
+  destinationType       String                 @default("PROVIDER")
+  beneficiaryName       String
+  beneficiaryIban       String
+  providerCif           String?
+  providerInvoicePdfUrl String?
+  netPaidCents          Int
+  korumFeeSettledCents  Int
+  paycometTransferId    String?
+  status                String                 @default("PENDING_DOUBLE_CHECK")
+  executedAt            DateTime?
+  createdAt             DateTime               @default(now())
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  initiative            Initiative             @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  signatures            DoubleCheckSignature[]
+  invoices              Invoice[]
+}
+
+model ResizePoll {
+  id           Int          @id @default(autoincrement())
+  initiativeId Int          @unique
+  optionsJson  Json
+  closesAt     DateTime
+  status       String       @default("OPEN")
+  createdAt    DateTime     @default(now())
+  initiative   Initiative   @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  votes        ResizeVote[]
+}
+
+model ResizeVote {
+  id             Int        @id @default(autoincrement())
+  pollId         Int
+  canonicalEmail String
+  optionIndex    Int
+  createdAt      DateTime   @default(now())
+  poll           ResizePoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, canonicalEmail])
+}
+
+model Invoice {
+  id                Int           @id @default(autoincrement())
+  invoiceNumber     String        @unique
+  organizationId    String
+  sponsorId         Int?
+  payoutId          Int?
+  recipientName     String
+  recipientTaxId    String
+  concept           String
+  baseAmountCents   Int
+  taxRateBps        Int           @default(2100)
+  taxAmountCents    Int           @default(0)
+  totalAmountCents  Int
+  prevVerifactuHash String?
+  verifactuHash     String        @unique
+  verifactuQrUrl    String
+  issuedAt          DateTime      @default(now())
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sponsor           Sponsor?      @relation(fields: [sponsorId], references: [id], onDelete: SetNull)
+  payout            EscrowPayout? @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+}
+
+model SupportTicket {
+  id             Int           @id @default(autoincrement())
+  ticketCode     String        @unique
+  organizationId String?
+  originLabel    String
+  senderEmail    String?
+  targetRole     String        @default("SUPERADMIN")
+  subject        String
+  message        String
+  status         String        @default("OPEN")
+  replyMessage   String?
+  createdAt      DateTime      @default(now())
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+}
+

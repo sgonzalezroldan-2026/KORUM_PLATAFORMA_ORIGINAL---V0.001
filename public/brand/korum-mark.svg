@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="KORUM Varsity Crest - Escudo Colegial Oficial">
+  <defs>
+    <!-- Paño de sudadera colegial pesada (Azul Marino Sudadera Stanford/Santa Isabel) -->
+    <radialGradient id="varsityClothMark" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1E3258"/>
+      <stop offset="65%" stop-color="#101F38"/>
+      <stop offset="100%" stop-color="#0A1424"/>
+    </radialGradient>
+    
+    <!-- Hilo de Oro Mostaza Deportivo para el pespunte bordado -->
+    <linearGradient id="embroideryGoldMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="40%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Hilo Marfil Colegial -->
+    <linearGradient id="stitchWhiteMark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F3F0E6"/>
+    </linearGradient>
+
+    <!-- Sombra suave de parche bordado en prenda -->
+    <filter id="patchShadowMark" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#050A12" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Base: Escudo Colegial Estilo Parche Cosido -->
+  <g filter="url(#patchShadowMark)">
+    <!-- Silueta Exterior del Escudo -->
+    <path d="M50 6 L82 13 C83.5 13.3 84.5 14.7 84.5 16.3 V45 C84.5 64 69 77.5 51.5 86 C50.5 86.5 49.5 86.5 48.5 86 C31 77.5 15.5 64 15.5 45 V16.3 C15.5 14.7 16.5 13.3 18 13 L50 6 Z" 
+          fill="url(#varsityClothMark)"/>
+
+    <!-- Pespunte Exterior de Hilo Bordado (Línea discontinua que simula puntadas de aguja) -->
+    <path d="M50 9 L80 15.5 C81 15.7 81.8 16.6 81.8 17.7 V44 C81.8 61.5 67.5 74.5 51 82.5 C50.3 82.8 49.7 82.8 49 82.5 C32.5 74.5 18.2 61.5 18.2 44 V17.7 C18.2 16.6 19 15.7 20 15.5 L50 9 Z" 
+          stroke="url(#embroideryGoldMark)" stroke-width="1.8" stroke-dasharray="3, 1.8" fill="none"/>
+
+    <!-- Ribete Interior Continuo de Doble Perfil Universitario -->
+    <path d="M50 13 L76 18.5 V43 C76 58 64 69.5 50 76.5 C36 69.5 24 58 24 43 V18.5 L50 13 Z" 
+          stroke="#FDFBF7" stroke-width="1.2" stroke-opacity="0.85" fill="none"/>
+  </g>
+
+  <!-- Corona de Laureles Cívicos Colegiales (Símbolo de Quórum y Comunidad de Familias) -->
+  <g fill="url(#embroideryGoldMark)" opacity="0.92">
+    <!-- Rama Izquierda -->
+    <path d="M28 48 C26 44 26 38 29 35 C28 38 29 42 32 44 C30 46 29 47 28 48 Z"/>
+    <path d="M26 39 C23 35 24 29 28 26 C26 29 28 34 31 35 C29 37 27 38 26 39 Z"/>
+    <path d="M29 30 C27 25 30 19 34 17 C32 20 33 25 36 26 C33 28 30 29 29 30 Z"/>
+    <!-- Rama Derecha -->
+    <path d="M72 48 C74 44 74 38 71 35 C72 38 71 42 68 44 C70 46 71 47 72 48 Z"/>
+    <path d="M74 39 C77 35 76 29 72 26 C74 29 72 34 69 35 C71 37 73 38 74 39 Z"/>
+    <path d="M71 30 C73 25 70 19 66 17 C68 20 67 25 64 26 C67 28 70 29 71 30 Z"/>
+  </g>
+
+  <!-- Letra 'K' Colegial Universitaria con Doble Perfil y Remate de Serifa Plana (Varsity Slab Serif) -->
+  <g id="varsityLetterKMark">
+    <!-- Sombra/Grosor del Parche de Fieltro -->
+    <path d="M37 25 H45 V43 L57 25 H67 L53 45 L68 67 H58 L45 48 V67 H37 V25 Z" 
+          fill="#060C17" transform="translate(1, 1.8)"/>
+    
+    <!-- Base Fieltro Blanco/Marfil -->
+    <path d="M37 25 H45 V43 L57 25 H67 L53 45 L68 67 H58 L45 48 V67 H37 V25 Z" 
+          fill="url(#stitchWhiteMark)"/>
+    
+    <!-- Perfil Interior Calado en Oro Deportivo (Doble Trazado Típico Sudadera Yale/Stanford) -->
+    <path d="M39.5 28.5 H42.5 V44.5 L55.5 28.5 H61.5 L49.5 45.5 L62.5 63.5 H56.5 L43.5 47 V63.5 H39.5 V28.5 Z" 
+          stroke="url(#embroideryGoldMark)" stroke-width="1.2" fill="none"/>
+  </g>
+
+  <!-- Cinta Inferior Conmemorativa: EST. 2026 · QUÓRUM ESCOLAR -->
+  <g>
+    <path d="M26 88 L50 82 L74 88 L68 94 L50 89 L32 94 Z" fill="#E5A93C"/>
+    <path d="M30 89 L50 84 L70 89" stroke="#101F38" stroke-width="0.75" fill="none"/>
+    <circle cx="50" cy="85.5" r="1.5" fill="#101F38"/>
+  </g>
+</svg>

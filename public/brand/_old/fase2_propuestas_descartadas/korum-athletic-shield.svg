@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="KORUM Athletic Shield - Emblema Deportivo Colegial">
+  <defs>
+    <!-- Marino Técnico de Chándal Escolar -->
+    <linearGradient id="athleticNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="60%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <!-- Naranja Coral Deportivo de Alta Visibilidad -->
+    <linearGradient id="athleticOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B4A"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+
+    <!-- Blanco Óptico de Franja Técnica -->
+    <linearGradient id="athleticWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+
+    <filter id="athleticGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#020617" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Silueta del Blasón Deportivo Angulado (Escudo Dinámico de Club Base) -->
+  <g filter="url(#athleticGlow)">
+    <!-- Marco Exterior -->
+    <path d="M50 8 L85 18 V46 C85 67 69 82 50 92 C31 82 15 67 15 46 V18 L50 8 Z" 
+          fill="url(#athleticNavy)"/>
+    
+    <!-- Doble Franja Atlética Perimetral (Inspirada en los ribetes de chándal escolar) -->
+    <path d="M50 12.5 L80.5 21.2 V45 C80.5 63.5 66.5 77 50 86 C33.5 77 19.5 63.5 19.5 45 V21.2 L50 12.5 Z" 
+          stroke="url(#athleticWhite)" stroke-width="1.8" fill="none"/>
+    <path d="M50 16 L76 23.5 V44 C76 60 63.5 72 50 80.5 C36.5 72 24 60 24 44 V23.5 L50 16 Z" 
+          stroke="url(#athleticOrange)" stroke-width="1.2" fill="none"/>
+  </g>
+
+  <!-- Letra 'K' Dinámica Atlética con Corte de Velocidad y Doble Raya de Equipo -->
+  <g id="athleticLetterK">
+    <!-- Barra Vertical Atlética Biselada -->
+    <path d="M35 27 L43 25 V71 L35 73 V27 Z" fill="url(#athleticWhite)"/>
+    <!-- Franja Naranja de Acompañamiento en la Barra Vertical -->
+    <path d="M36 29 L38.5 28.5 V69 L36 69.5 V29 Z" fill="url(#athleticOrange)"/>
+
+    <!-- Brazo Superior Dinámico (Corte de Dorsal Deportivo) -->
+    <polygon points="46,47 62,25 72,25 54,49" fill="url(#athleticWhite)"/>
+    <polygon points="56,33 64,27 68,27 59,38" fill="url(#athleticOrange)"/>
+
+    <!-- Brazo Inferior Dinámico -->
+    <polygon points="51,46 72,71 62,71 44,50" fill="url(#athleticWhite)"/>
+    <polygon points="53,52 64,66 60,66 49,54" fill="url(#athleticOrange)"/>
+
+    <!-- Núcleo de Unión de Equipo (Símbolo de Quórum en el Centro del Escudo) -->
+    <circle cx="48" cy="48" r="3" fill="#FFFFFF"/>
+    <circle cx="48" cy="48" r="1.5" fill="url(#athleticOrange)"/>
+  </g>
+
+  <!-- Corona Superior de Tres Estrellas de Club Base -->
+  <g fill="url(#athleticOrange)">
+    <polygon points="50,19 51,21.5 53.5,21.5 51.5,23 52.2,25.5 50,24 47.8,25.5 48.5,23 46.5,21.5 49,21.5"/>
+    <polygon points="41,22 41.8,24 43.8,24 42.2,25.2 42.8,27 41,26 39.2,27 39.8,25.2 38.2,24 40.2,24" opacity="0.8"/>
+    <polygon points="59,22 59.8,24 61.8,24 60.2,25.2 60.8,27 59,26 57.2,27 57.8,25.2 56.2,24 58.2,24" opacity="0.8"/>
+  </g>
+</svg>

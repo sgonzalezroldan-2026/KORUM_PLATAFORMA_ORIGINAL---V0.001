@@ -1,0 +1,30 @@
+# Dependencias y builds
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Secretos: nunca se versionan (solo la plantilla .env.example)
+.env
+.env.*
+!.env.example
+
+# Tests y cobertura
+coverage/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Logs y sistema
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Configuración local de cada persona (no compartida)
+.claude/settings.local.json
+.vercel/

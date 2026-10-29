@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 56" fill="none" role="img" aria-label="Garantía Escrow 100% Reembolsable · Custodia Regulada PSD2 Paycomet">
+  <defs>
+    <linearGradient id="ksSurface" x1="0" y1="0" x2="300" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="ksBorder" x1="0" y1="0" x2="300" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#047857"/>
+      <stop offset="65%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="ksGoldBevel" x1="12" y1="8" x2="52" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="40%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Contenedor Institucional Fiduciario -->
+  <rect x="1" y="1" width="298" height="54" rx="11" fill="url(#ksSurface)" stroke="url(#ksBorder)" stroke-width="1.6"/>
+  <path d="M5 12C5 7.58 8.58 4 13 4H16V52H13C8.58 52 5 48.42 5 44V12Z" fill="#047857" fill-opacity="0.08"/>
+  <rect x="1" y="11" width="3.5" height="34" rx="1.75" fill="#047857"/>
+
+  <!-- Mini-Escudo Corporativo KORUM -->
+  <g transform="translate(12, 7) scale(0.66)">
+    <path d="M32 4.5L54.2 9.2C55.3 9.44 56 10.42 56 11.55V30.8C56 43.6 45.7 52.7 33.05 58.65C32.38 58.96 31.62 58.96 30.95 58.65C18.3 52.7 8 43.6 8 30.8V11.55C8 10.42 8.7 9.44 9.8 9.2L32 4.5Z" fill="#0B1526"/>
+    <path d="M32 8.2L51.4 12.3C52.05 12.44 52.5 13.02 52.5 13.7V30.6C52.5 41.35 43.65 49.25 32.42 54.75C32.15 54.88 31.85 54.88 31.58 54.75C20.35 49.25 11.5 41.35 11.5 30.6V13.7C11.5 13.02 11.95 12.44 12.6 12.3L32 8.2Z" stroke="url(#ksGoldBevel)" stroke-width="2"/>
+    <rect x="19" y="17.5" width="6.4" height="27" rx="1.5" fill="#FFFFFF"/>
+    <path d="M37.8 17.5H45.2L34.6 31L45.2 44.5H37.8L27.4 31L37.8 17.5Z" fill="#FFFFFF"/>
+    <path d="M28.4 24.8L34.6 31L28.4 37.2L22.2 31L28.4 24.8Z" fill="#FFB800" stroke="#0B1526" stroke-width="1.6"/>
+    <path d="M28.4 28.3L31.1 31L28.4 33.7L25.7 31L28.4 28.3Z" fill="#FF5A43"/>
+  </g>
+
+  <!-- Sello Check Esmeralda -->
+  <circle cx="48" cy="42" r="7" fill="#047857" stroke="#FFFFFF" stroke-width="1.5"/>
+  <path d="M44.8 42.1L47 44.3L51.4 39.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Textos Fiduciarios -->
+  <text x="63" y="25" fill="#0B1526" font-family="'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="10.5" font-weight="800" letter-spacing="0.45">GARANTÍA ESCROW 100% REEMBOLSABLE</text>
+  <rect x="63" y="30.5" width="222" height="1" fill="#E2E8F0"/>
+  <circle cx="67" cy="40.5" r="3" fill="#059669"/>
+  <text x="74" y="43.8" fill="#047857" font-family="'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="9.2" font-weight="800" letter-spacing="0.9">CUSTODIA REGULADA PSD2 · PAYCOMET</text>
+</svg>

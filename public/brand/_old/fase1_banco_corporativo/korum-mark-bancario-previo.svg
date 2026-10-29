@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="KORUM Escudo Ágora-K">
+  <defs>
+    <linearGradient id="korumShieldBg" x1="8" y1="5" x2="56" y2="59" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#13233F"/>
+      <stop offset="55%" stop-color="#0B1526"/>
+      <stop offset="100%" stop-color="#070E1A"/>
+    </linearGradient>
+    <linearGradient id="korumGoldBevel" x1="12" y1="8" x2="52" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="35%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="korumKeystoneGold" x1="23" y1="25" x2="34" y2="37" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="50%" stop-color="#FFB800"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Silueta Exterior: Escudo Heráldico-Arquitectónico Marino Soberano -->
+  <path d="M32 4.5L54.2 9.2C55.3 9.44 56 10.42 56 11.55V30.8C56 43.6 45.7 52.7 33.05 58.65C32.38 58.96 31.62 58.96 30.95 58.65C18.3 52.7 8 43.6 8 30.8V11.55C8 10.42 8.7 9.44 9.8 9.2L32 4.5Z" fill="url(#korumShieldBg)"/>
+
+  <!-- Bisel Interior de Precisión en Oro Fiduciario -->
+  <path d="M32 8.2L51.4 12.3C52.05 12.44 52.5 13.02 52.5 13.7V30.6C52.5 41.35 43.65 49.25 32.42 54.75C32.15 54.88 31.85 54.88 31.58 54.75C20.35 49.25 11.5 41.35 11.5 30.6V13.7C11.5 13.02 11.95 12.44 12.6 12.3L32 8.2Z" stroke="url(#korumGoldBevel)" stroke-width="1.75"/>
+
+  <!-- Columna Institucional Vertical (Izquierda: Colegio / Club / Custodia) -->
+  <rect x="19" y="17.5" width="6.4" height="27" rx="1.5" fill="#FFFFFF"/>
+
+  <!-- Brazos Angulares Convergentes (Derecha: Quórum de Familias y Comunidad formando la K) -->
+  <path d="M37.8 17.5H45.2L34.6 31L45.2 44.5H37.8L27.4 31L37.8 17.5Z" fill="#FFFFFF"/>
+
+  <!-- Piedra Angular Central (Acuerdo Mancomunado Oro + Núcleo Cívico Coral) -->
+  <path d="M28.4 24.8L34.6 31L28.4 37.2L22.2 31L28.4 24.8Z" fill="url(#korumKeystoneGold)" stroke="#0B1526" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M28.4 28.3L31.1 31L28.4 33.7L25.7 31L28.4 28.3Z" fill="#FF5A43"/>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none" role="img" aria-label="KORUM Quórum Escolar - Logotipo Oficial">
+  <defs>
+    <!-- Gradiente paño azul marino de sudadera escolar -->
+    <radialGradient id="hVarsityCloth" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1E3258"/>
+      <stop offset="65%" stop-color="#101F38"/>
+      <stop offset="100%" stop-color="#0A1424"/>
+    </radialGradient>
+    
+    <!-- Hilo de oro mostaza deportivo bordado -->
+    <linearGradient id="hGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="40%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Hilo marfil de uniforme -->
+    <linearGradient id="hIvory" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F4F0E6"/>
+    </linearGradient>
+
+    <!-- Sombra suave de relieve bordado -->
+    <filter id="hPatchShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#050A12" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- ================= ESCUDO COLEGIAL VARSITY HERITAGE (Izquierda) ================= -->
+  <g transform="translate(6, 6) scale(0.68)" filter="url(#hPatchShadow)">
+    <!-- Silueta Exterior del Escudo -->
+    <path d="M50 6 L82 13 C83.5 13.3 84.5 14.7 84.5 16.3 V45 C84.5 64 69 77.5 51.5 86 C50.5 86.5 49.5 86.5 48.5 86 C31 77.5 15.5 64 15.5 45 V16.3 C15.5 14.7 16.5 13.3 18 13 L50 6 Z" 
+          fill="url(#hVarsityCloth)"/>
+
+    <!-- Pespunte Exterior de Hilo Bordado -->
+    <path d="M50 9 L80 15.5 C81 15.7 81.8 16.6 81.8 17.7 V44 C81.8 61.5 67.5 74.5 51 82.5 C50.3 82.8 49.7 82.8 49 82.5 C32.5 74.5 18.2 61.5 18.2 44 V17.7 C18.2 16.6 19 15.7 20 15.5 L50 9 Z" 
+          stroke="url(#hGold)" stroke-width="1.8" stroke-dasharray="3, 1.8" fill="none"/>
+
+    <!-- Ribete Interior Continuo -->
+    <path d="M50 13 L76 18.5 V43 C76 58 64 69.5 50 76.5 C36 69.5 24 58 24 43 V18.5 L50 13 Z" 
+          stroke="#FDFBF7" stroke-width="1.2" stroke-opacity="0.85" fill="none"/>
+
+    <!-- Corona de Laureles Cívicos Bordados -->
+    <g fill="url(#hGold)" opacity="0.92">
+      <path d="M28 48 C26 44 26 38 29 35 C28 38 29 42 32 44 C30 46 29 47 28 48 Z"/>
+      <path d="M26 39 C23 35 24 29 28 26 C26 29 28 34 31 35 C29 37 27 38 26 39 Z"/>
+      <path d="M29 30 C27 25 30 19 34 17 C32 20 33 25 36 26 C33 28 30 29 29 30 Z"/>
+      <path d="M72 48 C74 44 74 38 71 35 C72 38 71 42 68 44 C70 46 71 47 72 48 Z"/>
+      <path d="M74 39 C77 35 76 29 72 26 C74 29 72 34 69 35 C71 37 73 38 74 39 Z"/>
+      <path d="M71 30 C73 25 70 19 66 17 C68 20 67 25 64 26 C67 28 70 29 71 30 Z"/>
+    </g>
+
+    <!-- Letra 'K' Colegial Universitaria -->
+    <g>
+      <path d="M37 25 H45 V43 L57 25 H67 L53 45 L68 67 H58 L45 48 V67 H37 V25 Z" fill="#060C17" transform="translate(1, 1.8)"/>
+      <path d="M37 25 H45 V43 L57 25 H67 L53 45 L68 67 H58 L45 48 V67 H37 V25 Z" fill="url(#hIvory)"/>
+      <path d="M39.5 28.5 H42.5 V44.5 L55.5 28.5 H61.5 L49.5 45.5 L62.5 63.5 H56.5 L43.5 47 V63.5 H39.5 V28.5 Z" 
+            stroke="url(#hGold)" stroke-width="1.2" fill="none"/>
+    </g>
+
+    <!-- Cinta Inferior Conmemorativa -->
+    <path d="M26 88 L50 82 L74 88 L68 94 L50 89 L32 94 Z" fill="#E5A93C"/>
+  </g>
+
+  <!-- ================= WORDMARK KORUM (Tipografía Colegial Universitaria) ================= -->
+  <g transform="translate(78, 16)">
+    <!-- Letras K O R U M en Tipografía Universitaria con Remates y Sombra Suave -->
+    <!-- K -->
+    <path d="M0 8 H10 V23 L22 8 H33 L18 25 L34 46 H23 L10 27 V46 H0 V8 Z" fill="#101F38"/>
+    <path d="M3 11 H7 V24 L19 11 H25 L14 26 L26 43 H20 L10 28 V43 H3 V11 Z" fill="url(#hGold)"/>
+
+    <!-- O -->
+    <path d="M49 7 C40 7 35 14 35 27 C35 40 40 47 49 47 C58 47 63 40 63 27 C63 14 58 7 49 7 Z M49 15 C52 15 54 19 54 27 C54 35 52 39 49 39 C46 39 44 35 44 27 C44 19 46 15 49 15 Z" fill="#101F38"/>
+    <path d="M49 10 C42 10 38 16 38 27 C38 38 42 44 49 44 C56 44 60 38 60 27 C60 16 56 10 49 10 Z M49 16 C51 16 53 19 53 27 C53 35 51 38 49 38 C47 38 45 35 45 27 C45 19 47 16 49 16 Z" fill="url(#hGold)"/>
+
+    <!-- R -->
+    <path d="M67 8 H83 C90 8 94 12 94 19 C94 24 91 28 86 29 L95 46 H84 L76 31 H75 V46 H67 V8 Z M75 14 V25 H82 C85 25 87 23 87 19.5 C87 16 85 14 82 14 H75 Z" fill="#101F38"/>
+    <path d="M70 11 H81 C86 11 89 14 89 19 C89 23 86 26 82 26.5 L90 43 H84 L76 29 H73 V43 H70 V11 Z M73 15 V23 H80 C82 23 84 21.5 84 19 C84 16.5 82 15 80 15 H73 Z" fill="url(#hGold)"/>
+
+    <!-- U -->
+    <path d="M98 8 H106 V30 C106 37 109 40 114 40 C119 40 122 37 122 30 V8 H130 V30 C130 42 124 47 114 47 C104 47 98 42 98 30 V8 Z" fill="#101F38"/>
+    <path d="M101 11 H104 V30 C104 38 107 41 114 41 C121 41 124 38 124 30 V11 H127 V30 C127 40 122 44 114 44 C106 44 101 40 101 30 V11 Z" fill="url(#hGold)"/>
+
+    <!-- M -->
+    <path d="M134 8 H143 L150 28 L157 8 H166 V46 H158 V21 L152 40 H148 L142 21 V46 H134 V8 Z" fill="#101F38"/>
+    <path d="M137 11 H141 L149 32 L157 11 H161 V43 H156 V23 L151 38 H147 L142 23 V43 H137 V11 Z" fill="url(#hGold)"/>
+  </g>
+
+  <!-- ================= SUBTÍTULO: QUÓRUM ESCOLAR · CONFIANZA Y COMUNIDAD ================= -->
+  <text x="80" y="70" 
+        font-family="'Plus Jakarta Sans', sans-serif" 
+        font-size="9" 
+        font-weight="800" 
+        letter-spacing="3" 
+        fill="#D97706">
+    QUÓRUM ESCOLAR · COMUNIDAD Y PATIO
+  </text>
+  
+  <circle cx="282" cy="67.5" r="2" fill="#FF5A43"/>
+</svg>
