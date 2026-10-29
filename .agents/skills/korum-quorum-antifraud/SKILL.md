@@ -1,35 +1,42 @@
 ---
 name: korum-quorum-antifraud
-description: Protocolos de Quórum, Anti-Fraude en Servidor, Doble Firma Mancomunada y Cumplimiento Legal/Fiscal (CNMV, Ley 49/2002, Modelo 182 AEAT y RGPD) de KORUM. Cargar siempre que se programen el Buzón de Ideas, el Doble Check, el candado semántico 0% o el área fiscal de Mi Hucha.
+description: Quórum del buzón de ideas, antifraude en servidor (email canónico y regla padre/madre de máximo 2 cuentas por dispositivo, con privacidad desde el diseño), doble firma mancomunada DIRECTOR + COSIGNER, candado semántico con límites de palabra, fiscalidad (Ley 49/2002, Modelo 182) y derechos RGPD. Cargar siempre que se programen el buzón de ideas, la doble firma, el candado de categorías exentas o el área fiscal y de privacidad.
 ---
 
-# Skill · Gobernanza de Quórum, Anti-Fraude en Servidor y Marco Legal/Fiscal
+# Skill · Quórum, antifraude, doble firma y marco fiscal y de privacidad
 
-## 1. Participación Dual: Donación en 10s vs. Firma Registrada y Normalizada
-1. **Aportaciones Económicas (`💛 Aportar Ahora`):**
-   - **Sin registro obligatorio** (solo email ligero de entrega en modo invitado).
-2. **Firmas en el Buzón de Ideas (`✍️ Firmar Apoyo`):**
-   - **Requieren usuario autenticado con email verificado por Magic Link / OTP (`emailVerified !== null`).**
-   - **Normalización Canónica Anti-Multicuenta:** Antes de validar unicidad, el servidor normaliza el email (`canonicalEmail`): convierte a minúsculas, elimina sub-alias `+` (`nombre+2@gmail.com` → `nombre@gmail.com`), ignora puntos en dominios Gmail/Googlemail y rechaza dominios de correo temporal/desechable.
-   - **Límite estricto:** `1 única firma por canonicalEmail` en cada idea (`@@unique([ideaId, canonicalEmail])`).
+## 1. Dos formas de participar
 
----
+1. **Aportar dinero (`💛 Aportar ahora`):** sin registro; en modo invitado solo se pide el email.
+2. **Firmar una idea (`✍️ Firmar apoyo`):**
+   - Requiere sesión con **email verificado** por enlace mágico u OTP (`user.emailVerified === true`).
+   - **Email canónico:** antes de comprobar la unicidad, el servidor normaliza el email: minúsculas, sin sub-alias `+` (`nombre+2@gmail.com` → `nombre@gmail.com`), sin puntos en Gmail/Googlemail, y rechazo de dominios de correo desechable (lista mantenida en `src/core/security/disposable-domains.ts`).
+   - **Una firma por email canónico e idea** (`@@unique([ideaId, canonicalEmail])`).
 
-## 2. Algoritmo Anti-Fraude Doméstico: Regla Padre y Madre (`<= 2` Cuentas/Dispositivo)
+## 2. Regla padre y madre (máximo 2 cuentas por dispositivo)
 
-Combina cookie firmada `HttpOnly` de dispositivo + huella de navegador + control de ráfagas por subred IP (`/24`) para permitir que **madre y padre** firmen desde el mismo móvil, tablet u ordenador familiar sin falsos bloqueos, marcando como sospechosa cualquier 3ª cuenta o ráfaga automatizada:
+Permite que madre y padre firmen desde el mismo móvil u ordenador familiar y marca como sospechosa la 3ª cuenta o las ráfagas automatizadas.
+
+**Señales, de menos a más invasiva (privacidad desde el diseño):**
+
+1. **Cookie propia de dispositivo** (`HttpOnly`, `Secure`, `SameSite=Lax`, firmada, 13 meses). Se crea solo cuando la persona firma una idea, porque es necesaria para el servicio que ha pedido (votación segura). En base de datos se guarda solo su hash (`Device.cookieIdHash`).
+2. **Subred IP** (`/24` en IPv4, `/48` en IPv6), guardada solo como HMAC (`ipSubnetHash`) y únicamente para detectar ráfagas.
+3. **Huella de navegador:** solo con **consentimiento** expreso (`ConsentPurpose.DEVICE_FINGERPRINT`) y siempre como HMAC (`Device.fingerprintHmac`). Sin consentimiento el sistema funciona igual con las señales 1 y 2.
+
+La validez legal de este diseño (LSSI art. 22.2 y RGPD) está en la lista de comprobación del abogado ([docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) §5).
 
 ```typescript
 export interface SignatureAuditResult {
   status: 'VERIFIED' | 'SUSPICIOUS';
-  reason: string;
+  /** Clave de traducción del motivo (los textos viven en messages/{es,ca,en}.json). */
+  reasonKey: 'ideas.audit.ipBurst' | 'ideas.audit.firstAccount' | 'ideas.audit.secondAccount' | 'ideas.audit.tooManyAccounts';
   deviceAccountOrder: number;
 }
 
 export function normalizeCanonicalEmail(rawEmail: string): string {
   const [localRaw, domainRaw] = rawEmail.trim().toLowerCase().split('@');
   if (!localRaw || !domainRaw) return rawEmail.trim().toLowerCase();
-  const baseLocal = localRaw.split('+')[0];
+  const baseLocal = localRaw.split('+')[0] ?? localRaw;
   if (domainRaw === 'gmail.com' || domainRaw === 'googlemail.com') {
     return `${baseLocal.replace(/\./g, '')}@gmail.com`;
   }
@@ -48,60 +55,48 @@ export function evaluateIdeaSignatureFraud(params: {
   const accountOrderOnDevice = updatedList.indexOf(params.canonicalEmail) + 1;
 
   if (params.ipBurstSignaturesLast10Min >= 6) {
-    return {
-      status: 'SUSPICIOUS',
-      reason: '⚠️ Patrón de ráfaga anómalo detectado desde la misma red en menos de 10 minutos.',
-      deviceAccountOrder: accountOrderOnDevice
-    };
+    return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.ipBurst', deviceAccountOrder: accountOrderOnDevice };
   }
-
   if (accountOrderOnDevice === 1) {
-    return {
-      status: 'VERIFIED',
-      reason: '1ª cuenta familiar en el dispositivo (Verificada).',
-      deviceAccountOrder: 1
-    };
+    return { status: 'VERIFIED', reasonKey: 'ideas.audit.firstAccount', deviceAccountOrder: 1 };
   }
-
   if (accountOrderOnDevice === 2) {
-    return {
-      status: 'VERIFIED',
-      reason: '2ª cuenta familiar en el mismo dispositivo (Padre/Madre · Permitida y Verificada).',
-      deviceAccountOrder: 2
-    };
+    return { status: 'VERIFIED', reasonKey: 'ideas.audit.secondAccount', deviceAccountOrder: 2 };
   }
-
-  return {
-    status: 'SUSPICIOUS',
-    reason: `⚠️ ${accountOrderOnDevice}ª cuenta firmando desde el mismo dispositivo (Supera el máximo permitido de 2 cuentas familiares padre/madre).`,
-    deviceAccountOrder: accountOrderOnDevice
-  };
+  return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.tooManyAccounts', deviceAccountOrder: accountOrderOnDevice };
 }
 ```
 
----
+Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde la misma red en menos de 10 minutos.` · `1ª cuenta familiar en este dispositivo (verificada).` · `2ª cuenta familiar en el mismo dispositivo (padre/madre, verificada).` · `⚠️ {n}ª cuenta firmando desde el mismo dispositivo (máximo 2 por familia).`
 
-## 3. Doble Check Mancomunado Criptográfico Real (`ROLE_DIRECTOR` + `ROLE_AFA_PRESIDENT`)
-- En producción, el **Doble Check** no es un clic unilateral: exige **2 registros independientes en `DoubleCheckSignature`** (uno firmado por el usuario con rol `DIRECTOR` y otro por el usuario con rol `AFA_PRESIDENT`), tanto para:
-  1. Pasar una idea con quórum (`DOUBLE_CHECK`) a fase de `Presupuestación`.
-  2. Liberar los fondos Escrow (`ESCROW_PAYOUT`) hacia el proveedor o cuenta del centro.
-- Cuando firma el primero (`1/2`), el sistema envía enlace directo firmado + código OTP al segundo responsable para completar el candado mancomunado en 1 clic desde su móvil.
+## 3. Doble firma mancomunada (`DIRECTOR` + `COSIGNER`)
 
----
+- La doble firma exige **dos registros en `DoubleCheckSignature` de dos personas distintas**, una con rol `DIRECTOR` y otra con rol `COSIGNER`, para:
+  1. Pasar una idea con quórum (`DOUBLE_CHECK`) a `BUDGETING`.
+  2. Liberar fondos (`ESCROW_PAYOUT`) hacia la entidad o su proveedor.
+- Cada firma guarda `signatureHash` = HMAC de (tipo, id del objetivo, firmante, fecha) para detectar manipulaciones, y `otpVerifiedAt` si se firmó con código.
+- Tras la 1ª firma (`1/2`), la otra persona recibe un enlace firmado de un solo uso (caduca en 72 h) + OTP de 6 dígitos para firmar en 1 clic desde el móvil.
+- **Etiqueta visible del cargo** (`OrganizationMember.roleLabel`), según la entidad: *Dirección del centro*, *Presidencia del AMPA/AFA*, *Presidencia/Tesorería del club*, *Representación del patronato*, *Titularidad del colegio*. Una misma persona nunca ocupa los dos roles en la misma entidad.
 
-## 4. Candado Semántico Anti-Pillería con Límites de Palabra (`\b`) Sin Falsos Positivos
-Cuando un centro elige una categoría `EXEMPT` (`0%` comisión, distinta de `Taquilla y Rifas`):
-- **Prohibido usar `.includes('obra')` plano** (que bloqueaba erróneamente palabras como *"c**obra**r"*, *"s**obra**s"*, *"mani**obra**"* o *"obra de teatro"*).
-- El motor normaliza acentos, elimina primero locuciones culturales/pedagógicas seguras (`obra de teatro`, `obra teatral`, `obra literaria`, `taller de pintura`, `pintura infantil`, `mano de obra solidaria`) y evalúa **expresiones regulares con límites de palabra estrictos (`\b`)** sobre infraestructura, climatización y hardware (`\b(ventilador|ventiladores|aire acondicionado|aerotermia|split|splits|climatizacion|climatizar|pizarra|pizarras|proyector|proyectores|reforma|reformas|fachada|asfaltado|cesped artificial|cancha|canchas|toldo|toldos|pergola|calefaccion|ordenador|ordenadores|portatil|portatiles|tablet|tablets|marcador led|obra|obras)\b`).
-- Además, al liquidar a proveedor en `Logros y liquidaciones`, queda registrada la factura PDF adjunta para trazabilidad total.
+## 4. Candado semántico de categorías exentas (`\b`, sin falsos positivos)
 
----
+Cuando una entidad elige una categoría `EXEMPT` (`0 %`, distinta de *Taquilla y rifas*):
 
-## 5. Rigor Legal y Fiscal Automatizado (CNMV, AEAT Ley 49/2002, Modelo 182 y RGPD)
-1. **Exención CNMV (Ley 5/2015):** Mecenazgo no financiero y taquilla con custodia en entidad de pago regulada PSD2 (Paycomet).
-2. **Separación Estricta de Conceptos Fiscales y Condicional `ley49`:**
-   - Ni las recargas de *Mi Hucha* (`TOPUP`) ni la compra de entradas/rifas (`TICKET`) se incluyen jamás en certificados de donación; solo las **aportaciones puras irrevocables (`DONATION`)** de campañas no reembolsadas.
-   - Si `organization.ley49 === true` (Fundaciones y Asociaciones de Utilidad Pública), se emite **Certificado Fiscal IRPF (Ley 49/2002)** y el Panel del Centro habilita en enero la descarga en 1 clic del **fichero oficial AEAT Modelo 182 (`.BOE` / `.TXT`)**.
-   - Si `organization.ley49 === false` (AMPAs o clubes ordinarios), tanto el checkout como *Mi Hucha* emiten exclusivamente un **Justificante Oficial Nominativo de Aportación**, evitando contingencias tributarias a las familias ante la AEAT.
-3. **Derecho al Olvido RGPD:** Anonimiza PII (`email`, `fullName`, `nif`, `ip`) conservando únicamente los asientos contables anonimizados exigidos por la Ley General Tributaria (4 a 10 años).
+- **Prohibido `.includes('obra')`** (bloqueaba *"c**obra**r"*, *"s**obra**s"*, *"mani**obra**"* u *"obra de teatro"*).
+- Se normalizan acentos, se eliminan primero las expresiones culturales seguras (`obra de teatro`, `obra teatral`, `obra literaria`, `taller de pintura`, `pintura infantil`, `mano de obra solidaria`) y se evalúa una expresión regular con límites de palabra sobre infraestructura y equipamiento: `\b(ventilador|ventiladores|aire acondicionado|aerotermia|split|splits|climatizacion|climatizar|pizarra|pizarras|proyector|proyectores|reforma|reformas|fachada|asfaltado|cesped artificial|cancha|canchas|toldo|toldos|pergola|calefaccion|ordenador|ordenadores|portatil|portatiles|tablet|tablets|marcador led|obra|obras)\b`.
+- La lista se amplía con las palabras equivalentes en **catalán** (`ventiladors`, `pissarra`, `pissarres`, `tendal`, `tendals`, `reforma`, `obres`, `calefacció`, `ordinador`, `ordinadors`) y en **inglés** (`fan`, `fans`, `air conditioning`, `whiteboard`, `projector`, `awning`, `renovation`, `laptop`, `heating`), aplicando las mismas reglas de exclusión cultural en cada idioma.
 
+## 5. Fiscalidad (Ley 49/2002 y Modelo 182)
+
+1. **Separación de conceptos:** recargas (`TOPUP`) y entradas o rifas (`TICKET`) nunca aparecen en certificados; solo las **donaciones (`DONATION`) completadas y no reembolsadas**.
+2. **Certificado fiscal y Modelo 182** solo si `organization.ley49 === true` **y** `ley49VerifiedAt` no es nulo (fundaciones y asociaciones declaradas de utilidad pública que lo hayan acreditado). El panel de la entidad ofrece en enero la descarga del fichero del **Modelo 182** (registro de declarante y registros de declarados, en formato de longitud fija de la AEAT), con el NIF, nombre, provincia, importe y marca de recurrencia de cada donante (calculada por `donorTaxIdHmac` sobre los dos ejercicios anteriores).
+3. **Resto de entidades** (la mayoría de AMPAs y clubes): se emite un **justificante nominativo de aportación**, sin efectos fiscales.
+4. **Validación de NIF/NIE/CIF** con el algoritmo oficial (módulo 23 para DNI/NIE y dígito de control para CIF).
+5. **Ojo:** las cantidades aportadas a un **colegio privado con ánimo de lucro** pueden no ser donaciones a efectos fiscales; el alta de una entidad `SCHOOL_OWNER` no puede marcar `ley49` y su tratamiento lo confirma la asesoría (ver la lista del abogado).
+
+## 6. Derechos RGPD
+
+- **Acceso y portabilidad:** exportación en JSON y PDF de los datos de la persona desde *Mi cuenta* (`PrivacyRequest` `EXPORT`), en menos de un mes.
+- **Supresión (derecho al olvido):** se anonimizan nombre, email, NIF, tokens e identificadores de dispositivo (`gdprAnonymizedAt`) y se **conservan** los asientos y documentos fiscales el tiempo que exige la ley (Ley General Tributaria y normativa contable), sin datos que identifiquen a la persona más allá de lo obligatorio.
+- **Oposición y consentimientos:** cada consentimiento (`ConsentRecord`) se puede retirar desde *Mi cuenta* con el mismo esfuerzo con el que se dio.
+- Plazos de conservación: tabla en [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) §6, aplicados por la tarea `DATA_RETENTION_PURGE`.

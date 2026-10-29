@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Puertas 1, 2 y 4
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Valores falsos pero válidos: el servidor de pruebas arranca sin secretos reales.
+      DATABASE_URL: postgresql://korum:korum@localhost:5432/korum
+      BETTER_AUTH_SECRET: ci-better-auth-secret-0123456789abcdef
+      ENCRYPTION_KEY: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=
+      DATA_HMAC_SECRET: ci-data-hmac-secret-0123456789abcdef
+      QR_HMAC_SECRET: ci-qr-hmac-secret-0123456789abcdefgh
+      CRON_SECRET: ci-cron-secret-0123456789abcdefghij
+      PAYCOMET_MODE: mock
+      NEXT_PUBLIC_DEMO_MODE: "true"
+      NEXT_PUBLIC_APP_URL: http://localhost:3100
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Puerta 1 · invariantes y coherencia documental
+        run: npm run verify:invariants
+
+      - name: Puerta 1 · esquema de datos
+        run: npm run db:validate
+
+      - name: Puerta 1 · tipos
+        run: npm run typecheck
+
+      - name: Puerta 1 · lint
+        run: npm run lint
+
+      - name: Dependencias de producción sin vulnerabilidades altas
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Puerta 2 · tests unitarios
+        run: npm run test:unit
+
+      - name: Compilación de producción
+        run: npm run build
+
+      - name: Instalar navegador para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Puerta 4 · tests E2E (escritorio y móvil, con accesibilidad)
+        run: npm run test:e2e
+
+      - name: Informe de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

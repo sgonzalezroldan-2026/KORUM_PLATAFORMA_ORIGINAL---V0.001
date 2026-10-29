@@ -7,6 +7,9 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
+# Cliente de Prisma generado (se regenera con prisma generate)
+src/generated/
+
 # Secretos: nunca se versionan (solo la plantilla .env.example)
 .env
 .env.*

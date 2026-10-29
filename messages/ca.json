@@ -1,0 +1,65 @@
+{
+  "brand": {
+    "name": "KORUM",
+    "tagline": "On les bones idees sumen i s'aconsegueixen.",
+    "markLabel": "Logotip de KORUM"
+  },
+  "metadata": {
+    "title": "KORUM · On les bones idees sumen i s'aconsegueixen",
+    "description": "Bústia d'idees amb quòrum, campanyes «tot o res» i taquilla amb QR per a escoles, clubs i entitats culturals. Si no s'arriba a la meta, es retorna el 100 %."
+  },
+  "common": {
+    "skipToContent": "Salta al contingut",
+    "mainNavigation": "Navegació principal",
+    "close": "Tancar",
+    "retry": "Tornar-ho a provar",
+    "loading": "Carregant…",
+    "footerNote": "KORUM és una plataforma tecnològica. Els cobraments i les devolucions els gestiona PAYCOMET."
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "es": "Castellano",
+    "ca": "Català",
+    "en": "English"
+  },
+  "home": {
+    "eyebrow": "Per a escoles, clubs i entitats culturals",
+    "title": "On les bones idees sumen i s'aconsegueixen.",
+    "subtitle": "KORUM reuneix la bústia d'idees, les campanyes «tot o res» i la taquilla amb QR de la teva comunitat. Ho estem preparant tot per obrir molt aviat.",
+    "badgeRefund": "Si no s'arriba a la meta, es retorna el 100 %",
+    "badgeProvider": "L'entitat tria lliurement el seu proveïdor",
+    "badgePayments": "Cobraments i devolucions gestionats per PAYCOMET"
+  },
+  "status": {
+    "initiative": {
+      "BUDGETING": "Pressupostació",
+      "FUNDRAISING": "Recaptant",
+      "GOAL_REACHED": "Aconseguit!",
+      "CLOSED": "Tancada",
+      "EXPIRED": "Vençuda",
+      "RESIZE_VOTING": "Votació de redimensionament",
+      "REFUNDING": "Retornant",
+      "REFUNDED": "Reemborsada",
+      "CANCELLED": "Cancel·lada"
+    }
+  },
+  "ui": {
+    "toast": {
+      "region": "Avisos",
+      "dismiss": "Tancar l'avís"
+    },
+    "table": {
+      "sortBy": "Ordenar per {column}"
+    }
+  },
+  "error": {
+    "title": "Alguna cosa no ha anat com esperàvem",
+    "description": "No hem pogut carregar aquesta pàgina. Torna-ho a provar d'aquí a uns segons.",
+    "reference": "Referència per al suport: {reference}"
+  },
+  "notFound": {
+    "title": "No trobem aquesta pàgina",
+    "description": "Potser l'enllaç està mal escrit o la pàgina ja no existeix.",
+    "backHome": "Tornar a l'inici"
+  }
+}

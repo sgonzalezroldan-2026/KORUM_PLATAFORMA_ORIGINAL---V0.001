@@ -1,0 +1,65 @@
+{
+  "brand": {
+    "name": "KORUM",
+    "tagline": "Where good ideas add up and get done.",
+    "markLabel": "KORUM logo"
+  },
+  "metadata": {
+    "title": "KORUM · Where good ideas add up and get done",
+    "description": "An idea box with quorum, all-or-nothing campaigns and QR ticketing for schools, clubs and cultural groups. If a campaign misses its goal, everyone gets 100% back."
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "mainNavigation": "Main navigation",
+    "close": "Close",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "footerNote": "KORUM is a technology platform. Payments and refunds are handled by PAYCOMET."
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "es": "Castellano",
+    "ca": "Català",
+    "en": "English"
+  },
+  "home": {
+    "eyebrow": "For schools, clubs and cultural groups",
+    "title": "Where good ideas add up and get done.",
+    "subtitle": "KORUM brings together your community's idea box, all-or-nothing campaigns and QR ticketing. We are getting everything ready to open very soon.",
+    "badgeRefund": "If the goal is missed, 100% is refunded",
+    "badgeProvider": "Each group freely chooses its own supplier",
+    "badgePayments": "Payments and refunds handled by PAYCOMET"
+  },
+  "status": {
+    "initiative": {
+      "BUDGETING": "Budgeting",
+      "FUNDRAISING": "Fundraising",
+      "GOAL_REACHED": "Goal reached!",
+      "CLOSED": "Closed",
+      "EXPIRED": "Expired",
+      "RESIZE_VOTING": "Resize vote",
+      "REFUNDING": "Refunding",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "ui": {
+    "toast": {
+      "region": "Notifications",
+      "dismiss": "Dismiss notification"
+    },
+    "table": {
+      "sortBy": "Sort by {column}"
+    }
+  },
+  "error": {
+    "title": "Something didn't go as expected",
+    "description": "We couldn't load this page. Please try again in a few seconds.",
+    "reference": "Support reference: {reference}"
+  },
+  "notFound": {
+    "title": "We can't find this page",
+    "description": "The link may be mistyped or the page may no longer exist.",
+    "backHome": "Back to home"
+  }
+}

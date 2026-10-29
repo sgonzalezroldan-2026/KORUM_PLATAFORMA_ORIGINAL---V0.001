@@ -1,0 +1,23 @@
+# PostgreSQL 16 para desarrollo local. Arranque: docker compose up -d
+# Cadena de conexión (coincide con .env.example): postgresql://korum:korum@localhost:5432/korum
+services:
+  db:
+    image: postgres:16
+    container_name: korum-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: korum
+      POSTGRES_PASSWORD: korum
+      POSTGRES_DB: korum
+    ports:
+      - "5432:5432"
+    volumes:
+      - korum-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U korum -d korum"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  korum-db-data:

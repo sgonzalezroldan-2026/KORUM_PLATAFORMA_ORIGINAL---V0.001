@@ -1,21 +1,40 @@
-# Regla 04 · Protocolo de Ejecución Atómica, Cero Recortes y Bucle Cerrado QA (`0` Fallos)
+# Regla 04 · Protocolo de Ejecución por Sprints, Cero Recortes y Bucle QA
 
-## 1. Prohibición Absoluta de Código Truncado o Placeholders
-Está terminantemente prohibido escribir comentarios de omisión o tipos laxos en el código generado:
-- Prohibido `// ... resto del código aquí`, `// TODO`, `// FIXME`, `/* mantener igual */`.
-- Prohibido `any` sin justificación tipada o `Float` para importes monetarios.
-Todo archivo creado o editado debe ser 100% funcional, completo y compilable de la línea 1 a la última.
+> Válida para cualquier asistente (Claude Code o Gemini/Antigravity). Diferencias de herramientas entre ambos: [docs/GUIA_IA_CLAUDE_Y_GEMINI.md](../../docs/GUIA_IA_CLAUDE_Y_GEMINI.md).
 
-## 2. Dimensionamiento Óptimo y Orquestación de Agentes
-1. **Alcance Calibrado por Entrega:** Aborda **1 único Micro-Sprint** de `docs/PLAN_IMPLEMENTACION_ATOMICO.md` por entrega (salvo petición expresa del usuario de encadenar varios), manteniendo cada entrega en su ventana óptima (`4–8` archivos cohesivos, `~600–1.050` líneas de código de producción + su suite de tests automatizados).
-2. **Carga Previa de Skills Especializadas:** Antes de escribir código en un sprint, activa y lee siempre las Skills indicadas en la cabecera de ese Micro-Sprint (incluyendo el índice de líneas exactas de `prototype/Korum_v8.html` en `korum-nextjs-multitenant-ui` cuando toques UI).
-3. **Partición Modular Preventiva:** Si un componente o servicio supera las **300 líneas**, divídelo en submódulos cohesivos de responsabilidad única y escríbelos secuencialmente con `write_file` / `edit_file`.
-4. **Separación Estricta Constructor vs. Auditor:** Quien audita nunca es el mismo contexto que escribió sin revisar; utiliza los subagentes *Builders* para tareas modulares aislando rutas de archivos, y somete siempre la entrega a los subagentes independientes del **War Room**.
+## 1. Prohibido el código incompleto
 
-## 3. Las 5 Puertas Obligatorias y Bucle Cerrado de Auto-Corrección ("Fix-and-Retest Loop")
-Ningún Micro-Sprint puede entregarse al usuario ni marcarse como `[x]` sin superar al **100% (`0` fallos)** estas **5 puertas objetivas**:
-- **Puerta 1 (Estática e Invariantes):** `node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs` (`0` violaciones) + `npm run typecheck` (`0` errores TS).
-- **Puerta 2 (Tests Unitarios / Concurrencia / Fuzzing):** `npm run test:unit` (`Vitest`) al `100%` en verde.
-- **Puerta 3 (Auditoría Especializada War Room):** Dictamen `APROBADO` de los subagentes de dominio requeridos por el sprint (`fintech-escrow-auditor`, `antifraud-legal-guardian`, `ux-school-director-reviewer`).
-- **Puerta 4 (Pruebas Automatizadas E2E + Agente Usuario en Navegador Real):** En todo sprint con UI (`Sprint 1.1` y `Sprints 3.1–5.4`), `qa-e2e-verifier` ejecuta tanto la suite repetible `npm run test:e2e` (`Playwright`) como navegación interactiva real mediante `playwright-browser` MCP en `1440x900` (Desktop) y `430x932` (Mobile: `scrollWidth <= 430` y `.mobile-stack`), verificando clics, formularios, capturas visuales y `0` errores de consola.
-- **Puerta 5 (Iteración Automática ante Fallos y No-Regresión Global):** **Si cualquiera de las puertas 1 a 4 detecta un fallo, está prohibido dar por cerrado el sprint:** el agente corrige la causa raíz de inmediato y **re-ejecuta desde cero las pruebas automatizadas y la prueba de usuario en navegador**, iterando las veces necesarias hasta lograr **`0` errores y `100%` de suites previas y nuevas en verde** antes de responder al usuario.
+- Prohibido `// ... resto del código`, `// TODO`, `// FIXME`, `/* mantener igual */` o equivalentes.
+- Prohibido `any` sin justificación tipada y `Float` para importes.
+- Todo archivo creado o editado es funcional, completo y compila de la primera a la última línea.
+
+## 2. Antes de empezar un sprint (obligatorio, en este orden)
+
+1. **Leer el estado:** [docs/BITACORA_SPRINTS.md](../../docs/BITACORA_SPRINTS.md) (qué se hizo, qué quedó pendiente, decisiones tomadas) y la ficha del sprint en [docs/PLAN_IMPLEMENTACION_ATOMICO.md](../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+2. **Avisar al usuario del modelo recomendado.** Indica el modelo de IA y el nivel de esfuerzo que la ficha del sprint recomienda (línea `🤖`) y, si el modelo de la sesión actual no coincide, dilo y pregunta si continuar o cambiar antes de escribir código. No adivines el modelo de la sesión: si no lo sabes, pregúntalo.
+3. **Cargar las skills** que indica la ficha del sprint (y la anatomía del prototipo si el sprint toca interfaz).
+4. **Comprobar las dependencias externas** que indique la ficha (credenciales, decisiones legales pendientes). Si falta algo bloqueante, se para y se avisa; no se simula en silencio. Excepción: lo que figura en «Tareas externas aplazadas» del plan (respuestas de Paycomet, abogado, asesoría fiscal, proveedor Veri\*factu) **se construye contra el simulador por decisión del promotor**; en ese caso se anota en la bitácora la suposición usada y se recuerda que bloquea el paso a cobros reales.
+
+## 3. Tamaño de cada entrega y reparto de trabajo
+
+1. **Un único sprint por entrega**, salvo que el usuario pida encadenar varios. Cada entrega: `4–8` archivos cohesivos, `~600–1.050` líneas de producción + sus tests.
+2. **Partición preventiva:** si un componente o servicio supera las **300 líneas**, se divide en submódulos de responsabilidad única.
+3. **Constructor y auditor son contextos distintos:** quien escribe no se audita a sí mismo. Las auditorías las hacen los subagentes del *War Room* indicados en la ficha. Si es posible, el auditor usa **otro modelo** que el constructor (ver la guía de IA).
+4. **Imágenes:** si el sprint necesita una imagen que no sea vectorial o generada por código, sigue la sección de imágenes de la guía de IA: Claude produce SVG, CSS o imágenes por código; las imágenes fotográficas o ilustradas en mapa de bits se generan con el modelo de imagen de Gemini. Si el modelo de la sesión no puede generarla, deja escrito el *prompt* exacto y el destino del archivo, y avisa al usuario.
+
+## 4. Las 5 puertas y el bucle de corrección
+
+Ningún sprint se entrega ni se marca `[x]` sin superar al **100 % (`0` fallos)**:
+
+- **Puerta 1 · Estática e invariantes:** `node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs` (`0` violaciones) + `npm run typecheck` (`0` errores) + `npm run lint`.
+- **Puerta 2 · Tests unitarios, concurrencia y fuzzing:** `npm run test:unit` al `100 %`.
+- **Puerta 3 · War Room:** dictamen `APROBADO` de los auditores indicados en la ficha.
+- **Puerta 4 · Navegador real** (todo sprint con interfaz): `qa-e2e-verifier` ejecuta `npm run test:e2e` (Playwright, `1440×900` y `430×932`, incluida la comprobación de accesibilidad con axe) y además navega la app como una persona usuaria real con el **servidor MCP de Playwright**, revisando clics, formularios, capturas y `0` errores de consola.
+- **Puerta 5 · Bucle de corrección y no regresión:** si cualquier puerta falla, se corrige la causa raíz y se **vuelven a ejecutar todas las puertas desde la 1**, también la prueba en navegador, hasta `0` errores con el `100 %` de las suites (nuevas y anteriores) en verde.
+
+## 5. Al cerrar un sprint (obligatorio)
+
+1. Marca `[x]` en el plan y añade una entrada en [docs/BITACORA_SPRINTS.md](../../docs/BITACORA_SPRINTS.md): modelo y esfuerzo usados, archivos creados, decisiones, pendientes y resultado de las 5 puertas.
+2. Si has cambiado algo en `.agents/` (reglas, skills o agentes), ejecuta `node scripts/sync-ai-context.mjs` para regenerar `.claude/`.
+3. Propón un commit con un mensaje claro. Commitea solo si el usuario lo aprueba.
+4. Termina indicando **el siguiente sprint y su modelo y esfuerzo recomendados**.

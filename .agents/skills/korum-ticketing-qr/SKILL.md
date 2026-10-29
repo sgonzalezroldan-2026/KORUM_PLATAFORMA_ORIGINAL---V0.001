@@ -37,7 +37,7 @@ description: Motor de Taquilla Escolar, Eventos con Control Atómico de Aforo, R
 
 ## 2. Modalidades en el Estudio de Edición y Marco Legal de Rifas (`RAFFLE`)
 1. `ticketSubtype`: `'EVENT'` (Entrada con control de aforo) o `'RAFFLE'` (Papeleta de rifa solidaria numerada correlativamente desde `#0001` hasta `ticketMax`).
-2. **Aviso Normativo Automático en Rifas:** Cuando el centro selecciona `'RAFFLE'`, el Estudio muestra una nota preventiva recordando los umbrales de comunicación/autorización administrativa de rifas ocasionales o benéficas (Ley 13/2011 DGOJ / normativa autonómica) y que los premios en especie nunca deben canjearse por dinero.
+2. **Aviso Normativo Automático en Rifas:** Cuando el centro selecciona `'RAFFLE'`, el Estudio muestra una nota preventiva recordando que las rifas y tómbolas son competencia de cada comunidad autónoma, que pueden requerir comunicación o autorización previa según su importe, y que los premios en especie nunca deben canjearse por dinero. El Estudio exige marcar la casilla *"Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma"* antes de publicar (queda en `AuditLog`). El texto exacto del aviso lo valida el abogado (ver la lista de comprobación legal).
 3. `ticketFeeMode`: `'ADD'` (por defecto: suma los *Gastos de gestión digital* al comprador, dejando el 100% del precio íntegro al centro) o `'INC'` (incluidos dentro del precio facial).
 
 ---
@@ -47,16 +47,20 @@ description: Motor de Taquilla Escolar, Eventos con Control Atómico de Aforo, R
    - En la UI, `+` nunca supera `availableTickets = Math.max(0, ticketMax - ticketsSold)`.
    - En el servidor, la reserva de entradas se ejecuta dentro de `prisma.$transaction` con actualización condicional atómica (`WHERE id = $1 AND ticketsSold + $qty <= ticketMax`) para impedir sobreventa incluso si 50 familias pagan con Bizum en el mismo segundo.
 2. **Cierre Automático al Agotar la Última Entrada:**
-   - Al cumplirse `ticketsSold >= ticketMax`, la iniciativa pasa automáticamente a `Logro Conseguido` (`stepIndex: 5`) y muestra **`🎟️ ¡Aforo Completo! Entradas Agotadas`**.
+   - Al cumplirse `ticketsSold >= ticketMax`, la iniciativa pasa automáticamente a `GOAL_REACHED` (`stepIndex: 5`) y muestra **`🎟️ ¡Aforo Completo! Entradas Agotadas`**.
 
 ---
 
 ## 4. Pases QR Criptográficos (`HMAC-SHA256`) y "Modo Portería" sin Instalar App
 1. **Firma Anti-Fotocopia:**
    - Cada compra genera un registro `TicketPass` con código serie (`#PASE-2026-XXXX` o `#RIFA-2026-XXXX`), números asignados si es rifa (`#0197, #0198`) y un payload QR firmado con `QR_HMAC_SECRET` (`korum://v1/pass/{passUuid}?sig={hmac}`).
-   - El pase se envía automáticamente al email del comprador (incluso si compró como invitado) y queda accesible en `🐷 Mi Hucha` (`🎟️ Ver QR`) con impresión limpia `@media print` y botón de compartir en WhatsApp.
-2. **Vista Móvil `/school/[orgSlug]/porteria` (Escáner de Puerta + Sorteador en Vivo):**
-   - Accesible desde cualquier móvil de voluntarios del AFA/Club mediante un **PIN temporal de 6 dígitos** generado por el centro (sin darles acceso a datos bancarios del panel).
-   - **En Eventos (`EVENT`):** Escanea el QR con la cámara (`BarcodeDetector` / WebRTC), verifica el HMAC, permite check-in parcial (`Entran 2 de 4`) y lanza **alerta roja sonora/visual si una entrada fotocopiada ya fue validada** indicando la hora exacta del primer acceso, mostrando en vivo `🟢 X / Y asistentes dentro del recinto`.
-   - **En Rifas (`RAFFLE`):** Incluye modo **Sorteador Aleatorio Certificado en Pantalla Completa** para proyectar en la fiesta del colegio y extraer papeletas ganadoras únicamente entre las realmente vendidas y pagadas, generando acta auditable.
+   - El pase se envía automáticamente al email del comprador (incluso si compró como invitado) y queda accesible en el área privada de la familia (`🎟️ Mis entradas`, dentro de *Mi Hucha* o de *Mi cuenta* según el modo de la Hucha), con un enlace de acceso directo en el email para quien compró como invitado, con impresión limpia `@media print` y botón de compartir en WhatsApp.
+2. **Vista Móvil `/panel/[orgSlug]/porteria` (Escáner de Puerta + Sorteador en Vivo):**
+   - Accesible desde cualquier móvil de voluntarios del AMPA/AFA o del club mediante un **PIN de 6 dígitos propio de cada evento** (`Initiative.gatePinHash`, guardado con hash lento y con caducidad `gatePinExpiresAt`, por defecto el fin del evento + 6 h). Sin acceso a datos bancarios, fiscales ni personales del panel.
+   - **Protección contra fuerza bruta:** máximo 5 intentos fallidos por IP y evento cada 15 minutos (tabla `RateLimit`); con 20 fallos acumulados en el evento, el PIN se revoca y se avisa a los firmantes de la entidad. Cada intento queda en `AuditLog`.
+   - Un PIN correcto crea una `GateSession` (token en cookie `HttpOnly`, solo su hash en base de datos) que la entidad puede revocar desde el panel.
+   - **Lector QR:** `BarcodeDetector` donde exista y, como respaldo (Safari en iOS no lo soporta), una librería de lectura QR en JavaScript sobre la cámara (`getUserMedia`).
+   - **Sin cobertura:** al abrir la sesión se descarga la lista de pases del evento (solo `uuid`, cantidad y usados, firmada por el servidor); si se pierde la red, el escáner valida contra esa lista, guarda las lecturas en cola local y las sincroniza al volver la conexión, avisando de cualquier conflicto.
+   - **En Eventos (`EVENT`):** verifica el QR, permite check-in parcial (`Entran 2 de 4`) y lanza **alerta roja sonora, visual y con vibración si una entrada ya fue usada** indicando la hora exacta del primer acceso (`TicketCheckIn`), mostrando en vivo `🟢 X / Y asistentes dentro del recinto`.
+   - **En Rifas (`RAFFLE`):** Incluye modo **Sorteador Aleatorio Certificado en Pantalla Completa** para proyectar en la fiesta y extraer papeletas ganadoras únicamente entre las realmente vendidas y pagadas (`crypto.randomInt`), generando un acta con la lista de papeletas participantes, su huella SHA-256 y el resultado.
 

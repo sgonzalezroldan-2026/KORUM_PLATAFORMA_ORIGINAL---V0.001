@@ -1,47 +1,82 @@
-# Regla 03 · UX Mobile-First, Diseño Dual (Confianza + Emoción), Multi-Verticalidad y Copywriting
+# Regla 03 · UX Mobile-First, Diseño Dual, Idiomas, Accesibilidad y Textos
 
-## 0. Equilibrio Psicológico de Marca: Seriedad Corporativa + Emoción Comunitaria
-- **Presencia Colegial y Solvencia de Centro:** El logotipo de **KORUM** (*Escudo Varsity Heritage* inspirado en sudaderas y uniformes universitarios de Stanford/Yale/Santa Isabel + wordmark con doble perfil en oro deportivo) y todas las zonas donde intervienen dinero, firmas o custodia (`Cabecera Global`, `Hucha Escrow WLT-ESC-XXX`, `Desglose de 4 Líneas`, `Checkout`, `Mi Hucha`, `Pizarra TCO`, `Certificados AEAT`, `Facturas Veri*factu`, `Pases y Carteles QR`) deben proyectar máxima seriedad y solvencia institucional de centro educativo de prestigio (`#101F38`, `#047857`, `#F59E0B`, `tabular-nums`), eliminando toda estética bancaria o fintech fría.
-- **Tono Emocional de Patio y Cuaderno Vivo:** En el lienzo comunitario de Familias (`Hero del Centro/Club`, `Tarjetas de Iniciativas`, `Retos por Curso/Categoría`, `Buzón de Ideas` y `Galería Antes y Después`), el diseño apela a la memoria escolar mediante fondo cálido (`.korum-paper-dots`), hojas de libreta pautada (`.korum-notebook-sheet`), pósits con washi tape, sellos entintados de mérito (`.korum-stamp-badge` *"★ Aprobado en Patio"* / *"¡CONSEGUIDO!"*), pegatinas `.die-cut-sticker` y titulares cercanos en `Fredoka` (`.font-joy`).
+> Experiencia completa (recorridos, emails, estados vacíos, animaciones, métricas): [docs/EXPERIENCIA_DE_PRODUCTO.md](../../docs/EXPERIENCIA_DE_PRODUCTO.md). Marca: [korum-brand-design-system](../skills/korum-brand-design-system/SKILL.md).
 
-## 1. Visualización Móvil 100% Vertical Sin Apilamientos (`.mobile-stack`)
-- En vista móvil (`< 768px` o dentro del simulador `.mobile-simulator-wrap` de `430px`), **todas las pantallas de Familias y Comercios** (`Iniciativas`, `Ficha de Iniciativa`, `Buzón de Ideas`, `Logros`, `Comercios Amigos`, `Mi Hucha` y `FAQ y Soporte`), así como la vista móvil `/school/[orgSlug]/porteria`, deben apilar sus bloques en **1 sola columna vertical (`grid-template-columns: 1fr !important`)**.
-- Está prohibido dejar columnas laterales (`lg:col-span-7` + `lg:col-span-5`) comprimidas en horizontal dentro de un contenedor móvil.
+## 0. Equilibrio de marca: solidez colegial + emoción comunitaria
 
-## 2. Minimalismo en Listados, Fichas Públicas y Viralidad WhatsApp
-- **Filtros ocultos siempre por defecto:** Tanto en el portal público de Familias como en el Cuadro de Mandos del Centro, las barras de filtros deben permanecer ocultas al cargar y desplegarse únicamente al pulsar el botón `🔍 Filtrar` (mostrando contador numérico si hay filtros activos).
-- **Solo iniciativas en estado `Recaudando`:** En la pestaña pública `Iniciativas y Taquilla` solo deben mostrarse campañas cuyo estado sea estrictamente `Recaudando` (destacando visualmente si tienen activo un bono *Matching 2x*).
-- **Contador de aportaciones totales:** Debajo de la barra de progreso de cada iniciativa debe mostrarse `💛 X aportaciones`, sumando `+1` por cada transacción completada.
-- **Sin barra de 6 estados en la ficha pública:** Solo se deja constancia limpia de la **Hucha Escrow (`WLT-ESC-XXX`)** y la **Fecha límite**.
-- **Tarjetas Virales OpenGraph para WhatsApp (`next/og`):** Todo enlace compartido de una iniciativa o curso debe exponer metadatos OpenGraph dinámicos con imagen autogenerada en servidor (logo del centro, `%` de avance, días restantes y reto del curso/equipo).
-- **Comercios Amigos ordenados por categoría (sin importes en público):** Solo se muestra su distinción (`🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`), ordenando siempre **primero los Oro, luego los Plata y finalmente los Bronce**.
+- **Presencia colegial en las zonas de dinero y firmas.** El logotipo de KORUM (*Escudo Varsity Heritage*) y todo lo que toca dinero, firmas o custodia (cabecera global, hucha de la iniciativa `WLT-ESC-XXX`, desglose de 4 líneas, checkout, Mi Hucha, pizarra TCO, certificados, facturas, pases y carteles QR) usan `#101F38`, `#047857`, `#F59E0B` y `tabular-nums`, sin estética de banco ni de fintech fría.
+- **Tono de patio y cuaderno vivo en la comunidad.** Portada del centro o club, tarjetas de iniciativas, retos por curso o categoría, buzón de ideas y galería Antes/Después usan fondo cálido (`.korum-paper-dots`), hojas pautadas (`.korum-notebook-sheet`), pósits con washi tape, sellos de mérito (`.korum-stamp-badge`), pegatinas `.die-cut-sticker` y titulares en `Fredoka` (`.font-joy`).
+- La inspiración universitaria es de **estilo**: prohibido reproducir escudos, nombres, colores distintivos o lemas de instituciones o marcas reales.
 
-## 3. Textos Oficiales Validados y Precisión Legal `ley49` (Copywriting Inmutable)
-- **Email ligero en Checkout de Invitado:** Cuando el usuario no ha iniciado sesión (`isLoggedIn === false`), el modal de Checkout mantiene el pago en 10 segundos sin registro ni contraseña, solicitando únicamente `📧 Tu email para enviarte al instante tu recibo Escrow / entradas QR`.
-- **Texto del Check de Garantía en el Checkout (Prohibido usar la palabra "propina"):**
-  - **Título:** `🛡️ Activar aportación de garantía KORUM (+X,XX €)`
-  - **Descripción (Condicional según `organization.ley49` para rigor tributario ante AEAT):**
-    - Si `organization.ley49 === true`: `Tu aportación voluntaria incluye 3 garantías: (1) El 100% de tu donación llega íntegra al centro sin descuentos bancarios, (2) Garantía de reembolso automático Escrow si no se logra la meta, y (3) Emisión automática de tu Certificado Fiscal IRPF (Ley 49/2002).`
-    - Si `organization.ley49 === false`: `Tu aportación voluntaria incluye 3 garantías: (1) El 100% de tu donación llega íntegra al centro sin descuentos bancarios, (2) Garantía de reembolso automático Escrow si no se logra la meta, y (3) Emisión automática de tu Justificante Oficial Nominativo de Aportación.`
-- **Texto al pie del Desglose Público de Presupuesto:**
-  - `💡 Transparencia total: El importe total solicitado ya incluye el coste financiero de la cuenta bancaria Escrow, el soporte de la plataforma, la gestión y las garantías de devolución del 100% en caso de no conseguirse la iniciativa, para que al colegio le quede limpio el importe exacto necesario para pagar los costes reales de ejecución.`
-- **Texto de Advertencia al Reembolsar Saldo de Mi Hucha al Medio de Pago Original:**
-  - `⚠️ ¿Estás seguro de que deseas retirar el saldo disponible de tu Hucha? Se reembolsará el 100% directamente a tu medio de pago original (tarjeta/Bizum). Una vez devuelto el dinero, tu saldo quedará a 0,00 € y ya no podrás realizar el pago a iniciativas con tu Hucha hasta recargarla de nuevo, pero sí podrás seguir participando a través de otros medios de pago como Bizum o tarjeta.`
+## 1. Móvil en una sola columna (`.mobile-stack`)
 
-## 4. Selectores de Participación Multi-Verticales (Colegios vs. Clubes Deportivos)
-Siempre que una iniciativa o taquilla tenga activo el Reto Colectivo (`rewardEnabled: true`), el desplegable de participación carga la plantilla oficial correspondiente al vertical de la organización (o sus grupos personalizados):
-- **Plantilla Escolar Oficial (`SCHOOL` — 13 niveles + 2 Comunidad Ampliada):**
-  - *Educación Infantil (3):* `Infantil 3 años (I3)`, `Infantil 4 años (I4)`, `Infantil 5 años (I5)`.
-  - *Educación Primaria (6):* `1º de Primaria`, `2º de Primaria`, `3º de Primaria`, `4º de Primaria`, `5º de Primaria`, `6º de Primaria`.
-  - *Educación Secundaria - ESO (4):* `1º de ESO`, `2º de ESO`, `3º de ESO`, `4º de ESO`.
-  - *Comunidad Ampliada (2):* `Vecino / Amigo del Barrio`, `Antiguo Alumno / Familiar`.
-- **Plantilla Deportiva Oficial (`SPORTS_CLUB` — Equipos Base + Afición):**
-  - *Categorías Base (5):* `Prebenjamín`, `Benjamín`, `Alevín`, `Infantil`, `Cadete`.
-  - *Categorías Superiores (3):* `Juvenil / Júnior`, `Sénior / Primer Equipo`, `Escuela / Veteranos`.
-  - *Comunidad del Club (2):* `Socio / Afición`, `Antiguo Jugador / Familiar`.
+- En móvil (`< 768px`), **todas las pantallas de familias y comercios** (iniciativas, ficha, buzón de ideas, logros, comercios amigos, Mi Hucha, FAQ y soporte) y la portería apilan sus bloques en **una sola columna** (`grid-template-columns: 1fr`).
+- Prohibidas las columnas laterales comprimidas en un contenedor móvil. Comprobación: `document.documentElement.scrollWidth <= 430` a `430×932`.
 
-## 5. Tablas Interactivas del Super-Admin
-- Todas las tablas del Super-Admin (`Rendimiento por Centro`, `Top 10 Iniciativas`, `Listado Global de Iniciativas` y `Tabla de Iniciativas en Ficha 360º`) deben permitir **ordenar de mayor a menor y viceversa (`↕`) haciendo clic en el título de cualquiera de sus columnas**.
-- Las tablas de iniciativas (`Top 10`, `Global` y `Ficha 360º`) deben incluir siempre la columna `💛 Aportaciones`.
-- La tabla de `Rendimiento por Centro` debe incluir siempre las columnas `Cerradas (Año / Hist.)` y `Comercios (Act. / Hist.)`.
+## 2. Listados, fichas públicas y viralidad
 
+- **Filtros ocultos por defecto** en el portal de familias y en el cuadro de mandos de la entidad; se despliegan con `🔍 Filtrar` y muestran un contador si hay filtros activos.
+- **En la pestaña pública "Iniciativas y taquilla" solo aparecen iniciativas `FUNDRAISING`** (etiqueta visible «Recaudando»), destacando las que tienen *Matching 2x* activo.
+- **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio (el Auto-Impulso no cuenta).
+- **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**.
+- **Tarjetas para WhatsApp y redes (`next/og`):** todo enlace de iniciativa o curso genera su imagen en servidor (logo del centro, `%` de avance, días restantes y reto del curso o equipo). Detalle en [korum-seo-discoverability](../skills/korum-seo-discoverability/SKILL.md).
+- **Comercios amigos por categoría, sin importes en público:** `🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`, siempre en ese orden.
+
+## 3. Textos oficiales (no se cambian sin aprobación del usuario)
+
+- **Email en el checkout de invitado:** sin registro ni contraseña, un único campo: `📧 Tu email para enviarte al instante tu recibo o tus entradas QR`.
+- **Aportación voluntaria a KORUM en el checkout** (prohibida la palabra "propina"). El check aparece **desmarcado**; el importe se elige con un selector desde `0 €`:
+  - **Título:** `🛡️ Apoyar a KORUM con una aportación voluntaria (+X,XX €)`
+  - **Descripción si `organization.ley49 === true` y está verificada:** `Es opcional y no cambia nada de tu donación. Con ella sostienes el servicio que garantiza a todas las familias: (1) que el 100% de tu donación llega al centro sin descuentos bancarios, (2) la devolución automática si no se alcanza la meta y (3) la emisión automática de tu Certificado Fiscal de donación (Ley 49/2002).`
+  - **Descripción en el resto de casos:** igual, terminando en `(3) la emisión automática de tu Justificante Nominativo de Aportación.`
+- **Pie del desglose público:** `💡 Transparencia total: el importe total ya incluye el coste de la pasarela de pago, el servicio de la plataforma, la gestión y la devolución del 100% si la iniciativa no se consigue, para que al centro le quede exactamente lo necesario para pagar los costes reales.`
+- **Aviso al retirar el saldo de Mi Hucha** (solo en modo `REGULATED_WALLET`): `⚠️ ¿Seguro que quieres retirar el saldo de tu Hucha? Te devolveremos el 100% directamente a tu medio de pago original (tarjeta o Bizum). Tu saldo quedará a 0,00 € y no podrás pagar con la Hucha hasta recargarla, pero podrás seguir participando con Bizum o tarjeta.`
+- Las versiones en catalán e inglés de estos textos se revisan por una persona nativa antes de publicarse y se guardan en los catálogos de traducción como textos legales versionados.
+
+## 4. Cómo se habla de KORUM y del dinero (precisión legal)
+
+- KORUM es una **plataforma tecnológica**: no es un banco, no está regulada como entidad financiera y **no custodia fondos**. Los cobros, retenciones y devoluciones los ejecuta **PAYCOMET**, entidad de pago autorizada por el Banco de España (usar exactamente la redacción que Paycomet apruebe en el contrato).
+- **Prohibido** en textos públicos: "cuenta bancaria" referido a KORUM o a las huchas, "banco", "regulado por el Banco de España" referido a KORUM, "exención CNMV", "garantizado por ley", sellos o logotipos de organismos públicos.
+- En público, "Escrow" se dice **"hucha de la iniciativa"** o **"el dinero queda retenido en Paycomet hasta lograr la meta"**. "Escrow" se mantiene solo como término interno en código y documentación técnica.
+
+## 5. Selectores de participación por vertical
+
+Con el reto colectivo activo (`rewardEnabled: true`), el desplegable carga la plantilla oficial del vertical (o los grupos personalizados de la entidad):
+
+- **Escolar (`SCHOOL`): 13 cursos + 2 de comunidad.**
+  - *Infantil (3):* `Infantil 3 años (I3)`, `Infantil 4 años (I4)`, `Infantil 5 años (I5)`.
+  - *Primaria (6):* `1º de Primaria` … `6º de Primaria`.
+  - *ESO (4):* `1º de ESO` … `4º de ESO`.
+  - *Comunidad ampliada (2):* `Vecino / Amigo del Barrio`, `Antiguo Alumno / Familiar`.
+- **Deportiva (`SPORTS_CLUB`): equipos + afición.**
+  - *Base (5):* `Prebenjamín`, `Benjamín`, `Alevín`, `Infantil`, `Cadete`.
+  - *Superiores (3):* `Juvenil / Júnior`, `Sénior / Primer Equipo`, `Escuela / Veteranos`.
+  - *Comunidad del club (2):* `Socio / Afición`, `Antiguo Jugador / Familiar`.
+- **Cultural (`CULTURAL`): grupos configurables** con esta plantilla por defecto: `Alumnado / Integrantes`, `Familias`, `Profesorado / Monitores`, `Socios / Amigos`, `Antiguos Miembros`.
+
+## 6. Retos por curso sin presión social
+
+- Se muestran **solo en positivo**: «3ºB ya suma 28 familias · reto: 35». Prohibido señalar a personas, mostrar quién no ha aportado, ordenar cursos de último a primero o mostrar importes por curso.
+- La tarjeta de WhatsApp de un curso celebra lo conseguido («¡Solo faltan 7 familias para la tarde de cine!») sin nombres ni comparaciones con otros cursos.
+- Cada entidad puede desactivar los retos por curso.
+
+## 7. Idiomas (castellano, catalán e inglés)
+
+- Ningún texto visible en el código: todo en `messages/{es,ca,en}.json` con claves semánticas (`checkout.guarantee.title`). Plurales y variables con formato ICU.
+- Importes, fechas y números con `Intl` según el idioma (`25,00 €` en `es`/`ca`; `€25.00` en `en`).
+- El idioma se elige por URL (`/`, `/ca`, `/en`), con selector visible en la cabecera y el pie, y se recuerda en la cuenta (`User.locale`). **No hay redirección automática por el idioma del navegador ni cookie de idioma**: la misma URL muestra siempre el mismo idioma (SEO, enlaces compartidos y privacidad). Los emails salen en el idioma de la persona.
+- El contenido que escribe la entidad (títulos, descripciones) se muestra en su `contentLocale`; puede añadir traducciones opcionales (`translationsJson`).
+
+## 8. Accesibilidad (WCAG 2.2 AA, obligatoria)
+
+- Todo elemento interactivo es accesible con teclado, tiene foco visible (`:focus-visible`) y nombre accesible; las imágenes tienen `alt` (vacío si son decorativas).
+- Contraste mínimo 4.5:1 en texto normal y 3:1 en texto grande y componentes; objetivos táctiles de al menos 44×44 px.
+- Los estados no se comunican solo con color o emoji: van acompañados de texto.
+- Las animaciones respetan `prefers-reduced-motion`. Los errores de formulario se anuncian (`aria-live`) y se asocian al campo.
+- Los tests E2E incluyen una comprobación automática con axe (0 incidencias serias o críticas).
+
+## 9. Tablas del Super-Admin
+
+- Todas las tablas del Super-Admin (`Rendimiento por centro`, `Top 10 iniciativas`, `Listado global de iniciativas` e `Iniciativas en la ficha 360º`) se **ordenan de mayor a menor y viceversa (`↕`) al pulsar el título de cualquier columna**.
+- Las tablas de iniciativas incluyen siempre la columna `💛 Aportaciones`.
+- La tabla `Rendimiento por centro` incluye siempre `Cerradas (Año / Hist.)` y `Comercios (Act. / Hist.)`.

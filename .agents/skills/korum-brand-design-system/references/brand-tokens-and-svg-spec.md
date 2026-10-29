@@ -8,9 +8,9 @@
 | Rol / Capa | Token | Hexadecimal | Uso Estricto |
 | :--- | :--- | :--- | :--- |
 | **Capa 1 · Sudadera Colegial** | `varsity.navy` | `#101F38` / `#0A1424` | Fondo de escudo bordado, cabecera institucional, wordmark `KORUM` sobre claro y Consola Super-Admin. |
-| **Capa 1 · Oro Deportivo Bordado** | `varsity.gold` | `#F59E0B` / `#D97706` | Pespunte bordado, laureles cívicos, perfil interior de la letra K colegial y cinta EST. 2026. |
-| **Capa 1 · Hilo Marfil** | `varsity.ivory` | `#FDFBF7` | Relleno de fieltro de la letra K universitaria, ribetes de uniforme y texto en fondos oscuros. |
-| **Capa 1 · Custodia Escrow** | `varsity.emerald` | `#047857` / `#10B981` | Check de custodia mancomunada en sello, cuenta `WLT-ESC-XXX`, certificados IRPF y validación QR. |
+| **Capa 1 · Oro Deportivo Bordado** | `varsity.gold` | `#F59E0B` / `#D97706` | Anillo exterior, laureles, relleno de la letra K colegial y cinta con la palabra KORUM. |
+| **Capa 1 · Hilo Marfil** | `varsity.ivory` | `#FDFBF7` | Contorno de la letra K universitaria, fino anillo del parche, ribetes de uniforme y texto en fondos oscuros. |
+| **Capa 1 · Hucha de la iniciativa** | `varsity.emerald` | `#047857` / `#10B981` | Check de firma mancomunada, hucha `WLT-ESC-XXX`, certificados IRPF y validación QR. |
 | **Capa 2 · Papel Crema** | `patio.cream` | `#FFFDF8` | Fondo cálido de libreta escolar en portal de Familias y Carteles A4. |
 | **Capa 2 · Tinta Roja Escolar** | `patio.stamp` | `#DC2626` / `#FF5A43` | Sellos entintados de mérito (*"¡CONSEGUIDO!"*, *"★ APROBADO EN PATIO"*), margen de libreta y botones cálidos. |
 | **Capa 2 · Pauta Cuaderno** | `patio.rule` | `#E2E8F0` / `#CBD5E1` | Líneas guía horizontales de cuaderno escolar y cuadrícula de libreta. |
@@ -41,10 +41,14 @@
 
 ---
 
-## 4. Geometría Vectorial del Isotipo Oficial: *"Escudo Varsity Heritage"* (`viewBox="0 0 100 100"`)
+## 4. Geometría Vectorial del Isotipo: *"Parche Varsity Heritage"* (`viewBox="0 0 100 100"`)
 
-- **Base de Sudadera Escolar:** Silueta heráldica de proporciones clásicas (`M50 6 L82 13 ... V45 C84.5 64 ... 50 86 ... Z`) rellena con paño azul marino de sudadera pesada (`#101F38`).
-- **Pespunte Bordado de Aguja:** Línea discontinua perimetral (`stroke-dasharray="3.5, 2"`) en hilo de oro mostaza deportivo (`#F59E0B` ➔ `#D97706`).
-- **Laureles Cívicos Colegiales:** Dos ramas de tres hojas bordadas en oro a izquierda y derecha, simbolizando el quórum mancomunado de familias y escuela.
-- **Letra 'K' Universitaria:** Doble trazado típico de las sudaderas de gala colegiales: cuerpo de fieltro blanco marfil (`#FDFBF7`) con relieve de hilo y perfil interior calado en oro mostaza.
-- **Cinta Conmemorativa:** Cinta curva inferior dorada grabada con *"EST. 2026 · QUÓRUM ESCOLAR"*.
+Se dibuja a partir de la lámina de referencia `public/brand/korum-logo.jpg` (componente `KorumMark`):
+
+- **Base de parche redondo:** círculo de radio 46 relleno con paño azul marino de sudadera pesada (`#101F38`).
+- **Anillos:** anillo exterior de oro deportivo (`#F59E0B`, trazo ≈ 4) y, por dentro, un fino anillo marfil (`#FDFBF7`, trazo ≈ 1,2) con una separación de azul marino.
+- **Pespunte bordado de aguja:** línea discontinua (`stroke-dasharray="3.5, 2"`) en oro oscuro (`#D97706`) pegada al borde interior del anillo exterior. Es solo decoración: se omite por debajo de 24 px.
+- **Laureles:** dos ramas simétricas de 6 a 7 hojas (oro `#F59E0B` y marfil alternados) que abrazan la K por los lados.
+- **Letra 'K' universitaria:** serifa plana gruesa (*Collegiate Slab Serif*) **rellena de oro** (`#F59E0B`) con **contorno marfil** (`#FDFBF7`, trazo ≈ 2,5) y una sombra de hilo (`#D97706`) a la derecha.
+- **Cinta inferior:** cinta curva dorada con la palabra `KORUM` en azul marino. **Sin año y sin subtítulo** (ver `SKILL.md` §1 y §5).
+- **Tamaños:** funciona legible desde 16 px (favicon): por debajo de 32 px se simplifica a círculo + K + anillo (sin laureles ni cinta).

@@ -1,20 +1,40 @@
+// Contratos de dominio de KORUM. Los valores de los enums son códigos internos estables;
+// las etiquetas visibles (es/ca/en) viven en los catálogos de traducción (ver docs/GLOSARIO.md).
+
+export type Locale = 'es' | 'ca' | 'en';
+export const SUPPORTED_LOCALES: readonly Locale[] = ['es', 'ca', 'en'];
+export const DEFAULT_LOCALE: Locale = 'es';
+
 export type OrganizationVertical = 'SCHOOL' | 'SPORTS_CLUB' | 'CULTURAL';
-export type UserRole =
-  | 'FAMILY'
-  | 'MERCHANT'
-  | 'DIRECTOR'
-  | 'AFA_PRESIDENT'
-  | 'GATEKEEPER'
-  | 'SUPERADMIN';
+export type LegalForm =
+  | 'PARENTS_ASSOCIATION'
+  | 'SCHOOL_OWNER'
+  | 'FOUNDATION'
+  | 'SPORTS_ENTITY'
+  | 'CULTURAL_ASSOCIATION'
+  | 'OTHER_NONPROFIT';
+export type CenterOwnership = 'PUBLIC' | 'CONCERTED' | 'PRIVATE' | 'NOT_APPLICABLE';
+export type KybStatus = 'PENDING' | 'SUBMITTED' | 'VERIFIED' | 'REJECTED';
+
+/** Rol dentro de una organización (OrganizationMember.role). */
+export type MemberRole = 'FAMILY' | 'MERCHANT' | 'DIRECTOR' | 'COSIGNER' | 'GATEKEEPER';
+/** Rol efectivo de la sesión: un rol de organización o el Super-Admin de la plataforma. */
+export type UserRole = MemberRole | 'SUPERADMIN';
 
 export type InitiativeFormat = 'BUDGET' | 'TICKETING';
 export type InitiativeStatus =
-  | 'Presupuestación'
-  | 'Recaudando'
-  | 'Logro Conseguido'
-  | 'Cerrada'
-  | 'Expirada'
-  | 'Reembolsada';
+  | 'BUDGETING'
+  | 'FUNDRAISING'
+  | 'GOAL_REACHED'
+  | 'CLOSED'
+  | 'EXPIRED'
+  | 'RESIZE_VOTING'
+  | 'REFUNDING'
+  | 'REFUNDED'
+  | 'CANCELLED';
+
+/** Modo de funcionamiento de Mi Hucha (ajuste "hucha.mode" de la consola del Super-Admin). */
+export type HuchaMode = 'DISABLED' | 'PLEDGE' | 'REGULATED_WALLET';
 
 export type CategoryRuleType = 'EXEMPT' | 'BRACKETS';
 export type SponsorCategoryLevel = 'ORO' | 'PLATA' | 'BRONCE';
@@ -74,18 +94,38 @@ export const OFFICIAL_SPORTS_CLUB_GROUPS: ParticipationGroupCluster[] = [
   }
 ];
 
+/** Plantilla por defecto del vertical CULTURAL (la entidad puede editar sus grupos). */
+export const OFFICIAL_CULTURAL_GROUPS: ParticipationGroupCluster[] = [
+  {
+    group: '🎵 Comunidad de la Entidad',
+    items: [
+      'Alumnado / Integrantes',
+      'Familias',
+      'Profesorado / Monitores',
+      'Socios / Amigos',
+      'Antiguos Miembros'
+    ]
+  }
+];
+
+export type BracketMode = 'FLAT' | 'MARGINAL';
+
 export interface KorumGlobalRulesCents {
   exemptLimitCents: number;
+  bracketMode: BracketMode;
+  t1MaxCents: number;
+  t2MaxCents: number;
   t1Bps: number;
   t2Bps: number;
   t3Bps: number;
   sponsorFeeBps: number;
   fullIntegrityCheckCents: number;
-  tipPresetsCents: number[];
-  defaultTipIdx: number;
+  guaranteePresetsCents: number[];
+  defaultGuaranteeIdx: number;
   gatewayPctBps: number;
   gatewayFixedCents: number;
   topupFeeCents: number;
+  topupFeeBps: number;
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
   maintActive: boolean;
@@ -114,26 +154,39 @@ export interface CourseProgress {
   familiesCount: number;
 }
 
+export interface KorumSigner {
+  role: Extract<MemberRole, 'DIRECTOR' | 'COSIGNER'>;
+  /** Cargo visible: "Presidencia del AFA", "Tesorería del club", "Representación del patronato"... */
+  roleLabel: string;
+  name: string;
+  email: string;
+}
+
 export interface KorumOrganization {
   id: string;
   slug: string;
+  /** Nombre público de la comunidad. */
   name: string;
+  /** Razón social de la entidad titular de los fondos. */
+  legalName: string;
+  legalForm: LegalForm;
+  centerOwnership: CenterOwnership;
   vertical: OrganizationVertical;
-  orgType: string;
   province: string;
-  director: string;
-  afaPresident: string;
-  phone: string;
+  provinceCode: string;
+  contentLocale: Locale;
+  signers: KorumSigner[];
+  contactPhone: string;
   cif: string;
   iban: string;
   walletId: string;
-  kybValidated: boolean;
+  kybStatus: KybStatus;
   health: 'OK' | 'CALL';
   completedThisYear: number;
   completedHistorical: number;
   activeSponsorsCount: number;
   historicalSponsorsCount: number;
-  medal: string;
+  /** 0 = sin medalla, 1 Bronce, 2 Plata, 3 Oro. */
   medalRank: number;
   ley49: boolean;
   customRules: boolean;
@@ -191,7 +244,7 @@ export interface KorumInitiative {
   showPublicBreakdown: boolean;
   defaultExemptAppliedCents: number;
   medalExemptAppliedCents: number;
-  medalNameApplied: string;
+  medalRankApplied: number;
   bracketRateAppliedBps: number;
   bracketFeeCents: number;
   maintFeeCents: number;
@@ -252,7 +305,7 @@ export interface KorumIdeaAuditEntry {
 }
 
 export interface KorumIdeaMessage {
-  senderRole: 'FAMILY' | 'SCHOOL' | 'SYSTEM';
+  senderRole: 'FAMILY' | 'ORGANIZATION' | 'SYSTEM';
   senderLabel: string;
   body: string;
   createdAt?: string;
@@ -294,10 +347,10 @@ export interface KorumSupportTicket {
   ticketCode: string;
   organizationId?: string | null;
   originLabel: string;
-  targetRole: 'SCHOOL' | 'SUPERADMIN';
+  target: 'ORGANIZATION' | 'SUPERADMIN';
   subject: string;
   message: string;
-  status: 'OPEN' | 'RESOLVED';
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
   createdAt: string;
 }
 

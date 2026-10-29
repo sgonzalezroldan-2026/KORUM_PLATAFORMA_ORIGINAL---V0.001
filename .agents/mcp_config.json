@@ -4,22 +4,13 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
     },
-    "postgres": {
+    "playwright": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres",
-        "${DATABASE_URL}"
-      ]
+      "args": ["-y", "@playwright/mcp@0.0.83"]
     },
-    "playwright-browser": {
+    "prisma": {
       "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
-    },
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "."]
+      "args": ["prisma", "mcp"]
     }
   }
 }
-

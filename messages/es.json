@@ -1,0 +1,65 @@
+{
+  "brand": {
+    "name": "KORUM",
+    "tagline": "Donde las buenas ideas suman y se logran.",
+    "markLabel": "Logotipo de KORUM"
+  },
+  "metadata": {
+    "title": "KORUM · Donde las buenas ideas suman y se logran",
+    "description": "Buzón de ideas con quórum, campañas «todo o nada» y taquilla con QR para colegios, clubes y entidades culturales. Si no se llega a la meta, se devuelve el 100 %."
+  },
+  "common": {
+    "skipToContent": "Saltar al contenido",
+    "mainNavigation": "Navegación principal",
+    "close": "Cerrar",
+    "retry": "Reintentar",
+    "loading": "Cargando…",
+    "footerNote": "KORUM es una plataforma tecnológica. Los cobros y las devoluciones los gestiona PAYCOMET."
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "es": "Castellano",
+    "ca": "Català",
+    "en": "English"
+  },
+  "home": {
+    "eyebrow": "Para colegios, clubes y entidades culturales",
+    "title": "Donde las buenas ideas suman y se logran.",
+    "subtitle": "KORUM reúne el buzón de ideas, las campañas «todo o nada» y la taquilla con QR de tu comunidad. Estamos preparando todo para abrir muy pronto.",
+    "badgeRefund": "Si no se llega a la meta, se devuelve el 100 %",
+    "badgeProvider": "La entidad elige libremente a su proveedor",
+    "badgePayments": "Cobros y devoluciones gestionados por PAYCOMET"
+  },
+  "status": {
+    "initiative": {
+      "BUDGETING": "Presupuestación",
+      "FUNDRAISING": "Recaudando",
+      "GOAL_REACHED": "¡Conseguido!",
+      "CLOSED": "Cerrada",
+      "EXPIRED": "Vencida",
+      "RESIZE_VOTING": "Votación de redimensionamiento",
+      "REFUNDING": "Devolviendo",
+      "REFUNDED": "Reembolsada",
+      "CANCELLED": "Cancelada"
+    }
+  },
+  "ui": {
+    "toast": {
+      "region": "Avisos",
+      "dismiss": "Cerrar aviso"
+    },
+    "table": {
+      "sortBy": "Ordenar por {column}"
+    }
+  },
+  "error": {
+    "title": "Algo no ha salido como esperábamos",
+    "description": "No hemos podido cargar esta página. Inténtalo de nuevo en unos segundos.",
+    "reference": "Referencia para soporte: {reference}"
+  },
+  "notFound": {
+    "title": "No encontramos esta página",
+    "description": "Puede que el enlace esté mal escrito o que la página ya no exista.",
+    "backHome": "Volver al inicio"
+  }
+}

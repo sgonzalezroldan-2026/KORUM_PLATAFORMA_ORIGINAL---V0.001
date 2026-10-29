@@ -1,10 +1,41 @@
+// =============================================================================
+// KORUM v8.5 · Esquema de datos (PostgreSQL + Prisma ORM 7)
+// -----------------------------------------------------------------------------
+// Reglas que este esquema garantiza (ver .agents/rules/02-invariantes-financieros.md):
+//  1. Dinero SIEMPRE en céntimos enteros (Int) y porcentajes en puntos básicos (Bps). Prohibido Float.
+//  2. Libro mayor de DOBLE PARTIDA: cada LedgerJournal (asiento) agrupa apuntes EscrowLedgerEntry
+//     cuya suma de DEBIT es igual a la suma de CREDIT. Los asientos nunca se editan ni se borran:
+//     se corrigen con un contra-asiento (reversesJournalId).
+//  3. Nada contable, fiscal o de auditoría se borra en cascada. Las organizaciones se archivan
+//     (archivedAt) y los usuarios se anonimizan (gdprAnonymizedAt); por eso las relaciones con
+//     Organization usan onDelete: Restrict.
+//  4. Secretos y tokens de pago se guardan cifrados (AES-256-GCM, campos *Enc + keyVersion).
+//     Los identificadores personales que hay que buscar (NIF, huellas) se guardan como HMAC.
+//  5. Estados con valores cerrados = enum. Las etiquetas visibles (es/ca/en) viven en los
+//     catálogos de traducción, nunca en la base de datos (ver docs/GLOSARIO.md).
+//
+// Prisma 7: la URL de conexión se define en prisma.config.ts (Sprint 1.1), no aquí.
+// Los modelos de autenticación (Session, Account, Verification, TwoFactor, Passkey) siguen el
+// formato de Better Auth; validarlos con su CLI al implementar la autenticación (Sprint 3.2).
+// =============================================================================
+
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// Enums de dominio
+// -----------------------------------------------------------------------------
+
+enum Locale {
+  es
+  ca
+  en
 }
 
 enum OrganizationVertical {
@@ -13,18 +44,61 @@ enum OrganizationVertical {
   CULTURAL
 }
 
-enum UserRole {
+/// Forma jurídica de la entidad TITULAR de los fondos (la que pasa el KYB y cobra).
+enum LegalForm {
+  PARENTS_ASSOCIATION // AMPA / AFA (obligatoria si el centro es público)
+  SCHOOL_OWNER // Titular de un colegio privado o concertado (sociedad, cooperativa, congregación)
+  FOUNDATION
+  SPORTS_ENTITY
+  CULTURAL_ASSOCIATION
+  OTHER_NONPROFIT
+}
+
+/// Titularidad del centro educativo asociado (solo informativa fuera de SCHOOL).
+enum CenterOwnership {
+  PUBLIC
+  CONCERTED
+  PRIVATE
+  NOT_APPLICABLE
+}
+
+enum KybStatus {
+  PENDING
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
+enum HealthStatus {
+  OK
+  CALL
+}
+
+/// Roles dentro de una organización. El Super-Admin no es un rol de organización (User.isSuperadmin).
+enum MemberRole {
   FAMILY
   MERCHANT
-  DIRECTOR
-  AFA_PRESIDENT
-  GATEKEEPER
-  SUPERADMIN
+  DIRECTOR // Gestor/a principal y 1ª firma (Dirección del centro, Presidencia del club...)
+  COSIGNER // 2ª firma mancomunada (Presidencia AMPA/AFA, Tesorería del club, Titularidad del colegio...)
+  GATEKEEPER // Voluntario/a de portería con cuenta (el acceso por PIN usa GateSession)
 }
 
 enum InitiativeFormat {
   BUDGET
   TICKETING
+}
+
+/// Máquina de estados de la iniciativa (transiciones en docs/PRD_3_ENTORNOS_KORUM.md §4).
+enum InitiativeStatus {
+  BUDGETING // Presupuestación
+  FUNDRAISING // Recaudando
+  GOAL_REACHED // Logro conseguido (pendiente de liquidar)
+  CLOSED // Cerrada (liquidada y con Antes/Después)
+  EXPIRED // Venció sin llegar a la meta (decidir redimensionar o reembolsar)
+  RESIZE_VOTING // Votación de redimensionamiento abierta
+  REFUNDING // Reembolsos en curso
+  REFUNDED // Reembolsada al 100%
+  CANCELLED // Cancelada antes de recaudar
 }
 
 enum TicketSubtype {
@@ -40,6 +114,13 @@ enum TicketFeeMode {
 enum CategoryRuleType {
   EXEMPT
   BRACKETS
+}
+
+/// Cómo se aplican los tramos de comisión. FLAT: el tramo se elige por el importe total y se aplica a todo lo
+/// sujeto (comportamiento del prototipo). MARGINAL: cada tramo grava solo su porción, sin saltos en los umbrales.
+enum BracketMode {
+  FLAT
+  MARGINAL
 }
 
 enum SponsorCategoryLevel {
@@ -75,6 +156,12 @@ enum IdeaPhase {
   REJECTED
 }
 
+enum IdeaMessageSender {
+  FAMILY
+  ORGANIZATION
+  SYSTEM
+}
+
 enum DoubleCheckTargetType {
   IDEA_APPROVAL
   ESCROW_PAYOUT
@@ -84,8 +171,26 @@ enum ContributionType {
   DONATION
   TICKET
   SPONSORSHIP
-  SELF_BOOST
+  SELF_BOOST // Auto-Impulso aportado por KORUM
   MATCHING_FUND
+}
+
+enum ContributionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUND_PENDING
+  REFUNDED
+  CHARGEBACK
+}
+
+enum PaymentMethod {
+  CARD
+  BIZUM
+  APPLE_PAY
+  GOOGLE_PAY
+  HUCHA
+  PLATFORM // Fondos de KORUM (Auto-Impulso) o liberación de bolsas
 }
 
 enum WalletTxType {
@@ -95,40 +200,226 @@ enum WalletTxType {
   REFUND_TO_ORIGIN
 }
 
-enum LedgerEntryType {
+enum WalletTxStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+enum PayoutDestination {
+  PROVIDER
+  ORGANIZATION
+}
+
+enum PayoutStatus {
+  PENDING_DOUBLE_CHECK
+  APPROVED
+  PROCESSING
+  EXECUTED
+  FAILED
+}
+
+enum ResizePollStatus {
+  OPEN
+  CLOSED_APPROVED
+  CLOSED_REJECTED
+}
+
+enum SupportTarget {
+  ORGANIZATION
+  SUPERADMIN
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum InvoiceVerifactuStatus {
+  PENDING
+  SENT
+  ACCEPTED
+  ACCEPTED_WITH_ERRORS
+  REJECTED
+}
+
+// --- Libro mayor -------------------------------------------------------------
+
+/// Plan de cuentas del libro mayor. Ver ejemplos de asientos en .agents/skills/korum-escrow-payments/SKILL.md.
+enum LedgerAccount {
+  PSP_CLEARING // Activo: dinero cobrado que está en Paycomet
+  INITIATIVE_ESCROW // Pasivo: fondos retenidos por iniciativa hasta lograr la meta
+  FAMILY_WALLET // Pasivo: saldo de Mi Hucha (solo si hucha.mode = REGULATED_WALLET)
+  SPONSOR_CREDIT_POOL // Pasivo: patrocinios pendientes de reasignar
+  MATCHING_POOL // Pasivo: bolsa Matching 2x comprometida por un patrocinador
+  ORG_PAYABLE // Pasivo: importe aprobado para liquidar a la entidad o a su proveedor
+  REFUNDS_PAYABLE // Pasivo: devoluciones aprobadas pendientes de ejecutar
+  TAX_PAYABLE_VAT // Pasivo: IVA repercutido en facturas de KORUM
+  KORUM_REVENUE_GUARANTEE // Ingreso: aportaciones voluntarias de garantía
+  KORUM_REVENUE_BRACKET // Ingreso: comisión por tramos
+  KORUM_REVENUE_SPONSOR_FEE // Ingreso: fee de gestión publicitaria
+  KORUM_REVENUE_TICKET_FEE // Ingreso: gastos de gestión digital
+  KORUM_REVENUE_MAINTENANCE // Ingreso: cuota de mantenimiento
+  KORUM_REVENUE_TOPUP_FEE // Ingreso: gestión de recargas de Mi Hucha
+  GATEWAY_FEES_RECOVERED // Ingreso: coste de pasarela incluido en la meta y recuperado al liquidar
+  GATEWAY_FEES_EXPENSE // Gasto: comisiones cobradas por Paycomet
+  AUTO_BOOST_EXPENSE // Gasto: Auto-Impulso aportado por KORUM
+  CHARGEBACK_LOSSES // Gasto: contracargos no recuperables
+}
+
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerJournalKind {
   PAYIN_DONATION
   PAYIN_TICKET
   PAYIN_SPONSOR
   PAYIN_HUCHA_TOPUP
   HUCHA_SPEND
   HUCHA_REFUND_ORIGIN
+  GATEWAY_FEE
   SELF_BOOST_INJECTION
   MATCHING_RELEASE
-  SPLIT_PAYOUT_SCHOOL
+  PAYOUT_APPROVAL
+  SPLIT_PAYOUT_ORGANIZATION
   SPLIT_PAYOUT_PROVIDER
-  FEE_KORUM_REVENUE
   ESCROW_REFUND_DONOR
+  CREDIT_POOL_TRANSFER
+  CHARGEBACK
+  INVOICE_VAT
+  REVERSAL
 }
 
+// --- Plataforma, privacidad y operación --------------------------------------
+
+enum AuditActorType {
+  USER
+  SYSTEM
+  WEBHOOK
+  GATE_SESSION
+}
+
+enum WebhookStatus {
+  RECEIVED
+  PROCESSED
+  REJECTED
+  FAILED
+}
+
+enum NotificationChannel {
+  EMAIL
+}
+
+enum OutboxStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum JobType {
+  CAMPAIGN_EXPIRY // Vence una iniciativa: pasa a EXPIRED y avisa al centro
+  MASS_REFUND // Reembolso masivo de una iniciativa (por lotes, idempotente)
+  MONTHLY_TOPUP // Cargo mensual programado de Mi Hucha / aportación recurrente
+  SPONSOR_RENEWAL_NOTICE // Preaviso de renovación a 30 días
+  SPONSOR_RENEWAL_CHARGE // Cargo de renovación anual
+  CREDIT_POOL_EXPIRY // Bolsa de patrocinio sin asignar: reembolso al comercio
+  SPLIT_WINDOW_GUARD // Aviso antes de que venza la ventana de 90 días de Paycomet
+  PSP_RECONCILIATION // Conciliación diaria Paycomet ↔ libro mayor
+  MODEL182_REMINDER // Recordatorio de enero para exportar el Modelo 182
+  DATA_RETENTION_PURGE // Borrado/anonimización por plazos de conservación
+  OUTBOX_DISPATCH // Envío de notificaciones pendientes
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+  CANCELLED
+}
+
+enum FileVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum FilePurpose {
+  ORG_LOGO
+  ORG_BANNER
+  INITIATIVE_COVER
+  INITIATIVE_BEFORE
+  INITIATIVE_AFTER
+  KYB_DOCUMENT
+  PROVIDER_INVOICE
+  KORUM_INVOICE_PDF
+  SPONSOR_LOGO
+  TAX_CERTIFICATE
+  MODEL182_EXPORT
+}
+
+enum ConsentPurpose {
+  ANALYTICS_COOKIES
+  DEVICE_FINGERPRINT
+  MARKETING_EMAILS
+  PUBLIC_SUPPORTER_NAME
+}
+
+enum PrivacyRequestType {
+  ACCESS
+  EXPORT
+  RECTIFICATION
+  ERASURE
+  OBJECTION
+}
+
+enum PrivacyRequestStatus {
+  RECEIVED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+// -----------------------------------------------------------------------------
+// Configuración global (Motor de Reglas del Super-Admin)
+// -----------------------------------------------------------------------------
+
 model GlobalConfig {
-  id                     String   @id @default("GLOBAL")
-  exemptLimitCents       Int      @default(100000)
-  t1Bps                  Int      @default(500)
-  t2Bps                  Int      @default(400)
-  t3Bps                  Int      @default(300)
-  sponsorFeeBps          Int      @default(1500)
-  fullIntegrityCheckCents Int     @default(180)
-  tipPresetsCents        Int[]    @default([0, 100, 200, 400])
-  defaultTipIdx          Int      @default(2)
-  gatewayPctBps          Int      @default(100)
-  gatewayFixedCents      Int      @default(9)
-  topupFeeCents          Int      @default(25)
-  ticketFeeFixedCents    Int      @default(45)
-  ticketFeeBps           Int      @default(200)
-  maintActive            Boolean  @default(false)
-  maintPerInitCents      Int      @default(4900)
-  maintAnnualCapCents    Int      @default(14700)
-  updatedAt              DateTime @updatedAt
+  id                      String      @id @default("GLOBAL")
+  exemptLimitCents        Int         @default(100000)
+  /// Todo lo de esta tabla se edita desde el motor de reglas del Super-Admin. Si una combinación hace perder dinero
+  /// o es incoherente, la consola avisa (docs/DECISIONES_TECNICAS.md §6.1) pero nunca impide guardar.
+  bracketMode             BracketMode @default(FLAT)
+  /// Límite superior del tramo 1 y del tramo 2, sobre el neto garantizado (500000 = 5.000,00 €).
+  t1MaxCents              Int         @default(500000)
+  t2MaxCents              Int         @default(1500000)
+  t1Bps                   Int         @default(500)
+  t2Bps                   Int         @default(400)
+  t3Bps                   Int         @default(300)
+  sponsorFeeBps           Int         @default(1500)
+  /// Importe sugerido de la aportación voluntaria de garantía (el check va DESMARCADO por defecto).
+  fullIntegrityCheckCents Int         @default(180)
+  guaranteePresetsCents   Int[]       @default([0, 100, 200, 400])
+  defaultGuaranteeIdx     Int         @default(2)
+  gatewayPctBps           Int         @default(100)
+  gatewayFixedCents       Int         @default(9)
+  /// Fee de gestión de Mi Hucha por cargo: fijo + porcentaje (fee = topupFeeCents + importe × topupFeeBps / 10000).
+  topupFeeCents           Int         @default(25)
+  topupFeeBps             Int         @default(0)
+  ticketFeeFixedCents     Int         @default(45)
+  ticketFeeBps            Int         @default(200)
+  maintActive             Boolean     @default(false)
+  maintPerInitCents       Int         @default(4900)
+  maintAnnualCapCents     Int         @default(14700)
+  /// Duración máxima de una campaña. Paycomet exige repartir fondos antes de 90 días desde el cobro.
+  maxCampaignDays         Int         @default(60)
+  creditPoolMaxDays       Int         @default(60)
+  updatedAt               DateTime    @updatedAt
 }
 
 model MedalTierConfig {
@@ -150,111 +441,256 @@ model GlobalCategory {
   createdAt DateTime         @default(now())
 }
 
+/// Ajustes operativos editables desde la consola del Super-Admin (no secretos).
+/// Claves documentadas en docs/DECISIONES_TECNICAS.md §6 (p. ej. "hucha.mode", "autoBoost.publicDisclosureDefault").
+model PlatformSetting {
+  key         String   @id
+  valueJson   Json
+  version     Int      @default(1)
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
+/// Secretos editables desde la consola (credenciales Paycomet, API key de email...). Cifrados con ENCRYPTION_KEY.
+model PlatformSecret {
+  key         String   @id
+  ciphertext  String
+  iv          String
+  authTag     String
+  keyVersion  Int
+  hint        String? // Últimos 4 caracteres, para reconocerla sin mostrarla
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// Usuarios y autenticación (formato Better Auth + campos KORUM)
+// -----------------------------------------------------------------------------
+
 model User {
-  id                    String               @id @default(cuid())
-  email                 String               @unique
-  canonicalEmail        String               @unique
-  emailVerified         DateTime?
-  passwordHash          String?
-  twoFactorSecret       String?
-  twoFactorEnabled      Boolean              @default(false)
-  fullName              String?
-  nif                   String?
-  postalCode            String?
-  walletBalanceCents    Int                  @default(0)
-  activeOrganizationId  String?
-  paycometIdUser        String?
-  paycometTokenUser     String?
-  gdprAnonymizedAt      DateTime?
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String    @default("")
+  email                String    @unique
+  /// Email normalizado anti-multicuenta (ver korum-quorum-antifraud).
+  canonicalEmail       String    @unique
+  emailVerified        Boolean   @default(false)
+  emailVerifiedAt      DateTime?
+  image                String?
+  twoFactorEnabled     Boolean   @default(false)
+  isSuperadmin         Boolean   @default(false)
+  locale               Locale    @default(es)
+  /// NIF cifrado (solo si el usuario lo aporta para su certificado fiscal) y su HMAC para búsquedas.
+  nifEnc               String?
+  nifHmac              String?
+  nifKeyVersion        Int?
+  provinceCode         String? // Código INE de provincia (2 dígitos), necesario para el Modelo 182
+  postalCode           String?
+  /// Espejo del saldo de Mi Hucha en el proveedor regulado. La fuente de verdad es el proveedor.
+  walletBalanceCents   Int       @default(0)
+  walletProvider       String?
+  walletExternalId     String?   @unique
+  activeOrganizationId String?
+  gdprAnonymizedAt     DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  sessions              Session[]
+  accounts              Account[]
+  twoFactors            TwoFactor[]
+  passkeys              Passkey[]
   memberships           OrganizationMember[]
   contributions         Contribution[]
   walletTransactions    WalletTransaction[]
   walletSubscriptions   WalletSubscription[]
   doubleCheckSignatures DoubleCheckSignature[]
+  paymentMethodTokens   PaymentMethodToken[]
+  deviceAccounts        DeviceAccount[]
+  signatureAudits       IdeaSignatureAudit[]
+  consentRecords        ConsentRecord[]
+  privacyRequests       PrivacyRequest[]
 }
 
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  credentialID String    @unique
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  aaguid       String?
+  createdAt    DateTime? @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Límite de intentos (compatible con el almacenamiento en base de datos de Better Auth).
+/// Se reutiliza para PIN de portería, checkout y firmas de ideas.
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+}
+
+// -----------------------------------------------------------------------------
+// Organizaciones (entidad titular de los fondos)
+// -----------------------------------------------------------------------------
+
 model Organization {
-  id                       String                 @id
-  slug                     String                 @unique
+  id                       String               @id
+  slug                     String               @unique
+  /// Nombre público de la comunidad (p. ej. "CEIP Cervantes").
   name                     String
-  vertical                 OrganizationVertical   @default(SCHOOL)
-  orgType                  String                 @default("Comunidad Escolar × AFA")
+  /// Razón social de la entidad TITULAR de los fondos (p. ej. "AFA CEIP Cervantes").
+  legalName                String
+  legalForm                LegalForm
+  centerOwnership          CenterOwnership      @default(NOT_APPLICABLE)
+  vertical                 OrganizationVertical @default(SCHOOL)
   province                 String
-  director                 String
-  afaPresident             String
-  phone                    String
-  cif                      String                 @default("G-00000000")
-  iban                     String
-  walletId                 String                 @unique
-  paycometSubmerchantId    String?
-  kybValidated             Boolean                @default(true)
-  kybDocsJson              Json?
-  gatekeeperPinHash        String?
-  gatekeeperPinExpiresAt   DateTime?
-  health                   String                 @default("OK")
-  completedThisYear        Int                    @default(0)
-  completedHistorical      Int                    @default(0)
-  activeSponsorsCount      Int                    @default(0)
-  historicalSponsorsCount  Int                    @default(0)
-  medal                    String                 @default("🥈 Plata")
-  medalRank                Int                    @default(2)
-  ley49                    Boolean                @default(false)
-  customRules              Boolean                @default(false)
-  exemptLimitCents         Int                    @default(100000)
-  exemptRemainingCents     Int                    @default(100000)
-  medalGrantAvailableCents Int                    @default(100000)
+  provinceCode             String?
+  contactEmail             String?
+  contactPhone             String?
+  cif                      String?              @unique
+  iban                     String?
+  walletId                 String               @unique
+  /// Identificador de la cuenta destino en Paycomet (Split Id) tras el KYB.
+  paycometSplitId          String?              @unique
+  kybStatus                KybStatus            @default(PENDING)
+  kybReviewedAt            DateTime?
+  kybReviewedById          String?
+  health                   HealthStatus         @default(OK)
+  completedThisYear        Int                  @default(0)
+  completedHistorical      Int                  @default(0)
+  activeSponsorsCount      Int                  @default(0)
+  historicalSponsorsCount  Int                  @default(0)
+  medalRank                Int                  @default(0) // 0 = sin medalla; 1 Bronce, 2 Plata, 3 Oro
+  /// Régimen Ley 49/2002 declarado por la entidad. Solo emite certificados fiscales si además ley49VerifiedAt != null.
+  ley49                    Boolean              @default(false)
+  ley49VerifiedAt          DateTime?
+  customRules              Boolean              @default(false)
+  exemptLimitCents         Int                  @default(100000)
+  exemptRemainingCents     Int                  @default(100000)
+  medalGrantAvailableCents Int                  @default(0)
   medalGrantUsedInTitle    String?
-  t1Bps                    Int                    @default(500)
-  t2Bps                    Int                    @default(400)
-  t3Bps                    Int                    @default(300)
-  sponsorFeeBps            Int                    @default(1500)
-  fullIntegrityCheckCents  Int                    @default(180)
-  ticketFeeFixedCents      Int                    @default(45)
-  ticketFeeBps             Int                    @default(200)
-  maintActive              Boolean                @default(false)
-  maintPerInitCents        Int                    @default(4900)
-  maintAnnualCapCents      Int                    @default(14700)
-  maintPaidCents           Int                    @default(0)
-  donationPresetsCents     Int[]                  @default([1000, 2500, 5000])
-  defaultDonationIdx       Int                    @default(1)
-  sponsorTiersCents        Int[]                  @default([10000, 25000, 50000])
-  sponsorRenewalRule       SponsorRenewalRule     @default(SOONEST)
+  t1Bps                    Int                  @default(500)
+  t2Bps                    Int                  @default(400)
+  t3Bps                    Int                  @default(300)
+  sponsorFeeBps            Int                  @default(1500)
+  fullIntegrityCheckCents  Int                  @default(180)
+  ticketFeeFixedCents      Int                  @default(45)
+  ticketFeeBps             Int                  @default(200)
+  maintActive              Boolean              @default(false)
+  maintPerInitCents        Int                  @default(4900)
+  maintAnnualCapCents      Int                  @default(14700)
+  maintPaidCents           Int                  @default(0)
+  donationPresetsCents     Int[]                @default([1000, 2500, 5000])
+  defaultDonationIdx       Int                  @default(1)
+  sponsorTiersCents        Int[]                @default([10000, 25000, 50000])
+  sponsorRenewalRule       SponsorRenewalRule   @default(SOONEST)
   participationGroupsJson  Json?
-  minVotes                 Int                    @default(30)
-  maxIdeaDays              Int                    @default(45)
-  brandPrimary             String                 @default("#FF5A43")
-  brandSecondary           String                 @default("#FFB800")
-  logoUrl                  String?
-  bannerUrl                String?
-  createdAt                DateTime               @default(now())
-  updatedAt                DateTime               @updatedAt
-  members                  OrganizationMember[]
-  categories               OrganizationCategory[]
-  initiatives              Initiative[]
-  ideas                    Idea[]
-  sponsors                 Sponsor[]
-  contributions            Contribution[]
-  ledgerEntries            EscrowLedgerEntry[]
-  walletTransactions       WalletTransaction[]
-  walletSubscriptions      WalletSubscription[]
-  payouts                  EscrowPayout[]
-  doubleCheckSignatures    DoubleCheckSignature[]
-  invoices                 Invoice[]
-  supportTickets           SupportTicket[]
+  minVotes                 Int                  @default(30)
+  maxIdeaDays              Int                  @default(45)
+  brandPrimary             String               @default("#FF5A43")
+  brandSecondary           String               @default("#FFB800")
+  logoFileId               String?
+  bannerFileId             String?
+  /// Idioma en el que el centro redacta sus contenidos (la interfaz se traduce aparte).
+  contentLocale            Locale               @default(es)
+  /// La portada pública puede indexarse en buscadores (decisión del centro en el onboarding).
+  publicIndexing           Boolean              @default(true)
+  archivedAt               DateTime?
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt
+
+  logoFile              FileAsset?             @relation("OrgLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  bannerFile            FileAsset?             @relation("OrgBanner", fields: [bannerFileId], references: [id], onDelete: SetNull)
+  files                 FileAsset[]            @relation("OrgFiles")
+  members               OrganizationMember[]
+  categories            OrganizationCategory[]
+  initiatives           Initiative[]
+  ideas                 Idea[]
+  sponsors              Sponsor[]
+  contributions         Contribution[]
+  ledgerJournals        LedgerJournal[]
+  walletTransactions    WalletTransaction[]
+  walletSubscriptions   WalletSubscription[]
+  payouts               EscrowPayout[]
+  doubleCheckSignatures DoubleCheckSignature[]
+  invoices              Invoice[]
+  supportTickets        SupportTicket[]
 }
 
 model OrganizationMember {
   id             Int          @id @default(autoincrement())
   userId         String
   organizationId String
-  role           UserRole
+  role           MemberRole
+  /// Etiqueta visible del cargo (p. ej. "Presidencia del AMPA", "Tesorería del club").
+  roleLabel      String?
   createdAt      DateTime     @default(now())
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
   @@unique([userId, organizationId, role])
+  @@index([organizationId, role])
 }
 
 model OrganizationCategory {
@@ -264,68 +700,87 @@ model OrganizationCategory {
   icon           String           @default("🌟")
   rule           CategoryRuleType @default(BRACKETS)
   isCustom       Boolean          @default(true)
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
   @@unique([organizationId, name])
 }
 
+// -----------------------------------------------------------------------------
+// Iniciativas, taquilla y retos
+// -----------------------------------------------------------------------------
+
 model Initiative {
-  id                         Int                        @id @default(autoincrement())
-  walletEscrowId             String                     @unique
+  id                         Int              @id @default(autoincrement())
+  walletEscrowId             String           @unique
   paycometEscrowOrderId      String?
-  format                     InitiativeFormat           @default(BUDGET)
+  format                     InitiativeFormat @default(BUDGET)
   organizationId             String
-  academicYear               String                     @default("2026-2027")
+  academicYear               String
   title                      String
   category                   String
   stage                      String
-  status                     String                     @default("Recaudando")
-  stepIndex                  Int                        @default(4)
+  status                     InitiativeStatus @default(BUDGETING)
+  stepIndex                  Int              @default(3)
   closesAt                   DateTime
-  quarter                    String                     @default("2026-Q4")
-  raisedCents                Int                        @default(0)
+  /// Fecha del primer cobro: desde aquí corre la ventana de 90 días de Paycomet para repartir fondos.
+  firstPayinAt               DateTime?
+  quarter                    String
+  raisedCents                Int              @default(0)
   goalCents                  Int
-  totalContributions         Int                        @default(0)
-  costMatCents               Int                        @default(0)
-  costInstCents              Int                        @default(0)
-  contingencyBps             Int                        @default(1000)
-  showPublicBreakdown        Boolean                    @default(true)
-  defaultExemptAppliedCents  Int                        @default(0)
-  medalExemptAppliedCents    Int                        @default(0)
-  medalNameApplied           String                     @default("Ninguna")
-  bracketRateAppliedBps      Int                        @default(0)
-  bracketFeeCents            Int                        @default(0)
-  maintFeeCents              Int                        @default(0)
-  gatewayFeeCents            Int                        @default(0)
-  absorbsGatewayCostByKorum  Boolean                    @default(false)
-  matchingPoolTotalCents     Int                        @default(0)
-  matchingPoolRemainingCents Int                        @default(0)
+  totalContributions         Int              @default(0)
+  costMatCents               Int              @default(0)
+  costInstCents              Int              @default(0)
+  contingencyBps             Int              @default(1000)
+  showPublicBreakdown        Boolean          @default(true)
+  defaultExemptAppliedCents  Int              @default(0)
+  medalExemptAppliedCents    Int              @default(0)
+  medalRankApplied           Int              @default(0)
+  bracketRateAppliedBps      Int              @default(0)
+  bracketFeeCents            Int              @default(0)
+  maintFeeCents              Int              @default(0)
+  gatewayFeeCents            Int              @default(0)
+  absorbsGatewayCostByKorum  Boolean          @default(false)
+  matchingPoolTotalCents     Int              @default(0)
+  matchingPoolRemainingCents Int              @default(0)
   matchingSponsorName        String?
   ticketSubtype              TicketSubtype?
   ticketPriceCents           Int?
   ticketMax                  Int?
-  ticketsSold                Int                        @default(0)
+  ticketsSold                Int              @default(0)
   ticketFeeMode              TicketFeeMode?
   ticketVenue                String?
-  plaqueEnabled              Boolean                    @default(true)
-  rewardEnabled              Boolean                    @default(true)
-  targetFamiliesPerCourse    Int                        @default(35)
+  /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
+  gatePinHash                String?
+  gatePinExpiresAt           DateTime?
+  plaqueEnabled              Boolean          @default(true)
+  rewardEnabled              Boolean          @default(true)
+  targetFamiliesPerCourse    Int              @default(35)
   rewardText                 String?
   description                String
   thanksMessage              String?
-  coverImage                 String?
-  beforeImage                String?
-  afterImage                 String?
-  createdAt                  DateTime                   @default(now())
-  updatedAt                  DateTime                   @updatedAt
-  organization               Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  courses                    InitiativeCourseProgress[]
-  sponsors                   Sponsor[]
-  contributions              Contribution[]
-  ticketPasses               TicketPass[]
-  ledgerEntries              EscrowLedgerEntry[]
-  payout                     EscrowPayout?
-  resizePoll                 ResizePoll?
+  /// Traducciones opcionales del contenido: { "ca": { "title": "...", "description": "..." }, "en": {...} }.
+  translationsJson           Json?
+  coverFileId                String?
+  beforeFileId               String?
+  afterFileId                String?
+  createdAt                  DateTime         @default(now())
+  updatedAt                  DateTime         @updatedAt
+
+  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  coverFile      FileAsset?                 @relation("InitiativeCover", fields: [coverFileId], references: [id], onDelete: SetNull)
+  beforeFile     FileAsset?                 @relation("InitiativeBefore", fields: [beforeFileId], references: [id], onDelete: SetNull)
+  afterFile      FileAsset?                 @relation("InitiativeAfter", fields: [afterFileId], references: [id], onDelete: SetNull)
+  courses        InitiativeCourseProgress[]
+  sponsors       Sponsor[]
+  contributions  Contribution[]
+  ticketPasses   TicketPass[]
+  gateSessions   GateSession[]
+  ledgerJournals LedgerJournal[]
+  payout         EscrowPayout?
+  resizePoll     ResizePoll?
+
+  @@index([organizationId, status])
+  @@index([status, closesAt])
 }
 
 model InitiativeCourseProgress {
@@ -333,40 +788,54 @@ model InitiativeCourseProgress {
   initiativeId  Int
   groupName     String
   familiesCount Int        @default(0)
-  initiative    Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  initiative    Initiative @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
 
   @@unique([initiativeId, groupName])
 }
 
+// -----------------------------------------------------------------------------
+// Comercios amigos
+// -----------------------------------------------------------------------------
+
 model Sponsor {
-  id                Int                  @id @default(autoincrement())
-  organizationId    String
-  initiativeId      Int?
-  name              String
-  cif               String
-  contactPerson     String
-  phone             String
-  email             String
-  logoUrl           String?
-  sector            String
-  categoryLevel     SponsorCategoryLevel @default(PLATA)
-  tierRank          Int                  @default(2)
-  tierLabel         String
-  amountCents       Int
-  feeGeneratedCents Int
-  isMatchingPool    Boolean              @default(false)
-  promo             String
-  code              String
-  autoRenew         Boolean              @default(true)
-  paycometIdUser    String?
-  paycometToken     String?
-  status            SponsorStatus        @default(PENDING)
-  expiresAt         DateTime
-  createdAt         DateTime             @default(now())
-  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  initiative        Initiative?          @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
-  invoices          Invoice[]
+  id                   Int                  @id @default(autoincrement())
+  organizationId       String
+  initiativeId         Int?
+  name                 String
+  cif                  String
+  contactPerson        String
+  phone                String
+  email                String
+  logoFileId           String?
+  sector               String
+  categoryLevel        SponsorCategoryLevel @default(PLATA)
+  tierRank             Int                  @default(2)
+  tierLabel            String
+  amountCents          Int
+  feeGeneratedCents    Int
+  isMatchingPool       Boolean              @default(false)
+  promo                String
+  code                 String
+  autoRenew            Boolean              @default(true)
+  paymentMethodTokenId Int?
+  /// Fecha del cobro del patrocinio: limita el tiempo máximo en CREDIT_POOL (ventana de 90 días).
+  paidAt               DateTime?
+  status               SponsorStatus        @default(PENDING)
+  expiresAt            DateTime
+  createdAt            DateTime             @default(now())
+
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative         Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  logoFile           FileAsset?          @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  paymentMethodToken PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
+  invoices           Invoice[]
+
+  @@index([organizationId, status])
 }
+
+// -----------------------------------------------------------------------------
+// Buzón de ideas, quórum y doble firma
+// -----------------------------------------------------------------------------
 
 model Idea {
   id                    Int                    @id @default(autoincrement())
@@ -382,36 +851,67 @@ model Idea {
   suspiciousVotes       Int                    @default(0)
   expiresAt             DateTime
   createdAt             DateTime               @default(now())
-  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   signatures            IdeaSignatureAudit[]
   messages              IdeaMessage[]
   doubleCheckSignatures DoubleCheckSignature[]
+
+  @@index([organizationId, phase])
+}
+
+/// Dispositivo identificado por una cookie propia HttpOnly firmada (necesaria para la seguridad de la votación).
+/// La huella de navegador solo se guarda si hay consentimiento (ConsentPurpose.DEVICE_FINGERPRINT) y siempre como HMAC.
+model Device {
+  id              String               @id @default(cuid())
+  cookieIdHash    String               @unique
+  fingerprintHmac String?
+  firstSeenAt     DateTime             @default(now())
+  lastSeenAt      DateTime             @default(now())
+  accounts        DeviceAccount[]
+  signatures      IdeaSignatureAudit[]
+  consentRecords  ConsentRecord[]
+}
+
+model DeviceAccount {
+  id             Int      @id @default(autoincrement())
+  deviceId       String
+  userId         String
+  canonicalEmail String
+  /// Orden de aparición de la cuenta en el dispositivo (1ª y 2ª = familia; 3ª+ = sospechosa).
+  accountOrder   Int
+  firstSeenAt    DateTime @default(now())
+  device         Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, userId])
 }
 
 model IdeaSignatureAudit {
-  id                Int             @id @default(autoincrement())
-  ideaId            Int
-  userEmail         String
-  canonicalEmail    String
-  deviceFingerprint String
-  ipSubnetHash      String?
-  accountOrder      Int             @default(1)
-  status            SignatureStatus @default(VERIFIED)
-  reason            String
-  createdAt         DateTime        @default(now())
-  idea              Idea            @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  id             Int             @id @default(autoincrement())
+  ideaId         Int
+  userId         String?
+  canonicalEmail String
+  deviceId       String?
+  ipSubnetHash   String?
+  accountOrder   Int             @default(1)
+  status         SignatureStatus @default(VERIFIED)
+  reason         String
+  createdAt      DateTime        @default(now())
+  idea           Idea            @relation(fields: [ideaId], references: [id], onDelete: Restrict)
+  user           User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  device         Device?         @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   @@unique([ideaId, canonicalEmail])
 }
 
 model IdeaMessage {
-  id          Int      @id @default(autoincrement())
+  id          Int               @id @default(autoincrement())
   ideaId      Int
-  senderRole  String
+  senderRole  IdeaMessageSender
   senderLabel String
   body        String
-  createdAt   DateTime @default(now())
-  idea        Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  idea        Idea              @relation(fields: [ideaId], references: [id], onDelete: Restrict)
 }
 
 model DoubleCheckSignature {
@@ -421,146 +921,277 @@ model DoubleCheckSignature {
   ideaId         Int?
   payoutId       Int?
   signerUserId   String
-  signerRole     UserRole
-  signerIp       String?
+  signerRole     MemberRole
+  /// HMAC de (targetType, targetId, signerUserId, signedAt) para detectar manipulaciones.
+  signatureHash  String
+  otpVerifiedAt  DateTime?
+  signerIpHash   String?
   signedAt       DateTime              @default(now())
-  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Cascade)
-  payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Restrict)
+  payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Restrict)
   signer         User                  @relation(fields: [signerUserId], references: [id], onDelete: Restrict)
 
   @@unique([targetType, ideaId, signerRole])
   @@unique([targetType, payoutId, signerRole])
 }
 
+// -----------------------------------------------------------------------------
+// Cobros, pases QR y portería
+// -----------------------------------------------------------------------------
+
 model Contribution {
-  id                 Int                 @id @default(autoincrement())
-  organizationId     String
-  initiativeId       Int
-  userId             String?
-  guestEmail         String?
-  canonicalEmail     String?
-  fiscalYear         String              @default("2026")
-  type               ContributionType    @default(DONATION)
-  groupName          String?
-  amountCents        Int
-  guaranteeTipCents  Int                 @default(0)
-  matchedBonusCents  Int                 @default(0)
-  totalChargedCents  Int
-  isTaxDeductible    Boolean             @default(false)
-  paymentMethod      String
-  paycometOrder      String?             @unique
-  paycometAuthCode   String?
-  status             String              @default("COMPLETED")
-  createdAt          DateTime            @default(now())
-  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  initiative         Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
-  user               User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  ticketPass         TicketPass?
-  ledgerEntries      EscrowLedgerEntry[]
+  id                         Int                 @id @default(autoincrement())
+  organizationId             String
+  initiativeId               Int
+  userId                     String?
+  guestEmail                 String?
+  canonicalEmail             String?
+  locale                     Locale              @default(es)
+  fiscalYear                 Int
+  type                       ContributionType    @default(DONATION)
+  groupName                  String?
+  amountCents                Int
+  /// Aportación voluntaria de garantía KORUM (0 si el check no se marcó; va DESMARCADO por defecto).
+  guaranteeContributionCents Int                 @default(0)
+  matchedBonusCents          Int                 @default(0)
+  totalChargedCents          Int
+  isTaxDeductible            Boolean             @default(false)
+  /// Datos del donante para el Modelo 182 (solo DONATION en entidades ley49 verificadas).
+  donorFullName              String?
+  donorTaxIdEnc              String?
+  donorTaxIdHmac             String?
+  donorTaxIdKeyVersion       Int?
+  donorProvinceCode          String?
+  /// Solo para SELF_BOOST: si el Auto-Impulso se muestra en público (lo decide el Super-Admin).
+  publiclyDisclosed          Boolean             @default(true)
+  paymentMethod              PaymentMethod
+  paycometOrder              String?             @unique
+  paycometAuthCode           String?
+  status                     ContributionStatus  @default(PENDING)
+  refundedCents              Int                 @default(0)
+  refundedAt                 DateTime?
+  createdAt                  DateTime            @default(now())
+  organization               Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative                 Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  user                       User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ticketPass                 TicketPass?
+  walletTransactions         WalletTransaction[]
+  ledgerJournals             LedgerJournal[]
+
+  @@index([initiativeId, status])
+  @@index([organizationId, fiscalYear, type])
+  @@index([donorTaxIdHmac, fiscalYear])
+  @@index([canonicalEmail])
 }
 
 model TicketPass {
-  id              Int           @id @default(autoincrement())
-  uuid            String        @unique @default(uuid())
-  contributionId  Int           @unique
+  id              Int             @id @default(autoincrement())
+  uuid            String          @unique @default(uuid())
+  contributionId  Int             @unique
   initiativeId    Int
-  serialCode      String        @unique
-  subtype         TicketSubtype @default(EVENT)
+  serialCode      String          @unique
+  subtype         TicketSubtype   @default(EVENT)
   holderEmail     String
-  quantity        Int           @default(1)
-  checkedInCount  Int           @default(0)
-  raffleNumbers   Int[]         @default([])
+  quantity        Int             @default(1)
+  checkedInCount  Int             @default(0)
+  raffleNumbers   Int[]           @default([])
   qrHmacSignature String
   lastCheckedInAt DateTime?
-  isWinner        Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  contribution    Contribution  @relation(fields: [contributionId], references: [id], onDelete: Cascade)
-  initiative      Initiative    @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  isWinner        Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  contribution    Contribution    @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+  initiative      Initiative      @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  checkIns        TicketCheckIn[]
 }
 
-model EscrowLedgerEntry {
-  id                Int             @id @default(autoincrement())
-  idempotencyKey    String          @unique
-  organizationId    String
+/// Sesión de portería abierta con el PIN del evento. El token solo se guarda como hash.
+model GateSession {
+  id           String          @id @default(cuid())
+  initiativeId Int
+  tokenHash    String          @unique
+  deviceLabel  String?
+  createdAt    DateTime        @default(now())
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  initiative   Initiative      @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  checkIns     TicketCheckIn[]
+}
+
+model TicketCheckIn {
+  id            Int          @id @default(autoincrement())
+  ticketPassId  Int
+  gateSessionId String?
+  quantity      Int
+  accepted      Boolean
+  reason        String? // "FIRMA_INVALIDA", "PASE_AGOTADO"...
+  createdAt     DateTime     @default(now())
+  ticketPass    TicketPass   @relation(fields: [ticketPassId], references: [id], onDelete: Restrict)
+  gateSession   GateSession? @relation(fields: [gateSessionId], references: [id], onDelete: SetNull)
+
+  @@index([ticketPassId, createdAt])
+}
+
+// -----------------------------------------------------------------------------
+// Libro mayor de doble partida (inmutable)
+// -----------------------------------------------------------------------------
+
+/// Asiento contable. Invariante: Σ entries(DEBIT).amountCents == Σ entries(CREDIT).amountCents.
+/// Inmutable: la migración SQL del Sprint 1.2 añade triggers que impiden UPDATE/DELETE en esta tabla y en EscrowLedgerEntry.
+model LedgerJournal {
+  id                Int               @id @default(autoincrement())
+  idempotencyKey    String            @unique
+  kind              LedgerJournalKind
+  organizationId    String?
   initiativeId      Int?
   contributionId    Int?
   walletTxId        Int?
-  entryType         LedgerEntryType
-  amountCents       Int
-  currency          String          @default("EUR")
+  payoutId          Int?
   paycometReference String?
-  metadataJson      Json?
-  createdAt         DateTime        @default(now())
-  organization      Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  initiative        Initiative?     @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
-  contribution      Contribution?   @relation(fields: [contributionId], references: [id], onDelete: SetNull)
-  walletTransaction WalletTransaction? @relation(fields: [walletTxId], references: [id], onDelete: SetNull)
+  description       String
+  occurredAt        DateTime          @default(now())
+  createdById       String? // userId o "system"
+  reversesJournalId Int?              @unique
+  createdAt         DateTime          @default(now())
+
+  organization      Organization?       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative        Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  contribution      Contribution?       @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+  walletTransaction WalletTransaction?  @relation(fields: [walletTxId], references: [id], onDelete: Restrict)
+  payout            EscrowPayout?       @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  reversesJournal   LedgerJournal?      @relation("JournalReversal", fields: [reversesJournalId], references: [id], onDelete: Restrict)
+  reversedBy        LedgerJournal?      @relation("JournalReversal")
+  entries           EscrowLedgerEntry[]
+
+  @@index([organizationId, occurredAt])
+  @@index([initiativeId])
 }
 
+/// Apunte de un asiento. amountCents siempre > 0 (CHECK en la migración SQL); el signo lo da direction.
+/// organizationId / initiativeId / userId / sponsorId son dimensiones de subcuenta para calcular saldos.
+model EscrowLedgerEntry {
+  id             Int             @id @default(autoincrement())
+  journalId      Int
+  account        LedgerAccount
+  direction      LedgerDirection
+  amountCents    Int
+  currency       String          @default("EUR")
+  organizationId String?
+  initiativeId   Int?
+  userId         String?
+  sponsorId      Int?
+  createdAt      DateTime        @default(now())
+  journal        LedgerJournal   @relation(fields: [journalId], references: [id], onDelete: Restrict)
+
+  @@index([account, organizationId])
+  @@index([account, initiativeId])
+  @@index([account, userId])
+}
+
+// -----------------------------------------------------------------------------
+// Mi Hucha y medios de pago tokenizados
+// -----------------------------------------------------------------------------
+
+/// Token de tarjeta de Paycomet (JET-ID: idUser + tokenUser), siempre cifrado. Nunca se guarda el PAN.
+model PaymentMethodToken {
+  id                 Int                  @id @default(autoincrement())
+  userId             String?
+  provider           String               @default("paycomet")
+  idUserEnc          String
+  tokenUserEnc       String
+  keyVersion         Int
+  brand              String?
+  last4              String?
+  expiresMonth       Int?
+  expiresYear        Int?
+  createdAt          DateTime             @default(now())
+  revokedAt          DateTime?
+  user               User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sponsors           Sponsor[]
+  subscriptions      WalletSubscription[]
+  walletTransactions WalletTransaction[]
+}
+
+/// Movimiento de Mi Hucha. organizationId solo se rellena al gastar el saldo en una iniciativa (CONTRIBUTION_DEBIT):
+/// la Hucha es una por usuario, no una por centro.
 model WalletTransaction {
   id                       Int                 @id @default(autoincrement())
   userId                   String
-  organizationId           String
+  organizationId           String?
+  contributionId           Int?
+  paymentMethodTokenId     Int?
   txType                   WalletTxType
   amountCents              Int
   feeCents                 Int                 @default(0)
   remainingRefundableCents Int                 @default(0)
   paycometOrder            String?             @unique
   refundedFromOrder        String?
-  status                   String              @default("COMPLETED")
+  status                   WalletTxStatus      @default(PENDING)
   createdAt                DateTime            @default(now())
-  user                     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization             Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  ledgerEntries            EscrowLedgerEntry[]
+  user                     User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  organization             Organization?       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  contribution             Contribution?       @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+  paymentMethodToken       PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
+  ledgerJournals           LedgerJournal[]
+
+  @@index([userId, createdAt])
 }
 
+/// Recarga mensual programada (modo REGULATED_WALLET) o aportación mensual comprometida a una entidad (modo PLEDGE).
 model WalletSubscription {
-  id                 Int          @id @default(autoincrement())
-  userId             String
-  organizationId     String
-  monthlyAmountCents Int
-  feePerMonthCents   Int          @default(25)
-  totalMonths        Int          @default(9)
-  executedMonths     Int          @default(1)
-  active             Boolean      @default(true)
-  nextChargeAt       DateTime
-  paycometIdUser     String
-  paycometTokenUser  String
-  createdAt          DateTime     @default(now())
-  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                   Int                @id @default(autoincrement())
+  userId               String
+  organizationId       String?
+  paymentMethodTokenId Int
+  monthlyAmountCents   Int
+  feePerMonthCents     Int                @default(25)
+  totalMonths          Int                @default(9)
+  executedMonths       Int                @default(0)
+  active               Boolean            @default(true)
+  nextChargeAt         DateTime
+  createdAt            DateTime           @default(now())
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Restrict)
+  organization         Organization?      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  paymentMethodToken   PaymentMethodToken @relation(fields: [paymentMethodTokenId], references: [id], onDelete: Restrict)
+
+  @@index([active, nextChargeAt])
 }
+
+// -----------------------------------------------------------------------------
+// Liquidaciones, redimensionamiento y facturación
+// -----------------------------------------------------------------------------
 
 model EscrowPayout {
   id                    Int                    @id @default(autoincrement())
   organizationId        String
   initiativeId          Int                    @unique
-  destinationType       String                 @default("PROVIDER")
+  destinationType       PayoutDestination      @default(PROVIDER)
   beneficiaryName       String
   beneficiaryIban       String
   providerCif           String?
-  providerInvoicePdfUrl String?
+  providerInvoiceFileId String?
   netPaidCents          Int
   korumFeeSettledCents  Int
   paycometTransferId    String?
-  status                String                 @default("PENDING_DOUBLE_CHECK")
+  status                PayoutStatus           @default(PENDING_DOUBLE_CHECK)
   executedAt            DateTime?
   createdAt             DateTime               @default(now())
-  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  initiative            Initiative             @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative            Initiative             @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  providerInvoiceFile   FileAsset?             @relation("PayoutProviderInvoice", fields: [providerInvoiceFileId], references: [id], onDelete: Restrict)
   signatures            DoubleCheckSignature[]
   invoices              Invoice[]
+  ledgerJournals        LedgerJournal[]
 }
 
 model ResizePoll {
-  id           Int          @id @default(autoincrement())
-  initiativeId Int          @unique
+  id           Int              @id @default(autoincrement())
+  initiativeId Int              @unique
   optionsJson  Json
   closesAt     DateTime
-  status       String       @default("OPEN")
-  createdAt    DateTime     @default(now())
-  initiative   Initiative   @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  status       ResizePollStatus @default(OPEN)
+  createdAt    DateTime         @default(now())
+  initiative   Initiative       @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   votes        ResizeVote[]
 }
 
@@ -570,14 +1201,16 @@ model ResizeVote {
   canonicalEmail String
   optionIndex    Int
   createdAt      DateTime   @default(now())
-  poll           ResizePoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  poll           ResizePoll @relation(fields: [pollId], references: [id], onDelete: Restrict)
 
   @@unique([pollId, canonicalEmail])
 }
 
+/// Factura emitida por KORUM (a comercios o centros). Se registra en Veri*factu a través del proveedor de facturación.
 model Invoice {
-  id                Int           @id @default(autoincrement())
-  invoiceNumber     String        @unique
+  id                Int                    @id @default(autoincrement())
+  invoiceNumber     String                 @unique
+  series            String                 @default("K")
   organizationId    String
   sponsorId         Int?
   payoutId          Int?
@@ -585,30 +1218,184 @@ model Invoice {
   recipientTaxId    String
   concept           String
   baseAmountCents   Int
-  taxRateBps        Int           @default(2100)
-  taxAmountCents    Int           @default(0)
+  taxRateBps        Int                    @default(2100)
+  taxAmountCents    Int                    @default(0)
   totalAmountCents  Int
   prevVerifactuHash String?
-  verifactuHash     String        @unique
+  verifactuHash     String                 @unique
   verifactuQrUrl    String
-  issuedAt          DateTime      @default(now())
-  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  sponsor           Sponsor?      @relation(fields: [sponsorId], references: [id], onDelete: SetNull)
-  payout            EscrowPayout? @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+  verifactuStatus   InvoiceVerifactuStatus @default(PENDING)
+  providerReference String?
+  pdfFileId         String?
+  issuedAt          DateTime               @default(now())
+  organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  sponsor           Sponsor?               @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  payout            EscrowPayout?          @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  pdfFile           FileAsset?             @relation("InvoicePdf", fields: [pdfFileId], references: [id], onDelete: Restrict)
 }
 
 model SupportTicket {
-  id             Int           @id @default(autoincrement())
-  ticketCode     String        @unique
+  id             Int                 @id @default(autoincrement())
+  ticketCode     String              @unique
   organizationId String?
   originLabel    String
   senderEmail    String?
-  targetRole     String        @default("SUPERADMIN")
+  target         SupportTarget       @default(SUPERADMIN)
   subject        String
   message        String
-  status         String        @default("OPEN")
+  status         SupportTicketStatus @default(OPEN)
   replyMessage   String?
-  createdAt      DateTime      @default(now())
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  organization   Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 }
 
+// -----------------------------------------------------------------------------
+// Ficheros (Supabase Storage, región UE)
+// -----------------------------------------------------------------------------
+
+model FileAsset {
+  id             String         @id @default(cuid())
+  bucket         String
+  objectKey      String         @unique
+  visibility     FileVisibility
+  purpose        FilePurpose
+  mimeType       String
+  sizeBytes      Int
+  sha256         String
+  organizationId String?
+  uploadedById   String?
+  /// Fecha hasta la que hay que conservarlo por ley (facturas, KYB). El borrado lo hace DATA_RETENTION_PURGE.
+  retainUntil    DateTime?
+  deletedAt      DateTime?
+  createdAt      DateTime       @default(now())
+
+  organization      Organization?  @relation("OrgFiles", fields: [organizationId], references: [id], onDelete: Restrict)
+  orgLogos          Organization[] @relation("OrgLogo")
+  orgBanners        Organization[] @relation("OrgBanner")
+  initiativeCovers  Initiative[]   @relation("InitiativeCover")
+  initiativeBefores Initiative[]   @relation("InitiativeBefore")
+  initiativeAfters  Initiative[]   @relation("InitiativeAfter")
+  sponsorLogos      Sponsor[]      @relation("SponsorLogo")
+  payoutInvoices    EscrowPayout[] @relation("PayoutProviderInvoice")
+  korumInvoicePdfs  Invoice[]      @relation("InvoicePdf")
+
+  @@index([organizationId, purpose])
+}
+
+// -----------------------------------------------------------------------------
+// Operación: auditoría, webhooks, notificaciones y tareas programadas
+// -----------------------------------------------------------------------------
+
+/// Registro de auditoría append-only (trigger en la migración SQL). Nunca guarda secretos ni PII en claro.
+model AuditLog {
+  id             Int            @id @default(autoincrement())
+  occurredAt     DateTime       @default(now())
+  actorType      AuditActorType
+  actorUserId    String?
+  organizationId String?
+  action         String // p. ej. "payout.signed", "settings.secret.updated", "tenant.access_denied"
+  targetType     String
+  targetId       String
+  ipHash         String?
+  userAgent      String?
+  metadataJson   Json?
+
+  @@index([organizationId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([action, occurredAt])
+}
+
+/// Webhooks recibidos. La unicidad (provider, externalEventId) hace la recepción idempotente.
+model WebhookEvent {
+  id              Int           @id @default(autoincrement())
+  provider        String
+  externalEventId String
+  signatureValid  Boolean
+  payloadJson     Json
+  status          WebhookStatus @default(RECEIVED)
+  attempts        Int           @default(0)
+  errorMessage    String?
+  receivedAt      DateTime      @default(now())
+  processedAt     DateTime?
+
+  @@unique([provider, externalEventId])
+  @@index([status, receivedAt])
+}
+
+/// Bandeja de salida de notificaciones (patrón outbox): se escribe en la misma transacción que el cambio de negocio.
+model OutboxMessage {
+  id                Int                 @id @default(autoincrement())
+  idempotencyKey    String              @unique
+  channel           NotificationChannel @default(EMAIL)
+  templateKey       String // Catálogo en docs/EXPERIENCIA_DE_PRODUCTO.md §4
+  locale            Locale              @default(es)
+  toAddress         String
+  userId            String?
+  organizationId    String?
+  payloadJson       Json
+  status            OutboxStatus        @default(PENDING)
+  attempts          Int                 @default(0)
+  nextAttemptAt     DateTime            @default(now())
+  sentAt            DateTime?
+  providerMessageId String?
+  lastError         String?
+  createdAt         DateTime            @default(now())
+
+  @@index([status, nextAttemptAt])
+}
+
+/// Cola de tareas programadas procesada por los cron de /api/cron/* (idempotente y con reintentos).
+model Job {
+  id             Int       @id @default(autoincrement())
+  idempotencyKey String    @unique
+  type           JobType
+  payloadJson    Json
+  runAt          DateTime
+  status         JobStatus @default(PENDING)
+  attempts       Int       @default(0)
+  maxAttempts    Int       @default(5)
+  lockedAt       DateTime?
+  lockedBy       String?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, runAt])
+}
+
+// -----------------------------------------------------------------------------
+// Privacidad (RGPD)
+// -----------------------------------------------------------------------------
+
+model ConsentRecord {
+  id               Int            @id @default(autoincrement())
+  userId           String?
+  deviceId         String?
+  subjectEmailHmac String?
+  purpose          ConsentPurpose
+  granted          Boolean
+  policyVersion    String
+  source           String // "banner", "checkout", "ajustes"...
+  createdAt        DateTime       @default(now())
+  user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  device           Device?        @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([userId, purpose])
+}
+
+model PrivacyRequest {
+  id                 Int                  @id @default(autoincrement())
+  userId             String?
+  requesterEmailHmac String
+  type               PrivacyRequestType
+  status             PrivacyRequestStatus @default(RECEIVED)
+  /// Plazo legal de respuesta (1 mes desde la solicitud).
+  dueAt              DateTime
+  completedAt        DateTime?
+  notes              String?
+  createdAt          DateTime             @default(now())
+  user               User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, dueAt])
+}

@@ -1,48 +1,71 @@
 ---
 name: korum-nextjs-multitenant-ui
 description: >-
-  Arquitectura Next.js 15 App Router Multi-Tenant, aislamiento estricto por organizationId,
-  sistema visual Tailwind patio (Mobile-First 430px .mobile-stack), tarjetas virales next/og y
-  mapa anatómico exacto por líneas de prototype/Korum_v8.html. Cargar siempre antes de implementar
-  cualquier vista, layout, modal o Server Action de los Entornos 0, 1, 2 o 3.
+  Arquitectura Next.js App Router multi-entidad de KORUM: rutas por idioma (es/ca/en), aislamiento
+  estricto por organizationId, sistema visual dual (Varsity Heritage + patio), móvil a 430px con
+  .mobile-stack, estados de carga/vacío/error, accesibilidad y mapa por anclas estables de
+  prototype/Korum_v8.html. Cargar siempre antes de implementar cualquier vista, layout, modal o
+  Server Action de los Entornos 0, 1, 2 o 3.
 ---
 
-# Skill · Arquitectura Next.js Multi-Tenant, Design System `patio` y Paridad `Korum_v8.html`
+# Skill · Arquitectura Next.js multi-entidad, sistema visual y paridad con `Korum_v8.html`
 
-## 1. Uso Inteligente de la Referencia Funcional (`prototype/Korum_v8.html`)
-- `prototype/Korum_v8.html` tiene `5.217` líneas (`332 KB`). **Nunca leas el archivo entero de golpe.**
-- Consulta primero [korum-v8-anatomy.md](./references/korum-v8-anatomy.md) para localizar el rango exacto de líneas (`StartLine`–`EndLine`) del bloque HTML, modal y función JS que estás migrando, y lee únicamente esas `100–250` líneas para garantizar **0% de regresión visual o funcional** ahorrando el `85%` de la ventana de contexto.
+## 1. Cómo usar el prototipo (`prototype/Korum_v8.html`)
 
-## 2. Estructura de Rutas y Aislamiento Multi-Tenant (`organizationId`)
-1. **Grupos de Rutas App Router:**
-   - `src/app/(marketing)/page.tsx` ➔ Landing B2B/B2C, buscador de centros y simulador en vivo.
-   - `src/app/(auth)/login/page.tsx` y `registro-comunidad/page.tsx` ➔ Magic Link/OTP, 2FA y alta "Zero-Touch".
-   - `src/app/(public)/[orgSlug]/...` ➔ Entorno 1 (Familias, Socios y Comercios Amigos) + `src/app/api/og/initiative/[id]/route.tsx`.
-   - `src/app/(dashboard)/school/[orgSlug]/...` ➔ Entorno 2 (Panel Mancomunado Dirección + AFA/Club) y `/school/[orgSlug]/porteria` (acceso PIN temporal).
-   - `src/app/(superadmin)/admin/...` ➔ Entorno 3 (Consola Ejecutiva BI Super-Admin KORUM).
-2. **Guardia Obligatoria Anti-IDOR en Server Actions y Route Handlers:**
-   - Jamás confíes en un `organizationId` enviado por el cliente sin contrastarlo contra la sesión activa:
-     - `FAMILY` / `MERCHANT`: solo operaciones públicas permitidas o recursos propios (`userId` / `canonicalEmail`).
-     - `DIRECTOR` / `AFA_PRESIDENT` / `GATEKEEPER`: exige membresía verificada en `OrganizationMember` para ese exacto `organizationId` y el rol concreto requerido por la acción.
-     - `SUPERADMIN`: acceso transversal auditado.
+- Es la **referencia funcional**: define qué acciones, datos, filtros, columnas y alertas existen. **No es la referencia visual** (su paleta y su logotipo son de una fase descartada; manda [korum-brand-design-system](../korum-brand-design-system/SKILL.md)).
+- Es un archivo grande. **Nunca lo leas entero.** Busca en [korum-v8-anatomy.md](./references/korum-v8-anatomy.md) el ancla del bloque que migras (`id="checkout-modal"`, `function openCheckoutModal`), localízala con una búsqueda de texto y lee unas 150–250 líneas desde ahí.
+- El prototipo **está congelado**: no se edita. Si algo cambia, se cambia en la aplicación.
 
-## 3. Arquitectura Visual Dual: *"Autoridad Corporativa Fiduciaria + Emoción de Patio"* y Regla `430px`
-> **Nota obligatoria:** Carga siempre en conjunto `.agents/skills/korum-brand-design-system/SKILL.md` para aplicar las reglas completas de marca y tokens visuales.
+## 2. Rutas, idiomas y aislamiento entre entidades
 
-1. **Identidad Corporativa de Alta Presencia y Activos en `public/brand/`:**
-   - **Nuevo Logotipo Corporativo Oficial (*"El Escudo Ágora-K"*):** Escudo heráldico-arquitectónico en Marino Soberano (`#0B1526`) con bisel en Oro Fiduciario (`#D97706` / `#F59E0B`), monograma `K` estructural interior y piedra angular dorada, acompañado del wordmark geométrico pesado `KORUM` en `Plus Jakarta Sans ExtraBold` (`.font-corp`). **Prohibido usar estética infantil de muñecos en corro o tipografía `Fredoka` en el logotipo corporativo `KORUM`.**
-   - **Activos Vectoriales e Ilustraciones Oficiales:** Usa `public/brand/korum-logo.svg` (claro), `public/brand/korum-logo-dark.svg` (cabeceras oscuras `#0B1526`), `public/brand/korum-mark.svg` (escudo aislado/favicon/QR) y `public/brand/korum-escrow-seal.svg` para el **Marco Institucional y Fiduciario (Capa 1)**; utiliza `public/brand/korum-hero-patio.jpg` y `public/brand/korum-notebook-stickers.jpg` para la **Experiencia Comunitaria Emocional (Capa 2)**.
-2. **Separación Estricta de las 2 Capas Visuales (CSS Puro de `0 KB`):**
-   - **Capa 1 · Seriedad Bancaria en Zonas de Dinero y Gobernanza (`.korum-trust-vault`):** En cabeceras maestras, barra `WLT-ESC-XXX`, Desglose de 4 líneas, Pizarra TCO, Checkout Express 10s, Mi Hucha, Doble Firma, Certificados IRPF, Facturas Veri\*factu y Pases/Carteles QR, aplica superficies limpias, bordes estructurados en marino/esmeralda (`#047857`) y `Plus Jakarta Sans` con `tabular-nums` para inspirar confianza financiera absoluta.
-   - **Capa 2 · Emoción Cercana y Desenfadada en el Patio y Comunidad:**
-     - **Lienzo Cuaderno Punteado (`.korum-paper-dots`):** `#FFFDF8` con trama sutil de libreta (`radial-gradient`) para `SCHOOL`, cambiando a trama táctica suave de cancha (`.korum-court-grid`) en `SPORTS_CLUB`.
-     - **Hoja de Libreta en Buzón de Ideas (`.korum-notebook-sheet`):** margen vertical coral suave y tacto cálido de papel.
-     - **Pegatinas Troqueladas (`.die-cut-sticker`) y Botones Táctiles (`.tactile-btn`):** borde blanco nítido, sombra suave y micro-giro desenfadado (`-rotate-1` / `rotate-1`) en retos colectivos, medallas y sellos *Matching 2x*, junto con trazos vectoriales `SVG` estilo cera/rotulador (`#FFB800` / `#FF5A43`) bajo palabras emocionales.
-3. **Jerarquía Tipográfica Dual, Datos Tabulares y Micro-Interacciones Obligatorias:**
-   - **Corporativa y Financiera (`.font-corp`):** `Plus Jakarta Sans` (`700`/`800`) + `tabular-nums` obligatorio en el logo `KORUM`, cabeceras corporativas, recibos, tablas y todo importe en euros.
-   - **Emocional y Comunitaria (`.font-joy`):** `Fredoka` (`600`/`700`) reservada para titulares cercanos de campañas, nombre del centro en su portada, retos de cursos/categorías y celebraciones de logros.
-   - **Tooltip Contextual con Retardo Exacto de `1000ms`:** `<DelayedTooltip delayMs={1000}>`.
-   - **Filtros Siempre Ocultos al Cargar:** ocultos (`isOpen = false`) tras `🔍 Filtrar`.
-4. **Blindaje Mobile-First (`430x932`) y Conmutador `🖥️ Web / 📱 Móvil`:**
-   - Toda vista multicolumna de Familias (`Ficha Detallada`, `Mi Hucha`, `FAQ y Soporte`) y `Modo Portería` debe aplicar `.mobile-stack`, forzando **1 sola columna vertical** tanto en `< 768px` como dentro del simulador móvil (`max-w-[430px]`), garantizando `document.documentElement.scrollWidth <= 430`.
+1. **Rutas App Router** (con `next-intl`, `localePrefix: 'as-needed'`: castellano sin prefijo, `/ca` y `/en` con prefijo):
+   - `src/app/[locale]/(marketing)/page.tsx` → landing, buscador de entidades y calculadora.
+   - `src/app/[locale]/(auth)/login/page.tsx` y `registro-comunidad/page.tsx` → acceso y alta.
+   - `src/app/[locale]/(public)/[orgSlug]/...` → Entorno 1 (familias, socios y comercios).
+   - `src/app/[locale]/(dashboard)/panel/[orgSlug]/...` → Entorno 2 y `/panel/[orgSlug]/porteria`.
+   - `src/app/[locale]/(superadmin)/admin/...` → Entorno 3 y `/admin/ajustes`.
+   - `src/app/api/og/initiative/[id]/route.tsx` → tarjetas sociales (ver [korum-seo-discoverability](../korum-seo-discoverability/SKILL.md)).
+2. **Guardia anti-IDOR en cada Server Action y Route Handler:** nunca confíes en un `organizationId` enviado por el cliente.
+   - `FAMILY` / `MERCHANT`: solo operaciones públicas o recursos propios (`userId` / `canonicalEmail`).
+   - `DIRECTOR` / `COSIGNER` / `GATEKEEPER`: membresía verificada en `OrganizationMember` para ese `organizationId` y el rol que exige la acción.
+   - Sesión de portería (`GateSession`): solo el escáner y el sorteo de **su** evento.
+   - `isSuperadmin`: acceso transversal, siempre registrado en `AuditLog`.
+3. **Textos visibles:** siempre con `useTranslations` / `getTranslations` desde `messages/{es,ca,en}.json`. Ningún literal en JSX salvo nombres propios.
 
+## 3. Sistema visual dual y regla de 430 px
+
+> Carga siempre junto a [korum-brand-design-system](../korum-brand-design-system/SKILL.md), que manda en tokens, logotipo y activos.
+
+1. **Capa 1 · Solidez colegial en dinero y gobierno (`.korum-trust-vault`):** cabecera, hucha `WLT-ESC-XXX`, desglose de 4 líneas, pizarra TCO, checkout, Mi Hucha, doble firma, certificados, facturas y pases/carteles QR. Superficies limpias, bordes en azul marino `#101F38` y esmeralda `#047857`, `Plus Jakarta Sans` con `tabular-nums`. Logotipo: *Parche Varsity Heritage* (componentes `KorumLogo` y `KorumMark` de `src/components/brand/`, dibujados a partir de la lámina `public/brand/korum-logo.jpg`; variante para fondos oscuros).
+2. **Capa 2 · Emoción de patio en la comunidad:**
+   - Fondo `.korum-paper-dots` (`#FFFDF8`) en `SCHOOL`; `.korum-court-grid` en `SPORTS_CLUB`.
+   - `.korum-notebook-sheet` en el buzón de ideas; `.die-cut-sticker` y `.tactile-btn` en retos, medallas y *Matching 2x*; subrayados de cera (`#FFB800` / `#FF5A43`).
+3. **Tipografía:** `.font-corp` (`Plus Jakarta Sans` 700/800 + `tabular-nums`) para marca, cabeceras, recibos, tablas e importes; `.font-joy` (`Fredoka` 600/700) solo para titulares de campañas, nombre del centro en su portada, retos y celebraciones.
+4. **Micro-interacciones:** tooltip contextual con retardo exacto de `1000 ms` (`<DelayedTooltip delayMs={1000}>`); filtros ocultos al cargar tras `🔍 Filtrar`.
+5. **Móvil (`430×932`):** toda vista multicolumna de familias y la portería usa `.mobile-stack` (una sola columna en `< 768px`) y garantiza `document.documentElement.scrollWidth <= 430`. En producción no existe el simulador móvil del prototipo: el diseño responde al ancho real.
+
+## 4. Estados obligatorios de cada vista
+
+Toda vista con datos implementa sus cuatro estados con el texto que indica [docs/EXPERIENCIA_DE_PRODUCTO.md](../../../docs/EXPERIENCIA_DE_PRODUCTO.md) §5:
+
+- **Cargando:** esqueleto con la forma del contenido (nunca un spinner a pantalla completa), mediante `loading.tsx` o `Suspense`.
+- **Vacío:** mensaje que explica qué falta y un botón con la siguiente acción.
+- **Error:** `error.tsx` con explicación en lenguaje llano, botón de reintentar y referencia del error para soporte; nunca un error técnico en pantalla.
+- **Éxito:** confirmación visible (toast o pantalla de celebración) y foco movido al resultado.
+
+### Primitivas de `src/components/ui/` (Sprint 1.1): reglas de uso
+
+- **`DelayedTooltip`** (1000 ms con puntero, instantáneo con teclado, Escape en todo momento, la burbuja se puede pisar): el hijo debe ser enfocable y reenviar `aria-describedby`. Un botón `disabled` no recibe foco ni puntero: envuélvelo en `<span tabIndex={0}>`.
+- **`ToastProvider` / `useToast`:** para confirmaciones y errores **globales**. Un error de formulario dentro de un modal va **dentro del modal** (`role="alert"` junto al campo): la región de avisos queda fuera del diálogo y un lector de pantalla no la anunciaría.
+- **`EmptyState`:** `headingLevel={1}` en páginas completas (404, error: cada página tiene un único `h1`); `playful` solo en la comunidad (Fredoka), nunca en zonas de dinero; `role="alert"` + `headingRef` para errores.
+- **`LoadingRegion`** envuelve los esqueletos: anuncia «Cargando…» una vez y marca la zona como ocupada.
+- **`SortableTh`** + `useSortableRows`: pasa `columnName` si el `label` lleva emojis. Cada zona con scroll horizontal (`overflow-x-auto`) lleva `tabIndex={0}`, `role="region"` y `aria-label`. `LanguageSwitcher` conserva la ruta pero no los parámetros de búsqueda (deuda hasta que haya filtros en la URL).
+- **`CurrencyText` / `formatCents`:** cualquier importe visible pasa por ellos; nunca `toFixed` ni `Intl` suelto.
+
+## 5. Accesibilidad y rendimiento (se comprueban en la Puerta 4)
+
+- WCAG 2.2 AA (Regla 03 §8): HTML semántico, foco visible, etiquetas en formularios, `aria-live` para errores y cambios de progreso, `prefers-reduced-motion`.
+- Presupuesto en móvil medio con 4G: LCP < 2,5 s, INP < 200 ms, CLS < 0,1; JavaScript inicial de las páginas públicas < 170 KB comprimido. Server Components por defecto; `"use client"` solo donde hay interacción.
+- Imágenes con `next/image`, tamaños declarados y formatos modernos.
+- **Páginas públicas estáticas (`● /es`, `● /ca`, `● /en` en la tabla de `npm run build`):** cada layout y página de `[locale]` llama a `setRequestLocale(locale)` antes de usar traducciones, y pasa el idioma explícito en `generateMetadata` (`getTranslations({ locale, namespace })`). **`loading.tsx` es siempre componente de cliente**: no recibe `params`, y si usa las traducciones de servidor hace que toda la ruta pase a renderizarse en cada petición (lección del Sprint 1.1). Tras cualquier cambio de estructura, comprueba que la tabla de `npm run build` sigue mostrando `●` en las páginas públicas.
+- **404 con código 404 (no «soft 404»):** un `loading.tsx` hace *streaming* y envía antes el código `200`, de modo que un `notFound()` posterior ya no puede cambiarlo y Google lo trata como página válida. Por eso **no hay `loading.tsx` en la raíz de `[locale]`**: se coloca solo dentro de los segmentos con datos (portal, panel, consola) y la comprobación de existencia (`organización no encontrada` → `notFound()`) se hace en el `layout.tsx` de ese segmento, que se resuelve antes del *streaming*. `tests/e2e/i18n-base.spec.ts` comprueba que una URL inexistente responde `404`.

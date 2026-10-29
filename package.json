@@ -1,0 +1,60 @@
+{
+  "name": "korum",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "KORUM · plataforma SaaS multi-entidad para colegios, clubes y entidades culturales",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "verify:invariants": "node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs",
+    "sync:ai": "node scripts/sync-ai-context.mjs",
+    "setup:env": "node scripts/setup-env.mjs",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "clsx": "2.1.1",
+    "next": "16.4.3",
+    "next-intl": "4.14.9",
+    "pg": "8.23.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.3",
+    "jsdom": "30.1.3",
+    "postcss": "8.5.32",
+    "prisma": "7.10.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}

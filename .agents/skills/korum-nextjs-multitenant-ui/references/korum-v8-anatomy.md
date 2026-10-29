@@ -1,56 +1,131 @@
-# Índice Anatómico Exacto de `prototype/Korum_v8.html` (`5.371` Líneas)
+# Índice anatómico de `prototype/Korum_v8.html`
 
-Utiliza este mapa con `read_file` (`StartLine` / `EndLine`) para inspeccionar únicamente la sección exacta del prototipo que corresponda a tu Micro-Sprint, garantizando **Paridad Funcional 100% ("Zero Regression")** sin saturar la ventana de contexto.
+> **Cómo usarlo:** localiza el **ancla** con una búsqueda de texto exacta (Grep / búsqueda del editor) y lee unas 150–250 líneas a partir de ella. La columna *Línea* está verificada y la comprueba el escáner `verify-invariants.mjs` en cada sprint: si el prototipo cambiara, el escáner fallaría y este índice se actualizaría en el mismo sprint.
+>
+> **Estado:** prototipo **congelado** (5.407 líneas). Es referencia **funcional**: su paleta, su logotipo y su barra de demostración no se trasladan a producción (ver Regla 01 §6).
 
----
+## 1. Estilos y cabecera de demostración
 
-## 1. Estilos Globales, Cabecera Maestra Corporativa y Notificaciones (`L1–244`)
-- **`L1–160`**: Configuración Tailwind `corp` + `patio`, `.font-corp`, `.tabular-nums`, `.korum-paper-dots`, `.korum-court-grid`, `.korum-notebook-sheet`, `.die-cut-sticker`, `.tactile-btn`, `.korum-trust-vault`, `.mobile-simulator-wrap`, `.mobile-stack`, `.sortable-th`, `#delayed-tooltip` (`1s`) y reglas `@media print`.
-- **`L161–244`**: Barra Superior Maestra KORUM (Nuevo Logotipo Corporativo *"Escudo Ágora-K"*, descriptor institucional `QUÓRUM · ESCROW · COMUNIDAD`, insignia `Custodia Escrow PSD2`, conmutador `🖥️ Web` / `📱 Móvil`, selector rápido de 3 cuentas anti-fraude + invitado, botón `🔐` y Toast `#toast`).
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Configuración Tailwind del prototipo (paleta antigua: no usar) | `tailwind.config = {` | L10 |
+| Clases CSS: `.korum-paper-dots`, `.korum-notebook-sheet`, `.die-cut-sticker`, `.tactile-btn`, `.korum-trust-vault`, `.mobile-stack`, `@media print` | `<style>` | L42 |
+| Tooltip diferido de 1000 ms | `id="delayed-tooltip"` | L178 |
+| Barra superior de demostración (no va a producción) | `<header class="sticky top-0` | L183 |
+| Selector de entornos (demostración) | `id="env-btn-family"` | L230 |
+| Avisos emergentes (toast) | `id="toast"` | L261 |
 
-## 2. Markup HTML — Entorno 1: Familias y Comercios (`L245–617`)
-- **`L245–305`**: Hero de Patio personalizable (`#school-hero-header`) con ilustración de patio integrada, subrayado de cera en *"mejoras reales"*, co-branding `Custodia Garantizada KORUM Escrow`, botón `🐷 Mi Hucha` (`#header-wallet-pill`) y Barra de Impacto Colectivo con garantía PSD2.
-- **`L306–361`**: Pestañas principales (`activas`, `ideas`, `logros`, `comercios`, `faq`), botón `🔍 Filtrar` y `#family-filters-bar` (`hidden` por defecto).
-- **`L362–369`**: `#fview-activas` (grid de campañas) y `#fview-detail` (contenedor de ficha detallada `.mobile-stack`).
-- **`L370–386`**: `#fview-ideas` (Buzón de Ideas con Quórum y regla Padre/Madre).
-- **`L387–398`**: `#fview-logros` (Galería Antes y Después).
-- **`L399–418`**: `#fview-comercios` (Directorio Comercios Amigos Oro/Plata/Bronce).
-- **`L419–570`**: `#fview-mihucha` (`.mobile-stack`: recarga puntual vs programada mensual, reembolso, entradas QR, chat anónimo `#FAM-XXXX`, autogestión fiscal DNI/NIE y derecho RGPD).
-- **`L571–617`**: `#fview-faq` (`.mobile-stack`: acordeones FAQ y buzón inteligente de ayuda).
+## 2. Entorno 1 · Familias y comercios (HTML)
 
-## 3. Markup HTML — Entorno 2: Panel Colegio / AFA / Club (`L618–1158`)
-- **`L618–659`**: Cabecera mancomunada del Centro, selector de centro demo, **Kit de 3 Medallas (`Bronce`, `Plata`, `Oro`)** y sub-navegación (`dashboard`, `moderation`, `studio`, `escrow`, `support`).
-- **`L660–712`**: `#sch-sub-dashboard` (KPIs del centro, filtros ocultos tras botón y línea gráfica de 6 estados con ID Escrow).
-- **`L713–829`**: `#sch-sub-moderation` (Moderación Fase 0, Doble Check con auditoría de firmas Verificadas/Sospechosas, moderación y renovación de comercios, KYB Paycomet y configuración visual/reglas del centro).
-- **`L830–1073`**: `#sch-sub-studio` (Estudio de Edición Dual: selector `Presupuesto` vs `Taquilla/Rifa`, candado semántico, Placa y Reto independientes, Pizarra TCO de 5 líneas en vivo y botón de Cartel A4 + QR).
-- **`L1074–1132`**: `#sch-sub-escrow` (Liquidación 100% a proveedor/centro, subida fotos Antes/Después, encuesta de redimensionamiento y reembolso automático 100%).
-- **`L1133–1158`**: `#sch-sub-support` (Canal prioritario Centro ➔ Super-Admin).
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Contenedor del entorno de familias | `id="env-family"` | L273 |
+| Portada del centro con barra de impacto | `id="school-hero-header"` | L277 |
+| Píldora de Mi Hucha | `id="header-wallet-pill"` | L312 |
+| Barra de filtros (oculta por defecto) | `id="family-filters-bar"` | L363 |
+| Grid de campañas | `id="fview-activas"` | L390 |
+| Ficha detallada (`.mobile-stack`) | `id="fview-detail"` | L395 |
+| Buzón de ideas | `id="fview-ideas"` | L398 |
+| Logros Antes / Después | `id="fview-logros"` | L415 |
+| Comercios amigos | `id="fview-comercios"` | L427 |
+| Mi Hucha (recargas, retirada, QR, chat, fiscal, RGPD) | `id="fview-mihucha"` | L447 |
+| FAQ y soporte | `id="fview-faq"` | L599 |
 
-## 4. Markup HTML — Entorno 3: Consola Super-Admin KORUM (`L1159–1478`)
-- **`L1159–1182`**: Cabecera ejecutiva Super-Admin y sub-pestañas (`bi`, `crm`, `rules`, `tickets`).
-- **`L1183–1321`**: `#sa-sub-bi` (KPIs globales, Gráfico de las 6 Fuentes de Ingresos, Tabla de Centros con `Cerradas Año/Hist.` y `Comercios Act./Hist.`, Top 10 e Iniciativas Globales con `💛 Aportaciones` y cabeceras ordenables `↕`).
-- **`L1322–1332`**: `#sa-sub-crm` (Contenedor de la Ficha 360º Ampliada del Centro).
-- **`L1333–1468`**: `#sa-sub-rules` (Tramos globales, costes reales Paycomet, validador en vivo de *Gastos de gestión digital*, mantenimiento con tope anual, medallas y gestor de categorías globales).
-- **`L1469–1478`**: `#sa-sub-tickets` (Bandeja centralizada de soporte).
+## 3. Entorno 2 · Panel de la entidad (HTML)
 
-## 5. Modales Globales e Imprimibles (`L1479–1915`)
-- **`L1479–1635`**: `#checkout-modal` (Checkout Dual Familia / Taquilla / Comercio con escudo KORUM, custodia Escrow regulada PSD2, check `🛡️ Activar aportación de garantía KORUM`, selector de cursos y métodos de pago).
-- **`L1636–1679`**: `#withdraw-iban-modal` *(Nota v8.5: migrado en producción a modal de Reembolso `Refund` PSD2 al medio de pago original con advertencia oficial)*.
-- **`L1680–1738`**: `#printable-ticket-modal` (Entrada / Papeleta QR imprimible con cabecera y pie oficial KORUM Escrow).
-- **`L1739–1785`**: `#medal-kit-modal` (Kit Oficial de Medalla descargable con sello web e informe).
-- **`L1786–1808`**: `#new-idea-modal` y `#sponsor-detail-modal`.
-- **`L1809–1867`**: `#poster-modal` (Cartel Oficial A4 imprimible con QR real y marco institucional KORUM Escrow).
-- **`L1868–1915`**: `#share-modal` (WhatsApp / redes) y `#login-modal`.
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Contenedor del panel, cabecera y medallas | `id="env-school"` | L646 |
+| Cuadro de mandos (6 estados, filtros ocultos) | `id="sch-sub-dashboard"` | L688 |
+| Moderación, doble firma, comercios, KYB y ajustes | `id="sch-sub-moderation"` | L741 |
+| Estudio dual y pizarra TCO | `id="sch-sub-studio"` | L858 |
+| Liquidación, Antes/Después, redimensionamiento y reembolso | `id="sch-sub-escrow"` | L1102 |
+| Soporte de la entidad al Super-Admin | `id="sch-sub-support"` | L1161 |
 
-## 6. Estado y Lógica JavaScript de Referencia (`L1916–5371`)
-- **`L1916–2351`**: Estado maestro (`globalRules`, `medalsConfig`, `schoolsDB`, `initiatives`, `sponsors`, `ideas`, `tickets`).
-- **`L2352–2446`**: Categorías efectivas, exenciones, cálculo tarifa digital taquilla y candado semántico.
-- **`L2447–2750`**: Renderizado de portada de Familias (`renderFamilyCampaigns` con `.die-cut-sticker`, `.tactile-btn`, `tabular-nums`) y Ficha Detallada (`openInitiativeDetail` con `.korum-trust-vault` y 4 líneas auditadas).
-- **`L2751–3115`**: Lógica completa del Checkout (`openCheckoutModal`, `updateChkSummary`, `completeDonation`).
-- **`L3116–3312`**: Buzón de Ideas (`renderFamilyIdeas` con `.korum-notebook-sheet`, `votePublicIdea`, `submitAnonymousIdeaPhase0`), Logros (`renderFamilyAchievements`) y Comercios (`renderFamilySponsors`).
-- **`L3313–3504`**: Lógica de *Mi Hucha*, DNI/NIE módulo 23, certificados fiscales y olvido RGPD.
-- **`L3505–3806`**: Cuadro de Mandos del Centro, Kit de Medallas, Moderación, Renovación de Comercios y Ajustes del Centro.
-- **`L3807–4230`**: Estudio Dual (`loadInitiativeIntoStudio`, `recalcStudioTCO`, `saveInitiativeFromStudio`), Liquidaciones, Fotos Antes/Después y Cartel A4.
-- **`L4231–4709`**: Analítica BI Super-Admin, Gráfico de 6 Fuentes, Ordenación `↕` (`sortSaTable`), Alertas `💎`/`🚨`, Auto-Impulso y Pop-up Ejecutivo.
-- **`L4710–5188`**: Ficha 360º (`renderSchoolCRM360`), Reglas Globales, Validador de Gestión Digital y Soporte/Moderación.
-- **`L5189–5371`**: Navegación de entornos, simulador móvil `430px`, perfiles demo y tooltip diferido de `1000ms`.
+## 4. Entorno 3 · Consola del Super-Admin (HTML)
+
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Contenedor de la consola | `id="env-superadmin"` | L1187 |
+| BI: KPIs, 6 fuentes, tablas ordenables | `id="sa-sub-bi"` | L1211 |
+| Ficha 360º | `id="sa-sub-crm"` | L1350 |
+| Reglas globales, costes y medallas | `id="sa-sub-rules"` | L1361 |
+| Bandeja de soporte | `id="sa-sub-tickets"` | L1497 |
+
+## 5. Modales e imprimibles (HTML)
+
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Checkout dual (familia, taquilla, comercio) | `id="checkout-modal"` | L1507 |
+| Retirada de saldo (en producción: reembolso al medio original) | `id="withdraw-iban-modal"` | L1664 |
+| Pop-up ejecutivo de iniciativa | `id="sa-init-popup-modal"` | L1692 |
+| Entrada / papeleta imprimible | `id="printable-ticket-modal"` | L1708 |
+| Kit de medalla | `id="medal-kit-modal"` | L1767 |
+| Nueva idea | `id="new-idea-modal"` | L1806 |
+| Detalle de comercio | `id="sponsor-detail-modal"` | L1827 |
+| Cartel A4 con QR | `id="poster-modal"` | L1837 |
+| Compartir en WhatsApp y redes | `id="share-modal"` | L1896 |
+| Acceso (demostración) | `id="login-modal"` | L1912 |
+
+## 6. Lógica JavaScript de referencia
+
+| Bloque | Ancla | Línea |
+| :--- | :--- | :--- |
+| Plantilla de 13 cursos | `const OFFICIAL_13_COURSES` | L1937 |
+| Estado maestro de demostración | `const appState = {` | L1944 |
+| Categorías efectivas y exenciones | `function getEffectiveCategoriesForSchool` | L2368 |
+| Gastos de gestión digital por entidad | `function getTicketDigitalFeeForSchool` | L2386 |
+| Candado semántico (versión con `.includes`, sustituir por `\b`) | `function checkCategoryComplianceFraud` | L2394 |
+| Portada de familias | `function renderFamilyCampaigns` | L2500 |
+| Ficha detallada y desglose de 4 líneas | `function openInitiativeDetail` | L2608 |
+| Selector de cursos | `function buildCoursesSelectHtml` | L2790 |
+| Abrir checkout | `function openCheckoutModal` | L2831 |
+| Resumen del checkout | `function updateChkSummary` | L2973 |
+| Completar pago | `function completeDonation` | L3010 |
+| Buzón de ideas | `function renderFamilyIdeas` | L3150 |
+| Firmar una idea | `function votePublicIdea` | L3208 |
+| Proponer una idea (Fase 0) | `function submitAnonymousIdeaPhase0` | L3267 |
+| Logros | `function renderFamilyAchievements` | L3290 |
+| Comercios amigos | `function renderFamilySponsors` | L3319 |
+| Recarga puntual | `function executeInstantTopup` | L3389 |
+| Recarga mensual | `function activateMonthlyTopup` | L3415 |
+| Retirada de saldo | `function confirmWithdrawHuchaToBank` | L3451 |
+| Vista de Mi Hucha | `function renderMiHucha` | L3464 |
+| Validación DNI/NIE | `function validateSpanishIDLive` | L3524 |
+| Certificado fiscal | `function downloadAutonomousTaxCert` | L3536 |
+| Derecho al olvido | `function exerciseRightToBeForgotten` | L3540 |
+| Explicación de medallas | `function renderSchoolMedalsExplainer` | L3562 |
+| Cuadro de mandos de la entidad | `function renderSchoolDashboard` | L3606 |
+| Moderación | `function renderSchoolModeration` | L3674 |
+| Renovación automática de comercios | `function simulateSponsorAutomaticRenewal` | L3792 |
+| Ajustes de la entidad | `function saveSchoolGlobalSettings` | L3825 |
+| Cargar iniciativa en el Estudio | `function loadInitiativeIntoStudio` | L3885 |
+| Pizarra TCO | `function recalcStudioTCO` | L3942 |
+| Guardar desde el Estudio | `function saveInitiativeFromStudio` | L4060 |
+| Cerrar y publicar un logro | `function closeAndPublishAchievedInitiative` | L4167 |
+| Encuesta de redimensionamiento | `function sendResizePollToDonors` | L4199 |
+| Reembolso y reasignación de comercios | `function executeAutomaticRefundAndSponsorReassign` | L4203 |
+| Cartel A4 | `function updatePosterPreview` | L4251 |
+| Ingresos de una iniciativa | `function calculateInitiativeRevenueBreakdown` | L4273 |
+| Análisis de Auto-Impulso | `function calculateSelfBoostAnalysis` | L4325 |
+| Corregir tarifa con retorno negativo | `function fixNegativeReturnTariff` | L4343 |
+| Ejecutar Auto-Impulso | `function executeSuperAdminSelfBoost` | L4358 |
+| Gráfico de 6 fuentes | `function renderRevenueSourcesChartInto` | L4381 |
+| Ordenación de tablas | `function sortSaTable` | L4430 |
+| Pop-up ejecutivo | `function openSuperAdminInitiativePopup` | L4460 |
+| BI del Super-Admin | `function renderSuperAdminBI` | L4552 |
+| Ficha 360º | `function renderSchoolCRM360` | L4760 |
+| Reglas individuales de la entidad | `function saveIndividualSchoolRules` | L5001 |
+| Validador de gastos de gestión digital | `function validateTicketFeeCoverageLive` | L5022 |
+| Costes de pasarela y recarga | `function saveGatewayAndTopupCosts` | L5043 |
+| Reglas económicas globales | `function saveGlobalEconomicRules` | L5055 |
+| Configuración de medallas | `function saveMedalsConfiguration` | L5075 |
+| Categorías globales y tickets | `function renderSuperAdminCategoriesAndTickets` | L5089 |
+| Ticket de ayuda inteligente | `function submitSmartHelpTicket` | L5136 |
+| Aprobar idea en Fase 0 | `function approvePhase0ToPublic` | L5174 |
+| Doble firma de idea a presupuesto | `function approveDoubleCheckToBudget` | L5185 |
+| Moderar comercio | `function moderateSponsor` | L5212 |
+| Navegación entre entornos (demostración) | `function switchEnv` | L5231 |
+| Simulador móvil (demostración) | `function setFamilyViewport` | L5308 |
+| Compartir | `function openShareModal` | L5323 |
+| Perfiles simulados (demostración) | `function switchSimulatedUserProfile` | L5338 |

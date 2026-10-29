@@ -1,0 +1,161 @@
+# Experiencia de producto · KORUM v8.5
+
+> Documento que manda en **cómo se vive** KORUM: recorridos, momentos de celebración, emails, estados de pantalla, animaciones, accesibilidad, idiomas, tono y métricas. Lo que la app **hace** está en el [PRD](PRD_3_ENTORNOS_KORUM.md); cómo se **ve**, en la [skill de marca](../.agents/skills/korum-brand-design-system/SKILL.md).
+
+---
+
+## 1. Principios
+
+1. **Diez segundos para aportar.** Desde que se abre el checkout hasta que se confirma el pago con Bizum: ≤ 10 s y ≤ 3 toques.
+2. **Confianza cálida.** El dinero se explica con claridad (a dónde va, qué pasa si no se llega) y con orgullo de comunidad, nunca con jerga financiera.
+3. **Celebrar, nunca culpabilizar.** Se celebra cada aportación y cada logro; jamás se señala a quien no aporta (Regla 03 §6).
+4. **Cada pantalla tiene una siguiente acción** obvia, también cuando está vacía o hay un error.
+5. **Móvil, accesible y en tu idioma** desde el primer día: castellano, catalán e inglés.
+
+---
+
+## 2. Personas
+
+| Persona | Contexto | Qué necesita | Qué le hace desconfiar |
+| :--- | :--- | :--- | :--- |
+| **Laura, madre (38)** | Recibe el enlace en el grupo de WhatsApp de 3ºB. Móvil, prisa, Bizum. | Entender en 5 s qué se pide y pagar en 10. | Formularios largos, crear cuenta, letra pequeña. |
+| **José, abuelo (68)** | Le reenvían el enlace; dona con tarjeta. | Letra legible, botones grandes, un recibo claro. | Pasos confusos, ventanas emergentes. |
+| **Marta, presidenta del AMPA (44)** | Voluntaria con poco tiempo; firma desde el móvil. | Saber qué falta por hacer y firmar en 30 s. | Responsabilidad legal poco clara, papeleo. |
+| **Carlos, director del centro (55)** | Prudente; le preocupa la imagen del colegio. | Control, transparencia y que nadie se sienta presionado. | Que parezca un negocio o un banco. |
+| **Jordi, tesorero del club (50)** | Lleva las cuentas de un club de base. | Conciliación clara, entradas y rifas sin efectivo. | Comisiones ocultas. |
+| **Pilar, comercio del barrio (47)** | Panadería o clínica dental cercana. | Visibilidad entre familias y factura al momento. | Pagar sin ver retorno. |
+| **Álex, voluntario de portería (35)** | En la puerta de la fiesta, con su móvil y mala cobertura. | Verde o rojo, grande y al instante. | Apps que instalar, contraseñas. |
+
+---
+
+## 3. Recorridos y sus momentos *wow*
+
+| Recorrido | Objetivo | Momento *wow* |
+| :--- | :--- | :--- |
+| **Familia desde WhatsApp** → ficha → checkout → pago | ≤ 60 s en total; ≤ 10 s el pago | La barra de progreso **sube en directo** con su aportación, mensaje *"¡Sois 165 familias!"* y tarjeta lista para compartir con su curso. |
+| **Cofirmante** recibe *"Marta ha firmado, falta tu firma"* → enlace → código → firma | ≤ 30 s | Sello *"APROBADO"* que se estampa con una animación de tampón. |
+| **Entidad nueva**: alta → primera campaña con plantilla → publicar | ≤ 5 min hasta tener campaña lista (el KYB se completa antes de cobrar, sin bloquear el borrador) | Vista previa instantánea de **su** tarjeta de WhatsApp y de **su** cartel A4 con QR, con el texto del mensaje para el grupo ya escrito. |
+| **Comercio**: patrocinio → factura → directorio | ≤ 2 min | Email *"Ya eres Comercio ORO de CEIP Cervantes"* con un **cartel para su escaparate** ("Comercio amigo de…") en PDF. |
+| **Portería**: PIN → escanear | ≤ 0,5 s por entrada | Pantalla entera en verde o rojo, sonido y vibración; contador de aforo en vivo; en rifas, sorteo proyectable con animación de tómbola. |
+| **Logro**: campaña al 100 % → obra → fotos | Aviso en ≤ 1 min tras el último pago | Email *"¡Lo hemos conseguido!"* a todas las familias y, semanas después, *"Mirad cómo ha quedado"* con el **Antes y Después**. |
+| **Campaña que no llega** | Reembolso automático, sin gestiones | Mensaje cálido: *"Esta vez no ha sido posible. Te hemos devuelto el 100 %. ¡Gracias por intentarlo con nosotros!"* |
+| **Super-Admin** por la mañana | 2 min para saber cómo va todo | Panel con alertas priorizadas (💎, 🚨, conciliación, firmas atascadas, ventanas de 90 días). |
+
+---
+
+## 4. Catálogo de emails y notificaciones
+
+Reglas: solo emails **transaccionales** por defecto (los comerciales exigen consentimiento); remitente *"{Entidad} vía KORUM"*; idioma de la persona; versión HTML y de texto; botón principal único; sin adjuntos pesados (enlaces de descarga). WhatsApp se usa **solo para compartir enlaces** (`wa.me`); no se envían mensajes automáticos por WhatsApp.
+
+| `templateKey` | Cuándo | A quién | Contenido y botón |
+| :--- | :--- | :--- | :--- |
+| `auth.magicLink` / `auth.otp` | Al iniciar sesión | Persona | Enlace o código, caducidad visible |
+| `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
+| `ticket.pass` | Entrada o papeleta comprada | Comprador | QR, número de serie, fecha y lugar; *Añadir al calendario* |
+| `initiative.goalReached` | Campaña al 100 % | Donantes y firmantes | Celebración y próximos pasos; *Compartir el logro* |
+| `initiative.achievementPhotos` | Publicadas las fotos | Donantes | Antes y Después; *Ver cómo ha quedado* |
+| `initiative.expired` | Vence sin meta | Firmantes | Opciones: redimensionar o reembolsar; *Decidir ahora* |
+| `refund.issued` | Reembolso ejecutado | Donante | Importe devuelto y medio; plazo bancario orientativo |
+| `doubleCheck.pending` | Falta la 2ª firma | Cofirmante | Qué se firma y por qué; *Firmar ahora* (enlace de un solo uso) |
+| `payout.executed` | Liquidación hecha | Firmantes | Importe, destino y factura; *Subir fotos del Después* |
+| `splitWindow.warning` | Faltan 15 días de la ventana de 90 | Firmantes y Super-Admin | Qué hacer para liquidar a tiempo |
+| `sponsor.welcome` | Patrocinio confirmado | Comercio | Factura, justificante y cartel de escaparate |
+| `sponsor.renewalNotice` | 30 días antes de renovar | Comercio | Importe, fecha y cómo cancelar |
+| `sponsor.creditPool` | Patrocinio en la bolsa | Comercio | Plazo y opciones |
+| `pledge.charged` / `pledge.skipped` | Cobro mensual de Mi Hucha o mes sin iniciativa activa | Familia | A qué iniciativa ha ido; *Pausar o cambiar* |
+| `tax.certificateReady` | Enero | Donantes con NIF en entidades con Ley 49/2002 | Descargar certificado |
+| `org.model182Reminder` | 2 de enero | Firmantes de entidades con Ley 49/2002 | Descargar el Modelo 182 |
+| `org.kybStatus` | Cambia el estado del KYB | Firmantes | Qué falta o confirmación |
+| `privacy.exportReady` | Exportación lista | Persona | Descarga (enlace caducable) |
+| `support.reply` | Respuesta a un ticket | Remitente | Respuesta y enlace al hilo |
+
+---
+
+## 5. Estados de pantalla
+
+| Vista | Vacío | Error |
+| :--- | :--- | :--- |
+| Portada de la entidad sin campañas | *"Todavía no hay campañas abiertas. ¿Tienes una idea para el cole? Propónla en el Buzón."* → *Proponer idea* | *"No hemos podido cargar las campañas. Vuelve a intentarlo en unos segundos."* → *Reintentar* |
+| Buzón de ideas vacío | *"Sé la primera familia en proponer una mejora."* | Igual que arriba |
+| Logros vacíos | *"Aquí aparecerán las mejoras conseguidas, con su Antes y Después."* | — |
+| Pago rechazado | — | *"Bizum no ha confirmado el pago. No se te ha cobrado nada."* → *Probar otra vez* / *Pagar con tarjeta* (sin perder lo introducido) |
+| Panel de una entidad nueva | Guía de 3 pasos: *Crea tu primera campaña* (con plantillas) · *Invita a tu cofirmante* · *Completa el KYB* | — |
+| Portería sin conexión | — | Banda ámbar: *"Sin conexión: seguimos validando con la lista descargada."* |
+| Super-Admin sin alertas | *"Todo en orden. Ninguna alerta pendiente."* | — |
+
+Carga: siempre **esqueletos** con la forma del contenido; nunca pantallas en blanco ni spinners a pantalla completa.
+
+---
+
+## 6. Movimiento, sonido y celebraciones
+
+- **Duración:** 150–300 ms, curvas suaves. Nada se mueve sin motivo.
+- **Celebraciones:** barra de progreso que se llena al confirmar el pago; confeti breve al llegar al 100 %; sello de tampón al aprobar una firma; pegatina que "salta" al desbloquear un reto de curso.
+- **Portería:** pitido corto + vibración corta (válida); zumbido + vibración larga (no válida). Sonido desactivable.
+- **`prefers-reduced-motion`:** sin confeti ni desplazamientos; solo cambios de opacidad.
+
+---
+
+## 7. Accesibilidad
+
+- **WCAG 2.2 AA** en toda la aplicación (Regla 03 §8). La Ley Europea de Accesibilidad se aplica a servicios de comercio electrónico desde junio de 2025.
+- Página de **declaración de accesibilidad** con un canal para comunicar problemas.
+- Tamaño de texto base de 16 px, ampliable al 200 % sin romper el diseño; objetivos táctiles de 44 px.
+- Prueba manual con lector de pantalla (VoiceOver y TalkBack) en el checkout y en la portería en el Sprint 5.5.
+
+---
+
+## 8. Idiomas
+
+- **Idiomas de lanzamiento:** castellano (`es`, por defecto), catalán (`ca`) e inglés (`en`).
+- **Proceso:** el texto nace en castellano en `messages/es.json`; el catalán y el inglés se escriben de forma nativa (no traducción literal) y los textos legales los revisa una persona nativa.
+- **Vocabulario fijo:**
+
+| Concepto | es | ca | en |
+| :--- | :--- | :--- | :--- |
+| Mi Hucha | Mi Hucha | La meva Guardiola | My Piggy Bank |
+| AMPA / AFA | AMPA | AFA | Parents' Association |
+| Recaudando (`FUNDRAISING`) | Recaudando | Recaptant | Fundraising |
+| Logro conseguido (`GOAL_REACHED`) | ¡Conseguido! | Aconseguit! | Goal reached! |
+| Comercios amigos | Comercios amigos | Comerços amics | Local partners |
+| Gastos de gestión digital | Gastos de gestión digital | Despeses de gestió digital | Digital handling fee |
+| Aportación voluntaria a KORUM | Aportación voluntaria | Aportació voluntària | Optional contribution |
+
+- **Ampliación futura:** valenciano (como variante de `ca`), euskera y gallego, cuando haya entidades que lo pidan; la arquitectura ya lo permite.
+
+---
+
+## 9. Métricas y analítica
+
+- **Métrica principal:** campañas que alcanzan su meta por mes.
+- **Embudo de aportación:** vista de la ficha → apertura del checkout → pago completado (objetivo de conversión del piloto: ≥ 35 % desde la apertura del checkout) y tiempo mediano hasta pagar (≤ 15 s).
+- **Otras:** % de campañas logradas, tiempo mediano de la doble firma, tasa de activación de la aportación voluntaria (sustituye al 75 % supuesto del business case), entidades activas, retención anual de entidades, aportaciones por campaña, satisfacción de las entidades (encuesta de 1 pregunta tras cada campaña).
+- **Cómo se mide:** eventos de Plausible **sin datos personales** (`checkout_open`, `payment_success`, `share_click`, `idea_signed`) y consultas a nuestra base de datos para todo lo económico. El Super-Admin ve estas métricas en su panel.
+
+---
+
+## 10. Tono y microcopy
+
+- **De tú, cálido, breve, concreto.** Una idea por frase. Verbos de acción en los botones (*Aportar 25 €*, *Firmar ahora*).
+- **Sí:** *"Con tu aportación, 3ºB está más cerca de su tarde de cine."* · *"Si no llegamos a la meta, te devolvemos el 100 %."*
+- **No:** *"Faltan las aportaciones de 7 familias de 3ºB."* · *"Tu deuda"* · *"propina"* · jerga como *"split transfer"* o *"escrow"* en público.
+- Números siempre con su unidad y formato del idioma; fechas relativas cuando ayudan (*"quedan 5 días"*).
+
+---
+
+## 11. Plantillas de campaña (alta en 5 minutos)
+
+Cada plantilla trae título, descripción, categoría, reto sugerido y una imagen de portada. La entidad solo ajusta presupuesto y fechas.
+
+| Plantilla | Vertical | Formato | Categoría |
+| :--- | :--- | :--- | :--- |
+| Ventiladores para las aulas | Escolar | Presupuesto | Infraestructura y confort |
+| Toldos y sombra en el patio | Escolar | Presupuesto | Patios y deporte |
+| Pizarras digitales | Escolar | Presupuesto | Tecnología y recursos |
+| Biblioteca de aula | Escolar | Presupuesto | Tecnología y recursos |
+| Viaje de fin de curso | Escolar | Presupuesto | Comunidad y viajes (exenta) |
+| Marcador LED del pabellón | Deportiva | Presupuesto | Patios y deporte |
+| Equipaciones para las categorías base | Deportiva | Presupuesto | Patios y deporte |
+| Instrumentos para la banda o la escuela de música | Cultural | Presupuesto | Tecnología y recursos |
+| Fiesta solidaria con rifa | Todas | Taquilla / rifa | Taquilla y rifas |
+| Becas para que nadie se quede fuera | Todas | Presupuesto | Solidaridad y becas (exenta) |

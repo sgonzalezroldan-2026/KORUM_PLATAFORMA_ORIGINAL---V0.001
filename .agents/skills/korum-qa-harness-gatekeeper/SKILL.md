@@ -1,40 +1,56 @@
 ---
 name: korum-qa-harness-gatekeeper
 description: >-
-  Arnés determinista de Aseguramiento de Calidad (5-Gate Definition of Done + Bucle Cerrado de
-  Auto-Corrección) de KORUM: escáner verify-invariants.mjs, suites Vitest de fuzzing y concurrencia,
-  suites Playwright E2E y simulación interactiva de usuario en navegador real (playwright-browser MCP)
-  en Desktop (1440px) y Mobile (430px) iterando hasta alcanzar 0 errores antes de entregar.
+  Arnés de calidad de KORUM (definición de terminado en 5 puertas + bucle de corrección): escáner
+  verify-invariants.mjs (código, esquema, semilla y coherencia de la documentación), suites Vitest de
+  fuzzing y concurrencia, suites Playwright E2E con accesibilidad (axe) y prueba de usuario real en
+  navegador mediante el servidor MCP de Playwright, en escritorio (1440px) y móvil (430px), iterando
+  hasta 0 errores antes de entregar.
 ---
 
-# Skill · Arnés Determinista QA, Simulación de Usuario en Navegador y Bucle `0 Fallos`
+# Skill · Arnés de calidad, prueba de usuario en navegador y bucle `0 fallos`
 
-Ningún Micro-Sprint de `docs/PLAN_IMPLEMENTACION_ATOMICO.md` puede presentarse como terminado al usuario sin superar al **100% (`0` fallos)** las **5 Puertas Objetivas** y todos sus criterios en `docs/QA_ACCEPTANCE_CRITERIA.md`.
+Ningún sprint de [docs/PLAN_IMPLEMENTACION_ATOMICO.md](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md) se presenta como terminado sin superar al **100 % (`0` fallos)** las 5 puertas y todos sus criterios de [docs/QA_ACCEPTANCE_CRITERIA.md](../../../docs/QA_ACCEPTANCE_CRITERIA.md).
 
-## 1. Puerta 1 — Escáner Determinista de Invariantes
-Ejecuta siempre antes y después de los tests:
-```powershell
+## 1. Puerta 1 · Escáner determinista de invariantes
+
+Se ejecuta antes y después de los tests:
+
+```bash
 node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs
 ```
-Falla con código `1` si detecta: `Float` en Prisma, placeholders (`TODO`, `FIXME`, `// ...`), copy prohibido (`"propina"`, `"(Desactivado)"`), fugas `NEXT_PUBLIC_*` de secretos o `>= 1` céntimo de descuadre en `seed_data.json`.
 
-## 2. Puerta 2 — Suites Automatizadas Unitarias, Fuzzing y Concurrencia (`Vitest`)
-1. **Fuzzing Paramétrico TCO (`1.000` iteraciones deterministas):** verifica `finalGoalCents % 100 === 0` y `netGuaranteedCents + bracketFeeCents + maintFeeCents + gatewayFeeCents === finalGoalCents` (`0` céntimos de desviación en `1.000/1.000` casos).
-2. **Concurrencia Atómica (`Promise.all`):** verifica ausencia total de sobreventa en las últimas entradas de taquilla y absorción idempotente de webhooks Paycomet duplicados.
-3. **Regresión Semántica y Fiscal:** verifica `0` falsos positivos en `"sin cobrar"` / `"obra de teatro"` / `"sobras"` y exclusión total de `TOPUP` y `TICKET` en certificados IRPF y fichero `.BOE` del Modelo 182.
+Falla con código `1` si detecta:
 
-## 3. Puerta 4 — Doble Verificación en Navegador Real (Suite Playwright + Agente Interactuando en Vivo)
-En todo Micro-Sprint con interfaz (`Sprint 1.1` y `Sprints 3.1–5.4`), la verificación en navegador consta de **dos capas complementarias**:
-1. **Tests E2E Automatizados y Persistentes (`tests/e2e/*.spec.ts` vía `npm run test:e2e`):**
-   - Quedan grabados en el repositorio para garantizar no-regresión perpetua en todos los sprints siguientes.
-   - Ejecutan en `1440x900` (Desktop) y `430x932` (Mobile) verificando flujos completos, `0` errores `pageerror` / `console.error`, `document.documentElement.scrollWidth <= 430` y apilado vertical estricto en `.mobile-stack`.
-2. **Prueba Exploratoria de Usuario Real por el Agente `qa-e2e-verifier` (`playwright-browser` MCP):**
-   - El subagente abre la aplicación en vivo con `playwright_navigate`, redimensiona con `playwright_resize` (`1440x900` y `430x932`), hace clic, rellena formularios y abre modales como un usuario real (`playwright_click`, `playwright_fill`, `playwright_select`), lee `playwright_console_logs` y captura pantallas con `playwright_screenshot` (inspeccionándolas visualmente con `read_file`).
+- **Código y esquema:** `Float` en Prisma; placeholders (`TODO`, `FIXME`, `// ...`); textos prohibidos (`"propina"`, `"(Desactivado)"`); secretos expuestos con `NEXT_PUBLIC_`; descuadres de `>= 1` céntimo en `seed_data.json`; archivos con doble extensión.
+- **Coherencia de la documentación:** restos de la marca descartada; el nombre antiguo del rol de cofirmante (hoy `COSIGNER`); anclas de [korum-v8-anatomy.md](../korum-nextjs-multitenant-ui/references/korum-v8-anatomy.md) que ya no coinciden con su línea del prototipo; y `.claude/` desincronizado respecto a `.agents/` (se corrige con `node scripts/sync-ai-context.mjs`).
 
-## 4. Puerta 5 — Bucle Cerrado de Auto-Corrección (`Fix ➔ Re-Test ➔ 0 Fallos`)
+## 2. Puerta 2 · Tests unitarios, fuzzing y concurrencia (Vitest)
+
+1. **Fuzzing TCO (`1.000` iteraciones deterministas con semilla fija):** `finalGoalCents % 100 === 0` y `netGuaranteedCents + bracketFeeCents + maintFeeCents + gatewayFeeCents === finalGoalCents` en `1.000/1.000` casos.
+2. **Libro mayor:** cada asiento cumple `Σ DEBIT === Σ CREDIT`; repetir la misma `idempotencyKey` devuelve el asiento existente; `update`/`delete` sobre asientos falla.
+3. **Concurrencia (`Promise.all`):** sin sobreventa en las últimas entradas y sin doble abono ante webhooks duplicados.
+4. **Regresión semántica y fiscal:** `0` falsos positivos en `"sin cobrar"`, `"obra de teatro"`, `"sobras"` (y sus equivalentes en catalán e inglés) y exclusión total de `TOPUP` y `TICKET` en certificados y en el Modelo 182.
+
+## 3. Puerta 4 · Doble verificación en navegador real
+
+En todo sprint con interfaz:
+
+1. **Tests E2E persistentes** (`tests/e2e/*.spec.ts`, `npm run test:e2e`):
+   - Proyectos `desktop` (`1440×900`) y `mobile` (`430×932`).
+   - `0` errores `pageerror` / `console.error`, `document.documentElement.scrollWidth <= 430` y apilado vertical real en `.mobile-stack`.
+   - **Accesibilidad:** `@axe-core/playwright` sin incidencias `serious` ni `critical` en cada página visitada.
+   - **Idiomas:** las páginas tocadas se recorren al menos en `es` y en otro idioma (`ca` o `en`), sin claves de traducción sin resolver.
+2. **Prueba exploratoria de `qa-e2e-verifier` con el servidor MCP de Playwright** (en Claude Code, servidor `playwright` de `.mcp.json`; en Antigravity, el de `.agents/mcp_config.json`):
+   - Navega como una persona real (madre o padre invitado, familia registrada, comercio, gestor/a de la entidad, voluntario/a de portería, Super-Admin), redimensiona a `1440×900` y `430×932`, pulsa, rellena formularios y abre modales.
+   - Revisa los mensajes de consola, mide `scrollWidth` con una evaluación en página y toma capturas para inspeccionarlas visualmente.
+
+## 4. Puerta 5 · Bucle de corrección (`corregir ➔ repetir ➔ 0 fallos`)
+
 ```text
-[Construcción] ──► [G1 Invariantes + TS] ──► [G2 Vitest] ──► [G3 War Room] ──► [G4 Playwright + MCP Browser Vivo]
-       ▲                                                                                     │
-       └────────────── SI HAY >= 1 FALLO: Corregir causa raíz y RE-EJECUTAR TODO ◄───────────┘
+[Construcción] ──► [P1 invariantes + tipos + lint] ──► [P2 Vitest] ──► [P3 War Room] ──► [P4 Playwright + MCP]
+       ▲                                                                                          │
+       └────────────────── SI HAY ≥ 1 FALLO: corregir la causa raíz y REPETIR TODO ◄──────────────┘
 ```
-Está prohibido entregar un sprint con fallos pendientes o pedir al usuario que depure manualmente un error reproducible: si cualquier puerta falla, se corrige el código y se **vuelve a ejecutar el ciclo completo (incluyendo re-probar en navegador)** hasta que el resultado sea `100% PASS / 0 Errores`.
+
+Prohibido entregar un sprint con fallos pendientes o pedir al usuario que depure un error reproducible.

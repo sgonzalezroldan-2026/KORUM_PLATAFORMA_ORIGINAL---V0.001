@@ -20,15 +20,15 @@ Miles de **Colegios (públicos, concertados y privados), AFAs/AMPAs y Clubes Dep
 
 ## 2. La Solución KORUM: Los 5 Pilares del Modelo Next-Level
 
-KORUM transforma ese problema en una infraestructura digital **100% automatizada, neutral, alegre y blindada regulatoriamente** sobre cinco pilares:
+KORUM transforma ese problema en una infraestructura digital **100% automatizada, neutral, alegre y con el cumplimiento normativo integrado desde el diseño** sobre cinco pilares:
 
 1. **Del WhatsApp al Quórum Auditado + Doble Firma Mancomunada Real:**
    - Cualquier familia propone una mejora con alias privado (`Código #FAM-XXXX`).
    - Tras el filtro rápido de Fase 0, la comunidad firma digitalmente con email verificado y normalizado (permitiendo hasta 2 cuentas familiares por dispositivo doméstico: padre y madre).
    - Al alcanzar el quórum, exige el **Doble Check mancomunado criptográfico (`Dirección` + `Presidencia AFA/Junta`)** y **100% libertad del centro para presupuestar con el proveedor que desee**.
-2. **Seguridad Bancaria Escrow en Céntimos (Todo o Nada con Paycomet + PSD2):**
-   - Cada iniciativa cuenta con su propia orden de custodia **Escrow (`WLT-ESC-XXX`)** en Paycomet respaldada por un libro mayor contable de doble partida en céntimos enteros.
-   - Las familias aportan en 10 segundos con **Bizum, Tarjeta, Apple/Google Pay o el saldo pre-asignado de su Hucha KORUM** (sin obligación de contraseña; solo email ligero en modo invitado para entrega inmediata de recibos y entradas QR).
+2. **Todo o Nada con Paycomet (KORUM no toca el dinero):**
+   - Cada iniciativa tiene su propia hucha (`WLT-ESC-XXX`): los cobros los procesa y retiene **Paycomet**, entidad de pago autorizada por el Banco de España, y KORUM los registra en un libro mayor de doble partida en céntimos enteros. KORUM es la tecnología; no custodia fondos.
+   - Las familias aportan en 10 segundos con **Bizum, tarjeta, Apple/Google Pay** o con su **aportación mensual programada de Mi Hucha** (sin contraseña; solo email en modo invitado para recibir al instante el recibo y las entradas QR).
    - **Garantía absoluta:** Si no se alcanza el 100% en plazo (y no se aprueba redimensionar), Paycomet devuelve automáticamente el 100% al medio de pago original de cada familia sin pedir IBANs ni asumir riesgos de custodia manual.
 3. **Taquilla Escolar, Rifas Numeradas y "Modo Portería QR" sin Instalar App:**
    - Venta de entradas con bloqueo atómico de aforo o papeletas de rifa numeradas correlativamente (`#0001`–`#N`), generando al instante pases firmados criptográficamente (`HMAC-SHA256`).
@@ -45,7 +45,7 @@ KORUM transforma ese problema en una infraestructura digital **100% automatizada
 
 KORUM opera de forma 100% autónoma y escalable sin equipos comerciales pesados ni intermediación de obras, monetizando exclusivamente el valor transaccional y digital mediante **6 vías limpias**:
 
-1. **🛡️ Aportación Voluntaria de Garantía KORUM (Checkout Familias):** Sustituye la "propina" por 3 garantías reales (donación 100% íntegra al centro, reembolso automático Escrow y emisión automática del certificado/justificante fiscal).
+1. **🛡️ Aportación Voluntaria a KORUM (Checkout Familias):** importe opcional, con el check **desmarcado** por defecto, con el que la familia sostiene el servicio que garantiza a todas las familias, aporten o no: donación 100% íntegra al centro, devolución automática si no se llega a la meta y emisión automática del certificado o justificante.
 2. **🏗️ Comisión por Tramos sobre Obras/Equipamiento (`5% / 4% / 3%`):** Con campañas solidarias/viajes exentas (`0%`), **Importe Exento Anual por Defecto (`1.000 €`)** y **Becas de Ampliación de Exención (`+500 €`, `+1.000 €`, `+2.000 €`)** según las Medallas `Bronce`, `Plata` y `Oro`.
 3. **🏪 Fee de Gestión Publicitaria sobre Patrocinios de Comercios (`+15%`):** Sumado encima del patrocinio con factura Veri\*factu para que al centro le llegue el 100% íntegro.
 4. **🎟️ "Gastos de gestión digital" en Entradas y Rifas QR (`Fijo + %`):** Cubren el coste real bruto de Paycomet y generan margen neto limpio por cada entrada emitida.
@@ -56,7 +56,7 @@ KORUM opera de forma 100% autónoma y escalable sin equipos comerciales pesados 
 
 ## 4. Escalabilidad Multi-Vertical Nativa ("Future-Proof")
 
-El modelo `Organization` adapta automáticamente textos y selectores de participación según su `vertical`:
+El modelo `Organization` adapta automáticamente textos y selectores de participación según su `vertical`. En todos los casos cobra la **entidad titular** (AMPA/AFA, titular de un colegio privado o concertado, fundación, club o asociación); un colegio público participa siempre a través de su AMPA/AFA:
 - **Vertical 1 (`SCHOOL`):** Colegios Públicos, Concertados, Privados, Fundaciones Educativas, AFAs/AMPAs y Guarderías (plantilla de **13 cursos oficiales + comunidad**).
 - **Vertical 2 (`SPORTS_CLUB`):** Clubes Deportivos Base (fútbol, baloncesto, tenis, natación, gimnasia), adaptando automáticamente el reto colectivo a **Categorías/Equipos** (*Prebenjamín, Benjamín, Alevín, Infantil, Cadete, Juvenil, Sénior, Afición*).
 - **Vertical 3 (`CULTURAL`):** Escuelas de Música, Conservatorios, Grupos Scout, Fallas/Peñas y Asociaciones Culturales.

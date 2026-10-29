@@ -1,0 +1,224 @@
+/*
+ * KORUM · Sistema visual híbrido "Varsity Heritage Colegial + Cuaderno Vivo de Patio".
+ * Tokens y capas según .agents/skills/korum-brand-design-system. Tailwind 4 con configuración en CSS (@theme).
+ * Solo se escanea src/: el prototipo y la documentación no deben generar utilidades.
+ */
+@import "tailwindcss" source(none);
+@source "../";
+
+@theme {
+  /* Capa 1 · Sudadera colegial */
+  --color-varsity-navy: #101f38;
+  --color-varsity-navy-deep: #0a1424;
+  --color-varsity-gold: #f59e0b;
+  --color-varsity-gold-deep: #d97706;
+  --color-varsity-ivory: #fdfbf7;
+  --color-varsity-emerald: #047857;
+  --color-varsity-emerald-bright: #10b981;
+
+  /* Capa 2 · Cuaderno vivo de patio */
+  --color-patio-cream: #fffdf8;
+  --color-patio-stamp: #dc2626;
+  --color-patio-stamp-soft: #ff5a43;
+  --color-patio-rule: #e2e8f0;
+  --color-patio-rule-strong: #cbd5e1;
+  --color-patio-tape: #fde047;
+  --color-patio-sun: #ffb800;
+
+  /* Texto: contraste AA sobre el papel crema y sobre blanco */
+  --color-ink: #1e293b;
+  --color-ink-soft: #475569;
+
+  --font-corp: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-joy: var(--font-fredoka), ui-rounded, "Nunito", system-ui, sans-serif;
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-patch: 1.25rem;
+  --shadow-notebook: 0 1px 0 rgb(16 31 56 / 0.04), 0 10px 24px -12px rgb(16 31 56 / 0.25);
+  --shadow-vault: 0 0 0 1px rgb(16 31 56 / 0.08), 0 8px 20px -10px rgb(16 31 56 / 0.35);
+
+  --animate-skeleton: korum-skeleton 1.4s ease-in-out infinite;
+  --animate-toast-in: korum-toast-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-tooltip-in: korum-fade-in 150ms ease-out;
+}
+
+@keyframes korum-skeleton {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@keyframes korum-toast-in {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes korum-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background-color: var(--color-patio-cream);
+  }
+
+  body {
+    min-height: 100dvh;
+    color: var(--color-ink);
+    background-color: var(--color-patio-cream);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-wrap: break-word;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-varsity-gold-deep);
+    outline-offset: 2px;
+  }
+
+  img, svg, video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Movimiento: sin animaciones si la persona lo pide (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* Capa 2 · fondos de comunidad */
+  .korum-paper-dots {
+    background-color: var(--color-patio-cream);
+    background-image: radial-gradient(circle, rgb(16 31 56 / 0.07) 1px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+
+  .korum-court-grid {
+    background-color: #f4f7fb;
+    background-image:
+      linear-gradient(rgb(4 120 87 / 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(4 120 87 / 0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Hoja de cuaderno pautada con margen vertical coral */
+  .korum-notebook-sheet {
+    position: relative;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.25rem 1.25rem 3rem;
+    background-color: #ffffff;
+    background-image: repeating-linear-gradient(transparent, transparent 27px, var(--color-patio-rule) 28px);
+    box-shadow: var(--shadow-notebook);
+  }
+  .korum-notebook-sheet::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 2.25rem;
+    width: 2px;
+    background-color: var(--color-patio-stamp-soft);
+    opacity: 0.55;
+  }
+
+  /* Sello de goma entintado (decorativo: el texto sigue siendo legible sin la rotación) */
+  .korum-stamp-badge {
+    display: inline-block;
+    border: 2px dashed var(--color-patio-stamp);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    color: #b91c1c;
+    font-family: var(--font-joy);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transform: rotate(-2deg);
+  }
+
+  /* Parche bordado con pespunte discontinuo */
+  .varsity-patch {
+    border: 1.5px dashed var(--color-varsity-gold-deep);
+    border-radius: 0.75rem;
+    background-color: var(--color-varsity-ivory);
+    box-shadow: 0 6px 16px -10px rgb(16 31 56 / 0.4);
+  }
+
+  /* Pegatina troquelada para retos, medallas y Matching 2x */
+  .die-cut-sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    padding: 0.25rem 0.9rem;
+    background-color: var(--color-patio-tape);
+    color: var(--color-varsity-navy);
+    font-weight: 700;
+    box-shadow: 0 4px 10px -4px rgb(16 31 56 / 0.45);
+    transform: rotate(-1.5deg);
+    transition: transform 180ms ease-out;
+  }
+  .die-cut-sticker:hover {
+    transform: rotate(1deg) scale(1.03);
+  }
+
+  /* Botón de conversión con relieve y respuesta amortiguada al pulsar */
+  .tactile-btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 0.75rem;
+    padding: 0.65rem 1.25rem;
+    background-color: var(--color-varsity-gold);
+    color: var(--color-varsity-navy);
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--color-varsity-gold-deep), 0 10px 18px -10px rgb(16 31 56 / 0.5);
+    transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+  }
+  .tactile-btn:hover {
+    transform: translateY(-1px);
+  }
+  .tactile-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--color-varsity-gold-deep), 0 4px 8px -6px rgb(16 31 56 / 0.5);
+  }
+  .tactile-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  /* Capa 1 · superficies de dinero y gobierno: limpias, borde marino, sin frialdad bancaria */
+  .korum-trust-vault {
+    border: 2px solid var(--color-varsity-navy);
+    border-radius: var(--radius-patch);
+    background-color: #ffffff;
+    box-shadow: var(--shadow-vault);
+    font-family: var(--font-corp);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Móvil (< 768 px): una sola columna, sin columnas laterales comprimidas (Regla 03 §1) */
+  @media (max-width: 767.98px) {
+    .mobile-stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+  }
+  .mobile-stack > * {
+    min-width: 0;
+  }
+}
