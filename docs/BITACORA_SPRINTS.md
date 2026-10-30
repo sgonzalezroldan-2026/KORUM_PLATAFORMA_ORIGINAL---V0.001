@@ -19,6 +19,78 @@
 
 ## Entradas
 
+### Sprint 1.3 — Semilla completa y repositorios con aislamiento entre entidades · 2026-10-30 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Sonnet 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `antifraud-legal-guardian` (Opus), `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).
+- **Qué se ha hecho:**
+  - **Semilla** (`src/seed/*`, `prisma/seed.ts`, `prisma/reset.ts`): vuelca `src/mocks/seed_data.json` en la base:
+    - 4 entidades con titular legal y 2 firmantes distintos, reglas globales y medallas;
+    - 8 iniciativas, 5 comercios, 3 ideas con auditoría y chat, facturas y soporte;
+    - 1.505 cobros deterministas, 112 pases QR firmados y 3.018 asientos (debe = haber);
+    - 2 liquidaciones con doble firma: una ejecutada y otra esperando la 2ª firma.
+    - Es idempotente (`npm run db:seed`, unos 20–30 s en la base local) y termina conciliando el libro mayor con la semilla al céntimo.
+  - **Carga masiva** (`ledger-bulk.ts`): 2 sentencias SQL por lote dentro de una transacción. Valida cada asiento en memoria y, si el asiento ya existía, comprueba que tiene el mismo contenido (`assertSamePayload`): una semilla vieja se detiene con una pista para usar `db:reset`.
+  - **Conciliación** (`seed-verify.ts`): cruza fuentes distintas, sin repetir la lógica del planificador:
+    - la base contra el JSON;
+    - la tabla de aportaciones contra el libro;
+    - el IVA, calculado desde los comercios;
+    - la garantía voluntaria;
+    - `ORG_PAYABLE` a cero y pasarela sin negativos;
+    - firmas, reparto e IBAN de cada liquidación;
+    - que ningún asiento ni apunte de una iniciativa esté a nombre de otra entidad.
+  - **Guardia** (`seed-guard.ts`): `db:seed` y `db:reset` se niegan con `PAYCOMET_MODE=live`, en producción sin entorno de demostración, con bases no locales sin `NEXT_PUBLIC_DEMO_MODE=true` y con URL que cambien el servidor con `?host=`. Comprueba `DATABASE_URL` y `DIRECT_URL`, porque el reinicio de Prisma actúa sobre `DIRECT_URL`.
+  - **Repositorios** (`src/repositories/*`): `authorizeTenant` / `authorizeSuperadmin` con decisión pura (`decideTenantAccess`).
+    - La sesión de portería queda limitada a su evento y el Super-Admin falla cerrado si no se puede auditar.
+    - Los accesos fuera de la entidad y las sondas de identificadores inexistentes se registran en `AuditLog` con respuesta 404 uniforme.
+    - Los identificadores del cliente se acotan, el `User-Agent` se reduce a la familia del navegador y las vistas usan `select` explícito, sin datos personales.
+    - Las lecturas públicas solo devuelven campos públicos.
+  - **Libro mayor** (migraciones `ledger_trigger_performance`, `ledger_guards_hardening` y `ledger_entry_journal_index`):
+    - triggers con SQL estático;
+    - restaura el trigger de cuadre por apunte, que una auditoría demostró necesario;
+    - `search_path` con `pg_temp` al final en las 6 funciones;
+    - guarda de `AuditLog` que solo admite anonimizar IP y navegador;
+    - índice por `journalId` en los apuntes.
+  - **Escáner** (`verify-invariants.mjs`): evalúa el estado final de cada guarda y de cada función `korum_*` recorriendo las migraciones en orden. Probado en negativo con migraciones temporales. ESLint prohíbe importar `@/seed/*` y `@/mocks/*` desde la aplicación.
+  - **Tests nuevos:** `seed-plan`, `seed-guard` y `tenant-guard` (unitarios); `seed`, `ledger-bulk` y `tenant-isolation` (integración); ampliados `ledger` y `ledger-guards`.
+  - **Entorno y datos del prototipo:**
+    - `prisma.config.ts` trata los valores vacíos de `DIRECT_URL` y `SHADOW_DATABASE_URL` como no definidos.
+    - Se corrigieron datos de `seed_data.json`: correos a `.example`, un CIF con dígito de control inválido, el comercio 2 pasa de la iniciativa 2 (taquilla) a la 1, las iniciativas 6 y 8 cierran dentro de los 60 días y las ideas 502 y 503 tienen su mensaje de chat.
+- **Decisiones tomadas:**
+  - **IVA del 21 % sobre el fee de patrocinios**, asentado en `TAX_PAYABLE_VAT`. Es **provisional hasta la asesoría fiscal**. La comisión por tramos de las entidades (FAC-2026-0014, 40,32 € de IVA) no se asienta: su factura es un documento informativo.
+  - **Las liquidaciones de la semilla van a la cuenta de la entidad**, no a un proveedor. Supuesto provisional hasta la respuesta de **Paycomet** sobre pagar a terceros.
+  - **Sin reservas de cupo en las campañas sembradas:** los cupos de las entidades vienen del prototipo y no equivalen a «límite − reservado».
+  - La bolsa Matching 2x se cobra justo antes de la primera donación con bonus.
+  - Prisma bloquea `migrate reset` cuando lo lanza una IA y exige la autorización expresa de la persona (variable `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION`). Se pidió y se obtuvo una sola vez, para la base local, que solo tenía datos de demostración.
+  - Los E2E en modo CI (`next start`) necesitan compilar con `NEXT_PUBLIC_DEMO_MODE=true`, como hace el CI; si no, la galería `/dev/ui` no existe en la compilación.
+- **Auditoría (Puerta 3):** los tres auditores aprobaron tras varias rondas.
+  - **Antifraude:**
+    - corregidos portería, Super-Admin, `User-Agent`, correos reales, tiempos al enumerar identificadores y `limit` con `NaN`;
+    - último bloqueante: la guardia de `db:reset` ignoraba `DIRECT_URL` (corregido y probado con el comando real).
+  - **Financiero:**
+    - corregidos el trigger de cuadre por apunte, los tres ataques con `SET CONSTRAINTS` y tablas temporales, el IVA, los cupos inventados, `ledger-bulk` sin comparar contenido y las comprobaciones tautológicas;
+    - su reserva D queda como deuda.
+  - **QA:** corregidos el índice por `journalId`, el `?host=`, la limpieza de `seed.spec.ts` y el criterio QA-C04.
+- **Pendiente / deuda:**
+  - **Bloquean el paso a cobros reales** (tareas aplazadas):
+    - el IVA de patrocinios y de la comisión por tramos, que sigue pendiente de la asesoría fiscal;
+    - el destino de las liquidaciones, que sigue pendiente de Paycomet.
+  - **Cupos de las campañas sembradas.** Cancelar o reembolsar una campaña sembrada no devuelve cupo a la entidad (Regla 02 §2). Hay que corregir los cupos del JSON y añadir las instantáneas antes del sprint de cancelaciones. **Cambia cifras del prototipo, así que necesita tu visto bueno.**
+  - **Bolsa Matching 2x de la semilla.** Las donaciones 0155–0158 de la iniciativa 1 llegan con la bolsa pagada y no se emparejan, y la 0159 recibe 38 € sobre 40 € aunque quedan al menos 100 € en la bolsa. Rehacer el reparto con el motor real del checkout (Sprint 2.1). La bolsa tampoco tiene `Contribution`, así que `MASS_REFUND` no podría devolverla.
+  - **Facturas de liquidación (Sprint 2.4):** la liquidación ejecutada no lleva `PROVIDER_INVOICE`, y la skill §8 la exige también cuando el destino es la entidad.
+  - **Sprint 3.2 (obligatorio):** `loadUserActor` no considera la 2FA. Sin ella, la sesión no debe recibir los roles `DIRECTOR`, `COSIGNER` ni Super-Admin. Además, el acceso anónimo se audita como `USER`.
+  - **Sprint 6.1:** aplicar el rol `korum_app` (`prisma/sql/runtime-role.sql`) y hacer que la semilla se niegue si la base ya contiene entidades que no son de la semilla (un túnel SSH aparece como `localhost`).
+  - **Sprints 2.5 y 3.7:** la supresión RGPD debe anonimizar al usuario, porque los apuntes tienen clave foránea `RESTRICT`. `DATA_RETENTION_PURGE` debe filtrar por `occurredAt` y tener en cuenta que `korum_app` puede poner a NULL `ipHash` y `userAgent`.
+  - **Repositorios:** la prueba `_proof` de `assertInitiativeInOrganization` no va atada al `organizationId`. Atarla cuando más repositorios dependan de ella.
+  - **Semilla:** la carga no es atómica entre tablas. Al volver a ejecutarla converge y `verifySeed` lo detecta.
+  - **Concurrencia real:** solo la demuestra la CI con PostgreSQL 16, que aún no se ha ejecutado (no hay repositorio remoto). La base local es PGlite.
+- **Puertas:**
+  - P1 ✅: invariantes (94 archivos, 6 migraciones), `db:validate`, `typecheck` y `lint` a 0.
+  - P2 ✅: 154 unitarias y 91 de integración, estables en dos ejecuciones seguidas. `db:seed` repetido sobre la base local sin duplicados.
+  - P3 ✅: los tres auditores aprobaron.
+  - P4 ✅: el sprint no tiene interfaz. La no regresión pasa con 41 E2E en verde (y 3 omitidos) sobre la compilación de producción.
+  - P5 ✅: todas las puertas repetidas desde la 1 tras cada corrección. `npm audit`: 0 vulnerabilidades.
+- **Siguiente sprint:** 1.4 · modelo recomendado: **Claude Opus 5.5 · esfuerzo alto** (auditoría Claude Opus 5.5 · alto). Motor TCO dual (`FLAT` y `MARGINAL`) y `evaluatePricingHealth`, con fuzzing 1.000×.
+
 ### Sprint 1.2 — Libro mayor de doble partida, cliente Prisma y cupos reversibles · 2026-10-30 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (esfuerzo recomendado extra alto; el asistente no puede leer el configurado). Auditoría: `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).

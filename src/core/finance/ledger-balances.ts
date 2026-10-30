@@ -59,6 +59,26 @@ export async function getAccountBalance(db: Db, account: LedgerAccount, dimensio
   return { account, debitCents: debit, creditCents: credit, balanceCents: naturalBalance(account, debit, credit) };
 }
 
+/**
+ * Lo recaudado por una iniciativa según el libro: abonos a su hucha menos devoluciones, contracargos y anulaciones.
+ * La liquidación a la entidad (`PAYOUT_APPROVAL`) no cuenta —lo recaudado sigue siendo lo recaudado aunque ya se haya
+ * pagado—, ni tampoco su anulación. Debe coincidir siempre con `Initiative.raisedCents` (la conciliación lo vigila).
+ */
+export async function getRaisedFromLedger(db: Db, initiativeId: number): Promise<number> {
+  const rows = await db.escrowLedgerEntry.groupBy({
+    by: ['direction'],
+    where: {
+      account: 'INITIATIVE_ESCROW',
+      initiativeId,
+      journal: { kind: { not: 'PAYOUT_APPROVAL' }, NOT: { kind: 'REVERSAL', reversesJournal: { kind: 'PAYOUT_APPROVAL' } } }
+    },
+    _sum: { amountCents: true }
+  });
+  const debit = toSafeNumber(rows.find((row) => row.direction === 'DEBIT')?._sum.amountCents);
+  const credit = toSafeNumber(rows.find((row) => row.direction === 'CREDIT')?._sum.amountCents);
+  return credit - debit;
+}
+
 /** Balance de sumas de todo el libro: el total del debe debe ser igual al del haber (diagnóstico de la conciliación). */
 export async function getTrialBalance(db: Db): Promise<{ debitCents: number; creditCents: number; balanced: boolean }> {
   const rows = await db.escrowLedgerEntry.groupBy({ by: ['direction'], _sum: { amountCents: true } });

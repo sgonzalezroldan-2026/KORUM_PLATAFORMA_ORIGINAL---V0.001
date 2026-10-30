@@ -54,5 +54,21 @@ export default async function setup(project: TestProject) {
     throw new Error(`Fallo al aplicar las migraciones en el esquema ${TEST_SCHEMA}:\n${output.stdout?.toString() ?? ''}${output.stderr?.toString() ?? ''}`);
   }
 
+  await resetSearchPath(baseUrl);
   project.provide('testDatabaseUrl', baseUrl);
+}
+
+/**
+ * La CLI de Prisma fija el `search_path` del esquema que migra. La base local de `npm run db:dev` (PGlite) es un único
+ * proceso que comparte ese ajuste entre todas las conexiones, y se quedaría pegado haciendo que una migración posterior
+ * de `public` viera las tablas de `korum_test`. En un PostgreSQL real no ocurre; restablecerlo es inocuo.
+ */
+async function resetSearchPath(connectionString: string) {
+  const client = new pg.Client({ connectionString });
+  try {
+    await client.connect();
+    await client.query('RESET search_path');
+  } finally {
+    await client.end();
+  }
 }

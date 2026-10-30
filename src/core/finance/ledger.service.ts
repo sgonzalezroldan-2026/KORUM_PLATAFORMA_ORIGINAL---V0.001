@@ -3,7 +3,14 @@ import { isRootDb, isUniqueViolation, type Db } from '@/lib/db';
 import type { JournalLine, PostJournalInput } from './ledger-accounts';
 import { canonicalLines, idempotencyKeyProblems, LedgerValidationError, validateJournal } from './ledger-validation';
 
-export { getAccountBalance, getBalancesByAccount, getTrialBalance, type AccountBalance, type LedgerDimensions } from './ledger-balances';
+export {
+  getAccountBalance,
+  getBalancesByAccount,
+  getRaisedFromLedger,
+  getTrialBalance,
+  type AccountBalance,
+  type LedgerDimensions
+} from './ledger-balances';
 
 /**
  * Libro mayor de doble partida (Regla 02 §3, QA-C03).
@@ -66,8 +73,11 @@ async function waitForWinner(db: Db, idempotencyKey: string): Promise<JournalWit
   return null;
 }
 
-/** Comprueba que el asiento guardado con esa clave es exactamente la misma operación que se intenta registrar. */
-function assertSamePayload(existing: JournalWithEntries, input: PostJournalInput): JournalWithEntries {
+/**
+ * Comprueba que el asiento guardado con esa clave es exactamente la misma operación que se intenta registrar. También lo usa
+ * la carga masiva (`src/seed/ledger-bulk.ts`) para los asientos que ya existían.
+ */
+export function assertSamePayload(existing: JournalWithEntries, input: PostJournalInput): JournalWithEntries {
   const differences: string[] = [];
   if (existing.kind !== input.kind) differences.push(`tipo ${existing.kind} ≠ ${input.kind}`);
   const header: Array<[string, unknown, unknown]> = [

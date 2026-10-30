@@ -21,6 +21,8 @@ export default defineConfig([
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // Un parámetro con prefijo `_` es una «prueba» de tipos (p. ej. `assertInitiativeInOrganization(..., _proof)`), no un olvido.
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
       eqeqeq: ['error', 'always'],
       'no-console': ['error', { allow: ['warn', 'error'] }]
@@ -39,7 +41,23 @@ export default defineConfig([
     rules: { 'react/jsx-no-literals': 'off' }
   },
   {
-    files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.mjs'],
+    // La semilla escribe con carga masiva y sin guardias de entidad: solo la usan sus comandos y las pruebas, nunca el código de la app.
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/seed/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@/seed/*', '**/seed/*'], message: 'El código de la semilla (carga masiva, datos de demostración) no se importa desde la aplicación.' },
+            { group: ['@/mocks/*', '**/mocks/*'], message: 'Los datos de demostración no se importan desde la aplicación.' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.mjs', 'prisma/**/*.ts'],
     rules: {
       'no-console': 'off',
       'react/jsx-no-literals': 'off'

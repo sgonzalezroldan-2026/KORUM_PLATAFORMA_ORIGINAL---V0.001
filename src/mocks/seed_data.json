@@ -47,8 +47,8 @@
       "provinceCode": "08",
       "contentLocale": "ca",
       "signers": [
-        { "role": "DIRECTOR", "roleLabel": "Dirección del centro", "name": "Carlos Ruiz", "email": "director@cervantes.cat" },
-        { "role": "COSIGNER", "roleLabel": "Presidencia del AFA", "name": "Marta Gómez", "email": "afa@cervantes.cat" }
+        { "role": "DIRECTOR", "roleLabel": "Dirección del centro", "name": "Carlos Ruiz", "email": "director@cervantes.example" },
+        { "role": "COSIGNER", "roleLabel": "Presidencia del AFA", "name": "Marta Gómez", "email": "afa@cervantes.example" }
       ],
       "contactPhone": "934 12 88 90",
       "cif": "G-08451290",
@@ -102,8 +102,8 @@
       "provinceCode": "28",
       "contentLocale": "es",
       "signers": [
-        { "role": "DIRECTOR", "roleLabel": "Dirección del colegio", "name": "Elena Vázquez", "email": "direccion@sanjose.es" },
-        { "role": "COSIGNER", "roleLabel": "Representación del patronato", "name": "Jorge Pineda", "email": "patronato@sanjose.es" }
+        { "role": "DIRECTOR", "roleLabel": "Dirección del colegio", "name": "Elena Vázquez", "email": "direccion@sanjose.example" },
+        { "role": "COSIGNER", "roleLabel": "Representación del patronato", "name": "Jorge Pineda", "email": "patronato@sanjose.example" }
       ],
       "contactPhone": "915 44 20 11",
       "cif": "G-28114420",
@@ -156,8 +156,8 @@
       "provinceCode": "08",
       "contentLocale": "ca",
       "signers": [
-        { "role": "DIRECTOR", "roleLabel": "Presidencia del club", "name": "Marc Ribas", "email": "presidencia@basketvalles.cat" },
-        { "role": "COSIGNER", "roleLabel": "Tesorería del club", "name": "Anna Soler", "email": "tresoreria@basketvalles.cat" }
+        { "role": "DIRECTOR", "roleLabel": "Presidencia del club", "name": "Marc Ribas", "email": "presidencia@basketvalles.example" },
+        { "role": "COSIGNER", "roleLabel": "Tesorería del club", "name": "Anna Soler", "email": "tresoreria@basketvalles.example" }
       ],
       "contactPhone": "937 25 40 10",
       "cif": "G-58901234",
@@ -212,8 +212,8 @@
       "provinceCode": "46",
       "contentLocale": "es",
       "signers": [
-        { "role": "DIRECTOR", "roleLabel": "Dirección del instituto", "name": "Vicent Martí", "email": "direccio@iesmed.es" },
-        { "role": "COSIGNER", "roleLabel": "Presidencia del AMPA", "name": "Sonia Orts", "email": "ampa@iesmed.es" }
+        { "role": "DIRECTOR", "roleLabel": "Dirección del instituto", "name": "Vicent Martí", "email": "direccio@iesmed.example" },
+        { "role": "COSIGNER", "roleLabel": "Presidencia del AMPA", "name": "Sonia Orts", "email": "ampa@iesmed.example" }
       ],
       "contactPhone": "963 80 11 22",
       "cif": "G-46009911",
@@ -475,8 +475,8 @@
       "stage": "ESO",
       "status": "FUNDRAISING",
       "stepIndex": 4,
-      "closesAt": "2027-01-30T23:59:59.000Z",
-      "quarter": "2027-Q1",
+      "closesAt": "2026-12-07T23:59:59.000Z",
+      "quarter": "2026-Q4",
       "raisedCents": 840000,
       "goalCents": 1200000,
       "totalContributions": 190,
@@ -555,8 +555,8 @@
       "stage": "ESO",
       "status": "FUNDRAISING",
       "stepIndex": 4,
-      "closesAt": "2027-02-28T23:59:59.000Z",
-      "quarter": "2027-Q1",
+      "closesAt": "2026-12-01T23:59:59.000Z",
+      "quarter": "2026-Q4",
       "raisedCents": 210000,
       "goalCents": 450000,
       "totalContributions": 84,
@@ -586,12 +586,12 @@
     {
       "id": 2,
       "organizationId": "CERVANTES",
-      "initiativeId": 2,
+      "initiativeId": 1,
       "name": "Librería & Papelería El Compás",
-      "cif": "B-08991234",
+      "cif": "B-08991235",
       "contactPerson": "Jordi Vila",
       "phone": "934 11 00 22",
-      "email": "pedidos@elcompas.es",
+      "email": "pedidos@elcompas.example",
       "sector": "Material Escolar · A 100m del centro",
       "categoryLevel": "ORO",
       "tierRank": 3,
@@ -599,7 +599,7 @@
       "amountCents": 50000,
       "feeGeneratedCents": 7500,
       "isMatchingPool": false,
-      "initiativeTitle": "Gran Fiesta de Primavera y Rifa Solidaria Pro-Viaje 6º",
+      "initiativeTitle": "Climatización Sostenible: Ventiladores de Techo en Primaria",
       "promo": "12% de descuento en lecturas recomendadas y mochilas",
       "code": "COMPAS-COLE12",
       "autoRenew": true,
@@ -614,7 +614,7 @@
       "cif": "B-65432198",
       "contactPerson": "Dra. Elena Bosch",
       "phone": "934 55 12 09",
-      "email": "info@sonrisafeliz.cat",
+      "email": "info@sonrisafeliz.example",
       "sector": "Odontopediatría · C/ Mallorca 210",
       "categoryLevel": "PLATA",
       "tierRank": 2,
@@ -637,7 +637,7 @@
       "cif": "B-60112233",
       "contactPerson": "Pere Mas",
       "phone": "934 22 33 44",
-      "email": "horno@barrio.cat",
+      "email": "horno@barrio.example",
       "sector": "Alimentación · C/ Valencia 114",
       "categoryLevel": "BRONCE",
       "tierRank": 1,
@@ -660,7 +660,7 @@
       "cif": "B-61209876",
       "contactPerson": "Sarah Jenkins",
       "phone": "610 99 88 77",
-      "email": "hola@kidsenglish.es",
+      "email": "hola@kidsenglish.example",
       "sector": "Idiomas · C/ Valencia 98",
       "categoryLevel": "PLATA",
       "tierRank": 2,
@@ -683,7 +683,7 @@
       "cif": "B-28991100",
       "contactPerson": "Luis Gómez",
       "phone": "915 22 10 90",
-      "email": "optica@visionclara.es",
+      "email": "optica@visionclara.example",
       "sector": "Salud Visual · C/ Serrano 42",
       "categoryLevel": "ORO",
       "tierRank": 3,
@@ -704,7 +704,7 @@
       "id": 501,
       "organizationId": "CERVANTES",
       "alias": "Código #FAM-8492",
-      "authorCanonicalEmail": "laura@familia.es",
+      "authorCanonicalEmail": "laura@familia.example",
       "title": "Fuentes de agua filtrada fresca en el pasillo de Primaria",
       "category": "Infraestructura y Confort",
       "description": "Instalar dos fuentes refrigeradas con filtro para que los alumnos rellenen sus cantimploras.",
@@ -715,8 +715,8 @@
       "expiresAt": "2026-12-12T23:59:59.000Z",
       "auditLog": [
         {
-          "email": "laura@familia.es",
-          "canonicalEmail": "laura@familia.es",
+          "email": "laura@familia.example",
+          "canonicalEmail": "laura@familia.example",
           "deviceFingerprint": "dev-home-01",
           "accountOrder": 1,
           "status": "VERIFIED",
@@ -735,7 +735,7 @@
       "id": 502,
       "organizationId": "CERVANTES",
       "alias": "Código #FAM-3109",
-      "authorCanonicalEmail": "carlos@familia.es",
+      "authorCanonicalEmail": "carlos@familia.example",
       "title": "Aparcabicicletas y patinetes techado en la entrada infantil",
       "category": "Patios y Deporte",
       "description": "Muchos niños vienen en patinete y cuando llueve se mojan apoyados en la valla.",
@@ -746,37 +746,43 @@
       "expiresAt": "2026-11-16T23:59:59.000Z",
       "auditLog": [
         {
-          "email": "carlos@familia.es",
-          "canonicalEmail": "carlos@familia.es",
+          "email": "carlos@familia.example",
+          "canonicalEmail": "carlos@familia.example",
           "deviceFingerprint": "dev-home-02",
           "accountOrder": 1,
           "status": "VERIFIED",
           "reason": "1ª cuenta familiar en su dispositivo (Padre · Verificada)."
         },
         {
-          "email": "marta@familia.es",
-          "canonicalEmail": "marta@familia.es",
+          "email": "marta@familia.example",
+          "canonicalEmail": "marta@familia.example",
           "deviceFingerprint": "dev-home-02",
           "accountOrder": 2,
           "status": "VERIFIED",
           "reason": "2ª cuenta familiar en el mismo dispositivo doméstico (Madre · Permitida y Verificada)."
         },
         {
-          "email": "cuenta_extra3@temporal.com",
-          "canonicalEmail": "cuenta_extra3@temporal.com",
+          "email": "cuenta_extra3@temporal.example",
+          "canonicalEmail": "cuenta_extra3@temporal.example",
           "deviceFingerprint": "dev-home-02",
           "accountOrder": 3,
           "status": "SUSPICIOUS",
           "reason": "⚠️ 3ª cuenta detectada desde el mismo dispositivo (Supera el límite de 2 cuentas padre/madre)."
         }
       ],
-      "messages": []
+      "messages": [
+        {
+          "senderRole": "ORGANIZATION",
+          "senderLabel": "Dirección / AFA",
+          "body": "¡Gracias por la propuesta! La publicamos para que las familias puedan firmarla."
+        }
+      ]
     },
     {
       "id": 503,
       "organizationId": "CERVANTES",
       "alias": "Código #FAM-6721",
-      "authorCanonicalEmail": "laura@familia.es",
+      "authorCanonicalEmail": "laura@familia.example",
       "title": "Renovar micrófonos inalámbricos para el festival escolar",
       "category": "Tecnología y Recursos",
       "description": "En las actuaciones de los más pequeños apenas se escucha desde las filas traseras.",
@@ -787,15 +793,21 @@
       "expiresAt": "2026-11-09T23:59:59.000Z",
       "auditLog": [
         {
-          "email": "duplicado3@mismo-pc.es",
-          "canonicalEmail": "duplicado3@mismo-pc.es",
+          "email": "duplicado3@mismo-pc.example",
+          "canonicalEmail": "duplicado3@mismo-pc.example",
           "deviceFingerprint": "dev-home-03",
           "accountOrder": 3,
           "status": "SUSPICIOUS",
           "reason": "⚠️ 3ª cuenta firmando en ráfaga desde el mismo terminal."
         }
       ],
-      "messages": []
+      "messages": [
+        {
+          "senderRole": "SYSTEM",
+          "senderLabel": "KORUM",
+          "body": "Quórum alcanzado. La idea espera la doble firma de la Dirección y de la Presidencia del AFA."
+        }
+      ]
     }
   ],
   "invoices": [

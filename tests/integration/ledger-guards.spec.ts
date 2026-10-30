@@ -3,7 +3,7 @@ import type { PostJournalInput } from '@/core/finance/ledger-accounts';
 import { getAccountBalance, IdempotencyConflictError, JournalReversalError, postJournal, reverseJournal } from '@/core/finance/ledger.service';
 import { LedgerValidationError } from '@/core/finance/ledger-validation';
 import { ImmutableRecordError, type KorumPrismaClient } from '@/lib/prisma';
-import { createInitiative, createOrganization, createTestClient, table, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, table, TEST_SCHEMA, uniqueId } from './test-database';
 
 /** Defensas añadidas tras la auditoría financiera del Sprint 1.2. */
 
@@ -74,6 +74,90 @@ describe('un asiento confirmado no admite apuntes nuevos', () => {
     await expect(db.ledgerJournal.createMany({ data: [{ idempotencyKey: uniqueId('bulk'), kind: 'GATEWAY_FEE', description: 'en bloque' }] })).rejects.toBeInstanceOf(
       ImmutableRecordError
     );
+  });
+});
+
+describe('ataques de la auditoría 1.3 (SET CONSTRAINTS, tablas temporales, search_path)', () => {
+  const q = (name: string) => table(name);
+  const journalSql = (key: string) => `INSERT INTO ${q('LedgerJournal')} ("idempotencyKey","kind","description") VALUES ('${key}','GATEWAY_FEE','ataque') RETURNING "id"`;
+
+  it('SET CONSTRAINTS ALL IMMEDIATE no permite colar un apunte descuadrado después de comprobar el asiento', async () => {
+    const key = uniqueId('attack-immediate');
+    await expect(
+      db.$transaction(async (tx) => {
+        const id = (await tx.$queryRawUnsafe<Array<{ id: number }>>(journalSql(key)))[0]!.id;
+        await tx.$executeRawUnsafe(
+          `INSERT INTO ${q('EscrowLedgerEntry')} ("journalId","account","direction","amountCents") VALUES (${id},'GATEWAY_FEES_EXPENSE','DEBIT',100),(${id},'PSP_CLEARING','CREDIT',100)`
+        );
+        await tx.$executeRawUnsafe('SET CONSTRAINTS ALL IMMEDIATE');
+        await tx.$executeRawUnsafe(`INSERT INTO ${q('EscrowLedgerEntry')} ("journalId","account","direction","amountCents") VALUES (${id},'PSP_CLEARING','DEBIT',777700)`);
+      })
+    ).rejects.toThrow(/KORUM_UNBALANCED/);
+    expect(await db.ledgerJournal.count({ where: { idempotencyKey: key } })).toBe(0);
+  });
+
+  it('una tabla temporal «EscrowLedgerEntry» no engaña a la comprobación de cuadre (asiento de un solo apunte)', async () => {
+    const key = uniqueId('attack-temp-entry');
+    await expect(
+      db.$transaction(async (tx) => {
+        await tx.$executeRawUnsafe(`CREATE TEMP TABLE "EscrowLedgerEntry" ("journalId" integer, "direction" text, "amountCents" integer, "account" text) ON COMMIT DROP`);
+        const id = (await tx.$queryRawUnsafe<Array<{ id: number }>>(journalSql(key)))[0]!.id;
+        await tx.$executeRawUnsafe(`INSERT INTO ${q('EscrowLedgerEntry')} ("journalId","account","direction","amountCents") VALUES (${id},'PSP_CLEARING','DEBIT',500000)`);
+        // Apuntes falsos y cuadrados en la tabla temporal, que una función sin search_path explícito leería.
+        await tx.$executeRawUnsafe(`INSERT INTO pg_temp."EscrowLedgerEntry" VALUES (${id},'DEBIT',500000,'PSP_CLEARING'),(${id},'CREDIT',500000,'PSP_CLEARING')`);
+      })
+    ).rejects.toThrow(/KORUM_UNBALANCED/);
+    expect(await db.ledgerJournal.count({ where: { idempotencyKey: key } })).toBe(0);
+  });
+
+  it('una tabla temporal «LedgerJournal» no permite añadir apuntes a un asiento ya cerrado', async () => {
+    const { orgId, initiativeId } = await scenario();
+    const { journal } = await postJournal(db, payin(orgId, initiativeId));
+    await expect(
+      db.$transaction(async (tx) => {
+        await tx.$executeRawUnsafe(`CREATE TEMP TABLE "LedgerJournal" ("id" integer, "postedTxId" bigint) ON COMMIT DROP`);
+        await tx.$executeRawUnsafe(`INSERT INTO pg_temp."LedgerJournal" VALUES (${journal.id}, txid_current())`);
+        await tx.$executeRawUnsafe(
+          `INSERT INTO ${q('EscrowLedgerEntry')} ("journalId","account","direction","amountCents") VALUES (${journal.id},'PSP_CLEARING','DEBIT',100000),(${journal.id},'INITIATIVE_ESCROW','CREDIT',100000)`
+        );
+      })
+    ).rejects.toThrow(/KORUM_IMMUTABLE/);
+    expect(await db.escrowLedgerEntry.count({ where: { journalId: journal.id } })).toBe(2);
+  });
+
+  it('todas las funciones de los triggers llevan search_path explícito con pg_temp al final', async () => {
+    const functions = await db.$queryRawUnsafe<Array<{ proname: string; proconfig: string[] | null }>>(
+      `SELECT p.proname, p.proconfig FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = '${TEST_SCHEMA}' AND p.proname LIKE 'korum\\_%'`
+    );
+    expect(functions.length).toBeGreaterThanOrEqual(6);
+    for (const fn of functions) {
+      const searchPath = fn.proconfig?.find((setting) => setting.startsWith('search_path='));
+      expect(searchPath, fn.proname).toMatch(/pg_catalog, pg_temp$/);
+    }
+  });
+
+  it('los apuntes tienen índice por asiento: los triggers de cuadre y las lecturas no recorren la tabla entera', async () => {
+    const indexes = await db.$queryRawUnsafe<Array<{ indexdef: string }>>(
+      `SELECT indexdef FROM pg_indexes WHERE schemaname = '${TEST_SCHEMA}' AND tablename = 'EscrowLedgerEntry' AND indexname = 'EscrowLedgerEntry_journalId_idx'`
+    );
+    expect(indexes).toHaveLength(1);
+    expect(indexes[0]!.indexdef).toMatch(/\("journalId"\)$/);
+  });
+});
+
+describe('la auditoría solo admite la anonimización de IP y navegador', () => {
+  it('poner a NULL ipHash y userAgent está permitido; cualquier otro cambio, no', async () => {
+    const entry = await db.auditLog.create({
+      data: { actorType: 'USER', action: 'test.retencion', targetType: 'Test', targetId: uniqueId('t'), ipHash: 'hash-ip', userAgent: 'Chrome/Windows', metadataJson: { dato: 1 } }
+    });
+    await expect(db.$executeRawUnsafe(`UPDATE ${table('AuditLog')} SET "action" = 'borrado', "ipHash" = NULL, "userAgent" = NULL WHERE "id" = ${entry.id}`)).rejects.toThrow(/KORUM_IMMUTABLE/);
+    await expect(db.$executeRawUnsafe(`UPDATE ${table('AuditLog')} SET "ipHash" = 'otro' WHERE "id" = ${entry.id}`)).rejects.toThrow(/KORUM_IMMUTABLE/);
+    await expect(db.$executeRawUnsafe(`UPDATE ${table('AuditLog')} SET "metadataJson" = '{}' , "ipHash" = NULL, "userAgent" = NULL WHERE "id" = ${entry.id}`)).rejects.toThrow(/KORUM_IMMUTABLE/);
+    await expect(db.$executeRawUnsafe(`DELETE FROM ${table('AuditLog')} WHERE "id" = ${entry.id}`)).rejects.toThrow(/KORUM_IMMUTABLE/);
+
+    await db.$executeRawUnsafe(`UPDATE ${table('AuditLog')} SET "ipHash" = NULL, "userAgent" = NULL WHERE "id" = ${entry.id}`);
+    const redacted = await db.auditLog.findUniqueOrThrow({ where: { id: entry.id } });
+    expect(redacted).toMatchObject({ ipHash: null, userAgent: null, action: 'test.retencion', metadataJson: { dato: 1 } });
   });
 });
 

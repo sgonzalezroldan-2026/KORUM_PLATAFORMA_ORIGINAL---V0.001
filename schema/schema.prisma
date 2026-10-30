@@ -1109,6 +1109,8 @@ model EscrowLedgerEntry {
   user           User?           @relation(fields: [userId], references: [id], onDelete: Restrict)
   sponsor        Sponsor?        @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
 
+  /// Los triggers de cuadre (por asiento y por apunte), `findByKey` y `reverseJournal` filtran por `journalId`.
+  @@index([journalId])
   @@index([account, organizationId])
   @@index([account, initiativeId])
   @@index([account, userId])

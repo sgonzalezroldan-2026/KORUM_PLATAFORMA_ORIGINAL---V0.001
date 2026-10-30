@@ -186,18 +186,52 @@ if (fs.existsSync(migrationsDir)) {
     'LedgerJournal_no_truncate',
     'EscrowLedgerEntry_no_truncate',
     'AuditLog_no_truncate',
+    // El trigger de cuadre por apunte SÍ hace falta (SET CONSTRAINTS IMMEDIATE lo demostró en la auditoría 1.3).
     'LedgerJournal_balanced',
     'EscrowLedgerEntry_balanced',
     'EscrowLedgerEntry_amountCents_positive',
     'LedgerJournal_stamp_tx',
     'EscrowLedgerEntry_same_transaction'
   ];
+  // Lo que cuenta es el estado FINAL de cada guarda: se recorren las migraciones en orden y gana el último evento (crear/eliminar).
+  // Una migración puede eliminar una guarda y otra posterior restaurarla (ocurrió en 1.3); lo que no puede quedar es eliminada.
+  const guardEvents = (guard) => {
+    const events = [];
+    migrationFiles.forEach((file, order) => {
+      const sql = fs.readFileSync(file, 'utf8');
+      const create = new RegExp(`(?:CREATE\\s+(?:OR\\s+REPLACE\\s+)?(?:CONSTRAINT\\s+)?TRIGGER|ADD\\s+CONSTRAINT)\\s+"${guard}"`, 'gi');
+      const drop = new RegExp(`DROP\\s+(?:TRIGGER|CONSTRAINT)\\s+(?:IF\\s+EXISTS\\s+)?"${guard}"`, 'gi');
+      for (const match of sql.matchAll(create)) events.push({ order, index: match.index, kind: 'create' });
+      for (const match of sql.matchAll(drop)) events.push({ order, index: match.index, kind: 'drop' });
+    });
+    return events.sort((a, b) => a.order - b.order || a.index - b.index);
+  };
   for (const guard of requiredGuards) {
-    if (!allSql.includes(`"${guard}"`)) errors.push(`[LEDGER-GUARD-MISSING] no migration creates "${guard}"`);
-    const dropped = new RegExp(`DROP\\s+(TRIGGER|CONSTRAINT)\\s+(IF\\s+EXISTS\\s+)?"${guard}"`, 'i');
-    if (dropped.test(allSql)) errors.push(`[LEDGER-GUARD-DROPPED] a migration drops "${guard}" (the ledger must stay append-only and balanced)`);
+    const events = guardEvents(guard);
+    if (!events.some((event) => event.kind === 'create')) errors.push(`[LEDGER-GUARD-MISSING] no migration creates "${guard}"`);
+    else if (events[events.length - 1].kind === 'drop') errors.push(`[LEDGER-GUARD-DROPPED] the last migration touching "${guard}" drops it (the ledger must stay append-only and balanced)`);
   }
   if (/DISABLE\s+TRIGGER/i.test(allSql)) errors.push('[LEDGER-GUARD-DISABLED] a migration disables triggers');
+  // Las funciones `korum_*` de los triggers deben terminar con su search_path fijado y pg_temp al final (si no, una tabla temporal
+  // las engaña). Igual que con las guardas, cuenta el ESTADO FINAL: un `CREATE OR REPLACE FUNCTION` posterior sin `SET search_path`
+  // borra el endurecimiento anterior, así que tras la última definición de cada función debe haber otro endurecimiento.
+  const functionEvents = new Map();
+  const pushFunctionEvent = (name, event) => functionEvents.set(name, [...(functionEvents.get(name) ?? []), event]);
+  migrationFiles.forEach((file, order) => {
+    const sql = fs.readFileSync(file, 'utf8');
+    for (const definition of sql.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\s+(?:\w+\.)?"?(korum_\w+)"?\s*\(([\s\S]*?)\bAS\s+\$/gi)) {
+      const setting = /SET\s+search_path\s*(?:=|TO)\s*([^\n]*)/i.exec(definition[2]);
+      pushFunctionEvent(definition[1], { order, index: definition.index, hardened: Boolean(setting) && /pg_temp\s*$/i.test(setting[1].trim()) });
+    }
+    for (const alter of sql.matchAll(/ALTER\s+FUNCTION[^;]*?SET\s+search_path\s*=\s*%I,\s*pg_catalog,\s*pg_temp/gi)) {
+      for (const name of sql.matchAll(/'(korum_\w+)\(/g)) pushFunctionEvent(name[1], { order, index: alter.index, hardened: true });
+    }
+  });
+  if (functionEvents.size === 0) errors.push('[LEDGER-SEARCH-PATH] ninguna migración define las funciones korum_* de los triggers');
+  for (const [name, events] of functionEvents) {
+    events.sort((a, b) => a.order - b.order || a.index - b.index);
+    if (!events[events.length - 1].hardened) errors.push(`[LEDGER-SEARCH-PATH] la última definición de ${name}() no deja su search_path fijado con pg_temp al final`);
+  }
 } else {
   errors.push('[MIGRATIONS-MISSING] prisma/migrations not found');
 }

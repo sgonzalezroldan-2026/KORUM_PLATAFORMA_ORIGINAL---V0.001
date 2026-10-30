@@ -31,6 +31,10 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO korum_app;
 -- Libro mayor y auditoría: solo lectura y altas.
 REVOKE UPDATE, DELETE, TRUNCATE ON "LedgerJournal", "EscrowLedgerEntry", "AuditLog" FROM korum_app;
 
+-- Excepción de privacidad: la tarea de retención puede anonimizar la IP (HMAC) y el navegador de la auditoría. El trigger
+-- `AuditLog_immutable` solo deja pasar ese UPDATE (ambas columnas a NULL y nada más cambiado).
+GRANT UPDATE ("ipHash", "userAgent") ON "AuditLog" TO korum_app;
+
 -- La tabla de control de migraciones no es de la aplicación.
 REVOKE ALL ON "_prisma_migrations" FROM korum_app;
 

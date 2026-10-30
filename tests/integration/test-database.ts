@@ -45,6 +45,12 @@ export function createOrganization(db: KorumPrismaClient, overrides: Partial<Pri
   });
 }
 
+export function createUser(db: KorumPrismaClient, overrides: Partial<Prisma.UserUncheckedCreateInput> = {}) {
+  const id = uniqueId('user');
+  const email = `${id}@pruebas.example`;
+  return db.user.create({ data: { id, name: 'Persona de pruebas', email, canonicalEmail: email, emailVerified: true, ...overrides } });
+}
+
 export function createInitiative(db: KorumPrismaClient, organizationId: string, overrides: Partial<Prisma.InitiativeUncheckedCreateInput> = {}) {
   return db.initiative.create({
     data: {

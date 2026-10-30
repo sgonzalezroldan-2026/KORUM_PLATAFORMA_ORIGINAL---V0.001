@@ -22,7 +22,9 @@
     "db:dev": "prisma dev --name korum --detach",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
-    "db:migrate": "prisma migrate deploy",
+    "db:migrate": "node --env-file-if-exists=.env.local node_modules/prisma/build/index.js migrate deploy",
+    "db:seed": "tsx --env-file-if-exists=.env.local prisma/seed.ts",
+    "db:reset": "tsx --env-file-if-exists=.env.local prisma/reset.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -56,6 +58,7 @@
     "postcss": "8.5.32",
     "prisma": "7.10.1",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vite": "8.3.5",
     "vitest": "5.0.5"

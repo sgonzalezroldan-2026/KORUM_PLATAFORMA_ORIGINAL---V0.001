@@ -37,7 +37,7 @@ Nunca mezcles lógica de entornos distintos en un mismo componente de vista. Rut
 - `src/core/finance|security|ticketing|tax/...` → funciones puras y deterministas.
 - `src/services/payments|email|storage|invoicing/...` → adaptadores a proveedores externos.
 
-Toda Server Action y Route Handler obtiene `organizationId` y rol **de la sesión**, nunca del cliente, y registra en `AuditLog` los accesos denegados.
+Toda Server Action y Route Handler obtiene `organizationId` y rol **de la sesión**, nunca del cliente, y registra en `AuditLog` los accesos denegados. El acceso a datos de una entidad pasa siempre por `src/repositories/*` y su guardia `authorizeTenant` (detalle en la skill de interfaz multi-entidad §2).
 
 ## 5. Configuración: consola del Super-Admin primero, variables de entorno solo para lo imprescindible
 
