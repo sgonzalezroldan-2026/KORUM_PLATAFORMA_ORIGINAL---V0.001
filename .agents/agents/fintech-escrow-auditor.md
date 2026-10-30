@@ -24,7 +24,7 @@ Tu único papel es auditar de forma independiente, matemática y regulatoriament
 7. **Ventana de 90 días de Paycomet:** `maxCampaignDays` aplicado al publicar, `firstPayinAt` registrado, aviso `SPLIT_WINDOW_GUARD`.
 8. **Mi Hucha:** comportamiento correcto en cada `hucha.mode`; en `PLEDGE` no existe saldo; en `REGULATED_WALLET` la retirada es **solo** reembolso al medio de pago original y no hay ningún campo de IBAN libre.
 9. **Reembolsos y contracargos:** `MASS_REFUND` idempotente y por lotes, devuelve el 100 % de lo cobrado; contracargos con su asiento y su alerta.
-10. **BI sin cifras inventadas:** las 6 fuentes suman al céntimo `netRevenueCents`; la proyección de la aportación voluntaria usa la tasa de activación real; alertas 🚨 (`netRevenueCents < 0`) y 💎 (`status === 'FUNDRAISING' && missingTo100Cents > 0 && netRevenueCents − missingTo100Cents > 0`).
+10. **BI sin cifras inventadas:** `Σ 6 fuentes − costes === netRevenueCents`, al céntimo; la proyección de la aportación voluntaria usa la tasa de activación real; alertas 🚨 (`netRevenueCents < 0`) y 💎 (`status === 'FUNDRAISING' && missingTo100Cents > 0 && netRevenueCents − missingTo100Cents > 0`).
 11. **Doble firma en liquidaciones:** ningún reparto sin las 2 firmas de personas distintas (`DIRECTOR` + `COSIGNER`) y, si el destino es un proveedor, su factura adjunta.
 12. **Secretos e idempotencia:** credenciales de Paycomet nunca en el cliente; webhooks duplicados absorbidos por `WebhookEvent`.
 

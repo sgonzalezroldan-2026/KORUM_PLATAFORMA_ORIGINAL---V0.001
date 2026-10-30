@@ -79,7 +79,7 @@ El funcionamiento depende del ajuste `hucha.mode` de la consola del Super-Admin:
 
 ## 10. Analítica: real frente a proyectada, sin cifras inventadas
 
-- Prohibido inyectar ingresos ficticios. El panel separa **ingresos reales** (leídos del libro mayor) de la **proyección al 100 %**, y la suma de las **6 fuentes de ingresos** coincide al céntimo con el ingreso neto.
+- Prohibido inyectar ingresos ficticios. El panel separa **ingresos reales** (leídos del libro mayor) de la **proyección al 100 %**, y las **6 fuentes de ingresos**, menos los costes que asume KORUM (pasarela absorbida o margen de taquilla negativo; en lo real, también Auto-Impulso y contracargos), coinciden al céntimo con el ingreso neto.
 - Alertas en cada tabla de iniciativas:
   1. **🚨 Retorno negativo** (`netRevenueCents < 0`): `🚨 ¡Peligro Retorno Negativo! (-X,XX €) · Ajustar precios`, con corrección en 1 clic.
   2. **💎 Auto-Impulso rentable** (`status === 'FUNDRAISING' && missingTo100Cents > 0 && netRevenueCents − missingTo100Cents > 0`): `💎 ¡Auto-Impulso Rentable! Aportar X € ➔ Retorno +Y €`, con ejecución auditada en 1 clic.

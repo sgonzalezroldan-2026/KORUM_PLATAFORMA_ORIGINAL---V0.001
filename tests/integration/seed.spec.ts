@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.service';
+import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { verifyPassSignature } from '@/core/ticketing/qr-signature';
 import { seedDatabase } from '@/seed/seed';
@@ -127,6 +129,39 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     const revenue = await db.contribution.aggregate({ where: { initiativeId: 3 }, _sum: { guaranteeContributionCents: true } });
     const ledger = await db.escrowLedgerEntry.aggregate({ where: { account: 'KORUM_REVENUE_GUARANTEE', direction: 'CREDIT', organizationId: 'CERVANTES', journal: { initiativeId: 3 } }, _sum: { amountCents: true } });
     expect(ledger._sum.amountCents).toBe(revenue._sum.guaranteeContributionCents);
+  });
+
+  it('QA-FIN05 · los ingresos reales salen del libro mayor: solo lo cobrado, sin la comisión de lo que no se ha liquidado', async () => {
+    const real = calculateRealRevenueFromLedger(await getBalancesByAccount(db, { organizationId: 'CERVANTES' }));
+    const guarantee = await db.contribution.aggregate({ where: { organizationId: 'CERVANTES' }, _sum: { guaranteeContributionCents: true } });
+    const initiative4 = seed.initiatives.find((initiative) => initiative.id === 4)!;
+    const sponsorFees = seed.sponsors.filter((sponsor) => sponsor.organizationId === 'CERVANTES' && sponsor.status === 'APPROVED').reduce((total, sponsor) => total + sponsor.feeGeneratedCents, 0);
+    // De las 4 campañas de Cervantes solo la 4 está liquidada: la comisión de la 1 y la 3 todavía no es ingreso real.
+    expect(real.sourcesCents).toEqual({
+      bracketFeeCents: initiative4.bracketFeeCents,
+      supportGuaranteeCents: guarantee._sum.guaranteeContributionCents,
+      sponsorFeeCents: sponsorFees,
+      digitalTicketFeeCents: 196 * 55,
+      maintFeeCents: 0,
+      huchaTopupFeeCents: 0
+    });
+    const gatewaySpent = await db.escrowLedgerEntry.aggregate({ where: { account: 'GATEWAY_FEES_EXPENSE', organizationId: 'CERVANTES' }, _sum: { amountCents: true } });
+    expect(real.gatewayNetCostCents).toBe(gatewaySpent._sum.amountCents! - initiative4.gatewayFeeCents);
+  });
+
+  it.each([
+    ['CERVANTES', 53_000],
+    ['SANJOSE', -389],
+    ['CLUBKORUM', 3_458],
+    ['MEDITERRANEO', -2_856]
+  ])('QA-FIN05 · el neto real de %s cuadra con su balance: ingresos − gastos === activo − pasivo', async (organizationId, expectedNetCents) => {
+    const balances = await getBalancesByAccount(db, { organizationId });
+    const assetsMinusLiabilities = balances.reduce((total, { account, balanceCents }) => {
+      const { nature } = ACCOUNT_RULES[account];
+      return total + (nature === 'ASSET' ? balanceCents : nature === 'LIABILITY' ? -balanceCents : 0);
+    }, 0);
+    expect(assetsMinusLiabilities).toBe(expectedNetCents);
+    expect(calculateRealRevenueFromLedger(balances).netRevenueCents).toBe(expectedNetCents);
   });
 
   it('la semilla no inventa reservas de cupo y las campañas con cobros tienen la fecha de su primer cobro', async () => {

@@ -19,6 +19,55 @@
 
 ## Entradas
 
+### Sprint 1.4 — Motor TCO dual, tope anual de mantenimiento y BI real frente a proyectado · 2026-10-30 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).
+- **Qué se ha hecho:**
+  - **`tco.service.ts`:** tramos `FLAT` y `MARGINAL`, pizarras de presupuesto y de taquilla, desglose público de 4 líneas y tope anual de mantenimiento.
+  - **`pricing-health.ts`:** `evaluatePricingHealth`, que nunca lanza, y la lógica de aceptación de avisos por huella. Añade dos códigos a los de la skill: `RULE_VALUE_INVALID` y `BRACKET_THRESHOLDS_INVALID`.
+  - **`bi-analytics.service.ts`:** las 6 fuentes proyectadas al 100 %, con la tasa de activación real; alertas 💎 y 🚨; ingresos reales desde los saldos del libro mayor.
+  - **Tests nuevos:** `tco-bi-fuzz` (fuzzing 1.000× en cada modo), `bi-analytics` y `pricing-health`; ampliado `seed` con el cruce `ingresos − gastos === activo − pasivo` por entidad.
+  - **Documentos corregidos:** skill TCO (§3, §4 y §5 pasan a texto con referencia al código, porque las copias del código se habían desviado), Regla 02 §10, QA-FIN05, QA-FIN06, QA-A02, DECISIONES §6.1, fichas de los Sprints 5.1 y 5.3, y dos agentes.
+- **Decisiones tomadas:**
+  - **Cuadre de las 6 fuentes:** `Σ 6 fuentes − costes === netRevenueCents`. La iniciativa 8 tiene 0 de fuentes y −62,50 € de neto, así que la redacción anterior era imposible de cumplir.
+  - **Umbrales cruzados o iguales (decisión del constructor, reversible):** no se bloquean; el tramo 2 queda vacío y por encima de `t1` se aplica la tarifa `t3`. Si están cruzados, aviso `CRITICAL`.
+  - **Datos imposibles:** decimales, negativos o valores no numéricos se rechazarán al guardar en el Sprint 5.3, porque el motor se niega a calcular con ellos. No contradice «ninguna regla se bloquea»: no son reglas de precios elegidas.
+  - **Lo ya cobrado nunca se pierde:** una iniciativa que absorbe la pasarela o de taquilla no proyecta aportación voluntaria, pero conserva la real.
+  - **Taquilla en `INC`:** nunca se retiene más que el precio, y un cobro de 0 no tiene pasarela ni margen. La fórmula de la skill inventaba ingresos en eventos gratis.
+  - **Desglose público:** si el coste real supera la meta, lanza `PublicBreakdownMismatchError` en vez de publicar un desglose que no cuadra.
+  - **Cupos de las campañas sembradas (el promotor delegó la decisión):** se corrigen sin tocar importes de las iniciativas, en un paso aparte antes del Sprint 2.1 (ver Pendiente).
+- **Auditoría (Puerta 3):**
+  - **Financiera:** rechazada a la primera, aprobada en la reauditoría. Sin descuadres en 300.000 casos propios. Corregidos:
+    - la salud de precios lanzaba con umbrales cruzados;
+    - la pasarela se contaba dos veces en taquilla que absorbe;
+    - las tarifas de pasarela y de gestión no se validaban;
+    - pruebas sin cifras fijadas, que por eso no vieron lo anterior;
+    - documentos sin actualizar;
+    - margen inventado en `INC` y donación media inflada por patrocinios.
+  - **QA:** aprobada. En total, 28 alteraciones del motor; 25 detectadas a la primera. De las otras 3, 2 no cambian el resultado y 1 era un hueco real (`maintFeeCents`), ya cubierto.
+  - **Lanzar dos auditores a la vez provocó arranques fallidos de la integración:** `global-setup` borra `korum_test` en cada arranque. Las suites de integración se ejecutan de una en una. Si `globalSetup` falla, Vitest muestra `No test files found` y `code.charCodeAt is not a function`, que ocultan el error real.
+- **Pendiente / deuda:**
+  - **Siguiente paso, antes del Sprint 2.1: coherencia de los cupos sembrados** (la deuda del 1.3). Sin tocar metas, comisiones ni recaudado:
+    - CERVANTES: exento y beca restantes a 0, y `medalGrantUsedInTitle` con el título de la iniciativa 1. Sus 3 usos del exento pasan a 3 cursos distintos: iniciativa 3 a `2025-2026`; iniciativa 4 a `2024-2025`, con fechas de 2025.
+    - MEDITERRANEO: exento restante a 1.000 €, y `defaultExemptAppliedCents` de la iniciativa 8 a 0, porque está exenta por categoría y no consume cupo.
+    - SANJOSE y CLUBKORUM ya cuadran.
+    - Instantáneas `quotaReserved*` en las campañas sembradas y comprobación en `seed-verify`.
+    - Rehacer la base local exige `db:reset`, con autorización expresa del promotor.
+  - **Sprint 5.1 (requiere visto bueno del promotor, cambia la Regla 02 §10):** la alerta 💎 cuenta aportaciones proyectadas y entradas sin vender que no llegarían si KORUM completa la meta. Recomendación: calcularla solo con lo cobrado. Hoy no cambia ninguna alerta de la semilla: 2,56 €, 3,94 € y 4,04 € de parte proyectada en las iniciativas 1, 5 y 7, y 1,60 € de margen de entradas sin vender en la 2. Tiene que estar resuelta antes del botón de ejecución del Sprint 5.2.
+  - **Sprint 5.1, al llamar al motor:** pasar `maintFeeCents − maintShortfallCents` y sacar el número y la suma de la garantía de la misma consulta, porque una muestra incoherente lanza.
+  - **Sprints 5.1 y 5.3:** los textos `admin.pricingHealth.*` y la parte visible de QA-FIN06 (aviso atenuado y guardado). El texto de `TICKET_FEE_BELOW_GATEWAY_COST` no debe decir «pierdes» con margen 0.
+  - **Metas de la semilla:** 6 de las 8 están redondeadas a mano y su pasarela no coincide con la estimación del motor (en las iniciativas 3 y 4 queda 4,00 € por debajo). No se cambian: los costes reales se asientan cobro a cobro.
+  - **`tco.service.ts` tiene 294 líneas:** cualquier ampliación obliga a partirlo antes.
+  - **E2E:** `primitives.spec.ts:52` (tooltip a 1000 ms) falló una vez en modo desarrollo y pasó en la repetición completa y en 8 repeticiones seguidas. Fallo de temporización sin relación con este sprint; si reaparece, darle más margen.
+  - **Tests redundantes:** `bi-analytics.spec.ts` conserva dos comprobaciones de la identidad del neto que ya no aportan; son inofensivas.
+- **Puertas:**
+  - P1 ✅: invariantes, `typecheck` y `lint` a 0.
+  - P2 ✅: 239 unitarias y 96 de integración.
+  - P3 ✅: financiero y QA aprobados.
+  - P4 ✅: el sprint no tiene interfaz. No regresión con 41 E2E en verde y 3 omitidos, con el fallo puntual anotado arriba.
+  - P5 ✅: todas las puertas repetidas desde la 1 tras las correcciones.
+- **Siguiente sprint:** primero, el paso corto de cupos sembrados. Después, 2.1 · modelo recomendado: **Claude Opus 5.5 · esfuerzo extra alto** (auditoría Claude Opus 5.5 · alto). Adaptador Paycomet, webhooks, split transfer y reembolsos, contra el simulador.
+
 ### Sprint 1.3 — Semilla completa y repositorios con aislamiento entre entidades · 2026-10-30 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Sonnet 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `antifraud-legal-guardian` (Opus), `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).

@@ -19,7 +19,7 @@ Eres una persona ingeniera de interfaces de gestión y visualización de datos, 
    - **Estudio TCO dual:** 5 líneas en `BUDGET` (mantenimiento `0` → solo `"0,00 €"`, nunca "(Desactivado)"); "Gastos de gestión digital" y aviso de rifas en `TICKETING`; candado semántico; cartel A4 con QR real.
    - **Portería:** vista móvil rápida (< 0,5 s por lectura) con PIN del evento, lector QR con respaldo para iOS, check-in parcial, alerta roja ante pases usados, modo sin cobertura y sorteo certificado en pantalla completa; exportación del Modelo 182 solo para entidades con Ley 49/2002 verificada.
 3. **Entorno 3 (`/admin`):**
-   - Ingresos reales (libro mayor) separados de la proyección al 100 %, sin constantes ficticias; las 6 fuentes suman exactamente `netRevenueCents`.
+   - Ingresos reales (libro mayor) separados de la proyección al 100 %, sin constantes ficticias; `Σ 6 fuentes − costes === netRevenueCents`, al céntimo.
    - Ordenación `↕` en todas las cabeceras, columnas `Cerradas (Año / Hist.)`, `Comercios (Act. / Hist.)` y `💛 Aportaciones`, alertas 💎 y 🚨, pop-up ejecutivo (con la decisión de mostrar o no el Auto-Impulso en público), ficha 360º con facturas Veri\*factu y validador de gastos de gestión digital.
    - **`/admin/ajustes`:** formularios de ajustes y secretos (Paycomet, email, Veri\*factu, Hucha, Auto-Impulso, SEO, textos legales) con reautenticación 2FA y secretos enmascarados.
 4. **Calidad:** aislamiento por `organizationId` en cada acción, componentes de más de 300 líneas divididos, cuatro estados por vista, textos desde los catálogos de traducción y `npm run typecheck` sin errores.

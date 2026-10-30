@@ -166,6 +166,8 @@ export function calculateStudioBudgetTCO(input: BudgetTcoInputCents) {
 
 ---
 
+> **Código vigente:** [src/core/finance/tco.service.ts](../../../src/core/finance/tco.service.ts); el bloque anterior explica las fórmulas. Si `t2MaxCents` no supera a `t1MaxCents` el tramo 2 queda vacío en los dos modos: nada se cobra dos veces ni se bloquea, y si están cruzados la consola avisa con `BRACKET_THRESHOLDS_INVALID`.
+
 > **Efecto escalón de los tramos (decisión del promotor: configurable).** En modo `FLAT` (por defecto, el del prototipo y el de la semilla) el tramo se elige por el importe total y se aplica a todo lo sujeto: un neto de `5.000,00 €` paga el 5 % y uno de `5.000,01 €` paga el 4 % sobre todo, así que cobra **menos comisión** al subir el presupuesto. En modo `MARGINAL` cada tramo grava solo su porción y ese salto desaparece. El modo y los umbrales (`bracketMode`, `t1MaxCents`, `t2MaxCents`) los cambia el Super-Admin en el motor de reglas; mientras esté en `FLAT`, la consola muestra el aviso `BRACKET_CLIFF` de la sección 2.1 para que decida con la cifra delante. El fuzzing del Sprint 1.4 recorre **los dos modos** y comprueba que `MARGINAL` es continuo y monótono creciente en los umbrales.
 
 ---
@@ -174,16 +176,18 @@ export function calculateStudioBudgetTCO(input: BudgetTcoInputCents) {
 
 Decisión del promotor: **ni los tramos, ni la comisión, ni el fee de Mi Hucha, ni los gastos de gestión digital se bloquean.** Son configurables y, si la combinación elegida pierde dinero o es incoherente, la consola **avisa con una exclamación y una explicación en lenguaje llano** para que decida el Super-Admin. Nunca impide guardar.
 
-Función pura `evaluatePricingHealth(rules: KorumGlobalRulesCents): PricingAlert[]` en `src/core/finance/pricing-health.ts` (con el mismo redondeo y la misma aritmética entera que el resto del motor; el coste de pasarela de un cobro de `A` céntimos es `round(A × gatewayPctBps / 10000) + gatewayFixedCents`):
+Función pura `evaluatePricingHealth(rules: KorumGlobalRulesCents, realSourceMarginsCents?): PricingAlert[]` en `src/core/finance/pricing-health.ts`, que **nunca lanza** sea cual sea el valor editado (con el mismo redondeo y la misma aritmética entera que el resto del motor; el coste de pasarela de un cobro de `A` céntimos es `round(A × gatewayPctBps / 10000) + gatewayFixedCents`):
 
 | Código | Gravedad | Cuándo salta | Ejemplo con los valores por defecto |
 | :--- | :--- | :--- | :--- |
 | `HUCHA_FEE_BELOW_GATEWAY_COST` | `CRITICAL` | El fee de Mi Hucha (`topupFeeCents + importe × topupFeeBps / 10000`) es menor que el coste de pasarela para alguno de los importes de prueba (5, 10, 25, 50 y 100 €). | `❗ Un cargo de 50,00 € cuesta 0,59 € de pasarela y cobras 0,25 €: pierdes 0,34 € por cargo. Es rentable hasta 16,00 €.` |
-| `TICKET_FEE_BELOW_GATEWAY_COST` | `CRITICAL` | En taquilla, los *Gastos de gestión digital* no cubren la pasarela sobre `precio + gestión` para algún precio de prueba (2, 5, 10, 20 y 50 €). Sustituye al validador suelto `validateTicketFeeCoverageLive`: el validador en vivo del formulario llama a esta misma función. | — |
+| `TICKET_FEE_BELOW_GATEWAY_COST` | `CRITICAL` | En taquilla, los *Gastos de gestión digital* no cubren la pasarela sobre `precio + gestión` para algún precio de prueba (2, 5, 10, 20 y 50 €). También salta con margen `0`, porque la Regla 02 §6 exige margen positivo (ese caso no «pierde»: el texto no debe decirlo). Sustituye al validador suelto `validateTicketFeeCoverageLive`: el validador en vivo del formulario llama a esta misma función. | — |
 | `SPONSOR_FEE_BELOW_GATEWAY_COST` | `CRITICAL` | El fee de gestión publicitaria no cubre la pasarela sobre `nivel + fee` en alguno de los 3 niveles. | Con `sponsorFeeBps = 0` pierdes la pasarela de cada patrocinio. |
-| `BRACKET_CLIFF` | `WARNING` | Solo en `bracketMode = FLAT`: en un umbral (`t1MaxCents` o `t2MaxCents`) un presupuesto 1 céntimo mayor paga **menos** comisión que uno justo en el umbral, descontando el cupo exento global. | `⚠️ Con 1.000,00 € exentos, un neto de 5.000,00 € paga 200,00 € de comisión y uno de 5.000,01 € paga 160,00 €. Considera el modo marginal.` |
+| `RULE_VALUE_INVALID` | `CRITICAL` | Un valor de los que entran en los cálculos está vacío, es negativo, tiene decimales o supera `1.000.000.000`. Sustituye a todos los demás avisos: con ese valor, sus cifras no significarían nada. | — |
+| `BRACKET_THRESHOLDS_INVALID` | `CRITICAL` | `t1MaxCents > t2MaxCents`. El motor deja vacío el tramo 2 y sigue funcionando. Unos umbrales iguales no avisan: son un tramo 2 vacío a propósito. | — |
+| `BRACKET_CLIFF` | `WARNING` | Solo en `bracketMode = FLAT`: en un umbral (`t1MaxCents` o `t2MaxCents`) un presupuesto 1 céntimo mayor paga **menos** comisión que uno justo en el umbral, descontando el cupo exento global. Un solo aviso por código: el primer salto, el mayor (`worstDropCents`) y cuántos hay (`cliffCount`). | `⚠️ Con 1.000,00 € exentos, un neto de 5.000,00 € paga 200,00 € de comisión y uno de 5.000,01 € paga 160,00 €. Considera el modo marginal.` |
 | `BRACKET_RATES_NOT_DECREASING` | `WARNING` | Las tarifas no bajan al subir de tramo (`t1Bps < t2Bps` o `t2Bps < t3Bps`), contra la lógica de descuento por volumen. | — |
-| `SOURCE_NEGATIVE_MARGIN` | `CRITICAL` | Con datos **reales** del libro mayor (Sprint 5.1): una de las 6 fuentes de ingreso acumula margen neto negativo (ingreso de KORUM menos coste de pasarela de esos cobros) en el periodo visible. | `❗ Mi Hucha acumula un margen de −8,16 € este trimestre.` (cifra de ejemplo) |
+| `SOURCE_NEGATIVE_MARGIN` | `CRITICAL` | Con datos **reales** del libro mayor (Sprint 5.1): una de las 6 fuentes de ingreso acumula margen neto negativo (ingreso de KORUM menos coste de pasarela de esos cobros) en el periodo visible. Llegan por el parámetro `realSourceMarginsCents`; la huella no incluye el margen, que cambia con cada cobro. | `❗ Mi Hucha acumula un margen de −8,16 € este trimestre.` (cifra de ejemplo) |
 
 ```typescript
 export type PricingAlertSeverity = 'CRITICAL' | 'WARNING';
@@ -207,165 +211,44 @@ export interface PricingAlert {
 3. El aviso aceptado **no desaparece**: se muestra atenuado con «Aceptado por … el …». Si cambia la configuración implicada (huella distinta), vuelve a saltar como nuevo.
 4. Insignia con el número de avisos abiertos (`CRITICAL` primero) en la cabecera de `/admin`; banner completo en la portada de la consola si hay alguno `CRITICAL` sin aceptar.
 
-Tests del Sprint 1.4 (`tests/unit/pricing-health.spec.ts`): cada código con un caso que salta y otro que no; los valores por defecto producen exactamente `HUCHA_FEE_BELOW_GATEWAY_COST` y `BRACKET_CLIFF`; en `MARGINAL` no sale `BRACKET_CLIFF`; cambiar un valor implicado cambia la huella.
+Tests del Sprint 1.4 (`tests/unit/pricing-health.spec.ts`): cada código con un caso que salta y otro que no; los valores por defecto producen exactamente `HUCHA_FEE_BELOW_GATEWAY_COST` y `BRACKET_CLIFF`; en `MARGINAL` no sale `BRACKET_CLIFF`; cambiar un valor implicado cambia la huella; umbrales cruzados y valores imposibles avisan sin lanzar.
 
 ---
 
 ## 3. Fórmulas Exactas en Modo Taquilla (`TICKETING`) y Validador Paycomet
 
-En modo `'ADD'`, Paycomet aplica su `% variable` sobre el **cobro bruto total al comprador** (`ticketPriceCents + digitalFeeUnitCents`):
+Código vigente: `calculateStudioTicketingTCO` en [src/core/finance/tco.service.ts](../../../src/core/finance/tco.service.ts).
 
-```typescript
-export function calculateStudioTicketingTCO(input: {
-  ticketPriceCents: number;
-  ticketMax: number;
-  feeMode: 'ADD' | 'INC';
-  digitalFeeConfig: { fixedCents: number; pctBps: number };
-  gatewayConfig: { pctBps: number; fixedCents: number };
-  maintFeeCents: number;
-}) {
-  const digitalFeeUnitCents =
-    input.digitalFeeConfig.fixedCents +
-    Math.round((input.ticketPriceCents * input.digitalFeeConfig.pctBps) / 10000);
-
-  const buyerUnitChargeCents =
-    input.feeMode === 'ADD'
-      ? input.ticketPriceCents + digitalFeeUnitCents
-      : input.ticketPriceCents;
-
-  const gatewayUnitCostCents =
-    Math.round((buyerUnitChargeCents * input.gatewayConfig.pctBps) / 10000) +
-    input.gatewayConfig.fixedCents;
-
-  const netKorumMarginPerTicketCents = digitalFeeUnitCents - gatewayUnitCostCents;
-  const grossTicketsCents = input.ticketPriceCents * input.ticketMax;
-  const totalDigitalFeesCents = digitalFeeUnitCents * input.ticketMax;
-  const totalGatewayCostCents = gatewayUnitCostCents * input.ticketMax;
-
-  const netGuaranteedForSchoolCents =
-    input.feeMode === 'ADD'
-      ? Math.max(0, grossTicketsCents - input.maintFeeCents)
-      : Math.max(0, grossTicketsCents - totalDigitalFeesCents - input.maintFeeCents);
-
-  return {
-    digitalFeeUnitCents,
-    buyerUnitChargeCents,
-    gatewayUnitCostCents,
-    netKorumMarginPerTicketCents,
-    grossTicketsCents,
-    totalDigitalFeesCents,
-    totalGatewayCostCents,
-    netGuaranteedForSchoolCents,
-    isGatewayCovered: netKorumMarginPerTicketCents > 0
-  };
-}
-```
+- **Gasto unitario:** `gestión = fijo + round(precio × pct / 10000)`. En `INC` va dentro del precio, así que nunca se retiene más que el precio: `min(gestión, precio)`.
+- **Cobro al comprador:** `precio + gestión` en `ADD`; `precio` en `INC`.
+- **Pasarela por entrada:** `round(cobro × pct / 10000) + fijo`, sobre el **cobro bruto total**. Un cobro de `0` no pasa por Paycomet: coste `0`.
+- **Margen de KORUM:** `gestión − pasarela`, por entrada (`netKorumMarginPerTicketCents`) y con el aforo completo (`netKorumMarginAt100Cents`). `isGatewayCovered` exige margen estrictamente positivo (Regla 02 §6).
+- **Neto de la entidad:** `max(0, bruto − gestión retenida del precio − mantenimiento)`. `maintShortfallCents` recoge el mantenimiento que la recaudación no cubre, para que el neto a `0` no lo esconda.
+- **Ejemplo (QA-FIN03):** `ADD`, entrada de `500` cts y gestión de `55` cts, con Paycomet `1 % + 9` cts: cobro `555`, pasarela `6 + 9 = 15` y margen `+40` cts.
 
 ---
 
 ## 4. Cuadre Público de 4 Líneas en la Ficha de Familias (100% Meta)
 
-```typescript
-export function calculatePublicBreakdown4Lines(init: {
-  costMatCents: number;
-  costInstCents: number;
-  contingencyBps: number;
-  goalCents: number;
-}) {
-  const line1ProviderCents = init.costMatCents;
-  const line2InstallCents = init.costInstCents;
-  const line3ContingencyCents = Math.round(
-    ((line1ProviderCents + line2InstallCents) * init.contingencyBps) / 10000
-  );
-  const realExecutionTotalCents = line1ProviderCents + line2InstallCents + line3ContingencyCents;
-  const line4EscrowAndGuaranteeCents = Math.max(0, init.goalCents - realExecutionTotalCents);
+Código vigente: `calculatePublicBreakdown4Lines` en [src/core/finance/tco.service.ts](../../../src/core/finance/tco.service.ts).
 
-  return {
-    line1ProviderCents,
-    line2InstallCents,
-    line3ContingencyCents,
-    line4EscrowAndGuaranteeCents,
-    realExecutionTotalCents,
-    totalGoalCents: init.goalCents
-  };
-}
-```
+- Línea 1 `costMatCents`; línea 2 `costInstCents`; línea 3 `round((línea 1 + línea 2) × contingencyBps / 10000)`; línea 4 `goalCents − (línea 1 + línea 2 + línea 3)`.
+- Si el coste real supera la meta, las líneas no pueden cuadrar: lanza `PublicBreakdownMismatchError` en vez de publicar un desglose falso. Quien llama oculta el desglose y lo registra.
 
 ---
 
 ## 5. Analítica BI Real vs. Proyectada y Alertas Algorítmicas (Cero Ingresos Ficticios)
 
-- **Prohibido inventar constantes mágicas** (`8,00 €` fijos de Hucha o `1%` de comercios cuando hay `0` comercios).
-- **Proyección de la aportación voluntaria:** como el check va **desmarcado por defecto**, `projectedGuaranteeContributionsAt100Cents` se calcula con la **tasa de activación real observada** (aportaciones con `guaranteeContributionCents > 0` / aportaciones totales) de la propia entidad o, si aún no hay datos, de la plataforma. Nunca con un porcentaje fijo.
+Código vigente: [src/core/finance/bi-analytics.service.ts](../../../src/core/finance/bi-analytics.service.ts).
+
+- **Prohibido inventar constantes mágicas** (`8,00 €` fijos de Hucha o `1%` de comercios cuando hay `0` comercios). Sin datos, la proyección es `0`.
+- **Las 6 fuentes** (`RevenueSources`): `bracketFeeCents`, `supportGuaranteeCents`, `sponsorFeeCents`, `digitalTicketFeeCents`, `maintFeeCents` y `huchaTopupFeeCents`. El gráfico y la tabla suman exactamente lo mismo.
+- **Cuadre:** `Σ 6 fuentes − costes === netRevenueCents`, al céntimo. Los costes van aparte de las fuentes: una iniciativa puede tener `0` de fuentes y neto negativo (la `#8`).
+- **Proyección al 100 %** (`calculateRevenueBreakdown6Sources`):
+  - `supportGuaranteeCents = max(cobrado, proyectado)`; solo proyectan las campañas `BUDGET` que no absorben la pasarela. Lo ya cobrado nunca se pierde.
+  - `gatewayLossCents`: el margen negativo de taquilla, o `gatewayFeeCents` en las campañas `BUDGET` que absorben la pasarela. En taquilla no se resta otra vez, porque el margen ya la descuenta.
+- **Aportación voluntaria proyectada** (`projectGuaranteeContributionsAt100`): como el check va **desmarcado por defecto**, usa lo observado en la propia entidad o, si aún no hay datos, en la plataforma; nunca un porcentaje fijo. Las donaciones que faltan se estiman con la donación media de la iniciativa (sin patrocinios, bolsa Matching ni Auto-Impulso) o con el importe sugerido.
+- **Lo real** (`calculateRealRevenueFromLedger`) sale de los saldos del libro mayor: fuentes brutas menos la pasarela neta de lo recuperado, el Auto-Impulso y los contracargos asumidos. Por entidad cumple `ingresos − gastos === activo − pasivo`.
+- **Alertas** (`analyzeInitiativeProfitabilityAndSelfBoost`): 🚨 si `netRevenueCents < 0`; 💎 si `status === 'FUNDRAISING'`, `missingTo100Cents > 0` y `netRevenueCents − missingTo100Cents > 0`.
 - `InitiativeStatus` se importa de `src/types/korum.types.ts` (códigos internos; `FUNDRAISING` = «Recaudando»).
-- Las **6 vías del Gráfico de Fuentes de Ingresos** (`supportGuaranteeCents`, `bracketFeeCents`, `sponsorFeeCents`, `digitalTicketFeeCents`, `maintFeeCents`, `huchaTopupNetFeeCents`) se suman exactamente igual en el gráfico que en `netRevenueCents`:
-
-```typescript
-export function analyzeInitiativeProfitabilityAndSelfBoost(input: {
-  format: 'BUDGET' | 'TICKETING';
-  status: InitiativeStatus;
-  goalCents: number;
-  raisedCents: number;
-  bracketFeeCents: number;
-  maintFeeCents: number;
-  gatewayFeeCents: number;
-  absorbsGatewayCostByKorum: boolean;
-  realizedGuaranteeContributionsCents: number;
-  projectedGuaranteeContributionsAt100Cents: number;
-  approvedSponsorsFeeCents: number;
-  netDigitalTicketMarginAt100Cents: number;
-  allocatedHuchaTopupNetCents: number; // Margen neto real de recargas de Hucha de usuarios del centro
-}) {
-  const bracketFeeCents = input.format === 'BUDGET' ? input.bracketFeeCents : 0;
-  const supportGuaranteeCents =
-    input.format === 'BUDGET' && !input.absorbsGatewayCostByKorum
-      ? Math.max(input.realizedGuaranteeContributionsCents, input.projectedGuaranteeContributionsAt100Cents)
-      : 0;
-  const sponsorFeeCents = input.approvedSponsorsFeeCents;
-  const digitalTicketFeeCents =
-    input.format === 'TICKETING' ? Math.max(0, input.netDigitalTicketMarginAt100Cents) : 0;
-  const maintFeeCents = input.maintFeeCents;
-  const huchaTopupFeeCents = input.allocatedHuchaTopupNetCents;
-
-  const gatewayLossCents =
-    input.format === 'TICKETING' && input.netDigitalTicketMarginAt100Cents < 0
-      ? Math.abs(input.netDigitalTicketMarginAt100Cents)
-      : input.absorbsGatewayCostByKorum
-      ? input.gatewayFeeCents
-      : 0;
-
-  const netRevenueCents =
-    bracketFeeCents +
-    supportGuaranteeCents +
-    sponsorFeeCents +
-    digitalTicketFeeCents +
-    maintFeeCents +
-    huchaTopupFeeCents -
-    gatewayLossCents;
-
-  const missingTo100Cents = Math.max(0, input.goalCents - input.raisedCents);
-  const netProfitAfterBoostCents = netRevenueCents - missingTo100Cents;
-
-  return {
-    sourcesCents: {
-      bracketFeeCents,
-      supportGuaranteeCents,
-      sponsorFeeCents,
-      digitalTicketFeeCents,
-      maintFeeCents,
-      huchaTopupFeeCents,
-      gatewayLossCents
-    },
-    netRevenueCents,
-    missingTo100Cents,
-    netProfitAfterBoostCents,
-    isNegativeReturnAlert: netRevenueCents < 0,
-    isProfitableSelfBoost:
-      netRevenueCents > 0 &&
-      input.status === 'FUNDRAISING' &&
-      missingTo100Cents > 0 &&
-      netProfitAfterBoostCents > 0
-  };
-}
-```
 
