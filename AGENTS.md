@@ -110,8 +110,9 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 - Desarrollo: `npm run dev`
 - Tipos: `npm run typecheck` · Lint: `npm run lint`
 - Tests unitarios (Vitest): `npm run test:unit`
+- Tests de integración con PostgreSQL real (libro mayor, triggers, concurrencia): `npm run test:integration` (base local sin Docker: `npm run db:dev`)
 - Tests E2E de escritorio (`1440px`) y móvil (`430px`) con accesibilidad (Playwright + axe): `npm run test:e2e`
-- Migración y semilla: `npx prisma migrate dev && npx prisma db seed`
+- Migraciones: `npm run db:migrate` (aplica `prisma/migrations/`); las migraciones del libro mayor se escriben a mano y el escáner vigila que no se pierdan sus triggers. Semilla (desde el Sprint 1.3): `npx prisma db seed`
 
 ---
 

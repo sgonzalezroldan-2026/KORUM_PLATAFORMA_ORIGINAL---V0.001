@@ -14,12 +14,15 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test:unit": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
     "verify:invariants": "node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs",
     "sync:ai": "node scripts/sync-ai-context.mjs",
     "setup:env": "node scripts/setup-env.mjs",
+    "db:dev": "prisma dev --name korum --detach",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate deploy",
     "postinstall": "prisma generate"
   },
   "dependencies": {

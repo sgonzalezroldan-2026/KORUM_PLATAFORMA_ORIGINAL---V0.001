@@ -19,6 +19,52 @@
 
 ## Entradas
 
+### Sprint 1.2 — Libro mayor de doble partida, cliente Prisma y cupos reversibles · 2026-10-30 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (esfuerzo recomendado extra alto; el asistente no puede leer el configurado). Auditoría: `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).
+- **Qué se ha hecho:**
+  - **Migraciones** en `prisma/migrations/`:
+    - `init`: se genera desde el esquema.
+    - `ledger_immutability`: impide `UPDATE`/`DELETE`/`TRUNCATE` en asientos, apuntes y auditoría; comprueba el cuadre al confirmar; `CHECK amountCents > 0`, solo EUR y enlace de los contra-asientos.
+    - `ledger_append_guard`: ningún apunte puede añadirse a un asiento ya registrado; claves foráneas en las dimensiones; instantánea de cupos y curso.
+  - **Cliente y servicios:**
+    - `src/lib/prisma.ts`: adaptador `pg`, cliente perezoso y extensión `korum-append-only`. `src/lib/db.ts`: tipo `Db`, `inTransaction`.
+    - `money.ts`: `parseEurosToCents` y `bpsOf`, exactos con `BigInt`.
+    - `ledger-accounts.ts`: plan de cuentas con naturaleza y dimensiones obligatorias. `ledger-validation.ts`: validación pura.
+    - `ledger.service.ts`: `postJournal` idempotente y `reverseJournal`. `ledger-balances.ts`: saldos por cuenta y dimensión, y balance de sumas.
+    - `quota-reservation.ts`: reserva y liberación de cupos (QA-FIN01).
+  - **Pruebas:**
+    - `tests/integration/` contra PostgreSQL real en un esquema aislado `korum_test`, que se recrea en cada ejecución. 42 pruebas: QA-C03, QA-FIN01 y todos los ataques de la auditoría.
+    - Base local sin Docker: `npm run db:dev`. CI con un servicio `postgres:16`.
+  - **Escáner:** comprueba que ninguna migración borra ni desactiva los triggers del libro mayor.
+  - **Producción:** `prisma/sql/runtime-role.sql` crea un rol de ejecución sin privilegios, que se aplicará en el Sprint 6.1.
+- **Decisiones tomadas:**
+  - `formatCents`/`eurosToCents` de la ficha pasan a `formatCents`/`parseEurosToCents`.
+  - Los saldos se separan en `ledger-balances.ts` para no superar 300 líneas.
+  - La renovación anual de cupos (`Organization.quotaPeriod`) queda para el Sprint 2.4.
+  - En local las pruebas usan 1 conexión porque PGlite (la base de `npm run db:dev`) mezcla mensajes de protocolo con varias.
+- **Auditoría (Puerta 3):**
+  - **Financiera:** rechazado a la primera, aprobado en la reauditoría. Los apuntes podían añadirse a un asiento ya confirmado: el auditor sumó 1.000 € a una hucha con SQL directo. Corregido con el sello de transacción.
+  - **Defectos ya corregidos y probados:**
+    - la reserva de cupos podía quedar marcada sin descuento si quien llamaba capturaba el error;
+    - la liberación usaba el presupuesto actual en vez de lo reservado;
+    - la idempotencia no comparaba las referencias de origen;
+    - había una carrera en los contra-asientos;
+    - los apuntes no tenían claves foráneas.
+  - **QA:** aprobado; sus hallazgos coincidían con los anteriores.
+- **Pendiente / deuda:**
+  - **La concurrencia real solo la demuestra la CI con PostgreSQL 16, que aún no se ha ejecutado** (no hay repositorio remoto). Hasta entonces, QA-C03 queda verificado en funcionalidad pero no en «concurrencia real».
+  - El rol `korum_app` bloquea el paso a producción (casilla de [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §8).
+  - La supresión RGPD (Sprints 2.5 y 3.7) debe anonimizar al usuario y no borrarlo: los apuntes tienen clave foránea `RESTRICT` hacia `User`.
+  - `amountCents` es `Int`: máximo 21.474.836,47 € por apunte.
+- **Puertas:**
+  - P1 ✅: invariantes con 3 migraciones vigiladas, esquema, `typecheck` y `lint` a 0.
+  - P2 ✅: 104 unitarias y 42 de integración, estables en 3 ejecuciones seguidas.
+  - P3 ✅: financiera y QA aprobadas.
+  - P4 ✅: el sprint no tiene interfaz; la no regresión del 1.1 pasa con 41 E2E en verde.
+  - P5 ✅: todas las puertas repetidas tras cada corrección.
+- **Siguiente sprint:** 1.3 · modelo recomendado: **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría Claude Opus 5.5 · alto. Semilla completa con sus asientos y repositorios con aislamiento entre entidades.
+
 ### Sprint 1.1 — Proyecto Next.js, idiomas, primitivas de marca y arnés QA · 2026-10-29 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Sonnet 5.5 (esfuerzo recomendado: alto; el asistente no puede leer el nivel configurado en la sesión). Auditoría: subagentes `ux-school-director-reviewer` y `qa-e2e-verifier` en Claude Sonnet 5.5.

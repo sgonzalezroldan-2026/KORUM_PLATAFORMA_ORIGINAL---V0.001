@@ -14,9 +14,25 @@ jobs:
     name: Puertas 1, 2 y 4
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: korum
+          POSTGRES_PASSWORD: korum
+          POSTGRES_DB: korum_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U korum -d korum_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     env:
+      # Base de datos real para las pruebas de integración (solo se usa el esquema korum_test).
+      TEST_DATABASE_URL: postgresql://korum:korum@localhost:5432/korum_ci
       # Valores falsos pero válidos: el servidor de pruebas arranca sin secretos reales.
-      DATABASE_URL: postgresql://korum:korum@localhost:5432/korum
+      DATABASE_URL: postgresql://korum:korum@localhost:5432/korum_ci
       BETTER_AUTH_SECRET: ci-better-auth-secret-0123456789abcdef
       ENCRYPTION_KEY: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=
       DATA_HMAC_SECRET: ci-data-hmac-secret-0123456789abcdef
@@ -54,6 +70,9 @@ jobs:
 
       - name: Puerta 2 · tests unitarios
         run: npm run test:unit
+
+      - name: Puerta 2 · tests de integración con PostgreSQL (libro mayor, triggers y concurrencia)
+        run: npm run test:integration
 
       - name: Compilación de producción
         run: npm run build

@@ -172,6 +172,36 @@ for (const file of docFiles) {
   });
 }
 
+// 4b. Ledger immutability must survive every migration: the guards exist and no later migration drops or disables them
+const migrationsDir = path.join(ROOT, 'prisma', 'migrations');
+let migrationsChecked = 0;
+if (fs.existsSync(migrationsDir)) {
+  const migrationFiles = walkFiles(migrationsDir, ['.sql']).sort();
+  migrationsChecked = migrationFiles.length;
+  const allSql = migrationFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+  const requiredGuards = [
+    'LedgerJournal_immutable',
+    'EscrowLedgerEntry_immutable',
+    'AuditLog_immutable',
+    'LedgerJournal_no_truncate',
+    'EscrowLedgerEntry_no_truncate',
+    'AuditLog_no_truncate',
+    'LedgerJournal_balanced',
+    'EscrowLedgerEntry_balanced',
+    'EscrowLedgerEntry_amountCents_positive',
+    'LedgerJournal_stamp_tx',
+    'EscrowLedgerEntry_same_transaction'
+  ];
+  for (const guard of requiredGuards) {
+    if (!allSql.includes(`"${guard}"`)) errors.push(`[LEDGER-GUARD-MISSING] no migration creates "${guard}"`);
+    const dropped = new RegExp(`DROP\\s+(TRIGGER|CONSTRAINT)\\s+(IF\\s+EXISTS\\s+)?"${guard}"`, 'i');
+    if (dropped.test(allSql)) errors.push(`[LEDGER-GUARD-DROPPED] a migration drops "${guard}" (the ledger must stay append-only and balanced)`);
+  }
+  if (/DISABLE\s+TRIGGER/i.test(allSql)) errors.push('[LEDGER-GUARD-DISABLED] a migration disables triggers');
+} else {
+  errors.push('[MIGRATIONS-MISSING] prisma/migrations not found');
+}
+
 // 5b. Brand files cited in the documentation must exist (discarded assets live in public/brand/_old and are not cited as current)
 const brandRef = /public\/brand\/([\w./-]+\.(?:svg|jpg|jpeg|png|webp|avif))/g;
 for (const file of docFiles) {
@@ -244,5 +274,5 @@ if (errors.length > 0) {
 console.log(
   `✅ KORUM INVARIANT GATE PASSED: Prisma Int-cents OK, ${codeFiles.length} code file(s) clean, ` +
     `${seedInitiativesCount} seed initiatives reconciled to 0 cents drift, ${docFiles.length} doc file(s) coherent, ` +
-    `${anchorsChecked} prototype anchors verified, ${sprintsChecked} open sprints with AI model, .claude/ in sync.`
+    `${anchorsChecked} prototype anchors verified, ${sprintsChecked} open sprints with AI model, ${migrationsChecked} migration(s) keep ledger guards, .claude/ in sync.`
 );

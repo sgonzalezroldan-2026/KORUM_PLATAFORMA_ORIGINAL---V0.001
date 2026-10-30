@@ -508,6 +508,7 @@ model User {
   signatureAudits       IdeaSignatureAudit[]
   consentRecords        ConsentRecord[]
   privacyRequests       PrivacyRequest[]
+  escrowLedgerEntries   EscrowLedgerEntry[]
 }
 
 model Session {
@@ -641,6 +642,9 @@ model Organization {
   maintPerInitCents        Int                  @default(4900)
   maintAnnualCapCents      Int                  @default(14700)
   maintPaidCents           Int                  @default(0)
+  /// Curso al que pertenecen los cupos anuales de arriba (p. ej. "2026-2027"). La renovación anual de cupos lo cambia;
+  /// una campaña reservada en un curso anterior ya no devuelve cupo al curso nuevo.
+  quotaPeriod              String?
   donationPresetsCents     Int[]                @default([1000, 2500, 5000])
   defaultDonationIdx       Int                  @default(1)
   sponsorTiersCents        Int[]                @default([10000, 25000, 50000])
@@ -676,6 +680,7 @@ model Organization {
   doubleCheckSignatures DoubleCheckSignature[]
   invoices              Invoice[]
   supportTickets        SupportTicket[]
+  escrowLedgerEntries   EscrowLedgerEntry[]
 }
 
 model OrganizationMember {
@@ -734,6 +739,16 @@ model Initiative {
   showPublicBreakdown        Boolean          @default(true)
   defaultExemptAppliedCents  Int              @default(0)
   medalExemptAppliedCents    Int              @default(0)
+  /// Reserva de cupos de la entidad (exento anual, beca de medalla y tope de mantenimiento). Se reserva al pasar a
+  /// FUNDRAISING y se devuelve si la campaña se cancela o se reembolsa. Las dos marcas hacen ambas operaciones idempotentes.
+  quotaReservedAt            DateTime?
+  quotaReleasedAt            DateTime?
+  /// Instantánea de lo que se descontó realmente al reservar, y del curso de esos cupos: se devuelve exactamente esto,
+  /// aunque el presupuesto cambie después, y solo si los cupos de la entidad siguen siendo del mismo curso.
+  quotaReservedExemptCents   Int              @default(0)
+  quotaReservedMedalCents    Int              @default(0)
+  quotaReservedMaintCents    Int              @default(0)
+  quotaReservedPeriod        String?
   medalRankApplied           Int              @default(0)
   bracketRateAppliedBps      Int              @default(0)
   bracketFeeCents            Int              @default(0)
@@ -766,18 +781,19 @@ model Initiative {
   createdAt                  DateTime         @default(now())
   updatedAt                  DateTime         @updatedAt
 
-  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  coverFile      FileAsset?                 @relation("InitiativeCover", fields: [coverFileId], references: [id], onDelete: SetNull)
-  beforeFile     FileAsset?                 @relation("InitiativeBefore", fields: [beforeFileId], references: [id], onDelete: SetNull)
-  afterFile      FileAsset?                 @relation("InitiativeAfter", fields: [afterFileId], references: [id], onDelete: SetNull)
-  courses        InitiativeCourseProgress[]
-  sponsors       Sponsor[]
-  contributions  Contribution[]
-  ticketPasses   TicketPass[]
-  gateSessions   GateSession[]
-  ledgerJournals LedgerJournal[]
-  payout         EscrowPayout?
-  resizePoll     ResizePoll?
+  organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  coverFile           FileAsset?                 @relation("InitiativeCover", fields: [coverFileId], references: [id], onDelete: SetNull)
+  beforeFile          FileAsset?                 @relation("InitiativeBefore", fields: [beforeFileId], references: [id], onDelete: SetNull)
+  afterFile           FileAsset?                 @relation("InitiativeAfter", fields: [afterFileId], references: [id], onDelete: SetNull)
+  courses             InitiativeCourseProgress[]
+  sponsors            Sponsor[]
+  contributions       Contribution[]
+  ticketPasses        TicketPass[]
+  gateSessions        GateSession[]
+  ledgerJournals      LedgerJournal[]
+  payout              EscrowPayout?
+  resizePoll          ResizePoll?
+  escrowLedgerEntries EscrowLedgerEntry[]
 
   @@index([organizationId, status])
   @@index([status, closesAt])
@@ -824,11 +840,12 @@ model Sponsor {
   expiresAt            DateTime
   createdAt            DateTime             @default(now())
 
-  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  initiative         Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
-  logoFile           FileAsset?          @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
-  paymentMethodToken PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
-  invoices           Invoice[]
+  organization        Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative          Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  logoFile            FileAsset?          @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  paymentMethodToken  PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
+  invoices            Invoice[]
+  escrowLedgerEntries EscrowLedgerEntry[]
 
   @@index([organizationId, status])
 }
@@ -1036,8 +1053,9 @@ model TicketCheckIn {
 // Libro mayor de doble partida (inmutable)
 // -----------------------------------------------------------------------------
 
-/// Asiento contable. Invariante: Σ entries(DEBIT).amountCents == Σ entries(CREDIT).amountCents.
-/// Inmutable: la migración SQL del Sprint 1.2 añade triggers que impiden UPDATE/DELETE en esta tabla y en EscrowLedgerEntry.
+/// Asiento contable. Invariante: Σ entries(DEBIT).amountCents == Σ entries(CREDIT).amountCents, comprobado al confirmar la
+/// transacción por un trigger diferido. Inmutable: triggers que impiden UPDATE/DELETE/TRUNCATE en esta tabla, en
+/// EscrowLedgerEntry y en AuditLog (migración prisma/migrations/*_ledger_immutability).
 model LedgerJournal {
   id                Int               @id @default(autoincrement())
   idempotencyKey    String            @unique
@@ -1053,6 +1071,9 @@ model LedgerJournal {
   createdById       String? // userId o "system"
   reversesJournalId Int?              @unique
   createdAt         DateTime          @default(now())
+  /// Transacción de PostgreSQL que registró el asiento (la fija un trigger). Solo esa transacción puede añadirle apuntes:
+  /// así nadie puede ampliar un asiento ya confirmado. No se expone en el cliente.
+  postedTxId        BigInt            @default(dbgenerated("txid_current()")) @ignore
 
   organization      Organization?       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative        Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
@@ -1082,6 +1103,11 @@ model EscrowLedgerEntry {
   sponsorId      Int?
   createdAt      DateTime        @default(now())
   journal        LedgerJournal   @relation(fields: [journalId], references: [id], onDelete: Restrict)
+  /// Claves foráneas de las dimensiones: un apunte nunca puede apuntar a una entidad, iniciativa, familia o comercio inexistente.
+  organization   Organization?   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative     Initiative?     @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  user           User?           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  sponsor        Sponsor?        @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
 
   @@index([account, organizationId])
   @@index([account, initiativeId])

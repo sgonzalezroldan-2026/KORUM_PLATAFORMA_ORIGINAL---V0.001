@@ -20,6 +20,7 @@
     "allowJs": false,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "incremental": true,
     "esModuleInterop": true,
     "types": [

@@ -14,7 +14,7 @@ npm run setup:env      # crea .env.local con los secretos generados
 npm run dev            # abre http://localhost:3000
 ```
 
-La base de datos local (PostgreSQL) se arranca con Docker cuando haga falta: `docker compose up -d`. Hasta el Sprint 1.3 la aplicación no la usa.
+La base de datos local (PostgreSQL) se arranca con `npm run db:dev` (sin Docker: Prisma Postgres local en `localhost:51214`) o, si tienes Docker, con `docker compose up -d`. Las migraciones se aplican con `npm run db:migrate`.
 
 La galería de componentes está en <http://localhost:3000/dev/ui> (solo en desarrollo y en el entorno de demostración).
 
@@ -27,6 +27,8 @@ La galería de componentes está en <http://localhost:3000/dev/ui> (solo en desa
 | `npm run typecheck` | Comprobación de tipos (TypeScript estricto) |
 | `npm run lint` | Reglas de código, incluida la de «ningún texto visible fuera de `messages/`» |
 | `npm run test:unit` | Pruebas unitarias (Vitest) |
+| `npm run test:integration` | Pruebas contra PostgreSQL real: libro mayor, triggers y concurrencia (necesita `npm run db:dev`) |
+| `npm run db:dev` · `npm run db:migrate` | Base de datos local sin Docker · aplicar las migraciones |
 | `npm run test:e2e` | Pruebas de navegador a 1440 px y 430 px con accesibilidad (Playwright + axe) |
 | `npm run verify:invariants` | Escáner de invariantes del código, el esquema, la semilla y la documentación |
 | `npm run sync:ai` | Regenera la configuración de Claude Code a partir de `.agents/` |

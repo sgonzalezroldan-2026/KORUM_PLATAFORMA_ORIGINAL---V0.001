@@ -20,6 +20,15 @@ description: Integración con Paycomet REST API (cobros Bizum/tarjeta, split tra
 
 Modelo: `LedgerJournal` (asiento, con `idempotencyKey` única) + `EscrowLedgerEntry` (apuntes con `account`, `direction`, `amountCents > 0`). En cada asiento, `Σ DEBIT === Σ CREDIT`. Inmutable: los errores se corrigen con un asiento `REVERSAL`.
 
+Implementación (Sprint 1.2), que es la única puerta de entrada al libro:
+
+- `postJournal(db, input)` en `src/core/finance/ledger.service.ts`: valida, escribe asiento y apuntes en una sola escritura y es idempotente (misma clave + mismo contenido → devuelve el existente; mismo clave + otro contenido → `IdempotencyConflictError`). Dentro de una transacción ajena, una carrera por la clave aborta esa transacción: quien la abrió reintenta. `reverseJournal` crea el contra-asiento (solo uno por asiento). `getAccountBalance` / `getBalancesByAccount` / `getTrialBalance` reconstruyen saldos solo desde los apuntes.
+- **Dimensiones obligatorias** (`ACCOUNT_RULES` en `ledger-accounts.ts`): `INITIATIVE_ESCROW` lleva entidad e iniciativa; `ORG_PAYABLE`, entidad; `FAMILY_WALLET`, familia; `SPONSOR_CREDIT_POOL` y `MATCHING_POOL`, comercio. Conviene poner también `organizationId` en el resto de apuntes para los saldos por entidad del BI.
+- **Defensa en la base de datos** (migraciones `*_ledger_immutability` y `*_ledger_append_guard`): `UPDATE`/`DELETE`/`TRUNCATE` prohibidos en asientos, apuntes y auditoría; cuadre comprobado por un trigger diferido al confirmar; **ningún apunte puede añadirse a un asiento ya registrado** (cada asiento lleva sellada su transacción); claves foráneas en las dimensiones de los apuntes; `CHECK (amountCents > 0)` y solo euros. Desde la aplicación, la extensión `korum-append-only` de `src/lib/prisma.ts` impide editar, borrar, crear apuntes sueltos o asientos en bloque. En producción la aplicación usa el rol sin privilegios `korum_app` (`prisma/sql/runtime-role.sql`).
+- **Idempotencia completa:** la misma clave solo vale para la misma operación: tipo, apuntes, entidad, iniciativa, aportación, movimiento de Mi Hucha, liquidación y referencia de Paycomet. `postJournal` comprueba además que cada iniciativa citada existe y es de la entidad del asiento.
+- **Cupos** (`quota-reservation.ts`): se devuelve la instantánea reservada, solo dentro del mismo curso (`Organization.quotaPeriod`); ningún error deja la iniciativa marcada sin el descuento.
+- `amountCents` es `Int` (hasta 21.474.836,47 € por apunte); los saldos se suman sin desbordar.
+
 ### Asientos tipo (ejemplos con importes en céntimos)
 
 | Operación | Apuntes |

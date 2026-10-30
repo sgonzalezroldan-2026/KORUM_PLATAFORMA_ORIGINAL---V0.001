@@ -58,7 +58,7 @@ La detección de idioma por el navegador y la cookie de idioma están **desactiv
 | Errores | **Sentry** (región de datos UE) | Con limpieza de datos personales antes de enviar y alertas por email. |
 | Analítica | **Plausible** (UE, sin cookies) | Visitas y embudos sin banner de cookies. Las métricas de negocio salen de nuestra base de datos. |
 | Código y CI | **GitHub** + GitHub Actions | Cada cambio pasa P1, P2 y los E2E antes de desplegarse. |
-| Desarrollo local | Docker (PostgreSQL) + `PAYCOMET_MODE=mock` + vista previa de emails | Todo funciona sin conexión a servicios externos. |
+| Desarrollo local | PostgreSQL con `npm run db:dev` (Prisma Postgres local, sin Docker) o Docker + `PAYCOMET_MODE=mock` + vista previa de emails | Todo funciona sin conexión a servicios externos. Las pruebas de integración usan el esquema aislado `korum_test`. |
 
 ---
 
@@ -82,6 +82,8 @@ La detección de idioma por el navegador y la cookie de idioma están **desactiv
 - **Sesiones:** cookies `HttpOnly`, `Secure`, `SameSite=Lax`; 2FA obligatoria para firmantes y Super-Admin; reautenticación para acciones sensibles.
 - **Límites de intentos:** acceso, OTP, PIN de portería, checkout, firma de ideas y formularios de soporte.
 - **Registro de auditoría** append-only para firmas, liquidaciones, cambios de ajustes, accesos denegados y acciones del Super-Admin.
+- **Libro mayor blindado en tres capas:** (1) `postJournal` valida cada asiento; (2) la extensión `korum-append-only` del cliente impide editar, borrar o crear apuntes sueltos; (3) la base de datos, con triggers, impide `UPDATE`/`DELETE`/`TRUNCATE`, comprueba el cuadre al confirmar y no deja añadir apuntes a un asiento ya registrado.
+- **Rol de ejecución sin privilegios** (`prisma/sql/runtime-role.sql`): la aplicación se conecta como `korum_app`, que no es propietario ni superusuario, así que no puede desactivar triggers ni modificar el libro mayor; las migraciones usan la conexión directa del propietario. Se aplica en la preproducción (§8).
 - **Dependencias:** Dependabot y `npm audit` en CI.
 
 ---
@@ -153,6 +155,7 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 
 - [ ] Entornos `preview` y `production` separados, con bases de datos distintas.
 - [ ] Copias de seguridad diarias + recuperación a un punto en el tiempo, **probadas con una restauración real**.
+- [ ] Rol `korum_app` creado con `prisma/sql/runtime-role.sql`; `DATABASE_URL` lo usa y se comprueba que con él fallan `UPDATE` sobre `LedgerJournal`, `ALTER TABLE ... DISABLE TRIGGER` y `SET session_replication_role`.
 - [ ] Cron configurados y visibles en la consola con su última ejecución.
 - [ ] SPF, DKIM y DMARC validados; prueba de entrega a Gmail, Outlook e iCloud.
 - [ ] Alertas de Sentry y del fallo de conciliación activas.

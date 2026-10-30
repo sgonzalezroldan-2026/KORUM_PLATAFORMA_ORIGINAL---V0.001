@@ -27,7 +27,7 @@
 Ningún sprint se entrega ni se marca `[x]` sin superar al **100 % (`0` fallos)**:
 
 - **Puerta 1 · Estática e invariantes:** `node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs` (`0` violaciones) + `npm run typecheck` (`0` errores) + `npm run lint`.
-- **Puerta 2 · Tests unitarios, concurrencia y fuzzing:** `npm run test:unit` al `100 %`.
+- **Puerta 2 · Tests unitarios, de integración, concurrencia y fuzzing:** `npm run test:unit` y `npm run test:integration` (PostgreSQL real: en local, `npm run db:dev`; en CI, el servicio `postgres`) al `100 %`.
 - **Puerta 3 · War Room:** dictamen `APROBADO` de los auditores indicados en la ficha.
 - **Puerta 4 · Navegador real** (todo sprint con interfaz): `qa-e2e-verifier` ejecuta `npm run test:e2e` (Playwright, `1440×900` y `430×932`, incluida la comprobación de accesibilidad con axe) y además navega la app como una persona usuaria real con el **servidor MCP de Playwright**, revisando clics, formularios, capturas y `0` errores de consola.
 - **Puerta 5 · Bucle de corrección y no regresión:** si cualquier puerta falla, se corrige la causa raíz y se **vuelven a ejecutar todas las puertas desde la 1**, también la prueba en navegador, hasta `0` errores con el `100 %` de las suites (nuevas y anteriores) en verde.
