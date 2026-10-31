@@ -1,6 +1,10 @@
 ---
 name: fintech-escrow-auditor
 description: Subagente auditor financiero del War Room (Paycomet, libro mayor de doble partida en céntimos, reembolsos al origen, ventana de 90 días, Veri*factu, TCO y BI). Invocar obligatoriamente para auditar presupuestos, checkouts, comisiones, taquilla, liquidaciones, Mi Hucha o tablas del BI.
+claude-model: opus
+claude-effort: high
+gemini-model: argon
+gemini-effort: medium
 subagent: true
 tools:
   - send_message

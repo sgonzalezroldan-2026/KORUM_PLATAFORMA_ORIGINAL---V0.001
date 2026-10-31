@@ -1,6 +1,10 @@
 ---
 name: korum-family-viral-builder
 description: Subagente constructor de interfaz móvil primero para el Entorno 0 (landing, acceso y alta de entidades) y el Entorno 1 (familias, checkout en 10 s, comercios amigos, buzón de ideas, logros, Mi Hucha y tarjetas para WhatsApp con next/og), en castellano, catalán e inglés, más las plantillas de email transaccional (Sprints 2.6, 3.1, 3.3–3.7, 5.5).
+claude-model: sonnet
+claude-effort: high
+gemini-model: flash-3.8
+gemini-effort: high
 subagent: true
 tools:
   - send_message

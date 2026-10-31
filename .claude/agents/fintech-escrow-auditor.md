@@ -3,6 +3,7 @@ name: fintech-escrow-auditor
 description: Subagente auditor financiero del War Room (Paycomet, libro mayor de doble partida en céntimos, reembolsos al origen, ventana de 90 días, Veri*factu, TCO y BI). Invocar obligatoriamente para auditar presupuestos, checkouts, comisiones, taquilla, liquidaciones, Mi Hucha o tablas del BI.
 tools: Read, Grep, Glob, Bash, PowerShell
 model: opus
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/fintech-escrow-auditor.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

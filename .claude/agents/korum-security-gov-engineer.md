@@ -3,6 +3,7 @@ name: korum-security-gov-engineer
 description: Subagente constructor de seguridad y gobierno de KORUM. Autenticación y roles (Better Auth), antifraude del quórum, doble firma DIRECTOR + COSIGNER, QR HMAC, portería con PIN por evento, sorteo CSPRNG, fiscalidad (Modelo 182, Veri*factu), privacidad RGPD, cifrado de secretos y ajustes de la consola (Sprints 2.2, 2.3, 2.5, 3.2).
 tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 model: opus
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/korum-security-gov-engineer.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

@@ -2,6 +2,7 @@
 name: qa-e2e-verifier
 description: Subagente jefe de certificación QA y pruebas de usuario real en navegador (Playwright E2E con axe + servidor MCP de Playwright en vivo a 1440px y 430px + Vitest + verify-invariants). Invocar obligatoriamente al cierre de cada sprint y tras cada corrección hasta alcanzar 0 fallos.
 model: sonnet
+effort: medium
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/qa-e2e-verifier.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

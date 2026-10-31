@@ -6,7 +6,7 @@
 > 2. **Un sprint por entrega:** `4–8` archivos cohesivos y `~600–1.050` líneas de producción + tests.
 > 3. **Cierre con las 5 puertas** y dictamen de los auditores indicados. Después se actualiza la bitácora y se indica el siguiente sprint.
 >
-> **Cómo leer la línea `🤖`:** *constructor* es el modelo que escribe el código del sprint; *auditoría* es el modelo de los subagentes del *War Room* (en Claude Code ya viene fijado en `.claude/agents/`). Los niveles de esfuerzo son los de cada herramienta (Claude: medio, alto, extra alto, máx.; Gemini: medio, alto). El criterio general está en [GUIA_IA_CLAUDE_Y_GEMINI.md](GUIA_IA_CLAUDE_Y_GEMINI.md) §3: **Opus** para dinero, seguridad y decisiones irreversibles; **Sonnet** para interfaz y piezas bien especificadas; **Gemini** como alternativa o para revisión cruzada, traducciones e imágenes. El esfuerzo **máx.** se reserva para desatascar un fallo que ha resistido dos vueltas del bucle de corrección.
+> **Cómo leer la línea `🤖`:** *constructor* es el modelo que escribe el código del sprint; *auditoría* es el modelo de los subagentes del *War Room* (en Claude Code ya viene fijado en `.claude/agents/`). Los niveles de esfuerzo son los de cada herramienta (Claude: medio, alto, extra alto, máx.; Gemini: bajo, medio, alto). Equivalencias: **Opus = Argon** y **Sonnet = Flash 3.8**; Flash 3.8 va siempre en alto; Argon medio = Opus alto y Argon alto = Opus extra alto o máx. Cada agente trae su par fijado en `.agents/agents/` (campos `claude-model`, `claude-effort`, `gemini-model`, `gemini-effort`). Cuando la ficha pide un modelo distinto al del agente, lo indica con **Agente constructor:**. El criterio general está en [GUIA_IA_CLAUDE_Y_GEMINI.md](GUIA_IA_CLAUDE_Y_GEMINI.md) §3: **Opus** para dinero, seguridad y decisiones irreversibles; **Sonnet** para interfaz y piezas bien especificadas; **Gemini** como alternativa o para revisión cruzada, traducciones e imágenes. El esfuerzo **máx.** se reserva para desatascar un fallo que ha resistido dos vueltas del bucle de corrección.
 >
 > **Dependencias externas:** la línea `⛓️` indica qué se necesita fuera del código (credenciales, respuestas de Paycomet o del abogado). Si falta, el sprint se puede construir contra el simulador, pero no pasa a producción.
 
@@ -40,7 +40,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
 ## FASE 1 · Cimientos: proyecto, arnés QA, persistencia y motor matemático
 
 - [x] **SPRINT 1.1 — Proyecto Next.js + Tailwind 4 + idiomas + primitivas de marca + arnés QA:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Sonnet 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría **Claude Sonnet 5.5 · alto**.
   - **Marca:** `KorumMark` y `KorumLogo` se dibujan como SVG a partir de la lámina de referencia `public/brand/korum-logo.jpg` (parche redondo con la K colegial, laureles y cinta), **sin año ni subtítulo** para que sirvan a colegios, clubes y entidades culturales. Los SVG antiguos están descartados en `public/brand/_old/fase2_propuestas_descartadas/`.
   - **Alcance (`~750 LOC`):** `package.json` con versiones exactas verificadas (`npm view`), `tsconfig.json` (`strict`, `noUncheckedIndexedAccess`), `next.config.ts`, `prisma.config.ts` (esquema en `schema/schema.prisma`, cliente en `src/generated/prisma`), `src/app/globals.css` con `@theme` de Tailwind 4 (tokens de marca, tipografías, `.korum-paper-dots`, `.korum-court-grid`, `.korum-notebook-sheet`, `.die-cut-sticker`, `.tactile-btn`, `.korum-trust-vault`, `.mobile-stack`), `next-intl` con `es`/`ca`/`en` y catálogos base, `docker-compose.yml` (PostgreSQL 16), `src/config/env.ts` (Zod, fail-fast), `.env.example` actualizado, ESLint, `vitest.config.ts`, `playwright.config.ts` (proyectos `desktop` 1440×900 y `mobile` 430×932, con `@axe-core/playwright`), scripts `npm run verify:invariants | typecheck | lint | test:unit | test:e2e`, flujo de CI (`.github/workflows/ci.yml`) y primitivas (`KorumLogo`, `TrustBadge`, `CurrencyText`, `DelayedTooltip` de 1000 ms, `ToastProvider`, `SortableTh`, `StatusBadge`, `LanguageSwitcher`, `EmptyState`, `Skeleton`). Añadir el servidor MCP de Prisma a `.mcp.json` cuando Prisma esté instalado.
   - **Skills:** `korum-brand-design-system`, `korum-nextjs-multitenant-ui`, `korum-qa-harness-gatekeeper`.
@@ -55,14 +55,14 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-C03`, `QA-FIN01`.
 
 - [x] **SPRINT 1.3 — Semilla completa y repositorios con aislamiento entre entidades:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría **Claude Opus 5.5 · alto**.
   - **Alcance (`~850 LOC`, ampliado):** `prisma/seed.ts` + `src/seed/*` que vuelcan `src/mocks/seed_data.json` (reglas, medallas, 4 entidades con su titular legal y sus 2 firmantes, 8 iniciativas, 5 comercios, 3 ideas con auditoría y chat, pases QR, liquidaciones, facturas y soporte), repartiendo lo recaudado en 1.505 cobros deterministas y generando los 3.018 asientos, y verificando al final que los saldos del libro mayor cuadran con `raisedCents` al céntimo (`npm run db:seed`, idempotente); `src/repositories/*` con guardia obligatoria por entidad (`authorizeTenant`), registro de accesos denegados y de accesos del Super-Admin en `AuditLog`, anti-enumeración de identificadores y lecturas públicas con solo campos públicos + `tests/unit/{seed-plan,seed-guard,tenant-guard}.spec.ts` y `tests/integration/{seed,ledger-bulk,tenant-isolation}.spec.ts`. Incluye la guardia de la semilla y del reinicio (`seed-guard`: nunca con cobros reales ni contra bases no locales salvo entorno de demostración), la carga masiva que verifica el contenido de los asientos ya existentes, una conciliación con comprobaciones cruzadas independientes del planificador, la migración `ledger_guards_hardening` y un escáner que evalúa el estado final de las guardas del libro mayor.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-tco-calculator`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-core-fintech-architect` ➔ `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-C04`, `QA-SEC01`.
 
 - [x] **SPRINT 1.4 — Motor TCO dual, tope anual de mantenimiento y BI real frente a proyectado (fuzzing 1.000x):**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**.
   - **Alcance (`~950 LOC`):** `src/core/finance/tco.service.ts`, `pricing-health.ts` y `bi-analytics.service.ts`: `calculateBracketFeeCents` (modos `FLAT` y `MARGINAL`, umbrales configurables), `calculateStudioBudgetTCO`, `calculateStudioTicketingTCO`, `calculatePublicBreakdown4Lines`, `evaluateMaintenanceCapShutoff`, `calculateRevenueBreakdown6Sources` (real frente a proyectado, con tasa de activación real de la aportación voluntaria), detectores 💎 / 🚨 y **`evaluatePricingHealth`** (avisos al Super-Admin cuando una regla pierde dinero o es incoherente; [skill TCO §2.1](../.agents/skills/korum-tco-calculator/SKILL.md)) + `tests/unit/tco-bi-fuzz.spec.ts` (1.000 iteraciones deterministas en los dos modos de tramos), `tests/unit/bi-analytics.spec.ts` y `tests/unit/pricing-health.spec.ts`.
   - **Skills:** `korum-tco-calculator`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-core-fintech-architect` ➔ `fintech-escrow-auditor` + `qa-e2e-verifier`.
@@ -81,7 +81,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-P01`, `QA-P02`, `QA-P04`.
 
 - [ ] **SPRINT 2.2 — Antifraude del quórum, doble firma y candado semántico:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**.
   - **Alcance (`~850 LOC`):** `src/core/security/`: `email-normalizer.ts` (email canónico y dominios desechables), `device-quorum.service.ts` (cookie de dispositivo, subred IP como HMAC, huella solo con consentimiento, regla de 2 cuentas), `double-check.service.ts` (`DIRECTOR` + `COSIGNER`, `signatureHash`, enlace de un solo uso + OTP) y `semantic-lock.ts` (límites de palabra en es/ca/en con lista blanca cultural) + `tests/unit/security-quorum.spec.ts`.
   - **Heredado del Sprint 2.1:** `approvePayout` debe verificar, dentro de su transacción, el `signatureHash`, el OTP y que cada firmante sigue teniendo su rol. El hash debe incluir `netPaidCents` y la cuenta destino: si cambian, la firma deja de valer.
   - **Skills:** `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
@@ -89,7 +89,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-SEC02`, `QA-SEC03`, `QA-SEC04`.
 
 - [ ] **SPRINT 2.3 — Taquilla QR, PIN de portería por evento, sorteo certificado y fiscalidad (Modelo 182 + Veri\*factu):**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**.
   - ⛓️ **Depende de:** elección del proveedor de facturación Veri\*factu ([DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §4). Sin él, el adaptador funciona en modo simulado.
   - **Alcance (`~950 LOC`):** `src/core/ticketing/` (reserva atómica de aforo, numeración de rifas, firma y verificación HMAC en tiempo constante, check-in parcial con `TicketCheckIn`, PIN por evento con hash lento, límite de intentos y `GateSession`, sorteo con `crypto.randomInt` y acta con huella) y `src/core/tax/` (validación NIF/NIE/CIF, certificado o justificante, fichero del Modelo 182 con recurrencia por `donorTaxIdHmac`, interfaz `InvoicingProvider` para Veri\*factu) + `tests/unit/ticketing-tax.spec.ts`.
   - **Heredado del Sprint 2.1:** el webhook aún no actualiza `ticketsSold` ni emite pases al confirmar una entrada.
@@ -98,7 +98,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-P03`, `QA-REG01`, `QA-REG02`, `QA-REG03`, `QA-SEC06`.
 
 - [ ] **SPRINT 2.4 — Operación: tareas programadas, conciliación, ficheros, observabilidad y límites de intentos:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-core-fintech-architect` con modelo `sonnet` en esta llamada (su valor por defecto es `opus`).
   - **Alcance (`~850 LOC`):** `src/app/api/cron/[job]/route.ts` protegido con `CRON_SECRET` y procesador de `Job` (bloqueo, lotes, reintentos con espera creciente) con los tipos `CAMPAIGN_EXPIRY`, `MASS_REFUND`, `MONTHLY_TOPUP`, `SPONSOR_RENEWAL_NOTICE`, `SPONSOR_RENEWAL_CHARGE`, `CREDIT_POOL_EXPIRY`, `SPLIT_WINDOW_GUARD` (con `evaluateSplitWindow`), `PSP_RECONCILIATION`, `MODEL182_REMINDER` y la **renovación anual de cupos** de cada entidad (nuevo `Organization.quotaPeriod`, exento y beca de medalla del curso nuevo, `maintPaidCents` a 0; las reservas del curso anterior ya no abonan al nuevo); `src/services/storage/` (Supabase Storage: cubos público y privado, URL firmadas, `FileAsset` con hash y tipo verificado); `src/lib/rate-limit.ts` sobre `RateLimit`; Sentry con limpieza de datos personales + `tests/unit/jobs-storage.spec.ts`.
   - **Heredado del Sprint 2.1:** `MASS_REFUND` usa `refundContribution`, excluye `SPONSORSHIP`, no reintenta los resultados `UNKNOWN` y avisa de los `REJECTED`. Aplicar el límite de intentos a `/api/webhooks/paycomet`, purgar `rejected:*` a los 90 días y confirmar el `AuthCode` de cada cobro en la conciliación. `MASS_REFUND` debe recoger todo `REFUND_PENDING`, no solo las iniciativas en `REFUNDING` (un cobro tardío en una campaña cerrada también se devuelve), y avisar de las reservas `refundSendingAt` antiguas: una caída entre la reserva y la llamada las deja puestas para siempre. Un contracargo no confirmado (`IGNORED`) debe aparecer en la conciliación.
   - **Skills:** `korum-escrow-payments`, `korum-qa-harness-gatekeeper`.
@@ -106,7 +106,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-OPS01`, `QA-OPS02`.
 
 - [ ] **SPRINT 2.5 — Ajustes cifrados de la plataforma, registro de auditoría y privacidad RGPD:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**.
   - **Alcance (`~800 LOC`):** `src/core/security/crypto.ts` (AES-256-GCM con versión de clave y rotación; HMAC de datos personales), `src/services/settings/` (lectura tipada de `PlatformSetting` y `PlatformSecret` con caché, prioridad sobre las variables de respaldo y validación Zod por clave), `src/services/audit/` (escritura de `AuditLog` sin datos sensibles), `src/core/privacy/` (consentimientos, solicitudes de acceso, exportación y supresión con anonimización que conserva lo contable, `DATA_RETENTION_PURGE` con los plazos legales) + `tests/unit/settings-privacy.spec.ts`.
   - **Skills:** `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-security-gov-engineer` ➔ `antifraud-legal-guardian` + `qa-e2e-verifier`.
@@ -114,7 +114,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Heredado del Sprint 2.1:** atar el contexto de cifrado de las tarjetas a su fila, revocar los tokens al suprimir un usuario y borrarlos en Paycomet, evitar que cambiar `ENCRYPTION_KEY_VERSION` tumbe los webhooks y reutilizar los contextos de `src/lib/encryption.ts`.
 
 - [ ] **SPRINT 2.6 — Notificaciones: bandeja de salida y emails transaccionales en 3 idiomas:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto); textos en catalán e inglés revisados con **Gemini Argon · alto** · auditoría **Claude Sonnet 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto); textos en catalán e inglés revisados con **Gemini Argon · alto** · auditoría **Claude Sonnet 5.5 · alto**.
   - ⛓️ **Depende de:** cuenta del proveedor de email y dominio con SPF, DKIM y DMARC (se puede construir con el modo de vista previa local).
   - **Alcance (`~900 LOC`):** `src/services/email/` (interfaz `EmailProvider`, adaptador del proveedor elegido, modo vista previa en desarrollo), procesador de `OutboxMessage` con reintentos, plantillas con React Email para el catálogo de [EXPERIENCIA_DE_PRODUCTO.md](EXPERIENCIA_DE_PRODUCTO.md) §4 (recibo, entrada QR, logro conseguido, reembolso, firma pendiente, preaviso de renovación, certificado fiscal, acceso) en `es`/`ca`/`en`, con versión de texto plano + `tests/unit/email-outbox.spec.ts`.
   - **Imágenes:** cabecera y pie de los emails en SVG/PNG generados por código (Claude o Gemini).
@@ -127,7 +127,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
 ## FASE 3 · Entorno 0 (marketing y acceso) y Entorno 1 (familias, comercios y viralidad)
 
 - [ ] **SPRINT 3.1 — Landing, páginas pilar, calculadora de impacto y base SEO:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto); textos de marketing en catalán e inglés con **Gemini Argon · alto** · auditoría **Claude Sonnet 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto); textos de marketing en catalán e inglés con **Gemini Argon · alto** · auditoría **Claude Sonnet 5.5 · alto**.
   - **Alcance (`~950 LOC`):** `src/app/[locale]/(marketing)/` (portada con buscador de entidades y simulador, `para-colegios`, `para-clubes`, `para-entidades-culturales`, `para-comercios`, `como-funciona`, `precios`, `seguridad-y-transparencia`, `preguntas-frecuentes`), `robots.ts`, `sitemap.ts`, `llms.txt`, metadatos y JSON-LD por página, selector de idioma y aviso de cookies (solo si se activan cookies no esenciales) + `tests/e2e/marketing-seo.spec.ts`.
   - **Imágenes:** fotografía o ilustración de ambiente para la portada y las páginas pilar → **modelo de imagen de Gemini** (reglas de [GUIA_IA_CLAUDE_Y_GEMINI.md](GUIA_IA_CLAUDE_Y_GEMINI.md) §5); iconos e ilustraciones planas → SVG con Claude o Gemini.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-seo-discoverability`, `korum-brand-design-system`, `korum-tco-calculator`, `korum-qa-harness-gatekeeper`.
@@ -135,21 +135,21 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-M01`, `QA-SEO01`, `QA-SEO02`, `QA-F06`.
 
 - [ ] **SPRINT 3.2 — Autenticación por rol, alta autónoma de entidades y control de acceso:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**.
   - **Alcance (`~900 LOC`):** Better Auth (enlace mágico y OTP para familias y comercios; contraseña + 2FA para firmantes y Super-Admin; passkeys opcionales), `/login`, `/registro-comunidad` en 3 pasos (vertical, titular legal con forma jurídica y titularidad del centro, firmantes con su cargo, idioma del contenido e indexación pública, 1.000 € exentos y plantilla de grupos), invitación al cofirmante, middleware de roles (`/panel/[orgSlug]`, `/porteria`, `/admin`) y alta del primer Super-Admin. La barra de demostración del prototipo solo existe con `NEXT_PUBLIC_DEMO_MODE=true` + `tests/e2e/auth-rbac.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-security-gov-engineer` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-M02`, `QA-SEC05`.
 
 - [ ] **SPRINT 3.3 — Portal público de la entidad, ficha de iniciativa y tarjetas para WhatsApp:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Sonnet 5.5 · alto** + `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría **Claude Sonnet 5.5 · alto** + `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~950 LOC`):** cabecera dinámica de la entidad (ancla `id="school-hero-header"`), píldora de Mi Hucha según su modo, barra de impacto, `🔍 Filtrar` oculto por defecto, grid de iniciativas `FUNDRAISING` con `💛 X aportaciones` e insignia *Matching 2x*, ficha (`function openInitiativeDetail`) con hucha de la iniciativa + fecha límite, 4 líneas = 100 % de la meta, reto por curso en positivo y placa, modal de compartir y `/api/og/initiative/[id]/route.tsx` (< 300 KB, URL versionada; usa `KorumMarkSvg variant="simple"`, el isotipo sin hooks del Sprint 1.1), metadatos y JSON-LD + `tests/e2e/family-catalog-detail.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-seo-discoverability`, `korum-tco-calculator`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-family-viral-builder` + `korum-seo-discoverability-specialist` ➔ `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-F01`, `QA-F02`, `QA-F03`, `QA-F06`, `QA-SEO03`.
 
 - [ ] **SPRINT 3.4 — Checkout en 10 segundos (donación y taquilla), email de invitado y pase QR:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-family-viral-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).
   - **Alcance (`~950 LOC`):** checkout (anclas `id="checkout-modal"` y `function openCheckoutModal`) para donación y taquilla/rifa: email de invitado sin contraseña, selector de grupo según el vertical, **aportación voluntaria a KORUM con el check desmarcado** y texto según `ley49` verificada, selector manual desde 0 €, NIF opcional para el certificado, Bizum / tarjeta (y Hucha solo en `REGULATED_WALLET`), aforo atómico, *Gastos de gestión digital*, pantalla de celebración tras pagar y pase imprimible con QR firmado + `tests/e2e/family-checkout-tickets.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-ticketing-qr`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-family-viral-builder` + `korum-community-target-psychologist` ➔ `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
@@ -157,7 +157,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Heredado del Sprint 2.1:** el identificador `Order` debe ser aleatorio, sin email ni NIF, y hay que comprobar el dominio de `challengeUrl` antes de redirigir.
 
 - [ ] **SPRINT 3.5 — Comercios amigos (ORO > PLATA > BRONCE) y patrocinio con factura Veri\*factu:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~750 LOC`):** vista de comercios amigos (anclas `id="fview-comercios"` y `function renderFamilySponsors`) sin importes en público y con orden estricto, modal de ventaja o código para familias, pestaña de comercio del checkout (nivel, *Matching 2x* opcional, fee encima, datos fiscales, renovación anual con preaviso) y descarga del justificante y la factura + `tests/e2e/sponsors-verifactu.spec.ts`.
   - **Heredado del Sprint 2.1:** confirmar patrocinios por webhook. La bolsa Matching no es un cobro repartible: una campaña con bolsa puede no poder liquidarse hasta que los repartos la tengan en cuenta.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-qa-harness-gatekeeper`.
@@ -165,14 +165,14 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-F05`.
 
 - [ ] **SPRINT 3.6 — Buzón de ideas con quórum auditado y galería Antes / Después:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~800 LOC`):** buzón (anclas `id="fview-ideas"`, `function renderFamilyIdeas`, `function votePublicIdea`, `function submitAnonymousIdeaPhase0`): propuesta con alias `#FAM-XXXX`, firma en 1 clic con email verificado y regla padre/madre en servidor, aviso y consentimiento de la huella; logros (`id="fview-logros"`, `function renderFamilyAchievements`): comparador Antes/Después, agradecimiento y botón de compartir; subida de fotos con confirmación de que no aparecen menores identificables + `tests/e2e/ideas-achievements.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-family-viral-builder` + `korum-community-target-psychologist` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-F09`.
 
 - [ ] **SPRINT 3.7 — Mi Hucha (según su modo), Mi cuenta con derechos RGPD, entradas, FAQ y soporte:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-family-viral-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).
   - ⛓️ **Depende de:** para `REGULATED_WALLET`, confirmación escrita del proveedor de monederos. Mientras tanto se entrega `PLEDGE`.
   - **Alcance (`~950 LOC`):** Mi Hucha (ancla `id="fview-mihucha"`): modo `PLEDGE` (aportación mensual programada a una entidad, pausa y cancelación en 1 clic) y modo `REGULATED_WALLET` (recarga puntual y mensual, retirada solo al medio de pago original con el aviso oficial); **Mi cuenta**: mis aportaciones, mis entradas QR, datos fiscales y certificados, consentimientos, exportar mis datos y suprimir mi cuenta; chat anónimo `#FAM-XXXX`; FAQ y soporte (`id="fview-faq"`) + `tests/e2e/mi-hucha-cuenta-faq.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
@@ -184,21 +184,21 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
 ## FASE 4 · Entorno 2: panel mancomunado de la entidad y modo portería
 
 - [ ] **SPRINT 4.1 — Cabecera de gestión, kit de medallas, exportación del Modelo 182 y cuadro de mandos:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~850 LOC`):** layout `/panel/[orgSlug]` (anclas `id="env-school"`, `id="sch-sub-dashboard"`, `function renderSchoolDashboard`, `function renderSchoolMedalsExplainer`): cabecera con los dos firmantes y su cargo, estado KYB, cupos, kit de medallas (informe, sello y texto para redes), descarga del Modelo 182 solo con Ley 49/2002 verificada, filtros ocultos, línea de 6 estados con `WLT-ESC-XXX` y estado vacío guiado para la primera campaña + `tests/e2e/panel-dashboard-medals.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-S02`, `QA-S05`.
 
 - [ ] **SPRINT 4.2 — Aprobaciones, doble firma (`1/2 → 2/2`), moderación de comercios, KYB y ajustes de la entidad:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-backoffice-bi-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).
   - **Alcance (`~950 LOC`):** moderación (anclas `id="sch-sub-moderation"`, `function renderSchoolModeration`, `function approvePhase0ToPublic`, `function approveDoubleCheckToBudget`, `function moderateSponsor`): Fase 0, auditoría de firmas, chat con `#FAM-XXXX`, **doble firma** `DIRECTOR` + `COSIGNER` con enlace de un solo uso y OTP, moderación y renovación de comercios con `CREDIT_POOL`, alta KYB con subida privada de documentos, botones de donación, grupos, marca, idioma del contenido e indexación + `tests/e2e/panel-moderation-doublecheck.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-escrow-payments`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-S02`.
 
 - [ ] **SPRINT 4.3 — Estudio dual, pizarra TCO al céntimo, plantillas de campaña y cartel A4 con QR:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~950 LOC`):** Estudio (anclas `id="sch-sub-studio"`, `function loadInitiativeIntoStudio`, `function recalcStudioTCO`, `function saveInitiativeFromStudio`) y cartel (`id="poster-modal"`, `function updatePosterPreview`): modos `BUDGET` y `TICKETING` (`EVENT`/`RAFFLE` con aviso y confirmación de normativa), **plantillas de campaña listas para usar**, candado semántico en vivo, placa y reto independientes, duración máxima de 60 días, pizarra de 5 líneas cuadrada al céntimo (`"0,00 €"` limpio) y cartel A4 imprimible con QR real + `tests/e2e/panel-studio-poster.spec.ts`.
   - **Imágenes:** ilustraciones de portada para las plantillas de campaña → SVG (Claude o Gemini) o ilustración en mapa de bits con el **modelo de imagen de Gemini**.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-tco-calculator`, `korum-quorum-antifraud`, `korum-ticketing-qr`, `korum-qa-harness-gatekeeper`.
@@ -206,7 +206,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-S01`.
 
 - [ ] **SPRINT 4.4 — Logros, liquidación con doble firma, redimensionamiento y reembolso del 100 %:**
-  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-backoffice-bi-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).
   - ⛓️ **Depende de (aplazado):** respuesta de Paycomet sobre el pago directo al IBAN del proveedor. Mientras tanto el simulador paga a una cuenta destino de Paycomet y el destino «proveedor» queda marcado como no verificado.
   - **Alcance (`~900 LOC`):** liquidaciones y soporte (anclas `id="sch-sub-escrow"`, `id="sch-sub-support"`, `function closeAndPublishAchievedInitiative`, `function sendResizePollToDonors`, `function executeAutomaticRefundAndSponsorReassign`): cierre al 100 % con doble firma, destino entidad o proveedor con factura adjunta, aviso de la ventana de 90 días, fotos Antes/Después, votación vinculante de redimensionamiento, reembolso masivo con progreso visible, reasignación de comercios o `CREDIT_POOL` y buzón prioritario al Super-Admin + `tests/e2e/panel-payout-refund.spec.ts`.
   - **Heredado del Sprint 2.1:** replanificar los repartos que queden para revisión (`NEEDS_REVIEW`) y recalcular una liquidación firmada que deje de cuadrar.
@@ -215,7 +215,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Gate QA:** `QA-S03`.
 
 - [ ] **SPRINT 4.5 — Modo portería móvil y sorteador certificado de rifas:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~850 LOC`):** `/panel/[orgSlug]/porteria`: entrada con PIN del evento (límite de intentos), lector QR con respaldo para iOS, validación en < 0,5 s, check-in parcial, alerta roja con sonido y vibración ante pases usados, contador de aforo en vivo, modo sin cobertura con cola local y sincronización, y pantalla proyectable de sorteo certificado con acta + `tests/e2e/panel-porteria-raffle.spec.ts`.
   - **Skills:** `korum-ticketing-qr`, `korum-nextjs-multitenant-ui`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
@@ -226,14 +226,14 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
 ## FASE 5 · Entorno 3: consola del Super-Admin, ajustes, pulido final y certificación
 
 - [ ] **SPRINT 5.1 — BI (real frente a proyectado), gráfico de 6 fuentes, tablas ordenables y alertas:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~900 LOC`):** `/admin` (anclas `id="sa-sub-bi"`, `function renderSuperAdminBI`, `function renderRevenueSourcesChartInto`, `function sortSaTable`): KPIs del libro mayor separados de la proyección, gráfico de 6 fuentes, tabla de entidades, top 10 y listado global con `💛 Aportaciones`, ordenación `↕` en todas las columnas, alertas 💎 / 🚨, avisos de conciliación y **avisos de salud de precios** (insignia con el número de avisos abiertos en la cabecera, banner si hay alguno `CRITICAL` y aviso `SOURCE_NEGATIVE_MARGIN` calculado con el libro mayor) + `tests/e2e/superadmin-bi.spec.ts`. «Retorno +Y €» es `netProfitAfterBoostCents` (lo ya cobrado más la comisión de tramos y el mantenimiento, que se liquidan al completar la meta; Regla 02 §10). Al llamar al motor: pasar `maintFeeCents − maintShortfallCents` y sacar el número y la suma de la garantía de la misma consulta.
   - **Skills:** `korum-tco-calculator`, `korum-nextjs-multitenant-ui`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-A01`, `QA-A02`.
 
 - [ ] **SPRINT 5.2 — Pop-up ejecutivo (Auto-Impulso con decisión de visibilidad) y ficha 360º con facturas:**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~900 LOC`):** pop-up (anclas `id="sa-init-popup-modal"`, `function openSuperAdminInitiativePopup`, `function executeSuperAdminSelfBoost`, `function fixNegativeReturnTariff`): enlace público, comercios participantes, **ejecución del Auto-Impulso con selector "mostrar en público / no mostrar"** (valor por defecto del ajuste) y asiento en el libro mayor, corrección de tarifa en 1 clic; ficha 360º (`id="sa-sub-crm"`, `function renderSchoolCRM360`): titular legal, KYB y verificación de Ley 49/2002, tarifas individuales, categorías propias, facturas Veri\*factu, gráfico de 6 fuentes y tabla ordenable de iniciativas + `tests/e2e/superadmin-crm360.spec.ts`.
   - **Skills:** `korum-tco-calculator`, `korum-escrow-payments`, `korum-nextjs-multitenant-ui`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
@@ -248,7 +248,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
   - **Heredado del Sprint 2.1:** `resolveUnknownSplit` y `resolveUnknownRefund` no comprueban rol: su ruta debe exigir Super-Admin con 2FA.
 
 - [ ] **SPRINT 5.4 — Ajustes de la plataforma (`/admin/ajustes`):**
-  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
+  - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~850 LOC`):** pantallas para los ajustes de [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §6 (Paycomet y modo, email y remitente, Veri\*factu, modo de Mi Hucha, divulgación por defecto del Auto-Impulso, SEO y rastreadores de IA, textos legales versionados por idioma, límites) con secretos enmascarados, reautenticación 2FA, botón "probar conexión" y historial de cambios desde `AuditLog` + `tests/e2e/superadmin-settings.spec.ts`.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-seo-discoverability`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
@@ -274,7 +274,7 @@ Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales
 ## FASE 6 · Preproducción y piloto
 
 - [ ] **SPRINT 6.1 — Preproducción: infraestructura en la UE, dominios, copias de seguridad y manual de operación:**
-  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto).
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio).
   - ⛓️ **Depende de:** cuentas de Vercel, Supabase, proveedor de email, Sentry y Paycomet (sandbox → producción), dominio y **todas las tareas de «Tareas externas aplazadas»** (respuestas de Paycomet, abogado y asesoría fiscal con el visto bueno de [CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) §9). **Al abrir este sprint el asistente recuerda al promotor que sin ellas no se pasa a cobros reales.**
   - **Alcance:** entornos `preview` y `production` (funciones en Frankfurt, base de datos en la UE con copias diarias y recuperación a un punto en el tiempo), DNS (SPF, DKIM, DMARC), cron programados, Search Console y Bing Webmaster Tools, alertas de Sentry, prueba completa en sandbox real de Paycomet, simulacro de restauración de copia y `docs/MANUAL_OPERACION.md` (qué hacer ante un pago fallido, un contracargo, una caída o una solicitud RGPD).
   - **Constructor / auditores:** `korum-core-fintech-architect` + `korum-security-gov-engineer` ➔ `antifraud-legal-guardian` + `qa-e2e-verifier`.

@@ -3,6 +3,7 @@ name: korum-community-target-psychologist
 description: Subagente especialista en psicología de familias (madres y padres de 30 a 50 años, abuelos que donan), dinámicas de AMPA/AFA, clubes y entidades culturales, y branding emocional colegial. Invocar para escribir o revisar microcopy, recorridos, emails, momentos de celebración y para evitar presión social (Sprints 2.6, 3.1, 3.4, 3.6 y revisiones de textos).
 tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 model: sonnet
+effort: medium
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/korum-community-target-psychologist.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

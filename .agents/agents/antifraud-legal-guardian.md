@@ -1,6 +1,10 @@
 ---
 name: antifraud-legal-guardian
 description: Subagente guardián del War Room para seguridad, aislamiento entre entidades (IDOR), regla padre/madre, doble firma DIRECTOR + COSIGNER, candado semántico, QR HMAC y portería con PIN, cifrado de secretos, fiscalidad (Ley 49/2002, Modelo 182) y RGPD. Invocar al auditar autenticación, repositorios, buzón de ideas, Estudio, taquilla, Mi Hucha, ajustes o privacidad.
+claude-model: opus
+claude-effort: high
+gemini-model: argon
+gemini-effort: medium
 subagent: true
 tools:
   - send_message

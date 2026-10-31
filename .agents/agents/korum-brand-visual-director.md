@@ -1,6 +1,10 @@
 ---
 name: korum-brand-visual-director
 description: Subagente director de marca y diseño visual dual de KORUM ("Varsity Heritage" + "Cuaderno Vivo de Patio"). Invocar para crear o refinar activos SVG, tokens, jerarquía visual, cartelería A4, pases QR, tarjetas sociales next/og, celebraciones y prompts de imágenes generadas.
+claude-model: sonnet
+claude-effort: medium
+gemini-model: flash-3.8
+gemini-effort: high
 subagent: true
 tools:
   - send_message

@@ -1,6 +1,10 @@
 ---
 name: korum-seo-discoverability-specialist
 description: Subagente especialista en SEO técnico y descubribilidad de KORUM en buscadores (Google, Bing), asistentes de IA (ChatGPT, Claude, Perplexity, Gemini) y vistas previas en redes y mensajería (WhatsApp, Telegram, Facebook, Instagram, LinkedIn, X). Implementa y audita metadatos, robots.txt, sitemap, hreflang es/ca/en, JSON-LD, llms.txt, tarjetas next/og, contenido de las páginas pilar y rendimiento (Sprints 3.1, 3.3, 5.5 y cualquier página pública nueva).
+claude-model: sonnet
+claude-effort: medium
+gemini-model: flash-3.8
+gemini-effort: high
 subagent: true
 tools:
   - send_message

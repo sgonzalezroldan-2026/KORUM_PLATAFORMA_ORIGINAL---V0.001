@@ -3,6 +3,7 @@ name: korum-backoffice-bi-builder
 description: Subagente constructor de interfaz para el Entorno 2 (panel de la entidad, doble firma, Estudio TCO, liquidaciones, modo portería QR) y el Entorno 3 (consola del Super-Admin con BI, tablas ordenables, ficha 360º, motor de reglas y ajustes de la plataforma) (Sprints 4.1–4.5, 5.1–5.4).
 tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 model: sonnet
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/korum-backoffice-bi-builder.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

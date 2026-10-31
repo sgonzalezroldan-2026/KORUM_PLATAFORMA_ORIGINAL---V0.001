@@ -1,6 +1,10 @@
 ---
 name: korum-community-target-psychologist
 description: Subagente especialista en psicología de familias (madres y padres de 30 a 50 años, abuelos que donan), dinámicas de AMPA/AFA, clubes y entidades culturales, y branding emocional colegial. Invocar para escribir o revisar microcopy, recorridos, emails, momentos de celebración y para evitar presión social (Sprints 2.6, 3.1, 3.4, 3.6 y revisiones de textos).
+claude-model: sonnet
+claude-effort: medium
+gemini-model: flash-3.8
+gemini-effort: high
 subagent: true
 tools:
   - send_message

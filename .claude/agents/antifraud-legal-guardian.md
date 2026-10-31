@@ -3,6 +3,7 @@ name: antifraud-legal-guardian
 description: Subagente guardián del War Room para seguridad, aislamiento entre entidades (IDOR), regla padre/madre, doble firma DIRECTOR + COSIGNER, candado semántico, QR HMAC y portería con PIN, cifrado de secretos, fiscalidad (Ley 49/2002, Modelo 182) y RGPD. Invocar al auditar autenticación, repositorios, buzón de ideas, Estudio, taquilla, Mi Hucha, ajustes o privacidad.
 tools: Read, Grep, Glob, Bash, PowerShell
 model: opus
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/antifraud-legal-guardian.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

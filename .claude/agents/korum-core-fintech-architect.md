@@ -3,6 +3,7 @@ name: korum-core-fintech-architect
 description: Subagente constructor de backend financiero de KORUM. Prisma multi-entidad, libro mayor de doble partida en céntimos, motor TCO/BI, adaptador Paycomet (cobros, split transfer, reembolsos), Mi Hucha por modos, tareas programadas y conciliación (Sprints 1.2, 1.3, 1.4, 2.1, 2.4).
 tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 model: opus
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/korum-core-fintech-architect.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

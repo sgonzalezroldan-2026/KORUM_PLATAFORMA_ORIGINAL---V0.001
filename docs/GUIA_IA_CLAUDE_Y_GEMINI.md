@@ -39,13 +39,27 @@ El escáner de la Puerta 1 avisa si `.claude/` se ha quedado desactualizado.
 | :--- | :--- | :--- |
 | **Claude Opus 5.5** | medio · alto · extra alto · máx. | Dinero, libro mayor, pagos, seguridad, fiscalidad, esquema de datos, auditorías críticas, decisiones difíciles de deshacer. |
 | **Claude Sonnet 5.5** | medio · alto · extra alto · máx. | Interfaz y funcionalidades bien especificadas, tests E2E, emails, SEO, ajustes. Mejor relación calidad/coste para construir. |
-| **Gemini Argon** | medio · alto | Alternativa a Claude en cualquier sprint; **revisión cruzada** (un modelo distinto encuentra fallos distintos); textos nativos en catalán e inglés; lectura de mucho contexto a la vez. |
-| **Gemini Flash 3.8** | medio · alto | Tareas mecánicas y repetitivas: metadatos, catálogos de traducción, datos de prueba, ajustes menores. |
+| **Gemini Argon** | bajo · medio · alto | Alternativa a Claude en cualquier sprint; **revisión cruzada** (un modelo distinto encuentra fallos distintos); textos nativos en catalán e inglés; lectura de mucho contexto a la vez. |
+| **Gemini Flash 3.8** | bajo · medio · alto | Tareas mecánicas y repetitivas: metadatos, catálogos de traducción, datos de prueba, ajustes menores. |
 | **Modelo de imagen de Gemini** | — | Fotografías e ilustraciones en mapa de bits (§5). |
 
-> Supuesto: Gemini Argon es el modelo de gama alta de Gemini y Gemini Flash 3.8 el rápido y económico. Si no fuera así, aplica el mismo criterio por capacidad.
+> Gemini Argon es el modelo potente de Gemini y Gemini Flash 3.8 el rápido y económico.
 
-### 3.2 Niveles de esfuerzo
+### 3.1 bis Equivalencias entre Claude y Gemini
+
+Para ejecutar un sprint con Gemini en lugar de Claude (o un subagente en Antigravity) se aplica siempre esta tabla:
+
+| Claude | Gemini equivalente |
+| :--- | :--- |
+| **Opus 5.5** | **Argon** |
+| **Sonnet 5.5** (cualquier esfuerzo) | **Flash 3.8 · alto** (siempre alto) |
+| Opus · medio | Argon · medio |
+| Opus · alto | Argon · medio |
+| Opus · extra alto o máx. | Argon · alto |
+
+Cada subagente lleva su par fijado en la cabecera de `.agents/agents/*.md` (`claude-model`, `claude-effort`, `gemini-model`, `gemini-effort`). `node scripts/sync-ai-context.mjs` genera con ellos el `model` y el `effort` de `.claude/agents/` y **rechaza** cualquier par que rompa esta tabla. Antigravity lee los agentes directamente de `.agents/agents/`: si su selector de modelo no aplica estos campos solos, elige a mano el modelo y el esfuerzo que figuran en la cabecera del agente.
+
+### 3.2 Niveles de esfuerzo (Claude)
 
 - **Medio:** cambios acotados y mecánicos, o cuando la ficha del sprint es muy detallada.
 - **Alto:** el estándar para construir un sprint completo.
@@ -64,7 +78,15 @@ La recomendación exacta de cada sprint está en su línea `🤖` del [plan](PLA
 | Reglas globales y tareas repetitivas | Sonnet 5.5 · medio o Gemini Flash 3.8 · alto | Opus 5.5 · alto si toca dinero |
 | Textos de marketing y traducciones | Gemini Argon · alto | Persona nativa para los textos legales |
 
-En Claude Code, los subagentes del *War Room* ya tienen su modelo fijado en `.claude/agents/` (Opus para dinero y seguridad, Sonnet para experiencia y QA): basta con elegir el modelo de la sesión principal.
+En Claude Code, los subagentes ya tienen su modelo **y su esfuerzo** fijados en `.claude/agents/`:
+
+| Subagente | Claude | Gemini (Antigravity) |
+| :--- | :--- | :--- |
+| `korum-core-fintech-architect`, `korum-security-gov-engineer`, `fintech-escrow-auditor`, `antifraud-legal-guardian` | Opus 5.5 · alto | Argon · medio |
+| `korum-family-viral-builder`, `korum-backoffice-bi-builder`, `ux-school-director-reviewer` | Sonnet 5.5 · alto | Flash 3.8 · alto |
+| `qa-e2e-verifier`, `korum-seo-discoverability-specialist`, `korum-brand-visual-director`, `korum-community-target-psychologist` | Sonnet 5.5 · medio | Flash 3.8 · alto |
+
+Esos son los valores por defecto. Cuando la ficha de un sprint pide otro modelo para un agente (línea **Agente constructor:**), el orquestador lo indica al lanzarlo: por ejemplo, `korum-family-viral-builder` con `opus` en los sprints 3.4 y 3.7, y `korum-backoffice-bi-builder` con `opus` en el 4.2 y el 4.4. Para el resto basta con elegir el modelo de la sesión principal.
 
 ### 3.4 Cómo ahorrar tokens sin perder calidad
 

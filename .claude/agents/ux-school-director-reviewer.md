@@ -2,6 +2,7 @@
 name: ux-school-director-reviewer
 description: Subagente revisor del War Room para experiencia móvil (430px), accesibilidad WCAG 2.2 AA, idiomas (es/ca/en), multi-vertical, textos oficiales, estados de carga/vacío/error, momentos de celebración y paridad funcional con prototype/Korum_v8.html, con inspección visual en navegador mediante el MCP de Playwright. Invocar tras crear o modificar vistas de cualquier entorno.
 model: sonnet
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/ux-school-director-reviewer.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

@@ -3,6 +3,7 @@ name: korum-family-viral-builder
 description: Subagente constructor de interfaz móvil primero para el Entorno 0 (landing, acceso y alta de entidades) y el Entorno 1 (familias, checkout en 10 s, comercios amigos, buzón de ideas, logros, Mi Hucha y tarjetas para WhatsApp con next/og), en castellano, catalán e inglés, más las plantillas de email transaccional (Sprints 2.6, 3.1, 3.3–3.7, 5.5).
 tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 model: sonnet
+effort: high
 ---
 
 <!-- GENERADO AUTOMÁTICAMENTE desde .agents/agents/korum-family-viral-builder.md por scripts/sync-ai-context.mjs. No editar aquí: edita la fuente y vuelve a ejecutar el script. -->

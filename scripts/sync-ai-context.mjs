@@ -28,22 +28,38 @@ const TOOL_MAP = {
 const MCP_TOOLS = new Set(['call_mcp_tool', 'list_resources', 'read_resource']);
 
 /**
- * Modelo de Claude para cada subagente (criterio en docs/GUIA_IA_CLAUDE_Y_GEMINI.md §3):
- * dinero, seguridad y auditorías críticas en Opus; interfaz, contenido y QA en Sonnet.
+ * Modelo y esfuerzo de cada subagente. La fuente es el frontmatter de .agents/agents/*.md
+ * (claude-model, claude-effort, gemini-model, gemini-effort); criterio en docs/GUIA_IA_CLAUDE_Y_GEMINI.md §3.
+ * Equivalencias fijadas por el promotor:
+ *   Opus = Argon · Sonnet = Flash 3.8
+ *   Flash 3.8 siempre en esfuerzo alto, sea cual sea el esfuerzo de Sonnet.
+ *   Argon medio = Opus alto · Argon alto = Opus extra alto o máx. (Opus medio → Argon medio).
  */
-const CLAUDE_MODEL_BY_AGENT = {
-  'korum-core-fintech-architect': 'opus',
-  'korum-security-gov-engineer': 'opus',
-  'fintech-escrow-auditor': 'opus',
-  'antifraud-legal-guardian': 'opus',
-  'korum-family-viral-builder': 'sonnet',
-  'korum-backoffice-bi-builder': 'sonnet',
-  'korum-brand-visual-director': 'sonnet',
-  'korum-community-target-psychologist': 'sonnet',
-  'korum-seo-discoverability-specialist': 'sonnet',
-  'ux-school-director-reviewer': 'sonnet',
-  'qa-e2e-verifier': 'sonnet'
-};
+const GEMINI_MODEL_FOR_CLAUDE = { opus: 'argon', sonnet: 'flash-3.8' };
+const CLAUDE_EFFORTS = ['medium', 'high', 'xhigh', 'max'];
+const GEMINI_EFFORTS = ['low', 'medium', 'high'];
+const GEMINI_EFFORT_FOR_OPUS = { medium: 'medium', high: 'medium', xhigh: 'high', max: 'high' };
+
+/** Comprueba que el par Claude/Gemini de un agente respeta las equivalencias. */
+function validateModelPair(meta, sourceLabel) {
+  const { claudeModel, claudeEffort, geminiModel, geminiEffort } = meta;
+  if (!GEMINI_MODEL_FOR_CLAUDE[claudeModel]) {
+    throw new Error(`${sourceLabel}: claude-model debe ser opus o sonnet (recibido "${claudeModel}")`);
+  }
+  if (!CLAUDE_EFFORTS.includes(claudeEffort)) {
+    throw new Error(`${sourceLabel}: claude-effort debe ser uno de ${CLAUDE_EFFORTS.join(', ')} (recibido "${claudeEffort}")`);
+  }
+  if (geminiModel !== GEMINI_MODEL_FOR_CLAUDE[claudeModel]) {
+    throw new Error(`${sourceLabel}: gemini-model debe ser "${GEMINI_MODEL_FOR_CLAUDE[claudeModel]}" para claude-model "${claudeModel}"`);
+  }
+  if (!GEMINI_EFFORTS.includes(geminiEffort)) {
+    throw new Error(`${sourceLabel}: gemini-effort debe ser uno de ${GEMINI_EFFORTS.join(', ')} (recibido "${geminiEffort}")`);
+  }
+  const expectedEffort = claudeModel === 'sonnet' ? 'high' : GEMINI_EFFORT_FOR_OPUS[claudeEffort];
+  if (geminiEffort !== expectedEffort) {
+    throw new Error(`${sourceLabel}: gemini-effort debe ser "${expectedEffort}" para ${claudeModel} · ${claudeEffort}`);
+  }
+}
 
 function listFilesRecursive(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -76,7 +92,7 @@ function detectEol(text) {
 
 /** Lee el frontmatter simple de los agentes (claves de una línea + lista "tools"). */
 function parseAgentFrontmatter(frontmatter, sourceLabel) {
-  const result = { name: '', description: '', tools: [] };
+  const result = { name: '', description: '', tools: [], claudeModel: '', claudeEffort: '', geminiModel: '', geminiEffort: '' };
   let inTools = false;
   for (const rawLine of frontmatter.split(/\r?\n/)) {
     const line = rawLine.trimEnd();
@@ -98,6 +114,14 @@ function parseAgentFrontmatter(frontmatter, sourceLabel) {
       result.name = value.trim();
     } else if (key === 'description') {
       result.description = value.trim();
+    } else if (key === 'claude-model') {
+      result.claudeModel = value.trim();
+    } else if (key === 'claude-effort') {
+      result.claudeEffort = value.trim();
+    } else if (key === 'gemini-model') {
+      result.geminiModel = value.trim();
+    } else if (key === 'gemini-effort') {
+      result.geminiEffort = value.trim();
     }
   }
   if (!result.name || !result.description) {
@@ -146,13 +170,14 @@ export function buildExpectedFiles(root) {
     const { frontmatter, body } = splitFrontmatter(text, sourceLabel);
     const meta = parseAgentFrontmatter(frontmatter, sourceLabel);
     const tools = mapTools(meta.tools, sourceLabel);
-    const model = CLAUDE_MODEL_BY_AGENT[meta.name] ?? 'inherit';
+    validateModelPair(meta, sourceLabel);
     const header = [
       '---',
       `name: ${meta.name}`,
       `description: ${meta.description}`,
       ...(tools ? [`tools: ${tools.join(', ')}`] : []),
-      `model: ${model}`,
+      `model: ${meta.claudeModel}`,
+      `effort: ${meta.claudeEffort}`,
       '---'
     ].join(eol);
     // Los enlaces relativos a las reglas apuntan a .agents/rules desde la nueva ubicación.
