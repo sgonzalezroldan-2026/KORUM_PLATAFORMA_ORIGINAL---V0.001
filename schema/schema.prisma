@@ -512,6 +512,7 @@ model User {
   walletSubscriptions   WalletSubscription[]
   doubleCheckSignatures DoubleCheckSignature[]
   paymentMethodTokens   PaymentMethodToken[]
+  doubleCheckChallenges DoubleCheckChallenge[]
   deviceAccounts        DeviceAccount[]
   signatureAudits       IdeaSignatureAudit[]
   consentRecords        ConsentRecord[]
@@ -686,6 +687,7 @@ model Organization {
   walletSubscriptions   WalletSubscription[]
   payouts               EscrowPayout[]
   doubleCheckSignatures DoubleCheckSignature[]
+  doubleCheckChallenges DoubleCheckChallenge[]
   invoices              Invoice[]
   supportTickets        SupportTicket[]
   escrowLedgerEntries   EscrowLedgerEntry[]
@@ -878,6 +880,7 @@ model Idea {
   createdAt             DateTime               @default(now())
   organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   signatures            IdeaSignatureAudit[]
+  doubleCheckChallenges DoubleCheckChallenge[]
   messages              IdeaMessage[]
   doubleCheckSignatures DoubleCheckSignature[]
 
@@ -927,6 +930,7 @@ model IdeaSignatureAudit {
   device         Device?         @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   @@unique([ideaId, canonicalEmail])
+  @@unique([ideaId, userId])
 }
 
 model IdeaMessage {
@@ -947,7 +951,11 @@ model DoubleCheckSignature {
   payoutId       Int?
   signerUserId   String
   signerRole     MemberRole
-  /// HMAC de (targetType, targetId, signerUserId, signedAt) para detectar manipulaciones.
+  /// Lo que se firmó, para poder volver a verificar la huella aunque el importe cambie después.
+  targetDigest   String                @default("")
+  /// Fila del cargo con el que se firmó. Sin clave foránea: debe sobrevivir a la baja para poder verificar la huella.
+  membershipId   Int                   @default(0)
+  /// HMAC de la firma y de lo firmado (importe, cuenta destino o texto de la idea): si algo cambia, deja de valer. Ver signature-hash.ts.
   signatureHash  String
   otpVerifiedAt  DateTime?
   signerIpHash   String?
@@ -959,6 +967,32 @@ model DoubleCheckSignature {
 
   @@unique([targetType, ideaId, signerRole])
   @@unique([targetType, payoutId, signerRole])
+}
+
+/// Enlace de un solo uso + OTP para firmar. Solo se guardan sus HMAC; `targetDigest` fija lo que se pidió firmar.
+model DoubleCheckChallenge {
+  id             String                @id @default(cuid())
+  organizationId String
+  targetType     DoubleCheckTargetType
+  ideaId         Int?
+  payoutId       Int?
+  signerUserId   String
+  signerRole     MemberRole
+  tokenHash      String                @unique
+  otpHmac        String
+  targetDigest   String
+  attempts       Int                   @default(0)
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime              @default(now())
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Restrict)
+  payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  signer         User                  @relation(fields: [signerUserId], references: [id], onDelete: Restrict)
+
+  @@index([targetType, ideaId, signerUserId])
+  @@index([targetType, payoutId, signerUserId])
 }
 
 // -----------------------------------------------------------------------------
@@ -1221,6 +1255,7 @@ model EscrowPayout {
   initiative            Initiative             @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   providerInvoiceFile   FileAsset?             @relation("PayoutProviderInvoice", fields: [providerInvoiceFileId], references: [id], onDelete: Restrict)
   signatures            DoubleCheckSignature[]
+  doubleCheckChallenges DoubleCheckChallenge[]
   invoices              Invoice[]
   ledgerJournals        LedgerJournal[]
   splits                EscrowPayoutSplit[]

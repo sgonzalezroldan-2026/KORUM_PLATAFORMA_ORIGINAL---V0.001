@@ -1,6 +1,8 @@
 import { planPayoutSplits, SPLIT_WINDOW_DAYS } from '@/core/finance/campaign-window';
 import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
+import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
+import { payoutTargetDigest } from '@/core/security/signature-hash';
 import { inTransaction, type Db } from '@/lib/db';
 import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 
@@ -20,6 +22,17 @@ export class PayoutNotAllowedError extends Error {
   }
 }
 
+/** Hay firmas guardadas que no superan la comprobación: manipuladas, sin OTP, de otro importe o de quien ya no tiene el rol. */
+class PayoutSignaturesRejectedError extends PayoutNotAllowedError {
+  constructor(
+    payoutId: number,
+    readonly organizationId: string,
+    readonly reasons: SignatureInvalidReason[]
+  ) {
+    super(payoutId, `faltan dos firmas válidas de DIRECTOR y COSIGNER, dos personas distintas (${reasons.join(', ')})`);
+  }
+}
+
 const DAY_MS = 86_400_000;
 
 function assertVerifiedOrganization(payoutId: number, organization: { kybStatus: string; archivedAt: Date | null }): void {
@@ -27,8 +40,22 @@ function assertVerifiedOrganization(payoutId: number, organization: { kybStatus:
   if (organization.archivedAt) throw new PayoutNotAllowedError(payoutId, 'la entidad está archivada');
 }
 
-/** Comprueba las dos firmas y que las cifras cuadran, reparte el neto entre los cobros y mueve el dinero de la hucha a lo debido a la entidad. */
-export async function approvePayout(db: Db, payoutId: number, now: Date = new Date()): Promise<{ approved: boolean; splits: number }> {
+/**
+ * Comprueba las dos firmas y que las cifras cuadran, reparte el neto entre los cobros y mueve el dinero de la hucha a lo debido a la entidad.
+ * Las firmas se verifican aquí, en la misma transacción que mueve el dinero: huella, OTP y que cada firmante sigue teniendo su rol.
+ */
+export async function approvePayout(db: Db, payoutId: number, signatureSecret: string, now: Date = new Date()): Promise<{ approved: boolean; splits: number }> {
+  try {
+    return await approveSignedPayout(db, payoutId, signatureSecret, now);
+  } catch (error) {
+    if (error instanceof PayoutSignaturesRejectedError && error.reasons.length > 0) {
+      await db.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: error.organizationId, action: 'payout.signatures_rejected', targetType: 'EscrowPayout', targetId: String(payoutId), metadataJson: { reasons: error.reasons } } });
+    }
+    throw error;
+  }
+}
+
+async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: string, now: Date): Promise<{ approved: boolean; splits: number }> {
   return inTransaction(db, async (tx) => {
     const { initiativeId } = await tx.escrowPayout.findUniqueOrThrow({ where: { id: payoutId }, select: { initiativeId: true } });
     // Se bloquea la iniciativa antes de leer nada: un contracargo simultáneo espera, y después ya la verá liquidada.
@@ -37,11 +64,10 @@ export async function approvePayout(db: Db, payoutId: number, now: Date = new Da
     if (count === 0) return { approved: false, splits: 0 };
 
     const payout = await tx.escrowPayout.findUniqueOrThrow({ where: { id: payoutId }, include: { signatures: true, organization: { select: { paycometSplitId: true, kybStatus: true, archivedAt: true } } } });
-    const signatures = payout.signatures.filter((signature) => signature.targetType === 'ESCROW_PAYOUT' && signature.organizationId === payout.organizationId);
-    const director = signatures.find((signature) => signature.signerRole === 'DIRECTOR');
-    const cosigner = signatures.find((signature) => signature.signerRole === 'COSIGNER');
-    if (!director || !cosigner || director.signerUserId === cosigner.signerUserId) throw new PayoutNotAllowedError(payoutId, 'faltan las firmas de DIRECTOR y COSIGNER, dos personas distintas');
     if (payout.destinationType !== 'ORGANIZATION') throw new PayoutNotAllowedError(payoutId, 'pagar directamente a un proveedor está pendiente de confirmar con Paycomet');
+    const targetDigest = payoutTargetDigest(signatureSecret, payout, payout.organization.paycometSplitId);
+    const doubleCheck = await evaluateDoubleCheck(tx, signatureSecret, { organizationId: payout.organizationId, targetType: 'ESCROW_PAYOUT', targetId: payoutId, targetDigest }, payout.signatures);
+    if (!doubleCheck.complete) throw new PayoutSignaturesRejectedError(payoutId, payout.organizationId, doubleCheck.invalid.map((entry) => entry.reason));
     assertVerifiedOrganization(payoutId, payout.organization);
     if (!payout.organization.paycometSplitId) throw new PayoutNotAllowedError(payoutId, 'la entidad no tiene cuenta destino en Paycomet');
 

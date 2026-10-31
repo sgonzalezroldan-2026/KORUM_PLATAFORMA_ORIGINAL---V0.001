@@ -61,5 +61,13 @@
     "title": "No encontramos esta página",
     "description": "Puede que el enlace esté mal escrito o que la página ya no exista.",
     "backHome": "Volver al inicio"
+  },
+  "ideas": {
+    "audit": {
+      "ipBurst": "⚠️ Muchas firmas desde la misma red en menos de 10 minutos.",
+      "firstAccount": "1ª cuenta familiar en este dispositivo (verificada).",
+      "secondAccount": "2ª cuenta familiar en el mismo dispositivo (padre/madre, verificada).",
+      "tooManyAccounts": "⚠️ {n}ª cuenta firmando desde el mismo dispositivo (máximo 2 por familia)."
+    }
   }
 }

@@ -1,6 +1,7 @@
-import { createHmac } from 'node:crypto';
 import { postJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
+import type { SignatureReasonKey } from '@/core/security/device-quorum.service';
+import { computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from '@/core/security/signature-hash';
 import type { DoubleCheckTargetType, MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { SEED_ACTOR, signerUserId } from './seed-base';
@@ -14,21 +15,19 @@ import type { KorumSeedData } from './seed-types';
 
 const DAY_MS = 86_400_000;
 
-function signatureHash(secret: string, parts: Array<string | number>): string {
-  return createHmac('sha256', secret).update(parts.join(':')).digest('hex');
-}
-
 interface SignatureInput {
   organizationId: string;
   targetType: DoubleCheckTargetType;
   targetId: number;
+  targetDigest: string;
   role: Extract<MemberRole, 'DIRECTOR' | 'COSIGNER'>;
   signedAt: Date;
 }
 
 async function sign(db: KorumPrismaClient, secrets: SeedSecrets, input: SignatureInput): Promise<void> {
   const userId = signerUserId(input.organizationId, input.role);
-  const hash = signatureHash(secrets.hmacSecret, [input.targetType, input.targetId, userId, input.signedAt.toISOString()]);
+  const membership = await db.organizationMember.findUniqueOrThrow({ where: { userId_organizationId_role: { userId, organizationId: input.organizationId, role: input.role } }, select: { id: true } });
+  const hash = computeSignatureHash(secrets.hmacSecret, { organizationId: input.organizationId, targetType: input.targetType, targetId: input.targetId, targetDigest: input.targetDigest, signerUserId: userId, signerRole: input.role, membershipId: membership.id, signedAt: input.signedAt, otpVerifiedAt: input.signedAt });
   await db.doubleCheckSignature.createMany({
     data: [
       {
@@ -37,6 +36,8 @@ async function sign(db: KorumPrismaClient, secrets: SeedSecrets, input: Signatur
         ...(input.targetType === 'ESCROW_PAYOUT' ? { payoutId: input.targetId } : { ideaId: input.targetId }),
         signerUserId: userId,
         signerRole: input.role,
+        targetDigest: input.targetDigest,
+        membershipId: membership.id,
         signatureHash: hash,
         otpVerifiedAt: input.signedAt,
         signedAt: input.signedAt
@@ -82,7 +83,8 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
     });
     payoutIds.set(initiative.id, payout.id);
 
-    const target = { organizationId: initiative.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id };
+    const { paycometSplitId } = await db.organization.findUniqueOrThrow({ where: { id: initiative.organizationId }, select: { paycometSplitId: true } });
+    const target = { organizationId: initiative.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutTargetDigest(secrets.hmacSecret, payout, paycometSplitId) };
     await sign(db, secrets, { ...target, role: 'DIRECTOR', signedAt: new Date(closesAt.getTime() + DAY_MS + 9 * 3_600_000) });
     if (closed) await sign(db, secrets, { ...target, role: 'COSIGNER', signedAt: new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000) });
 
@@ -168,6 +170,12 @@ export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, p
   }
 }
 
+/** La semilla describe el motivo con texto del prototipo; en la base se guarda su clave de traducción, igual que en una firma real. */
+function seedReasonKey(entry: { status: string; accountOrder: number }): SignatureReasonKey {
+  if (entry.status === 'SUSPICIOUS') return entry.accountOrder > 2 ? 'ideas.audit.tooManyAccounts' : 'ideas.audit.ipBurst';
+  return entry.accountOrder === 1 ? 'ideas.audit.firstAccount' : 'ideas.audit.secondAccount';
+}
+
 /** Buzón de ideas: cada idea con su auditoría de firmas, su chat anónimo y, la que espera doble firma, la 1ª firma. */
 export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets): Promise<void> {
   for (const idea of seed.ideas) {
@@ -198,7 +206,7 @@ export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secr
         canonicalEmail: entry.canonicalEmail,
         accountOrder: entry.accountOrder,
         status: entry.status,
-        reason: entry.reason,
+        reason: seedReasonKey(entry),
         createdAt: new Date(createdAt.getTime() + (index + 1) * DAY_MS)
       })),
       skipDuplicates: true
@@ -215,7 +223,7 @@ export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secr
       });
     }
     if (idea.phase === 'DOUBLE_CHECK') {
-      await sign(db, secrets, { organizationId: idea.organizationId, targetType: 'IDEA_APPROVAL', targetId: idea.id, role: 'DIRECTOR', signedAt: new Date(expiresAt.getTime() - 10 * DAY_MS) });
+      await sign(db, secrets, { organizationId: idea.organizationId, targetType: 'IDEA_APPROVAL', targetId: idea.id, targetDigest: ideaTargetDigest(secrets.hmacSecret, { organizationId: idea.organizationId, title: idea.title, category: idea.category, description: idea.description }), role: 'DIRECTOR', signedAt: new Date(expiresAt.getTime() - 10 * DAY_MS) });
     }
   }
 }

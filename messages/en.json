@@ -61,5 +61,13 @@
     "title": "We can't find this page",
     "description": "The link may be mistyped or the page may no longer exist.",
     "backHome": "Back to home"
+  },
+  "ideas": {
+    "audit": {
+      "ipBurst": "⚠️ Many signatures from the same network in under 10 minutes.",
+      "firstAccount": "1st family account on this device (verified).",
+      "secondAccount": "2nd family account on the same device (parent, verified).",
+      "tooManyAccounts": "⚠️ Account number {n} signing from the same device (maximum 2 per family)."
+    }
   }
 }

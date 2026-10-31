@@ -1,3 +1,5 @@
+import { evaluateDoubleCheck } from '@/core/security/double-check-evaluation';
+import { ideaTargetDigest, payoutTargetDigest } from '@/core/security/signature-hash';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.service';
 import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
@@ -251,6 +253,25 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     const pairs = await db.escrowLedgerEntry.groupBy({ by: ['organizationId', 'initiativeId'], where: { initiativeId: { in: [...owner.keys()] }, journal: { idempotencyKey: { startsWith: 'seed:' } } } });
     expect(pairs.length).toBeGreaterThanOrEqual(seed.initiatives.length);
     for (const pair of pairs) expect(owner.get(pair.initiativeId!), `iniciativa ${pair.initiativeId}`).toBe(pair.organizationId);
+  });
+
+  it('QA-SEC03 · las firmas sembradas superan la verificación', async () => {
+    // Solo las entidades de la semilla: otras suites dejan aquí sus propias filas a medio firmar.
+    const seedOrganizations = { organizationId: { in: seed.schools.map((school) => school.id) } };
+    const payouts = await db.escrowPayout.findMany({ where: seedOrganizations, include: { signatures: true, organization: { select: { paycometSplitId: true } } } });
+    expect(payouts.length).toBeGreaterThan(0);
+    for (const payout of payouts) {
+      const context = { organizationId: payout.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutTargetDigest(SECRETS.hmacSecret, payout, payout.organization.paycometSplitId) };
+      const evaluation = await evaluateDoubleCheck(db, SECRETS.hmacSecret, context, payout.signatures);
+      expect(evaluation.invalid).toEqual([]);
+      expect(evaluation.complete).toBe(payout.status === 'EXECUTED');
+    }
+    const ideas = await db.idea.findMany({ where: { phase: 'DOUBLE_CHECK', ...seedOrganizations }, include: { doubleCheckSignatures: true } });
+    expect(ideas.length).toBeGreaterThan(0);
+    for (const idea of ideas) {
+      const context = { organizationId: idea.organizationId, targetType: 'IDEA_APPROVAL' as const, targetId: idea.id, targetDigest: ideaTargetDigest(SECRETS.hmacSecret, idea) };
+      expect(await evaluateDoubleCheck(db, SECRETS.hmacSecret, context, idea.doubleCheckSignatures)).toMatchObject({ complete: false, validRoles: ['DIRECTOR'], invalid: [] });
+    }
   });
 
   it('volver a ejecutar la semilla no duplica nada y sigue cuadrando', async () => {

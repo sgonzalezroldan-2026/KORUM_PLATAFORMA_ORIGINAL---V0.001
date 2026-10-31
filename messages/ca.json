@@ -61,5 +61,13 @@
     "title": "No trobem aquesta pàgina",
     "description": "Potser l'enllaç està mal escrit o la pàgina ja no existeix.",
     "backHome": "Tornar a l'inici"
+  },
+  "ideas": {
+    "audit": {
+      "ipBurst": "⚠️ Moltes signatures des de la mateixa xarxa en menys de 10 minuts.",
+      "firstAccount": "1r compte familiar en aquest dispositiu (verificat).",
+      "secondAccount": "2n compte familiar en el mateix dispositiu (pare/mare, verificat).",
+      "tooManyAccounts": "⚠️ Compte número {n} signant des del mateix dispositiu (màxim 2 per família)."
+    }
   }
 }

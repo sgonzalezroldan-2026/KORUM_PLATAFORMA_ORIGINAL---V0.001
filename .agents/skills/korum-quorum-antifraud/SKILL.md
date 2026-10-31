@@ -33,39 +33,23 @@ export interface SignatureAuditResult {
   deviceAccountOrder: number;
 }
 
-export function normalizeCanonicalEmail(rawEmail: string): string {
-  const [localRaw, domainRaw] = rawEmail.trim().toLowerCase().split('@');
-  if (!localRaw || !domainRaw) return rawEmail.trim().toLowerCase();
-  const baseLocal = localRaw.split('+')[0] ?? localRaw;
-  if (domainRaw === 'gmail.com' || domainRaw === 'googlemail.com') {
-    return `${baseLocal.replace(/\./g, '')}@gmail.com`;
-  }
-  return `${baseLocal}@${domainRaw}`;
-}
-
 export function evaluateIdeaSignatureFraud(params: {
-  canonicalEmail: string;
-  deviceCanonicalEmails: string[];
+  deviceAccountOrder: number;
   ipBurstSignaturesLast10Min: number;
 }): SignatureAuditResult {
-  const updatedList = params.deviceCanonicalEmails.includes(params.canonicalEmail)
-    ? params.deviceCanonicalEmails
-    : [...params.deviceCanonicalEmails, params.canonicalEmail];
-
-  const accountOrderOnDevice = updatedList.indexOf(params.canonicalEmail) + 1;
-
-  if (params.ipBurstSignaturesLast10Min >= 6) {
-    return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.ipBurst', deviceAccountOrder: accountOrderOnDevice };
-  }
-  if (accountOrderOnDevice === 1) {
-    return { status: 'VERIFIED', reasonKey: 'ideas.audit.firstAccount', deviceAccountOrder: 1 };
-  }
-  if (accountOrderOnDevice === 2) {
-    return { status: 'VERIFIED', reasonKey: 'ideas.audit.secondAccount', deviceAccountOrder: 2 };
-  }
-  return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.tooManyAccounts', deviceAccountOrder: accountOrderOnDevice };
+  const { deviceAccountOrder } = params;
+  if (params.ipBurstSignaturesLast10Min >= 6) return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.ipBurst', deviceAccountOrder };
+  if (deviceAccountOrder > 2) return { status: 'SUSPICIOUS', reasonKey: 'ideas.audit.tooManyAccounts', deviceAccountOrder };
+  return { status: 'VERIFIED', reasonKey: deviceAccountOrder === 1 ? 'ideas.audit.firstAccount' : 'ideas.audit.secondAccount', deviceAccountOrder };
 }
 ```
+
+El email canónico está en `src/core/security/email-normalizer.ts` y el orden lo calcula `signIdea` (`device-quorum.service.ts`):
+
+- **Una firma por persona e idea:** se comprueba por email canónico y por `userId`; cambiar de email no da otra firma.
+- **La cuenta se identifica por `userId`** y su orden se fija al llegar al dispositivo. Con consentimiento e IP válida, cuentan juntos los dispositivos con la **misma huella y la misma red en los últimos 30 días**: solo la huella no basta, porque dos móviles iguales de dos familias pueden darla idéntica.
+- **Ráfaga:** firmas previas de la misma subred, por idea, en 10 minutos. Sin una IP válida se usa el grupo común `unknown-ip`, que también cuenta.
+- **Retirar el consentimiento** borra la huella de todos los dispositivos de esa persona y devuelve su orden al de llegada en cada uno (`clearFingerprintsOf`).
 
 Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde la misma red en menos de 10 minutos.` · `1ª cuenta familiar en este dispositivo (verificada).` · `2ª cuenta familiar en el mismo dispositivo (padre/madre, verificada).` · `⚠️ {n}ª cuenta firmando desde el mismo dispositivo (máximo 2 por familia).`
 
@@ -74,7 +58,8 @@ Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde
 - La doble firma exige **dos registros en `DoubleCheckSignature` de dos personas distintas**, una con rol `DIRECTOR` y otra con rol `COSIGNER`, para:
   1. Pasar una idea con quórum (`DOUBLE_CHECK`) a `BUDGETING`.
   2. Liberar fondos (`ESCROW_PAYOUT`) hacia la entidad o su proveedor.
-- Cada firma guarda `signatureHash` = HMAC de (tipo, id del objetivo, firmante, fecha) para detectar manipulaciones, y `otpVerifiedAt` si se firmó con código.
+- Cada firma guarda `signatureHash`, HMAC de la entidad, el tipo y el id del objetivo, lo firmado (`targetDigest`: importe, cuenta destino e IBAN de una liquidación; texto de una idea), el firmante, su rol, la fila de su cargo (`membershipId`), la fecha y `otpVerifiedAt`. Si cambia lo firmado, o quien firmó pierde el cargo, la firma deja de valer, aunque luego se le devuelva: un trigger impide editar el rol de una fila de `OrganizationMember`, así que recuperarlo crea una fila nueva. Al volver a firmar ese rol, la firma antigua se sustituye y se copia entera a `AuditLog` (`double_check.signature_superseded`), con lo necesario para verificar su huella.
+- **Toda firma exige enlace + OTP + la sesión de esa misma persona**, con 2FA activado. El Super-Admin y las cuentas anonimizadas nunca firman. Dos cuentas con la misma bandeja de entrada canónica cuentan como una sola persona (`SAME_INBOX`). `completeSignature` no aprueba una liquidación: quien llama ejecuta `approvePayout`, que lo vuelve a comprobar todo en la transacción que mueve el dinero. Los intentos denegados quedan en `AuditLog` (`double_check.denied`).
 - Tras la 1ª firma (`1/2`), la otra persona recibe un enlace firmado de un solo uso (caduca en 72 h) + OTP de 6 dígitos para firmar en 1 clic desde el móvil.
 - **Etiqueta visible del cargo** (`OrganizationMember.roleLabel`), según la entidad: *Dirección del centro*, *Presidencia del AMPA/AFA*, *Presidencia/Tesorería del club*, *Representación del patronato*, *Titularidad del colegio*. Una misma persona nunca ocupa los dos roles en la misma entidad.
 
@@ -83,8 +68,8 @@ Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde
 Cuando una entidad elige una categoría `EXEMPT` (`0 %`, distinta de *Taquilla y rifas*):
 
 - **Prohibido `.includes('obra')`** (bloqueaba *"c**obra**r"*, *"s**obra**s"*, *"mani**obra**"* u *"obra de teatro"*).
-- Se normalizan acentos, se eliminan primero las expresiones culturales seguras (`obra de teatro`, `obra teatral`, `obra literaria`, `taller de pintura`, `pintura infantil`, `mano de obra solidaria`) y se evalúa una expresión regular con límites de palabra sobre infraestructura y equipamiento: `\b(ventilador|ventiladores|aire acondicionado|aerotermia|split|splits|climatizacion|climatizar|pizarra|pizarras|proyector|proyectores|reforma|reformas|fachada|asfaltado|cesped artificial|cancha|canchas|toldo|toldos|pergola|calefaccion|ordenador|ordenadores|portatil|portatiles|tablet|tablets|marcador led|obra|obras)\b`.
-- La lista se amplía con las palabras equivalentes en **catalán** (`ventiladors`, `pissarra`, `pissarres`, `tendal`, `tendals`, `reforma`, `obres`, `calefacció`, `ordinador`, `ordinadors`) y en **inglés** (`fan`, `fans`, `air conditioning`, `whiteboard`, `projector`, `awning`, `renovation`, `laptop`, `heating`), aplicando las mismas reglas de exclusión cultural en cada idioma.
+- Se normalizan acentos, se eliminan primero las expresiones culturales seguras (`obra de teatro`, `obra social`, `obra solidaria`, `taller de pintura`, `mano de obra solidaria`…) y se buscan palabras completas sobre infraestructura y equipamiento, en **castellano, catalán e inglés**. Las listas viven en `src/core/security/semantic-lock.ts`, que es lo que manda.
+- **La lista blanca solo admite expresiones cerradas**, que no puedan continuar con un aparato o una instalación: `fans de` dejaría pasar «fans de techo», y `reforma educativa` dejaría pasar «reforma educativa del gimnasio». Ante la duda se bloquea, porque el candado solo pide elegir una categoría con tramos.
 
 ## 5. Fiscalidad (Ley 49/2002 y Modelo 182)
 

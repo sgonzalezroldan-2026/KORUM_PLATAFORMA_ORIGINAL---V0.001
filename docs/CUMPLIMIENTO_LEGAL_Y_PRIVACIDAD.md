@@ -165,6 +165,7 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla.
 - [ ] Condiciones de uso, política de privacidad, aviso legal y política de cookies (en es, ca y en).
 - [ ] Contrato de encargo del tratamiento con las entidades y reparto de responsabilidades (§5.1).
 - [ ] Validez del diseño antifraude (cookie de dispositivo sin consentimiento, huella con consentimiento) frente a la LSSI art. 22.2.
+- [ ] Si, con el consentimiento de una persona, los dispositivos con la misma huella y red pueden contar también las cuentas de quien no consintió y comparte ese dispositivo.
 - [ ] EIPD (§5.3) y plazos de conservación (§6).
 - [ ] Textos del checkout, de la aportación voluntaria y del aviso de rifas.
 - [ ] Modo `REGULATED_WALLET` de Mi Hucha, si se quiere activar.

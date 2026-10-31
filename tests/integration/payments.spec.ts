@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CampaignDurationError, publishInitiative } from '@/core/finance/campaign-window';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger, getTrialBalance } from '@/core/finance/ledger.service';
+import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadCardToken, tokenizeAndStoreCard } from '@/services/payments/card-tokens';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
@@ -12,6 +13,7 @@ import { createInitiative, createOrganization, createTestClient, createUser, uni
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración' };
 const IP = '10.0.0.1';
+const HMAC_SECRET = 'secreto-de-integracion-de-las-firmas-0123456789';
 let db: KorumPrismaClient;
 let mock: MockPaycometProvider;
 
@@ -447,26 +449,83 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
     const signer = await createUser(db);
     for (const role of options.sign ?? ['DIRECTOR', 'COSIGNER']) {
       const user = options.sameSigner ? signer : await createUser(db);
-      await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: user.id, signerRole: role, signatureHash: uniqueId('h') } });
+      const membership = await db.organizationMember.create({ data: { organizationId: organization.id, userId: user.id, role } });
+      const signedAt = new Date('2026-11-09T10:00:00.000Z');
+      const signatureHash = computeSignatureHash(HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutTargetDigest(HMAC_SECRET, payout, organization.paycometSplitId), signerUserId: user.id, signerRole: role, membershipId: membership.id, signedAt, otpVerifiedAt: signedAt });
+      await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: user.id, signerRole: role, signatureHash, otpVerifiedAt: signedAt, signedAt } });
     }
     return { organization, initiative, payout, charges };
   }
 
   it('sin las dos firmas de dos personas distintas no se aprueba ni mueve dinero', async () => {
     const single = await reachedCampaign({ sign: ['DIRECTOR'] });
-    await expect(approvePayout(db, single.payout.id, now)).rejects.toBeInstanceOf(PayoutNotAllowedError);
+    await expect(approvePayout(db, single.payout.id, HMAC_SECRET, now)).rejects.toBeInstanceOf(PayoutNotAllowedError);
     expect(await db.escrowPayout.findUniqueOrThrow({ where: { id: single.payout.id } })).toMatchObject({ status: 'PENDING_DOUBLE_CHECK' });
     expect((await getAccountBalance(db, 'INITIATIVE_ESCROW', { initiativeId: single.initiative.id })).balanceCents).toBe(3_000);
 
     const same = await reachedCampaign({ sameSigner: true });
-    await expect(approvePayout(db, same.payout.id, now)).rejects.toThrow(/dos personas distintas/);
+    await expect(approvePayout(db, same.payout.id, HMAC_SECRET, now)).rejects.toThrow(/dos personas distintas/);
   });
 
   it('una persona con los dos roles y una tercera fila no suman dos firmas', async () => {
     const { organization, payout } = await reachedCampaign({ sameSigner: true });
     const third = await createUser(db);
     await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: third.id, signerRole: 'GATEKEEPER', signatureHash: uniqueId('h') } });
-    await expect(approvePayout(db, payout.id, now)).rejects.toThrow(/dos personas distintas/);
+    await expect(approvePayout(db, payout.id, HMAC_SECRET, now)).rejects.toThrow(/dos personas distintas/);
+  });
+
+  describe('QA-SEC03 · las firmas se verifican al aprobar', () => {
+    const rejected = async (payoutId: number, reason: string) => {
+      await expect(approvePayout(db, payoutId, HMAC_SECRET, now)).rejects.toThrow(reason);
+      expect(await db.escrowPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'PENDING_DOUBLE_CHECK' });
+      expect(await db.escrowPayoutSplit.count({ where: { payoutId } })).toBe(0);
+    };
+
+    it('una firma editada a mano no vale y queda en la auditoría', async () => {
+      const { organization, payout } = await reachedCampaign();
+      const row = await db.doubleCheckSignature.findFirstOrThrow({ where: { payoutId: payout.id, signerRole: 'COSIGNER' } });
+      await db.doubleCheckSignature.update({ where: { id: row.id }, data: { signedAt: new Date('2026-11-09T11:00:00.000Z') } });
+      await rejected(payout.id, 'HASH_MISMATCH');
+      expect(await db.auditLog.count({ where: { action: 'payout.signatures_rejected', organizationId: organization.id, targetId: String(payout.id) } })).toBe(1);
+    });
+
+    it('una firma sin OTP no vale', async () => {
+      const { payout } = await reachedCampaign();
+      await db.doubleCheckSignature.updateMany({ where: { payoutId: payout.id, signerRole: 'DIRECTOR' }, data: { otpVerifiedAt: null } });
+      await rejected(payout.id, 'OTP_MISSING');
+    });
+
+    it('si cambia el importe neto, las firmas dejan de valer', async () => {
+      const { payout } = await reachedCampaign();
+      await db.escrowPayout.update({ where: { id: payout.id }, data: { netPaidCents: 2_699 } });
+      await rejected(payout.id, 'HASH_MISMATCH');
+    });
+
+    it('si cambia la cuenta destino antes de aprobar, las firmas dejan de valer', async () => {
+      const { organization, payout } = await reachedCampaign();
+      await db.organization.update({ where: { id: organization.id }, data: { paycometSplitId: uniqueId('split-nueva') } });
+      await rejected(payout.id, 'HASH_MISMATCH');
+    });
+
+    it('si un firmante pierde su rol, su firma deja de valer', async () => {
+      const { organization, payout } = await reachedCampaign();
+      const row = await db.doubleCheckSignature.findFirstOrThrow({ where: { payoutId: payout.id, signerRole: 'COSIGNER' } });
+      await db.organizationMember.deleteMany({ where: { organizationId: organization.id, userId: row.signerUserId } });
+      await rejected(payout.id, 'ROLE_LOST');
+    });
+
+    it('una firma no revive al devolver el rol a quien lo perdió', async () => {
+      const { organization, payout } = await reachedCampaign();
+      const row = await db.doubleCheckSignature.findFirstOrThrow({ where: { payoutId: payout.id, signerRole: 'COSIGNER' } });
+      await db.organizationMember.deleteMany({ where: { organizationId: organization.id, userId: row.signerUserId } });
+      await db.organizationMember.create({ data: { organizationId: organization.id, userId: row.signerUserId, role: 'COSIGNER' } });
+      await rejected(payout.id, 'HASH_MISMATCH');
+    });
+
+    it('con otro secreto no se puede dar por buena ninguna firma', async () => {
+      const { payout } = await reachedCampaign();
+      await expect(approvePayout(db, payout.id, `${HMAC_SECRET}-otro`, now)).rejects.toThrow('HASH_MISMATCH');
+    });
   });
 
   it('no vale una firma de otra entidad ni de otro tipo de aprobación', async () => {
@@ -474,16 +533,16 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
     const other = await createOrganization(db);
     const outsider = await createUser(db);
     await db.doubleCheckSignature.create({ data: { organizationId: other.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: outsider.id, signerRole: 'COSIGNER', signatureHash: uniqueId('h') } });
-    await expect(approvePayout(db, payout.id, now)).rejects.toThrow(/dos personas distintas/);
+    await expect(approvePayout(db, payout.id, HMAC_SECRET, now)).rejects.toThrow(/dos personas distintas/);
   });
 
   it('una entidad sin verificar o archivada no cobra', async () => {
     const pending = await reachedCampaign();
     await db.organization.update({ where: { id: pending.organization.id }, data: { kybStatus: 'PENDING' } });
-    await expect(approvePayout(db, pending.payout.id, now)).rejects.toThrow(/KYB/);
+    await expect(approvePayout(db, pending.payout.id, HMAC_SECRET, now)).rejects.toThrow(/KYB/);
 
     const archived = await reachedCampaign();
-    await approvePayout(db, archived.payout.id, now);
+    await approvePayout(db, archived.payout.id, HMAC_SECRET, now);
     await db.organization.update({ where: { id: archived.organization.id }, data: { archivedAt: now } });
     await expect(executeApprovedPayout(db, mock, archived.payout.id, now)).rejects.toThrow(/archivada/);
   });
@@ -491,7 +550,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
   it('la cuenta destino se fija al aprobar: cambiarla después no desvía los repartos', async () => {
     const { organization, payout } = await reachedCampaign();
     const approvedAccount = (await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).paycometSplitId;
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     await db.organization.update({ where: { id: organization.id }, data: { paycometSplitId: uniqueId('split-nueva') } });
     const provider = new MockPaycometProvider({ secrets });
     await executeApprovedPayout(db, provider, payout.id, now);
@@ -500,7 +559,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('QA-P02 · el reparto va a la cuenta destino de la entidad: el IBAN guardado no interviene', async () => {
     const { organization, payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     const provider = new MockPaycometProvider({ secrets });
     await executeApprovedPayout(db, provider, payout.id, now);
     const account = (await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).paycometSplitId;
@@ -510,7 +569,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('pagar directamente a un proveedor no existe hasta que lo confirme Paycomet', async () => {
     const { payout } = await reachedCampaign({ destinationType: 'PROVIDER' });
-    await expect(approvePayout(db, payout.id, now)).rejects.toThrow(/pendiente de confirmar con Paycomet/);
+    await expect(approvePayout(db, payout.id, HMAC_SECRET, now)).rejects.toThrow(/pendiente de confirmar con Paycomet/);
   });
 
   it('una ejecución sin aprobar se niega', async () => {
@@ -520,8 +579,8 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('aprueba, reparte cobro a cobro hasta el neto exacto y deja el libro cuadrado', async () => {
     const { organization, initiative, payout, charges } = await reachedCampaign();
-    expect(await approvePayout(db, payout.id, now)).toEqual({ approved: true, splits: 3 });
-    expect(await approvePayout(db, payout.id, now)).toEqual({ approved: false, splits: 0 });
+    expect(await approvePayout(db, payout.id, HMAC_SECRET, now)).toEqual({ approved: true, splits: 3 });
+    expect(await approvePayout(db, payout.id, HMAC_SECRET, now)).toEqual({ approved: false, splits: 0 });
     expect((await getAccountBalance(db, 'INITIATIVE_ESCROW', { initiativeId: initiative.id })).balanceCents).toBe(0);
     expect(await getRaisedFromLedger(db, initiative.id)).toBe(3_000);
 
@@ -540,17 +599,17 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('no se aprueba si los cobros ya no caben en la ventana de 90 días', async () => {
     const { payout } = await reachedCampaign({ chargedAt: new Date('2026-01-01T00:00:00Z') });
-    await expect(approvePayout(db, payout.id, now)).rejects.toThrow(/ventana de 90 días/);
+    await expect(approvePayout(db, payout.id, HMAC_SECRET, now)).rejects.toThrow(/ventana de 90 días/);
     expect(await db.escrowPayout.findUniqueOrThrow({ where: { id: payout.id } })).toMatchObject({ status: 'PENDING_DOUBLE_CHECK' });
   });
 
   it('un contracargo tras aprobar lo asume KORUM; uno antes hace que la aprobación se niegue', async () => {
     const before = await reachedCampaign();
     await deliver('CHARGEBACK', before.charges[0]!.paycometOrder!, 1_000);
-    await expect(approvePayout(db, before.payout.id, now)).rejects.toThrow(/no ha alcanzado la meta/);
+    await expect(approvePayout(db, before.payout.id, HMAC_SECRET, now)).rejects.toThrow(/no ha alcanzado la meta/);
 
     const after = await reachedCampaign();
-    await approvePayout(db, after.payout.id, now);
+    await approvePayout(db, after.payout.id, HMAC_SECRET, now);
     await deliver('CHARGEBACK', after.charges[0]!.paycometOrder!, 1_000);
     expect((await getAccountBalance(db, 'CHARGEBACK_LOSSES', { organizationId: after.organization.id })).balanceCents).toBe(1_000);
     expect(await getRaisedFromLedger(db, after.initiative.id)).toBe(3_000);
@@ -558,7 +617,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('un contracargo con la liquidación fallida no toca la hucha vacía: lo asume KORUM', async () => {
     const { organization, initiative, payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     const firstOrder = charges[0]!.paycometOrder!;
     const rejecting = new MockPaycometProvider({ secrets, failSplit: (order) => (order === firstOrder ? new PaymentProviderError('rechazado', '130') : null) });
     expect(await executeApprovedPayout(db, rejecting, payout.id, now)).toMatchObject({ status: 'FAILED' });
@@ -570,7 +629,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('un reparto de un cobro que ya no vale no se envía y queda para revisión', async () => {
     const { payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     await deliver('CHARGEBACK', charges[0]!.paycometOrder!, 1_000);
     const provider = new MockPaycometProvider({ secrets });
     expect(await executeApprovedPayout(db, provider, payout.id, now)).toMatchObject({ status: 'NEEDS_REVIEW' });
@@ -579,7 +638,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('un error definitivo se puede reintentar sin repetir lo ya hecho', async () => {
     const { payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     const secondOrder = charges[1]!.paycometOrder!;
     const flaky = new MockPaycometProvider({ secrets, failSplit: (order) => (order === secondOrder ? new PaymentProviderError('rechazado', '130') : null) });
     expect(await executeApprovedPayout(db, flaky, payout.id, now)).toEqual({ status: 'FAILED', doneCents: 1_000 });
@@ -592,7 +651,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('un corte de conexión nunca se reenvía a ciegas: espera a que una persona compruebe qué pasó', async () => {
     const { payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     const firstOrder = charges[0]!.paycometOrder!;
     const cut = new MockPaycometProvider({ secrets, failSplit: (order) => (order === firstOrder ? new PaymentProviderError('corte', 'NETWORK', true) : null) });
     expect(await executeApprovedPayout(db, cut, payout.id, now)).toEqual({ status: 'NEEDS_REVIEW', doneCents: 0 });
@@ -615,7 +674,7 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
 
   it('dos ejecuciones simultáneas no envían dos veces el mismo reparto', async () => {
     const { payout, charges } = await reachedCampaign();
-    await approvePayout(db, payout.id, now);
+    await approvePayout(db, payout.id, HMAC_SECRET, now);
     const shared = new MockPaycometProvider({ secrets });
     await Promise.all([executeApprovedPayout(db, shared, payout.id, now), executeApprovedPayout(db, shared, payout.id, now)]);
     for (const charge of charges) expect(shared.calls.filter((call) => call.order === charge.paycometOrder).length).toBeLessThanOrEqual(1);

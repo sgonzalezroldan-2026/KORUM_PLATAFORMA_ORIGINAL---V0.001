@@ -1,3 +1,4 @@
+import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import type { InitiativeFundingPlan } from './funding-plan';
 import type { KorumSeedData } from './seed-types';
@@ -22,8 +23,7 @@ function omit<T extends object, K extends keyof T>(value: T, keys: readonly K[])
   return copy;
 }
 
-/** Correo canónico de la semilla: todo en minúsculas (la normalización antifraude completa llega en el Sprint 2.2). */
-const canonical = (email: string) => email.trim().toLowerCase();
+const canonical = normalizeCanonicalEmail;
 
 export async function seedPlatformConfig(db: KorumPrismaClient, seed: KorumSeedData): Promise<void> {
   await db.globalConfig.upsert({ where: { id: 'GLOBAL' }, create: { id: 'GLOBAL', ...seed.globalRules }, update: {} });

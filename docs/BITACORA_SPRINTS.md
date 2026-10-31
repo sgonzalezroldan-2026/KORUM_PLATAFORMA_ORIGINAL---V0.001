@@ -19,6 +19,49 @@
 
 ## Entradas
 
+### Sprint 2.2 — Antifraude del quórum, doble firma y candado semántico · 2026-10-31 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `antifraud-legal-guardian` (tres pases) y `qa-e2e-verifier` (dos pases).
+- **Qué se ha hecho:**
+  - **`src/core/security/`:** `email-normalizer.ts`, `disposable-domains.ts`, `device-signals.ts`, `device-quorum.service.ts` (`signIdea`), `double-check.service.ts` (`requestSignature`, `completeSignature`), `double-check-evaluation.ts`, `signature-hash.ts`, `data-hmac.ts` y `semantic-lock.ts`.
+  - **`approvePayout`:** verifica en su transacción la huella, el OTP y el cargo de cada firmante; recibe el secreto como parámetro. Un rechazo por firmas queda en `AuditLog`.
+  - **Esquema:** migraciones `20261031090000_double_check_challenge` y `20261031090100_signature_digest_one_per_user` (`targetDigest`, `membershipId`, una firma por persona e idea y trigger que impide editar el rol de un cargo).
+  - **Semilla:** firmas verificables y motivos como clave de traducción. Una base local ya sembrada conserva las firmas antiguas, que ya no valen: hay que ejecutar `npm run db:reset`.
+  - **Tests:** `tests/unit/security-quorum.spec.ts`, `tests/integration/security-governance.spec.ts`, ampliaciones en `payments.spec.ts` y `seed.spec.ts`.
+  - **Documentos:** skill `korum-quorum-antifraud`, lista del abogado en CUMPLIMIENTO §5, textos `ideas.audit.*` y notas «Heredado del Sprint 2.2» en las fichas 2.4, 2.5, 2.6, 3.2, 3.6, 4.2, 4.3, 4.4 y 6.1.
+- **Decisiones tomadas:**
+  - **Firmar exige enlace + OTP + la sesión de esa misma persona con 2FA activado:** enlace y código van al mismo correo, y una bandeja comprometida no debe bastar para mover dinero.
+  - **Lo firmado entra en la huella:** si cambia el importe, la cuenta o el texto de la idea, o el firmante pierde el cargo, la firma deja de valer aunque se le devuelva el cargo. Cambiar de cargo obliga a una fila nueva.
+  - **Una firma que deja de valer se borra al volver a firmar ese rol,** con copia completa en `AuditLog` que permite verificar su huella. Se descartó `supersededAt`, que exigía un índice único parcial fuera del esquema de Prisma.
+  - **Dos cuentas con la misma bandeja canónica son una sola persona** en la doble firma.
+  - **El orden de una cuenta se fija al llegar al dispositivo.** Con consentimiento e IP válida, cuentan juntos los dispositivos con la misma huella y la misma red en los últimos 30 días. Retirar el consentimiento devuelve a esa persona su orden de llegada.
+  - **Una IP no válida va al grupo común `unknown-ip`,** que cuenta para la ráfaga pero no para el cruce de huellas.
+  - **Lista blanca del candado sin expresiones abiertas:** ante la duda se bloquea, porque solo pide elegir una categoría con tramos. Por eso «Fans of the school team» se bloquea.
+- **Riesgos aceptados:**
+  - Cookie nueva y otra red reinician la cuenta, también con huella; una ventana de incógnito con otro email verificado solo la frena la ráfaga.
+  - Una cuenta nueva en un dispositivo puede recibir un orden peor por un desconocido con su huella y su red en los últimos 30 días (rehabilitable en el 4.2).
+  - Retirar el consentimiento borra la huella de un dispositivo compartido aunque otra persona de ese dispositivo consienta; una cuenta posterior con esa huella queda como 1ª.
+  - Recalcular solo la fila de quien retira puede dejar órdenes repetidos en un dispositivo.
+  - El candado se puede esquivar a propósito (`v e n t i l a d o r e s`, homoglifos) y la lista de correos desechables es corta (pasan `tempmail.plus`, `mail.tm`).
+- **Pendiente / deuda:**
+  - **Decidido por el promotor el 01-11-2026:** el candado bloquea también `mobiliario`, `radiadores`, `ventilación`, `altavoces`, `portería` y `pista deportiva` (y sus equivalentes en catalán e inglés); `pintar` queda fuera para no chocar con talleres de pintura. El plazo de 30 días del cruce de huellas se mantiene.
+  - **Sin verificar:** la concurrencia real, solo revisada leyendo el código porque la base local tiene una sola conexión; bloquea los cobros reales (ficha 6.1).
+  - **Al llegar a `CONVERTED` no se crea aún la iniciativa** que pide el PRD §4.2: ficha 4.2. Hoy nadie llama a estos servicios desde una pantalla, y `completeSignature` no aprueba liquidaciones: ficha 4.4.
+  - **Enlace y OTP aún no se envían:** los devuelve el servicio, y deben ir a la bandeja de salida en el 2.6, sin llegar al navegador.
+  - **Pago a proveedor:** la factura solo se comprueba por tener valor; bloqueado de todos modos por `approvePayout` (ficha 4.4).
+  - **Textos `ideas.audit.*` en catalán e inglés:** falta la revisión de una persona nativa.
+  - **Prueba inestable ajena al sprint:** `primitives.spec.ts:91` (Escape cierra la burbuja) falló una vez en escritorio y pasó al repetirla.
+- **Incidencias:**
+  - Dos pases de la auditoría de seguridad rechazaron el sprint (A1–A7 y R1–R4), todo corregido. Entre los fallos: firmar dos veces cambiando de email, sortear la huella borrando la cookie, colar equipamiento por la lista blanca y firmas que revivían al recuperar el rol.
+  - Las suites de integración se pisan si corren a la vez: todas recrean `korum_test`. Se perdieron dos ejecuciones de QA por eso.
+- **Puertas:**
+  - **P1 ✅** invariantes, `typecheck` y `lint` a 0.
+  - **P2 ✅** 388/388 unitarias y 199/199 de integración, con la base local de una sola conexión.
+  - **P3 ✅** `antifraud-legal-guardian` aprobado en el tercer pase; `qa-e2e-verifier` aprobado. Mutaciones de QA detectadas salvo una, redundante, que se eliminó del código; `SAME_INBOX` ganó una prueba directa.
+  - **P4 ✅** el sprint no tiene interfaz: `test:e2e` 41 pasan y 3 omitidas a propósito, sin recorrido con el MCP de Playwright.
+  - **P5 ✅** puertas repetidas tras cada corrección. Tras el último añadido, que solo toca pruebas y documentos, se repitieron P1 y P2, no E2E.
+- **Siguiente sprint:** 2.3 · modelo recomendado: **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría Claude Opus 5.5 · alto.
+
 ### Sprint 2.1 — Adaptador Paycomet, webhooks idempotentes, split transfer y reembolsos al origen · 2026-10-31 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian` y `qa-e2e-verifier` (este último, en Sonnet 5.5).
