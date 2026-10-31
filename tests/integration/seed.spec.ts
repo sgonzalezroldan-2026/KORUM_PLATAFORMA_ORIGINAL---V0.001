@@ -1,13 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.service';
 import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
+import { releaseInitiativeQuotas, reserveInitiativeQuotas } from '@/core/finance/quota-reservation';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { verifyPassSignature } from '@/core/ticketing/qr-signature';
 import { seedDatabase } from '@/seed/seed';
 import { loadSeedData } from '@/seed/seed-types';
 import { SeedReconciliationError, verifySeed, type SeedReport } from '@/seed/seed-verify';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { createTestClient, TEST_SCHEMA } from './test-database';
+import { createInitiative, createTestClient, TEST_SCHEMA } from './test-database';
 
 const SECRETS = { hmacSecret: 'integration-data-hmac-secret-0123456789', qrSecret: 'integration-qr-hmac-secret-0123456789ab' };
 const seed = loadSeedData();
@@ -49,7 +50,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(await db.idea.count({ where: { id: { in: [501, 502, 503] } } })).toBe(3);
     for (const ideaId of [501, 502, 503]) expect(await db.ideaMessage.count({ where: { ideaId } }), `chat de la idea ${ideaId}`).toBe(1);
     expect(await db.ideaSignatureAudit.count({ where: { ideaId: 502 } })).toBe(3);
-    expect(await db.invoice.count({ where: { invoiceNumber: { in: ['FAC-2026-0014', 'FAC-2026-0019'] } } })).toBe(2);
+    expect(await db.invoice.count({ where: { invoiceNumber: { in: ['FAC-2025-0014', 'FAC-2026-0019'] } } })).toBe(2);
     expect(await db.supportTicket.count({ where: { ticketCode: 'TCK-901' } })).toBe(1);
     expect(await db.user.count({ where: { isSuperadmin: true, id: 'user-superadmin' } })).toBe(1);
   });
@@ -164,12 +165,51 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(calculateRealRevenueFromLedger(balances).netRevenueCents).toBe(expectedNetCents);
   });
 
-  it('la semilla no inventa reservas de cupo y las campañas con cobros tienen la fecha de su primer cobro', async () => {
+  it('los cupos de cada entidad son su límite menos lo que reservan sus campañas del curso', async () => {
+    const quotas = async (id: string) => db.organization.findUniqueOrThrow({ where: { id }, select: { exemptRemainingCents: true, medalGrantAvailableCents: true, maintPaidCents: true } });
+    expect(await quotas('CERVANTES')).toEqual({ exemptRemainingCents: 0, medalGrantAvailableCents: 0, maintPaidCents: 0 });
+    expect(await quotas('SANJOSE')).toEqual({ exemptRemainingCents: 0, medalGrantAvailableCents: 0, maintPaidCents: 9_800 });
+    expect(await quotas('CLUBKORUM')).toEqual({ exemptRemainingCents: 0, medalGrantAvailableCents: 0, maintPaidCents: 0 });
+    // La iniciativa 8 está exenta por categoría: no consume el exento anual.
+    expect(await quotas('MEDITERRANEO')).toEqual({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 50_000, maintPaidCents: 0 });
+    const cervantes = await db.initiative.findMany({ where: { organizationId: 'CERVANTES', quotaReservedExemptCents: { gt: 0 } }, select: { quotaReservedPeriod: true } });
+    expect(cervantes.map((row) => row.quotaReservedPeriod).sort()).toEqual(['2024-2025', '2025-2026', '2026-2027']);
+  });
+
+  it('QA-FIN01 · cancelar una campaña sembrada devuelve sus cupos; una de un curso pasado no abona nada', async () => {
+    expect(await releaseInitiativeQuotas(db, 1)).toEqual({ released: true, credited: true });
+    expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true, medalGrantAvailableCents: true } })).toEqual({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 });
+    await expect(reserveInitiativeQuotas(db, 1)).resolves.toEqual({ reserved: true });
+
+    expect(await releaseInitiativeQuotas(db, 3)).toEqual({ released: true, credited: false });
+    expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true } })).toEqual({ exemptRemainingCents: 0 });
+    await db.initiative.update({ where: { id: 3 }, data: { quotaReleasedAt: null } });
+    await expect(verifySeed(db, seed)).resolves.toBeDefined();
+  });
+
+  it('una campaña de desarrollo publicada después no hace fallar la conciliación, y su cupo cuenta', async () => {
+    const extra = await createInitiative(db, 'MEDITERRANEO', { defaultExemptAppliedCents: 100_000 });
+    await reserveInitiativeQuotas(db, extra.id);
+    await expect(verifySeed(db, seed)).resolves.toBeDefined();
+    await releaseInitiativeQuotas(db, extra.id);
+    await expect(verifySeed(db, seed)).resolves.toBeDefined();
+  });
+
+  it('todas las entidades están verificadas antes de su primera campaña', async () => {
+    const initiative4 = await db.initiative.findUniqueOrThrow({ where: { id: 4 }, select: { firstPayinAt: true } });
+    const cervantes = await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { kybReviewedAt: true, ley49VerifiedAt: true } });
+    expect(cervantes.kybReviewedAt!.getTime()).toBeLessThan(initiative4.firstPayinAt!.getTime());
+    expect(cervantes.ley49VerifiedAt!.getTime()).toBeLessThan(initiative4.firstPayinAt!.getTime());
+  });
+
+  it('la conciliación detecta un cupo que no cuadra con las reservas', async () => {
+    await db.organization.update({ where: { id: 'MEDITERRANEO' }, data: { exemptRemainingCents: 0 } });
+    await expect(verifySeed(db, seed)).rejects.toThrow(/MEDITERRANEO: le quedan 0 de exento/);
+    await db.organization.update({ where: { id: 'MEDITERRANEO' }, data: { exemptRemainingCents: 100_000 } });
+  });
+
+  it('las campañas con cobros tienen la fecha de su primer cobro', async () => {
     const initiatives = await db.initiative.findMany({ where: { id: { in: seed.initiatives.map((initiative) => initiative.id) } } });
-    for (const initiative of initiatives) {
-      expect(initiative.quotaReservedAt, `iniciativa ${initiative.id}`).toBeNull();
-      expect(initiative.quotaReservedExemptCents + initiative.quotaReservedMedalCents + initiative.quotaReservedMaintCents).toBe(0);
-    }
     for (const initiative of initiatives.filter((candidate) => candidate.raisedCents > 0)) {
       expect(initiative.firstPayinAt, `iniciativa ${initiative.id}`).not.toBeNull();
     }

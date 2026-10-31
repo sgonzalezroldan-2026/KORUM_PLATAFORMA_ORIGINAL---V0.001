@@ -72,6 +72,7 @@ function analyzeSeedInitiative(id: number) {
       projectedGuaranteeContributionsAt100Cents: projection.projectedCents,
       approvedSponsorsFeeCents: seed.sponsors.filter((sponsor) => sponsor.initiativeId === id && sponsor.status === 'APPROVED').reduce((total, sponsor) => total + sponsor.feeGeneratedCents, 0),
       netDigitalTicketMarginAt100Cents: ticketMargin,
+      netDigitalTicketMarginRealizedCents: initiative.format === 'TICKETING' ? (ticketMargin / initiative.ticketMax!) * initiative.ticketsSold! : 0,
       allocatedHuchaTopupNetCents: 0
     })
   };
@@ -109,7 +110,9 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     expect(result.sourcesCents).toEqual({ bracketFeeCents: 14_440, supportGuaranteeCents: 8_356, sponsorFeeCents: 12_750, digitalTicketFeeCents: 0, maintFeeCents: 0, huchaTopupFeeCents: 0 });
     expect(result.netRevenueCents).toBe(35_546);
     expect(result.missingTo100Cents).toBe(15_000);
-    expect(result.netProfitAfterBoostCents).toBe(20_546);
+    // Solo lo cobrado: sin los 2,56 € proyectados.
+    expect(result.collectedNetRevenueCents).toBe(35_290);
+    expect(result.netProfitAfterBoostCents).toBe(20_290);
     expect(result.isProfitableSelfBoost).toBe(true);
     expect(result.isNegativeReturnAlert).toBe(false);
   });
@@ -127,14 +130,30 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     const alerts = ids.map((id) => ({ id, ...analyzeSeedInitiative(id).result }));
     expect(alerts.filter((row) => row.isNegativeReturnAlert).map((row) => row.id)).toEqual([8]);
     expect(alerts.filter((row) => row.isProfitableSelfBoost).map((row) => row.id)).toEqual([1, 2, 5, 7]);
-    expect(alerts.find((row) => row.id === 2)?.netRevenueCents).toBe(8_000);
-    expect(alerts.find((row) => row.id === 5)?.netRevenueCents).toBe(61_907);
-    expect(alerts.find((row) => row.id === 7)?.netRevenueCents).toBe(46_104);
+    expect(alerts.find((row) => row.id === 2)).toMatchObject({ netRevenueCents: 8_000, netProfitAfterBoostCents: 5_840 });
+    expect(alerts.find((row) => row.id === 5)).toMatchObject({ netRevenueCents: 61_907, netProfitAfterBoostCents: 16_513 });
+    expect(alerts.find((row) => row.id === 7)).toMatchObject({ netRevenueCents: 46_104, netProfitAfterBoostCents: 23_700 });
   });
 
   it('la campaña ya lograda no dispara 💎 aunque sea rentable', () => {
     expect(analyzeSeedInitiative(3).result).toMatchObject({ missingTo100Cents: 0, isProfitableSelfBoost: false });
-    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...baseInput, status: 'BUDGETING', goalCents: 100, raisedCents: 0, bracketFeeCents: 500 }).isProfitableSelfBoost).toBe(false);
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...baseInput, status: 'BUDGETING', goalCents: 100, raisedCents: 0, bracketFeeCents: 500, netDigitalTicketMarginRealizedCents: 0 }).isProfitableSelfBoost).toBe(false);
+  });
+
+  it('💎 no cuenta lo que aún no se ha cobrado: la aportación proyectada no justifica gastar dinero real', () => {
+    const boost = { ...baseInput, status: 'FUNDRAISING', goalCents: 10_000, raisedCents: 5_000, netDigitalTicketMarginRealizedCents: 0 } as const;
+    // 35 € de tramos + 17 € proyectados = 52 € al 100 %, pero faltan 50 € y solo hay 35 € seguros: no compensa.
+    const projected = analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, bracketFeeCents: 3_500, projectedGuaranteeContributionsAt100Cents: 1_700 });
+    expect(projected).toMatchObject({ netRevenueCents: 5_200, collectedNetRevenueCents: 3_500, netProfitAfterBoostCents: -1_500, isProfitableSelfBoost: false });
+    // Con esos mismos 17 € ya cobrados, sí compensa.
+    const realized = analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, bracketFeeCents: 3_500, realizedGuaranteeContributionsCents: 1_700 });
+    expect(realized).toMatchObject({ netProfitAfterBoostCents: 200, isProfitableSelfBoost: true });
+  });
+
+  it('💎 en taquilla cuenta el margen de las entradas vendidas, no el del aforo completo', () => {
+    const boost = { ...baseInput, format: 'TICKETING', status: 'FUNDRAISING', goalCents: 10_000, raisedCents: 9_000, netDigitalTicketMarginAt100Cents: 2_000 } as const;
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, netDigitalTicketMarginRealizedCents: 800 })).toMatchObject({ netRevenueCents: 2_000, netProfitAfterBoostCents: -200, isProfitableSelfBoost: false });
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, netDigitalTicketMarginRealizedCents: 1_100 })).toMatchObject({ netProfitAfterBoostCents: 100, isProfitableSelfBoost: true });
   });
 
   it('el gráfico suma exactamente lo mismo que las filas de la tabla', () => {

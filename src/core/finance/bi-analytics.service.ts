@@ -148,16 +148,29 @@ export function calculateRevenueBreakdown6Sources(input: InitiativeRevenueInput)
 
 /**
  * Rentabilidad al 100 % y alertas de cada tabla (Regla 02 §10):
- * 🚨 `isNegativeReturnAlert` si el neto es negativo; 💎 `isProfitableSelfBoost` si está recaudando y a KORUM le compensa aportar lo que falta.
+ * 🚨 `isNegativeReturnAlert` si el neto al 100 % es negativo; 💎 `isProfitableSelfBoost` si está recaudando y a KORUM le compensa aportar lo que falta.
+ * El 💎 lleva a gastar dinero real, así que no cuenta nada proyectado (decisión del promotor): si KORUM completa la meta, las aportaciones
+ * voluntarias y las entradas que faltaban ya no llegarán. `collectedNetRevenueCents` es lo ya cobrado más la comisión de tramos y el
+ * mantenimiento, que aún no se han cobrado pero se liquidan precisamente al completar la meta.
  */
-export function analyzeInitiativeProfitabilityAndSelfBoost(input: InitiativeRevenueInput & { status: InitiativeStatus; goalCents: number; raisedCents: number }) {
+export function analyzeInitiativeProfitabilityAndSelfBoost(
+  input: InitiativeRevenueInput & {
+    status: InitiativeStatus;
+    goalCents: number;
+    raisedCents: number;
+    /** Margen de las entradas ya vendidas: margen por entrada × vendidas. */
+    netDigitalTicketMarginRealizedCents: number;
+  }
+) {
   assertAmount(input.goalCents, 'meta');
   assertAmount(input.raisedCents, 'recaudado');
   const breakdown = calculateRevenueBreakdown6Sources(input);
   const missingTo100Cents = Math.max(0, input.goalCents - input.raisedCents);
-  const netProfitAfterBoostCents = breakdown.netRevenueCents - missingTo100Cents;
+  const collected = calculateRevenueBreakdown6Sources({ ...input, projectedGuaranteeContributionsAt100Cents: 0, netDigitalTicketMarginAt100Cents: input.netDigitalTicketMarginRealizedCents });
+  const netProfitAfterBoostCents = collected.netRevenueCents - missingTo100Cents;
   return {
     ...breakdown,
+    collectedNetRevenueCents: collected.netRevenueCents,
     missingTo100Cents,
     netProfitAfterBoostCents,
     isNegativeReturnAlert: breakdown.netRevenueCents < 0,

@@ -163,6 +163,52 @@ async function verifyAccounts(db: KorumPrismaClient, seed: KorumSeedData, check:
   }
 }
 
+/**
+ * Cupos (Regla 02 §2): lo que le queda a cada entidad es su límite menos lo reservado por TODAS sus campañas activas del curso, incluidas
+ * las altas posteriores de desarrollo, y ningún curso consume más exento que el límite. A las sembradas se les exige además su instantánea
+ * y una verificación de la entidad anterior a su publicación: detecta también una semilla vieja.
+ */
+async function verifyQuotas(db: KorumPrismaClient, seed: KorumSeedData, check: Check): Promise<void> {
+  for (const school of seed.schools) {
+    const org = await db.organization.findUniqueOrThrow({
+      where: { id: school.id },
+      select: { exemptLimitCents: true, exemptRemainingCents: true, medalGrantAvailableCents: true, medalRank: true, maintPaidCents: true, maintAnnualCapCents: true, quotaPeriod: true, kybReviewedAt: true }
+    });
+    const reservations = await db.initiative.findMany({
+      where: { organizationId: school.id, quotaReservedAt: { not: null } },
+      select: { id: true, quotaReservedAt: true, quotaReleasedAt: true, quotaReservedExemptCents: true, quotaReservedMedalCents: true, quotaReservedMaintCents: true, quotaReservedPeriod: true, defaultExemptAppliedCents: true, medalExemptAppliedCents: true, maintFeeCents: true }
+    });
+    const seededIds = new Set(seed.initiatives.map((initiative) => initiative.id));
+    const seeded = reservations.filter((row) => seededIds.has(row.id));
+    check(seeded.length === seed.initiatives.filter((initiative) => initiative.organizationId === school.id).length, `${school.id}: faltan reservas de cupos en sus campañas; ejecuta npm run db:reset`);
+    const exemptByPeriod = new Map<string, number>();
+    let currentExempt = 0;
+    let currentMedal = 0;
+    let currentMaint = 0;
+    for (const row of seeded) {
+      check(
+        row.quotaReleasedAt === null && row.quotaReservedPeriod !== null && row.quotaReservedExemptCents === row.defaultExemptAppliedCents && row.quotaReservedMedalCents === row.medalExemptAppliedCents && row.quotaReservedMaintCents === row.maintFeeCents,
+        `iniciativa ${row.id}: su reserva de cupos no coincide con lo que aplica; ejecuta npm run db:reset`
+      );
+      check(org.kybReviewedAt !== null && row.quotaReservedAt !== null && org.kybReviewedAt <= row.quotaReservedAt, `iniciativa ${row.id}: se publicó antes de verificar a la entidad; ejecuta npm run db:reset`);
+    }
+    for (const row of reservations.filter((candidate) => candidate.quotaReleasedAt === null)) {
+      const period = row.quotaReservedPeriod ?? '';
+      exemptByPeriod.set(period, (exemptByPeriod.get(period) ?? 0) + row.quotaReservedExemptCents);
+      if (period === org.quotaPeriod) {
+        currentExempt += row.quotaReservedExemptCents;
+        currentMedal += row.quotaReservedMedalCents;
+        currentMaint += row.quotaReservedMaintCents;
+      }
+    }
+    for (const [period, exempt] of exemptByPeriod) check(exempt <= org.exemptLimitCents, `${school.id}: en ${period} usa ${exempt} de exento y su límite anual es ${org.exemptLimitCents}`);
+    const medalGrant = seed.medalsConfig.find((tier) => tier.rank === org.medalRank)?.grantCents ?? 0;
+    check(org.exemptRemainingCents === org.exemptLimitCents - currentExempt, `${school.id}: le quedan ${org.exemptRemainingCents} de exento y deberían ser ${org.exemptLimitCents - currentExempt}`);
+    check(org.medalGrantAvailableCents === medalGrant - currentMedal, `${school.id}: le quedan ${org.medalGrantAvailableCents} de beca y deberían ser ${medalGrant - currentMedal}`);
+    check(org.maintPaidCents === currentMaint && org.maintPaidCents <= org.maintAnnualCapCents, `${school.id}: mantenimiento acumulado ${org.maintPaidCents} y sus campañas reservan ${currentMaint}`);
+  }
+}
+
 export async function verifySeed(db: KorumPrismaClient, seed: KorumSeedData): Promise<SeedReport> {
   const problems: string[] = [];
   const check: Check = (condition, message) => {
@@ -183,6 +229,7 @@ export async function verifySeed(db: KorumPrismaClient, seed: KorumSeedData): Pr
     if (report) initiatives.push(report);
   }
   await verifyAccounts(db, seed, check);
+  await verifyQuotas(db, seed, check);
 
   const trial = await getTrialBalance(db);
   check(trial.balanced, `el libro no cuadra: debe ${trial.debitCents} y haber ${trial.creditCents}`);

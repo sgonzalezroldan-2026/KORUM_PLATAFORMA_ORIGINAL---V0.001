@@ -9,7 +9,7 @@ import type { KorumSeedData } from './seed-types';
 
 export const SEED_ACADEMIC_YEAR = '2026-2027';
 /** Fecha de la revisión KYB de las entidades de la semilla. */
-const KYB_REVIEWED_AT = new Date('2026-02-01T10:00:00.000Z');
+const KYB_REVIEWED_AT = new Date('2025-02-01T10:00:00.000Z');
 export const SEED_ACTOR = 'seed';
 
 export const SUPERADMIN_USER_ID = 'user-superadmin';
@@ -128,10 +128,14 @@ export async function seedInitiatives(db: KorumPrismaClient, seed: KorumSeedData
         matchingSponsorName: initiative.matchingSponsorName ?? null,
         closesAt,
         createdAt,
-        firstPayinAt: plan?.firstPayinAt ?? null
-        // Sin reservas de cupo (quotaReserved*): los cupos de las entidades son valores de demostración del prototipo, que no
-        // equivalen a «límite − lo reservado por sus campañas» (p. ej. Cervantes usa 3 veces el exento anual de 1.000 €). La
-        // reserva y devolución reales se prueban en QA-FIN01 con campañas nuevas; devolver una iniciativa de la semilla no abona nada.
+        firstPayinAt: plan?.firstPayinAt ?? null,
+        // Las 8 campañas de la semilla están publicadas: reservaron sus cupos en su curso. Cancelar una del curso actual los
+        // devuelve a la entidad; una de un curso pasado cierra la reserva sin abonar nada (`releaseInitiativeQuotas`).
+        quotaReservedAt: createdAt,
+        quotaReservedExemptCents: initiative.defaultExemptAppliedCents,
+        quotaReservedMedalCents: initiative.medalExemptAppliedCents,
+        quotaReservedMaintCents: initiative.maintFeeCents,
+        quotaReservedPeriod: initiative.academicYear
       },
       update: {}
     });
