@@ -19,6 +19,65 @@
 
 ## Entradas
 
+### Sprint 2.1 — Adaptador Paycomet, webhooks idempotentes, split transfer y reembolsos al origen · 2026-10-31 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian` y `qa-e2e-verifier` (este último, en Sonnet 5.5).
+- **Qué se ha hecho:**
+  - **`src/services/payments/`:** interfaz `PaymentProvider`, simulador `mock-paycomet.ts`, adaptador REST `paycomet.adapter.ts`, `provider-factory.ts`, `paycomet-notification.ts` (firma e identificador), `paycomet-webhook.service.ts`, `payment-events.service.ts`, `payment-reversals.ts` (devoluciones y contracargos), `split-transfer.service.ts` (liquidación) y `card-tokens.ts`.
+  - **Otros archivos nuevos:** `src/app/api/webhooks/paycomet/route.ts`, `src/core/finance/campaign-window.ts`, `src/core/finance/payment-journals.ts` y `src/lib/encryption.ts` (AES-256-GCM).
+  - **Esquema:** migraciones `20261030090600_payout_splits` y `20261030090700_payout_destination_refund_claim`.
+  - **Tests:** `tests/unit/paycomet-escrow.spec.ts` y `tests/integration/payments.spec.ts`. `global-setup.ts` reinicia las secuencias para que las filas de los tests no choquen con los identificadores fijos de la semilla.
+  - **Documentos:** skill `korum-escrow-payments`, CUMPLIMIENTO §2 (preguntas 9 y 10) y retención, PRD, `.env.example` y notas «Heredado del Sprint 2.1» en las fichas 2.2, 2.3, 2.4, 2.5, 3.4, 3.5, 4.4, 5.3 y 6.1.
+- **Decisiones tomadas:**
+  - **Mover dinero como máximo una vez:** se reserva la fila antes de llamar a Paycomet. Si el resultado es desconocido, no se reintenta a ciegas: espera a su notificación o a una persona (`resolveUnknownRefund`, `resolveUnknownSplit`).
+  - **Una liquidación son varios repartos:** el split de Paycomet cita un cobro original, así que una liquidación son N repartos, cada uno con su ventana de 90 días.
+  - **Cuenta destino fija al aprobar:** `destinationSplitId` se guarda con las firmas; un cambio posterior de cuenta no desvía el dinero.
+  - **Cobro tardío:** si llega con la campaña cerrada o liquidada, se asienta y queda `REFUND_PENDING`.
+  - **Firma inválida:** no se guarda el cuerpo; solo un recuento por hora y motivo (`rejected:<hora>:<motivo>`), con 90 días de retención en CUMPLIMIENTO.
+  - **`GOAL_REACHED` a `FUNDRAISING`:** un contracargo que deja la iniciativa bajo la meta la devuelve a recaudar (PRD).
+  - **`prisma/reset.ts`:** ahora siembra tras migrar, como ya decía la documentación. El cambio aún no se ha ejecutado.
+  - **`env.ts`:** rechaza `PAYCOMET_MODE=live` junto con el modo demostración.
+- **Suposiciones contra el simulador (bloquean los cobros reales, Sprint 6.1):**
+  - Paycomet rechaza las devoluciones que exceden el cobro y aplica el tope de reparto por pedido.
+  - Todo cobro confirmado trae `AuthCode`.
+  - El formato de las notificaciones, el valor de fallo de `Response` y que `BankDateTime` esté en UTC.
+  - **El adaptador real nunca se ha ejecutado contra el sandbox**, porque no hay credenciales.
+- **Pendiente / deuda:**
+  - **Riesgos aceptados:** un `AuthCode` falso en la primera escritura (resolver antes de cobrar dinero real) y la contención en la fila de rechazados hasta el límite de peticiones del 2.4.
+  - **Sin verificar:** la concurrencia real solo se ha revisado leyendo el código, porque la base local tiene una sola conexión; la CI con PostgreSQL real aún no se ha visto. Los webhooks se serializan por iniciativa y no se ha medido si un pico agota el tiempo de la transacción de Prisma.
+  - **QA parcial:** en `QA-P04`, el aviso de `SPLIT_WINDOW_GUARD` solo existe como cálculo; la tarea programada llega en el 2.4. En `QA-P02`, el caso sin saldo que retirar queda como diseño hasta Mi Hucha.
+  - **Sprint 2.3:** pases y `ticketsSold`. **Sprint 3.5:** `SPONSORSHIP` falla a propósito en el webhook.
+  - **Sprint 2.4:** la comisión de pasarela sale de `GlobalConfig` hasta la conciliación, y el corte de la renovación anual de cupos debe ser posterior al 21 de agosto.
+  - **Deudas del 1.3 movidas:** reparto del Matching de la semilla al 3.4, bolsa sin `Contribution` al 2.4/3.5 y factura del proveedor al 2.4.
+  - **Decisión del promotor antes del Sprint 5.2:** el «Retorno» de 💎 incluye dinero que KORUM se queda de todos modos (fee de comercios) y omite la pasarela recuperada, así que puede dar falsos positivos.
+  - **Modelos por tipo de agente:** el promotor pidió revisarlos al acabar este sprint; no se ha cambiado ninguno.
+- **Incidencias:**
+  - La base local de PGlite puede quedarse colgada tras una suite de integración con muchos fallos: hace falta reiniciarla (`npm run db:dev`). Los datos no se pierden.
+  - QA dejó en la base local una fila `rejected:…:BAD_SIGNATURE` de su petición real con firma falsa. Es inofensiva.
+- **Puertas:**
+  - **P1 ✅** invariantes, `typecheck` y `lint` a 0.
+  - **P2 ✅** 284/284 unitarias y 149/149 de integración.
+  - **P3 ✅** financiera aprobada; seguridad aprobada con condiciones, aplicadas; QA aprobado. Mutaciones de QA: 5 de 6 detectadas; la sexta (identificador con `MethodId` o `ErrorID`) se escapaba y se cubrió con una prueba nueva, comprobada con esa misma mutación.
+  - **P4 ✅** el sprint no tiene interfaz: `test:e2e` 41 pasan y 3 omitidas a propósito, y peticiones reales al endpoint (401 con firma falsa, 413 con cuerpo de 70 KB, con y sin tamaño declarado).
+  - **P5 ✅** puertas repetidas tras cada corrección. Tras el último añadido, que solo toca una prueba unitaria, se repitieron P1 y las unitarias, no integración ni E2E.
+- **Siguiente sprint:** 2.2 · modelo recomendado: **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · alto) · auditoría Claude Opus 5.5 · alto.
+- **Traspaso a otra sesión (decisión del promotor):** el Sprint 2.2 se hace en una sesión nueva, sin arrastrar este contexto. Los modelos por tipo de agente se tratan en una sesión aparte y dedicada; hasta entonces no se ha cambiado ninguno (mapa en `scripts/sync-ai-context.mjs`, `CLAUDE_MODEL_BY_AGENT`; la fuente de los agentes está en `.agents/agents/`). Antes de empezar el 2.2, leer la ficha (con la nota «Heredado del Sprint 2.1») y las «Pendiente / deuda» de arriba. `.vscode/settings.json` (exclusión de Tailwind sobre `prototype/`) quedó fuera de los commits a propósito.
+
+### Paso previo al Sprint 2.1 — Cupos de la semilla y alerta de Auto-Impulso · 2026-10-30 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría aprobada por `fintech-escrow-auditor` y `qa-e2e-verifier`.
+- **Qué se ha hecho:**
+  - **Semilla:** `seed_data.json` y `seed-base.ts` reservan cupos exentos, beca de medalla y mantenimiento con su instantánea y su curso. Las iniciativas #3 y #4 y la factura pasan a cursos anteriores para que los cupos cuadren sin tocar importes.
+  - **`seed-verify.ts`:** `verifyQuotas` comprueba las reservas activas, que el KYB sea anterior a la publicación y que lo exento de cada curso no supere el límite.
+  - **`bi-analytics.service.ts`:** la alerta 💎 usa `collectedNetRevenueCents`. Cifras fijadas en tests: #1 20.290, #2 5.840, #5 16.513 y #7 23.700 céntimos.
+  - **Documentos:** Regla 02 §10, skill TCO §5, QA-FIN05, QA-A02, ficha 5.1 y `fintech-escrow-auditor`.
+- **Decisiones tomadas:**
+  - **Cupos (el promotor delegó la decisión):** se corrigen los datos de la semilla, no los importes de las iniciativas.
+  - **Alerta 💎 (decisión del promotor):** se calcula solo con lo ya cobrado, más la comisión de tramos y el mantenimiento, que se liquidan al completar la meta. Nunca con aportaciones proyectadas ni entradas sin vender, que ya no llegarían si KORUM completa la meta.
+  - **Base local:** reiniciada con autorización del promotor; la semilla concilia 3.018 asientos.
+- **Pendiente / deuda:** `completedThisYear` es un contador de demostración, y `medalGrantUsedInTitle` no se gestiona al cancelar una campaña.
+- **Puertas:** P1 ✅ · P2 ✅ · P3 ✅ (aprobado) · P4 no aplica (sin interfaz) · P5 ✅.
+
 ### Sprint 1.4 — Motor TCO dual, tope anual de mantenimiento y BI real frente a proyectado · 2026-10-30 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor` (Opus) y `qa-e2e-verifier` (Sonnet).

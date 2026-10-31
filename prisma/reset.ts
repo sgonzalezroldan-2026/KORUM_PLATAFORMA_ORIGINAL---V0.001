@@ -18,6 +18,8 @@ function main() {
   });
   const prismaCli = resolve('node_modules', 'prisma', 'build', 'index.js');
   execFileSync(process.execPath, [prismaCli, 'migrate', 'reset', '--force'], { stdio: 'inherit' });
+  // `migrate reset` ya no ejecuta la semilla por sí solo: sin esto la base quedaría migrada pero vacía.
+  execFileSync(process.execPath, [prismaCli, 'db', 'seed'], { stdio: 'inherit' });
 }
 
 try {

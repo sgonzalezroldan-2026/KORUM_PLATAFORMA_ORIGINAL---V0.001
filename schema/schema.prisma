@@ -212,6 +212,14 @@ enum PayoutDestination {
   ORGANIZATION
 }
 
+/// Cada reparto se registra antes de enviarlo. SENDING: enviado sin confirmar; nunca se reenvía sin comprobar qué pasó.
+enum PayoutSplitStatus {
+  PENDING
+  SENDING
+  DONE
+  FAILED
+}
+
 enum PayoutStatus {
   PENDING_DOUBLE_CHECK
   APPROVED
@@ -988,6 +996,8 @@ model Contribution {
   status                     ContributionStatus  @default(PENDING)
   refundedCents              Int                 @default(0)
   refundedAt                 DateTime?
+  /// Devolución pedida a Paycomet sin confirmar: mientras esté puesta no se vuelve a pedir, para no devolver dos veces.
+  refundSendingAt            DateTime?
   createdAt                  DateTime            @default(now())
   organization               Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative                 Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
@@ -995,6 +1005,7 @@ model Contribution {
   ticketPass                 TicketPass?
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]
+  payoutSplits               EscrowPayoutSplit[]
 
   @@index([initiativeId, status])
   @@index([organizationId, fiscalYear, type])
@@ -1200,6 +1211,8 @@ model EscrowPayout {
   providerInvoiceFileId String?
   netPaidCents          Int
   korumFeeSettledCents  Int
+  /// Cuenta destino fijada al aprobar: las firmas valen para esa cuenta, aunque la entidad cambie la suya después.
+  destinationSplitId    String?
   paycometTransferId    String?
   status                PayoutStatus           @default(PENDING_DOUBLE_CHECK)
   executedAt            DateTime?
@@ -1210,6 +1223,27 @@ model EscrowPayout {
   signatures            DoubleCheckSignature[]
   invoices              Invoice[]
   ledgerJournals        LedgerJournal[]
+  splits                EscrowPayoutSplit[]
+}
+
+/// Un reparto de una liquidación: Paycomet reparte cobro a cobro, y cada cobro tiene su ventana de 90 días.
+model EscrowPayoutSplit {
+  id             Int               @id @default(autoincrement())
+  payoutId       Int
+  contributionId Int
+  amountCents    Int
+  status         PayoutSplitStatus @default(PENDING)
+  splitAuthCode  String?
+  errorMessage   String?
+  attempts       Int               @default(0)
+  sentAt         DateTime?
+  executedAt     DateTime?
+  createdAt      DateTime          @default(now())
+  payout         EscrowPayout      @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  contribution   Contribution      @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+
+  @@unique([payoutId, contributionId])
+  @@index([payoutId, status])
 }
 
 model ResizePoll {

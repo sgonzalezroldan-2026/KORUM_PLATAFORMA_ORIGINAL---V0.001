@@ -78,6 +78,10 @@ const envSchema = z
         message: 'En producción PAYCOMET_MODE no puede ser «mock» salvo en el entorno de demostración (NEXT_PUBLIC_DEMO_MODE=true)'
       });
     }
+    // Dinero real con perfiles simulados: nunca.
+    if (value.PAYCOMET_MODE === 'live' && value.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      ctx.addIssue({ code: 'custom', path: ['PAYCOMET_MODE'], message: 'PAYCOMET_MODE=live no se puede combinar con el entorno de demostración (NEXT_PUBLIC_DEMO_MODE=true)' });
+    }
   });
 
 export type Env = z.infer<typeof envSchema>;

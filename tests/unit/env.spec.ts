@@ -28,6 +28,11 @@ function issuesOf(source: Record<string, string | undefined>): string[] {
 }
 
 describe('QA-C01 · validación del entorno (fail-fast)', () => {
+  it('rechaza cobros reales en el entorno de demostración', () => {
+    expect(issuesOf(validSource({ PAYCOMET_MODE: 'live', NEXT_PUBLIC_DEMO_MODE: 'true' })).join()).toMatch(/demostración/);
+    expect(issuesOf(validSource({ PAYCOMET_MODE: 'live' }))).toEqual([]);
+  });
+
   it('acepta un entorno mínimo válido y rellena los valores por defecto', () => {
     const env = parseEnv(validSource());
     expect(env.PAYCOMET_MODE).toBe('mock');

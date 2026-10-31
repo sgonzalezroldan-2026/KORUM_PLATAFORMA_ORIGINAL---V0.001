@@ -105,6 +105,7 @@ RESIZE_VOTING ──aprobada (nueva meta ≤ lo recaudado)───────�
 RESIZE_VOTING ──rechazada──────────────────────────────────► REFUNDING
 REFUNDING ──todas las devoluciones ejecutadas──────────────► REFUNDED
 GOAL_REACHED ──doble firma + split transfer + fotos────────► CLOSED
+GOAL_REACHED ──contracargo baja de la meta, sin liquidar───► FUNDRAISING
 ```
 
 - `stepIndex` de la línea de 6 estados del panel: idea (1) → quórum (2) → `BUDGETING` (3) → `FUNDRAISING` (4) → `GOAL_REACHED` / `CLOSED` (5–6).

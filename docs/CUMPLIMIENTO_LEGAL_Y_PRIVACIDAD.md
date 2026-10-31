@@ -37,6 +37,8 @@
 6. Cobros recurrentes con tarjeta tokenizada (`JET-ID`) para la aportación mensual de Mi Hucha y la renovación de comercios: requisitos de autenticación reforzada (SCA) en el primer cobro y en los siguientes.
 7. ¿Ofrece Paycomet monederos con saldo a nombre de cada usuario (necesario para el modo `REGULATED_WALLET` de Mi Hucha)?
 8. Redacción aprobada para mencionar a Paycomet en la web, los emails y los recibos, y uso de su logotipo.
+9. Repartos: la API exige citar el cobro original en cada *split transfer*. ¿Una liquidación son tantos repartos como cobros? ¿El tope de cada uno es lo cobrado en ese pedido, o se puede repartir el saldo global? ¿Hay límite de repartos o una forma de agruparlos?
+10. Notificaciones: formato del cuerpo (formulario o JSON), valor de `Response` en un fallo, zona horaria de `BankDateTime`, política de reintentos y qué respuesta espera Paycomet. ¿Devolver más de lo cobrado se rechaza siempre, también con reintentos tras un corte de conexión?
 
 ---
 
@@ -109,6 +111,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Dato | Plazo | Después |
 | :--- | :--- | :--- |
 | Asientos contables, aportaciones, facturas, webhooks de pago | 6 años desde el cierre del ejercicio | Borrado |
+| Recuento de notificaciones rechazadas por firma inválida (`rejected:*`) | 90 días | Borrado |
 | Documentos KYB de la entidad | Mientras dure la relación + 6 años | Borrado |
 | Datos fiscales del donante (NIF, provincia) | 6 años | Borrado |
 | Cuenta de usuario sin actividad | 3 años | Aviso y anonimización a los 30 días |

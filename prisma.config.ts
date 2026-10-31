@@ -10,7 +10,7 @@ export default defineConfig({
   schema: 'schema/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
-    // `prisma migrate reset` ejecuta la semilla al terminar. `npm run db:seed` la lanza por separado.
+    // La lanzan `npm run db:seed` y, tras reiniciar, `npm run db:reset` (`prisma/reset.ts`).
     seed: 'tsx --env-file-if-exists=.env.local prisma/seed.ts'
   },
   datasource: {

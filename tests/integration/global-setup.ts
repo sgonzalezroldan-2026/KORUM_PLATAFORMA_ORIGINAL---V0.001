@@ -54,8 +54,25 @@ export default async function setup(project: TestProject) {
     throw new Error(`Fallo al aplicar las migraciones en el esquema ${TEST_SCHEMA}:\n${output.stdout?.toString() ?? ''}${output.stderr?.toString() ?? ''}`);
   }
 
+  await reserveSeedIdentifiers(baseUrl);
   await resetSearchPath(baseUrl);
   project.provide('testDatabaseUrl', baseUrl);
+}
+
+/**
+ * La semilla usa identificadores fijos (iniciativas 1–8, comercios, ideas). Las altas de las pruebas empiezan más arriba para no chocar
+ * con ellos, sea cual sea el orden en que se ejecuten los archivos.
+ */
+async function reserveSeedIdentifiers(connectionString: string) {
+  const client = new pg.Client({ connectionString });
+  try {
+    await client.connect();
+    for (const table of ['Initiative', 'Sponsor', 'Idea']) {
+      await client.query(`ALTER SEQUENCE "${TEST_SCHEMA}"."${table}_id_seq" RESTART WITH 100000`);
+    }
+  } finally {
+    await client.end();
+  }
 }
 
 /**

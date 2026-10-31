@@ -15,7 +15,8 @@ description: Integración con Paycomet REST API (cobros Bizum/tarjeta, split tra
   - Base: `https://rest.paycomet.com` · Cabecera: `PAYCOMET-API-TOKEN` (valor leído de `PlatformSecret` `paycomet.apiKey`, con respaldo en `PAYCOMET_API_KEY`).
   - Métodos: tarjeta / Apple Pay / Google Pay (`methodId: 1`) y Bizum (`methodId: 11`).
 - `PAYCOMET_MODE=mock` usa un simulador local determinista que firma sus webhooks igual que Paycomet, para tests E2E sin red.
-- **Webhooks:** se verifica la firma, se guarda en `WebhookEvent` (único por `provider + externalEventId`) y se procesa en una `prisma.$transaction` que crea el asiento y actualiza los contadores. Un webhook repetido no hace nada.
+- **Webhooks** (`paycomet-webhook.service.ts`): se verifica la firma (SHA-512 con `md5(contraseña)`, fórmula oficial en `paycomet-notification.ts`), con un identificador sacado solo de campos firmados; se guarda en `WebhookEvent` (único por `provider + externalEventId`) y se procesa en una `prisma.$transaction` que crea el asiento y actualiza los contadores. Un webhook repetido no hace nada. Con firma inválida no se guarda el cuerpo ni un identificador sacado de él, solo un recuento por hora y motivo (`rejected:<hora>:<motivo>`): no está verificado, alguien podría reservar el identificador de un pago real y el número de filas no debe crecer con cada petición.
+- **Resultado desconocido:** si se corta la conexión con Paycomet, `PaymentProviderError.outcomeUnknown` es `true` y la operación nunca se reintenta a ciegas, porque podría mover dinero dos veces.
 - **Nunca** se actualiza `raisedCents`, un estado de pago o un saldo sin su asiento.
 
 ## 2. Libro mayor de doble partida
@@ -66,7 +67,8 @@ Implementación (Sprint 1.2), que es la única puerta de entrada al libro:
 
 Según la documentación de *split transfer* de Paycomet, un reparto solo puede ejecutarse **si no han pasado más de 90 días desde el cobro inicial**. Consecuencias obligatorias:
 
-- Campañas de **60 días como máximo** (`GlobalConfig.maxCampaignDays`, nunca más de 75).
+- **Se reparte cobro a cobro:** `/v1/marketplace/split-transfer` exige el pedido original y su código de autorización, así que una liquidación son muchos repartos, cada uno con su propia ventana (`planPayoutSplits`, tabla `EscrowPayoutSplit`). **A confirmar con Paycomet:** que el tope de cada reparto es lo cobrado en ese pedido.
+- Campañas de **60 días como máximo** (`GlobalConfig.maxCampaignDays`, nunca más de 75; `publishInitiative` lo comprueba).
 - `Initiative.firstPayinAt` se rellena con el primer cobro; la tarea `SPLIT_WINDOW_GUARD` avisa cuando quedan 15 días.
 - `CREDIT_POOL`: plazo `min(creditPoolMaxDays, 85 − días desde Sponsor.paidAt)`; al vencer, reembolso al comercio.
 
@@ -89,13 +91,16 @@ Según la documentación de *split transfer* de Paycomet, un reparto solo puede 
 - Cuando `raisedCents >= goalCents`:
   1. La entidad elige destino: **su propia cuenta** o **el proveedor** que haya elegido libremente. En ambos casos adjunta la factura del proveedor (`PROVIDER_INVOICE`).
   2. **Doble firma obligatoria:** dos registros en `DoubleCheckSignature` de dos personas distintas (`DIRECTOR` y `COSIGNER`). Sin ellas no se ejecuta ningún reparto.
-  3. Se ejecuta el *split transfer* a la cuenta destino de la entidad. **A confirmar con Paycomet:** si se puede pagar directamente al IBAN de un tercero (proveedor). Si no se puede, el dinero va a la entidad y el pago al proveedor lo hace la entidad, con la factura adjunta como justificante.
+  3. Se aprueba (`approvePayout`: firmas, cifras, hucha y plan de repartos, todo en una transacción) y se ejecuta (`executeApprovedPayout`) el *split transfer* a la cuenta destino de la entidad. Cada reparto se registra antes de enviarlo: se puede reanudar sin repetir lo ya hecho, y uno de resultado desconocido queda en `SENDING` hasta que una persona lo resuelve (`resolveUnknownSplit`). **A confirmar con Paycomet:** si se puede pagar directamente al IBAN de un tercero (proveedor). Si no se puede, el dinero va a la entidad y el pago al proveedor lo hace la entidad, con la factura adjunta como justificante.
   4. Con la transferencia hecha y las fotos Antes/Después subidas, la iniciativa pasa a `CLOSED` y aparece en *Logros conseguidos*.
 
 ## 9. Campañas fallidas, contracargos y conciliación
 
 - **Vencimiento sin meta** (`CAMPAIGN_EXPIRY` → `EXPIRED`): la entidad elige votación de redimensionamiento (`RESIZE_VOTING`) o reembolso (`REFUNDING`). El reembolso (`MASS_REFUND`) devuelve el **100 % de lo cobrado** a cada persona por `/v1/payments/{order}/refund`, en lotes idempotentes con reintentos; al terminar, `REFUNDED` y se liberan los cupos reservados. **A confirmar con Paycomet:** coste de cada devolución y plazo máximo de devolución por Bizum y por tarjeta.
-- **Contracargos:** webhook específico → asiento `CHARGEBACK` (§2), aviso al Super-Admin y a la entidad, y la contribución pasa a `CHARGEBACK`.
+- **Contracargos:** webhook específico → asiento `CHARGEBACK` (§2), aviso al Super-Admin y a la entidad (Sprint 2.6), y la contribución pasa a `CHARGEBACK`. El asiento depende de dónde esté el dinero: en la hucha, sale de ella y de los ingresos de ese cobro; con la devolución pendiente, la cancela; ya liquidado o devuelto, lo asume KORUM.
+- **Reserva de cada devolución:** `refundSendingAt` se pone antes de llamar a Paycomet, así que dos ejecuciones no devuelven dos veces. Tras un rechazo definitivo se libera. Con el resultado desconocido, no se reintenta hasta que llegue su notificación o una persona lo compruebe (`resolveUnknownRefund`). Un aviso de fallo solo libera la reserva si es posterior a ella.
+- **Devolver refleja el cobro:** reembolsos y contracargos reflejan línea a línea el asiento del cobro original, así que incluyen exactamente lo cobrado. Si la donación liberó bolsa Matching, ese bonus vuelve a la bolsa.
+- **Cobro confirmado con la campaña cerrada:** el dinero entró, así que se asienta y queda en `REFUND_PENDING` para devolverlo entero. Si la campaña ya logró la meta y no se ha liquidado, es excedente de la entidad.
 - **Conciliación diaria** (`PSP_RECONCILIATION`): compara saldos y movimientos de Paycomet con `PSP_CLEARING`; cualquier diferencia queda como alerta en la consola.
 
 ## 10. Facturación Veri\*factu

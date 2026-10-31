@@ -1,0 +1,103 @@
+/**
+ * Contrato con la entidad de pago (Regla 01 §3). El resto de la aplicación solo conoce esta interfaz, así que se puede cambiar de
+ * proveedor sin tocar nada más. Todos los importes van en céntimos enteros.
+ *
+ * El dinero solo sale de dos formas, y ninguna admite un destino libre: el reembolso vuelve al cobro original (`order` + `authCode`) y
+ * el reparto va a la cuenta destino de una entidad ya verificada (`splitId`). No existe ningún método que reciba un IBAN (QA-P02).
+ */
+
+export type PaymentMode = 'mock' | 'sandbox' | 'live';
+export type ChargeMethod = 'CARD' | 'BIZUM' | 'APPLE_PAY' | 'GOOGLE_PAY';
+
+export interface ChargeRequest {
+  order: string;
+  amountCents: number;
+  method: ChargeMethod;
+  originalIp: string;
+  /** Token de la tarjeta guardada o recién tokenizada. Obligatorio en todo lo que no sea Bizum. */
+  card?: { idUser: number; tokenUser: string };
+  description?: string;
+}
+
+export interface ChargeResult {
+  order: string;
+  authCode: string | null;
+  /** Página de autenticación reforzada o de confirmación de Bizum, si el cobro la necesita. El resultado llega por webhook. */
+  challengeUrl: string | null;
+}
+
+export interface TokenizeRequest {
+  /** Token de un solo uso del formulario de tarjeta (JET-ID): KORUM nunca ve ni guarda el número de la tarjeta. */
+  jetToken: string;
+}
+
+export interface TokenizeResult {
+  idUser: number;
+  tokenUser: string;
+}
+
+export interface RefundRequest {
+  order: string;
+  authCode: string;
+  amountCents: number;
+  originalIp: string;
+}
+
+export interface RefundResult {
+  authCode: string | null;
+}
+
+export interface SplitTransferRequest {
+  /** Cobro original del que sale el reparto: Paycomet reparte cobro a cobro, no sobre un saldo global. */
+  order: string;
+  authCode: string;
+  splitId: string;
+  amountCents: number;
+}
+
+export interface SplitTransferResult {
+  splitAuthCode: string;
+}
+
+export type PaymentNotificationKind = 'PAYMENT_COMPLETED' | 'PAYMENT_FAILED' | 'REFUND_COMPLETED' | 'REFUND_FAILED' | 'CHARGEBACK' | 'IGNORED';
+
+/** Notificación de la entidad de pago, ya con su firma comprobada. */
+export interface PaymentNotification {
+  externalEventId: string;
+  kind: PaymentNotificationKind;
+  order: string;
+  amountCents: number;
+  currency: string;
+  authCode: string | null;
+  occurredAt: Date | null;
+  /** Solo campos de la operación: nunca el token de la tarjeta ni datos de quien paga. Es lo que se guarda en `WebhookEvent`. */
+  payload: Record<string, string>;
+}
+
+export type NotificationCheck = { valid: true; notification: PaymentNotification } | { valid: false; reason: string };
+
+export interface PaymentProvider {
+  readonly mode: PaymentMode;
+  readonly name: string;
+  charge(request: ChargeRequest): Promise<ChargeResult>;
+  tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult>;
+  refund(request: RefundRequest): Promise<RefundResult>;
+  splitTransfer(request: SplitTransferRequest): Promise<SplitTransferResult>;
+  verifyNotification(rawBody: string, contentType: string | null): NotificationCheck;
+}
+
+export class PaymentProviderError extends Error {
+  readonly code: string;
+  /**
+   * `true` si no se sabe si la operación se hizo (se cortó la conexión): nunca se reintenta a ciegas, porque podría mover dinero dos
+   * veces. Hay que comprobarlo antes en el proveedor.
+   */
+  readonly outcomeUnknown: boolean;
+
+  constructor(message: string, code: string, outcomeUnknown = false) {
+    super(message);
+    this.name = 'PaymentProviderError';
+    this.code = code;
+    this.outcomeUnknown = outcomeUnknown;
+  }
+}
