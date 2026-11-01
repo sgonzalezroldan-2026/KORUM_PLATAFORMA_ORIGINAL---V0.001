@@ -771,8 +771,13 @@ model Initiative {
   ticketSubtype              TicketSubtype?
   ticketPriceCents           Int?
   ticketMax                  Int?
+  /// Solo lo pagado. Hasta liquidar, la suma de los pases no anulados cuadra con este contador; tras liquidar, un contracargo anula el pase sin recalcular el aforo.
   ticketsSold                Int              @default(0)
+  /// Plazas retenidas por pagos en curso. La base de datos impide que ticketsSold + ticketsHeld supere ticketMax.
+  ticketsHeld                Int              @default(0)
   ticketFeeMode              TicketFeeMode?
+  /// Solo rifas: premios a sortear. Se fija antes de vender y no cambia después (trigger): nunca se sortean más.
+  rafflePrizeCount           Int?
   ticketVenue                String?
   /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
   gatePinHash                String?
@@ -799,6 +804,8 @@ model Initiative {
   sponsors            Sponsor[]
   contributions       Contribution[]
   ticketPasses        TicketPass[]
+  raffleNumbers       RaffleNumber[]
+  raffleDraws         RaffleDraw[]
   gateSessions        GateSession[]
   ledgerJournals      LedgerJournal[]
   payout              EscrowPayout?
@@ -1010,6 +1017,10 @@ model Contribution {
   fiscalYear                 Int
   type                       ContributionType    @default(DONATION)
   groupName                  String?
+  /// Solo TICKET: entradas o papeletas de esta compra.
+  ticketQuantity             Int?
+  /// Solo TICKET: con valor mientras esta compra retiene plazas en `Initiative.ticketsHeld`.
+  ticketHoldUntil            DateTime?
   amountCents                Int
   /// Aportación voluntaria de garantía KORUM (0 si el check no se marcó; va DESMARCADO por defecto).
   guaranteeContributionCents Int                 @default(0)
@@ -1042,6 +1053,7 @@ model Contribution {
   payoutSplits               EscrowPayoutSplit[]
 
   @@index([initiativeId, status])
+  @@index([initiativeId, ticketHoldUntil])
   @@index([organizationId, fiscalYear, type])
   @@index([donorTaxIdHmac, fiscalYear])
   @@index([canonicalEmail])
@@ -1061,10 +1073,48 @@ model TicketPass {
   qrHmacSignature String
   lastCheckedInAt DateTime?
   isWinner        Boolean         @default(false)
+  /// Reembolso o contracargo: el pase deja de valer en la puerta y en el sorteo.
+  revokedAt       DateTime?
   createdAt       DateTime        @default(now())
   contribution    Contribution    @relation(fields: [contributionId], references: [id], onDelete: Restrict)
   initiative      Initiative      @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   checkIns        TicketCheckIn[]
+  numbers         RaffleNumber[]
+}
+
+/// Número de rifa ocupado. Al anular el pase se borra y el número vuelve a estar libre, así la numeración no pasa de `ticketMax`.
+model RaffleNumber {
+  initiativeId Int
+  number       Int
+  ticketPassId Int
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  ticketPass   TicketPass @relation(fields: [ticketPassId], references: [id], onDelete: Restrict)
+
+  @@id([initiativeId, number])
+  @@index([ticketPassId])
+}
+
+/// Acta de un sorteo. Inmutable (trigger y extensión del cliente), y nunca más premios que `Initiative.rafflePrizeCount`: repetir hasta que salga quien se quiere no es posible.
+model RaffleDraw {
+  id                 Int        @id @default(autoincrement())
+  initiativeId       Int
+  round              Int
+  /// La misma clave devuelve la misma acta: un doble toque no saca otro ganador.
+  idempotencyKey     String
+  /// Con valor si es una ronda extra hecha por los firmantes (premio sin reclamar, ganador reembolsado).
+  extraRoundReason   String?
+  /// Lista de papeletas participantes: solo número y serie, sin datos personales.
+  participantsJson   Json
+  participantsSha256 String
+  winningNumbers     Int[]
+  actSha256          String
+  drawnByType        String
+  drawnById          String
+  drawnAt            DateTime
+  initiative         Initiative @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+
+  @@unique([initiativeId, round])
+  @@unique([initiativeId, idempotencyKey])
 }
 
 /// Sesión de portería abierta con el PIN del evento. El token solo se guarda como hash.
@@ -1307,6 +1357,10 @@ model ResizeVote {
 model Invoice {
   id                Int                    @id @default(autoincrement())
   invoiceNumber     String                 @unique
+  /// Una misma operación (un patrocinio, una liquidación) nunca genera dos facturas aunque se reintente.
+  idempotencyKey    String?                @unique
+  /// NIF con el que se calculó la huella: la cadena se comprueba siempre con el mismo, aunque cambie el ajuste de la consola.
+  issuerTaxId       String?
   series            String                 @default("K")
   organizationId    String
   sponsorId         Int?

@@ -1,6 +1,8 @@
 import { planPayoutSplits, SPLIT_WINDOW_DAYS } from '@/core/finance/campaign-window';
 import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
+import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
+import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
 import { payoutTargetDigest } from '@/core/security/signature-hash';
 import { inTransaction, type Db } from '@/lib/db';
@@ -59,7 +61,7 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
   return inTransaction(db, async (tx) => {
     const { initiativeId } = await tx.escrowPayout.findUniqueOrThrow({ where: { id: payoutId }, select: { initiativeId: true } });
     // Se bloquea la iniciativa antes de leer nada: un contracargo simultáneo espera, y después ya la verá liquidada.
-    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now } });
+    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now }, include: { _count: { select: { raffleDraws: true } } } });
     const { count } = await tx.escrowPayout.updateMany({ where: { id: payoutId, status: 'PENDING_DOUBLE_CHECK' }, data: { status: 'APPROVED' } });
     if (count === 0) return { approved: false, splits: 0 };
 
@@ -71,7 +73,12 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     assertVerifiedOrganization(payoutId, payout.organization);
     if (!payout.organization.paycometSplitId) throw new PayoutNotAllowedError(payoutId, 'la entidad no tiene cuenta destino en Paycomet');
 
-    if (initiative.status !== 'GOAL_REACHED' || initiative.raisedCents < initiative.goalCents) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta');
+    const drawn = initiative._count.raffleDraws > 0;
+    // Una rifa sorteada se liquida aunque un contracargo la baje de la meta: ya no puede vender más. Y sin sorteo no se liquida.
+    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta');
+    if (initiative.ticketSubtype === 'RAFFLE' && (!drawn || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiativeId, initiative.rafflePrizeCount)))) {
+      throw new PayoutNotAllowedError(payoutId, 'la rifa aún no se ha sorteado por completo');
+    }
     const gatewayInGoalCents = initiative.absorbsGatewayCostByKorum ? 0 : initiative.gatewayFeeCents;
     const korumFeeCents = initiative.bracketFeeCents + initiative.maintFeeCents;
     if (payout.korumFeeSettledCents !== korumFeeCents || payout.netPaidCents + korumFeeCents + gatewayInGoalCents !== initiative.raisedCents) {

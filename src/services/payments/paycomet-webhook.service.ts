@@ -1,6 +1,6 @@
-import type { Db } from '@/lib/db';
+import { QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { applyPaymentNotification } from './payment-events.service';
+import { applyPaymentNotification, type PaymentEventOptions } from './payment-events.service';
 import type { PaymentProvider } from './payment-provider';
 import { PaymentReconciliationError } from './payment-reversals';
 
@@ -49,7 +49,7 @@ async function recordRejection(db: Db, providerName: string, reason: string, now
 /** Solo los mensajes propios, que no llevan datos de personas; de cualquier otro error, su tipo. */
 const safeErrorMessage = (error: unknown): string => (error instanceof PaymentReconciliationError ? error.message.slice(0, 500) : error instanceof Error ? error.name : 'Error desconocido');
 
-export async function handlePaymentWebhook(db: KorumPrismaClient, provider: PaymentProvider, rawBody: string, contentType: string | null, now: Date = new Date()): Promise<WebhookResult> {
+export async function handlePaymentWebhook(db: KorumPrismaClient, provider: PaymentProvider, rawBody: string, contentType: string | null, now: Date = new Date(), options: PaymentEventOptions = {}): Promise<WebhookResult> {
   const check = provider.verifyNotification(rawBody, contentType);
   if (!check.valid) {
     await recordRejection(db, provider.name, check.reason, now);
@@ -65,9 +65,9 @@ export async function handlePaymentWebhook(db: KorumPrismaClient, provider: Paym
       // Si otra entrega va por delante, esto espera a que confirme y entonces ya no encuentra la fila pendiente.
       const claim = await tx.webhookEvent.updateMany({ where: { ...key, status: { in: ['RECEIVED', 'FAILED'] } }, data: { status: 'PROCESSED', processedAt: now, errorMessage: null, attempts: { increment: 1 } } });
       if (claim.count === 0) return false;
-      await applyPaymentNotification(tx, notification, now);
+      await applyPaymentNotification(tx, notification, now, options);
       return true;
-    });
+    }, QUEUED_TRANSACTION);
     return { status: 200, outcome: processed ? 'PROCESSED' : 'DUPLICATE' };
   } catch (error) {
     const message = safeErrorMessage(error);

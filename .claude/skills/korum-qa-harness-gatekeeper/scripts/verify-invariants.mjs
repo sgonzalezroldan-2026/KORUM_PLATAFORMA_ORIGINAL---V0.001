@@ -56,6 +56,8 @@ const placeholderPatterns = [
 const secretLeakRegex =
   /NEXT_PUBLIC_(PAYCOMET_API_KEY|PAYCOMET_WEBHOOK_SECRET|QR_HMAC_SECRET|AUTH_SECRET|BETTER_AUTH_SECRET|ENCRYPTION_KEY|DATA_HMAC_SECRET|CRON_SECRET|SUPABASE_SERVICE_ROLE_KEY|EMAIL_API_KEY|SENTRY_AUTH_TOKEN|DATABASE_URL|DIRECT_URL)\b/;
 const forbiddenMaintenanceLabel = /\(Desactivado\)/;
+// Un sorteo, un PIN o una numeración fiscal con un generador predecible no serían certificables (QA-REG01).
+const predictableRandomDirs = [path.join('src', 'core', 'ticketing') + path.sep, path.join('src', 'core', 'tax') + path.sep, path.join('src', 'services', 'invoicing') + path.sep];
 
 for (const file of codeFiles) {
   const rel = path.relative(ROOT, file);
@@ -68,6 +70,9 @@ for (const file of codeFiles) {
       if (pat.regex.test(line)) {
         errors.push(`[${pat.id}] ${rel}:${idx + 1} contains forbidden placeholder: "${line.trim()}"`);
       }
+    }
+    if (predictableRandomDirs.some((dir) => rel.startsWith(dir)) && /Math\.random/.test(line)) {
+      errors.push(`[PREDICTABLE-RANDOM] ${rel}:${idx + 1} usa Math.random: en taquilla y fiscalidad solo vale node:crypto`);
     }
     if (secretLeakRegex.test(line)) {
       errors.push(`[SECRET-LEAK] ${rel}:${idx + 1} exposes private secret via NEXT_PUBLIC_: "${line.trim()}"`);
@@ -191,7 +196,12 @@ if (fs.existsSync(migrationsDir)) {
     'EscrowLedgerEntry_balanced',
     'EscrowLedgerEntry_amountCents_positive',
     'LedgerJournal_stamp_tx',
-    'EscrowLedgerEntry_same_transaction'
+    'EscrowLedgerEntry_same_transaction',
+    // El acta de un sorteo no se puede repetir ni retocar, y el aforo no se puede superar (Sprint 2.3).
+    'RaffleDraw_immutable',
+    'RaffleDraw_no_truncate',
+    'Initiative_tickets_within_capacity',
+    'Initiative_prize_count_locked'
   ];
   // Lo que cuenta es el estado FINAL de cada guarda: se recorren las migraciones en orden y gana el último evento (crear/eliminar).
   // Una migración puede eliminar una guarda y otra posterior restaurarla (ocurrió en 1.3); lo que no puede quedar es eliminada.

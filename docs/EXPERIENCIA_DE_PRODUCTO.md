@@ -52,6 +52,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | `auth.magicLink` / `auth.otp` | Al iniciar sesión | Persona | Enlace o código, caducidad visible |
 | `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
 | `ticket.pass` | Entrada o papeleta comprada | Comprador | QR, número de serie, fecha y lugar; *Añadir al calendario* |
+| `gate.pinRevoked` | 20 intentos fallidos de PIN en un evento | Firmantes | Que el PIN se ha revocado por seguridad y que las sesiones abiertas siguen; *Generar otro PIN* |
 | `initiative.goalReached` | Campaña al 100 % | Donantes y firmantes | Celebración y próximos pasos; *Compartir el logro* |
 | `initiative.achievementPhotos` | Publicadas las fotos | Donantes | Antes y Después; *Ver cómo ha quedado* |
 | `initiative.expired` | Vence sin meta | Firmantes | Opciones: redimensionar o reembolsar; *Decidir ahora* |

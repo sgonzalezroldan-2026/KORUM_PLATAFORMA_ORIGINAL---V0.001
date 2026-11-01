@@ -1,6 +1,8 @@
 import { postJournal, reverseJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
 import { chargebackLines, PAYIN_KINDS, refundApprovalLines, refundExecutionLines, type ChargebackMode } from '@/core/finance/payment-journals';
+import { isGoalMet } from '@/core/ticketing/ticket-goal';
+import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
 import { PaymentProviderError, type PaymentNotification, type PaymentProvider } from './payment-provider';
 
@@ -73,19 +75,21 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
 
 /**
  * Quita el cobro de los contadores de la iniciativa, en la misma transacción que su asiento. Si baja de la meta antes de liquidar,
- * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra.
+ * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. Una rifa ya sorteada no se reabre: no puede volver a vender
+ * y se quedaría sin salida; se liquida lo que queda.
  */
 async function removeFromInitiative(tx: Db, contribution: ContributionRow): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
+  const releasedTickets = await revokePassInTx(tx, contribution.id, new Date());
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
-    data: { raisedCents: { decrement: contribution.amountCents + bonusCents }, totalContributions: { decrement: 1 } },
-    select: { raisedCents: true, goalCents: true, status: true }
+    data: { raisedCents: { decrement: contribution.amountCents + bonusCents }, totalContributions: { decrement: 1 }, ticketsSold: { decrement: releasedTickets } },
+    select: { raisedCents: true, goalCents: true, status: true, format: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
   });
   if (contribution.groupName) {
     await tx.initiativeCourseProgress.updateMany({ where: { initiativeId: contribution.initiativeId, groupName: contribution.groupName, familiesCount: { gt: 0 } }, data: { familiesCount: { decrement: 1 } } });
   }
-  if (initiative.status === 'GOAL_REACHED' && initiative.raisedCents < initiative.goalCents) {
+  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
   }
 }
@@ -230,6 +234,8 @@ export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNoti
   assertMatchesCharge(contribution, notification, 'Reembolso');
   if (contribution.status === 'COMPLETED' && isSettled(contribution.initiative.payout?.status)) {
     await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'REFUNDED', refundedCents: contribution.totalChargedCents, refundedAt: occurredAt } });
+    // Ya liquidada, el aforo no se recalcula; pero el pase de quien ha recuperado su dinero deja de valer.
+    await revokePassInTx(tx, contribution.id, occurredAt);
     await postJournal(tx, {
       idempotencyKey: `payment:refund-after-settlement:${contribution.id}`,
       kind: 'ESCROW_REFUND_DONOR',
@@ -275,6 +281,7 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
     lines: chargebackLines(mode, mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution) : [], contribution.organizationId, contribution.totalChargedCents)
   });
   if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution);
+  else await revokePassInTx(tx, contribution.id, occurredAt);
   await tx.auditLog.create({
     data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.chargeback', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { mode, amountCents: notification.amountCents, initiativeId: contribution.initiativeId } }
   });

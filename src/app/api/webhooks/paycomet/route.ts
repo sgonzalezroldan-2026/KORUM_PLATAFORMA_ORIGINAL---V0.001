@@ -1,3 +1,4 @@
+import { getEnv } from '@/config/env';
 import { getPrisma } from '@/lib/prisma';
 import { handlePaymentWebhook, readBodyWithLimit } from '@/services/payments/paycomet-webhook.service';
 import { getPaymentProvider } from '@/services/payments/provider-factory';
@@ -12,6 +13,6 @@ export async function POST(request: Request): Promise<Response> {
 
   const db = getPrisma();
   const provider = await getPaymentProvider(db);
-  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'));
+  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: getEnv().QR_HMAC_SECRET });
   return new Response(null, { status: result.status });
 }

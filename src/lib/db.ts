@@ -9,7 +9,7 @@ import type { KorumPrismaClient } from './prisma';
 export type Db = Omit<KorumPrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends' | '$use' | '$metrics'>;
 
 type RootDb = Db & {
-  $transaction<R>(fn: (tx: Db) => Promise<R>, options?: { isolationLevel?: Prisma.TransactionIsolationLevel; timeout?: number }): Promise<R>;
+  $transaction<R>(fn: (tx: Db) => Promise<R>, options?: { isolationLevel?: Prisma.TransactionIsolationLevel; maxWait?: number; timeout?: number }): Promise<R>;
 };
 
 /** `true` si es el cliente raíz (puede abrir transacciones); `false` si ya estamos dentro de una. */
@@ -18,9 +18,15 @@ export function isRootDb(db: Db): db is RootDb {
 }
 
 /** Ejecuta `fn` en una transacción: abre una nueva si hace falta o reutiliza la de quien llama. */
-export async function inTransaction<R>(db: Db, fn: (tx: Db) => Promise<R>): Promise<R> {
-  return isRootDb(db) ? db.$transaction(fn) : fn(db);
+export async function inTransaction<R>(db: Db, fn: (tx: Db) => Promise<R>, options?: { maxWait?: number; timeout?: number }): Promise<R> {
+  return isRootDb(db) ? db.$transaction(fn, options) : fn(db);
 }
+
+/**
+ * Para operaciones que se ponen en cola tras un mismo bloqueo (una avalancha de compras, la numeración de facturas). Por defecto Prisma
+ * abandona a los 2 s si no consigue conexión: en plena avalancha, una compra posible acabaría en error en lugar de esperar su turno.
+ */
+export const QUEUED_TRANSACTION = { maxWait: 20_000, timeout: 30_000 };
 
 /** Violación de una restricción única (`P2002`), p. ej. dos webhooks simultáneos con la misma clave de idempotencia. */
 export function isUniqueViolation(error: unknown): boolean {

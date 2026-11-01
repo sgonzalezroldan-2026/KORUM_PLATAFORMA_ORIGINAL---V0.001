@@ -93,10 +93,14 @@ export function planPayoutSplits(candidates: readonly SplitCandidate[], netCents
 /** Publica una campaña: comprueba la duración, reserva sus cupos y la pasa a `FUNDRAISING`, todo o nada. Repetirla no hace nada. */
 export async function publishInitiative(db: Db, initiativeId: number, now: Date = new Date()): Promise<{ published: boolean }> {
   return inTransaction(db, async (tx) => {
-    const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: { status: true, closesAt: true } });
+    const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: { status: true, closesAt: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true } });
     if (initiative.status === 'FUNDRAISING') return { published: false };
     if (initiative.status !== 'BUDGETING') throw new InitiativeNotPublishableError(initiativeId, `está en estado ${initiative.status}`);
     if (initiative.closesAt.getTime() <= now.getTime()) throw new InitiativeNotPublishableError(initiativeId, 'su fecha de cierre ya ha pasado');
+    // Publicada, los premios ya no se pueden cambiar: sin ellos la rifa vendería y luego no podría sortearse ni liquidarse.
+    if (initiative.ticketSubtype === 'RAFFLE' && (initiative.rafflePrizeCount === null || initiative.ticketMax === null || initiative.rafflePrizeCount > initiative.ticketMax)) {
+      throw new InitiativeNotPublishableError(initiativeId, 'una rifa necesita un número de premios, y no más que papeletas');
+    }
     const config = await tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { maxCampaignDays: true } });
     assertCampaignDuration(now, initiative.closesAt, config.maxCampaignDays);
 

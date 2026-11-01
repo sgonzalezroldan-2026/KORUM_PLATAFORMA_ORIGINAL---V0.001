@@ -1,6 +1,8 @@
 import { postJournal } from '@/core/finance/ledger.service';
 import { bpsOf } from '@/core/finance/money';
 import { donationOrTicketPayinLines, gatewayFeeLines, matchingReleaseLines } from '@/core/finance/payment-journals';
+import { settleTicketSeatInTx } from '@/core/ticketing/ticket-issuance';
+import { releaseTicketHoldInTx } from '@/core/ticketing/ticket-reservation.service';
 import type { Db } from '@/lib/db';
 import { applyChargebackInTx, applyConfirmedRefundInTx, approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
 import type { PaymentNotification } from './payment-provider';
@@ -54,7 +56,12 @@ async function releaseMatching(
   return bonusCents;
 }
 
-async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date): Promise<void> {
+/** Lo que necesita el webhook además de la notificación. El secreto del QR va aparte: sin él, una entrada falla y se reintenta. */
+export interface PaymentEventOptions {
+  qrSecret?: string;
+}
+
+async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions): Promise<void> {
   const { order } = notification;
   // Bloquea la iniciativa: dos notificaciones del mismo pedido, o un cobro y una aprobación simultáneos, van uno detrás de otro.
   const contribution = await loadLockedContribution(tx, { paycometOrder: order });
@@ -115,24 +122,40 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   // Después ya no cabe en ninguna liquidación: el dinero entró, así que se devuelve entero.
   const accepting = initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status));
   if (!accepting) {
+    if (contribution.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
     await approveRefundInTx(tx, contribution.id, { lateCharge: true });
     return;
   }
+  let capacityFull = false;
+  if (contribution.type === 'TICKET') {
+    if (!options.qrSecret) throw new PaymentReconciliationError(`Cobro ${order}: falta el secreto del QR para emitir el pase.`);
+    const seat = await settleTicketSeatInTx(tx, contribution, options.qrSecret, occurredAt);
+    if (!seat.issued) {
+      // Pago tardío sin plaza, o rifa ya sorteada: el dinero entró, así que se devuelve entero. No llegó a contar en el aforo.
+      await approveRefundInTx(tx, contribution.id, { lateCharge: true });
+      return;
+    }
+    capacityFull = seat.capacityFull;
+  }
   const bonusCents = contribution.type === 'DONATION' ? await releaseMatching(tx, contribution, order, occurredAt) : 0;
-  if (initiative.status === 'FUNDRAISING' && initiative.raisedCents + bonusCents >= initiative.goalCents) {
+  if (initiative.status === 'FUNDRAISING' && (capacityFull || initiative.raisedCents + bonusCents >= initiative.goalCents)) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'GOAL_REACHED', stepIndex: 5 } });
   }
 }
 
-export async function applyPaymentNotification(tx: Db, notification: PaymentNotification, receivedAt: Date): Promise<void> {
+export async function applyPaymentNotification(tx: Db, notification: PaymentNotification, receivedAt: Date, options: PaymentEventOptions = {}): Promise<void> {
   const occurredAt = notification.occurredAt ?? receivedAt;
   switch (notification.kind) {
     case 'PAYMENT_COMPLETED':
-      await completePayment(tx, notification, occurredAt);
+      await completePayment(tx, notification, occurredAt, options);
       return;
-    case 'PAYMENT_FAILED':
-      await tx.contribution.updateMany({ where: { paycometOrder: notification.order, status: 'PENDING' }, data: { status: 'FAILED' } });
+    case 'PAYMENT_FAILED': {
+      // Se bloquea primero la iniciativa, en el mismo orden que un cobro: un fallo y un cobro simultáneos no se quedan esperándose.
+      const contribution = await loadLockedContribution(tx, { paycometOrder: notification.order });
+      const { count } = await tx.contribution.updateMany({ where: { paycometOrder: notification.order, status: 'PENDING' }, data: { status: 'FAILED' } });
+      if (count === 1 && contribution?.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
       return;
+    }
     case 'REFUND_COMPLETED':
       await applyConfirmedRefundInTx(tx, notification, occurredAt);
       return;

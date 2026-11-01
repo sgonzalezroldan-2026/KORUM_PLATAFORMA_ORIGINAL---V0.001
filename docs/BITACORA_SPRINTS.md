@@ -19,6 +19,51 @@
 
 ## Entradas
 
+### Sprint 2.3 — Taquilla QR, PIN de portería, sorteo certificado y fiscalidad · 2026-11-01 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 en la sesión principal, sin subagente constructor (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor` (tres pases), `antifraud-legal-guardian` (tres pases) y `qa-e2e-verifier`.
+- **Qué se ha hecho:**
+  - **`src/core/ticketing/`:** `ticket-reservation.service.ts` (reserva de aforo), `ticket-issuance.ts` (venta, pase, números y anulación), `ticket-goal.ts`, `gate-pin.ts`, `gate-session.service.ts`, `check-in.service.ts`, `raffle-draw.ts` y `raffle-draw.service.ts`.
+  - **`src/core/tax/`:** `tax-id.ts`, `donation-document.ts`, `model182-format.ts` y `model182.service.ts`.
+  - **`src/services/invoicing/`:** `invoicing-provider.ts`, `mock-invoicing.ts`, `provider-factory.ts`, `verifactu-record.ts` e `invoice.service.ts`. **`src/lib/rate-limit.ts`** se adelanta del 2.4, porque lo necesita el PIN.
+  - **Pagos:** el webhook ya suma `ticketsSold`, emite el pase y escribe `ticket.pass` en `OutboxMessage` (deuda del 2.1). Reembolsos y contracargos anulan el pase.
+  - **Esquema:** migración `20261101090000_ticketing_engine`: `ticketsHeld`, `ticketQuantity`, `ticketHoldUntil`, `rafflePrizeCount`, `TicketPass.revokedAt`, `Invoice.issuerTaxId` e `idempotencyKey`, tablas `RaffleNumber` y `RaffleDraw`, `CHECK` de aforo y triggers del acta y de los premios, vigilados por el escáner. El escáner prohíbe además `Math.random` en taquilla y fiscalidad.
+  - **Tests:** `tests/unit/ticketing-tax.spec.ts`, `tests/integration/ticketing-gate.spec.ts` y `tests/integration/tax-invoicing.spec.ts`.
+  - **Documentos:** skill `korum-ticketing-qr`, `gate.pinRevoked` en EXPERIENCIA §4, nuevo criterio `QA-SEC09` y notas «Heredado del Sprint 2.3» en las fichas 2.4, 2.5, 2.6, 3.4, 4.3, 4.4, 4.5 y 6.1.
+- **Decisiones tomadas por defecto (el promotor las aprobó con el plan):**
+  - **Reserva de plaza de 15 minutos al iniciar el pago.** Un pago tardío sin plaza se devuelve entero y no cuenta en el aforo.
+  - **Sorteo solo en `GOAL_REACHED`.** Los premios se fijan antes de vender y un trigger impide cambiarlos; nunca se sortean más, y la misma clave devuelve la misma acta. Una ronda extra la hacen solo los firmantes, con motivo cerrado y justificado.
+  - **Una rifa sorteada no se reabre ni vuelve a vender;** se liquida lo recaudado aunque un contracargo la baje de la meta. Sin todos los premios sorteados no se liquida.
+  - **El aforo agotado cuenta como meta cumplida (`isGoalMet`):** en modo `INC` la hucha recibe menos que la meta.
+  - **Modelo 182:** quien no tiene NIF o provincia queda fuera y se informa; la aportación voluntaria a KORUM no cuenta; las donaciones de campañas sin resolver entran y se señalan en `unresolved`.
+  - **Facturas:** huella calculada por KORUM con la fórmula oficial y enviada al proveedor después de confirmar; se envían en orden.
+- **Fuentes oficiales:** huella con el documento de la AEAT v0.1.2, con sus ejemplos oficiales como tests. Modelo 182 con el diseño de registro publicado, del **ejercicio 2021**, más la recurrencia según la nota de la AEAT tras la Orden HAC/1430/2025. Los porcentajes 80/40/45 salen de fuentes secundarias y los 40/50 de personas jurídicas se programaron de memoria: **sin contrastar con el texto legal**.
+- **Riesgos aceptados:**
+  - Con 20 fallos alguien puede revocar el PIN a propósito en plena puerta (lo exige QA-SEC06); las sesiones abiertas siguen y los firmantes generan otro.
+  - El tiempo de respuesta revela si un evento tiene PIN activo: los identificadores ya son públicos y el límite por IP sigue activo.
+  - Cinco errores de tecleo repartidos en una tarde con actividad pueden bloquear una wifi 15 minutos, porque un acceso correcto no pone el contador a cero.
+  - Al llegar al fallo 20 con accesos correctos en curso, el PIN se puede revocar con menos de 20 fallos reales.
+  - Con la rifa en `GOAL_REACHED`, cualquiera con el PIN puede sortear antes del acto, hasta que exista la fecha del evento (`QA-SEC09`, ficha 4.5). Hoy ninguna ruta llama a estos servicios.
+- **Pendiente / deuda:**
+  - **Decidido por el promotor el 01-11-2026, a construir en el 2.4:** un evento ya celebrado que recibe un contracargo no se reabre y se liquida lo recaudado, como una rifa sorteada (ficha 2.4).
+  - **Decisión de la asesoría:** si el Modelo 182 excluye las campañas sin resolver, y la revisión completa del formato (ficha 6.1).
+  - **QA-REG03 a medias:** validación de NIF/NIE hecha; la supresión es del 2.5.
+  - **Sin construir:** recalcular una liquidación ya creada (ficha 4.4), el proveedor Veri\*factu real, los PDF, el envío de emails, la lista sin cobertura de portería y `resolveUnknownInvoice` (2.4).
+  - **Sin cifrar:** el NIF de destinatarios de factura (ficha 2.5).
+  - **Sin verificar:** la concurrencia real, porque la base local tiene una sola conexión; bloquea los cobros reales (ficha 6.1). La fórmula de la URL del QR tampoco se contrastó con un documento oficial.
+  - **Base local:** `npm run db:reset` lo bloqueó la salvaguarda de Prisma hasta que el promotor dio su consentimiento expreso (01-11-2026), y se ejecutó después del cierre.
+- **Incidencias:**
+  - El tamaño se pasó de la ficha: unas 1.530 líneas nuevas frente a ~950, sin contar las correcciones en pagos. Ningún archivo supera las 300.
+  - Dos pases de cada auditor rechazaron o dejaron correcciones: rifas y eventos `INC` sin poder liquidarse, sorteo repetible, rifa publicable sin premios y un `null` que saltaba el tope de premios, entre otros. Todo corregido, salvo lo anotado arriba.
+  - La suite de integración tarda unos 16 minutos con la base local; el scrypt del PIN pesa en ella.
+- **Puertas:**
+  - **P1 ✅** invariantes, `typecheck` y `lint` a 0.
+  - **P2 ✅** 448/448 unitarias y 266/266 de integración, con la base local de una sola conexión.
+  - **P3 ✅** `fintech-escrow-auditor` y `antifraud-legal-guardian` aprobados en su último pase. Mutaciones de QA (tope de premios, emisión del pase, 182 con entradas) detectadas y revertidas.
+  - **P4 ✅** el sprint no tiene interfaz: `test:e2e` 41 pasan y 3 omitidas a propósito, sobre la base sin reiniciar y sin recorrido con el MCP de Playwright.
+  - **P5 ✅** puertas repetidas tras las correcciones. Tras el último pase de QA solo cambiaron documentos: se repitió P1.
+- **Siguiente sprint:** 2.4 · modelo recomendado: constructor Claude Sonnet 5.5 · alto; auditoría Claude Opus 5.5 · alto.
+
 ### Sprint 2.2 — Antifraude del quórum, doble firma y candado semántico · 2026-10-31 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 (el asistente no puede leer el esfuerzo configurado). Auditoría: `antifraud-legal-guardian` (tres pases) y `qa-e2e-verifier` (dos pases).

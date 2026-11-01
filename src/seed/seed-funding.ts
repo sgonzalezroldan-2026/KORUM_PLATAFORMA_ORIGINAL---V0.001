@@ -65,6 +65,7 @@ function contributionRow(payment: PlannedPayment, scope: Scope, locale: 'es' | '
     fiscalYear: payment.createdAt.getUTCFullYear(),
     type: payment.type,
     groupName: payment.groupName,
+    ticketQuantity: payment.type === 'TICKET' ? payment.quantity : null,
     amountCents: payment.amountCents,
     guaranteeContributionCents: payment.guaranteeCents,
     matchedBonusCents: payment.matchedBonusCents,
