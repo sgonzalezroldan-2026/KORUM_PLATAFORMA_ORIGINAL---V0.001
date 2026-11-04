@@ -1,8 +1,9 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
 /**
- * Cifrado AES-256-GCM de secretos y datos sensibles (Regla 01 §5). `context` ata cada valor a su uso (p. ej. `paycomet:tokenUser`): un
- * valor cifrado copiado a otro campo no se puede descifrar allí. La rotación de claves llega con los ajustes de la consola (Sprint 2.5).
+ * Primitivas AES-256-GCM (Regla 01 §5). `context` ata cada valor a su uso: un valor cifrado copiado a otro campo no se puede descifrar
+ * allí. **La aplicación no las usa directamente:** pasa por `src/core/security/crypto.ts`, que añade la versión de clave, la rotación y
+ * los contextos de cada dato (`CRYPTO_CONTEXT`).
  */
 
 const ALGORITHM = 'aes-256-gcm';

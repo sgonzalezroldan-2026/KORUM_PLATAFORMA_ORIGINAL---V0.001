@@ -1,0 +1,36 @@
+/**
+ * Plazos de conservación de CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD §6 (propuesta a validar por el abogado), en un solo sitio. La tarea
+ * `DATA_RETENTION_PURGE` los aplica; ningún otro módulo debe escribir estos números.
+ *
+ * Los de «6 años desde el cierre del ejercicio» se cuentan por años naturales: un dato del ejercicio 2020 vence el 1 de enero de 2027.
+ */
+
+const DAY_MS = 86_400_000;
+
+export const RETENTION = {
+  /** Datos fiscales del donante (NIF, nombre, provincia) y emails de sus compras: 6 años desde el cierre del ejercicio. */
+  fiscalYears: 6,
+  /** Webhooks de pago: 6 años desde el cierre del ejercicio en que llegaron. */
+  paymentWebhookYears: 6,
+  /** Cuenta sin actividad: 3 años, aviso y anonimización 30 días después si no vuelve. */
+  inactiveAccountDays: 3 * 365,
+  inactivityGraceDays: 30,
+  /** Auditoría de firmas de ideas: vida de la idea + 1 año. */
+  ideaSignatureDaysAfterIdea: 365,
+  /** Cookie de dispositivo: 13 meses (y con ella, el dispositivo). */
+  deviceDays: 396,
+  /** HMAC de IP y huella del navegador: 12 meses. */
+  networkHashDays: 365,
+  /** Contenido de las notificaciones enviadas: 12 meses (se conserva el hecho del envío). */
+  notificationDays: 365,
+  /** Consentimientos: mientras estén vigentes + 3 años. */
+  consentDaysAfterSuperseded: 3 * 365
+} as const;
+
+export const daysBefore = (now: Date, days: number) => new Date(now.getTime() - days * DAY_MS);
+
+/** Último ejercicio cuyos datos fiscales ya han vencido: con `now` en 2027, el 2020. */
+export const lastExpiredFiscalYear = (now: Date) => now.getUTCFullYear() - RETENTION.fiscalYears - 1;
+
+/** 1 de enero (UTC) del primer año que aún se conserva: lo anterior a esta fecha ha vencido. */
+export const fiscalCutoff = (now: Date, years: number) => new Date(Date.UTC(now.getUTCFullYear() - years, 0, 1));

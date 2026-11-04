@@ -10,7 +10,7 @@ import { PaymentProviderError } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { executePendingRefund, refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
 import { approvePayout, executeApprovedPayout, PayoutNotAllowedError, resolveUnknownSplit } from '@/services/payments/split-transfer.service';
-import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, uniqueId } from './test-database';
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración' };
 const IP = '10.0.0.1';
@@ -210,7 +210,7 @@ describe('cobros confirmados', () => {
     const organization = await createOrganization(db);
     const initiative = await createInitiative(db, organization.id, { status: 'FUNDRAISING', goalCents: 100_000, matchingPoolTotalCents: 4_000, matchingPoolRemainingCents: 4_000 });
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, initiativeId: initiative.id, name: 'Comercio', cif: 'B00000000', contactPerson: 'Persona', phone: '600000000', email: 'c@pruebas.example', sector: 'Comercio', categoryLevel: 'PLATA', tierRank: 2, tierLabel: 'Plata', amountCents: 4_000, feeGeneratedCents: 600, isMatchingPool: true, promo: 'x', code: uniqueId('C'), status: 'APPROVED', expiresAt: new Date('2027-01-01') }
+      data: { organizationId: organization.id, initiativeId: initiative.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: 'c@pruebas.example', sector: 'Comercio', categoryLevel: 'PLATA', tierRank: 2, tierLabel: 'Plata', amountCents: 4_000, feeGeneratedCents: 600, isMatchingPool: true, promo: 'x', code: uniqueId('C'), status: 'APPROVED', expiresAt: new Date('2027-01-01') }
     });
     await db.ledgerJournal.create({
       data: {
@@ -696,7 +696,7 @@ describe('aislamiento entre entidades', () => {
 
 describe('tarjetas tokenizadas', () => {
   it('se guardan cifradas y se recuperan para cobrar; solo su propietario; una revocada no se usa', async () => {
-    const encryption = { keyBase64: Buffer.alloc(32, 9).toString('base64'), keyVersion: 1 };
+    const encryption = TEST_KEYRING;
     const owner = await createUser(db);
     const stranger = await createUser(db);
     const { paymentMethodTokenId } = await tokenizeAndStoreCard(db, mock, { jetToken: 'jet-de-prueba', userId: owner.id, brand: 'VISA', last4: '4242' }, encryption);

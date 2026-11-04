@@ -1,6 +1,8 @@
 import type { Db } from '@/lib/db';
 import type { InvoicingProvider } from '@/services/invoicing/invoicing-provider';
+import type { Keyring } from '@/core/security/crypto';
 import type { PaymentProvider } from '@/services/payments/payment-provider';
+import type { StorageProvider } from '@/services/storage/storage-provider';
 
 /**
  * Lo que recibe cada tarea programada. Los proveedores externos son perezosos: una tarea que no cobra ni factura (p. ej. la purga) no
@@ -11,6 +13,12 @@ export interface JobDeps {
   invoicingProvider: () => InvoicingProvider;
   /** IP que se envía a Paycomet en las devoluciones: `Contribution` no guarda la del cobro. Suposición contra el simulador (bitácora 2.4). */
   refundOriginalIp: () => Promise<string>;
+  /** Almacén de ficheros: la purga borra los que superan su plazo de conservación. */
+  storageProvider: () => StorageProvider;
+  /** Llavero de cifrado: la rotación vuelve a cifrar con la clave actual. */
+  keyring: () => Keyring;
+  /** `DATA_HMAC_SECRET`, para el HMAC del email en las solicitudes de privacidad. */
+  hmacSecret: () => string;
 }
 
 export interface JobContext {

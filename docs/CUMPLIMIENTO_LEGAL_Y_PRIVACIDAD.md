@@ -123,7 +123,12 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Consentimientos | Mientras estén vigentes + 3 años | Borrado |
 | Errores en Sentry | 90 días | Automático |
 
-La tarea `DATA_RETENTION_PURGE` aplica esta tabla.
+La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los números viven en `src/core/privacy/retention-policy.ts`). **Cómo se ha construido, a validar por el abogado (ficha 6.1):**
+
+- **Asientos, aportaciones y auditoría no se borran** a los 6 años: el libro mayor y la auditoría son inmutables por diseño (triggers). En su lugar se **anonimiza** lo personal de las aportaciones (NIF, nombre, provincia y emails) y de la auditoría (IP y navegador, a los 12 meses); importes y fechas se conservan sin nadie identificable detrás.
+- **Supresión a petición (derecho al olvido):** anonimiza la cuenta, sus compras como invitada, entradas, dispositivos, firmas de ideas y mensajes; borra sesiones, credenciales y tarjetas (también en Paycomet). Conserva, por obligación legal (RGPD art. 17.3.b), el NIF, el nombre y la provincia de las **donaciones con certificado fiscal**, hasta que vence su plazo. No se puede suprimir a quien firma en una entidad (primero se le da de baja del cargo) ni con saldo en el monedero regulado.
+- **Cuenta sin actividad:** a los 3 años se escribe el aviso `privacy.inactivityNotice`; si no vuelve en 30 días, se suprime como arriba.
+- **Solicitudes RGPD:** vencen al mes; fuera de plazo, alerta crítica en la consola.
 
 ---
 

@@ -1,4 +1,5 @@
 import { inTransaction, type Db } from '@/lib/db';
+import { dataHmac } from './data-hmac';
 import { createDeviceCookieValue, hasKnownSubnet, hashDeviceCookieId, hashFingerprint, hashIpSubnet, readDeviceCookieId } from './device-signals';
 import { InvalidEmailError, isDisposableEmail, normalizeCanonicalEmail } from './email-normalizer';
 
@@ -16,6 +17,13 @@ export interface SignatureAuditResult {
   reasonKey: SignatureReasonKey;
   deviceAccountOrder: number;
 }
+
+/**
+ * Marca que deja la supresión de una cuenta (`erasePersonalData`) en sus firmas e ideas: no contiene el email, pero la misma persona, si
+ * vuelve a darse de alta con el mismo email, no puede firmar otra vez la misma idea (ni la suya). La purga de conservación la sustituye
+ * por una marca sin relación con nadie al año de cerrarse la idea.
+ */
+export const ideaSignerMarker = (secret: string, canonicalEmail: string) => `anonimizado:hmac:${dataHmac(secret, 'idea-signer', canonicalEmail)}`;
 
 const MAX_FAMILY_ACCOUNTS = 2;
 const BURST_THRESHOLD = 6;
@@ -102,9 +110,10 @@ export async function signIdea(db: Db, secret: string, input: SignIdeaInput, now
     const idea = await tx.idea.update({ where: { id: input.ideaId }, data: { votes: { increment: 0 } }, include: { organization: { select: { minVotes: true } } } });
     if (idea.phase !== 'PUBLIC_VOTING' || idea.expiresAt <= now) throw new IdeaSignatureRejectedError('IDEA_CLOSED');
     // Quien propone la idea ya cuenta como su primer voto.
-    if (idea.authorCanonicalEmail === canonicalEmail) return { status: 'ALREADY_SIGNED' };
-    // Por email y por persona: cambiar de email no da derecho a una segunda firma.
-    const signed = await tx.ideaSignatureAudit.findFirst({ where: { ideaId: idea.id, OR: [{ canonicalEmail }, { userId: input.userId }] }, select: { id: true } });
+    const formerSelf = ideaSignerMarker(secret, canonicalEmail);
+    if (idea.authorCanonicalEmail === canonicalEmail || idea.authorCanonicalEmail === formerSelf) return { status: 'ALREADY_SIGNED' };
+    // Por email y por persona: cambiar de email, o suprimir la cuenta y volver a darse de alta, no da derecho a una segunda firma.
+    const signed = await tx.ideaSignatureAudit.findFirst({ where: { ideaId: idea.id, OR: [{ canonicalEmail }, { canonicalEmail: formerSelf }, { userId: input.userId }] }, select: { id: true } });
     if (signed) return { status: 'ALREADY_SIGNED' };
 
     const receivedId = readDeviceCookieId(secret, input.deviceCookie);

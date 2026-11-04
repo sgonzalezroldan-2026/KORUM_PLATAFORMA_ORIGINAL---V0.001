@@ -18,7 +18,7 @@ import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.servi
 import { PaymentProviderError, type PaymentProvider } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { approvePayout, PayoutNotAllowedError } from '@/services/payments/split-transfer.service';
-import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, testJobDeps, uniqueId } from './test-database';
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración' };
 const HMAC_SECRET = 'secreto-de-integracion-de-las-firmas-0123456789';
@@ -31,7 +31,7 @@ let mock: MockPaycometProvider;
 const refundFailures = new Map<string, PaymentProviderError>();
 const refundAttempts = new Map<string, number>();
 
-const deps = (provider: () => Promise<PaymentProvider>, invoicing: MockInvoicingProvider = new MockInvoicingProvider()): JobDeps => ({ paymentProvider: provider, invoicingProvider: () => invoicing, refundOriginalIp: async () => '10.0.0.1' });
+const deps = (provider: () => Promise<PaymentProvider>, invoicing: MockInvoicingProvider = new MockInvoicingProvider()): JobDeps => ({ paymentProvider: provider, invoicingProvider: () => invoicing, refundOriginalIp: async () => '10.0.0.1', ...testJobDeps() });
 const run = (type: JobType, handler: JobHandler, now: Date, jobDeps: JobDeps) => runJob({ db, type, handler, deps: jobDeps, now });
 
 beforeAll(async () => {
@@ -233,7 +233,7 @@ describe('QA-OPS02 · PSP_RECONCILIATION', () => {
 });
 
 describe('INVOICE_SUBMIT · facturas Veri*factu', () => {
-  const invoiceInput = (organizationId: string) => ({ idempotencyKey: uniqueId('factura'), organizationId, issuerTaxId: '89890001K', recipientName: 'Comercio del Barrio SL', recipientTaxId: 'B12345674', concept: 'Fee de gestión publicitaria', baseAmountCents: 3_750, taxRateBps: 2100 });
+  const invoiceInput = (organizationId: string) => ({ idempotencyKey: uniqueId('factura'), organizationId, issuerTaxId: '89890001K', recipientName: 'Comercio del Barrio SL', recipientTaxId: 'B12345674', keyring: TEST_KEYRING, concept: 'Fee de gestión publicitaria', baseAmountCents: 3_750, taxRateBps: 2100 });
 
   it('envía las pendientes en orden; una de resultado desconocido detiene las siguientes, se avisa y una persona la resuelve', { timeout: 240_000 }, async () => {
     // Cola limpia: lo que dejaron otras pruebas (pendientes o de resultado desconocido) bloquearía el orden de envío de las facturas de esta.

@@ -68,6 +68,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | `org.model182Reminder` | 2 de enero | Firmantes de entidades con Ley 49/2002 | Descargar el Modelo 182 |
 | `org.kybStatus` | Cambia el estado del KYB | Firmantes | Qué falta o confirmación |
 | `privacy.exportReady` | Exportación lista | Persona | Descarga (enlace caducable) |
+| `privacy.inactivityNotice` | 3 años sin actividad (`DATA_RETENTION_PURGE`) | Persona | Que su cuenta se suprimirá el día `eraseOn` si no vuelve a entrar, qué se conserva por ley y que basta con iniciar sesión para conservarla; *Entrar en mi cuenta* |
 | `support.reply` | Respuesta a un ticket | Remitente | Respuesta y enlace al hilo |
 
 ---

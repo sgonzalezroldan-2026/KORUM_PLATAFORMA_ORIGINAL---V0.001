@@ -1,10 +1,12 @@
-import { dataHmac } from '@/core/security/data-hmac';
+import type { Keyring } from '@/core/security/crypto';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
-import { openField, sealField } from '@/lib/encryption';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { authorizeTenant, ResourceNotFoundError, type SessionActor } from '@/repositories/tenant-guard';
 import { buildModel182File, PROVINCE_CODES, type Model182File, type Model182Donor } from './model182-format';
 import { validateTaxId } from './tax-id';
+import { openDonorTaxId } from './tax-id-vault';
+
+export { sealDonorTaxId } from './tax-id-vault';
 
 /**
  * Exportación del Modelo 182 de una entidad (Regla 02 §9, QA-REG02). Solo con la Ley 49/2002 **verificada**, y solo donaciones completadas y
@@ -13,8 +15,6 @@ import { validateTaxId } from './tax-id';
  * de campañas aún sin resolver entran, porque se han cobrado, pero se señalan: si la campaña falla habrá que presentar una sustitutiva.
  */
 
-const DONOR_TAX_ID_CONTEXT = 'contribution:donorTaxId';
-const DONOR_TAX_ID_HMAC_PURPOSE = 'donor-tax-id';
 const UNRESOLVED_STATUSES = new Set(['FUNDRAISING', 'EXPIRED', 'RESIZE_VOTING', 'REFUNDING', 'CANCELLED']);
 
 export class Model182NotAllowedError extends Error {
@@ -22,17 +22,6 @@ export class Model182NotAllowedError extends Error {
     super(`No se puede exportar el Modelo 182: ${reason}.`);
     this.name = 'Model182NotAllowedError';
   }
-}
-
-/** Lo que guarda el checkout del NIF de un donante. Único sitio donde se cifra, para que el contexto coincida con el de la exportación. */
-export function sealDonorTaxId(rawTaxId: string, keys: { encryptionKey: string; keyVersion: number; hmacSecret: string }) {
-  const validation = validateTaxId(rawTaxId);
-  if (!validation.valid) throw new RangeError('El NIF del donante no es válido.');
-  return {
-    donorTaxIdEnc: sealField(validation.normalized, keys.encryptionKey, DONOR_TAX_ID_CONTEXT),
-    donorTaxIdHmac: dataHmac(keys.hmacSecret, DONOR_TAX_ID_HMAC_PURPOSE, validation.normalized),
-    donorTaxIdKeyVersion: keys.keyVersion
-  };
 }
 
 export interface Model182Export extends Model182File {
@@ -49,7 +38,7 @@ export interface Model182Request {
   declarationNumber?: string;
 }
 
-export async function exportModel182(db: KorumPrismaClient, encryptionKey: string, actor: SessionActor, request: Model182Request): Promise<Model182Export> {
+export async function exportModel182(db: KorumPrismaClient, keyring: Keyring, actor: SessionActor, request: Model182Request): Promise<Model182Export> {
   const { organizationId, fiscalYear } = request;
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'tax.model182_export', targetType: 'Organization', targetId: organizationId });
   const organization = await db.organization.findUnique({ where: { id: organizationId }, select: { ley49: true, ley49VerifiedAt: true, cif: true, legalName: true } });
@@ -63,10 +52,10 @@ export async function exportModel182(db: KorumPrismaClient, encryptionKey: strin
   const rows = await db.contribution.findMany({
     where: { organizationId, type: 'DONATION', status: 'COMPLETED', refundedCents: 0, fiscalYear: { gte: fiscalYear - 3, lte: fiscalYear } },
     orderBy: { createdAt: 'asc' },
-    select: { fiscalYear: true, amountCents: true, donorFullName: true, donorTaxIdEnc: true, donorTaxIdHmac: true, donorProvinceCode: true, initiative: { select: { status: true } } }
+    select: { fiscalYear: true, amountCents: true, donorFullName: true, donorTaxIdEnc: true, donorTaxIdHmac: true, donorTaxIdKeyVersion: true, donorProvinceCode: true, initiative: { select: { status: true } } }
   });
 
-  const donors = new Map<string, { sealed: string; fullName: string; provinceCode: string; byYear: Map<number, number> }>();
+  const donors = new Map<string, { sealed: string; keyVersion: number | null; fullName: string; provinceCode: string; byYear: Map<number, number> }>();
   const excluded = { contributions: 0, amountCents: 0 };
   const unresolved = { contributions: 0, amountCents: 0 };
   for (const row of rows) {
@@ -83,9 +72,10 @@ export async function exportModel182(db: KorumPrismaClient, encryptionKey: strin
       unresolved.contributions += 1;
       unresolved.amountCents += row.amountCents;
     }
-    const donor = donors.get(row.donorTaxIdHmac!) ?? { sealed: row.donorTaxIdEnc!, fullName: row.donorFullName!, provinceCode: row.donorProvinceCode!, byYear: new Map<number, number>() };
+    const donor = donors.get(row.donorTaxIdHmac!) ?? { sealed: row.donorTaxIdEnc!, keyVersion: row.donorTaxIdKeyVersion, fullName: row.donorFullName!, provinceCode: row.donorProvinceCode!, byYear: new Map<number, number>() };
     // Si cambió de domicilio o corrigió su nombre, vale el último dato: las filas vienen en orden de fecha.
     donor.sealed = row.donorTaxIdEnc!;
+    donor.keyVersion = row.donorTaxIdKeyVersion;
     donor.fullName = row.donorFullName!;
     donor.provinceCode = row.donorProvinceCode!;
     donor.byYear.set(row.fiscalYear, (donor.byYear.get(row.fiscalYear) ?? 0) + row.amountCents);
@@ -96,7 +86,7 @@ export async function exportModel182(db: KorumPrismaClient, encryptionKey: strin
   for (const donor of donors.values()) {
     const amountCents = donor.byYear.get(fiscalYear) ?? 0;
     if (amountCents === 0) continue;
-    const validation = validateTaxId(openField(donor.sealed, encryptionKey, DONOR_TAX_ID_CONTEXT));
+    const validation = validateTaxId(openDonorTaxId(keyring, donor.sealed, donor.keyVersion));
     if (!validation.valid) {
       excluded.contributions += 1;
       excluded.amountCents += amountCents;

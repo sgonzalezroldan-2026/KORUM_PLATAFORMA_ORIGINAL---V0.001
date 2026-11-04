@@ -1,3 +1,4 @@
+import { rotateEncryptedData } from '@/core/security/key-rotation';
 import { FAILURE_WINDOW_MS } from '@/core/ticketing/gate-session.service';
 import type { Db } from '@/lib/db';
 import { purgeStaleAttempts, type PurgeRule } from '@/lib/rate-limit';
@@ -34,11 +35,12 @@ async function purgeSignatureChallenges(db: Db, now: Date, limit: number): Promi
  * `OPS_HOUSEKEEPING`: limpieza diaria de lo que crece sin parar y ya no sirve (QA-OPS01):
  *   - contadores de intentos por IP caducados;
  *   - notificaciones de pago rechazadas de más de 90 días;
- *   - desafíos de firma caducados, consumidos o revocados hace más de 7 días.
- * Nunca toca asientos, facturas, auditoría ni webhooks de pago válidos (6 años de conservación). La purga de datos personales por plazos
- * (`DATA_RETENTION_PURGE`) es del Sprint 2.5.
+ *   - desafíos de firma caducados, consumidos o revocados hace más de 7 días;
+ *   - y, durante una rotación de clave, vuelve a cifrar con la actual lo cifrado con la anterior (`key-rotation.ts`).
+ * Nunca toca asientos, facturas, auditoría ni webhooks de pago válidos (6 años de conservación). La purga de datos personales por plazos es
+ * otra tarea (`DATA_RETENTION_PURGE`, semanal).
  */
-export const housekeepingHandler: JobHandler = async ({ db, now, batchSize }) => {
+export const housekeepingHandler: JobHandler = async ({ db, now, batchSize, deps }) => {
   const total = { rateLimits: 0, webhooks: 0, challenges: 0 };
   let hasMore = false;
   // Varias pasadas en la misma ejecución mientras alguna alcance el lote: la tarea es diaria y un flood de subredes distintas hace crecer la tabla más rápido que un lote al día.
@@ -52,5 +54,7 @@ export const housekeepingHandler: JobHandler = async ({ db, now, batchSize }) =>
     hasMore = rateLimits >= batchSize || webhooks >= batchSize || challenges >= batchSize;
     if (!hasMore) break;
   }
-  return { processed: total.rateLimits + total.webhooks + total.challenges, hasMore, detail: total };
+  const rotation = await rotateEncryptedData(db, deps.keyring(), batchSize, now);
+  const detail = { ...total, reencrypted: rotation.rotated, undecryptable: rotation.undecryptable };
+  return { processed: total.rateLimits + total.webhooks + total.challenges + rotation.rotated, hasMore: hasMore || rotation.hasMore, detail };
 };

@@ -1,11 +1,14 @@
 import { getEnv } from '@/config/env';
+import { getKeyring } from '@/config/keyring';
 import type { Db } from '@/lib/db';
 import { getInvoicingProvider } from '@/services/invoicing/provider-factory';
 import { getPaymentProvider, PaymentConfigurationError } from '@/services/payments/provider-factory';
+import { getSetting } from '@/services/settings/settings.service';
+import { getStorageProvider } from '@/services/storage/provider-factory';
 import type { JobDeps } from './job-types';
 
 /** Ajuste de la consola con la IP pública del servidor que llama a Paycomet: la API de devoluciones la pide como «IP de la aplicación del negocio». */
-export const SERVER_IP_SETTING = 'paycomet.serverIp';
+export const SERVER_IP_SETTING = 'paycomet.serverIp' as const;
 const MOCK_SERVER_IP = '127.0.0.1';
 
 /**
@@ -17,9 +20,12 @@ export function buildJobDeps(db: Db): JobDeps {
   return {
     paymentProvider: () => getPaymentProvider(db),
     invoicingProvider: () => getInvoicingProvider(env.PAYCOMET_MODE),
+    storageProvider: () => getStorageProvider(),
+    keyring: () => getKeyring(),
+    hmacSecret: () => env.DATA_HMAC_SECRET,
     refundOriginalIp: async () => {
-      const setting = await db.platformSetting.findUnique({ where: { key: SERVER_IP_SETTING } });
-      if (typeof setting?.valueJson === 'string' && setting.valueJson.length > 0) return setting.valueJson;
+      const serverIp = await getSetting(db, SERVER_IP_SETTING);
+      if (serverIp) return serverIp;
       if (env.PAYCOMET_MODE === 'mock') return MOCK_SERVER_IP;
       throw new PaymentConfigurationError([SERVER_IP_SETTING]);
     }

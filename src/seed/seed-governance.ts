@@ -1,7 +1,9 @@
 import { postJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
+import type { Keyring } from '@/core/security/crypto';
 import type { SignatureReasonKey } from '@/core/security/device-quorum.service';
 import { computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from '@/core/security/signature-hash';
+import { sealInvoiceRecipientTaxId } from '@/core/tax/tax-id-vault';
 import type { DoubleCheckTargetType, MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { SEED_ACTOR, signerUserId } from './seed-base';
@@ -130,12 +132,13 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
  * Facturas de KORUM tal como vienen en la semilla. Son documentos: el IVA de los patrocinios sí se asienta en el libro (ver
  * `seed-funding`), pero el de la comisión por tramos (p. ej. FAC-2025-0014, 40,32 €) no, hasta que la asesoría fiscal lo decida.
  */
-export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, payoutIds: Map<number, number>): Promise<void> {
+export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, payoutIds: Map<number, number>, keyring: Keyring): Promise<void> {
   const payouts = await db.escrowPayout.findMany({ where: { id: { in: [...payoutIds.values()] } }, select: { id: true, organizationId: true, korumFeeSettledCents: true } });
   let previousHash: string | null = null;
   for (const invoice of [...seed.invoices].sort((a, b) => a.issuedAt.localeCompare(b.issuedAt))) {
     const sponsor = seed.sponsors.find((candidate) => candidate.cif === invoice.recipientTaxId && candidate.organizationId === invoice.organizationId);
     const payout = payouts.find((candidate) => candidate.organizationId === invoice.organizationId && candidate.korumFeeSettledCents === invoice.baseAmountCents);
+    const recipientTaxId = sealInvoiceRecipientTaxId(keyring, invoice.invoiceNumber, invoice.recipientTaxId);
     await db.invoice.upsert({
       where: { invoiceNumber: invoice.invoiceNumber },
       create: {
@@ -145,7 +148,7 @@ export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, p
         sponsorId: sponsor?.id ?? null,
         payoutId: sponsor ? null : (payout?.id ?? null),
         recipientName: invoice.recipientName,
-        recipientTaxId: invoice.recipientTaxId,
+        ...recipientTaxId,
         concept: invoice.concept,
         baseAmountCents: invoice.baseAmountCents,
         taxRateBps: invoice.taxRateBps,
@@ -159,6 +162,7 @@ export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, p
       },
       update: {}
     });
+    await db.invoice.updateMany({ where: { invoiceNumber: invoice.invoiceNumber, recipientTaxIdEnc: null }, data: recipientTaxId });
     previousHash = invoice.verifactuHash;
   }
   for (const ticket of seed.supportTickets) {

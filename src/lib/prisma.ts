@@ -51,6 +51,16 @@ function entryGuard(params: AppendOnlyArgs) {
   return appendOnly(params);
 }
 
+/**
+ * Auditoría: solo-alta, con la única excepción que también admite su trigger: vaciar a la vez la IP (HMAC) y el navegador cuando vence su
+ * plazo de conservación (`DATA_RETENTION_PURGE`, 12 meses). Cualquier otro campo en `data` se rechaza.
+ */
+function auditGuard(params: AppendOnlyArgs) {
+  const data = (params.args as { data?: Record<string, unknown> } | undefined)?.data;
+  const onlyAnonymizes = params.operation === 'updateMany' && data !== undefined && Object.keys(data).sort().join(',') === 'ipHash,userAgent' && data.ipHash === null && data.userAgent === null;
+  return onlyAnonymizes ? params.query(params.args) : appendOnly(params);
+}
+
 export interface CreatePrismaClientOptions {
   connectionString: string;
   /** Esquema de PostgreSQL. Por defecto `public`; las pruebas de integración usan uno propio (`korum_test`). */
@@ -66,7 +76,7 @@ export function createPrismaClient({ connectionString, schema, maxConnections }:
     query: {
       ledgerJournal: { $allOperations: journalGuard },
       escrowLedgerEntry: { $allOperations: entryGuard },
-      auditLog: { $allOperations: appendOnly },
+      auditLog: { $allOperations: auditGuard },
       raffleDraw: { $allOperations: appendOnly }
     }
   });

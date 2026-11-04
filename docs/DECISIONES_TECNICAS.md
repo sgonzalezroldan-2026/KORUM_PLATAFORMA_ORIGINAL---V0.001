@@ -77,7 +77,8 @@ La detección de idioma por el navegador y la cookie de idioma están **desactiv
 
 ## 5. Seguridad
 
-- **Cifrado de secretos y datos sensibles:** AES-256-GCM con `ENCRYPTION_KEY` y versión de clave (`keyVersion`) para poder rotarla. Se cifran: secretos de la consola, tokens de Paycomet, NIF. Lo que hay que buscar (NIF, IP, huellas) se guarda además como HMAC con `DATA_HMAC_SECRET`.
+- **Cifrado de secretos y datos sensibles (Sprint 2.5, `src/core/security/crypto.ts`):** AES-256-GCM con `ENCRYPTION_KEY` y versión de clave (`keyVersion`) en cada valor. Se cifran: secretos de la consola, tokens de Paycomet, NIF de donantes y de cuentas, NIF de destinatarios de factura y CIF de comercios (un autónomo factura con su DNI). Cada valor se cifra con un **contexto** propio (`CRYPTO_CONTEXT`) que lo ata a su uso y, donde se puede, a su fila: la tarjeta a su identificador, el NIF de una factura a su número, el CIF de un comercio a su entidad. Lo que hay que buscar (NIF, IP, huellas) se guarda además como HMAC con `DATA_HMAC_SECRET`. El CIF de las entidades (`Organization.cif`, personas jurídicas con datos de registro público) sigue en claro, pendiente de confirmar (ficha 6.1).
+- **Rotación de la clave de cifrado:** (1) generar una clave nueva; (2) desplegar con `ENCRYPTION_KEY` = nueva, `ENCRYPTION_KEY_VERSION` + 1 y la anterior en `ENCRYPTION_PREVIOUS_KEYS` (`versión:clave`, separadas por comas); (3) la tarea diaria `OPS_HOUSEKEEPING` vuelve a cifrar con la actual todo lo antiguo (`rotateEncryptedData`), con el mismo contexto; (4) cuando la consola muestre 0 pendientes (`countPendingRotation`), vaciar `ENCRYPTION_PREVIOUS_KEYS`. Mientras tanto todo se sigue leyendo: un webhook no falla porque haya cambiado la versión. Si la versión guardada no está en el llavero se prueban las demás claves (AES-GCM autentica, así que una clave equivocada falla y nunca devuelve basura); un valor que ninguna clave lee abre la alerta crítica `ENCRYPTION_KEY_MISSING`. `QR_HMAC_SECRET` es una firma, no un cifrado: cambiarlo invalida los pases ya emitidos.
 - **Contraseñas y PIN:** hash lento (el de Better Auth para contraseñas; scrypt para el PIN de portería).
 - **Cabeceras:** CSP estricta con *nonce*, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` (cámara solo en la portería).
 - **Sesiones:** cookies `HttpOnly`, `Secure`, `SameSite=Lax`; 2FA obligatoria para firmantes y Super-Admin; reautenticación para acciones sensibles.
@@ -94,6 +95,8 @@ La detección de idioma por el navegador y la cookie de idioma están **desactiv
 
 Se guardan en `PlatformSetting` (no secretos) y `PlatformSecret` (cifrados). Todo cambio exige 2FA reciente y queda en `AuditLog`.
 
+**Cómo funciona (Sprint 2.5, `src/services/settings/`):** el catálogo de claves y su validación Zod vive en `setting-definitions.ts`; una clave que no esté allí no se puede leer ni guardar. Prioridad: valor de la consola → variable de respaldo → valor por defecto; un valor guardado que ya no valida se rechaza en lugar de usarse. Las lecturas se guardan en caché 30 s por proceso y guardar vacía la caché al momento: el servicio usa el valor nuevo sin reiniciar (QA-SEC07). Guardar exige un `VerifiedSuperadminActor` (`src/core/security/verified-actor.ts`): sesión válida de un Super-Admin con 2FA cuyo segundo factor se verificó hace **menos de 10 minutos**. Esa marca la guarda la propia sesión (`Session.secondFactorVerifiedAt`), escrita solo por la capa de acceso al comprobar el TOTP o la llave (`markSessionReauthenticated`; el escáner de invariantes lo vigila): quien pide el cambio no puede declararla. El objeto no se puede fabricar ni alargar fuera de `verifySuperadminSession`, y cada escritura vuelve a comprobar en la base que la sesión sigue viva y el rol vigente. Exportar o suprimir los propios datos exige el equivalente para el titular (`VerifiedAccountActor`, con email verificado y reautenticación reciente). Los ajustes llevan versión para que dos personas no se pisen (`expectedVersion`). En la auditoría quedan la clave y la versión; el valor solo si no es personal ni largo (p. ej. `hucha.mode` sí, `platform.company` no) y **nunca** el de un secreto ni su pista.
+
 | Clave | Tipo | Por defecto | Notas |
 | :--- | :--- | :--- | :--- |
 | `paycomet.apiKey` | secreto | — | Respaldo: `PAYCOMET_API_KEY` |
@@ -103,6 +106,7 @@ Se guardan en `PlatformSetting` (no secretos) y `PlatformSecret` (cifrados). Tod
 | `email.provider` | `brevo` · `smtp` · otro adaptador | `brevo` | |
 | `email.apiKey` / `email.smtp.password` | secreto | — | Respaldo: `EMAIL_API_KEY` |
 | `email.fromAddress`, `email.fromName`, `email.replyTo` | texto | `hola@{dominio}` · `KORUM` | |
+| `email.smtp.host`, `email.smtp.port` | texto · número | — | Solo con `email.provider = smtp` |
 | `invoicing.provider`, `invoicing.issuerNif`, `invoicing.issuerName`, `invoicing.series` | texto | — | Respaldo del NIF: `VERIFACTU_ISSUER_NIF` |
 | `invoicing.apiKey` | secreto | — | |
 | `hucha.mode` | `DISABLED` · `PLEDGE` · `REGULATED_WALLET` | `PLEDGE` | `REGULATED_WALLET` solo se puede activar si `hucha.walletProvider` está configurado |
@@ -114,6 +118,7 @@ Se guardan en `PlatformSetting` (no secretos) y `PlatformSecret` (cifrados). Tod
 | `legal.{terminos,privacidad,cookies,aviso-legal}.{es,ca,en}` | Markdown versionado | — | Cada versión con fecha; los consentimientos guardan la versión aceptada |
 | `platform.company` | JSON (razón social, NIF, domicilio, email de soporte y de privacidad) | — | Aparece en el aviso legal, los emails y las facturas |
 | `limits.*` | números | ver Regla 01 y skills | Intentos de PIN, OTP, checkout |
+| `privacy.policyVersion` | fecha `AAAA-MM-DD` | — | Versión vigente de la política de privacidad: la guarda cada consentimiento |
 | `pricing.acknowledgements` | JSON (lista de `{ code, fingerprint, acknowledgedById, acknowledgedAt, note }`) | `[]` | Avisos de salud de precios aceptados a propósito por el Super-Admin (§6.1) |
 
 ### 6.1 Reglas económicas editables y avisos de salud de precios
@@ -153,8 +158,8 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 | `PSP_RECONCILIATION` | Diaria (madrugada) | Diaria | Concilia los cobros de Paycomet con los de KORUM, uno a uno |
 | `QUOTA_RENEWAL` | Diaria | Diaria | Renueva los cupos anuales de cada entidad desde el 22 de agosto |
 | `MODEL182_REMINDER` | 2 de enero | 2 de enero | Recuerda a las entidades con Ley 49/2002 que descarguen su Modelo 182 |
-| `OPS_HOUSEKEEPING` | Diaria | Diaria | Purga contadores de intentos caducados, notificaciones rechazadas de más de 90 días y desafíos de firma antiguos |
-| `DATA_RETENTION_PURGE` | Semanal | Semanal | Aplica los plazos de conservación. **Sin manejador hasta el Sprint 2.5** |
+| `OPS_HOUSEKEEPING` | Diaria | Diaria | Purga contadores de intentos caducados, notificaciones rechazadas de más de 90 días y desafíos de firma antiguos; durante una rotación de clave, vuelve a cifrar lo antiguo con la actual (§5) |
+| `DATA_RETENTION_PURGE` | Semanal | Semanal | Aplica los plazos de conservación de [CUMPLIMIENTO §6](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (`src/core/privacy/retention-*.ts`): anonimiza datos fiscales y emails de ejercicios vencidos, firmas de ideas antiguas y avisa o suprime cuentas inactivas; borra dispositivos, HMAC de red, contenido de notificaciones, consentimientos sustituidos, ficheros y webhooks vencidos; reintenta el borrado de tarjetas en Paycomet y alerta de solicitudes RGPD fuera de plazo |
 | `OUTBOX_DISPATCH` | Cada minuto | Diaria | Envía las notificaciones pendientes. **Sin manejador hasta el Sprint 2.6** |
 
 ### 7.1 Cómo se ejecutan (Sprint 2.4)

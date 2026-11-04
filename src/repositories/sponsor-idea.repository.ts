@@ -9,7 +9,7 @@ const SPONSOR_VIEW = {
   id: true,
   initiativeId: true,
   name: true,
-  cif: true,
+  // El CIF va cifrado (`cifEnc`) y no forma parte de la vista: se descifra solo donde haga falta (factura, ficha del comercio).
   contactPerson: true,
   phone: true,
   email: true,

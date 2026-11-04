@@ -49,6 +49,7 @@ Toda Server Action y Route Handler obtiene `organizationId` y rol **de la sesió
 | `DATABASE_URL` / `DIRECT_URL` | Conexión a PostgreSQL (pooler) y conexión directa para migraciones |
 | `BETTER_AUTH_SECRET` | Firma de sesiones |
 | `ENCRYPTION_KEY` / `ENCRYPTION_KEY_VERSION` | Cifrado de secretos, tokens de pago y NIF |
+| `ENCRYPTION_PREVIOUS_KEYS` | Solo durante una rotación de clave: las anteriores, para descifrar (DECISIONES_TECNICAS §5) |
 | `DATA_HMAC_SECRET` | HMAC de NIF, IP y huellas (búsquedas sin guardar el dato en claro) |
 | `QR_HMAC_SECRET` | Firma de los pases QR |
 | `CRON_SECRET` | Autenticación de las tareas programadas |

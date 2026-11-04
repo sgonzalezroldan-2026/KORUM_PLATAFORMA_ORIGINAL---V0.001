@@ -12,7 +12,7 @@ import type { JobDeps, JobHandler } from '@/core/jobs/job-types';
 import type { JobType } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { reserveAttempt } from '@/lib/rate-limit';
-import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, testJobDeps, uniqueId } from './test-database';
 
 let db: KorumPrismaClient;
 
@@ -21,7 +21,8 @@ const deps: JobDeps = {
   invoicingProvider: () => {
     throw new Error('no se usa en este archivo');
   },
-  refundOriginalIp: async () => '10.0.0.1'
+  refundOriginalIp: async () => '10.0.0.1',
+  ...testJobDeps()
 };
 
 const MINUTE = 60_000;
@@ -293,7 +294,7 @@ describe('tareas de cobros recurrentes (sin mover dinero)', () => {
     const now = new Date();
     const organization = await createOrganization(db);
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cif: 'B12345674', contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() + 20 * DAY) }
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() + 20 * DAY) }
     });
     for (let step = 0; step < 3; step += 1) await run('SPONSOR_RENEWAL_NOTICE', sponsorRenewalNoticeHandler, new Date(now.getTime() + step * DAY));
     const notices = await db.outboxMessage.findMany({ where: { templateKey: 'sponsor.renewalNotice', organizationId: organization.id } });
@@ -305,7 +306,7 @@ describe('tareas de cobros recurrentes (sin mover dinero)', () => {
     const now = new Date();
     const organization = await createOrganization(db);
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cif: 'B12345674', contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() - DAY) }
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() - DAY) }
     });
     await run('SPONSOR_RENEWAL_CHARGE', sponsorRenewalChargeHandler, now);
     const alert = await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'SPONSOR_RENEWAL_DUE:global' } });
@@ -323,7 +324,7 @@ describe('tareas de cobros recurrentes (sin mover dinero)', () => {
     const now = uniqueDay();
     const organization = await createOrganization(db);
     await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cif: 'B12345674', contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'CREDIT_POOL', paidAt: new Date(now.getTime() - 86 * DAY), expiresAt: new Date(now.getTime() + 30 * DAY) }
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'CREDIT_POOL', paidAt: new Date(now.getTime() - 86 * DAY), expiresAt: new Date(now.getTime() + 30 * DAY) }
     });
     await run('CREDIT_POOL_EXPIRY', creditPoolExpiryHandler, now);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'CREDIT_POOL_EXPIRED:global' } })).toMatchObject({ severity: 'CRITICAL', status: 'OPEN' });
@@ -398,7 +399,7 @@ describe('renovación de cupos al publicar y en la tarea', () => {
 describe('recorridos completos aunque el lote sea pequeño', () => {
   const newSponsor = (organizationId: string, expiresAt: Date) =>
     db.sponsor.create({
-      data: { organizationId, name: 'Comercio', cif: 'B12345674', contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt }
+      data: { organizationId, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt }
     });
 
   it('el preaviso llega a todos los comercios de la ventana, no solo a los primeros del lote', async () => {

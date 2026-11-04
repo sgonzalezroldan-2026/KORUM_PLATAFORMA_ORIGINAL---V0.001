@@ -1,7 +1,9 @@
 import { createHmac } from 'node:crypto';
 import { getEnv } from '@/config/env';
+import { getKeyring } from '@/config/keyring';
+import type { Keyring } from '@/core/security/crypto';
 import type { Db } from '@/lib/db';
-import { decryptParts } from '@/lib/encryption';
+import { getSecret, getSetting } from '@/services/settings/settings.service';
 import { MockPaycometProvider } from './mock-paycomet';
 import { PaycometAdapter, type PaycometCredentials } from './paycomet.adapter';
 import type { NotificationSecrets } from './paycomet-notification';
@@ -19,28 +21,14 @@ export class PaymentConfigurationError extends Error {
   }
 }
 
-/** El contexto con el que se cifra cada secreto de la consola: es su propia clave. */
-export const platformSecretContext = (key: string) => `platform-secret:${key}`;
-
-async function readSecret(db: Db, key: string, encryptionKey: string, keyVersion: number): Promise<string | undefined> {
-  const row = await db.platformSecret.findUnique({ where: { key } });
-  if (!row) return undefined;
-  if (row.keyVersion !== keyVersion) throw new RangeError(`El secreto ${key} está cifrado con la versión ${row.keyVersion} de la clave y la actual es la ${keyVersion}`);
-  return decryptParts(row, encryptionKey, platformSecretContext(key));
-}
-
-async function readSetting(db: Db, key: string): Promise<string | undefined> {
-  const row = await db.platformSetting.findUnique({ where: { key } });
-  return typeof row?.valueJson === 'string' || typeof row?.valueJson === 'number' ? String(row.valueJson) : undefined;
-}
-
-export async function resolvePaycometCredentials(db: Db): Promise<PaycometCredentials> {
-  const env = getEnv();
+export async function resolvePaycometCredentials(db: Db, keyring: Keyring = getKeyring()): Promise<PaycometCredentials> {
+  // Consola primero y variables de respaldo después (lo resuelve el servicio de ajustes). Con el llavero, un secreto cifrado con una clave
+  // anterior se sigue leyendo durante la rotación: cambiar `ENCRYPTION_KEY_VERSION` no deja sin webhooks.
   const values = {
-    apiKey: (await readSecret(db, 'paycomet.apiKey', env.ENCRYPTION_KEY, env.ENCRYPTION_KEY_VERSION)) ?? env.PAYCOMET_API_KEY,
-    notificationPassword: (await readSecret(db, 'paycomet.webhookSecret', env.ENCRYPTION_KEY, env.ENCRYPTION_KEY_VERSION)) ?? env.PAYCOMET_WEBHOOK_SECRET,
-    merchantCode: (await readSetting(db, 'paycomet.merchantCode')) ?? env.PAYCOMET_MERCHANT_CODE,
-    terminal: (await readSetting(db, 'paycomet.terminalId')) ?? env.PAYCOMET_TERMINAL_ID
+    apiKey: await getSecret(db, keyring, 'paycomet.apiKey'),
+    notificationPassword: await getSecret(db, keyring, 'paycomet.webhookSecret'),
+    merchantCode: await getSetting(db, 'paycomet.merchantCode'),
+    terminal: await getSetting(db, 'paycomet.terminalId')
   };
   const missing = Object.entries(values)
     .filter(([, value]) => !value)

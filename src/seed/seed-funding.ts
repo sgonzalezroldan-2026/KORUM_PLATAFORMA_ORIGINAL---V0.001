@@ -1,4 +1,5 @@
 import type { JournalLine, PostJournalInput } from '@/core/finance/ledger-accounts';
+import type { Keyring } from '@/core/security/crypto';
 import { signPass } from '@/core/ticketing/qr-signature';
 import type { Prisma } from '@/generated/prisma/client';
 import type { LedgerJournalKind } from '@/generated/prisma/enums';
@@ -21,6 +22,8 @@ export interface SeedSecrets {
   hmacSecret: string;
   /** Para firmar los pases QR (`QR_HMAC_SECRET`). */
   qrSecret: string;
+  /** Para cifrar los NIF de comercios y facturas (`ENCRYPTION_KEY`). */
+  keyring: Keyring;
 }
 
 const CHUNK_SIZE = 500;

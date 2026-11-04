@@ -1,5 +1,6 @@
 import type { JobType } from '@/generated/prisma/enums';
 import { campaignExpiryHandler } from './handlers/campaign-expiry';
+import { dataRetentionPurgeHandler } from './handlers/data-retention-purge';
 import { housekeepingHandler } from './handlers/housekeeping';
 import { massRefundHandler } from './handlers/mass-refund';
 import { model182ReminderHandler } from './handlers/model182-reminder';
@@ -11,8 +12,8 @@ import { invoiceSubmitHandler, ticketHoldReleaseHandler } from './handlers/ticke
 import type { JobHandler } from './job-types';
 
 /**
- * Tipo de tarea → quien la ejecuta. `OUTBOX_DISPATCH` (Sprint 2.6) y `DATA_RETENTION_PURGE` (Sprint 2.5) existen en el calendario pero aún
- * no tienen manejador: la ruta responde `404` y no figuran en `vercel.json`. Un test comprueba que lo programado y lo registrado coinciden.
+ * Tipo de tarea → quien la ejecuta. `OUTBOX_DISPATCH` (Sprint 2.6) existe en el calendario pero aún no tiene manejador: la ruta responde
+ * `404` y no figura en `vercel.json`. Un test comprueba que lo programado y lo registrado coinciden.
  */
 export const JOB_HANDLERS: Partial<Record<JobType, JobHandler>> = {
   CAMPAIGN_EXPIRY: campaignExpiryHandler,
@@ -27,5 +28,6 @@ export const JOB_HANDLERS: Partial<Record<JobType, JobHandler>> = {
   QUOTA_RENEWAL: quotaRenewalHandler,
   TICKET_HOLD_RELEASE: ticketHoldReleaseHandler,
   INVOICE_SUBMIT: invoiceSubmitHandler,
-  OPS_HOUSEKEEPING: housekeepingHandler
+  OPS_HOUSEKEEPING: housekeepingHandler,
+  DATA_RETENTION_PURGE: dataRetentionPurgeHandler
 };

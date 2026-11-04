@@ -8,14 +8,22 @@ import type { Db } from '@/lib/db';
  * lo comprueba la capa de acceso (Sprint 3.2): aquí se garantiza que la cuenta lo tiene configurado y que no es una cuenta cualquiera.
  */
 
-export type SuperadminDenial = 'NOT_SUPERADMIN' | 'TWO_FACTOR_REQUIRED';
+/** `SESSION_INVALID` y `REAUTH_REQUIRED` solo los da `verifySuperadminSession` (`verified-actor.ts`). */
+export type SuperadminDenial = 'NOT_SUPERADMIN' | 'TWO_FACTOR_REQUIRED' | 'SESSION_INVALID' | 'REAUTH_REQUIRED';
+
+const DENIAL_MESSAGE: Record<SuperadminDenial, string> = {
+  NOT_SUPERADMIN: 'solo el Super-Admin puede resolver este caso',
+  TWO_FACTOR_REQUIRED: 'el Super-Admin necesita la verificación en dos pasos activada',
+  SESSION_INVALID: 'la sesión no es válida',
+  REAUTH_REQUIRED: 'hay que volver a verificar el segundo factor'
+};
 
 export class SuperadminRequiredError extends Error {
   constructor(
     readonly reason: SuperadminDenial,
     readonly operation: string
   ) {
-    super(reason === 'NOT_SUPERADMIN' ? `${operation}: solo el Super-Admin puede resolver este caso` : `${operation}: el Super-Admin necesita la verificación en dos pasos activada`);
+    super(`${operation}: ${DENIAL_MESSAGE[reason]}`);
     this.name = 'SuperadminRequiredError';
   }
 }

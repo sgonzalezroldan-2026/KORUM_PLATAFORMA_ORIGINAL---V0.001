@@ -1,4 +1,5 @@
 import { getEnv } from '@/config/env';
+import { getKeyring } from '@/config/keyring';
 import { createPrismaClient } from '@/lib/prisma';
 import { seedDatabase } from '@/seed/seed';
 import { assertSeedAllowed } from '@/seed/seed-guard';
@@ -20,7 +21,7 @@ async function main() {
   const db = createPrismaClient({ connectionString: env.DATABASE_URL, schema });
   const startedAt = Date.now();
   try {
-    const report = await seedDatabase(db, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, schema, log: (message) => console.log(message) });
+    const report = await seedDatabase(db, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, keyring: getKeyring(), schema, log: (message) => console.log(message) });
     console.log(
       `\n✅ Semilla lista en ${((Date.now() - startedAt) / 1000).toFixed(1)} s: ${report.organizations} entidades, ${report.initiatives.length} iniciativas, ` +
         `${report.contributions} aportaciones, ${report.ticketPasses} pases QR y ${report.journals} asientos (debe = haber = ${report.ledgerDebitCents} céntimos).`

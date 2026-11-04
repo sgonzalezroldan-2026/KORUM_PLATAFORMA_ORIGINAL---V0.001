@@ -89,6 +89,8 @@ export interface PaymentProvider {
   readonly name: string;
   charge(request: ChargeRequest): Promise<ChargeResult>;
   tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult>;
+  /** Borra una tarjeta guardada en el proveedor (supresión de la cuenta). Borrar una que ya no existe no es un error. */
+  deleteCard(card: TokenizeResult): Promise<void>;
   refund(request: RefundRequest): Promise<RefundResult>;
   splitTransfer(request: SplitTransferRequest): Promise<SplitTransferResult>;
   /** Cobros confirmados con `occurredAt` en `[from, to]`. Lanza si el proveedor no puede devolverlos todos: una lista recortada falsearía la conciliación. */

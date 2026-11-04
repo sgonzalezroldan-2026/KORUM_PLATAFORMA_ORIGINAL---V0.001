@@ -59,6 +59,10 @@ const forbiddenMaintenanceLabel = /\(Desactivado\)/;
 // Un sorteo, un PIN o una numeración fiscal con un generador predecible no serían certificables (QA-REG01).
 const predictableRandomDirs = [path.join('src', 'core', 'ticketing') + path.sep, path.join('src', 'core', 'tax') + path.sep, path.join('src', 'services', 'invoicing') + path.sep];
 
+// La prueba de reautenticación (`markSessionReauthenticated`) solo la escribe la capa de sesión, al comprobar el código, el enlace, el
+// TOTP o la llave de acceso (Sprint 2.5, QA-SEC07). Cualquier otro sitio que la llame podría fabricar un actor verificado.
+const reauthWriterAllowed = [path.join('src', 'core', 'security', 'verified-actor.ts'), path.join('src', 'lib', 'auth') + path.sep, path.join('src', 'app', 'api', 'auth') + path.sep];
+
 for (const file of codeFiles) {
   const rel = path.relative(ROOT, file);
   const isTestFile = rel.startsWith('tests' + path.sep) || rel.includes('.spec.') || rel.includes('.test.');
@@ -73,6 +77,9 @@ for (const file of codeFiles) {
     }
     if (predictableRandomDirs.some((dir) => rel.startsWith(dir)) && /Math\.random/.test(line)) {
       errors.push(`[PREDICTABLE-RANDOM] ${rel}:${idx + 1} usa Math.random: en taquilla y fiscalidad solo vale node:crypto`);
+    }
+    if (!isTestFile && /(markSessionReauthenticated|reauthenticatedAt|secondFactorVerifiedAt)/.test(line) && !reauthWriterAllowed.some((allowed) => rel === allowed || rel.startsWith(allowed))) {
+      errors.push(`[REAUTH-WRITER] ${rel}:${idx + 1} toca la prueba de reautenticación: solo la capa de sesión (src/lib/auth, src/app/api/auth) puede escribirla o leerla fuera de verified-actor.ts`);
     }
     if (secretLeakRegex.test(line)) {
       errors.push(`[SECRET-LEAK] ${rel}:${idx + 1} exposes private secret via NEXT_PUBLIC_: "${line.trim()}"`);

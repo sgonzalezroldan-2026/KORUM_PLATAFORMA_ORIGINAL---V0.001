@@ -361,6 +361,14 @@ enum OpsAlertType {
   MONTHLY_TOPUP_DUE
   /// Una iniciativa devuelta (`REFUNDED`) conserva dinero en su hucha: patrocinio o Auto-Impulso, que no se devuelven con `MASS_REFUND`.
   ESCROW_LEFTOVER
+  /// Al suprimir una cuenta, Paycomet no confirmó el borrado de una tarjeta: la purga semanal lo reintenta.
+  CARD_DELETE_FAILED
+  /// Una solicitud de derechos RGPD supera su plazo legal de respuesta (1 mes).
+  PRIVACY_REQUEST_OVERDUE
+  /// Hay datos cifrados con una versión de clave que ya no está disponible: no se pueden volver a cifrar con la actual.
+  ENCRYPTION_KEY_MISSING
+  /// La supresión automática de una cuenta inactiva falló por un error inesperado: se reintenta cada semana.
+  PRIVACY_ERASURE_FAILED
 }
 
 enum OpsAlertSeverity {
@@ -529,6 +537,10 @@ model User {
   walletExternalId     String?   @unique
   activeOrganizationId String?
   gdprAnonymizedAt     DateTime?
+  /// Última actividad de la cuenta (inicio de sesión o aportación). A los 3 años sin actividad se avisa y, 30 días después, se anonimiza.
+  lastActiveAt         DateTime  @default(now())
+  /// Aviso de inactividad enviado. Si la persona vuelve antes de 30 días, el aviso deja de contar.
+  inactivityNoticeAt   DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -548,20 +560,28 @@ model User {
   consentRecords        ConsentRecord[]
   privacyRequests       PrivacyRequest[]
   escrowLedgerEntries   EscrowLedgerEntry[]
+
+  @@index([gdprAnonymizedAt, lastActiveAt])
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String   @unique
-  ipAddress String?
-  userAgent String?
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                     String    @id
+  expiresAt              DateTime
+  token                  String    @unique
+  ipAddress              String?
+  userAgent              String?
+  userId                 String
+  /// Última reautenticación de esta sesión (enlace mágico, código por email, TOTP o llave de acceso). La escribe solo la capa de sesión
+  /// (`markSessionReauthenticated`); la exigen exportar o suprimir datos personales (src/core/security/verified-actor.ts).
+  reauthenticatedAt      DateTime?
+  /// Última vez que esta sesión superó el segundo factor (TOTP o llave de acceso). La exigen los cambios de ajustes del Super-Admin.
+  secondFactorVerifiedAt DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([expiresAt])
 }
 
 model Account {
@@ -868,7 +888,9 @@ model Sponsor {
   organizationId       String
   initiativeId         Int?
   name                 String
-  cif                  String
+  /// CIF o NIF del comercio, cifrado con contexto propio de su entidad (un autónomo factura con su DNI). Ver src/core/security/crypto.ts.
+  cifEnc               String?
+  cifKeyVersion        Int?
   contactPerson        String
   phone                String
   email                String
@@ -1264,6 +1286,8 @@ model PaymentMethodToken {
   expiresYear        Int?
   createdAt          DateTime             @default(now())
   revokedAt          DateTime?
+  /// Borrada también en Paycomet (supresión de la cuenta). Hasta entonces se conserva el token cifrado para poder pedir el borrado.
+  providerDeletedAt  DateTime?
   user               User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   sponsors           Sponsor[]
   subscriptions      WalletSubscription[]
@@ -1390,36 +1414,38 @@ model ResizeVote {
 
 /// Factura emitida por KORUM (a comercios o centros). Se registra en Veri*factu a través del proveedor de facturación.
 model Invoice {
-  id                Int                    @id @default(autoincrement())
-  invoiceNumber     String                 @unique
+  id                       Int                    @id @default(autoincrement())
+  invoiceNumber            String                 @unique
   /// Una misma operación (un patrocinio, una liquidación) nunca genera dos facturas aunque se reintente.
-  idempotencyKey    String?                @unique
+  idempotencyKey           String?                @unique
   /// NIF con el que se calculó la huella: la cadena se comprueba siempre con el mismo, aunque cambie el ajuste de la consola.
-  issuerTaxId       String?
-  series            String                 @default("K")
-  organizationId    String
-  sponsorId         Int?
-  payoutId          Int?
-  recipientName     String
-  recipientTaxId    String
-  concept           String
-  baseAmountCents   Int
-  taxRateBps        Int                    @default(2100)
-  taxAmountCents    Int                    @default(0)
-  totalAmountCents  Int
-  prevVerifactuHash String?
-  verifactuHash     String                 @unique
-  verifactuQrUrl    String
-  verifactuStatus   InvoiceVerifactuStatus @default(PENDING)
-  providerReference String?
-  pdfFileId         String?
-  issuedAt          DateTime               @default(now())
+  issuerTaxId              String?
+  series                   String                 @default("K")
+  organizationId           String
+  sponsorId                Int?
+  payoutId                 Int?
+  recipientName            String
+  /// NIF del destinatario, cifrado con su número de factura como contexto. No forma parte de la huella Veri*factu (solo el del emisor).
+  recipientTaxIdEnc        String?
+  recipientTaxIdKeyVersion Int?
+  concept                  String
+  baseAmountCents          Int
+  taxRateBps               Int                    @default(2100)
+  taxAmountCents           Int                    @default(0)
+  totalAmountCents         Int
+  prevVerifactuHash        String?
+  verifactuHash            String                 @unique
+  verifactuQrUrl           String
+  verifactuStatus          InvoiceVerifactuStatus @default(PENDING)
+  providerReference        String?
+  pdfFileId                String?
+  issuedAt                 DateTime               @default(now())
   /// Momento en que se reservó el envío al proveedor (`PENDING → SENT`). Si lleva horas sin resolverse, hay un envío de resultado desconocido.
-  sentAt            DateTime?
-  organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  sponsor           Sponsor?               @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
-  payout            EscrowPayout?          @relation(fields: [payoutId], references: [id], onDelete: Restrict)
-  pdfFile           FileAsset?             @relation("InvoicePdf", fields: [pdfFileId], references: [id], onDelete: Restrict)
+  sentAt                   DateTime?
+  organization             Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  sponsor                  Sponsor?               @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  payout                   EscrowPayout?          @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  pdfFile                  FileAsset?             @relation("InvoicePdf", fields: [pdfFileId], references: [id], onDelete: Restrict)
 }
 
 model SupportTicket {

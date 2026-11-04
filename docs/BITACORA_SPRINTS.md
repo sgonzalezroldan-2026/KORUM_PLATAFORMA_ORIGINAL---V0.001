@@ -19,6 +19,81 @@
 
 ## Entradas
 
+### Sprint 2.5 — Ajustes cifrados de la plataforma, registro de auditoría y privacidad RGPD · 2026-11-05 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 en la sesión principal, sin subagente constructor (el asistente no puede leer el esfuerzo configurado; la ficha recomienda «alto»). Auditoría: `antifraud-legal-guardian` (tres rondas) y `qa-e2e-verifier` (certificación final).
+- **Qué se ha hecho:**
+  - **Cifrado (`src/core/security/crypto.ts`):** llavero con versión de clave (`ENCRYPTION_KEY` + `ENCRYPTION_KEY_VERSION` + la nueva `ENCRYPTION_PREVIOUS_KEYS`), contextos por dato y por fila (`CRYPTO_CONTEXT`), reexporta el HMAC de `data-hmac.ts`. Si la versión guardada no está en el llavero se prueban las demás claves: cambiar solo la versión no tumba los webhooks. `src/lib/encryption.ts` queda como primitiva.
+  - **Rotación (`key-rotation.ts`):** `OPS_HOUSEKEEPING` vuelve a cifrar cada día con la clave actual secretos, tarjetas, NIF de donantes y de cuentas, NIF de facturas y CIF de comercios. Escribe con condición, para no pisar un cambio hecho a la vez. Lo que no se puede leer abre `ENCRYPTION_KEY_MISSING`, una alerta por tabla. `countPendingRotation` dice cuándo se puede retirar la clave anterior.
+  - **Personas verificadas (`verified-actor.ts`):** la prueba de reautenticación vive en la sesión (`Session.reauthenticatedAt` y `secondFactorVerifiedAt`) y solo la escribe `markSessionReauthenticated`, que el escáner vigila (regla `[REAUTH-WRITER]`). `VerifiedSuperadminActor` (2FA de menos de 10 min) y `VerifiedAccountActor` (titular con email verificado) no se pueden fabricar ni alargar, y se revalidan en la base dentro de cada operación.
+  - **Ajustes (`src/services/settings/`):** catálogo con validación Zod por clave (DECISIONES §6, incluido `paycomet.serverIp`). Prioridad consola, luego respaldo del entorno, luego valor por defecto. Caché de 30 s que se vacía al guardar. Control de versión al editar. Secretos cifrados con pista de 4 caracteres. Auditoría sin valores de secretos. La fábrica de Paycomet y `job-deps` ya leen de aquí.
+  - **Auditoría (`src/services/audit/`):** `writeAudit` con limpieza de campos sensibles (también en plural) y de textos, e IP solo como HMAC. La extensión de Prisma admite una sola edición del registro, la misma que su trigger: vaciar IP y navegador a la vez.
+  - **Privacidad (`src/core/privacy/`):**
+    - Consentimientos: retirar la huella la borra al momento.
+    - Solicitudes RGPD: plazo de un mes, email solo como HMAC.
+    - Exportación: JSON y PDF propio sin dependencias, con textos en `privacy.export.*` en es, ca y en.
+    - Supresión.
+    - Plazos de conservación (`retention-policy.ts`).
+    - Tarea semanal `DATA_RETENTION_PURGE`, registrada en `job-registry.ts` y `vercel.json`. Cada paso va aislado y la alerta de solicitudes vencidas se ejecuta la primera.
+  - **NIF cifrados (`src/core/tax/tax-id-vault.ts`):** `Sponsor.cif` pasa a `cifEnc` (contexto de su entidad) e `Invoice.recipientTaxId` a `recipientTaxIdEnc` (contexto de su número de factura). La semilla los escribe ya cifrados. `sealDonorTaxId` se mueve aquí y el Modelo 182 descifra con el llavero.
+  - **Tarjetas:** cifrado atado a la fila. `PaymentProvider.deleteCard` en el adaptador (`POST /v1/cards/delete`, suposición) y en el simulador. `deleteStoredCard` revoca la tarjeta y la borra en Paycomet.
+  - **Esquema:** migración `20261105090000_privacy_settings`:
+    - `User.lastActiveAt` e `inactivityNoticeAt`.
+    - Columnas cifradas de comercio y factura (las antiguas en claro se eliminan).
+    - `PaymentMethodToken.providerDeletedAt`.
+    - Campos de reautenticación en `Session`.
+    - Cuatro `OpsAlertType` nuevos: `CARD_DELETE_FAILED`, `PRIVACY_REQUEST_OVERDUE`, `ENCRYPTION_KEY_MISSING` y `PRIVACY_ERASURE_FAILED`.
+  - **Tests:** `tests/unit/settings-privacy.spec.ts` (28) y `tests/integration/settings-privacy.spec.ts` (13), más ajustes en `seed.spec`, `ledger.spec`, `payments.spec`, `tax-invoicing.spec`, `jobs-*`, `tenant-isolation.spec`, `paycomet-escrow.spec`, `jobs-storage.spec` e `i18n-catalogs.spec`.
+  - **Documentos:**
+    - DECISIONES §5 (cifrado y procedimiento de rotación), §6 (cómo funcionan los ajustes y claves nuevas) y §7.
+    - CUMPLIMIENTO §6 (cómo se aplican los plazos).
+    - EXPERIENCIA §4 (`privacy.inactivityNotice`).
+    - Regla 01 (`ENCRYPTION_PREVIOUS_KEYS`) y skill `korum-quorum-antifraud` §6, sincronizadas con `.claude/`.
+    - `.env.example`.
+    - Ficha 2.5 marcada `[x]` y notas «Heredado del Sprint 2.5» en las fichas 2.6, 3.2, 3.5, 3.6, 3.7, 4.4, 5.4 y 6.1.
+- **Decisiones tomadas (por delegación del promotor; las legales, a validar por el abogado en la ficha 6.1):**
+  - **No se borran asientos, aportaciones ni auditoría a los 6 años:** son inmutables por diseño. Se anonimiza lo personal: NIF, nombre, provincia y emails; en la auditoría, IP y navegador a los 12 meses.
+  - **Supresión:**
+    - Conserva el NIF, el nombre y la provincia solo de las donaciones declarables en el Modelo 182 (RGPD art. 17.3.b).
+    - No borra filas `DeviceAccount` (regla padre/madre).
+    - Deja un HMAC en firmas e ideas para que nadie vuelva a firmar la misma idea con otra cuenta.
+    - Se bloquea para firmantes, para el Super-Admin y para quien tiene saldo en el monedero regulado.
+    - Si Paycomet falla, la supresión sigue: la tarjeta queda revocada y la purga reintenta el borrado.
+  - **Compras como invitada:** solo se atribuyen a una cuenta con el email verificado (exportación y supresión).
+  - **Cuentas inactivas:** aviso a los 3 años y supresión 30 días después. Nunca se aplica a quien tiene una aportación mensual activa, compras recientes (con la cuenta o como invitada con su email) o un cargo de firma.
+  - **El CIF de la entidad (`Organization.cif`) sigue en claro:** es una persona jurídica, con datos de registro público. A confirmar en la ficha 6.1.
+  - **Alcance de `VerifiedSuperadminActor`:** se usa ya en los ajustes y en la supresión a petición del Super-Admin. Las resoluciones manuales del 2.4 pasarán a él en el Sprint 3.2.
+- **Suposiciones contra el simulador** (bloquean el paso a cobros reales, ficha 6.1): borrado de tarjetas con `POST /v1/cards/delete` y su respuesta si la tarjeta ya no existe.
+- **Riesgos aceptados y menores sin corregir:**
+  - **Lotes de inactividad:** si más de 1.000 cuentas fallan siempre o siguen en su periodo de gracia, ocupan el lote.
+  - **Votos de redimensionamiento (`ResizeVote`):** sin plazo de conservación propio (ficha 4.4).
+  - **Contextos de cifrado:** el NIF del donante usa un contexto común y el CIF del comercio el de su entidad. Solo quien escribe directamente en la base podría moverlos entre filas (ficha 6.1).
+  - **`EscrowPayout.providerCif` e IBAN** siguen en claro (ficha 4.4).
+  - **`Session.ipAddress`** lo guardará Better Auth en claro si no se configura (ficha 3.2).
+  - **`Idea.alias`** sigue visible tras la supresión (ficha 3.6).
+  - **Veri\*factu:** el registro que se envía no incluye el NIF del destinatario (ficha 6.1).
+- **Pendiente / deuda:** la capa de sesión (3.2) debe llamar a `markSessionReauthenticated` y actualizar `lastActiveAt`. Las pantallas de *Mi cuenta* (3.7) y de `/admin/ajustes` (5.4) aún no existen.
+- **Incidencias:**
+  - **Tamaño:** unas 1.900 líneas de producción nuevas frente a ~800 de la ficha, por las deudas heredadas y las tres rondas de auditoría. Ningún archivo pasa de 300 líneas.
+  - **Auditoría:** tres rondas de `antifraud-legal-guardian`.
+    - 1ª ronda, rechazada por tres hallazgos altos: un NIF ilegible o Paycomet sin configurar detenían la supresión y la purga; el actor verificado se podía fabricar declarando la hora del 2FA; la exportación y la supresión se atribuían compras de invitado con un email sin verificar. Además, ocho hallazgos medios.
+    - 2ª ronda, rechazada por un hallazgo alto: la exportación aceptaba el identificador de otra cuenta.
+    - 3ª ronda: APROBADO.
+  - **Fallos reales encontrados por las pruebas y corregidos:** la supresión borraba el nombre de una donación con certificado fiscal, y la extensión de Prisma impedía vaciar la IP vencida de la auditoría.
+  - **Línea de los archivos:** el script de edición en Windows convirtió algunos archivos a CRLF; se devolvieron a LF.
+  - **Prueba añadida tras la certificación:** la de la carrera de rotación (el Super-Admin guarda un secreto mientras rota), porque ninguna prueba detectaba la mutación (h); se separó `reencryptPlatformSecret` para provocarla. La base local quedó bloqueada por un servidor de pruebas que dejó abierto el verificador; el promotor la reinició, la prueba pasó y, con la mutación (h) aplicada, falla como debe.
+  - **Base de desarrollo:** migración `20261105090000_privacy_settings` aplicada al esquema `public` con `npm run db:migrate`. De la certificación quedan una fila `Job` `DATA_RETENTION_PURGE` en `PENDING` (se ejecutará en la próxima llamada) y quizá una base vacía `qa_cron`, sin efecto.
+- **Puertas:**
+  - **P1 ✅** Invariantes (0 violaciones, 203 archivos, 14 migraciones), `db:validate`, `typecheck` y `lint` a 0. Repetida tras el último cambio.
+  - **P2 ✅** 557/557 unitarias (repetidas tras el último cambio) y 333/333 de integración (14 archivos) en la certificación; después, el archivo del sprint (13/13) repetido con la prueba de la carrera.
+  - **P3 ✅** `antifraud-legal-guardian` APROBADO en la 3ª ronda. `qa-e2e-verifier` APROBADO: 8 mutaciones, 7 detectadas; la (h) ya la detecta la prueba nueva.
+  - **P4 ✅** El sprint no tiene interfaz.
+    - `test:e2e`: 41 pasan y 3 se omiten a propósito.
+    - Compilación de producción.
+    - Ruta `/api/cron/data-retention-purge`: 401 sin cabecera o con secreto malo, 405 con `POST`, 200 con el secreto correcto. `outbox-dispatch` sigue en 404.
+  - **P5 ✅** Puertas repetidas tras cada ronda de correcciones; tras añadir la prueba de la carrera, P1, las unitarias y el archivo de integración del sprint.
+- **Siguiente sprint:** 2.6 — Notificaciones: bandeja de salida y emails transaccionales en 3 idiomas · modelo recomendado: constructor Claude Sonnet 5.5 · alto (textos en catalán e inglés revisados con Gemini Argon · alto); auditoría Claude Sonnet 5.5 · alto.
+
 ### Sprint 2.4 — Operación: tareas programadas, conciliación, ficheros, observabilidad y límites de intentos · 2026-11-04 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Sonnet 5.5 en la sesión principal (el asistente no puede leer el esfuerzo configurado; la ficha recomienda «alto»). Auditoría: `fintech-escrow-auditor` y `antifraud-legal-guardian` (tres rondas cada uno) y `qa-e2e-verifier` (certificación final).

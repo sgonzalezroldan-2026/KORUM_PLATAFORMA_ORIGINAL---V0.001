@@ -1,4 +1,6 @@
+import type { Keyring } from '@/core/security/crypto';
 import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
+import { sealSponsorTaxId } from '@/core/tax/tax-id-vault';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import type { InitiativeFundingPlan } from './funding-plan';
 import type { KorumSeedData } from './seed-types';
@@ -147,17 +149,20 @@ export async function seedInitiatives(db: KorumPrismaClient, seed: KorumSeedData
 }
 
 /** Comercios amigos. El cobro de los aprobados lo registra `seed-funding`; aquí solo la ficha del comercio. */
-export async function seedSponsors(db: KorumPrismaClient, seed: KorumSeedData, plans: InitiativeFundingPlan[]): Promise<void> {
+export async function seedSponsors(db: KorumPrismaClient, seed: KorumSeedData, plans: InitiativeFundingPlan[], keyring: Keyring): Promise<void> {
   for (const sponsor of seed.sponsors) {
     const plan = plans.find((candidate) => candidate.initiativeId === sponsor.initiativeId);
     const paidAt =
       plan?.payments.find((payment) => payment.sponsorId === sponsor.id)?.createdAt ?? plan?.poolPayins.find((payin) => payin.sponsorId === sponsor.id)?.paidAt ?? null;
-    const columns = omit(sponsor, ['initiativeTitle', 'expiresAt']);
+    const columns = omit(sponsor, ['initiativeTitle', 'expiresAt', 'cif']);
+    // El CIF de la semilla viene en claro y se guarda cifrado, como lo hará el alta real (Sprint 3.5). Si ya existía la fila, se completa.
+    const taxId = sealSponsorTaxId(keyring, sponsor.organizationId, sponsor.cif);
     await db.sponsor.upsert({
       where: { id: sponsor.id },
-      create: { ...columns, isMatchingPool: sponsor.isMatchingPool ?? false, expiresAt: new Date(sponsor.expiresAt), paidAt },
+      create: { ...columns, ...taxId, isMatchingPool: sponsor.isMatchingPool ?? false, expiresAt: new Date(sponsor.expiresAt), paidAt },
       update: {}
     });
+    await db.sponsor.updateMany({ where: { id: sponsor.id, cifEnc: null }, data: taxId });
   }
 }
 

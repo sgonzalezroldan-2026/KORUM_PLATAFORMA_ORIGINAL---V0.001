@@ -559,8 +559,8 @@ describe('QA-OPS01 · la ruta de tareas exige CRON_SECRET', () => {
     vi.stubEnv('CRON_SECRET', secret);
     const headers = { authorization: `Bearer ${secret}` };
     expect((await call(headers, 'no-existe')).status).toBe(404);
+    // `DATA_RETENTION_PURGE` ya tiene manejador (Sprint 2.5); `OUTBOX_DISPATCH` lo tendrá en el 2.6.
     expect((await call(headers, 'outbox-dispatch')).status).toBe(404);
-    expect((await call(headers, 'data-retention-purge')).status).toBe(404);
   });
 });
 

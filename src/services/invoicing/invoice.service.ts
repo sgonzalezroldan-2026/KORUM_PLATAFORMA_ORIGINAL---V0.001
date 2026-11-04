@@ -1,6 +1,8 @@
 import { bpsOf } from '@/core/finance/money';
 import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
+import type { Keyring } from '@/core/security/crypto';
 import { validateTaxId } from '@/core/tax/tax-id';
+import { sealInvoiceRecipientTaxId } from '@/core/tax/tax-id-vault';
 import { inTransaction, isUniqueViolation, QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import { InvoicingProviderError, type InvoicingProvider } from './invoicing-provider';
 import { computeVerifactuHash, formatCents, generatedAtOf, invoiceYearOf, issueDateOf, verifactuQrUrl, type VerifactuRecord } from './verifactu-record';
@@ -16,7 +18,10 @@ export interface IssueInvoiceInput {
   organizationId: string;
   issuerTaxId: string;
   recipientName: string;
+  /** En claro solo en memoria: se guarda cifrado con el número de la factura como contexto. */
   recipientTaxId: string;
+  /** Llavero con el que se cifra el NIF del destinatario. */
+  keyring: Keyring;
   concept: string;
   baseAmountCents: number;
   taxRateBps: number;
@@ -82,7 +87,7 @@ export async function issueInvoice(db: Db, input: IssueInvoiceInput, now: Date =
           payoutId: input.payoutId ?? null,
           recipientName: input.recipientName,
           issuerTaxId: input.issuerTaxId,
-          recipientTaxId: recipient.normalized,
+          ...sealInvoiceRecipientTaxId(input.keyring, invoiceNumber, recipient.normalized),
           concept: input.concept,
           baseAmountCents: input.baseAmountCents,
           taxRateBps: input.taxRateBps,

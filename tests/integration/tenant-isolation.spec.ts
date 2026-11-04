@@ -39,7 +39,7 @@ async function createTenant(name: string, brand: string): Promise<Tenant> {
   await db.contribution.create({
     data: { organizationId: organization.id, initiativeId: initiative.id, guestEmail: `donante-${organization.id}@familias.example`, canonicalEmail: `donante-${organization.id}@familias.example`, fiscalYear: 2026, amountCents: 2_500, totalChargedCents: 2_500, paymentMethod: 'CARD', status: 'COMPLETED' }
   });
-  await db.sponsor.create({ data: { organizationId: organization.id, name: `Comercio de ${name}`, cif: 'B-1', contactPerson: 'x', phone: '1', email: 'c@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: uniqueId('C'), expiresAt: new Date('2027-01-01') } });
+  await db.sponsor.create({ data: { organizationId: organization.id, name: `Comercio de ${name}`, contactPerson: 'x', phone: '1', email: 'c@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: uniqueId('C'), expiresAt: new Date('2027-01-01') } });
   await db.idea.create({ data: { organizationId: organization.id, alias: 'Código #FAM-0001', authorCanonicalEmail: `autor-${organization.id}@familias.example`, title: `Idea de ${name}`, category: 'Patios y Deporte', description: 'd', expiresAt: new Date('2027-01-01') } });
 
   const members = await Promise.all(

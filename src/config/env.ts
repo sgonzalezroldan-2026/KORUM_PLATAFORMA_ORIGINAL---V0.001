@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { keyringFromEnv, KeyringConfigurationError } from '@/core/security/crypto';
 
 /**
  * Variables de entorno de KORUM, validadas con Zod y con fallo inmediato (Regla 01 §5).
@@ -42,6 +43,8 @@ const envSchema = z
     BETTER_AUTH_SECRET: secret('BETTER_AUTH_SECRET'),
     ENCRYPTION_KEY: base64Key32,
     ENCRYPTION_KEY_VERSION: z.preprocess(blankToUndefined, z.coerce.number().int().min(1).default(1)),
+    /** Claves anteriores (`versión:clave,…`) mientras dura una rotación: se usan solo para descifrar. */
+    ENCRYPTION_PREVIOUS_KEYS: optional(z.string()),
     DATA_HMAC_SECRET: secret('DATA_HMAC_SECRET'),
     QR_HMAC_SECRET: secret('QR_HMAC_SECRET'),
     CRON_SECRET: secret('CRON_SECRET'),
@@ -70,6 +73,13 @@ const envSchema = z
     NEXT_PUBLIC_DEMO_MODE: z.preprocess(blankToUndefined, z.enum(['true', 'false']).default('false'))
   })
   .superRefine((value, ctx) => {
+    // El llavero entero se valida al arrancar: una clave anterior mal escrita se descubre aquí y no al descifrar el primer secreto.
+    try {
+      keyringFromEnv(value);
+    } catch (error) {
+      if (!(error instanceof KeyringConfigurationError)) throw error;
+      ctx.addIssue({ code: 'custom', path: ['ENCRYPTION_PREVIOUS_KEYS'], message: error.message });
+    }
     // El simulador de pagos solo puede estar en producción si es el entorno de demostración declarado.
     if (value.NODE_ENV === 'production' && value.PAYCOMET_MODE === 'mock' && value.NEXT_PUBLIC_DEMO_MODE !== 'true') {
       ctx.addIssue({

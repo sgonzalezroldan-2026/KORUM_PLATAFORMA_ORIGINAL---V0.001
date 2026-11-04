@@ -33,6 +33,7 @@ export interface MockPaycometOptions {
   /** Fuerza un fallo en una operación, para probar reintentos y cortes de conexión. */
   failRefund?: MockFailure;
   failSplit?: MockFailure;
+  failDeleteCard?: MockFailure;
 }
 
 interface MockCharge {
@@ -49,6 +50,8 @@ export class MockPaycometProvider implements PaymentProvider {
   readonly mode = 'mock' as const;
   readonly name = 'paycomet';
   readonly calls: Array<{ operation: 'charge' | 'refund' | 'split'; order: string; amountCents: number; authCode?: string; splitId?: string }> = [];
+  /** Tarjetas cuyo borrado se ha pedido (`idUser`). */
+  readonly deletedCards: number[] = [];
   private readonly charges = new Map<string, MockCharge>();
   private readonly now: () => Date;
 
@@ -82,6 +85,11 @@ export class MockPaycometProvider implements PaymentProvider {
   async tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult> {
     const digest = createHash('sha256').update(request.jetToken).digest();
     return { idUser: digest.readUInt32BE(0), tokenUser: digest.subarray(4, 20).toString('hex') };
+  }
+
+  async deleteCard(card: TokenizeResult): Promise<void> {
+    this.throwIfFailing(this.options.failDeleteCard, String(card.idUser));
+    this.deletedCards.push(card.idUser);
   }
 
   async refund(request: RefundRequest): Promise<RefundResult> {

@@ -102,6 +102,14 @@ export class PaycometAdapter implements PaymentProvider {
     return this.parse(cardResponse, await this.post('/v1/cards', { terminal: this.terminal, jetToken: request.jetToken }), 'tokenización');
   }
 
+  /**
+   * `POST /v1/cards/delete` (borrado de usuario de la especificación REST). Suposición contra la documentación, sin probar en el sandbox:
+   * confirmar el nombre de la operación y qué responde si la tarjeta ya no existe (tareas aplazadas, ficha 6.1).
+   */
+  async deleteCard(card: TokenizeResult): Promise<void> {
+    await this.post('/v1/cards/delete', { terminal: this.terminal, idUser: card.idUser, tokenUser: card.tokenUser });
+  }
+
   async refund(request: RefundRequest): Promise<RefundResult> {
     this.assertSafeOrder(request.order);
     const body = await this.post(`/v1/payments/${encodeURIComponent(request.order)}/refund`, {

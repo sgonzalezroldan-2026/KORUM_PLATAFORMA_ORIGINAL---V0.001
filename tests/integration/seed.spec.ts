@@ -5,14 +5,15 @@ import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.serv
 import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
 import { releaseInitiativeQuotas, reserveInitiativeQuotas } from '@/core/finance/quota-reservation';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger } from '@/core/finance/ledger.service';
+import { openInvoiceRecipientTaxId, openSponsorTaxId } from '@/core/tax/tax-id-vault';
 import { verifyPassSignature } from '@/core/ticketing/qr-signature';
 import { seedDatabase } from '@/seed/seed';
 import { loadSeedData } from '@/seed/seed-types';
 import { SeedReconciliationError, verifySeed, type SeedReport } from '@/seed/seed-verify';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { createInitiative, createTestClient, TEST_SCHEMA } from './test-database';
+import { createInitiative, createTestClient, TEST_KEYRING, TEST_SCHEMA } from './test-database';
 
-const SECRETS = { hmacSecret: 'integration-data-hmac-secret-0123456789', qrSecret: 'integration-qr-hmac-secret-0123456789ab' };
+const SECRETS = { hmacSecret: 'integration-data-hmac-secret-0123456789', qrSecret: 'integration-qr-hmac-secret-0123456789ab', keyring: TEST_KEYRING };
 const seed = loadSeedData();
 /** Un día dentro del curso 2026-2027 de la semilla: la reserva de cupos renueva el curso de la entidad si el reloj real ya lo ha pasado. */
 const SEED_DAY = new Date('2026-11-04T10:00:00Z');
@@ -57,6 +58,19 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(await db.invoice.count({ where: { invoiceNumber: { in: ['FAC-2025-0014', 'FAC-2026-0019'] } } })).toBe(2);
     expect(await db.supportTicket.count({ where: { ticketCode: 'TCK-901' } })).toBe(1);
     expect(await db.user.count({ where: { isSuperadmin: true, id: 'user-superadmin' } })).toBe(1);
+  });
+
+  it('el CIF de los comercios y el NIF de los destinatarios de factura se guardan cifrados (Sprint 2.5)', async () => {
+    const compact = (taxId: string) => taxId.toUpperCase().replace(/[\s.-]/g, '');
+    for (const sponsor of seed.sponsors) {
+      const row = await db.sponsor.findUniqueOrThrow({ where: { id: sponsor.id }, select: { organizationId: true, cifEnc: true, cifKeyVersion: true } });
+      expect(row.cifEnc).not.toContain(compact(sponsor.cif));
+      expect(openSponsorTaxId(TEST_KEYRING, { ...row, cifEnc: row.cifEnc! })).toBe(compact(sponsor.cif));
+    }
+    for (const invoice of seed.invoices) {
+      const row = await db.invoice.findUniqueOrThrow({ where: { invoiceNumber: invoice.invoiceNumber }, select: { invoiceNumber: true, recipientTaxIdEnc: true, recipientTaxIdKeyVersion: true } });
+      expect(openInvoiceRecipientTaxId(TEST_KEYRING, { ...row, recipientTaxIdEnc: row.recipientTaxIdEnc! })).toBe(compact(invoice.recipientTaxId));
+    }
   });
 
   it('los saldos del libro mayor coinciden con raisedCents en las 8 iniciativas (0 céntimos de desviación)', async () => {
@@ -319,7 +333,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     });
     expect(initiative.id).toBeGreaterThan(8);
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Nuevo', cif: 'B-00000000', contactPerson: 'x', phone: '0', email: 'n@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: 'NUEVO', expiresAt: new Date('2027-01-01') }
+      data: { organizationId: organization.id, name: 'Nuevo', contactPerson: 'x', phone: '0', email: 'n@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: 'NUEVO', expiresAt: new Date('2027-01-01') }
     });
     expect(sponsor.id).toBeGreaterThan(5);
   });

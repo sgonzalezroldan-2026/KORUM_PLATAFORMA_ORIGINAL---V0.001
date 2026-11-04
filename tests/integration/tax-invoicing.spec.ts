@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createKeyring } from '@/core/security/crypto';
 import { exportModel182, Model182NotAllowedError, sealDonorTaxId } from '@/core/tax/model182.service';
 import { validateTaxId } from '@/core/tax/tax-id';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -12,7 +13,8 @@ import { createInitiative, createOrganization, createTestClient, uniqueId } from
 
 const ENCRYPTION_KEY = randomBytes(32).toString('base64');
 const HMAC_SECRET = 'secreto-de-integracion-de-los-nif-0123456789';
-const keys = { encryptionKey: ENCRYPTION_KEY, keyVersion: 1, hmacSecret: HMAC_SECRET };
+const KEYRING = createKeyring({ version: 1, key: ENCRYPTION_KEY });
+const keys = { keyring: KEYRING, hmacSecret: HMAC_SECRET };
 const ISSUER = 'B12345674';
 let db: KorumPrismaClient;
 
@@ -83,7 +85,7 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
     await donation(organization.id, initiative.id, 9_000, { status: 'CHARGEBACK', taxId: 'Z1234567R' });
     await donation(organization.id, initiative.id, 9_000, { status: 'PENDING', taxId: 'Z1234567R' });
 
-    const file = await exportModel182(db, ENCRYPTION_KEY, director(organization.id), request(organization.id));
+    const file = await exportModel182(db, KEYRING, director(organization.id), request(organization.id));
     expect(file.donorCount).toBe(2);
     expect(file.totalCents).toBe(14_000);
     expect(file.excluded).toEqual({ contributions: 0, amountCents: 0 });
@@ -107,7 +109,7 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
     await donation(organization.id, initiative.id, 3_000, { taxId: null });
     await donation(organization.id, initiative.id, 4_000, { taxId: 'X1234567L', province: null });
     await donation(organization.id, initiative.id, 500, { taxId: 'Y1234567X', province: '77' });
-    const file = await exportModel182(db, ENCRYPTION_KEY, director(organization.id), request(organization.id));
+    const file = await exportModel182(db, KEYRING, director(organization.id), request(organization.id));
     expect(file.donorCount).toBe(1);
     expect(file.totalCents).toBe(3_000);
     expect(file.excluded).toEqual({ contributions: 3, amountCents: 7_500 });
@@ -124,7 +126,7 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
     // Donar a otra entidad no hace recurrente en esta.
     await donation(other.organization.id, other.initiative.id, 1_000, { fiscalYear: 2025, taxId: 'X1234567L' });
 
-    const file = await exportModel182(db, ENCRYPTION_KEY, director(organization.id), request(organization.id));
+    const file = await exportModel182(db, KEYRING, director(organization.id), request(organization.id));
     const byTaxId = new Map(file.content.trimEnd().split('\r\n').slice(1).map((line) => [line.slice(17, 26), line]));
     expect(byTaxId.get('12345678Z')!.slice(131, 132)).toBe('1');
     expect(byTaxId.get('X1234567L')!.slice(131, 132)).toBe('2');
@@ -132,18 +134,18 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
 
   it('una entidad sin verificar no puede exportar, y queda registrado', async () => {
     const pending = await ley49Org({ ley49VerifiedAt: null, cif: validCif() });
-    await expect(exportModel182(db, ENCRYPTION_KEY, director(pending.organization.id), request(pending.organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
+    await expect(exportModel182(db, KEYRING, director(pending.organization.id), request(pending.organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
     expect(await db.auditLog.count({ where: { action: 'tax.model182_denied', organizationId: pending.organization.id } })).toBe(1);
     const none = await ley49Org({ ley49: false, ley49VerifiedAt: null });
-    await expect(exportModel182(db, ENCRYPTION_KEY, director(none.organization.id), request(none.organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
+    await expect(exportModel182(db, KEYRING, director(none.organization.id), request(none.organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
   });
 
   it('otra entidad, un voluntario de portería o alguien sin sesión no pueden exportar', async () => {
     const { organization } = await orgWithCif();
     const other = await orgWithCif();
-    await expect(exportModel182(db, ENCRYPTION_KEY, director(other.organization.id), request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
-    await expect(exportModel182(db, ENCRYPTION_KEY, { kind: 'anonymous' }, request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
-    await expect(exportModel182(db, ENCRYPTION_KEY, { kind: 'gate', gateSessionId: 'x', organizationId: organization.id, initiativeId: 1 }, request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(exportModel182(db, KEYRING, director(other.organization.id), request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(exportModel182(db, KEYRING, { kind: 'anonymous' }, request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(exportModel182(db, KEYRING, { kind: 'gate', gateSessionId: 'x', organizationId: organization.id, initiativeId: 1 }, request(organization.id))).rejects.toBeInstanceOf(TenantAccessError);
   });
 
   it('el NIF se guarda cifrado y la auditoría solo lleva cifras', async () => {
@@ -151,7 +153,7 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
     const row = await donation(organization.id, initiative.id, 1_000);
     expect(row.donorTaxIdEnc).not.toContain('12345678Z');
     expect(row.donorTaxIdHmac).not.toContain('12345678Z');
-    await exportModel182(db, ENCRYPTION_KEY, director(organization.id), request(organization.id));
+    await exportModel182(db, KEYRING, director(organization.id), request(organization.id));
     const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'tax.model182_exported', organizationId: organization.id } });
     expect(JSON.stringify(audit.metadataJson)).not.toContain('12345678Z');
     expect(audit.metadataJson).toMatchObject({ donorCount: 1, totalCents: 1_000 });
@@ -163,13 +165,13 @@ describe('QA-REG02 · exportación del Modelo 182', () => {
 
   it('una entidad sin CIF no puede presentar', async () => {
     const { organization } = await ley49Org();
-    await expect(exportModel182(db, ENCRYPTION_KEY, director(organization.id), request(organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
+    await expect(exportModel182(db, KEYRING, director(organization.id), request(organization.id))).rejects.toBeInstanceOf(Model182NotAllowedError);
   });
 
 });
 
 describe('QA-REG02 · facturas Veri*factu', () => {
-  const base = (organizationId: string, baseAmountCents = 3_750) => ({ idempotencyKey: uniqueId('factura'), organizationId, issuerTaxId: ISSUER, recipientName: 'Comercio del Barrio SL', recipientTaxId: 'B12345674', concept: 'Fee de gestión publicitaria', baseAmountCents, taxRateBps: 2100 });
+  const base = (organizationId: string, baseAmountCents = 3_750) => ({ idempotencyKey: uniqueId('factura'), organizationId, issuerTaxId: ISSUER, recipientName: 'Comercio del Barrio SL', recipientTaxId: 'B12345674', keyring: KEYRING, concept: 'Fee de gestión publicitaria', baseAmountCents, taxRateBps: 2100 });
 
   it('números consecutivos, huella encadenada y QR', async () => {
     const organization = await createOrganization(db);

@@ -1,6 +1,8 @@
 import { inject } from 'vitest';
 import type { Prisma } from '@/generated/prisma/client';
+import { createKeyring } from '@/core/security/crypto';
 import { createPrismaClient, type KorumPrismaClient } from '@/lib/prisma';
+import { MemoryStorage } from '@/services/storage/memory-storage';
 import { TEST_SCHEMA } from './test-schema';
 
 export { TEST_SCHEMA };
@@ -16,6 +18,17 @@ export function createTestClient(): KorumPrismaClient {
   const realPostgres = Boolean(process.env.TEST_DATABASE_URL);
   return createPrismaClient({ connectionString: inject('testDatabaseUrl'), schema: TEST_SCHEMA, maxConnections: realPostgres ? undefined : 1 });
 }
+
+/** Llavero de las pruebas: una clave fija de 32 bytes, versión 1. */
+export const TEST_KEYRING = createKeyring({ version: 1, key: Buffer.alloc(32, 9).toString('base64') });
+export const TEST_HMAC_SECRET = 'integration-data-hmac-secret-0123456789';
+
+/** Dependencias de las tareas que no mueven dinero: los proveedores de pago y facturación fallan si alguien los usa. */
+export const testJobDeps = () => ({
+  storageProvider: () => new MemoryStorage(),
+  keyring: () => TEST_KEYRING,
+  hmacSecret: () => TEST_HMAC_SECRET
+});
 
 /** Nombre de tabla cualificado para el SQL escrito a mano de las pruebas. */
 export const table = (name: string) => `"${TEST_SCHEMA}"."${name}"`;

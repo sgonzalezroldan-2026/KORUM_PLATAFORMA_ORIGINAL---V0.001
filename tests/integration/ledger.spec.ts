@@ -181,6 +181,13 @@ describe('QA-C03 · la base de datos protege la partida doble aunque se salte el
     await expect(db.escrowLedgerEntry.update({ where: { id: entryId }, data: { amountCents: 1 } })).rejects.toBeInstanceOf(ImmutableRecordError);
     await expect(db.escrowLedgerEntry.delete({ where: { id: entryId } })).rejects.toBeInstanceOf(ImmutableRecordError);
     await expect(db.auditLog.deleteMany({})).rejects.toBeInstanceOf(ImmutableRecordError);
+    // La única edición admitida (Sprint 2.5): vaciar a la vez la IP y el navegador vencidos. Con cualquier otro campo, no.
+    const audit = await db.auditLog.create({ data: { actorType: 'SYSTEM', action: 'test.audit', targetType: 'X', targetId: uniqueId('a'), ipHash: 'hash', userAgent: 'navegador' } });
+    await expect(db.auditLog.updateMany({ where: { id: audit.id }, data: { ipHash: null, userAgent: null, action: 'cambiado' } })).rejects.toBeInstanceOf(ImmutableRecordError);
+    await expect(db.auditLog.updateMany({ where: { id: audit.id }, data: { ipHash: 'otra' } })).rejects.toBeInstanceOf(ImmutableRecordError);
+    await expect(db.auditLog.update({ where: { id: audit.id }, data: { ipHash: null, userAgent: null } })).rejects.toBeInstanceOf(ImmutableRecordError);
+    expect(await db.auditLog.updateMany({ where: { id: audit.id }, data: { ipHash: null, userAgent: null } })).toEqual({ count: 1 });
+    expect(await db.auditLog.findUniqueOrThrow({ where: { id: audit.id } })).toMatchObject({ action: 'test.audit', ipHash: null, userAgent: null });
     await expect(
       db.ledgerJournal.upsert({ where: { id: journal.id }, create: { idempotencyKey: uniqueId('x'), kind: 'GATEWAY_FEE', description: 'x' }, update: { description: 'x' } })
     ).rejects.toBeInstanceOf(ImmutableRecordError);

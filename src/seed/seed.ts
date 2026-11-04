@@ -29,7 +29,7 @@ export async function seedDatabase(db: KorumPrismaClient, options: SeedOptions):
   await seedOrganizations(db, seed);
   log('Iniciativas y comercios…');
   await seedInitiatives(db, seed, plans);
-  await seedSponsors(db, seed, plans);
+  await seedSponsors(db, seed, plans, options.keyring);
   log('Cobros, pases QR y libro mayor…');
   try {
     await seedFunding(db, seed, plans, options, options.schema ?? 'public', log);
@@ -41,7 +41,7 @@ export async function seedDatabase(db: KorumPrismaClient, options: SeedOptions):
   }
   log('Liquidaciones, facturas, ideas y soporte…');
   const payoutIds = await seedPayouts(db, seed, options);
-  await seedInvoices(db, seed, payoutIds);
+  await seedInvoices(db, seed, payoutIds, options.keyring);
   await seedIdeas(db, seed, options);
   await resetSequences(db, options.schema ?? 'public');
   log('Conciliando el libro mayor con la semilla…');
