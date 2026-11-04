@@ -1,4 +1,5 @@
 import { EnvValidationError, getEnv } from '@/config/env';
+import { initErrorReporting } from '@/lib/error-reporting';
 
 /**
  * Falla pronto (QA-C01): si falta o es inválida una variable crítica, el servidor muestra qué hay que corregir y se detiene.
@@ -14,4 +15,6 @@ if (process.env.NEXT_PHASE !== 'phase-production-build') {
     console.error(`\n${error.message}\n`);
     process.exit(1);
   }
+  // Sentry solo si hay DSN; el DSN es público por diseño (Regla 01 §5).
+  initErrorReporting({ dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined, environment: process.env.NODE_ENV ?? 'development' });
 }

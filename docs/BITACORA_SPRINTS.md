@@ -19,6 +19,55 @@
 
 ## Entradas
 
+### Sprint 2.4 — Operación: tareas programadas, conciliación, ficheros, observabilidad y límites de intentos · 2026-11-04 · terminado
+
+- **Modelo y esfuerzo usados:** constructor Claude Sonnet 5.5 en la sesión principal (el asistente no puede leer el esfuerzo configurado; la ficha recomienda «alto»). Auditoría: `fintech-escrow-auditor` y `antifraud-legal-guardian` (tres rondas cada uno) y `qa-e2e-verifier` (certificación final).
+- **Qué se ha hecho:**
+  - **`src/core/jobs/`:** cola de tareas sobre la tabla `Job` (`job-schedule.ts`, `job-types.ts`, `job-runner.ts`, `job-registry.ts`, `job-deps.ts`, `ops-alerts.ts`, `notify.ts`) y 11 manejadores en `handlers/`: `campaign-expiry`, `mass-refund`, `split-window-guard`, `psp-reconciliation`, `quota-renewal`, `ticketing-invoicing` (liberación de reservas e `INVOICE_SUBMIT`), `housekeeping`, `model182-reminder` y `recurring-billing` (avisos y detección de los tres cobros recurrentes aplazados).
+  - **`src/app/api/cron/[job]/route.ts`** (`GET` con `Authorization: Bearer $CRON_SECRET`, comparación en tiempo constante, `401` antes de tocar la base, `404` para tareas desconocidas o sin manejador, `maxDuration = 300`) y **`vercel.json`** con 13 tareas, vigilado por un test contra `JOB_SPECS`.
+  - **Plan gratuito de Vercel (decisión del promotor, 04-11-2026, tras el cierre inicial):** todas las tareas quedan **diarias** (`cron`) y cada una guarda su frecuencia objetivo para Pro (`proCron`, `VERCEL_PLAN = 'hobby'`); un test impide desplegar una expresión que corra más de una vez al día. `job-drain.ts` (`drainBatches`) hace que cada llamada **vacíe los lotes** (hasta que no quede nada, 240 s o 40 lotes) para que una devolución masiva no tarde semanas.
+  - **Esquema:** migraciones `20261104090000_operations` y `20261104100000_ops_alert_escrow_leftover`: cuatro `JobType` nuevos, tabla `OpsAlert` (alertas con estado, `dedupeKey` único y detalle sin datos personales), `Invoice.sentAt` e índices de purga y de reembolso.
+  - **Pagos:** `PaymentProvider.listCharges` (adaptador de Paycomet con `POST /v1/payments/search` y simulador con ganchos), `removeFromInitiative` con fecha, `eventAlreadyHeld`, `eventHeld` en `approveSignedPayout`, `resolveUnknownInvoice`.
+  - **Cupos:** `academic-year.ts` (el curso nuevo empieza el 22 de agosto UTC), `renewOrganizationQuotas` (solo hacia delante, atómica, idempotente) y renovación previa al reservar cupos.
+  - **Conciliación:** `src/core/finance/reconciliation.ts` compara importe y `AuthCode` de cada cobro; ventana de recuperación de hasta 14 días con alerta si hay hueco; comprueba `PSP_CLEARING ≥ 0`, `raisedCents` frente al libro mayor y contracargos sin confirmar.
+  - **Ficheros:** `src/services/storage/` (interfaz `StorageProvider`, adaptador de Supabase por API REST sin SDK, simulador en memoria, tipo verificado por los primeros bytes, reglas por finalidad con `FILE_RULES`, `getFileUrl` con guardia de entidad y URL firmadas de 5 minutos).
+  - **Observabilidad:** `@sentry/node@10.76.1` (exacto), solo servidor, con `scrubEvent` y `redactText` (`src/lib/redact.ts`, patrones acotados contra ReDoS) y `onRequestError` que envía solo el patrón de ruta.
+  - **Límites de intentos:** webhook de Paycomet por subred (HMAC), liberado si la firma es válida; `requestSignature` limitado a 5 cada 10 minutos por persona y objetivo; `purgeStaleAttempts` solo sobre contadores con ventana (nunca `gate-pin:event:*`).
+  - **Cierre posterior a petición del promotor (04-11-2026):** (1) `resolveUnknownRefund` (movida a `manual-resolutions.ts` para que `payment-reversals.ts` baje de 300 a unas 285 líneas), `resolveUnknownSplit` y `resolveUnknownInvoice` ya exigen por sí mismas una cuenta de Super-Admin con verificación en dos pasos (`src/core/security/superadmin-guard.ts`) y dejan un aviso en la auditoría si no; (2) `CAMPAIGN_EXPIRY` recorre las candidatas con cursor por identificador, así que las que nunca pueden vencer ya no dejan sin atender a las demás; (3) lo del plan gratuito de Vercel (arriba). Auditoría posterior (`antifraud-legal-guardian`, APROBADO sin hallazgos críticos ni altos): la guardia también protege `reactivateRejectedRefund`, rechaza cuentas anonimizadas y registra el caso al que se intentó acceder; el envío de facturas respeta el límite de tiempo de la llamada. Aceptados y anotados en las fichas: la guardia valida el identificador recibido, no una sesión (ficha 3.2); con Hobby las facturas Veri\*factu salen una vez al día (ficha 6.1); `now` es el mismo en todos los lotes de una llamada; los recuentos de estado (`stuck`, `closed`) se suman entre lotes en el resumen.
+  - **Tests:** `tests/unit/jobs-storage.spec.ts` (~75), `tests/unit/webhook-rate-limit.spec.ts`, `tests/integration/jobs-runner.spec.ts` y `tests/integration/jobs-payments-ops.spec.ts`, más ajustes en `env.spec`, `paycomet-escrow.spec` y `seed.spec`.
+  - **Documentos:** `DECISIONES_TECNICAS.md` §7 y §7.1, skill `korum-escrow-payments` §9 (sincronizada con `.claude/`), `.env.example`, ficha 2.4 marcada `[x]` y notas «Heredado del Sprint 2.4» en las fichas 2.5, 2.6, 3.2, 3.4, 3.5, 3.6, 4.4, 5.1, 5.4 y 6.1.
+- **Decisiones tomadas (por delegación del promotor):**
+  - **Un `Job` por hueco de tiempo** (`<TIPO>:<inicio del hueco UTC>`), reclamado con `updateMany` condicional y marca propia (`lockedBy`); un bloqueo vencido se recupera a los 15 min. Reintentos con espera `min(60 s·2^(n-1), 6 h)`; a los 5 intentos, `FAILED` y alerta `JOB_FAILED`.
+  - **`OpsAlert` en vez de `AuditLog`** para lo que la consola mostrará como abierto o resuelto (el registro de auditoría es inmutable y no tiene estado).
+  - **Devoluciones masivas:** espera `10 min·2^(n-1)`, máximo 5 intentos, la alerta `REFUND_REJECTED` hace de contador; un resultado `UNKNOWN` nunca se reintenta (`REFUND_STUCK`); la tarea solo falla si no avanzó nada; al cerrar la iniciativa, `ESCROW_LEFTOVER` avisa si queda dinero retenido.
+  - **Evento celebrado + contracargo (decisión del 01-11-2026):** un evento de taquilla cuyo cierre ya pasó no se reabre; se liquida lo recaudado. Las rifas siguen exigiendo sorteo completo.
+  - **Tareas aplazadas, solo detección (no mueven dinero):** `MONTHLY_TOPUP`, `SPONSOR_RENEWAL_CHARGE` y `CREDIT_POOL_EXPIRY` abren alertas agregadas; `SPONSOR_RENEWAL_NOTICE` escribe en `OutboxMessage`; `OUTBOX_DISPATCH` y `DATA_RETENTION_PURGE` no tienen manejador hasta los sprints 2.6 y 2.5 (la ruta responde 404).
+  - **Sentry con `@sentry/node`, no `@sentry/nextjs`:** este último (11.10.0 y 10.76.1) arrastraba vulnerabilidades moderadas por el empaquetador; `npm audit --omit=dev` queda a 0.
+  - **Supuestos contra el simulador** (a confirmar con Paycomet; bloquean el paso a cobros reales, ficha 6.1): la IP original de las devoluciones es el ajuste `paycomet.serverIp`; el endpoint `POST /v1/payments/search` y su límite de 10.000 resultados; las fechas de la búsqueda se interpretan en UTC.
+- **Riesgos aceptados y menores sin corregir:**
+  - `CREDIT_POOL` solo aplica el tope de 85 días desde `paidAt`; falta la fecha de entrada en la bolsa (sprint 3.5).
+  - Al limpiar textos de error se pierden algunos identificadores técnicos largos (tokens, UUID): es la segunda barrera, no la primera.
+  - La conciliación solo cubre cobros; devoluciones y repartos quedan para la ficha 6.1.
+  - `clearRefundClaimInTx` con desplazamiento de reloj podría duplicar una devolución: ficha 6.1.
+  - El límite del webhook confía en `x-forwarded-for`, válido solo tras Vercel.
+  - Imágenes públicas conservan los metadatos EXIF (fichas 3.6 y 4.4).
+  - `getFileUrl` y `uploadFile` aún no los llama ninguna ruta: al conectarlos hará falta límite de intentos y de tamaño del cuerpo.
+  - Las tres resoluciones manuales comprueban que la cuenta es Super-Admin con 2FA configurada, pero que **la sesión actual** superó el segundo factor lo comprobará la capa de acceso (sprint 3.2).
+  - Al crear entidades hay que fijar `quotaPeriod` (sprint 3.2).
+- **Pendiente / deuda, a decidir o hacer por el promotor:** pasar al plan **Pro** de Vercel (hoy gratuito, pero sus condiciones lo limitan a uso no comercial: **antes del primer cobro real**); crear los cubos de Supabase como privados y fijar el DSN de Sentry de la UE (ficha 6.1); respuestas de Paycomet sobre IP original, consulta de cobros y zona horaria.
+- **Incidencias:**
+  - Tamaño: unas 1.550 líneas de producción nuevas frente a ~850 de la ficha, por las deudas heredadas y las correcciones de auditoría. Ningún archivo pasa de 300 líneas; `payment-reversals.ts` está exactamente en 300, así que conviene dividirlo antes de añadirle nada.
+  - Tres rondas de auditoría con correcciones, entre ellas: expresión regular vulnerable a ReDoS en el limpiador de emails, fuga del nombre de la transacción a Sentry, guardia de `getFileUrl`, espera de reintentos y contador de intentos de devolución, cursos que cambian a mitad de la renovación, ventana de recuperación de la conciliación, hora UTC con 3 h de margen, avisos de patrocinio por cursor y la alerta `ESCROW_LEFTOVER`.
+  - La prueba final de integración encontró un fallo real (una devolución sin aprobar reiniciaba su contador de intentos): corregido y repetido.
+  - Base local: las dos migraciones se aplicaron con `npm run db:migrate`. La suite de integración tarda unos 20 minutos y recrea `korum_test`: no se ejecutan dos a la vez.
+- **Puertas:**
+  - **P1 ✅** invariantes (0 violaciones, 180 archivos, 13 migraciones), `db:validate`, `typecheck` y `lint` a 0.
+  - **P2 ✅** 529/529 unitarias y 313/313 de integración (12 archivos).
+  - **P3 ✅** `fintech-escrow-auditor` y `antifraud-legal-guardian` aprobados; `qa-e2e-verifier` aprobado con las 17 mutaciones detectadas y revertidas.
+  - **P4 ✅** el sprint no tiene interfaz: `test:e2e` 41 pasan y 3 omitidas a propósito (escritorio y móvil con axe), compilación de producción y prueba de la ruta cron (sin cabecera 401, secreto malo 401, `POST` 405, tarea desconocida 404, `outbox-dispatch` 404, secreto correcto 200).
+  - **P5 ✅** todas las puertas repetidas tras las correcciones.
+- **Siguiente sprint:** 2.5 — Ajustes cifrados de la plataforma, registro de auditoría y privacidad RGPD · modelo recomendado: constructor Claude Opus 5.5 · alto; auditoría Claude Opus 5.5 · alto.
+
 ### Sprint 2.3 — Taquilla QR, PIN de portería, sorteo certificado y fiscalidad · 2026-11-01 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 en la sesión principal, sin subagente constructor (el asistente no puede leer el esfuerzo configurado). Auditoría: `fintech-escrow-auditor` (tres pases), `antifraud-legal-guardian` (tres pases) y `qa-e2e-verifier`.

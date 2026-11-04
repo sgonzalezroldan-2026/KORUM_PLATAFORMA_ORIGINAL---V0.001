@@ -76,20 +76,22 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
 /**
  * Quita el cobro de los contadores de la iniciativa, en la misma transacción que su asiento. Si baja de la meta antes de liquidar,
  * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. Una rifa ya sorteada no se reabre: no puede volver a vender
- * y se quedaría sin salida; se liquida lo que queda.
+ * y se quedaría sin salida; se liquida lo que queda. Tampoco se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
+ * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026).
  */
-async function removeFromInitiative(tx: Db, contribution: ContributionRow): Promise<void> {
+async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
-  const releasedTickets = await revokePassInTx(tx, contribution.id, new Date());
+  const releasedTickets = await revokePassInTx(tx, contribution.id, at);
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
     data: { raisedCents: { decrement: contribution.amountCents + bonusCents }, totalContributions: { decrement: 1 }, ticketsSold: { decrement: releasedTickets } },
-    select: { raisedCents: true, goalCents: true, status: true, format: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
+    select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
   });
   if (contribution.groupName) {
     await tx.initiativeCourseProgress.updateMany({ where: { initiativeId: contribution.initiativeId, groupName: contribution.groupName, familiesCount: { gt: 0 } }, data: { familiesCount: { decrement: 1 } } });
   }
-  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0) {
+  const eventAlreadyHeld = initiative.format === 'TICKETING' && initiative.closesAt <= at;
+  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0 && !eventAlreadyHeld) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
   }
 }
@@ -98,7 +100,7 @@ async function removeFromInitiative(tx: Db, contribution: ContributionRow): Prom
  * Aprueba el reembolso dentro de la transacción de quien llama: asiento, contadores y estado. Repetirla no hace nada. Con `lateCharge`, el
  * cobro acaba de entrar y no formó parte de ninguna liquidación: se puede devolver aunque la iniciativa ya esté liquidada.
  */
-export async function approveRefundInTx(tx: Db, contributionId: number, options: { lateCharge?: boolean } = {}): Promise<void> {
+export async function approveRefundInTx(tx: Db, contributionId: number, options: { lateCharge?: boolean; at?: Date } = {}): Promise<void> {
   const contribution = await loadLockedContribution(tx, { id: contributionId });
   if (!contribution) throw new RefundNotAllowedError(contributionId, 'no existe');
   if (contribution.status !== 'COMPLETED') return;
@@ -116,7 +118,7 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
     createdById: 'system',
     lines: refundApprovalLines(await payinLinesOf(tx, contribution), contribution.organizationId, contribution.totalChargedCents)
   });
-  await removeFromInitiative(tx, contribution);
+  await removeFromInitiative(tx, contribution, options.at ?? new Date());
 }
 
 /** Registra que el dinero ya ha vuelto al medio de pago. Idempotente: lo pueden avisar la respuesta de la API y el webhook. */
@@ -202,22 +204,9 @@ export async function refundContribution(db: Db, provider: PaymentProvider, cont
     if (contribution.type !== 'DONATION' && contribution.type !== 'TICKET') throw new RefundNotAllowedError(contributionId, `las aportaciones de tipo ${contribution.type} no se reembolsan así`);
     if (!REFUNDABLE_INITIATIVE_STATUSES.has(contribution.initiative.status)) throw new RefundNotAllowedError(contributionId, `la iniciativa está en estado ${contribution.initiative.status}`);
     if (contribution.status !== 'COMPLETED') throw new RefundNotAllowedError(contributionId, `está en estado ${contribution.status}`);
-    await approveRefundInTx(tx, contributionId);
+    await approveRefundInTx(tx, contributionId, { at: now });
   });
   return executePendingRefund(db, provider, contributionId, originalIp, now);
-}
-
-/** Resuelve una devolución de resultado desconocido, cuando una persona ya ha comprobado en Paycomet qué pasó. Queda en la auditoría. */
-export async function resolveUnknownRefund(db: Db, contributionId: number, resolution: { refunded: boolean; resolvedById: string }, now: Date = new Date()): Promise<void> {
-  await inTransaction(db, async (tx) => {
-    const contribution = await loadLockedContribution(tx, { id: contributionId });
-    if (contribution?.status !== 'REFUND_PENDING' || !contribution.refundSendingAt) throw new RefundNotAllowedError(contributionId, 'no tiene una devolución de resultado desconocido');
-    if (resolution.refunded) await settleRefundInTx(tx, contributionId, now);
-    else await tx.contribution.update({ where: { id: contributionId }, data: { refundSendingAt: null } });
-    await tx.auditLog.create({
-      data: { actorType: 'USER', actorUserId: resolution.resolvedById, organizationId: contribution.organizationId, action: 'payment.refund_resolved', targetType: 'Contribution', targetId: String(contributionId), metadataJson: { refunded: resolution.refunded } }
-    });
-  });
 }
 
 function assertMatchesCharge(contribution: ContributionRow, notification: Pick<PaymentNotification, 'order' | 'amountCents' | 'currency'>, label: string): void {
@@ -226,6 +215,12 @@ function assertMatchesCharge(contribution: ContributionRow, notification: Pick<P
     throw new PaymentReconciliationError(`${label} de ${notification.amountCents} sobre un cobro de ${contribution.totalChargedCents} (${notification.order}): los parciales se revisan a mano.`);
   }
 }
+
+/**
+ * Momento que decide si un evento ya se celebró: el más tardío entre la fecha del banco y el instante en que se procesa. Un aviso atrasado o reintentado
+ * con fecha anterior al evento, procesado después, no debe reabrir una campaña que `CAMPAIGN_EXPIRY` acabaría venciendo y devolviendo.
+ */
+const laterOf = (occurredAt: Date): Date => new Date(Math.max(occurredAt.getTime(), Date.now()));
 
 /** Un reembolso que Paycomet confirma: el pedido por KORUM, o uno hecho desde su panel. Si ya se liquidó, el dinero ya ha salido y lo asume KORUM. */
 export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNotification, occurredAt: Date): Promise<void> {
@@ -253,7 +248,7 @@ export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNoti
     });
     return;
   }
-  if (contribution.status === 'COMPLETED') await approveRefundInTx(tx, contribution.id);
+  if (contribution.status === 'COMPLETED') await approveRefundInTx(tx, contribution.id, { at: laterOf(occurredAt) });
   await settleRefundInTx(tx, contribution.id, occurredAt);
 }
 
@@ -280,7 +275,7 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
     createdById: 'webhook',
     lines: chargebackLines(mode, mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution) : [], contribution.organizationId, contribution.totalChargedCents)
   });
-  if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution);
+  if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution, laterOf(occurredAt));
   else await revokePassInTx(tx, contribution.id, occurredAt);
   await tx.auditLog.create({
     data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.chargeback', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { mode, amountCents: notification.amountCents, initiativeId: contribution.initiativeId } }

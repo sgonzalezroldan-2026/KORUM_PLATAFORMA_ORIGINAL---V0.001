@@ -40,3 +40,27 @@ export async function lastAttemptAt(db: Db, key: string): Promise<number | null>
 export async function clearAttempts(db: Db, key: string): Promise<void> {
   await db.rateLimit.deleteMany({ where: { key } });
 }
+
+export interface PurgeRule {
+  /** Prefijo de las claves de esta regla, p. ej. `gate-pin:ip:`. */
+  prefix: string;
+  /** La misma ventana con la que se reservan los intentos: pasada, el contador ya habría vuelto a cero. */
+  windowMs: number;
+}
+
+/**
+ * Borra los contadores con ventana que llevan más tiempo que ella sin actividad: su siguiente intento empezaría de cero igualmente, así que
+ * borrarlos no cambia el comportamiento. Es necesario porque las claves por IP crecen con cada visitante nuevo. **Solo** toca las claves
+ * de las reglas indicadas: los contadores sin ventana (`windowMs: null`, como `gate-pin:event:*`) no caducan solos y nunca se purgan aquí.
+ * Devuelve cuántos borró, hasta `limit` por regla.
+ */
+export async function purgeStaleAttempts(db: Db, rules: readonly PurgeRule[], now: Date = new Date(), limit = 1000): Promise<number> {
+  let purged = 0;
+  for (const rule of rules) {
+    const stale = await db.rateLimit.findMany({ where: { key: { startsWith: rule.prefix }, lastRequest: { lt: BigInt(now.getTime() - rule.windowMs) } }, take: limit, select: { key: true } });
+    if (stale.length === 0) continue;
+    const { count } = await db.rateLimit.deleteMany({ where: { key: { in: stale.map((row) => row.key) }, lastRequest: { lt: BigInt(now.getTime() - rule.windowMs) } } });
+    purged += count;
+  }
+  return purged;
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/mass-refund",
+      "schedule": "30 5 * * *"
+    },
+    {
+      "path": "/api/cron/ticket-hold-release",
+      "schedule": "45 5 * * *"
+    },
+    {
+      "path": "/api/cron/invoice-submit",
+      "schedule": "50 5 * * *"
+    },
+    {
+      "path": "/api/cron/campaign-expiry",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/monthly-topup",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/sponsor-renewal-notice",
+      "schedule": "30 6 * * *"
+    },
+    {
+      "path": "/api/cron/sponsor-renewal-charge",
+      "schedule": "45 6 * * *"
+    },
+    {
+      "path": "/api/cron/credit-pool-expiry",
+      "schedule": "15 7 * * *"
+    },
+    {
+      "path": "/api/cron/split-window-guard",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/psp-reconciliation",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/cron/quota-renewal",
+      "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/cron/model182-reminder",
+      "schedule": "0 8 2 1 *"
+    },
+    {
+      "path": "/api/cron/ops-housekeeping",
+      "schedule": "15 3 * * *"
+    }
+  ]
+}

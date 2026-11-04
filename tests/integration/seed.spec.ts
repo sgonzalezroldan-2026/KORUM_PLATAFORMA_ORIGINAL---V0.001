@@ -14,6 +14,8 @@ import { createInitiative, createTestClient, TEST_SCHEMA } from './test-database
 
 const SECRETS = { hmacSecret: 'integration-data-hmac-secret-0123456789', qrSecret: 'integration-qr-hmac-secret-0123456789ab' };
 const seed = loadSeedData();
+/** Un día dentro del curso 2026-2027 de la semilla: la reserva de cupos renueva el curso de la entidad si el reloj real ya lo ha pasado. */
+const SEED_DAY = new Date('2026-11-04T10:00:00Z');
 
 let db: KorumPrismaClient;
 let report: SeedReport;
@@ -181,7 +183,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
   it('QA-FIN01 · cancelar una campaña sembrada devuelve sus cupos; una de un curso pasado no abona nada', async () => {
     expect(await releaseInitiativeQuotas(db, 1)).toEqual({ released: true, credited: true });
     expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true, medalGrantAvailableCents: true } })).toEqual({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 });
-    await expect(reserveInitiativeQuotas(db, 1)).resolves.toEqual({ reserved: true });
+    await expect(reserveInitiativeQuotas(db, 1, SEED_DAY)).resolves.toEqual({ reserved: true });
 
     expect(await releaseInitiativeQuotas(db, 3)).toEqual({ released: true, credited: false });
     expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true } })).toEqual({ exemptRemainingCents: 0 });
@@ -191,7 +193,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
 
   it('una campaña de desarrollo publicada después no hace fallar la conciliación, y su cupo cuenta', async () => {
     const extra = await createInitiative(db, 'MEDITERRANEO', { defaultExemptAppliedCents: 100_000 });
-    await reserveInitiativeQuotas(db, extra.id);
+    await reserveInitiativeQuotas(db, extra.id, SEED_DAY);
     await expect(verifySeed(db, seed)).resolves.toBeDefined();
     await releaseInitiativeQuotas(db, extra.id);
     await expect(verifySeed(db, seed)).resolves.toBeDefined();

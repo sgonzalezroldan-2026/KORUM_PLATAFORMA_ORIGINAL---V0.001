@@ -104,7 +104,7 @@ export async function publishInitiative(db: Db, initiativeId: number, now: Date 
     const config = await tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { maxCampaignDays: true } });
     assertCampaignDuration(now, initiative.closesAt, config.maxCampaignDays);
 
-    await reserveInitiativeQuotas(tx, initiativeId);
+    await reserveInitiativeQuotas(tx, initiativeId, now);
     const { count } = await tx.initiative.updateMany({ where: { id: initiativeId, status: 'BUDGETING' }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
     if (count === 0) throw new InitiativeNotPublishableError(initiativeId, 'ha cambiado de estado mientras se publicaba');
     return { published: true };

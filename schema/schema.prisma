@@ -342,6 +342,36 @@ enum JobType {
   MODEL182_REMINDER // Recordatorio de enero para exportar el Modelo 182
   DATA_RETENTION_PURGE // Borrado/anonimización por plazos de conservación
   OUTBOX_DISPATCH // Envío de notificaciones pendientes
+  QUOTA_RENEWAL // Renovación anual de cupos (exento, beca de medalla y mantenimiento) de cada entidad
+  TICKET_HOLD_RELEASE // Libera las plazas reservadas cuyo pago no llegó
+  INVOICE_SUBMIT // Envía al proveedor Veri*factu las facturas pendientes
+  OPS_HOUSEKEEPING // Purga de límites de intentos, notificaciones rechazadas y desafíos de firma caducados
+}
+
+enum OpsAlertType {
+  JOB_FAILED
+  REFUND_REJECTED
+  REFUND_STUCK
+  SPLIT_WINDOW_EXPIRING
+  RECONCILIATION_MISMATCH
+  CHARGEBACK_UNCONFIRMED
+  INVOICE_STUCK
+  SPONSOR_RENEWAL_DUE
+  CREDIT_POOL_EXPIRED
+  MONTHLY_TOPUP_DUE
+  /// Una iniciativa devuelta (`REFUNDED`) conserva dinero en su hucha: patrocinio o Auto-Impulso, que no se devuelven con `MASS_REFUND`.
+  ESCROW_LEFTOVER
+}
+
+enum OpsAlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum OpsAlertStatus {
+  OPEN
+  RESOLVED
 }
 
 enum JobStatus {
@@ -598,6 +628,8 @@ model RateLimit {
   key         String @unique
   count       Int
   lastRequest BigInt
+
+  @@index([lastRequest])
 }
 
 // -----------------------------------------------------------------------------
@@ -691,6 +723,7 @@ model Organization {
   invoices              Invoice[]
   supportTickets        SupportTicket[]
   escrowLedgerEntries   EscrowLedgerEntry[]
+  opsAlerts             OpsAlert[]
 }
 
 model OrganizationMember {
@@ -1000,6 +1033,7 @@ model DoubleCheckChallenge {
 
   @@index([targetType, ideaId, signerUserId])
   @@index([targetType, payoutId, signerUserId])
+  @@index([expiresAt])
 }
 
 // -----------------------------------------------------------------------------
@@ -1054,6 +1088,7 @@ model Contribution {
 
   @@index([initiativeId, status])
   @@index([initiativeId, ticketHoldUntil])
+  @@index([status, refundSendingAt])
   @@index([organizationId, fiscalYear, type])
   @@index([donorTaxIdHmac, fiscalYear])
   @@index([canonicalEmail])
@@ -1379,6 +1414,8 @@ model Invoice {
   providerReference String?
   pdfFileId         String?
   issuedAt          DateTime               @default(now())
+  /// Momento en que se reservó el envío al proveedor (`PENDING → SENT`). Si lleva horas sin resolverse, hay un envío de resultado desconocido.
+  sentAt            DateTime?
   organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   sponsor           Sponsor?               @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
   payout            EscrowPayout?          @relation(fields: [payoutId], references: [id], onDelete: Restrict)
@@ -1513,6 +1550,29 @@ model Job {
   updatedAt      DateTime  @updatedAt
 
   @@index([status, runAt])
+}
+
+/// Alerta de operación para la consola del Super-Admin. A diferencia de `AuditLog` (inmutable), tiene estado: se abre una vez por
+/// `dedupeKey`, cuenta sus repeticiones y se resuelve. El detalle no lleva datos personales.
+model OpsAlert {
+  id             String           @id @default(cuid())
+  type           OpsAlertType
+  severity       OpsAlertSeverity
+  status         OpsAlertStatus   @default(OPEN)
+  /// Un mismo problema no abre dos alertas: la clave identifica el problema (p. ej. `JOB_FAILED:MASS_REFUND:2026-11-04`).
+  dedupeKey      String           @unique
+  organizationId String?
+  targetType     String?
+  targetId       String?
+  detailJson     Json
+  occurrences    Int              @default(1)
+  firstSeenAt    DateTime         @default(now())
+  lastSeenAt     DateTime         @default(now())
+  resolvedAt     DateTime?
+  organization   Organization?    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([status, severity, lastSeenAt])
+  @@index([organizationId])
 }
 
 // -----------------------------------------------------------------------------

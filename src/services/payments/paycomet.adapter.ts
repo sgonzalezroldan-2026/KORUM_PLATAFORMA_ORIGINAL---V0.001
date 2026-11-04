@@ -7,6 +7,7 @@ import {
   type ChargeMethod,
   type NotificationCheck,
   type PaymentProvider,
+  type PspCharge,
   type RefundRequest,
   type RefundResult,
   type SplitTransferRequest,
@@ -34,11 +35,31 @@ export interface PaycometCredentials {
   notificationPassword: string;
 }
 
+/** Tope de resultados por consulta de operaciones (valor por defecto de Paycomet). Si se alcanza, la lista podría estar recortada. */
+const SEARCH_LIMIT = 10_000;
+const MAX_SEARCH_AMOUNT_CENTS = 100_000_000;
+const OPERATION_AUTHORIZATION = 1;
+const STATE_CORRECT = 1;
 const SAFE_ORDER = /^[A-Za-z0-9_-]{1,70}$/;
 const paymentResponse = z.object({ order: z.coerce.string().optional(), authCode: z.coerce.string().nullish(), challengeUrl: z.url({ protocol: /^https$/ }).nullish() });
 const cardResponse = z.object({ idUser: z.coerce.number().int().positive(), tokenUser: z.string().min(1) });
 const refundResponse = z.object({ authCode: z.coerce.string().nullish() });
+const searchResponse = z.object({
+  operations: z
+    .array(z.object({ order: z.coerce.string().min(1), amount: z.coerce.number().int().nonnegative(), authCode: z.coerce.string().nullish(), timestamp: z.string().regex(/^\d{14}$/), state: z.coerce.number().int(), operationType: z.coerce.number().int() }))
+    .default([])
+});
 const splitResponse = z.object({ submerchant: z.object({ splitAuthCode: z.coerce.string().min(1) }) });
+
+const pad = (value: number) => String(value).padStart(2, '0');
+
+function formatPaycometDate(date: Date): string {
+  return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}`;
+}
+
+function parsePaycometDate(value: string): Date {
+  return new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:${value.slice(12, 14)}Z`);
+}
 
 export class PaycometAdapter implements PaymentProvider {
   readonly name = 'paycomet';
@@ -97,6 +118,31 @@ export class PaycometAdapter implements PaymentProvider {
       submerchant: { splitId: request.splitId, amount: request.amountCents, currency: CURRENCY }
     });
     return { splitAuthCode: this.parse(splitResponse, body, 'reparto').submerchant.splitAuthCode };
+  }
+
+  /**
+   * Cobros confirmados (`POST /v1/payments/search`, operación 1 «Autorización» con resultado correcto). Paycomet fecha en formato
+   * `YmdHis`; se asume UTC, igual que `BankDateTime` de las notificaciones (suposición contra la documentación: confirmar en el sandbox).
+   */
+  async listCharges(range: { from: Date; to: Date }): Promise<PspCharge[]> {
+    const body = await this.post('/v1/payments/search', {
+      terminal: this.terminal,
+      sortType: 1,
+      sortOrder: 'ASC',
+      operations: [OPERATION_AUTHORIZATION],
+      minAmount: 0,
+      maxAmount: MAX_SEARCH_AMOUNT_CENTS,
+      state: STATE_CORRECT,
+      fromDate: formatPaycometDate(range.from),
+      toDate: formatPaycometDate(range.to),
+      currency: CURRENCY,
+      limit: SEARCH_LIMIT
+    });
+    const { operations } = this.parse(searchResponse, body, 'consulta de operaciones');
+    if (operations.length >= SEARCH_LIMIT) throw new PaymentProviderError('La consulta de Paycomet alcanzó su límite de resultados: la lista puede estar incompleta', 'SEARCH_TRUNCATED');
+    return operations
+      .filter((operation) => operation.operationType === OPERATION_AUTHORIZATION && operation.state === STATE_CORRECT)
+      .map((operation) => ({ order: operation.order, amountCents: operation.amount, authCode: operation.authCode ?? null, occurredAt: parsePaycometDate(operation.timestamp) }));
   }
 
   verifyNotification(rawBody: string, contentType: string | null): NotificationCheck {

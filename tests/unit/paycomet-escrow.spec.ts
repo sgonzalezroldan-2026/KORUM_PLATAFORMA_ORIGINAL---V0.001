@@ -244,7 +244,8 @@ describe('QA-P02 · el dinero solo vuelve al cobro original', () => {
   it('el contrato no admite ningún destino libre: añadir un campo o un método rompe esta prueba', () => {
     expectTypeOf<keyof RefundRequest>().toEqualTypeOf<'order' | 'authCode' | 'amountCents' | 'originalIp'>();
     expectTypeOf<keyof SplitTransferRequest>().toEqualTypeOf<'order' | 'authCode' | 'splitId' | 'amountCents'>();
-    expectTypeOf<keyof PaymentProvider>().toEqualTypeOf<'mode' | 'name' | 'charge' | 'tokenizeCard' | 'refund' | 'splitTransfer' | 'verifyNotification'>();
+    // `listCharges` (Sprint 2.4) solo lee: no mueve dinero ni admite destino.
+    expectTypeOf<keyof PaymentProvider>().toEqualTypeOf<'mode' | 'name' | 'charge' | 'tokenizeCard' | 'refund' | 'splitTransfer' | 'listCharges' | 'verifyNotification'>();
   });
 
   it('ningún archivo de pagos ni el webhook aceptan un IBAN', () => {

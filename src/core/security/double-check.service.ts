@@ -2,6 +2,8 @@ import { randomBytes, randomInt } from 'node:crypto';
 import type { DoubleCheckTargetType } from '@/generated/prisma/enums';
 import type { Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { reserveAttempt } from '@/lib/rate-limit';
+import { SIGNATURE_REQUEST_RULE } from '@/lib/rate-limit-rules';
 import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, ResourceNotFoundError, type SessionActor } from '@/repositories/tenant-guard';
 import { dataHmac, safeEqual } from './data-hmac';
 import { evaluateDoubleCheck, loadSignerMemberships, SIGNER_ROLES, type DoubleCheckContext, type DoubleCheckEvaluation, type SignerMembership, type SignerRole, type StoredSignature } from './double-check-evaluation';
@@ -21,7 +23,7 @@ export type SignatureTarget = { targetType: 'IDEA_APPROVAL'; ideaId: number } | 
 const CHALLENGE_TTL_MS = 72 * 3_600_000;
 export const MAX_OTP_ATTEMPTS = 5;
 
-export type DoubleCheckBlock = 'NOT_A_SIGNER' | 'HOLDS_BOTH_ROLES' | 'TWO_FACTOR_REQUIRED' | 'TARGET_CLOSED' | 'ALREADY_SIGNED' | 'SAME_PERSON' | 'PROVIDER_INVOICE_MISSING' | 'DESTINATION_ACCOUNT_MISSING';
+export type DoubleCheckBlock = 'NOT_A_SIGNER' | 'HOLDS_BOTH_ROLES' | 'TWO_FACTOR_REQUIRED' | 'TARGET_CLOSED' | 'ALREADY_SIGNED' | 'SAME_PERSON' | 'PROVIDER_INVOICE_MISSING' | 'DESTINATION_ACCOUNT_MISSING' | 'RATE_LIMITED';
 
 export class DoubleCheckNotAllowedError extends Error {
   readonly reason: DoubleCheckBlock;
@@ -126,6 +128,12 @@ export async function requestSignature(db: KorumPrismaClient, secret: string, ac
   if (owner !== organizationId) {
     await recordCrossTenantAttempt(db, actor, { ...probe, ownerOrganizationId: owner });
     throw new ResourceNotFoundError(target.targetType);
+  }
+  // Tras comprobar permiso y propiedad: quien no puede firmar no gasta el cupo de otra persona. Cada petición revoca el enlace anterior y
+  // manda un correo nuevo, así que sin límite se podría inundar la bandeja de quien firma.
+  if (!(await reserveAttempt(db, `${SIGNATURE_REQUEST_RULE.prefix}${actor.userId}:${target.targetType}:${targetId}`, SIGNATURE_REQUEST_RULE, now))) {
+    await recordAudit(db, actor, { organizationId, action: 'double_check.request_rate_limited', targetType: target.targetType, targetId: String(targetId), metadata: { limit: SIGNATURE_REQUEST_RULE.limit } });
+    throw new DoubleCheckNotAllowedError('RATE_LIMITED');
   }
 
   try {

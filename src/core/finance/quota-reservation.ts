@@ -1,4 +1,5 @@
 import { inTransaction, type Db } from '@/lib/db';
+import { academicYearFor, isLaterAcademicYear } from './academic-year';
 
 /**
  * Reserva reversible de cupos de la entidad (Regla 02 §2, QA-FIN01).
@@ -91,7 +92,7 @@ async function updateOrganizationQuotas(tx: Db, organizationId: string, next: (c
  * Si la reserva anterior se devolvió (campaña reabierta), vuelve a reservar. Lanza `InsufficientQuotaError` sin cambiar
  * nada si a la entidad ya no le queda cupo.
  */
-export async function reserveInitiativeQuotas(db: Db, initiativeId: number): Promise<{ reserved: boolean }> {
+export async function reserveInitiativeQuotas(db: Db, initiativeId: number, now: Date = new Date()): Promise<{ reserved: boolean }> {
   return inTransaction(db, async (tx) => {
     const before = await tx.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: QUOTA_FIELDS });
     if (before.quotaReservedAt && !before.quotaReleasedAt) return { reserved: false };
@@ -108,6 +109,10 @@ export async function reserveInitiativeQuotas(db: Db, initiativeId: number): Pro
 
     // 2. Descuenta de la entidad. Si no se puede, deshace la marca (su fila sigue bloqueada por nosotros) y entonces falla.
     try {
+      // Si la entidad aún está en el curso anterior (la renovación diaria no ha pasado todavía), se renueva antes: de otro modo la campaña gastaría el
+      // sobrante del curso viejo y la renovación posterior se lo regalaría de nuevo. Una entidad sin curso asignado se queda como está.
+      const { quotaPeriod } = await tx.organization.findUniqueOrThrow({ where: { id: before.organizationId }, select: { quotaPeriod: true } });
+      if (quotaPeriod !== null) await renewOrganizationQuotas(tx, before.organizationId, academicYearFor(now));
       const org = await updateOrganizationQuotas(tx, before.organizationId, (current) => {
         if (current.exemptRemainingCents < amounts.exempt) {
           throw new InsufficientQuotaError(before.organizationId, `exento disponible ${current.exemptRemainingCents} < ${amounts.exempt} céntimos`);
@@ -185,5 +190,41 @@ export async function releaseInitiativeQuotas(db: Db, initiativeId: number): Pro
       throw error;
     }
     return { released: true, credited };
+  });
+}
+
+/**
+ * Renovación anual de cupos (tarea `QUOTA_RENEWAL`): al empezar un curso nuevo, el exento vuelve a su límite, la beca de la medalla
+ * actual se repone, el mantenimiento pagado y las campañas cerradas del año vuelven a 0. Solo avanza (`newPeriod` debe ser posterior al curso
+ * actual) y la escritura es condicional al curso leído, así que dos ejecuciones simultáneas renuevan una sola vez. Las reservas del curso anterior
+ * no abonan al nuevo (`releaseInitiativeQuotas` lo comprueba con `quotaReservedPeriod`).
+ *
+ * Una entidad **sin curso asignado** (`quotaPeriod === null`, p. ej. recién creada) no recibe una reposición: sus cupos ya son los del curso en que
+ * se creó y ya pueden haberse gastado. Solo se le asigna el curso vigente, y a sus reservas abiertas (hechas sin curso) el mismo, para que si la
+ * campaña se cancela el cupo siga abonándose. Si no, la entidad recibiría el exento dos veces en un mismo curso.
+ * Cada cambio queda en `AuditLog` dentro de la misma transacción.
+ */
+export async function renewOrganizationQuotas(db: Db, organizationId: string, newPeriod: string): Promise<{ renewed: boolean }> {
+  return inTransaction(db, async (tx) => {
+    const current = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { quotaPeriod: true, medalRank: true, exemptLimitCents: true } });
+    if (!isLaterAcademicYear(newPeriod, current.quotaPeriod)) return { renewed: false };
+    const audit = (action: string) => tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId, action, targetType: 'Organization', targetId: organizationId, metadataJson: { period: newPeriod } } });
+
+    if (current.quotaPeriod === null) {
+      const assigned = await tx.organization.updateMany({ where: { id: organizationId, quotaPeriod: null }, data: { quotaPeriod: newPeriod } });
+      if (assigned.count !== 1) return { renewed: false };
+      await tx.initiative.updateMany({ where: { organizationId, quotaReservedAt: { not: null }, quotaReleasedAt: null, quotaReservedPeriod: null }, data: { quotaReservedPeriod: newPeriod } });
+      await audit('quota.period_assigned');
+      return { renewed: true };
+    }
+
+    const tier = await tx.medalTierConfig.findUnique({ where: { rank: current.medalRank }, select: { grantCents: true } });
+    const { count } = await tx.organization.updateMany({
+      where: { id: organizationId, quotaPeriod: current.quotaPeriod },
+      data: { quotaPeriod: newPeriod, exemptRemainingCents: current.exemptLimitCents, medalGrantAvailableCents: tier?.grantCents ?? 0, medalGrantUsedInTitle: null, maintPaidCents: 0, completedThisYear: 0 }
+    });
+    if (count !== 1) return { renewed: false };
+    await audit('quota.renewed');
+    return { renewed: true };
   });
 }

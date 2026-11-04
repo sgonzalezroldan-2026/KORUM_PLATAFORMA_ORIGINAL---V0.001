@@ -7,6 +7,7 @@ import {
   type ChargeResult,
   type NotificationCheck,
   type PaymentProvider,
+  type PspCharge,
   type RefundRequest,
   type RefundResult,
   type SplitTransferRequest,
@@ -36,6 +37,7 @@ export interface MockPaycometOptions {
 
 interface MockCharge {
   amountCents: number;
+  authCode: string;
   chargedAt: Date;
   refundedCents: number;
   splitCents: number;
@@ -54,15 +56,27 @@ export class MockPaycometProvider implements PaymentProvider {
     this.now = options.now ?? (() => new Date());
   }
 
-  registerCharge(order: string, amountCents: number, chargedAt: Date = this.now()): void {
-    this.charges.set(order, { amountCents, chargedAt, refundedCents: 0, splitCents: 0 });
+  /** Da de alta un cobro en el simulador. `authCode` permite fabricar una diferencia con lo guardado en KORUM (pruebas de conciliación). */
+  registerCharge(order: string, amountCents: number, chargedAt: Date = this.now(), authCode: string = stableCode('A', order)): void {
+    this.charges.set(order, { amountCents, authCode, chargedAt, refundedCents: 0, splitCents: 0 });
+  }
+
+  /** Quita un cobro del simulador, como si Paycomet no lo tuviera (pruebas de conciliación). */
+  forgetCharge(order: string): void {
+    this.charges.delete(order);
+  }
+
+  async listCharges(range: { from: Date; to: Date }): Promise<PspCharge[]> {
+    return [...this.charges]
+      .filter(([, charge]) => charge.chargedAt >= range.from && charge.chargedAt <= range.to)
+      .map(([order, charge]) => ({ order, amountCents: charge.amountCents, authCode: charge.authCode, occurredAt: charge.chargedAt }));
   }
 
   async charge(request: ChargeRequest): Promise<ChargeResult> {
     if (request.method !== 'BIZUM' && !request.card) throw new PaymentProviderError('Un cobro con tarjeta necesita su token', 'MOCK_NO_CARD');
     this.calls.push({ operation: 'charge', order: request.order, amountCents: request.amountCents });
     this.registerCharge(request.order, request.amountCents);
-    return { order: request.order, authCode: stableCode('A', request.order), challengeUrl: null };
+    return { order: request.order, authCode: this.charges.get(request.order)?.authCode ?? null, challengeUrl: null };
   }
 
   async tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult> {

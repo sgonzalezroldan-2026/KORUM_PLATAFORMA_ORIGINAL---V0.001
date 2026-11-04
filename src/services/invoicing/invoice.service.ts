@@ -1,4 +1,5 @@
 import { bpsOf } from '@/core/finance/money';
+import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
 import { validateTaxId } from '@/core/tax/tax-id';
 import { inTransaction, isUniqueViolation, QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import { InvoicingProviderError, type InvoicingProvider } from './invoicing-provider';
@@ -109,13 +110,13 @@ export async function issueInvoice(db: Db, input: IssueInvoiceInput, now: Date =
 export type SubmitInvoiceOutcome = 'ACCEPTED' | 'ACCEPTED_WITH_ERRORS' | 'REJECTED' | 'RETRY_LATER' | 'UNKNOWN' | 'ALREADY_SENT';
 
 /** Envía una factura al proveedor. La reserva (`PENDING` → `SENT`) impide enviarla dos veces, igual que `refundSendingAt` en los reembolsos. */
-export async function submitInvoice(db: Db, provider: InvoicingProvider, invoiceId: number): Promise<SubmitInvoiceOutcome> {
+export async function submitInvoice(db: Db, provider: InvoicingProvider, invoiceId: number, now: Date = new Date()): Promise<SubmitInvoiceOutcome> {
   const invoice = await db.invoice.findUniqueOrThrow({ where: { id: invoiceId } });
   if (!invoice.issuerTaxId) throw new Error(`La factura ${invoice.invoiceNumber} no se emitió con este servicio.`);
   // La huella apunta a la factura anterior: enviarlas fuera de orden registraría una cadena que el proveedor aún no tiene.
   const earlier = await db.invoice.findFirst({ where: { id: { lt: invoiceId }, verifactuStatus: { in: ['PENDING', 'SENT'] } }, select: { id: true } });
   if (earlier && invoice.verifactuStatus === 'PENDING') return 'RETRY_LATER';
-  const { count } = await db.invoice.updateMany({ where: { id: invoiceId, verifactuStatus: 'PENDING' }, data: { verifactuStatus: 'SENT' } });
+  const { count } = await db.invoice.updateMany({ where: { id: invoiceId, verifactuStatus: 'PENDING' }, data: { verifactuStatus: 'SENT', sentAt: now } });
   if (count === 0) return 'ALREADY_SENT';
 
   const audit = (action: string, code: string) => db.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: invoice.organizationId, action, targetType: 'Invoice', targetId: String(invoiceId), metadataJson: { code } } });
@@ -130,22 +131,54 @@ export async function submitInvoice(db: Db, provider: InvoicingProvider, invoice
       await audit('invoice.registration_unknown', error.code);
       return 'UNKNOWN';
     }
-    await db.invoice.update({ where: { id: invoiceId }, data: { verifactuStatus: 'PENDING' } });
+    await db.invoice.update({ where: { id: invoiceId }, data: { verifactuStatus: 'PENDING', sentAt: null } });
     await audit('invoice.registration_retry', error.code);
     return 'RETRY_LATER';
   }
 }
 
-/** Envía en orden las pendientes y se detiene en la primera que no pase. La ejecutará la tarea programada (Sprint 2.4). */
-export async function submitPendingInvoices(db: Db, provider: InvoicingProvider): Promise<{ submitted: number; stoppedAt: number | null }> {
-  const pending = await db.invoice.findMany({ where: { verifactuStatus: 'PENDING' }, orderBy: { id: 'asc' }, select: { id: true } });
+/** Envía en orden las pendientes (hasta `limit`) y se detiene en la primera que no pase. La ejecuta la tarea `INVOICE_SUBMIT`. */
+export async function submitPendingInvoices(db: Db, provider: InvoicingProvider, options: { limit?: number; now?: Date; deadline?: number } = {}): Promise<{ submitted: number; stoppedAt: number | null }> {
+  const pending = await db.invoice.findMany({ where: { verifactuStatus: 'PENDING' }, orderBy: { id: 'asc' }, take: options.limit, select: { id: true } });
   let submitted = 0;
   for (const { id } of pending) {
-    const outcome = await submitInvoice(db, provider, id);
+    // Sin tiempo para otra llamada al proveedor: cortar una a medias deja la factura en `SENT` y obliga a resolverla a mano.
+    if (options.deadline !== undefined && Date.now() > options.deadline) return { submitted, stoppedAt: null };
+    const outcome = await submitInvoice(db, provider, id, options.now);
     if (outcome === 'RETRY_LATER' || outcome === 'UNKNOWN') return { submitted, stoppedAt: id };
     submitted += 1;
   }
   return { submitted, stoppedAt: null };
+}
+
+export class InvoiceNotAllowedError extends Error {
+  constructor(invoiceId: number, reason: string) {
+    super(`La factura ${invoiceId} no se puede resolver: ${reason}.`);
+    this.name = 'InvoiceNotAllowedError';
+  }
+}
+
+export type UnknownInvoiceResolution =
+  /** El proveedor no la tiene: vuelve a la cola de envío. */
+  | { registered: false; resolvedById: string }
+  /** El proveedor la tiene, con este estado y esta referencia. */
+  | { registered: true; status: 'ACCEPTED' | 'ACCEPTED_WITH_ERRORS' | 'REJECTED'; providerReference: string | null; resolvedById: string };
+
+/**
+ * Resuelve una factura de resultado desconocido, cuando una persona (solo Super-Admin con verificación en dos pasos, `assertSuperadminWithTwoFactor`) ya ha comprobado en el
+ * proveedor qué pasó. Mientras una esté en `SENT`, el envío de todas las siguientes se detiene. Queda en la auditoría.
+ */
+export async function resolveUnknownInvoice(db: Db, invoiceId: number, resolution: UnknownInvoiceResolution): Promise<void> {
+  await assertSuperadminWithTwoFactor(db, resolution.resolvedById, 'invoice.resolve_unknown', String(invoiceId));
+  await inTransaction(db, async (tx) => {
+    const invoice = await tx.invoice.findUniqueOrThrow({ where: { id: invoiceId }, select: { organizationId: true } });
+    const data = resolution.registered ? { verifactuStatus: resolution.status, providerReference: resolution.providerReference } : { verifactuStatus: 'PENDING' as const, sentAt: null };
+    const { count } = await tx.invoice.updateMany({ where: { id: invoiceId, verifactuStatus: 'SENT' }, data });
+    if (count === 0) throw new InvoiceNotAllowedError(invoiceId, 'no está pendiente de resolver');
+    await tx.auditLog.create({
+      data: { actorType: 'USER', actorUserId: resolution.resolvedById, organizationId: invoice.organizationId, action: 'invoice.registration_resolved', targetType: 'Invoice', targetId: String(invoiceId), metadataJson: { registered: resolution.registered } }
+    });
+  });
 }
 
 export interface ChainCheck {

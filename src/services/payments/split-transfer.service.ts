@@ -3,6 +3,7 @@ import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
 import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
+import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
 import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
 import { payoutTargetDigest } from '@/core/security/signature-hash';
 import { inTransaction, type Db } from '@/lib/db';
@@ -74,8 +75,10 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     if (!payout.organization.paycometSplitId) throw new PayoutNotAllowedError(payoutId, 'la entidad no tiene cuenta destino en Paycomet');
 
     const drawn = initiative._count.raffleDraws > 0;
-    // Una rifa sorteada se liquida aunque un contracargo la baje de la meta: ya no puede vender más. Y sin sorteo no se liquida.
-    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta');
+    // Una rifa sorteada y un evento cuya fecha ya pasó se liquidan aunque un contracargo los baje de la meta: ya no pueden vender más.
+    // Y una rifa sin sorteo completo no se liquida (comprobación siguiente).
+    const eventHeld = initiative.format === 'TICKETING' && initiative.closesAt <= now;
+    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn || eventHeld)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta');
     if (initiative.ticketSubtype === 'RAFFLE' && (!drawn || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiativeId, initiative.rafflePrizeCount)))) {
       throw new PayoutNotAllowedError(payoutId, 'la rifa aún no se ha sorteado por completo');
     }
@@ -194,7 +197,9 @@ export async function executeApprovedPayout(db: Db, provider: PaymentProvider, p
  * Resuelve un reparto de resultado desconocido, cuando una persona ya ha comprobado en Paycomet qué pasó: con `splitAuthCode` se hizo; con
  * `null`, no se hizo y vuelve a estar pendiente. Solo actúa si sigue en `SENDING`: dos resoluciones cruzadas no pueden pagar dos veces.
  */
+/** Solo una cuenta de Super-Admin con verificación en dos pasos puede resolverlo (`assertSuperadminWithTwoFactor`), como `resolveUnknownRefund`. */
 export async function resolveUnknownSplit(db: Db, splitId: number, resolution: { splitAuthCode: string | null; resolvedById: string }, now: Date = new Date()): Promise<void> {
+  await assertSuperadminWithTwoFactor(db, resolution.resolvedById, 'payout.resolve_unknown_split', String(splitId));
   const code = resolution.splitAuthCode;
   if (code !== null && code.trim() === '') throw new RangeError('El código de autorización del reparto no puede estar vacío');
   const split = await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: splitId }, include: { payout: { select: { organizationId: true, initiativeId: true } } } });

@@ -82,6 +82,10 @@ const envSchema = z
     if (value.PAYCOMET_MODE === 'live' && value.NEXT_PUBLIC_DEMO_MODE === 'true') {
       ctx.addIssue({ code: 'custom', path: ['PAYCOMET_MODE'], message: 'PAYCOMET_MODE=live no se puede combinar con el entorno de demostración (NEXT_PUBLIC_DEMO_MODE=true)' });
     }
+    // Almacenamiento: la dirección y la clave van juntas; con una sola, subir un fichero fallaría en el primer uso en lugar de al arrancar.
+    if (Boolean(value.SUPABASE_URL) !== Boolean(value.SUPABASE_SERVICE_ROLE_KEY)) {
+      ctx.addIssue({ code: 'custom', path: [value.SUPABASE_URL ? 'SUPABASE_SERVICE_ROLE_KEY' : 'SUPABASE_URL'], message: 'SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY se configuran juntas o ninguna' });
+    }
   });
 
 export type Env = z.infer<typeof envSchema>;

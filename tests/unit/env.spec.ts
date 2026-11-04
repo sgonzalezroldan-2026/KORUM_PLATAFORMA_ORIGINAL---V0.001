@@ -61,6 +61,14 @@ describe('QA-C01 · validación del entorno (fail-fast)', () => {
     expect(parseEnv(validSource({ SUPABASE_URL: '', SENTRY_AUTH_TOKEN: '' })).SUPABASE_URL).toBeUndefined();
   });
 
+  it('el almacén de ficheros se configura entero o no se configura: la dirección y la clave van juntas', () => {
+    const url = 'https://abc.supabase.co';
+    expect(issuesOf(validSource({ SUPABASE_URL: url })).some((issue) => issue.includes('SUPABASE_SERVICE_ROLE_KEY'))).toBe(true);
+    expect(issuesOf(validSource({ SUPABASE_SERVICE_ROLE_KEY: 'clave' })).some((issue) => issue.includes('SUPABASE_URL'))).toBe(true);
+    expect(issuesOf(validSource({ SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: 'clave' }))).toEqual([]);
+    expect(issuesOf(validSource())).toEqual([]);
+  });
+
   it('exige una clave AES de exactamente 32 bytes en base64', () => {
     expect(issuesOf(validSource({ ENCRYPTION_KEY: b64(16) })).some((issue) => issue.includes('ENCRYPTION_KEY'))).toBe(true);
     expect(issuesOf(validSource({ ENCRYPTION_KEY: 'no es base64 !!' })).some((issue) => issue.includes('ENCRYPTION_KEY'))).toBe(true);

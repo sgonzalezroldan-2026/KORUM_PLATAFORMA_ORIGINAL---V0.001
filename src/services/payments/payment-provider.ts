@@ -59,6 +59,14 @@ export interface SplitTransferResult {
   splitAuthCode: string;
 }
 
+/** Un cobro confirmado tal y como lo ve Paycomet, para la conciliación diaria. */
+export interface PspCharge {
+  order: string;
+  amountCents: number;
+  authCode: string | null;
+  occurredAt: Date;
+}
+
 export type PaymentNotificationKind = 'PAYMENT_COMPLETED' | 'PAYMENT_FAILED' | 'REFUND_COMPLETED' | 'REFUND_FAILED' | 'CHARGEBACK' | 'IGNORED';
 
 /** Notificación de la entidad de pago, ya con su firma comprobada. */
@@ -83,6 +91,8 @@ export interface PaymentProvider {
   tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult>;
   refund(request: RefundRequest): Promise<RefundResult>;
   splitTransfer(request: SplitTransferRequest): Promise<SplitTransferResult>;
+  /** Cobros confirmados con `occurredAt` en `[from, to]`. Lanza si el proveedor no puede devolverlos todos: una lista recortada falsearía la conciliación. */
+  listCharges(range: { from: Date; to: Date }): Promise<PspCharge[]>;
   verifyNotification(rawBody: string, contentType: string | null): NotificationCheck;
 }
 
