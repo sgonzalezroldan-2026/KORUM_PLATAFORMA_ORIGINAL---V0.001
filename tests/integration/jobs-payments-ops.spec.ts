@@ -367,7 +367,10 @@ describe('límite de peticiones de firma', () => {
     expect(await db.auditLog.count({ where: { action: 'double_check.request_rate_limited', organizationId: organization.id } })).toBe(2);
     // Pasada la ventana, vuelve a poder pedirlo.
     const challenge = await requestSignature(db, HMAC_SECRET, actor, organization.id, target, new Date(now.getTime() + 11 * MINUTE));
-    expect(challenge.otp).toMatch(/^\d{6}$/);
+    // El código ya no se devuelve a quien llama: va por email.
+    expect(challenge).not.toHaveProperty('otp');
+    const sent = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'doubleCheck.pending', userId: actor.userId }, orderBy: { id: 'desc' } });
+    expect((sent.payloadJson as { otp: string }).otp).toMatch(/^\d{6}$/);
   });
 });
 

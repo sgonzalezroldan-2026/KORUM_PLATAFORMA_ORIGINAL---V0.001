@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
+      "path": "/api/cron/outbox-dispatch",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/mass-refund",
       "schedule": "30 5 * * *"
     },

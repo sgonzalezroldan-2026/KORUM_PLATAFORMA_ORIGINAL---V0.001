@@ -4,6 +4,7 @@ import { dataRetentionPurgeHandler } from './handlers/data-retention-purge';
 import { housekeepingHandler } from './handlers/housekeeping';
 import { massRefundHandler } from './handlers/mass-refund';
 import { model182ReminderHandler } from './handlers/model182-reminder';
+import { outboxDispatchHandler } from './handlers/outbox-dispatch';
 import { pspReconciliationHandler } from './handlers/psp-reconciliation';
 import { quotaRenewalHandler } from './handlers/quota-renewal';
 import { creditPoolExpiryHandler, monthlyTopupHandler, sponsorRenewalChargeHandler, sponsorRenewalNoticeHandler } from './handlers/recurring-billing';
@@ -12,10 +13,11 @@ import { invoiceSubmitHandler, ticketHoldReleaseHandler } from './handlers/ticke
 import type { JobHandler } from './job-types';
 
 /**
- * Tipo de tarea → quien la ejecuta. `OUTBOX_DISPATCH` (Sprint 2.6) existe en el calendario pero aún no tiene manejador: la ruta responde
- * `404` y no figura en `vercel.json`. Un test comprueba que lo programado y lo registrado coinciden.
+ * Tipo de tarea → quien la ejecuta. Un tipo del calendario sin manejador responde `404` y no figura en `vercel.json`; un test comprueba
+ * que lo programado y lo registrado coinciden.
  */
 export const JOB_HANDLERS: Partial<Record<JobType, JobHandler>> = {
+  OUTBOX_DISPATCH: outboxDispatchHandler,
   CAMPAIGN_EXPIRY: campaignExpiryHandler,
   MASS_REFUND: massRefundHandler,
   MONTHLY_TOPUP: monthlyTopupHandler,

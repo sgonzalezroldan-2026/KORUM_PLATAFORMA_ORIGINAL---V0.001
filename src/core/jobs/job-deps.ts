@@ -1,6 +1,7 @@
 import { getEnv } from '@/config/env';
 import { getKeyring } from '@/config/keyring';
 import type { Db } from '@/lib/db';
+import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { getInvoicingProvider } from '@/services/invoicing/provider-factory';
 import { getPaymentProvider, PaymentConfigurationError } from '@/services/payments/provider-factory';
 import { getSetting } from '@/services/settings/settings.service';
@@ -23,6 +24,7 @@ export function buildJobDeps(db: Db): JobDeps {
     storageProvider: () => getStorageProvider(),
     keyring: () => getKeyring(),
     hmacSecret: () => env.DATA_HMAC_SECRET,
+    outbox: buildOutboxDeps(db),
     refundOriginalIp: async () => {
       const serverIp = await getSetting(db, SERVER_IP_SETTING);
       if (serverIp) return serverIp;

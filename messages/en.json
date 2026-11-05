@@ -163,5 +163,167 @@
         "PUBLIC_SUPPORTER_NAME": "Show my name among supporters"
       }
     }
+  },
+  "email": {
+    "common": {
+      "senderName": "{organization} via KORUM",
+      "tagline": "Where good ideas add up and get done.",
+      "buttonFallback": "If the button does not work, copy this link into your browser:",
+      "footerTransactional": "You are receiving this because you made a transaction with {organization} through KORUM. This is a service message, not marketing.",
+      "footerAccount": "You are receiving this because an action was requested on your KORUM account. This is a service message, not marketing.",
+      "footerPlatform": "KORUM is a technology platform and does not hold funds. Payments and refunds are handled by PAYCOMET.",
+      "logoLabel": "KORUM logo",
+      "calendarName": "Event",
+      "quantity": "{count, plural, one {# item} other {# items}}",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "footerOrganization": "You are receiving this because you manage {organization} on KORUM. This is a service message, not marketing."
+    },
+    "auth": {
+      "magicLink": {
+        "subject": "Your link to sign in to KORUM",
+        "preheader": "One click and you are in.",
+        "title": "Sign in to KORUM",
+        "body": "Press the button to sign in. The link expires in {minutes} minutes and works only once.",
+        "cta": "Sign in to my account",
+        "footnote": "If this was not you, ignore this email: nobody gets in without pressing the link."
+      },
+      "otp": {
+        "subject": "Your KORUM access code",
+        "preheader": "It is a one-time code.",
+        "title": "Your access code",
+        "body": "Enter this code to sign in. It expires in {minutes} minutes.",
+        "codeLabel": "Code",
+        "footnote": "If you did not ask for it, ignore this message and do not share the code with anyone."
+      }
+    },
+    "receipt": {
+      "subject": "Receipt for your contribution to “{initiative}”",
+      "preheader": "Thanks for chipping in. Here is your receipt.",
+      "title": "Thank you for chipping in!",
+      "body": "We have received your contribution of {amount} to “{initiative}”, from {organization}.",
+      "guarantee": "The money is held by Paycomet until the goal is reached. If the initiative does not succeed, we refund 100% of what you paid to the same payment method.",
+      "fiscalCertificate": "If you provided your tax ID, the part donated to the organisation will be included in your donation tax certificate (Spanish Law 49/2002), which you can download in January. The voluntary contribution to KORUM does not count towards the certificate.",
+      "fiscalReceipt": "Keep this email: it works as a personalised proof of your contribution.",
+      "contribution": "Contribution",
+      "voluntary": "Voluntary contribution to KORUM",
+      "total": "Total charged",
+      "group": "Your group",
+      "holder": "Received by",
+      "reference": "Reference",
+      "cta": "See the initiative"
+    },
+    "ticket": {
+      "subjectEvent": "Your ticket for “{initiative}”",
+      "subjectRaffle": "Your raffle tickets for “{initiative}”",
+      "preheader": "Your QR code is inside.",
+      "titleEvent": "Your ticket is ready",
+      "titleRaffle": "Your raffle tickets are ready",
+      "bodyEvent": "Show the QR code at the door. It is attached to this email as an image, and you can also open it with the button.",
+      "bodyRaffle": "Your numbers are in the draw. Keep this email: the attached QR code identifies you if you win.",
+      "serial": "Ticket number",
+      "quantity": "Quantity",
+      "numbers": "Your numbers",
+      "venue": "Venue",
+      "date": "Date",
+      "cta": "See my ticket",
+      "footnote": "The QR code is personal: do not post it on social media. It can be used only once; if someone else uses it first, your ticket will no longer be valid."
+    },
+    "gate": {
+      "pinRevoked": {
+        "subject": "We have revoked the door PIN for “{initiative}”",
+        "preheader": "For security. The door keeps running.",
+        "title": "Door PIN revoked",
+        "body": "After too many failed attempts, we revoked the door PIN for “{initiative}”. Sessions that were already open keep working, so the door does not stop.",
+        "cta": "Generate another PIN"
+      }
+    },
+    "goalReached": {
+      "subject": "“{initiative}” has reached its goal!",
+      "preheader": "Time to celebrate: it is done.",
+      "title": "Goal reached!",
+      "body": "“{initiative}” has reached the {goal} it needed thanks to {count, plural, one {# contribution} other {# contributions}}.",
+      "next": "The next step is settlement: it needs the signatures of two different people from the organisation.",
+      "cta": "Go to the dashboard"
+    },
+    "expired": {
+      "subject": "“{initiative}” did not reach its goal",
+      "preheader": "You can resize it or refund 100%.",
+      "title": "The campaign ended short of its goal",
+      "body": "“{initiative}” expired with {raised} of the {goal} needed. No contribution is lost: you can resize the initiative or refund 100% to families.",
+      "cta": "Decide now"
+    },
+    "refund": {
+      "subject": "We have refunded your payment for “{initiative}”",
+      "preheader": "The amount is on its way back to your payment method.",
+      "title": "Refund issued",
+      "body": "We have refunded {amount} to the same payment method you paid with.",
+      "timing": "Depending on your card issuer or payment app, it can take a few business days to show up.",
+      "amount": "Amount refunded",
+      "cta": "See the organisation"
+    },
+    "doubleCheck": {
+      "subject": "Your signature is needed at {organization}",
+      "preheader": "One-time link and a 6-digit code.",
+      "title": "We need your signature",
+      "body": "To complete this operation, two signatures from different people of the organisation are needed. Open the link while signed in and enter the 6-digit code. It expires on {expires}.",
+      "what": "What is being signed",
+      "ideaApproval": "Approve the idea “{title}”",
+      "payout": "Release the funds for “{title}”",
+      "codeLabel": "Your 6-digit code",
+      "cta": "Sign now",
+      "footnote": "The link works once. If you were not expecting this signature, do not complete it and tell the other signer."
+    },
+    "split": {
+      "expiring": {
+        "subject": "{days, plural, one {# day} other {# days}} left to settle “{initiative}”",
+        "preheader": "Paycomet only allows paying out funds for 90 days.",
+        "title": "The settlement deadline is running out",
+        "body": "Paycomet only allows paying out funds during the 90 days after the first charge. Time left for “{initiative}”: {days, plural, one {# day} other {# days}}. If it is not settled in time, it will have to be resolved by hand.",
+        "cta": "Settle now"
+      },
+      "expired": {
+        "subject": "The payout window for “{initiative}” has expired",
+        "preheader": "Our team will help you sort it out.",
+        "title": "The payout window has expired",
+        "body": "The 90 days that Paycomet allows for paying out the funds of “{initiative}” have passed. The KORUM team will review the case and contact you.",
+        "cta": "Open the dashboard"
+      }
+    },
+    "sponsor": {
+      "renewalNotice": {
+        "subject": "Your sponsorship with {organization} renews on {date}",
+        "preheader": "You can still cancel it.",
+        "title": "Your sponsorship renews soon",
+        "body": "On {date} your sponsorship of {amount} with {organization} will renew. If you do not want to renew it, you can cancel before that date.",
+        "amount": "Amount",
+        "date": "Renewal date",
+        "cta": "Manage my sponsorship"
+      }
+    },
+    "tax": {
+      "certificateReady": {
+        "subject": "Your {year} tax certificate of donation is ready",
+        "preheader": "Download it whenever you like.",
+        "title": "Your tax certificate is ready",
+        "body": "You can now download the tax certificate for your {year} donations (Law 49/2002) for your income tax return.",
+        "cta": "Download certificate"
+      }
+    },
+    "model182": {
+      "subject": "Reminder: Modelo 182 (Form 182) for {year}",
+      "preheader": "It must be filed by 31 January.",
+      "title": "Time to prepare Modelo 182",
+      "body": "Modelo 182 (Form 182), with the {year} donations, must be filed by 31 January. You can already download it from the organisation dashboard.",
+      "cta": "Download Modelo 182"
+    },
+    "inactivity": {
+      "subject": "Your KORUM account will be deleted on {date} unless you return",
+      "preheader": "Signing in is enough to keep it.",
+      "title": "We have not seen you in a while",
+      "body": "You have not signed in to KORUM for over three years. Unless you sign in before {date}, we will delete your account and personal data.",
+      "kept": "By legal obligation we keep the minimum accounting and tax data of your contributions, unlinked from your account.",
+      "keep": "To keep it, just sign in.",
+      "cta": "Sign in to my account"
+    }
   }
 }

@@ -67,11 +67,13 @@ export interface CreatePrismaClientOptions {
   schema?: string;
   /** Tamaño máximo del pool de conexiones (por defecto, el de `pg`: 10). */
   maxConnections?: number;
+  /** Esperas por defecto de las transacciones interactivas (Prisma: 2 s para conseguir conexión, 5 s de duración). */
+  transactionOptions?: { maxWait?: number; timeout?: number };
 }
 
-export function createPrismaClient({ connectionString, schema, maxConnections }: CreatePrismaClientOptions) {
+export function createPrismaClient({ connectionString, schema, maxConnections, transactionOptions }: CreatePrismaClientOptions) {
   const adapter = new PrismaPg({ connectionString, max: maxConnections }, schema ? { schema } : undefined);
-  return new PrismaClient({ adapter }).$extends({
+  return new PrismaClient({ adapter, ...(transactionOptions ? { transactionOptions } : {}) }).$extends({
     name: 'korum-append-only',
     query: {
       ledgerJournal: { $allOperations: journalGuard },

@@ -22,7 +22,7 @@ import { describeSecrets, getSecret, getSetting, invalidateSettingsCache, Invali
 import { UnknownSettingError } from '@/services/settings/setting-definitions';
 import { MemoryStorage } from '@/services/storage/memory-storage';
 import es from '../../messages/es.json';
-import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, testJobDeps, uniqueId } from './test-database';
 
 /** Sprint 2.5 · QA-SEC07 (ajustes cifrados), QA-PRIV01 (exportación), QA-PRIV02 (consentimientos y conservación) y QA-REG03 (supresión). */
 
@@ -413,7 +413,7 @@ describe('QA-PRIV02 · DATA_RETENTION_PURGE solo toca lo vencido', () => {
       const ago = (days: number) => new Date(now.getTime() - days * DAY);
       const storage = new MemoryStorage();
       const provider = new MockPaycometProvider({ secrets: mockSecrets });
-      const deps: JobDeps = { paymentProvider: async () => provider, invoicingProvider: () => { throw new Error('no se usa'); }, refundOriginalIp: async () => '10.0.0.1', storageProvider: () => storage, keyring: () => TEST_KEYRING, hmacSecret: () => TEST_HMAC_SECRET };
+      const deps: JobDeps = { paymentProvider: async () => provider, invoicingProvider: () => { throw new Error('no se usa'); }, refundOriginalIp: async () => '10.0.0.1', storageProvider: () => storage, keyring: () => TEST_KEYRING, hmacSecret: () => TEST_HMAC_SECRET, outbox: testJobDeps().outbox };
 
       const organization = await createOrganization(asClient(tx));
       const initiative = await createInitiative(asClient(tx), organization.id);

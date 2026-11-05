@@ -555,12 +555,10 @@ describe('QA-OPS01 · la ruta de tareas exige CRON_SECRET', () => {
     expect((await call({ authorization: 'Bearer corto' })).status).toBe(401);
   });
 
-  it('con el secreto correcto, una tarea desconocida o sin manejador responde 404', async () => {
+  it('con el secreto correcto, una tarea desconocida responde 404', async () => {
     vi.stubEnv('CRON_SECRET', secret);
     const headers = { authorization: `Bearer ${secret}` };
     expect((await call(headers, 'no-existe')).status).toBe(404);
-    // `DATA_RETENTION_PURGE` ya tiene manejador (Sprint 2.5); `OUTBOX_DISPATCH` lo tendrá en el 2.6.
-    expect((await call(headers, 'outbox-dispatch')).status).toBe(404);
   });
 });
 

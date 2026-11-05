@@ -45,27 +45,29 @@
 
 ## 4. Catálogo de emails y notificaciones
 
+**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome`, `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
+
 Reglas: solo emails **transaccionales** por defecto (los comerciales exigen consentimiento); remitente *"{Entidad} vía KORUM"*; idioma de la persona; versión HTML y de texto; botón principal único; sin adjuntos pesados (enlaces de descarga). WhatsApp se usa **solo para compartir enlaces** (`wa.me`); no se envían mensajes automáticos por WhatsApp.
 
 | `templateKey` | Cuándo | A quién | Contenido y botón |
 | :--- | :--- | :--- | :--- |
 | `auth.magicLink` / `auth.otp` | Al iniciar sesión | Persona | Enlace o código, caducidad visible |
 | `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
-| `ticket.pass` | Entrada o papeleta comprada | Comprador | QR, número de serie, fecha y lugar; *Añadir al calendario* |
+| `ticket.pass` | Entrada o papeleta comprada | Comprador | QR adjunto, número de serie, fecha y lugar; *Ver mi entrada* (el calendario va como `.ics` adjunto) |
 | `gate.pinRevoked` | 20 intentos fallidos de PIN en un evento | Firmantes | Que el PIN se ha revocado por seguridad y que las sesiones abiertas siguen; *Generar otro PIN* |
-| `initiative.goalReached` | Campaña al 100 % | Donantes y firmantes | Celebración y próximos pasos; *Compartir el logro* |
+| `initiative.goalReached` | Campaña al 100 % | Firmantes (el aviso a donantes y *Compartir el logro* llegan con el Sprint 3.6) | Celebración y próximos pasos; *Ir al panel* |
 | `initiative.achievementPhotos` | Publicadas las fotos | Donantes | Antes y Después; *Ver cómo ha quedado* |
 | `initiative.expired` | Vence sin meta | Firmantes | Opciones: redimensionar o reembolsar; *Decidir ahora* |
 | `refund.issued` | Reembolso ejecutado | Donante | Importe devuelto y medio; plazo bancario orientativo |
-| `doubleCheck.pending` | Falta la 2ª firma | Cofirmante | Qué se firma y por qué; *Firmar ahora* (enlace de un solo uso) |
+| `doubleCheck.pending` | Se pide una firma, o falta la 2ª | Quien debe firmar | Qué se firma, código de 6 dígitos y caducidad; *Firmar ahora* (enlace de un solo uso, con el token en el fragmento `#t=`). Enlace y código se borran del mensaje al enviarse |
 | `payout.executed` | Liquidación hecha | Firmantes | Importe, destino y factura; *Subir fotos del Después* |
-| `splitWindow.warning` | Faltan 15 días de la ventana de 90 | Firmantes y Super-Admin | Qué hacer para liquidar a tiempo |
+| `split.windowExpiring` / `split.windowExpired` | Faltan 15 días de la ventana de 90 / ha vencido | Firmantes | Qué hacer para liquidar a tiempo; *Liquidar ahora* |
 | `sponsor.welcome` | Patrocinio confirmado | Comercio | Factura, justificante y cartel de escaparate |
 | `sponsor.renewalNotice` | 30 días antes de renovar | Comercio | Importe, fecha y cómo cancelar |
 | `sponsor.creditPool` | Patrocinio en la bolsa | Comercio | Plazo y opciones |
 | `pledge.charged` / `pledge.skipped` | Cobro mensual de Mi Hucha o mes sin iniciativa activa | Familia | A qué iniciativa ha ido; *Pausar o cambiar* |
 | `tax.certificateReady` | Enero | Donantes con NIF en entidades con Ley 49/2002 | Descargar certificado |
-| `org.model182Reminder` | 2 de enero | Firmantes de entidades con Ley 49/2002 | Descargar el Modelo 182 |
+| `model182.reminder` | 2 de enero | Firmantes de entidades con Ley 49/2002 | Descargar el Modelo 182 |
 | `org.kybStatus` | Cambia el estado del KYB | Firmantes | Qué falta o confirmación |
 | `privacy.exportReady` | Exportación lista | Persona | Descarga (enlace caducable) |
 | `privacy.inactivityNotice` | 3 años sin actividad (`DATA_RETENTION_PURGE`) | Persona | Que su cuenta se suprimirá el día `eraseOn` si no vuelve a entrar, qué se conserva por ley y que basta con iniciar sesión para conservarla; *Entrar en mi cuenta* |

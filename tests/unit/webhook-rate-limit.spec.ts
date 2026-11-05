@@ -4,10 +4,18 @@ const reserveAttempt = vi.fn<(db: unknown, key: string, rule: unknown) => Promis
 const releaseAttempt = vi.fn<(db: unknown, key: string) => Promise<void>>();
 const getPaymentProvider = vi.fn(async () => ({ name: 'paycomet' }));
 const handlePaymentWebhook = vi.fn<(...args: unknown[]) => Promise<{ status: number; outcome: string }>>();
+const dispatchOutbox = vi.fn<(...args: unknown[]) => Promise<unknown>>();
+const reportError = vi.fn();
+/** `after` real solo existe dentro de una petición de Next: aquí se ejecuta al momento para poder comprobar qué hace. */
+const after = vi.fn((callback: () => Promise<void>) => callback());
 
 vi.mock('@/config/env', () => ({ getEnv: () => ({ DATA_HMAC_SECRET: 'secreto-de-pruebas-del-limite-de-peticiones-0123456789', QR_HMAC_SECRET: 'otro-secreto-de-pruebas-0123456789-abcdefghi' }) }));
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => ({}) }));
 vi.mock('@/lib/rate-limit', () => ({ reserveAttempt, releaseAttempt }));
+vi.mock('next/server', () => ({ after }));
+vi.mock('@/lib/error-reporting', () => ({ reportError }));
+vi.mock('@/services/email/outbox-deps', () => ({ buildOutboxDeps: () => ({}) }));
+vi.mock('@/services/email/outbox-processor', () => ({ dispatchOutbox }));
 vi.mock('@/services/payments/provider-factory', () => ({ getPaymentProvider }));
 vi.mock('@/services/payments/paycomet-webhook.service', async (importOriginal) => ({ ...(await importOriginal<Record<string, unknown>>()), handlePaymentWebhook }));
 
@@ -21,6 +29,7 @@ describe('QA-OPS01 · límite de intentos del webhook de Paycomet', () => {
     reserveAttempt.mockResolvedValue(true);
     releaseAttempt.mockResolvedValue(undefined);
     handlePaymentWebhook.mockResolvedValue({ status: 200, outcome: 'PROCESSED' });
+    dispatchOutbox.mockResolvedValue({});
   });
 
   it('agotado el cupo de la red de origen, responde 429 sin descifrar credenciales ni procesar nada', async () => {
@@ -34,6 +43,26 @@ describe('QA-OPS01 · límite de intentos del webhook de Paycomet', () => {
     expect((await POST(request({ 'x-forwarded-for': '203.0.113.7' }))).status).toBe(200);
     expect(releaseAttempt).toHaveBeenCalledTimes(1);
     expect(releaseAttempt.mock.calls[0]?.[1]).toBe(reserveAttempt.mock.calls[0]?.[1]);
+  });
+
+  it('tras un cobro procesado envía el recibo y las entradas en el propio flujo, sin retrasar la respuesta a Paycomet', async () => {
+    expect((await POST(request({ 'x-forwarded-for': '203.0.113.7' }))).status).toBe(200);
+    expect(after).toHaveBeenCalledTimes(1);
+    expect(dispatchOutbox).toHaveBeenCalledTimes(1);
+  });
+
+  it('un duplicado o una notificación rechazada no disparan envíos', async () => {
+    handlePaymentWebhook.mockResolvedValue({ status: 200, outcome: 'DUPLICATE' });
+    await POST(request({ 'x-forwarded-for': '203.0.113.7' }));
+    handlePaymentWebhook.mockResolvedValue({ status: 401, outcome: 'REJECTED' });
+    await POST(request({ 'x-forwarded-for': '203.0.113.7' }));
+    expect(dispatchOutbox).not.toHaveBeenCalled();
+  });
+
+  it('si el envío falla, el cobro sigue confirmado (200), el error se registra y los mensajes quedan para la tarea programada', async () => {
+    dispatchOutbox.mockRejectedValue(new Error('proveedor caído'));
+    expect((await POST(request({ 'x-forwarded-for': '203.0.113.7' }))).status).toBe(200);
+    expect(reportError).toHaveBeenCalledTimes(1);
   });
 
   it('una firma inválida conserva el intento gastado', async () => {

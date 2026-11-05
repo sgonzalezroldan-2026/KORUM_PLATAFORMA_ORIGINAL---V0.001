@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { IdeaSignatureRejectedError, signIdea } from '@/core/security/device-quorum.service';
-import { completeSignature, DoubleCheckNotAllowedError, MAX_OTP_ATTEMPTS, requestSignature, type SignatureTarget } from '@/core/security/double-check.service';
+import { completeSignature, DoubleCheckNotAllowedError, MAX_OTP_ATTEMPTS, requestSignature as requestSignatureReceipt, type SignatureTarget } from '@/core/security/double-check.service';
 import { evaluateDoubleCheck } from '@/core/security/double-check-evaluation';
 import { computeSignatureHash, ideaTargetDigest, verifySignatureHash } from '@/core/security/signature-hash';
 import type { MemberRole } from '@/generated/prisma/enums';
@@ -14,6 +14,21 @@ import { createInitiative, createOrganization, createTestClient, createUser, uni
 const SECRET = 'secreto-de-integracion-de-las-firmas-0123456789';
 const NOW = new Date('2026-11-10T10:00:00.000Z');
 let db: KorumPrismaClient;
+
+/**
+ * El enlace y el código de la firma ya no salen del servicio hacia quien llama: viajan por email. Las pruebas los leen de la bandeja de
+ * salida, que es lo que recibiría la persona firmante.
+ */
+async function secretsSentTo(client: KorumPrismaClient, userId: string): Promise<{ token: string; otp: string }> {
+  const message = await client.outboxMessage.findFirstOrThrow({ where: { templateKey: 'doubleCheck.pending', userId }, orderBy: { id: 'desc' } });
+  const payload = message.payloadJson as { token: string; otp: string };
+  return { token: payload.token, otp: payload.otp };
+}
+
+const requestSignature = async (...args: Parameters<typeof requestSignatureReceipt>) => {
+  const receipt = await requestSignatureReceipt(...args);
+  return { ...receipt, ...(await secretsSentTo(args[0] as KorumPrismaClient, receipt.signerUserId)) };
+};
 
 beforeAll(async () => {
   db = createTestClient();
@@ -316,7 +331,7 @@ describe('QA-SEC03 · doble firma', () => {
 
     const next = first.status === 'SIGNED' ? first.nextChallenges : [];
     expect(next.map((entry) => entry.signerUserId)).toEqual([cosigner.id]);
-    const second = await completeSignature(db, SECRET, cosignerActor, { token: next[0]!.token, otp: next[0]!.otp }, NOW);
+    const second = await completeSignature(db, SECRET, cosignerActor, (await secretsSentTo(db, next[0]!.signerUserId)), NOW);
     expect(second).toMatchObject({ status: 'SIGNED', signatures: 2, complete: true, ideaConverted: true });
     expect((await db.idea.findUniqueOrThrow({ where: { id: idea.id } })).phase).toBe('CONVERTED');
     expect(await db.doubleCheckSignature.count({ where: { ideaId: idea.id } })).toBe(2);
@@ -412,6 +427,27 @@ describe('QA-SEC03 · doble firma', () => {
     expect(await db.doubleCheckSignature.count({ where: { payoutId: payout.id } })).toBe(0);
   });
 
+  it('QA-NOT01 · el enlace y el código no salen en la respuesta: van por la bandeja de salida, a la persona firmante y en su idioma; pedir otro anula el email anterior', async () => {
+    const { organization, director, directorActor } = await team();
+    await db.user.update({ where: { id: director.id }, data: { locale: 'ca' } });
+    const { target, payout } = await payoutTarget(organization.id);
+
+    const receipt = await requestSignatureReceipt(db, SECRET, directorActor, organization.id, target, NOW);
+    expect(Object.keys(receipt).sort()).toEqual(['expiresAt', 'signerRole', 'signerUserId']);
+    const first = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'doubleCheck.pending', userId: director.id }, orderBy: { id: 'desc' } });
+    expect(first).toMatchObject({ status: 'PENDING', toAddress: director.email, locale: 'ca', organizationId: organization.id });
+    expect(first.payloadJson).toMatchObject({ targetType: 'ESCROW_PAYOUT', token: expect.stringMatching(/^[A-Za-z0-9_-]{43}$/), otp: expect.stringMatching(/^\d{6}$/), expiresAt: receipt.expiresAt.toISOString() });
+    const initiative = await db.initiative.findUniqueOrThrow({ where: { id: payout.initiativeId }, select: { title: true } });
+    expect((first.payloadJson as { targetTitle: string }).targetTitle).toBe(initiative.title);
+
+    // El email anterior, si aún no ha salido, ya no sirve: se cancela y se vacía.
+    await requestSignatureReceipt(db, SECRET, directorActor, organization.id, target, NOW);
+    expect(await db.outboxMessage.findUniqueOrThrow({ where: { id: first.id } })).toMatchObject({ status: 'CANCELLED', payloadJson: {} });
+    const pending = await db.outboxMessage.findMany({ where: { templateKey: 'doubleCheck.pending', userId: director.id, status: 'PENDING' } });
+    expect(pending).toHaveLength(1);
+    expect(pending[0]!.id).toBeGreaterThan(first.id);
+  });
+
   it('si cambia el importe, la firma anterior se sustituye al volver a firmar y queda constancia', async () => {
     const { organization, directorActor } = await team();
     const { payout, target } = await payoutTarget(organization.id);
@@ -470,7 +506,7 @@ describe('QA-SEC03 · doble firma', () => {
     const signed = await completeSignature(db, SECRET, directorActor, { token: first.token, otp: first.otp }, NOW);
     await expect(approvePayout(db, payout.id, SECRET, NOW)).rejects.toBeInstanceOf(PayoutNotAllowedError);
     const next = signed.status === 'SIGNED' ? signed.nextChallenges[0]! : null;
-    expect(await completeSignature(db, SECRET, cosignerActor, { token: next!.token, otp: next!.otp }, NOW)).toMatchObject({ status: 'SIGNED', complete: true, ideaConverted: false });
+    expect(await completeSignature(db, SECRET, cosignerActor, (await secretsSentTo(db, next!.signerUserId)), NOW)).toMatchObject({ status: 'SIGNED', complete: true, ideaConverted: false });
     expect((await db.escrowPayout.findUniqueOrThrow({ where: { id: payout.id } })).status).toBe('PENDING_DOUBLE_CHECK');
 
     expect(await approvePayout(db, payout.id, SECRET, NOW)).toEqual({ approved: true, splits: 1 });
@@ -538,7 +574,7 @@ describe('QA-SEC03 · doble firma', () => {
     const challenge = await requestSignature(db, SECRET, actor, organization.id, target, NOW);
     const signed = await completeSignature(db, SECRET, actor, { token: challenge.token, otp: challenge.otp }, NOW);
     const next = signed.status === 'SIGNED' ? signed.nextChallenges[0]! : null;
-    expect(await completeSignature(db, SECRET, actorFor(second.id, {}, [{ organizationId: organization.id, role: 'COSIGNER' }]), { token: next!.token, otp: next!.otp }, NOW)).toEqual({ status: 'NOT_ALLOWED', reason: 'SAME_PERSON' });
+    expect(await completeSignature(db, SECRET, actorFor(second.id, {}, [{ organizationId: organization.id, role: 'COSIGNER' }]), (await secretsSentTo(db, next!.signerUserId)), NOW)).toEqual({ status: 'NOT_ALLOWED', reason: 'SAME_PERSON' });
   });
 
   it('aunque existan las dos firmas, la misma bandeja de entrada no completa la doble firma', async () => {

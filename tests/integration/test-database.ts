@@ -2,6 +2,7 @@ import { inject } from 'vitest';
 import type { Prisma } from '@/generated/prisma/client';
 import { createKeyring } from '@/core/security/crypto';
 import { createPrismaClient, type KorumPrismaClient } from '@/lib/prisma';
+import { PreviewEmailProvider } from '@/services/email/preview-email-provider';
 import { MemoryStorage } from '@/services/storage/memory-storage';
 import { TEST_SCHEMA } from './test-schema';
 
@@ -14,9 +15,13 @@ export { TEST_SCHEMA };
  * solapan sentencia a sentencia y las ramas de carrera se siguen ejercitando. Con un PostgreSQL real (`TEST_DATABASE_URL`,
  * como en la CI) se usa el pool completo y la concurrencia es real.
  */
+/**
+ * Con la base local sin Docker (una sola conexión) las transacciones simultáneas se ponen en cola: el límite de 2 s que Prisma da para
+ * conseguir conexión es de un servidor con pool, no de este. Con PostgreSQL real (`TEST_DATABASE_URL`) se dejan los valores de producción.
+ */
 export function createTestClient(): KorumPrismaClient {
   const realPostgres = Boolean(process.env.TEST_DATABASE_URL);
-  return createPrismaClient({ connectionString: inject('testDatabaseUrl'), schema: TEST_SCHEMA, maxConnections: realPostgres ? undefined : 1 });
+  return createPrismaClient({ connectionString: inject('testDatabaseUrl'), schema: TEST_SCHEMA, maxConnections: realPostgres ? undefined : 1, ...(realPostgres ? {} : { transactionOptions: { maxWait: 60_000, timeout: 120_000 } }) });
 }
 
 /** Llavero de las pruebas: una clave fija de 32 bytes, versión 1. */
@@ -27,7 +32,13 @@ export const TEST_HMAC_SECRET = 'integration-data-hmac-secret-0123456789';
 export const testJobDeps = () => ({
   storageProvider: () => new MemoryStorage(),
   keyring: () => TEST_KEYRING,
-  hmacSecret: () => TEST_HMAC_SECRET
+  hmacSecret: () => TEST_HMAC_SECRET,
+  outbox: {
+    provider: async () => new PreviewEmailProvider({ writeFiles: false }),
+    sender: async () => ({ fromAddress: 'no-responder@korum.test', fromName: 'KORUM' }),
+    appUrl: () => 'https://korum.test',
+    qrSecret: () => 'integration-qr-hmac-secret-0123456789ab'
+  }
 });
 
 /** Nombre de tabla cualificado para el SQL escrito a mano de las pruebas. */

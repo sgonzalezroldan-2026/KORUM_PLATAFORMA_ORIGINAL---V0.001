@@ -31,3 +31,6 @@ Thumbs.db
 # Configuración local de cada persona (no compartida)
 .claude/settings.local.json
 .vercel/
+
+# Vista previa local de emails (Sprint 2.6)
+.email-preview/

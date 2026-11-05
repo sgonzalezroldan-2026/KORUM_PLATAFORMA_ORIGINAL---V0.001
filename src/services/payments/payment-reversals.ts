@@ -4,6 +4,7 @@ import { chargebackLines, PAYIN_KINDS, refundApprovalLines, refundExecutionLines
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
+import { queueRefundIssued } from '@/services/email/outbox-writers';
 import { PaymentProviderError, type PaymentNotification, type PaymentProvider } from './payment-provider';
 
 /**
@@ -141,6 +142,7 @@ export async function settleRefundInTx(tx: Db, contributionId: number, occurredA
     createdById: 'system',
     lines: refundExecutionLines(contribution.organizationId, contribution.totalChargedCents)
   });
+  await queueRefundIssued(tx, contributionId);
   return true;
 }
 
@@ -243,6 +245,7 @@ export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNoti
       createdById: 'webhook',
       lines: chargebackLines('KORUM_LOSS', [], contribution.organizationId, contribution.totalChargedCents)
     });
+    await queueRefundIssued(tx, contribution.id);
     await tx.auditLog.create({
       data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.refund_after_settlement', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { amountCents: contribution.totalChargedCents } }
     });

@@ -126,7 +126,7 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string): P
   for (const vote of votes) await tx.resizeVote.update({ where: { id: vote.id }, data: { canonicalEmail: anonymizedMarker('voto', vote.id) } });
 
   const messages = { OR: [{ userId: user.id }, ...(user.emailVerified ? [{ toAddress: user.email }] : [])] };
-  await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });
+  await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
   if (user.emailVerified) await tx.supportTicket.updateMany({ where: { senderEmail: user.email }, data: { senderEmail: null } });
   await tx.consentRecord.updateMany({ where: { userId: user.id }, data: { subjectEmailHmac: null } });

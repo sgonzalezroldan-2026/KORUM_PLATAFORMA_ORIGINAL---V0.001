@@ -163,5 +163,167 @@
         "PUBLIC_SUPPORTER_NAME": "Mostrar mi nombre entre quienes apoyan"
       }
     }
+  },
+  "email": {
+    "common": {
+      "senderName": "{organization} vía KORUM",
+      "tagline": "Donde las buenas ideas suman y se logran.",
+      "buttonFallback": "Si el botón no funciona, copia este enlace en tu navegador:",
+      "footerTransactional": "Te escribimos porque has hecho una operación en {organization} a través de KORUM. Es un mensaje del servicio, no publicidad.",
+      "footerAccount": "Te escribimos porque se ha pedido una acción en tu cuenta de KORUM. Es un mensaje del servicio, no publicidad.",
+      "footerPlatform": "KORUM es una plataforma tecnológica y no custodia fondos. Los cobros y las devoluciones los gestiona PAYCOMET.",
+      "logoLabel": "Logotipo de KORUM",
+      "calendarName": "Evento",
+      "quantity": "{count, plural, one {# unidad} other {# unidades}}",
+      "days": "{count, plural, one {# día} other {# días}}",
+      "footerOrganization": "Te escribimos porque gestionas {organization} en KORUM. Es un mensaje del servicio, no publicidad."
+    },
+    "auth": {
+      "magicLink": {
+        "subject": "Tu enlace para entrar en KORUM",
+        "preheader": "Un solo clic y estás dentro.",
+        "title": "Entra en KORUM",
+        "body": "Pulsa el botón para iniciar sesión. El enlace caduca en {minutes} minutos y solo sirve una vez.",
+        "cta": "Entrar en mi cuenta",
+        "footnote": "Si no has sido tú, ignora este email: nadie entrará sin pulsar el enlace."
+      },
+      "otp": {
+        "subject": "Tu código de acceso a KORUM",
+        "preheader": "Es un código de un solo uso.",
+        "title": "Tu código de acceso",
+        "body": "Introduce este código para entrar. Caduca en {minutes} minutos.",
+        "codeLabel": "Código",
+        "footnote": "Si no lo has pedido tú, ignora este mensaje y no compartas el código con nadie."
+      }
+    },
+    "receipt": {
+      "subject": "Recibo de tu aportación a «{initiative}»",
+      "preheader": "Gracias por sumar. Aquí tienes tu recibo.",
+      "title": "¡Gracias por sumar!",
+      "body": "Hemos recibido tu aportación de {amount} para «{initiative}», de {organization}.",
+      "guarantee": "El dinero queda retenido en Paycomet hasta lograr la meta. Si la iniciativa no se consigue, te devolvemos el 100 % de lo que has pagado al mismo medio de pago.",
+      "fiscalCertificate": "Si has indicado tu NIF, la parte donada a la entidad se incluirá en tu certificado fiscal de donación (Ley 49/2002), que podrás descargar en enero. La aportación voluntaria a KORUM no cuenta para el certificado.",
+      "fiscalReceipt": "Guarda este email: sirve como justificante nominativo de tu aportación.",
+      "contribution": "Aportación",
+      "voluntary": "Aportación voluntaria a KORUM",
+      "total": "Total cobrado",
+      "group": "Participas con",
+      "holder": "Recibe la entidad",
+      "reference": "Referencia",
+      "cta": "Ver la iniciativa"
+    },
+    "ticket": {
+      "subjectEvent": "Tu entrada para «{initiative}»",
+      "subjectRaffle": "Tus papeletas de «{initiative}»",
+      "preheader": "Tu código QR está dentro.",
+      "titleEvent": "Tu entrada está lista",
+      "titleRaffle": "Tus papeletas están listas",
+      "bodyEvent": "Presenta el código QR en la puerta. Lo encontrarás en este email como imagen adjunta, y también puedes abrirlo desde el botón.",
+      "bodyRaffle": "Tus números ya participan en el sorteo. Guarda este email: el código QR adjunto te identifica si sales premiado.",
+      "serial": "Código",
+      "quantity": "Cantidad",
+      "numbers": "Tus números",
+      "venue": "Lugar",
+      "date": "Fecha",
+      "cta": "Ver mi entrada",
+      "footnote": "El código QR es personal: no lo publiques en redes. Solo se puede usar una vez; si alguien lo usa antes que tú, tu entrada deja de valer."
+    },
+    "gate": {
+      "pinRevoked": {
+        "subject": "Hemos revocado el PIN de portería de «{initiative}»",
+        "preheader": "Por seguridad. La puerta no se detiene.",
+        "title": "PIN de portería revocado",
+        "body": "Tras demasiados intentos fallidos, hemos revocado el PIN de portería de «{initiative}». Las sesiones que ya estaban abiertas siguen funcionando, así que la puerta no se detiene.",
+        "cta": "Generar otro PIN"
+      }
+    },
+    "goalReached": {
+      "subject": "¡«{initiative}» ha logrado su meta!",
+      "preheader": "Celebradlo: ya está.",
+      "title": "¡Meta conseguida!",
+      "body": "«{initiative}» ha llegado a los {goal} que necesitaba gracias a {count, plural, one {# aportación} other {# aportaciones}}.",
+      "next": "El siguiente paso es la liquidación: hace falta la firma de dos personas distintas de la entidad.",
+      "cta": "Ir al panel"
+    },
+    "expired": {
+      "subject": "«{initiative}» no ha llegado a su meta",
+      "preheader": "Podéis redimensionarla o devolver el 100 %.",
+      "title": "La campaña ha terminado sin llegar a la meta",
+      "body": "«{initiative}» venció con {raised} de los {goal} necesarios. Ninguna aportación se pierde: podéis redimensionar la iniciativa o devolver el 100 % a las familias.",
+      "cta": "Decidir ahora"
+    },
+    "refund": {
+      "subject": "Te hemos devuelto tu pago de «{initiative}»",
+      "preheader": "El importe ya va de vuelta a tu medio de pago.",
+      "title": "Devolución realizada",
+      "body": "Te hemos devuelto {amount} al mismo medio de pago con el que pagaste.",
+      "timing": "Según el emisor de tu tarjeta o de tu app de pago, puede tardar unos días laborables en verse reflejado.",
+      "amount": "Importe devuelto",
+      "cta": "Ver la entidad"
+    },
+    "doubleCheck": {
+      "subject": "Falta tu firma en {organization}",
+      "preheader": "Enlace de un solo uso y código de 6 dígitos.",
+      "title": "Necesitamos tu firma",
+      "body": "Para completar esta operación hacen falta dos firmas de personas distintas de la entidad. Abre el enlace con tu sesión iniciada e introduce el código de 6 dígitos. Caduca el {expires}.",
+      "what": "Qué se firma",
+      "ideaApproval": "Aprobar la idea «{title}»",
+      "payout": "Liberar los fondos de «{title}»",
+      "codeLabel": "Tu código de 6 dígitos",
+      "cta": "Firmar ahora",
+      "footnote": "El enlace sirve una sola vez. Si no esperabas esta firma, no la completes y avisa a la otra persona firmante."
+    },
+    "split": {
+      "expiring": {
+        "subject": "Quedan {days, plural, one {# día} other {# días}} para liquidar «{initiative}»",
+        "preheader": "Paycomet solo permite repartir los fondos durante 90 días.",
+        "title": "El plazo para liquidar se agota",
+        "body": "Paycomet solo permite repartir los fondos durante 90 días desde el primer cobro. Plazo restante para «{initiative}»: {days, plural, one {# día} other {# días}}. Si no se liquida a tiempo, habrá que resolverlo a mano.",
+        "cta": "Liquidar ahora"
+      },
+      "expired": {
+        "subject": "Ha vencido el plazo de reparto de «{initiative}»",
+        "preheader": "Nuestro equipo os ayudará a resolverlo.",
+        "title": "El plazo de reparto ha vencido",
+        "body": "Han pasado los 90 días que Paycomet permite para repartir los fondos de «{initiative}». El equipo de KORUM revisará el caso y se pondrá en contacto con vosotros.",
+        "cta": "Abrir el panel"
+      }
+    },
+    "sponsor": {
+      "renewalNotice": {
+        "subject": "Tu patrocinio con {organization} se renueva el {date}",
+        "preheader": "Todavía puedes cancelarlo.",
+        "title": "Tu patrocinio se renueva pronto",
+        "body": "El {date} se renovará tu patrocinio de {amount} con {organization}. Si no quieres renovarlo, puedes cancelarlo antes de esa fecha.",
+        "amount": "Importe",
+        "date": "Fecha de renovación",
+        "cta": "Gestionar mi patrocinio"
+      }
+    },
+    "tax": {
+      "certificateReady": {
+        "subject": "Tu certificado fiscal de donación de {year} está listo",
+        "preheader": "Descárgalo cuando quieras.",
+        "title": "Tu certificado fiscal está listo",
+        "body": "Ya puedes descargar el certificado fiscal de tus donaciones de {year} (Ley 49/2002) para tu declaración de la renta.",
+        "cta": "Descargar certificado"
+      }
+    },
+    "model182": {
+      "subject": "Recordatorio: Modelo 182 de {year}",
+      "preheader": "Se presenta hasta el 31 de enero.",
+      "title": "Toca preparar el Modelo 182",
+      "body": "El Modelo 182 con los donativos de {year} se presenta hasta el 31 de enero. Ya puedes descargarlo desde el panel de la entidad.",
+      "cta": "Descargar el Modelo 182"
+    },
+    "inactivity": {
+      "subject": "Tu cuenta de KORUM se suprimirá el {date} si no vuelves",
+      "preheader": "Basta con iniciar sesión para conservarla.",
+      "title": "Hace mucho que no te vemos",
+      "body": "Llevas más de tres años sin entrar en KORUM. Si no vuelves antes del {date}, suprimiremos tu cuenta y tus datos personales.",
+      "kept": "Por obligación legal conservamos los datos contables y fiscales mínimos de tus aportaciones, sin vincularlos a tu cuenta.",
+      "keep": "Para conservarla, basta con iniciar sesión.",
+      "cta": "Entrar en mi cuenta"
+    }
   }
 }

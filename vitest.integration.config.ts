@@ -18,7 +18,8 @@ export default defineConfig({
     globalSetup: ['./tests/integration/global-setup.ts'],
     // Un único archivo a la vez: todos comparten la misma base de datos.
     fileParallelism: false,
-    testTimeout: 30_000,
+    // La base local sin Docker tiene una sola conexión y es lenta: los tests con varias firmas o liquidaciones en cadena superan los 30 s.
+    testTimeout: 90_000,
     hookTimeout: 180_000
   }
 });

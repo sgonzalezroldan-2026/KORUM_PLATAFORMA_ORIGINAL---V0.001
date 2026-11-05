@@ -369,6 +369,8 @@ enum OpsAlertType {
   ENCRYPTION_KEY_MISSING
   /// La supresión automática de una cuenta inactiva falló por un error inesperado: se reintenta cada semana.
   PRIVACY_ERASURE_FAILED
+  /// La bandeja de salida no puede enviar emails: proveedor sin configurar, plantilla desconocida o mensajes que agotan sus reintentos.
+  EMAIL_DELIVERY_FAILED
 }
 
 enum OpsAlertSeverity {

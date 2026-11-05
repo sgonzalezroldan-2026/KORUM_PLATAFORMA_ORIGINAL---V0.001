@@ -163,5 +163,167 @@
         "PUBLIC_SUPPORTER_NAME": "Mostrar el meu nom entre qui dona suport"
       }
     }
+  },
+  "email": {
+    "common": {
+      "senderName": "{organization} via KORUM",
+      "tagline": "On les bones idees sumen i s’aconsegueixen.",
+      "buttonFallback": "Si el botó no funciona, copia aquest enllaç al navegador:",
+      "footerTransactional": "T’escrivim perquè has fet una operació a {organization} a través de KORUM. És un missatge del servei, no publicitat.",
+      "footerAccount": "T’escrivim perquè s’ha demanat una acció al teu compte de KORUM. És un missatge del servei, no publicitat.",
+      "footerPlatform": "KORUM és una plataforma tecnològica i no custodia fons. Els cobraments i les devolucions els gestiona PAYCOMET.",
+      "logoLabel": "Logotip de KORUM",
+      "calendarName": "Esdeveniment",
+      "quantity": "{count, plural, one {# unitat} other {# unitats}}",
+      "days": "{count, plural, one {# dia} other {# dies}}",
+      "footerOrganization": "T’escrivim perquè gestiones {organization} a KORUM. És un missatge del servei, no publicitat."
+    },
+    "auth": {
+      "magicLink": {
+        "subject": "El teu enllaç per entrar a KORUM",
+        "preheader": "Un sol clic i ja ets dins.",
+        "title": "Entra a KORUM",
+        "body": "Prem el botó per iniciar la sessió. L’enllaç caduca en {minutes} minuts i només serveix una vegada.",
+        "cta": "Entrar al meu compte",
+        "footnote": "Si no has estat tu, ignora aquest correu: ningú no entrarà sense prémer l’enllaç."
+      },
+      "otp": {
+        "subject": "El teu codi d’accés a KORUM",
+        "preheader": "És un codi d’un sol ús.",
+        "title": "El teu codi d’accés",
+        "body": "Introdueix aquest codi per entrar. Caduca en {minutes} minuts.",
+        "codeLabel": "Codi",
+        "footnote": "Si no l’has demanat tu, ignora aquest missatge i no comparteixis el codi amb ningú."
+      }
+    },
+    "receipt": {
+      "subject": "Rebut de la teva aportació a «{initiative}»",
+      "preheader": "Gràcies per sumar. Aquí tens el teu rebut.",
+      "title": "Gràcies per sumar!",
+      "body": "Hem rebut la teva aportació de {amount} per a «{initiative}», de {organization}.",
+      "guarantee": "Els diners queden retinguts a Paycomet fins a assolir la meta. Si la iniciativa no s’aconsegueix, et retornem el 100 % del que has pagat pel mateix mitjà de pagament.",
+      "fiscalCertificate": "Si has indicat el teu NIF, la part donada a l’entitat s’inclourà al teu certificat fiscal de donació (Llei 49/2002), que podràs descarregar al gener. L’aportació voluntària a KORUM no compta per al certificat.",
+      "fiscalReceipt": "Guarda aquest correu: serveix com a justificant nominatiu de la teva aportació.",
+      "contribution": "Aportació",
+      "voluntary": "Aportació voluntària a KORUM",
+      "total": "Total cobrat",
+      "group": "Participes amb",
+      "holder": "Rep l’entitat",
+      "reference": "Referència",
+      "cta": "Veure la iniciativa"
+    },
+    "ticket": {
+      "subjectEvent": "La teva entrada per a «{initiative}»",
+      "subjectRaffle": "Les teves butlletes de «{initiative}»",
+      "preheader": "El teu codi QR és a dins.",
+      "titleEvent": "La teva entrada és a punt",
+      "titleRaffle": "Les teves butlletes són a punt",
+      "bodyEvent": "Presenta el codi QR a la porta. El trobaràs en aquest correu com a imatge adjunta i també pots obrir-lo des del botó.",
+      "bodyRaffle": "Els teus números ja participen en el sorteig. Guarda aquest correu: el codi QR adjunt t’identifica si resultes premiat.",
+      "serial": "Codi",
+      "quantity": "Quantitat",
+      "numbers": "Els teus números",
+      "venue": "Lloc",
+      "date": "Data",
+      "cta": "Veure la meva entrada",
+      "footnote": "El codi QR és personal: no el publiquis a les xarxes. Només es pot fer servir una vegada; si algú el fa servir abans que tu, la teva entrada deixa de ser vàlida."
+    },
+    "gate": {
+      "pinRevoked": {
+        "subject": "Hem revocat el PIN de porteria de «{initiative}»",
+        "preheader": "Per seguretat. La porta no s’atura.",
+        "title": "PIN de porteria revocat",
+        "body": "Després de massa intents fallits, hem revocat el PIN de porteria de «{initiative}». Les sessions que ja eren obertes continuen funcionant, de manera que la porta no s’atura.",
+        "cta": "Generar un altre PIN"
+      }
+    },
+    "goalReached": {
+      "subject": "«{initiative}» ha assolit la meta!",
+      "preheader": "Celebreu-ho: ja està.",
+      "title": "Meta aconseguida!",
+      "body": "«{initiative}» ha arribat als {goal} que necessitava gràcies a {count, plural, one {# aportació} other {# aportacions}}.",
+      "next": "El pas següent és la liquidació: calen les signatures de dues persones diferents de l’entitat.",
+      "cta": "Anar al tauler de l’entitat"
+    },
+    "expired": {
+      "subject": "«{initiative}» no ha arribat a la meta",
+      "preheader": "Podeu redimensionar-la o retornar el 100 %.",
+      "title": "La campanya ha acabat sense assolir la meta",
+      "body": "«{initiative}» ha vençut amb {raised} dels {goal} necessaris. Cap aportació no es perd: podeu redimensionar la iniciativa o retornar el 100 % a les famílies.",
+      "cta": "Decidir ara"
+    },
+    "refund": {
+      "subject": "T’hem retornat el teu pagament de «{initiative}»",
+      "preheader": "L’import ja torna al teu mitjà de pagament.",
+      "title": "Devolució feta",
+      "body": "T’hem retornat {amount} pel mateix mitjà de pagament amb què vas pagar.",
+      "timing": "Segons l’emissor de la teva targeta o aplicació de pagament, pot trigar uns dies feiners a reflectir-s’hi.",
+      "amount": "Import retornat",
+      "cta": "Veure l’entitat"
+    },
+    "doubleCheck": {
+      "subject": "Falta la teva signatura a {organization}",
+      "preheader": "Enllaç d’un sol ús i codi de 6 xifres.",
+      "title": "Necessitem la teva signatura",
+      "body": "Per completar aquesta operació calen dues signatures de persones diferents de l’entitat. Obre l’enllaç amb la sessió iniciada i introdueix el codi de 6 xifres. Caduca el {expires}.",
+      "what": "Què signes",
+      "ideaApproval": "Aprovar la idea «{title}»",
+      "payout": "Alliberar els fons de «{title}»",
+      "codeLabel": "El teu codi de 6 xifres",
+      "cta": "Signar ara",
+      "footnote": "L’enllaç serveix una sola vegada. Si no esperaves aquesta signatura, no la completis i avisa l’altra persona signatària."
+    },
+    "split": {
+      "expiring": {
+        "subject": "Queden {days, plural, one {# dia} other {# dies}} per liquidar «{initiative}»",
+        "preheader": "Paycomet només permet repartir els fons durant 90 dies.",
+        "title": "El termini per liquidar s’esgota",
+        "body": "Paycomet només permet repartir els fons durant 90 dies des del primer cobrament. Termini restant per a «{initiative}»: {days, plural, one {# dia} other {# dies}}. Si no es liquida a temps, caldrà resoldre-ho a mà.",
+        "cta": "Liquidar ara"
+      },
+      "expired": {
+        "subject": "Ha vençut el termini de repartiment de «{initiative}»",
+        "preheader": "El nostre equip us ajudarà a resoldre-ho.",
+        "title": "El termini de repartiment ha vençut",
+        "body": "Han passat els 90 dies que Paycomet permet per repartir els fons de «{initiative}». L’equip de KORUM revisarà el cas i es posarà en contacte amb vosaltres.",
+        "cta": "Obrir el tauler de l’entitat"
+      }
+    },
+    "sponsor": {
+      "renewalNotice": {
+        "subject": "El teu patrocini amb {organization} es renova el {date}",
+        "preheader": "Encara el pots cancel·lar.",
+        "title": "El teu patrocini es renova aviat",
+        "body": "El {date} es renovarà el teu patrocini de {amount} amb {organization}. Si no vols renovar-lo, el pots cancel·lar abans d’aquesta data.",
+        "amount": "Import",
+        "date": "Data de renovació",
+        "cta": "Gestionar el meu patrocini"
+      }
+    },
+    "tax": {
+      "certificateReady": {
+        "subject": "El teu certificat fiscal de donació de {year} és a punt",
+        "preheader": "Descarrega’l quan vulguis.",
+        "title": "El teu certificat fiscal és a punt",
+        "body": "Ja pots descarregar el certificat fiscal de les teves donacions de {year} (Llei 49/2002) per a la declaració de la renda.",
+        "cta": "Descarregar el certificat"
+      }
+    },
+    "model182": {
+      "subject": "Recordatori: Model 182 de {year}",
+      "preheader": "Es presenta fins al 31 de gener.",
+      "title": "Toca preparar el Model 182",
+      "body": "El Model 182 amb els donatius de {year} es presenta fins al 31 de gener. Ja el pots descarregar des del tauler de l’entitat.",
+      "cta": "Descarregar el Model 182"
+    },
+    "inactivity": {
+      "subject": "El teu compte de KORUM es suprimirà el {date} si no tornes",
+      "preheader": "N’hi ha prou d’iniciar la sessió per conservar-lo.",
+      "title": "Fa molt que no et veiem",
+      "body": "Fa més de tres anys que no entres a KORUM. Si no tornes abans del {date}, suprimirem el teu compte i les teves dades personals.",
+      "kept": "Per obligació legal conservem les dades comptables i fiscals mínimes de les teves aportacions, sense vincular-les al teu compte.",
+      "keep": "Per conservar-lo, n’hi ha prou d’iniciar la sessió.",
+      "cta": "Entrar al meu compte"
+    }
   }
 }

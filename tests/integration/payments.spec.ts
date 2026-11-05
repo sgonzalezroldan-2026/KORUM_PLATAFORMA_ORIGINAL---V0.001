@@ -34,7 +34,7 @@ async function setup(overrides: Parameters<typeof createInitiative>[2] = {}) {
   return { organization, initiative };
 }
 
-async function pendingDonation(organizationId: string, initiativeId: number, amountCents = 2_500, guaranteeCents = 0, extra: { groupName?: string; createdAt?: Date } = {}) {
+async function pendingDonation(organizationId: string, initiativeId: number, amountCents = 2_500, guaranteeCents = 0, extra: { groupName?: string; createdAt?: Date; guestEmail?: string } = {}) {
   return db.contribution.create({
     data: {
       organizationId,
@@ -47,6 +47,7 @@ async function pendingDonation(organizationId: string, initiativeId: number, amo
       paymentMethod: 'BIZUM',
       paycometOrder: uniqueId('ORD'),
       status: 'PENDING',
+      guestEmail: `${uniqueId('donante')}@pruebas.example`,
       ...extra
     }
   });
@@ -57,7 +58,7 @@ const deliver = (kind: 'PAYMENT' | 'REFUND' | 'CHARGEBACK', order: string, amoun
   return handlePaymentWebhook(db, mock, rawBody, contentType);
 };
 
-async function paidDonation(organizationId: string, initiativeId: number, amountCents = 2_500, guaranteeCents = 0, extra: { groupName?: string; createdAt?: Date } = {}) {
+async function paidDonation(organizationId: string, initiativeId: number, amountCents = 2_500, guaranteeCents = 0, extra: { groupName?: string; createdAt?: Date; guestEmail?: string } = {}) {
   const contribution = await pendingDonation(organizationId, initiativeId, amountCents, guaranteeCents, extra);
   expect(await deliver('PAYMENT', contribution.paycometOrder!, contribution.totalChargedCents)).toEqual({ status: 200, outcome: 'PROCESSED' });
   return contribution;
@@ -106,6 +107,8 @@ describe('QA-P01 · webhooks firmados e idempotentes', () => {
     expect(await db.ledgerJournal.count({ where: { contributionId: contribution.id, kind: 'PAYIN_DONATION' } })).toBe(1);
     expect(await db.ledgerJournal.count({ where: { contributionId: contribution.id, kind: 'GATEWAY_FEE' } })).toBe(1);
     expect(await getRaisedFromLedger(db, initiative.id)).toBe(2_500);
+    // El recibo se escribe con el asiento y una sola vez, aunque el aviso llegue dos veces a la vez.
+    expect(await db.outboxMessage.count({ where: { idempotencyKey: `contribution.receipt:${contribution.id}` } })).toBe(1);
   });
 
   it('una entrega posterior repetida tampoco hace nada', async () => {
@@ -155,6 +158,48 @@ describe('cobros confirmados', () => {
     expect(await db.ledgerJournal.count({ where: { contributionId: contribution.id } })).toBe(0);
     await deliver('PAYMENT', contribution.paycometOrder!, 2_500);
     expect(await statusOf(contribution.id)).toBe('COMPLETED');
+  });
+
+  it('QA-NOT01 · el recibo sale con el cobro: importes, titular legal y, según la Ley 49/2002, certificado o justificante', async () => {
+    const { organization, initiative } = await setup();
+    const contribution = await paidDonation(organization.id, initiative.id, 2_500, 180, { groupName: '3º de Primaria', guestEmail: 'madre@pruebas.example' });
+    const receipt = await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `contribution.receipt:${contribution.id}` } });
+    expect(receipt).toMatchObject({ templateKey: 'contribution.receipt', status: 'PENDING', toAddress: 'madre@pruebas.example', organizationId: organization.id, locale: 'es' });
+    expect(receipt.payloadJson).toEqual({ initiativeId: initiative.id, amountCents: 2_500, guaranteeCents: 180, totalCents: 2_680, reference: contribution.paycometOrder, groupName: '3º de Primaria', fiscalCertificate: false });
+
+    const verified = await createOrganization(db, { paycometSplitId: uniqueId('split'), kybStatus: 'VERIFIED', ley49: true, ley49VerifiedAt: new Date() });
+    const other = await createInitiative(db, verified.id, { status: 'FUNDRAISING', goalCents: 100_000 });
+    const certified = await paidDonation(verified.id, other.id);
+    expect((await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `contribution.receipt:${certified.id}` } })).payloadJson).toMatchObject({ fiscalCertificate: true });
+  });
+
+  it('QA-NOT01 · una donación de una cuenta se envía al email de la cuenta y en su idioma; sin destinatario no se escribe nada', async () => {
+    const { organization, initiative } = await setup();
+    const donor = await createUser(db, { locale: 'ca' });
+    const withAccount = await pendingDonation(organization.id, initiative.id, 1_000, 0, { guestEmail: undefined });
+    await db.contribution.update({ where: { id: withAccount.id }, data: { userId: donor.id, guestEmail: null, locale: 'ca' } });
+    expect((await deliver('PAYMENT', withAccount.paycometOrder!, 1_000)).outcome).toBe('PROCESSED');
+    expect(await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `contribution.receipt:${withAccount.id}` } })).toMatchObject({ toAddress: donor.email, userId: donor.id, locale: 'ca' });
+
+    const anonymous = await pendingDonation(organization.id, initiative.id, 1_000);
+    await db.contribution.update({ where: { id: anonymous.id }, data: { guestEmail: null } });
+    expect((await deliver('PAYMENT', anonymous.paycometOrder!, 1_000)).outcome).toBe('PROCESSED');
+    expect(await db.outboxMessage.count({ where: { idempotencyKey: `contribution.receipt:${anonymous.id}` } })).toBe(0);
+  });
+
+  it('QA-NOT01 · al lograr la meta se avisa una vez a quienes firman, en el propio flujo del cobro', async () => {
+    const { organization, initiative } = await setup({ goalCents: 5_000 });
+    const [director, cosigner] = await Promise.all([createUser(db), createUser(db, { locale: 'en' })]);
+    await db.organizationMember.createMany({ data: [{ organizationId: organization.id, userId: director.id, role: 'DIRECTOR' }, { organizationId: organization.id, userId: cosigner.id, role: 'COSIGNER' }] });
+    await paidDonation(organization.id, initiative.id, 3_000);
+    expect(await db.outboxMessage.count({ where: { organizationId: organization.id, templateKey: 'initiative.goalReached' } })).toBe(0);
+
+    await paidDonation(organization.id, initiative.id, 3_000);
+    await paidDonation(organization.id, initiative.id, 500);
+    const notices = await db.outboxMessage.findMany({ where: { organizationId: organization.id, templateKey: 'initiative.goalReached' }, orderBy: { toAddress: 'asc' } });
+    expect(notices.map((notice) => notice.userId).sort()).toEqual([director.id, cosigner.id].sort());
+    expect(notices.find((notice) => notice.userId === cosigner.id)?.locale).toBe('en');
+    expect(notices[0]?.payloadJson).toEqual({ initiativeId: initiative.id });
   });
 
   it('al cruzar la meta pasa a GOAL_REACHED, y lo que entra después es excedente de la entidad', async () => {
@@ -261,6 +306,10 @@ describe('QA-P02 · reembolso al medio de pago original', () => {
     // Solo queda la comisión de Paycomet, que asume KORUM como garantía de devolución.
     expect(balances.PSP_CLEARING).toBe(-36);
     expect(await getRaisedFromLedger(db, initiative.id)).toBe(0);
+    // El aviso de devolución sale con el asiento y por el importe total devuelto, voluntaria incluida (QA-NOT01).
+    const notice = await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `refund.issued:${contribution.id}` } });
+    expect(notice).toMatchObject({ templateKey: 'refund.issued', status: 'PENDING', toAddress: contribution.guestEmail });
+    expect(notice.payloadJson).toEqual({ initiativeId: initiative.id, amountCents: 2_680 });
   });
 
   it('repetirlo no devuelve dos veces; el aviso posterior del webhook tampoco', async () => {
@@ -273,6 +322,7 @@ describe('QA-P02 · reembolso al medio de pago original', () => {
     expect(mock.calls.length).toBe(calls);
     expect((await deliver('REFUND', contribution.paycometOrder!, 2_500)).status).toBe(200);
     expect(await db.ledgerJournal.count({ where: { contributionId: contribution.id, kind: 'ESCROW_REFUND_DONOR' } })).toBe(2);
+    expect(await db.outboxMessage.count({ where: { idempotencyKey: `refund.issued:${contribution.id}` } })).toBe(1);
   });
 
   it('si Paycomet la rechaza, sigue pendiente, queda auditado y se puede reintentar', async () => {

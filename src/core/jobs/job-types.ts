@@ -2,6 +2,7 @@ import type { Db } from '@/lib/db';
 import type { InvoicingProvider } from '@/services/invoicing/invoicing-provider';
 import type { Keyring } from '@/core/security/crypto';
 import type { PaymentProvider } from '@/services/payments/payment-provider';
+import type { OutboxDeps } from '@/services/email/outbox-processor';
 import type { StorageProvider } from '@/services/storage/storage-provider';
 
 /**
@@ -19,6 +20,8 @@ export interface JobDeps {
   keyring: () => Keyring;
   /** `DATA_HMAC_SECRET`, para el HMAC del email en las solicitudes de privacidad. */
   hmacSecret: () => string;
+  /** Bandeja de salida: proveedor de email, remitente, URL pública y secreto del QR. */
+  outbox: OutboxDeps;
 }
 
 export interface JobContext {

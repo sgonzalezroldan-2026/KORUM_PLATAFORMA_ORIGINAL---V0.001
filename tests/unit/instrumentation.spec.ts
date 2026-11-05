@@ -40,7 +40,8 @@ describe('QA-C01 · el servidor se detiene al arrancar con un entorno inválido'
     for (const name of ['DATABASE_URL', 'ENCRYPTION_KEY', 'QR_HMAC_SECRET', 'BETTER_AUTH_SECRET']) {
       expect(message).toContain(name);
     }
-  });
+    // La importación dinámica del módulo de arranque es pesada: con la máquina cargada roza los 5 s por defecto.
+  }, 30_000);
 
   it('con un entorno válido no termina el proceso', async () => {
     stubValidEnv();

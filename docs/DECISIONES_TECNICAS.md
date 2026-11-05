@@ -25,7 +25,7 @@
 | Autenticación | **Better Auth** (enlace mágico, OTP por email, contraseña, 2FA TOTP, passkeys, límite de intentos en base de datos) | Librería TypeScript completa; el equipo de Auth.js (NextAuth) se integró en Better Auth en 2025 y recomienda Better Auth para proyectos nuevos. Datos en nuestra propia base de datos. | Auth.js (solo mantenimiento), Supabase Auth (ata la lógica de roles a otro sistema), Clerk (datos fuera, coste por usuario) |
 | Idiomas | **next-intl** (`es`, `ca`, `en`) con rutas por idioma | Estándar en App Router, mensajes ICU y SEO multi-idioma. | — |
 | Validación | **Zod** | Mismo esquema para formularios, Server Actions, webhooks y entorno. | — |
-| Emails | **React Email** (plantillas) + adaptador `EmailProvider` | Plantillas en React, en 3 idiomas, con vista previa local. | — |
+| Emails | **`@react-email/render`** (HTML a partir de un único componente `EmailLayout`) + adaptador `EmailProvider` | Plantillas en React, en 3 idiomas, con vista previa local. Se usa solo `@react-email/render` y no `@react-email/components` (arrastra una versión de `html-to-text` con `deepmerge` vulnerable y rompe `npm audit`); el texto plano se genera desde el mismo contenido estructurado. | — |
 | QR | `qrcode` (generar) + `BarcodeDetector` con librería de lectura de respaldo (leer) | Safari en iOS no soporta `BarcodeDetector`. | — |
 | PDF | `@react-pdf/renderer` | Certificados, justificantes, actas de sorteo y cartel A4 desde componentes React. | Navegador sin cabeza (pesado en serverless) |
 | Tests | **Vitest** + **Playwright** + **@axe-core/playwright** | Unitarios, extremo a extremo y accesibilidad en la misma suite. | — |
@@ -160,7 +160,7 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 | `MODEL182_REMINDER` | 2 de enero | 2 de enero | Recuerda a las entidades con Ley 49/2002 que descarguen su Modelo 182 |
 | `OPS_HOUSEKEEPING` | Diaria | Diaria | Purga contadores de intentos caducados, notificaciones rechazadas de más de 90 días y desafíos de firma antiguos; durante una rotación de clave, vuelve a cifrar lo antiguo con la actual (§5) |
 | `DATA_RETENTION_PURGE` | Semanal | Semanal | Aplica los plazos de conservación de [CUMPLIMIENTO §6](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (`src/core/privacy/retention-*.ts`): anonimiza datos fiscales y emails de ejercicios vencidos, firmas de ideas antiguas y avisa o suprime cuentas inactivas; borra dispositivos, HMAC de red, contenido de notificaciones, consentimientos sustituidos, ficheros y webhooks vencidos; reintenta el borrado de tarjetas en Paycomet y alerta de solicitudes RGPD fuera de plazo |
-| `OUTBOX_DISPATCH` | Cada minuto | Diaria | Envía las notificaciones pendientes. **Sin manejador hasta el Sprint 2.6** |
+| `OUTBOX_DISPATCH` | Cada minuto | Diaria | Envía los mensajes de `OutboxMessage` que ya tocan (`src/services/email/outbox-processor.ts`): reclamo condicional con reserva de 10 min, hasta 6 intentos con espera creciente (1 min a 6 h) y alerta `EMAIL_DELIVERY_FAILED` al agotarlos. **Con el plan gratuito es solo la red de seguridad**: el recibo y las entradas QR salen en el propio webhook del cobro (`after()` en `/api/webhooks/paycomet`) |
 
 ### 7.1 Cómo se ejecutan (Sprint 2.4)
 

@@ -14,8 +14,9 @@ import { computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from './si
  * liberar una liquidación. Toda firma se hace con un enlace de un solo uso y un OTP, y además con la sesión de esa misma persona: el enlace
  * y el código van al mismo correo, y una bandeja de entrada comprometida no debe bastar para mover dinero.
  *
- * El enlace y el OTP en claro solo salen de aquí una vez, para que la capa de notificaciones los envíe. La firma nunca aprueba por sí sola
- * una liquidación: al completarse, quien llama ejecuta `approvePayout`, que vuelve a comprobarlo todo dentro de su transacción.
+ * El enlace y el OTP en claro **nunca salen de este módulo hacia el navegador**: se escriben en la bandeja de salida (`doubleCheck.pending`),
+ * dentro de la misma transacción que crea el desafío, y viajan solo por email. La respuesta a quien llama lleva únicamente quién, con qué
+ * cargo y hasta cuándo (`SignatureReceipt`). La firma nunca aprueba por sí sola una liquidación: al completarse, quien llama ejecuta `approvePayout`, que vuelve a comprobarlo todo dentro de su transacción.
  */
 
 export type SignatureTarget = { targetType: 'IDEA_APPROVAL'; ideaId: number } | { targetType: 'ESCROW_PAYOUT'; payoutId: number };
@@ -59,13 +60,10 @@ async function lockTarget(tx: Db, secret: string, target: SignatureTarget, now: 
   return { context, open: payout.status === 'PENDING_DOUBLE_CHECK', block, signatures: payout.signatures };
 }
 
-export interface IssuedChallenge {
+/** Lo que sabe quien pide o completa una firma: a quién se ha enviado el enlace y hasta cuándo vale. Sin el enlace ni el código. */
+export interface SignatureReceipt {
   signerUserId: string;
   signerRole: SignerRole;
-  /** Va en el enlace; no se puede recuperar después. */
-  token: string;
-  /** Código de 6 dígitos; no se puede recuperar después. */
-  otp: string;
   expiresAt: Date;
 }
 
@@ -73,17 +71,47 @@ const hashToken = (secret: string, token: string) => dataHmac(secret, 'double-ch
 const hashOtp = (secret: string, tokenHash: string, otp: string) => dataHmac(secret, 'double-check-otp', `${tokenHash}:${otp}`);
 
 /** Crea un enlace y un OTP nuevos para una persona y anula los anteriores que tuviera para este objetivo. */
-async function issueChallenge(tx: Db, secret: string, target: SignatureTarget, context: DoubleCheckContext, signer: { userId: string; role: SignerRole }, now: Date): Promise<IssuedChallenge> {
-  await tx.doubleCheckChallenge.updateMany({ where: { targetType: target.targetType, ...targetColumns(target), signerUserId: signer.userId, consumedAt: null, revokedAt: null }, data: { revokedAt: now } });
+async function issueChallenge(tx: Db, secret: string, target: SignatureTarget, context: DoubleCheckContext, signer: { userId: string; role: SignerRole }, now: Date): Promise<SignatureReceipt> {
+  const open = { targetType: target.targetType, ...targetColumns(target), signerUserId: signer.userId, consumedAt: null, revokedAt: null };
+  const superseded = await tx.doubleCheckChallenge.findMany({ where: open, select: { id: true } });
+  await tx.doubleCheckChallenge.updateMany({ where: open, data: { revokedAt: now } });
+  // El email del enlace anterior, si aún no ha salido, ya no sirve: se cancela y se vacía.
+  if (superseded.length > 0) {
+    await tx.outboxMessage.updateMany({ where: { idempotencyKey: { in: superseded.map((old) => outboxKeyOf(old.id)) }, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED', payloadJson: {} } });
+  }
   const token = randomBytes(32).toString('base64url');
   const otp = String(randomInt(0, 1_000_000)).padStart(6, '0');
   const tokenHash = hashToken(secret, token);
   const expiresAt = new Date(now.getTime() + CHALLENGE_TTL_MS);
-  await tx.doubleCheckChallenge.create({
-    data: { organizationId: context.organizationId, targetType: target.targetType, ...targetColumns(target), signerUserId: signer.userId, signerRole: signer.role, tokenHash, otpHmac: hashOtp(secret, tokenHash, otp), targetDigest: context.targetDigest, expiresAt, createdAt: now }
+  const challenge = await tx.doubleCheckChallenge.create({
+    data: { organizationId: context.organizationId, targetType: target.targetType, ...targetColumns(target), signerUserId: signer.userId, signerRole: signer.role, tokenHash, otpHmac: hashOtp(secret, tokenHash, otp), targetDigest: context.targetDigest, expiresAt, createdAt: now },
+    select: { id: true }
   });
+  await queueChallengeEmail(tx, target, context.organizationId, signer.userId, challenge.id, { token, otp, expiresAt });
   await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: context.organizationId, action: 'double_check.challenge_issued', targetType: target.targetType, targetId: String(targetIdOf(target)), metadataJson: { signerUserId: signer.userId, signerRole: signer.role } } });
-  return { signerUserId: signer.userId, signerRole: signer.role, token, otp, expiresAt };
+  return { signerUserId: signer.userId, signerRole: signer.role, expiresAt };
+}
+
+const outboxKeyOf = (challengeId: string) => `doubleCheck.pending:${challengeId}`;
+
+/** Escribe el enlace y el código en la bandeja de salida, en la misma transacción que el desafío: o existen los dos o ninguno. */
+async function queueChallengeEmail(tx: Db, target: SignatureTarget, organizationId: string, signerUserId: string, challengeId: string, secrets: { token: string; otp: string; expiresAt: Date }): Promise<void> {
+  const signer = await tx.user.findUniqueOrThrow({ where: { id: signerUserId }, select: { email: true, locale: true } });
+  const title =
+    target.targetType === 'IDEA_APPROVAL'
+      ? (await tx.idea.findUniqueOrThrow({ where: { id: target.ideaId }, select: { title: true } })).title
+      : (await tx.escrowPayout.findUniqueOrThrow({ where: { id: target.payoutId }, select: { initiative: { select: { title: true } } } })).initiative.title;
+  await tx.outboxMessage.create({
+    data: {
+      idempotencyKey: outboxKeyOf(challengeId),
+      templateKey: 'doubleCheck.pending',
+      locale: signer.locale,
+      toAddress: signer.email,
+      userId: signerUserId,
+      organizationId,
+      payloadJson: { targetType: target.targetType, targetTitle: title.slice(0, 200), token: secrets.token, otp: secrets.otp, expiresAt: secrets.expiresAt.toISOString() }
+    }
+  });
 }
 
 async function targetOrganization(db: Db, target: SignatureTarget): Promise<string | null> {
@@ -115,7 +143,7 @@ async function signerBlock(tx: Db, locked: LockedTarget, evaluation: DoubleCheck
 }
 
 /** La persona de la sesión pide firmar. Su rol sale de la base de datos, y el Super-Admin nunca firma por otra persona. */
-export async function requestSignature(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, target: SignatureTarget, now: Date = new Date()): Promise<IssuedChallenge> {
+export async function requestSignature(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, target: SignatureTarget, now: Date = new Date()): Promise<SignatureReceipt> {
   const targetId = targetIdOf(target);
   const probe = { organizationId, resourceType: target.targetType, resourceId: targetId };
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'double_check.request', targetType: target.targetType, targetId, allowSuperadmin: false });
@@ -154,7 +182,7 @@ export async function requestSignature(db: KorumPrismaClient, secret: string, ac
 }
 
 export type CompleteSignatureResult =
-  | { status: 'SIGNED'; signatures: number; complete: boolean; ideaConverted: boolean; /** Para la otra persona firmante, si falta su firma. */ nextChallenges: IssuedChallenge[] }
+  | { status: 'SIGNED'; signatures: number; complete: boolean; ideaConverted: boolean; /** Para la otra persona firmante, si falta su firma. */ nextChallenges: SignatureReceipt[] }
   | { status: 'INVALID_OTP'; attemptsLeft: number }
   /** El enlace no existe, ha caducado, ya se usó, se agotaron sus intentos o no es de esta persona. No se distingue, para no dar pistas. */
   | { status: 'INVALID_LINK' }
@@ -256,7 +284,7 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
     const missingRole: SignerRole = signerRole === 'DIRECTOR' ? 'COSIGNER' : 'DIRECTOR';
     const candidates = await tx.organizationMember.findMany({ where: { organizationId: challenge.organizationId, role: missingRole, userId: { not: actor.userId }, user: { twoFactorEnabled: true } }, select: { userId: true } });
     const candidateRoles = await loadSignerMemberships(tx, challenge.organizationId, candidates.map((candidate) => candidate.userId));
-    const nextChallenges: IssuedChallenge[] = [];
+    const nextChallenges: SignatureReceipt[] = [];
     for (const candidate of candidates) {
       if (candidateRoles.get(candidate.userId)?.length === 1) nextChallenges.push(await issueChallenge(tx, secret, target, locked.context, { userId: candidate.userId, role: missingRole }, now));
     }
