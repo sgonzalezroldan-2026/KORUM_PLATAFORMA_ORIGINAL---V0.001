@@ -32,3 +32,23 @@ export async function expectNoSeriousA11yViolations(page: Page) {
 export async function expectNoMissingTranslations(page: Page) {
   await expect(page.locator('body')).not.toContainText('__MISSING__');
 }
+
+/**
+ * QA-F06: en móvil (< 768 px) los hijos de cada `.mobile-stack` van uno debajo de otro, sin columnas laterales comprimidas:
+ * `box[i+1].y >= box[i].y + box[i].height - 1`.
+ */
+export async function expectMobileStackIsOneColumn(page: Page) {
+  const problems = await page.evaluate(() => {
+    const found: string[] = [];
+    document.querySelectorAll('.mobile-stack').forEach((container, index) => {
+      const boxes = [...container.children].map((child) => child.getBoundingClientRect()).filter((box) => box.height > 0);
+      for (let i = 0; i < boxes.length - 1; i += 1) {
+        const current = boxes[i];
+        const next = boxes[i + 1];
+        if (current && next && next.y < current.y + current.height - 1) found.push(`.mobile-stack #${index}: el bloque ${i + 1} empieza antes de que acabe el ${i}`);
+      }
+    });
+    return found;
+  });
+  expect(problems).toEqual([]);
+}

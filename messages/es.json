@@ -6,7 +6,7 @@
   },
   "metadata": {
     "title": "KORUM · Donde las buenas ideas suman y se logran",
-    "description": "Buzón de ideas con quórum, campañas «todo o nada» y taquilla con QR para colegios, clubes y entidades culturales. Si no se llega a la meta, se devuelve el 100 %."
+    "description": "Buzón de ideas, campañas «todo o nada» y taquilla con QR para colegios, clubes y entidades culturales. Si no se llega a la meta, se devuelve el 100 %."
   },
   "common": {
     "skipToContent": "Saltar al contenido",
@@ -24,11 +24,88 @@
   },
   "home": {
     "eyebrow": "Para colegios, clubes y entidades culturales",
-    "title": "Donde las buenas ideas suman y se logran.",
-    "subtitle": "KORUM reúne el buzón de ideas, las campañas «todo o nada» y la taquilla con QR de tu comunidad. Estamos preparando todo para abrir muy pronto.",
+    "title": "Donde las buenas ideas de tu colegio o club suman y se hacen realidad.",
+    "subtitle": "La plataforma independiente para que tu comunidad proponga, decida y financie mejoras: campañas «todo o nada» con devolución automática si no se llega a la meta, taquilla digital con QR y libertad total para elegir proveedor. Sin cuota de alta y sin manejar efectivo.",
+    "ctaSignup": "🏫 Dar de alta mi colegio, AMPA o club gratis",
+    "ctaFind": "🔍 Buscar mi colegio o club",
+    "ctaLogin": "🔐 Iniciar sesión",
     "badgeRefund": "Si no se llega a la meta, se devuelve el 100 %",
     "badgeProvider": "La entidad elige libremente a su proveedor",
-    "badgePayments": "Cobros y devoluciones gestionados por PAYCOMET"
+    "badgePayments": "Cobros y devoluciones gestionados por PAYCOMET",
+    "finder": {
+      "title": "Encuentra tu colegio o club",
+      "intro": "Si tu comunidad ya está en KORUM, entra en su página para ver sus iniciativas."
+    },
+    "steps": {
+      "title": "Cómo funciona, en 4 pasos",
+      "items": [
+        {
+          "title": "Proponed y sumad firmas",
+          "text": "Cualquier familia propone una mejora y la comunidad la respalda con su firma."
+        },
+        {
+          "title": "Doble firma de la entidad",
+          "text": "Dos personas de la entidad la aprueban y elegís libremente a vuestro proveedor."
+        },
+        {
+          "title": "Aportan en 10 segundos",
+          "text": "Las familias aportan con Bizum o tarjeta. Es todo o nada: si no se llega a la meta, se devuelve el 100 %."
+        },
+        {
+          "title": "Disfrutad del Antes y Después",
+          "text": "Con la meta lograda se paga la mejora y toda la comunidad ve el resultado."
+        }
+      ]
+    },
+    "calculator": {
+      "title": "¿Cuánto hay que reunir?",
+      "intro": "Calcula la meta de tu proyecto con las mismas reglas que usa la plataforma. Con una aportación media de 15 a 25 € y unos pocos comercios del barrio, las metas suelen alcanzarse."
+    },
+    "audiences": {
+      "title": "Pensado para cada comunidad",
+      "cards": [
+        {
+          "title": "Entidades",
+          "bullets": [
+            "Sin efectivo y sin hojas de cálculo",
+            "Doble firma mancomunada de dos personas",
+            "Cobro directo a la entidad o a su proveedor",
+            "Modelo 182 listo en un clic si la entidad se acoge a la Ley 49/2002",
+            "Modo portería con QR y medallas anuales"
+          ],
+          "link": "Descubrir las ventajas para entidades"
+        },
+        {
+          "title": "Familias",
+          "bullets": [
+            "Aportar en 10 segundos, sin registro",
+            "Devolución automática del 100 % si no se llega a la meta",
+            "Retos por curso o equipo, siempre en positivo",
+            "Entradas con QR en el móvil"
+          ],
+          "link": "Ver cómo funciona"
+        },
+        {
+          "title": "Comercios",
+          "bullets": [
+            "Visibilidad ante las familias del barrio",
+            "Categoría Oro, Plata o Bronce",
+            "El 100 % del patrocinio llega a la iniciativa",
+            "Justificante del patrocinio y factura del fee, al momento"
+          ],
+          "link": "Ver cómo participan los comercios"
+        }
+      ]
+    },
+    "money": {
+      "title": "Cómo se trata el dinero",
+      "text": "Los pagos los procesa PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM es la tecnología: no guarda vuestro dinero. Si una iniciativa no llega a su meta, se devuelve el 100 % a cada persona.",
+      "link": "Leer más sobre seguridad y transparencia"
+    },
+    "final": {
+      "title": "Empieza hoy, sin coste de alta",
+      "text": "Da de alta tu entidad en tres pasos y empieza a recoger las ideas de tu comunidad."
+    }
   },
   "status": {
     "initiative": {
@@ -324,6 +401,541 @@
       "kept": "Por obligación legal conservamos los datos contables y fiscales mínimos de tus aportaciones, sin vincularlos a tu cuenta.",
       "keep": "Para conservarla, basta con iniciar sesión.",
       "cta": "Entrar en mi cuenta"
+    }
+  },
+  "nav": {
+    "menu": "Menú",
+    "login": "Iniciar sesión",
+    "signup": "Dar de alta mi entidad",
+    "footerAudiences": "Para quién",
+    "footerInfo": "Información",
+    "footerLanguage": "Idioma en el pie de página",
+    "pages": {
+      "colegios": "Para colegios",
+      "clubes": "Para clubes",
+      "culturales": "Para entidades culturales",
+      "comercios": "Para comercios",
+      "comoFunciona": "Cómo funciona",
+      "precios": "Precios",
+      "seguridad": "Seguridad y transparencia",
+      "faq": "Preguntas frecuentes"
+    }
+  },
+  "cookies": {
+    "title": "Cookies opcionales",
+    "text": "Usamos cookies que no son imprescindibles. Solo se activarán si las aceptas; si las rechazas, KORUM funciona igual.",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "purposes": {
+      "analytics": "Estadísticas de uso",
+      "preferences": "Preferencias",
+      "marketing": "Publicidad"
+    }
+  },
+  "finder": {
+    "label": "Nombre de tu colegio, club o entidad",
+    "placeholder": "Por ejemplo, Cervantes",
+    "hint": "Escribe al menos 2 letras. Se busca por nombre o por provincia.",
+    "searching": "Buscando…",
+    "results": "{count, plural, one {# entidad encontrada} other {# entidades encontradas}}",
+    "error": "No hemos podido buscar ahora mismo.",
+    "retry": "Reintentar",
+    "emptyTitle": "No encontramos «{query}»",
+    "emptyText": "Puede que tu entidad aún no esté en KORUM. Darla de alta es gratis y lleva unos minutos.",
+    "emptyAction": "Dar de alta mi entidad gratis",
+    "vertical": {
+      "SCHOOL": "Colegio",
+      "SPORTS_CLUB": "Club deportivo",
+      "CULTURAL": "Entidad cultural"
+    },
+    "noResults": "No hay resultados. Puedes dar de alta tu entidad gratis."
+  },
+  "calculator": {
+    "formLabel": "Datos para el simulador",
+    "verticalLabel": "Tipo de entidad",
+    "vertical": {
+      "SCHOOL": "Colegio o AMPA/AFA",
+      "SPORTS_CLUB": "Club deportivo",
+      "CULTURAL": "Entidad cultural"
+    },
+    "objectiveLabel": "¿Qué queréis conseguir?",
+    "objective": {
+      "climate": "Climatización de las aulas",
+      "shade": "Sombra en el patio",
+      "boards": "Pizarras digitales",
+      "scoreboard": "Marcador LED",
+      "trip": "Viaje de fin de curso",
+      "custom": "Otro objetivo",
+      "instruments": "Instrumentos y vestuario"
+    },
+    "costLabel": "Presupuesto de vuestro proveedor",
+    "costHint": "Es un importe de ejemplo: cámbialo por vuestro presupuesto.",
+    "costError": "Escribe un importe mayor que cero y de hasta {max}.",
+    "families": {
+      "SCHOOL": "Número de familias del centro",
+      "SPORTS_CLUB": "Número de socios y familias",
+      "CULTURAL": "Número de personas de la comunidad"
+    },
+    "familiesError": "Escribe un número entero de 1 a {max}.",
+    "sponsorsLabel": "Comercios del barrio que patrocinan: {count}",
+    "sponsorsValue": "{count, plural, =0 {ningún comercio} one {# comercio} other {# comercios}}",
+    "sponsorsHint": "Cada comercio aporta {level}, que llegan íntegros a la iniciativa (su fee de gestión va aparte y lo paga el comercio).",
+    "resultTitle": "Tu iniciativa, en números",
+    "goal": "Meta a publicar: <strong>{amount}</strong>",
+    "breakdown": {
+      "net": "Para pagar la mejora, con reserva de contingencia",
+      "commission": "Comisión de KORUM (exento: {exempt})",
+      "maintenance": "Mantenimiento de la plataforma",
+      "gateway": "Pasarela de pago, con el redondeo al euro"
+    },
+    "remaining": "Entre las familias hay que reunir <strong>{amount}</strong> {sponsors}.",
+    "noSponsors": "(sin comercios)",
+    "withSponsors": "({count, plural, one {con # comercio} other {con # comercios}})",
+    "coveredBySponsors": "¡Con esos comercios la meta queda cubierta!",
+    "atAverage": "Con {average} de media harían falta {count, plural, one {# aportación} other {# aportaciones}}: el {pct} de la comunidad.",
+    "tooMuch": "Con {average} de media no bastaría ni con toda la comunidad: suma comercios o ajusta el objetivo.",
+    "ifHalf": "Si participa una de cada dos familias, la aportación media sería de <strong>{average}</strong>.",
+    "disclaimer": "Cifras orientativas con las tarifas vigentes: los primeros {exempt} de cada curso no pagan comisión. La meta final la calcula el Estudio con vuestro presupuesto real.",
+    "needData": "Completa el presupuesto y el número de personas para ver el cálculo.",
+    "announce": "Meta a publicar: {goal}. Por reunir entre las familias: {remaining}."
+  },
+  "marketing": {
+    "ogAlt": "KORUM: donde las buenas ideas suman y se logran",
+    "updated": "Actualizado el",
+    "breadcrumbLabel": "Ruta de navegación",
+    "breadcrumbHome": "Inicio",
+    "cta": {
+      "signup": "Dar de alta mi entidad gratis",
+      "find": "Buscar mi colegio o club",
+      "howItWorks": "Ver cómo funciona"
+    },
+    "llms": {
+      "summary": "KORUM es una plataforma tecnológica para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales. Reúne un buzón de ideas con quórum, campañas de mecenazgo «todo o nada», taquilla y rifas con QR, comercios amigos y Mi Hucha.",
+      "money": "Los cobros, retenciones y devoluciones los ejecuta PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM no es una entidad financiera ni custodia fondos. Si una iniciativa no llega a su meta, se devuelve el 100 % a cada persona, al medio de pago original. KORUM nunca intermedia ni cobra comisiones a proveedores de obras o equipamiento: la entidad elige libremente.",
+      "figuresTitle": "Tarifas vigentes",
+      "figures": [
+        "Alta de entidades: gratis.",
+        "Los primeros {exempt} de cada curso no pagan comisión; después, {t1Rate}, {t2Rate} o {t3Rate} según el tamaño de la iniciativa (tramos hasta {t1Max} y {t2Max}).",
+        "Pasarela de pago: {gatewayRate} más {gatewayFixed} por aportación, incluida en la meta que ven las familias.",
+        "Entradas y papeletas: «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio.",
+        "Patrocinio de comercios: el 100 % del nivel elegido llega a la iniciativa; el fee de gestión publicitaria ({sponsorFee} más IVA) se suma encima.",
+        "Duración máxima de una campaña: {maxDays} días."
+      ],
+      "pagesTitle": "Páginas"
+    },
+    "pricing": {
+      "title": "Tarifas vigentes",
+      "caption": "Tarifas de KORUM",
+      "colConcept": "Concepto",
+      "colPrice": "Qué se paga",
+      "noteFlat": "El neto es lo que necesita la entidad para pagar la mejora. La tarifa se decide por el neto total de la iniciativa y se aplica solo a la parte que supera lo exento.",
+      "noteMarginal": "El neto es lo que necesita la entidad para pagar la mejora. Cada tramo paga únicamente la parte del neto que cae dentro de él.",
+      "exemptLabel": "Primeros {exempt} de cada curso",
+      "exemptValue": "Sin comisión",
+      "tier1Label": "Neto de hasta {t1Max}",
+      "tier1Value": "{t1Rate} sobre la parte que supera lo exento",
+      "tier2Label": "Neto de {t1Max} a {t2Max}",
+      "tier2Value": "{t2Rate} sobre la parte que supera lo exento",
+      "tier3Label": "Neto de más de {t2Max}",
+      "tier3Value": "{t3Rate} sobre la parte que supera lo exento",
+      "maintLabel": "Mantenimiento de la plataforma",
+      "maintOff": "Sin cuota de mantenimiento",
+      "maintOn": "{maintFee} por campaña, con un tope anual de {maintCap}",
+      "gatewayLabel": "Pasarela de pago (Paycomet)",
+      "gatewayValue": "{gatewayRate} más {gatewayFixed} por aportación, incluidos en la meta que ven las familias",
+      "ticketsLabel": "Entradas y papeletas",
+      "ticketsValue": "«Gastos de gestión digital»: {ticketFixed} más el {ticketRate} del precio, siempre desglosados antes de pagar",
+      "sponsorsLabel": "Patrocinio de comercios",
+      "sponsorsValue": "El 100 % del nivel elegido llega a la iniciativa. El fee de gestión publicitaria ({sponsorFee} más IVA) se suma encima y lo paga el comercio",
+      "voluntaryLabel": "Aportación voluntaria a KORUM",
+      "voluntaryValue": "Opcional y desmarcada por defecto; el importe se elige desde cero. No cambia nada de la donación",
+      "setupLabel": "Alta de la entidad",
+      "setupValue": "Gratis",
+      "durationLabel": "Duración máxima de una campaña",
+      "durationValue": "{maxDays} días desde su publicación",
+      "disclaimer": "La meta final de cada iniciativa la calcula el Estudio de la entidad con su presupuesto real; el simulador de la portada da una estimación."
+    },
+    "pages": {
+      "colegios": {
+        "title": "Recaudar fondos para colegios y AMPA/AFA",
+        "description": "Financia climatización, sombra o pizarras digitales con campañas todo o nada, doble firma y devolución del 100 % si no se llega a la meta.",
+        "h1": "Cómo financiar mejoras en tu colegio sin manejar efectivo",
+        "answer": "KORUM permite que un colegio o su AMPA/AFA proponga una mejora, la apruebe con doble firma y la financie con las aportaciones de las familias en una campaña «todo o nada»: si no se llega a la meta, se devuelve el 100 % a cada persona. Los primeros {exempt} de cada curso no pagan comisión.",
+        "sections": [
+          {
+            "title": "Qué puede hacer tu colegio",
+            "bullets": [
+              "Abrir un buzón de ideas con quórum para que las familias propongan y respalden mejoras.",
+              "Lanzar campañas «todo o nada» para climatización, sombra en el patio, pizarras digitales o el viaje de fin de curso.",
+              "Vender entradas y papeletas de rifa con QR en festivales y fiestas, con control de aforo.",
+              "Plantear retos por curso (de Infantil 3 años a 4º de ESO) y celebrar lo que se consigue.",
+              "Exportar el Modelo 182 en un clic si la entidad se acoge a la Ley 49/2002."
+            ]
+          },
+          {
+            "title": "Quién firma y quién cobra",
+            "paragraphs": [
+              "Un colegio público participa siempre a través de su AMPA/AFA, que es la entidad titular de los fondos. Los colegios concertados y privados se dan de alta a través de su titular.",
+              "Aprobar una idea y liberar fondos exige la firma de dos personas distintas: la dirección del centro y la presidencia del AMPA/AFA. El dinero se cobra con Paycomet, queda retenido hasta lograr la meta y se paga a la entidad o directamente a su proveedor con la factura delante."
+            ]
+          },
+          {
+            "title": "Libertad total para elegir proveedor",
+            "paragraphs": [
+              "KORUM nunca intermedia ni homologa proveedores de obras o equipamiento, ni les cobra comisiones. Vuestra entidad introduce el presupuesto del proveedor que prefiera y la plataforma calcula la meta."
+            ]
+          },
+          {
+            "title": "Retos por curso, siempre en positivo",
+            "paragraphs": [
+              "Los cursos suman familias participantes para desbloquear un premio colectivo. Se celebra lo conseguido («3ºB ya suma 28 familias»); nunca se señala a nadie ni se comparan importes entre cursos."
+            ]
+          },
+          {
+            "title": "Cuánto cuesta",
+            "paragraphs": [
+              "Dar de alta el colegio es gratis. Los primeros {exempt} de cada curso no pagan comisión; a partir de ahí, la comisión va del {t1Rate} al {t3Rate} según el tamaño de la iniciativa. Todas las tarifas están en la página de precios."
+            ]
+          }
+        ],
+        "ctaTitle": "Empieza con el buzón de ideas de tu colegio",
+        "ctaText": "El alta es gratuita y lleva unos minutos. Sin manejar efectivo y con la devolución del 100 % si no se llega a la meta."
+      },
+      "clubes": {
+        "title": "Recaudar fondos para clubes deportivos",
+        "description": "Financia material, desplazamientos o instalaciones del club con campañas todo o nada, entradas y rifas con QR, y devolución del 100 % si no se llega.",
+        "h1": "Cómo recaudar fondos para un club deportivo base",
+        "answer": "KORUM da a un club deportivo base una forma ordenada de recaudar: campañas «todo o nada» para material, desplazamientos o instalaciones, entradas y rifas con QR para sus eventos y retos por equipo en positivo. Si una campaña no llega a la meta, se devuelve el 100 %. Los primeros {exempt} de cada temporada no pagan comisión.",
+        "sections": [
+          {
+            "title": "Pensado para cómo funciona un club",
+            "bullets": [
+              "Equipos por categoría (Prebenjamín, Benjamín, Alevín, Infantil, Cadete, Juvenil, Sénior…) más la afición y los antiguos jugadores.",
+              "Doble firma entre la gestión principal del club y su tesorería o presidencia.",
+              "Campañas para equipaciones, material, desplazamientos o mejoras de las instalaciones.",
+              "Modelo 182 en un clic si la entidad se acoge a la Ley 49/2002."
+            ]
+          },
+          {
+            "title": "Entradas, rifas y portería",
+            "paragraphs": [
+              "Vende entradas con aforo controlado y papeletas de rifa numeradas. Los voluntarios validan en la puerta con la cámara del móvil, con un PIN del evento y sin instalar nada. El sorteo de la rifa se hace en pantalla y deja un acta.",
+              "Las rifas y tómbolas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa: la entidad confirma que cumple la normativa de la suya antes de publicar."
+            ]
+          },
+          {
+            "title": "Retos por equipo, sin presión",
+            "paragraphs": [
+              "Cada equipo suma familias para desbloquear un premio colectivo. Los retos se muestran solo en positivo y cada club puede desactivarlos."
+            ]
+          },
+          {
+            "title": "Independencia de proveedores",
+            "paragraphs": [
+              "KORUM nunca intermedia proveedores ni les cobra comisiones: el club elige libremente a quién compra y presupuesta."
+            ]
+          },
+          {
+            "title": "Cuánto cuesta",
+            "paragraphs": [
+              "El alta es gratis y los primeros {exempt} de cada temporada no pagan comisión. Las entradas y papeletas llevan unos «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio, siempre desglosados antes de pagar."
+            ]
+          }
+        ],
+        "ctaTitle": "Da de alta a tu club en unos minutos",
+        "ctaText": "Abre campañas, vende entradas con QR y celebra cada meta con tu afición."
+      },
+      "culturales": {
+        "title": "Financiar proyectos de entidades culturales",
+        "description": "Bandas, coros, teatros y asociaciones: financia proyectos con campañas todo o nada, entradas QR y devolución del 100 % si no se llega a la meta.",
+        "h1": "Cómo financiar los proyectos de una entidad cultural",
+        "answer": "KORUM ayuda a una asociación, banda, coro, escuela o grupo de teatro a financiar instrumentos, vestuario, giras o actividades con campañas «todo o nada»: el dinero solo se usa si se alcanza la meta y, si no, se devuelve el 100 % a cada persona. Los primeros {exempt} de cada año no pagan comisión.",
+        "sections": [
+          {
+            "title": "Para quién es",
+            "bullets": [
+              "Asociaciones culturales, bandas de música, coros y orquestas.",
+              "Grupos de teatro, danza y escuelas de música.",
+              "Fundaciones y patronatos que organizan actividades con su comunidad."
+            ]
+          },
+          {
+            "title": "Qué puedes hacer",
+            "bullets": [
+              "Financiar instrumentos, vestuario, escenografía, giras o reformas del local.",
+              "Vender entradas con QR para conciertos y funciones, con el aforo controlado.",
+              "Organizar a tu comunidad en grupos que configuras tú: alumnado o integrantes, familias, profesorado o monitores, socios y amigos, antiguos miembros.",
+              "Decidir con quórum y doble firma qué proyectos se hacen."
+            ]
+          },
+          {
+            "title": "Transparencia con tus socios",
+            "paragraphs": [
+              "Cada campaña muestra su hucha identificada, su fecha límite y cómo se reparte la meta en cuatro líneas que suman exactamente el total. Quien aporta sabe a dónde va su dinero y qué pasa si no se llega."
+            ]
+          },
+          {
+            "title": "Cuánto cuesta",
+            "paragraphs": [
+              "El alta es gratis. Los primeros {exempt} de cada año no pagan comisión; después, del {t1Rate} al {t3Rate} según el tamaño del proyecto."
+            ]
+          }
+        ],
+        "ctaTitle": "Da de alta a tu entidad cultural",
+        "ctaText": "Abre el buzón de ideas de tu comunidad y lanza tu primera campaña con la devolución del 100 % si no se llega a la meta."
+      },
+      "comercios": {
+        "title": "Patrocinar al colegio o club de tu barrio",
+        "description": "Patrocina el colegio o club de tu barrio: el 100 % llega a la iniciativa, ganas visibilidad ante las familias y recibes tu justificante al momento.",
+        "h1": "Cómo patrocinar al colegio o club de tu barrio",
+        "answer": "Un comercio patrocina una iniciativa eligiendo un nivel de 100, 250 o 500 €. El 100 % de ese importe llega íntegro a la iniciativa; el fee de gestión publicitaria ({sponsorFee} más IVA) se suma encima y lo asume el comercio, que recibe al momento el justificante del patrocinio y la factura del fee.",
+        "sections": [
+          {
+            "title": "Qué obtiene tu comercio",
+            "bullets": [
+              "Aparecer como comercio amigo en la página de la entidad, en la categoría Oro, Plata o Bronce, sin mostrar importes en público.",
+              "Visibilidad ante las familias del barrio durante todo el curso.",
+              "Una ventaja o cupón propio para las familias, si quieres ofrecerlo.",
+              "Justificante del patrocinio y factura del fee de gestión, por email al momento."
+            ]
+          },
+          {
+            "title": "Cómo participar",
+            "steps": [
+              {
+                "title": "Busca la entidad de tu barrio",
+                "text": "Encuentra el colegio, club o entidad cultural que quieres apoyar."
+              },
+              {
+                "title": "Elige el nivel",
+                "text": "Selecciona 100, 250 o 500 € y paga con tarjeta o Bizum."
+              },
+              {
+                "title": "Recibe tu justificante y tu factura",
+                "text": "El justificante del patrocinio y la factura del fee te llegan por email al momento, sin trámites."
+              },
+              {
+                "title": "Aparece como comercio amigo",
+                "text": "Tu comercio se muestra en su categoría durante el curso."
+              }
+            ]
+          },
+          {
+            "title": "Si la campaña no llega a la meta",
+            "paragraphs": [
+              "El patrocinio se reasigna según la regla de la entidad. Si no hay otra campaña activa, se guarda en una bolsa de crédito a nombre del comercio durante un plazo limitado y, si no se usa, se le reembolsa."
+            ]
+          }
+        ],
+        "ctaTitle": "Apoya a tu barrio",
+        "ctaText": "Busca el colegio o club que quieres patrocinar y empieza en pocos minutos."
+      },
+      "comoFunciona": {
+        "title": "Cómo funciona la plataforma",
+        "description": "De la idea a la mejora en 4 pasos: ideas con quórum, doble firma, aportaciones todo o nada con Paycomet y devolución del 100 % si no se llega.",
+        "h1": "Cómo funciona KORUM, paso a paso",
+        "answer": "En KORUM una comunidad propone una mejora, la respalda con firmas, la aprueban dos personas de la entidad y las familias la financian con aportaciones «todo o nada»: el dinero se cobra con Paycomet y, si no se llega a la meta en plazo, se devuelve el 100 % a cada persona.",
+        "sections": [
+          {
+            "title": "De la idea a la mejora",
+            "steps": [
+              {
+                "title": "Proponed y sumad firmas",
+                "text": "Una familia propone una idea con un alias privado. Las demás la respaldan con su firma hasta alcanzar el quórum."
+              },
+              {
+                "title": "Doble firma de la entidad",
+                "text": "Dos personas distintas de la entidad aprueban la idea. La entidad elige libremente a su proveedor y la plataforma calcula la meta."
+              },
+              {
+                "title": "Las familias aportan en 10 segundos",
+                "text": "Con Bizum o tarjeta y solo con su email. Cada iniciativa tiene su hucha identificada y su fecha límite."
+              },
+              {
+                "title": "Disfrutad del Antes y Después",
+                "text": "Al lograr la meta se paga la mejora con la factura del proveedor delante y se publica el resultado."
+              }
+            ]
+          },
+          {
+            "title": "Qué pasa con el dinero",
+            "paragraphs": [
+              "Los cobros los procesa Paycomet y el dinero queda retenido hasta lograr la meta. KORUM lo registra en un libro mayor de doble partida, al céntimo. Si la última aportación supera la meta, el excedente se entrega íntegro a la entidad como reserva adicional del proyecto."
+            ]
+          },
+          {
+            "title": "Y si no se llega a la meta",
+            "paragraphs": [
+              "Una campaña dura como máximo {maxDays} días. Si en ese plazo no llega al 100 % y la entidad no decide redimensionarla, Paycomet devuelve automáticamente el 100 % de lo cobrado a cada persona, aportación voluntaria incluida, al medio de pago original."
+            ]
+          },
+          {
+            "title": "Quién interviene",
+            "bullets": [
+              "Las familias y socios proponen, firman y aportan.",
+              "La entidad aprueba con doble firma, elige proveedor y recibe el dinero.",
+              "Los comercios del barrio patrocinan y ganan visibilidad.",
+              "Paycomet ejecuta los cobros, las retenciones y las devoluciones.",
+              "KORUM pone la tecnología y no guarda el dinero."
+            ]
+          }
+        ],
+        "ctaTitle": "¿Lista tu comunidad para empezar?",
+        "ctaText": "El alta es gratis y lleva unos minutos."
+      },
+      "precios": {
+        "title": "Precios y tarifas",
+        "description": "Alta gratuita. Los primeros {exempt} de cada curso sin comisión; después, del {t1Rate} al {t3Rate}. Consulta todas las tarifas con detalle.",
+        "h1": "Precios de KORUM: qué se paga y quién lo paga",
+        "answer": "Dar de alta una entidad es gratis. KORUM cobra una comisión por tramos solo sobre lo que supera los primeros {exempt} de cada curso, y el coste de la pasarela de pago ya va incluido en la meta que ven las familias.",
+        "sections": [
+          {
+            "title": "Qué incluye la meta que ven las familias",
+            "paragraphs": [
+              "La ficha pública de cada iniciativa reparte la meta en cuatro líneas que suman exactamente el total:"
+            ],
+            "bullets": [
+              "Presupuesto del proveedor y equipamiento.",
+              "Instalación y adecuación técnica.",
+              "Reserva de mantenimiento, riesgos y contingencia.",
+              "Pasarela de pago, plataforma, gestión y garantía de devolución."
+            ]
+          },
+          {
+            "title": "Quién paga qué",
+            "bullets": [
+              "La entidad no paga por darse de alta.",
+              "Las familias aportan a la meta y, si quieren, una aportación voluntaria a KORUM que llega desmarcada.",
+              "Los comercios pagan el nivel de patrocinio, que llega íntegro, más el fee de gestión publicitaria.",
+              "Quien compra una entrada o una papeleta paga los «Gastos de gestión digital», siempre a la vista."
+            ]
+          },
+          {
+            "title": "La aportación voluntaria a KORUM",
+            "paragraphs": [
+              "Es opcional y no cambia nada de la donación. Con ella se sostiene el servicio que garantiza a todas las familias que el 100 % de su donación llega al centro, la devolución automática si no se alcanza la meta y la emisión automática de su certificado o justificante."
+            ]
+          }
+        ],
+        "ctaTitle": "Calcula la meta de tu proyecto",
+        "ctaText": "Da de alta a tu entidad gratis y el Estudio calculará la meta exacta con tu presupuesto."
+      },
+      "seguridad": {
+        "title": "Seguridad y transparencia",
+        "description": "Quién gestiona el dinero, cómo se aprueban los gastos, qué pasa si no se llega a la meta y cómo se protegen tus datos en KORUM.",
+        "h1": "Seguridad y transparencia: quién gestiona el dinero y los datos",
+        "answer": "Los pagos los procesa PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM es la tecnología: no guarda vuestro dinero. Cada iniciativa tiene su propia hucha identificada y el dinero queda retenido en Paycomet hasta lograr la meta.",
+        "sections": [
+          {
+            "title": "Qué es y qué no es KORUM",
+            "paragraphs": [
+              "KORUM es una plataforma tecnológica: no es una entidad financiera ni custodia fondos. Los cobros, las retenciones, los repartos y las devoluciones los ejecuta Paycomet.",
+              "KORUM nunca intermedia ni homologa proveedores de obras o equipamiento ni les cobra comisiones: cada entidad elige libremente."
+            ]
+          },
+          {
+            "title": "Cómo se aprueban los gastos",
+            "paragraphs": [
+              "Aprobar una idea y liberar fondos exige la firma de dos personas distintas de la entidad, ambas con verificación en dos pasos. El pago se hace con la factura del proveedor delante y queda registrado en un libro mayor que no se puede editar: los errores se corrigen con un contra-asiento."
+            ]
+          },
+          {
+            "title": "Si no se llega a la meta",
+            "paragraphs": [
+              "Se devuelve el 100 % de lo cobrado a cada persona, al medio de pago original y de forma automática."
+            ]
+          },
+          {
+            "title": "Tus datos",
+            "bullets": [
+              "Sin cookies de seguimiento ni píxeles de terceros: la analítica de visitas no usa cookies.",
+              "El NIF que se aporta para el certificado fiscal se guarda cifrado.",
+              "Las ideas de las familias y el proceso de pago no se indexan en buscadores.",
+              "Las fotos del Antes y Después solo se publican si la entidad confirma que no aparecen menores reconocibles.",
+              "Puedes pedir una copia o la supresión de tus datos en cualquier momento."
+            ]
+          }
+        ],
+        "ctaTitle": "Transparencia desde el primer día",
+        "ctaText": "Da de alta tu entidad y comprueba cada paso en tu panel."
+      },
+      "faq": {
+        "title": "Preguntas frecuentes",
+        "description": "Respuestas claras sobre dinero, devoluciones, doble firma, comisiones, rifas, certificados fiscales y datos personales en KORUM.",
+        "h1": "Preguntas frecuentes sobre KORUM",
+        "answer": "Aquí respondemos, en lenguaje llano, lo que más nos preguntan las entidades, las familias y los comercios.",
+        "sections": [
+          {
+            "title": "Sobre el dinero",
+            "faq": [
+              {
+                "q": "¿Quién guarda el dinero?",
+                "a": "Paycomet, entidad de pago autorizada por el Banco de España, procesa los cobros y retiene el dinero hasta lograr la meta. KORUM es la tecnología y no guarda vuestro dinero."
+              },
+              {
+                "q": "¿Qué pasa si no se llega a la meta?",
+                "a": "Se devuelve el 100 % de lo cobrado a cada persona, al medio de pago original y de forma automática, incluida la aportación voluntaria a KORUM."
+              },
+              {
+                "q": "¿Qué pasa si se supera la meta?",
+                "a": "La iniciativa pasa a conseguida, cierra nuevas aportaciones y el excedente se entrega íntegro a la entidad como reserva adicional del proyecto."
+              },
+              {
+                "q": "¿Cuánto dura una campaña?",
+                "a": "Como máximo {maxDays} días desde su publicación, porque Paycomet solo permite repartir los fondos durante un plazo limitado desde cada cobro."
+              }
+            ]
+          },
+          {
+            "title": "Sobre las entidades",
+            "faq": [
+              {
+                "q": "¿Cuánto cuesta usar KORUM?",
+                "a": "El alta es gratis. Los primeros {exempt} de cada curso no pagan comisión; después, del {t1Rate} al {t3Rate} según el tamaño de la iniciativa. Las tarifas completas están en la página de precios."
+              },
+              {
+                "q": "¿Puede darse de alta un colegio público?",
+                "a": "Sí, siempre a través de su AMPA/AFA, que es la entidad titular de los fondos. Los colegios concertados y privados lo hacen a través de su titular."
+              },
+              {
+                "q": "¿Podemos elegir a nuestro proveedor?",
+                "a": "Sí, siempre. KORUM nunca intermedia ni homologa proveedores de obras o equipamiento ni les cobra comisiones."
+              },
+              {
+                "q": "¿Quién firma las decisiones de la entidad?",
+                "a": "Dos personas distintas: la gestión principal (dirección, presidencia del club…) y un cofirmante (presidencia del AMPA/AFA, tesorería del club…). Hacen falta las dos para aprobar una idea y para liberar fondos."
+              },
+              {
+                "q": "¿Podemos hacer rifas?",
+                "a": "Sí, con papeletas numeradas y sorteo certificado en pantalla. Las rifas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa: la entidad confirma que cumple su normativa antes de publicar."
+              }
+            ]
+          },
+          {
+            "title": "Sobre familias y comercios",
+            "faq": [
+              {
+                "q": "¿Tengo que registrarme para aportar?",
+                "a": "No. Para aportar o comprar entradas basta tu email, donde recibes al instante el recibo o las entradas. Para proponer o firmar ideas sí hace falta una cuenta verificada."
+              },
+              {
+                "q": "¿Recibiré un certificado fiscal?",
+                "a": "Solo si la entidad tiene acreditado el régimen de la Ley 49/2002. En caso contrario recibes un justificante nominativo de aportación."
+              },
+              {
+                "q": "¿Qué recibe un comercio que patrocina?",
+                "a": "Aparece como comercio amigo en su categoría (Oro, Plata o Bronce), recibe al momento el justificante del patrocinio y la factura del fee, y el 100 % del nivel elegido llega a la iniciativa."
+              },
+              {
+                "q": "¿Cómo se protegen mis datos?",
+                "a": "No usamos cookies de seguimiento, el NIF se guarda cifrado y puedes pedir una copia o la supresión de tus datos cuando quieras."
+              }
+            ]
+          }
+        ],
+        "ctaTitle": "¿Listos para empezar?",
+        "ctaText": "Da de alta tu entidad gratis y resuelve el resto sobre la marcha."
+      }
     }
   }
 }

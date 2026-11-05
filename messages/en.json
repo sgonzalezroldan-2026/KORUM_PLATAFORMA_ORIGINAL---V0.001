@@ -6,7 +6,7 @@
   },
   "metadata": {
     "title": "KORUM · Where good ideas add up and get done",
-    "description": "An idea box with quorum, all-or-nothing campaigns and QR ticketing for schools, clubs and cultural groups. If a campaign misses its goal, everyone gets 100% back."
+    "description": "Ideas box, all-or-nothing campaigns and QR ticketing for schools, clubs and cultural organisations. If the goal is not reached, 100% is refunded."
   },
   "common": {
     "skipToContent": "Skip to content",
@@ -23,12 +23,89 @@
     "en": "English"
   },
   "home": {
-    "eyebrow": "For schools, clubs and cultural groups",
-    "title": "Where good ideas add up and get done.",
-    "subtitle": "KORUM brings together your community's idea box, all-or-nothing campaigns and QR ticketing. We are getting everything ready to open very soon.",
-    "badgeRefund": "If the goal is missed, 100% is refunded",
-    "badgeProvider": "Each group freely chooses its own supplier",
-    "badgePayments": "Payments and refunds handled by PAYCOMET"
+    "eyebrow": "For schools, clubs and cultural organisations",
+    "title": "Where your school or club’s good ideas add up and come true.",
+    "subtitle": "The independent platform for your community to propose, decide and fund improvements: all-or-nothing campaigns with automatic refunds if the goal is not reached, digital ticketing with QR codes, and complete freedom to choose your supplier. No sign-up fee and no handling cash.",
+    "ctaSignup": "🏫 Register my school, parents’ association or club for free",
+    "ctaFind": "🔍 Find my school or club",
+    "ctaLogin": "🔐 Log in",
+    "badgeRefund": "If the goal is not reached, 100% is refunded",
+    "badgeProvider": "The organisation freely chooses its supplier",
+    "badgePayments": "Payments and refunds handled by PAYCOMET",
+    "finder": {
+      "title": "Find your school or club",
+      "intro": "If your community is already on KORUM, open its page to see its initiatives."
+    },
+    "steps": {
+      "title": "How it works, in 4 steps",
+      "items": [
+        {
+          "title": "Propose and gather signatures",
+          "text": "Any family proposes an improvement and the community backs it with a signature."
+        },
+        {
+          "title": "Double signature by the organisation",
+          "text": "Two people from the organisation approve it, and you freely choose your supplier."
+        },
+        {
+          "title": "Families contribute in 10 seconds",
+          "text": "Families pay with Bizum or card. It is all or nothing: if the goal is not reached, 100% is refunded."
+        },
+        {
+          "title": "Enjoy the Before and After",
+          "text": "Once the goal is reached, the improvement is paid for and the whole community sees the result."
+        }
+      ]
+    },
+    "calculator": {
+      "title": "How much needs to be raised?",
+      "intro": "Work out your project’s goal with the same rules the platform uses. With an average contribution of €15 to €25 and a few neighbourhood businesses, goals are usually within reach."
+    },
+    "audiences": {
+      "title": "Designed for every community",
+      "cards": [
+        {
+          "title": "Organisations",
+          "bullets": [
+            "No cash and no spreadsheets",
+            "Joint double signature by two people",
+            "Direct payment to the organisation or its supplier",
+            "Model 182 ready in one click if the organisation falls under Law 49/2002",
+            "Entry-check mode with QR codes and yearly medals"
+          ],
+          "link": "Discover the benefits for organisations"
+        },
+        {
+          "title": "Families",
+          "bullets": [
+            "Contribute in 10 seconds, no sign-up",
+            "Automatic 100% refund if the goal is not reached",
+            "Class or team challenges, always positive",
+            "QR tickets on your phone"
+          ],
+          "link": "See how it works"
+        },
+        {
+          "title": "Local businesses",
+          "bullets": [
+            "Visibility among neighbourhood families",
+            "Gold, Silver or Bronze category",
+            "100% of the sponsorship reaches the initiative",
+            "Sponsorship receipt and invoice for the fee, straight away"
+          ],
+          "link": "See how businesses take part"
+        }
+      ]
+    },
+    "money": {
+      "title": "How money is handled",
+      "text": "Payments are processed by PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is the technology: it never holds your money. If an initiative does not reach its goal, 100% is refunded to each person.",
+      "link": "Read more about security and transparency"
+    },
+    "final": {
+      "title": "Start today, free to register",
+      "text": "Register your organisation in three steps and start collecting your community’s ideas."
+    }
   },
   "status": {
     "initiative": {
@@ -324,6 +401,541 @@
       "kept": "By legal obligation we keep the minimum accounting and tax data of your contributions, unlinked from your account.",
       "keep": "To keep it, just sign in.",
       "cta": "Sign in to my account"
+    }
+  },
+  "nav": {
+    "menu": "Menu",
+    "login": "Log in",
+    "signup": "Register my organisation",
+    "footerAudiences": "Who it is for",
+    "footerInfo": "Information",
+    "footerLanguage": "Footer language options",
+    "pages": {
+      "colegios": "For schools",
+      "clubes": "For clubs",
+      "culturales": "For cultural organisations",
+      "comercios": "For local businesses",
+      "comoFunciona": "How it works",
+      "precios": "Pricing",
+      "seguridad": "Security and transparency",
+      "faq": "Frequently asked questions"
+    }
+  },
+  "cookies": {
+    "title": "Optional cookies",
+    "text": "We use cookies that are not essential. They only switch on if you accept them; if you decline, KORUM works exactly the same.",
+    "accept": "Accept",
+    "reject": "Decline",
+    "purposes": {
+      "analytics": "Usage statistics",
+      "preferences": "Preferences",
+      "marketing": "Advertising"
+    }
+  },
+  "finder": {
+    "label": "Name of your school, club or organisation",
+    "placeholder": "For example, Cervantes",
+    "hint": "Type at least 2 letters. We search by name or province.",
+    "searching": "Searching…",
+    "results": "{count, plural, one {# organisation found} other {# organisations found}}",
+    "error": "We could not run the search right now.",
+    "retry": "Try again",
+    "emptyTitle": "We could not find “{query}”",
+    "emptyText": "Your organisation may not be on KORUM yet. Registering it is free and takes a few minutes.",
+    "emptyAction": "Register my organisation for free",
+    "vertical": {
+      "SCHOOL": "School",
+      "SPORTS_CLUB": "Sports club",
+      "CULTURAL": "Cultural organisation"
+    },
+    "noResults": "No results. You can register your organisation for free."
+  },
+  "calculator": {
+    "formLabel": "Simulator details",
+    "verticalLabel": "Type of organisation",
+    "vertical": {
+      "SCHOOL": "School or parents’ association",
+      "SPORTS_CLUB": "Sports club",
+      "CULTURAL": "Cultural organisation"
+    },
+    "objectiveLabel": "What do you want to achieve?",
+    "objective": {
+      "climate": "Classroom climate control",
+      "shade": "Shade for the playground",
+      "boards": "Digital whiteboards",
+      "scoreboard": "LED scoreboard",
+      "trip": "End-of-year trip",
+      "custom": "Something else",
+      "instruments": "Instruments and costumes"
+    },
+    "costLabel": "Your supplier’s quote",
+    "costHint": "This is an example amount: replace it with your own quote.",
+    "costError": "Enter an amount greater than zero and up to {max}.",
+    "families": {
+      "SCHOOL": "Number of families at the school",
+      "SPORTS_CLUB": "Number of members and families",
+      "CULTURAL": "Number of people in the community"
+    },
+    "familiesError": "Enter a whole number from 1 to {max}.",
+    "sponsorsLabel": "Local businesses sponsoring: {count}",
+    "sponsorsValue": "{count, plural, =0 {no businesses} one {# business} other {# businesses}}",
+    "sponsorsHint": "Each business contributes {level}, which reaches the initiative in full (its management fee is extra and paid by the business).",
+    "resultTitle": "Your initiative in numbers",
+    "goal": "Goal to publish: <strong>{amount}</strong>",
+    "breakdown": {
+      "net": "To pay for the improvement, with a contingency reserve",
+      "commission": "KORUM commission (exempt: {exempt})",
+      "maintenance": "Platform maintenance",
+      "gateway": "Payment gateway, including rounding up to the euro"
+    },
+    "remaining": "Families need to raise <strong>{amount}</strong> {sponsors}.",
+    "noSponsors": "(without businesses)",
+    "withSponsors": "({count, plural, one {with # business} other {with # businesses}})",
+    "coveredBySponsors": "With those businesses the goal is fully covered!",
+    "atAverage": "With an average of {average} you would need {count, plural, one {# contribution} other {# contributions}}: {pct} of the community.",
+    "tooMuch": "With an average of {average}, even the whole community would not be enough: add businesses or adjust the goal.",
+    "ifHalf": "If one in every two families takes part, the average contribution would be <strong>{average}</strong>.",
+    "disclaimer": "Indicative figures with the current rates: the first {exempt} of each school year pays no commission. The final goal is calculated by the Studio with your real quote.",
+    "needData": "Fill in the quote and the number of people to see the calculation.",
+    "announce": "Goal to publish: {goal}. Left for families to raise: {remaining}."
+  },
+  "marketing": {
+    "ogAlt": "KORUM: where good ideas add up and get done",
+    "updated": "Updated on",
+    "breadcrumbLabel": "Breadcrumb",
+    "breadcrumbHome": "Home",
+    "cta": {
+      "signup": "Register my organisation for free",
+      "find": "Find my school or club",
+      "howItWorks": "See how it works"
+    },
+    "llms": {
+      "summary": "KORUM is a technology platform for schools (through their parents’ association or owner), grassroots sports clubs and cultural organisations. It combines an ideas box with a quorum, all-or-nothing crowdfunding campaigns, QR ticketing and raffles, friendly local businesses and Mi Hucha.",
+      "money": "Payments, the holding of funds and refunds are executed by PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is not a financial institution and does not hold funds. If an initiative does not reach its goal, 100% is refunded to each person, to the original payment method. KORUM never intermediates or charges commissions to suppliers of works or equipment: the organisation chooses freely.",
+      "figuresTitle": "Current rates",
+      "figures": [
+        "Registering an organisation: free.",
+        "The first {exempt} of each school year pays no commission; after that, {t1Rate}, {t2Rate} or {t3Rate} depending on the size of the initiative (bands up to {t1Max} and {t2Max}).",
+        "Payment gateway: {gatewayRate} plus {gatewayFixed} per contribution, included in the goal families see.",
+        "Tickets and raffle tickets: “digital management fees” of {ticketFixed} plus {ticketRate} of the price.",
+        "Business sponsorship: 100% of the chosen level reaches the initiative; the advertising management fee ({sponsorFee} plus VAT) is added on top.",
+        "Maximum campaign length: {maxDays} days."
+      ],
+      "pagesTitle": "Pages"
+    },
+    "pricing": {
+      "title": "Current rates",
+      "caption": "KORUM rates",
+      "colConcept": "Item",
+      "colPrice": "What you pay",
+      "noteFlat": "The net amount is what the organisation needs to pay for the improvement. The rate is decided by the initiative’s total net amount and applies only to the part above the exempt amount.",
+      "noteMarginal": "The net amount is what the organisation needs to pay for the improvement. Each band pays only on the part of the net amount that falls inside it.",
+      "exemptLabel": "First {exempt} of each school year",
+      "exemptValue": "No commission",
+      "tier1Label": "Net amount up to {t1Max}",
+      "tier1Value": "{t1Rate} on the part above the exempt amount",
+      "tier2Label": "Net amount from {t1Max} to {t2Max}",
+      "tier2Value": "{t2Rate} on the part above the exempt amount",
+      "tier3Label": "Net amount over {t2Max}",
+      "tier3Value": "{t3Rate} on the part above the exempt amount",
+      "maintLabel": "Platform maintenance",
+      "maintOff": "No maintenance fee",
+      "maintOn": "{maintFee} per campaign, up to a yearly cap of {maintCap}",
+      "gatewayLabel": "Payment gateway (Paycomet)",
+      "gatewayValue": "{gatewayRate} plus {gatewayFixed} per contribution, included in the goal families see",
+      "ticketsLabel": "Tickets and raffle tickets",
+      "ticketsValue": "“Digital management fees”: {ticketFixed} plus {ticketRate} of the price, always itemised before paying",
+      "sponsorsLabel": "Business sponsorship",
+      "sponsorsValue": "100% of the chosen level reaches the initiative. The advertising management fee ({sponsorFee} plus VAT) is added on top and paid by the business",
+      "voluntaryLabel": "Voluntary contribution to KORUM",
+      "voluntaryValue": "Optional and unticked by default; you choose the amount from zero. It changes nothing about your donation",
+      "setupLabel": "Registering the organisation",
+      "setupValue": "Free",
+      "durationLabel": "Maximum campaign length",
+      "durationValue": "{maxDays} days from publication",
+      "disclaimer": "The final goal of each initiative is calculated by the organisation’s Studio with its real quote; the simulator on the home page gives an estimate."
+    },
+    "pages": {
+      "colegios": {
+        "title": "Fundraising for schools and parents’ groups",
+        "description": "Fund climate control, shade or digital whiteboards with all-or-nothing campaigns, double signatures and a 100% refund if the goal is not reached.",
+        "h1": "How to fund improvements at your school without handling cash",
+        "answer": "KORUM lets a school or its parents’ association propose an improvement, approve it with a double signature and fund it with families’ contributions in an all-or-nothing campaign: if the goal is not reached, 100% is refunded to each person. The first {exempt} of each school year pays no commission.",
+        "sections": [
+          {
+            "title": "What your school can do",
+            "bullets": [
+              "Open an ideas box with a quorum so families can propose and back improvements.",
+              "Launch all-or-nothing campaigns for climate control, playground shade, digital whiteboards or the end-of-year trip.",
+              "Sell tickets and raffle tickets with QR codes at festivals and parties, with capacity control.",
+              "Set class challenges (from the first year of nursery to the last year of compulsory secondary school) and celebrate what is achieved.",
+              "Export Model 182 in one click if the organisation falls under Law 49/2002."
+            ]
+          },
+          {
+            "title": "Who signs and who gets paid",
+            "paragraphs": [
+              "A state school always takes part through its parents’ association, which is the organisation that owns the funds. Subsidised and private schools register through their owner.",
+              "Approving an idea and releasing funds requires the signatures of two different people: the head of the school and the chair of the parents’ association. Money is collected through Paycomet, held until the goal is reached, and paid to the organisation or directly to its supplier with the invoice in hand."
+            ]
+          },
+          {
+            "title": "Complete freedom to choose your supplier",
+            "paragraphs": [
+              "KORUM never intermediates or approves suppliers of works or equipment, and never charges them commissions. Your organisation enters the quote from the supplier it prefers and the platform works out the goal."
+            ]
+          },
+          {
+            "title": "Class challenges, always positive",
+            "paragraphs": [
+              "Classes add participating families to unlock a shared prize. What is achieved is celebrated (“Class 3B already has 28 families”); nobody is singled out and amounts are never compared between classes."
+            ]
+          },
+          {
+            "title": "What it costs",
+            "paragraphs": [
+              "Registering the school is free. The first {exempt} of each school year pays no commission; after that, the commission runs from {t1Rate} to {t3Rate} depending on the size of the initiative. All rates are on the pricing page."
+            ]
+          }
+        ],
+        "ctaTitle": "Start with your school’s ideas box",
+        "ctaText": "Registration is free and takes a few minutes. No cash, and a 100% refund if the goal is not reached."
+      },
+      "clubes": {
+        "title": "Fundraising for sports clubs",
+        "description": "Fund kit, travel or facilities with all-or-nothing campaigns, QR tickets and raffles, and a 100% refund if the goal is not reached.",
+        "h1": "How to raise funds for a grassroots sports club",
+        "answer": "KORUM gives a grassroots sports club an orderly way to raise money: all-or-nothing campaigns for kit, travel or facilities, QR tickets and raffles for its events, and positive team challenges. If a campaign does not reach its goal, 100% is refunded. The first {exempt} of each season pays no commission.",
+        "sections": [
+          {
+            "title": "Built for how a club works",
+            "bullets": [
+              "Teams by category (from the youngest age groups to seniors) plus supporters and former players.",
+              "Double signature between the club’s main manager and its treasurer or chair.",
+              "Campaigns for kit, equipment, travel or facility improvements.",
+              "Model 182 in one click if the organisation falls under Law 49/2002."
+            ]
+          },
+          {
+            "title": "Tickets, raffles and the door",
+            "paragraphs": [
+              "Sell tickets with controlled capacity and numbered raffle tickets. Volunteers check people in at the door with their phone camera, using an event PIN and installing nothing. The raffle draw is held on screen and leaves a record.",
+              "Raffles and lotteries are regulated by each autonomous community and may require prior notification or authorisation: the organisation confirms it complies with its own rules before publishing."
+            ]
+          },
+          {
+            "title": "Team challenges, no pressure",
+            "paragraphs": [
+              "Each team adds families to unlock a shared prize. Challenges are always shown in a positive way and every club can switch them off."
+            ]
+          },
+          {
+            "title": "Supplier independence",
+            "paragraphs": [
+              "KORUM never intermediates suppliers or charges them commissions: the club freely chooses whom it buys from and budgets with."
+            ]
+          },
+          {
+            "title": "What it costs",
+            "paragraphs": [
+              "Registration is free and the first {exempt} of each season pays no commission. Tickets and raffle tickets carry “digital management fees” of {ticketFixed} plus {ticketRate} of the price, always itemised before paying."
+            ]
+          }
+        ],
+        "ctaTitle": "Register your club in a few minutes",
+        "ctaText": "Open campaigns, sell tickets with QR codes and celebrate every goal with your supporters."
+      },
+      "culturales": {
+        "title": "Funding cultural organisation projects",
+        "description": "Bands, choirs, theatres and associations: fund projects with all-or-nothing campaigns, QR tickets and a 100% refund if the goal is not reached.",
+        "h1": "How to fund the projects of a cultural organisation",
+        "answer": "KORUM helps an association, band, choir, school or theatre group fund instruments, costumes, tours or activities with all-or-nothing campaigns: the money is only used if the goal is reached and, if not, 100% is refunded to each person. The first {exempt} of each year pays no commission.",
+        "sections": [
+          {
+            "title": "Who it is for",
+            "bullets": [
+              "Cultural associations, music bands, choirs and orchestras.",
+              "Theatre and dance groups and music schools.",
+              "Foundations and trusts that run activities with their community."
+            ]
+          },
+          {
+            "title": "What you can do",
+            "bullets": [
+              "Fund instruments, costumes, scenery, tours or premises refurbishments.",
+              "Sell QR tickets for concerts and performances, with capacity controlled.",
+              "Organise your community into groups you configure: students or members, families, teachers or instructors, friends and supporters, former members.",
+              "Decide with a quorum and a double signature which projects go ahead."
+            ]
+          },
+          {
+            "title": "Transparency with your supporters",
+            "paragraphs": [
+              "Every campaign shows its identified pot, its deadline and how the goal breaks down into four lines that add up exactly to the total. Anyone who contributes knows where their money goes and what happens if the goal is not reached."
+            ]
+          },
+          {
+            "title": "What it costs",
+            "paragraphs": [
+              "Registration is free. The first {exempt} of each year pays no commission; after that, from {t1Rate} to {t3Rate} depending on the size of the project."
+            ]
+          }
+        ],
+        "ctaTitle": "Register your cultural organisation",
+        "ctaText": "Open your community’s ideas box and launch your first campaign with a 100% refund if the goal is not reached."
+      },
+      "comercios": {
+        "title": "Sponsor your neighbourhood school or club",
+        "description": "Sponsor your neighbourhood school or club: 100% reaches the initiative, you gain visibility among families and get your receipt straight away.",
+        "h1": "How to sponsor your neighbourhood school or club",
+        "answer": "A business sponsors an initiative by choosing a level of €100, €250 or €500. 100% of that amount reaches the initiative in full; the advertising management fee ({sponsorFee} plus VAT) is added on top and paid by the business, which receives the sponsorship receipt and the fee invoice straight away.",
+        "sections": [
+          {
+            "title": "What your business gets",
+            "bullets": [
+              "A place as a friendly business on the organisation’s page, in the Gold, Silver or Bronze category, with no amounts shown publicly.",
+              "Visibility among neighbourhood families throughout the school year.",
+              "Your own offer or coupon for families, if you want to give one.",
+              "A sponsorship receipt and the invoice for the management fee, by email straight away."
+            ]
+          },
+          {
+            "title": "How to take part",
+            "steps": [
+              {
+                "title": "Find your neighbourhood organisation",
+                "text": "Look up the school, club or cultural organisation you want to support."
+              },
+              {
+                "title": "Choose a level",
+                "text": "Pick €100, €250 or €500 and pay by card or Bizum."
+              },
+              {
+                "title": "Receive your receipt and invoice",
+                "text": "The sponsorship receipt and the fee invoice reach you by email straight away, with no paperwork."
+              },
+              {
+                "title": "Appear as a friendly business",
+                "text": "Your business is shown in its category during the school year."
+              }
+            ]
+          },
+          {
+            "title": "If the campaign does not reach its goal",
+            "paragraphs": [
+              "The sponsorship is reassigned according to the organisation’s rule. If there is no other active campaign, it is kept as a credit pot in the business’s name for a limited period and, if unused, refunded to it."
+            ]
+          }
+        ],
+        "ctaTitle": "Support your neighbourhood",
+        "ctaText": "Find the school or club you want to sponsor and get started in minutes."
+      },
+      "comoFunciona": {
+        "title": "How the platform works",
+        "description": "From idea to improvement in 4 steps: ideas with a quorum, double signature, all-or-nothing contributions via Paycomet and a 100% refund if not reached.",
+        "h1": "How KORUM works, step by step",
+        "answer": "On KORUM a community proposes an improvement, backs it with signatures, two people from the organisation approve it and families fund it with all-or-nothing contributions: the money is collected through Paycomet and, if the goal is not reached in time, 100% is refunded to each person.",
+        "sections": [
+          {
+            "title": "From idea to improvement",
+            "steps": [
+              {
+                "title": "Propose and gather signatures",
+                "text": "A family proposes an idea under a private alias. Others back it with their signature until the quorum is reached."
+              },
+              {
+                "title": "Double signature by the organisation",
+                "text": "Two different people from the organisation approve the idea. The organisation freely chooses its supplier and the platform works out the goal."
+              },
+              {
+                "title": "Families contribute in 10 seconds",
+                "text": "With Bizum or card and just their email. Every initiative has its own identified pot and a deadline."
+              },
+              {
+                "title": "Enjoy the Before and After",
+                "text": "When the goal is reached, the improvement is paid for with the supplier’s invoice in hand and the result is published."
+              }
+            ]
+          },
+          {
+            "title": "What happens to the money",
+            "paragraphs": [
+              "Payments are processed by Paycomet and the money is held until the goal is reached. KORUM records it in a double-entry ledger, to the cent. If the last contribution takes the total above the goal, the surplus goes in full to the organisation as an additional project reserve."
+            ]
+          },
+          {
+            "title": "And if the goal is not reached",
+            "paragraphs": [
+              "A campaign lasts at most {maxDays} days. If it does not reach 100% in that time and the organisation does not decide to resize it, Paycomet automatically refunds 100% of what was collected to each person, voluntary contribution included, to the original payment method."
+            ]
+          },
+          {
+            "title": "Who is involved",
+            "bullets": [
+              "Families and members propose, sign and contribute.",
+              "The organisation approves with a double signature, chooses its supplier and receives the money.",
+              "Neighbourhood businesses sponsor and gain visibility.",
+              "Paycomet carries out the payments, the holding of funds and the refunds.",
+              "KORUM provides the technology and does not hold the money."
+            ]
+          }
+        ],
+        "ctaTitle": "Is your community ready to start?",
+        "ctaText": "Registration is free and takes a few minutes."
+      },
+      "precios": {
+        "title": "Pricing and rates",
+        "description": "Free registration. The first {exempt} of each school year with no commission; after that, from {t1Rate} to {t3Rate}. See every rate in detail.",
+        "h1": "KORUM pricing: what is paid and who pays it",
+        "answer": "Registering an organisation is free. KORUM charges a banded commission only on the part above the first {exempt} of each school year, and the cost of the payment gateway is already included in the goal families see.",
+        "sections": [
+          {
+            "title": "What the goal families see includes",
+            "paragraphs": [
+              "The public page of each initiative splits the goal into four lines that add up exactly to the total:"
+            ],
+            "bullets": [
+              "Supplier quote and equipment.",
+              "Installation and technical set-up.",
+              "Maintenance, risk and contingency reserve.",
+              "Payment gateway, platform, management and refund guarantee."
+            ]
+          },
+          {
+            "title": "Who pays what",
+            "bullets": [
+              "The organisation pays nothing to register.",
+              "Families contribute to the goal and, if they wish, a voluntary contribution to KORUM that arrives unticked.",
+              "Businesses pay the sponsorship level, which arrives in full, plus the advertising management fee.",
+              "Whoever buys a ticket or a raffle ticket pays the “digital management fees”, always in plain sight."
+            ]
+          },
+          {
+            "title": "The voluntary contribution to KORUM",
+            "paragraphs": [
+              "It is optional and changes nothing about the donation. It supports the service that guarantees every family that 100% of their donation reaches the school, an automatic refund if the goal is not reached, and the automatic issue of their certificate or receipt."
+            ]
+          }
+        ],
+        "ctaTitle": "Work out your project’s goal",
+        "ctaText": "Register your organisation for free and the Studio will calculate the exact goal from your quote."
+      },
+      "seguridad": {
+        "title": "Security and transparency",
+        "description": "Who handles the money, how spending is approved, what happens if the goal is not reached and how your data is protected on KORUM.",
+        "h1": "Security and transparency: who handles the money and the data",
+        "answer": "Payments are processed by PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is the technology: it never holds your money. Every initiative has its own identified pot, and the money is held at Paycomet until the goal is reached.",
+        "sections": [
+          {
+            "title": "What KORUM is and is not",
+            "paragraphs": [
+              "KORUM is a technology platform: it is not a financial institution and does not hold funds. Payments, the holding of funds, transfers and refunds are carried out by Paycomet.",
+              "KORUM never intermediates or approves suppliers of works or equipment and never charges them commissions: each organisation chooses freely."
+            ]
+          },
+          {
+            "title": "How spending is approved",
+            "paragraphs": [
+              "Approving an idea and releasing funds requires the signatures of two different people from the organisation, both with two-step verification. Payment is made with the supplier’s invoice in hand and recorded in a ledger that cannot be edited: mistakes are corrected with a reversing entry."
+            ]
+          },
+          {
+            "title": "If the goal is not reached",
+            "paragraphs": [
+              "100% of what was collected is refunded to each person, to the original payment method and automatically."
+            ]
+          },
+          {
+            "title": "Your data",
+            "bullets": [
+              "No tracking cookies or third-party pixels: visit analytics do not use cookies.",
+              "The tax ID provided for the tax certificate is stored encrypted.",
+              "Families’ ideas and the payment process are not indexed by search engines.",
+              "Before and After photos are only published if the organisation confirms that no recognisable minors appear.",
+              "You can ask for a copy or the deletion of your data at any time."
+            ]
+          }
+        ],
+        "ctaTitle": "Transparency from day one",
+        "ctaText": "Register your organisation and check every step in your dashboard."
+      },
+      "faq": {
+        "title": "Frequently asked questions",
+        "description": "Clear answers on money, refunds, double signatures, commissions, raffles, tax certificates and personal data on KORUM.",
+        "h1": "Frequently asked questions about KORUM",
+        "answer": "Here we answer, in plain language, what organisations, families and businesses ask us most.",
+        "sections": [
+          {
+            "title": "About the money",
+            "faq": [
+              {
+                "q": "Who holds the money?",
+                "a": "Paycomet, a payment institution authorised by the Bank of Spain, processes payments and holds the money until the goal is reached. KORUM is the technology and does not hold your money."
+              },
+              {
+                "q": "What happens if the goal is not reached?",
+                "a": "100% of what was collected is refunded to each person, to the original payment method and automatically, including the voluntary contribution to KORUM."
+              },
+              {
+                "q": "What happens if the goal is exceeded?",
+                "a": "The initiative is marked as achieved, closes to new contributions and the surplus goes in full to the organisation as an additional project reserve."
+              },
+              {
+                "q": "How long does a campaign last?",
+                "a": "At most {maxDays} days from publication, because Paycomet only allows funds to be split within a limited period after each payment."
+              }
+            ]
+          },
+          {
+            "title": "About organisations",
+            "faq": [
+              {
+                "q": "How much does KORUM cost?",
+                "a": "Registration is free. The first {exempt} of each school year pays no commission; after that, from {t1Rate} to {t3Rate} depending on the size of the initiative. Full rates are on the pricing page."
+              },
+              {
+                "q": "Can a state school register?",
+                "a": "Yes, always through its parents’ association, which is the organisation that owns the funds. Subsidised and private schools do so through their owner."
+              },
+              {
+                "q": "Can we choose our own supplier?",
+                "a": "Yes, always. KORUM never intermediates or approves suppliers of works or equipment and never charges them commissions."
+              },
+              {
+                "q": "Who signs the organisation’s decisions?",
+                "a": "Two different people: the main manager (head teacher, club chair…) and a co-signer (chair of the parents’ association, club treasurer…). Both are needed to approve an idea and to release funds."
+              },
+              {
+                "q": "Can we hold raffles?",
+                "a": "Yes, with numbered tickets and a certified on-screen draw. Raffles are regulated by each autonomous community and may require prior notification or authorisation: the organisation confirms it complies with its own rules before publishing."
+              }
+            ]
+          },
+          {
+            "title": "About families and businesses",
+            "faq": [
+              {
+                "q": "Do I need to sign up to contribute?",
+                "a": "No. To contribute or buy tickets, your email is enough, and that is where your receipt or tickets arrive instantly. To propose or sign ideas you do need a verified account."
+              },
+              {
+                "q": "Will I receive a tax certificate?",
+                "a": "Only if the organisation has its Law 49/2002 status accredited. Otherwise you receive a named contribution receipt."
+              },
+              {
+                "q": "What does a sponsoring business receive?",
+                "a": "It appears as a friendly business in its category (Gold, Silver or Bronze), receives the sponsorship receipt and the fee invoice straight away, and 100% of the chosen level reaches the initiative."
+              },
+              {
+                "q": "How is my data protected?",
+                "a": "We do not use tracking cookies, the tax ID is stored encrypted, and you can ask for a copy or the deletion of your data whenever you like."
+              }
+            ]
+          }
+        ],
+        "ctaTitle": "Ready to start?",
+        "ctaText": "Register your organisation for free and sort out the rest as you go."
+      }
     }
   }
 }

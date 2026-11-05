@@ -5,18 +5,21 @@ import ca from '../../messages/ca.json';
 import en from '../../messages/en.json';
 import es from '../../messages/es.json';
 
-type Catalog = { [key: string]: string | Catalog };
+type Catalog = { [key: string]: CatalogNode | undefined };
+type CatalogNode = string | CatalogNode[] | Catalog;
 const CATALOGS: Record<string, Catalog> = { es, ca, en };
 
 /** Aplana un catálogo a `ruta.de.la.clave → texto`. */
-function flatten(catalog: Catalog, prefix = ''): Record<string, string> {
+function flatten(catalog: CatalogNode, prefix = ''): Record<string, string> {
   return Object.entries(catalog).reduce<Record<string, string>>((flat, [key, value]) => {
     const path = prefix ? `${prefix}.${key}` : key;
+    if (value === undefined) return flat;
     return typeof value === 'string' ? { ...flat, [path]: value } : { ...flat, ...flatten(value, path) };
   }, {});
 }
 
-const placeholders = (text: string) => [...text.matchAll(/\{(\w+)/g)].map((match) => match[1]).sort();
+/** Nombres de variable ICU: `{nombre}` y `{nombre, plural, …}`; el texto de las ramas de un plural no cuenta. */
+const placeholders = (text: string) => [...text.matchAll(/\{(\w+)\s*[,}]/g)].map((match) => match[1]).sort();
 
 describe('QA-C05 · catálogos de traducción', () => {
   const flat = Object.fromEntries(Object.entries(CATALOGS).map(([locale, catalog]) => [locale, flatten(catalog)]));
@@ -53,7 +56,7 @@ describe('QA-C05 · catálogos de traducción', () => {
   it('en catalán y en inglés no quedan textos copiados del castellano salvo nombres propios o palabras idénticas', () => {
     // «Avisos» se escribe igual en castellano y en catalán; los nombres de idioma y de marca no se traducen.
     // En la exportación de datos (Sprint 2.5): «Sí», «No», «Idea», «Iniciativa», «NIF», «Completada» y «Fallida» son iguales en catalán.
-    const SAME_IN_CATALAN = new Set(['ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED']);
+    const SAME_IN_CATALAN = new Set(['ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED', 'calculator.objective.scoreboard', 'nav.menu']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
@@ -62,10 +65,13 @@ describe('QA-C05 · catálogos de traducción', () => {
     expect(sameAsSpanish('en')).toEqual([]);
   });
 
+  /** La única mención admitida de «Banco de España» es la redacción aprobada de Paycomet (Regla 03 §4); referida a KORUM sigue prohibida. */
+  const APPROVED_PAYCOMET_PHRASE = /autorizada por el Banco de España/g;
+
   it('no hay vocabulario prohibido en los textos públicos (propina, banco, escrow)', () => {
     for (const [locale, entries] of Object.entries(flat)) {
       for (const [key, text] of Object.entries(entries)) {
-        expect(text, `${locale}:${key}`).not.toMatch(/\bpropinas?\b|\bbanco\b|\bescrow\b|\btip\b/i);
+        expect(text.replace(APPROVED_PAYCOMET_PHRASE, ''), `${locale}:${key}`).not.toMatch(/\bpropinas?\b|\bbanco\b|\bescrow\b|\btip\b/i);
       }
     }
   });

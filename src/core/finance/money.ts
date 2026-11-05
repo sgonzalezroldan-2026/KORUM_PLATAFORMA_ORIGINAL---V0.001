@@ -56,6 +56,22 @@ export function formatCents(cents: number, locale: MoneyLocale): string {
   return formatterFor(locale).format(decimal);
 }
 
+const percentFormatterCache = new Map<MoneyLocale, Intl.NumberFormat>();
+
+/**
+ * Porcentaje legible de unos puntos básicos: `500` → `5 %` (es, ca) o `5%` (en); `45` → `0,45 %`. Solo para mostrar: los cálculos
+ * siguen en puntos básicos enteros. Admite hasta dos decimales, que es la precisión de un punto básico.
+ */
+export function formatBps(bps: number, locale: MoneyLocale): string {
+  if (!Number.isSafeInteger(bps)) throw new RangeError(`Los puntos básicos deben ser un entero, recibido: ${String(bps)}`);
+  let formatter = percentFormatterCache.get(locale);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(INTL_LOCALE[locale], { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    percentFormatterCache.set(locale, formatter);
+  }
+  return formatter.format(bps / 10000);
+}
+
 const SEPARATORS: Record<MoneyLocale, { decimal: string; group: string }> = {
   es: { decimal: ',', group: '.' },
   ca: { decimal: ',', group: '.' },

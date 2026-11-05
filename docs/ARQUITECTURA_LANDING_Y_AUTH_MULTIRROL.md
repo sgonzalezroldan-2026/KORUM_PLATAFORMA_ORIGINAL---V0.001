@@ -12,7 +12,7 @@ Diseño dual de la [skill de marca](../.agents/skills/korum-brand-design-system/
 
 1. **Hero con doble llamada a la acción:**
    - **Titular:** *"Donde las buenas ideas de tu colegio o club suman y se hacen realidad."*
-   - **Subtítulo:** *"La plataforma independiente para que tu comunidad proponga, decida y financie mejoras: campañas todo o nada con devolución automática si no se llega a la meta, taquilla digital con QR y libertad total para elegir proveedor. Sin cuotas fijas y sin manejar efectivo."*
+   - **Subtítulo:** *"La plataforma independiente para que tu comunidad proponga, decida y financie mejoras: campañas todo o nada con devolución automática si no se llega a la meta, taquilla digital con QR y libertad total para elegir proveedor. Sin cuota de alta y sin manejar efectivo."*
    - **Principal (entidades):** `🏫 Dar de alta mi colegio, AMPA o club gratis` → `/registro-comunidad`.
    - **Secundaria (familias):** `🔍 Buscar mi colegio o club` (por nombre, ciudad o código postal) + `🔐 Iniciar sesión`.
 2. **Calculadora de impacto:** tipo de entidad, número de familias o socios y objetivo (climatización, sombra en el patio, pizarras digitales, marcador LED, viaje de fin de curso). Muestra cómo, con una aportación media de 15–25 € y unos pocos comercios del barrio, se alcanza la meta, destacando los primeros `1.000 €` sin comisión. Las cifras son orientativas y se dice así.

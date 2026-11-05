@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 import { expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
 const HOME = [
-  { path: '/', lang: 'es', title: 'Donde las buenas ideas suman y se logran.' },
-  { path: '/ca', lang: 'ca', title: "On les bones idees sumen i s'aconsegueixen." },
-  { path: '/en', lang: 'en', title: 'Where good ideas add up and get done.' }
+  { path: '/', lang: 'es', title: 'Donde las buenas ideas de tu colegio o club suman y se hacen realidad.' },
+  { path: '/ca', lang: 'ca', title: 'On les bones idees de la teva escola o club sumen i es fan realitat.' },
+  { path: '/en', lang: 'en', title: 'Where your school or club’s good ideas add up and come true.' }
 ] as const;
 
 test.describe('QA-C05 · idiomas operativos', () => {
@@ -51,7 +51,7 @@ test.describe('QA-C05 · idiomas operativos', () => {
 
   test('el idioma activo se marca con aria-current y cada enlace declara su idioma', async ({ page }) => {
     await page.goto('/en');
-    const switcher = page.getByRole('navigation', { name: 'Language' });
+    const switcher = page.getByRole('navigation', { name: 'Language', exact: true });
     await expect(switcher.getByRole('link', { name: 'EN, English' })).toHaveAttribute('aria-current', 'true');
     await expect(switcher.getByRole('link', { name: 'CA, Català' })).toHaveAttribute('lang', 'ca');
     await expect(switcher.getByRole('link', { name: 'ES, Castellano' })).toHaveAttribute('hreflang', 'es');

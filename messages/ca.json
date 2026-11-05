@@ -6,7 +6,7 @@
   },
   "metadata": {
     "title": "KORUM · On les bones idees sumen i s'aconsegueixen",
-    "description": "Bústia d'idees amb quòrum, campanyes «tot o res» i taquilla amb QR per a escoles, clubs i entitats culturals. Si no s'arriba a la meta, es retorna el 100 %."
+    "description": "Bústia d’idees, campanyes «tot o res» i taquilla amb QR per a escoles, clubs i entitats culturals. Si no s’arriba a la meta, es retorna el 100 %."
   },
   "common": {
     "skipToContent": "Salta al contingut",
@@ -24,11 +24,88 @@
   },
   "home": {
     "eyebrow": "Per a escoles, clubs i entitats culturals",
-    "title": "On les bones idees sumen i s'aconsegueixen.",
-    "subtitle": "KORUM reuneix la bústia d'idees, les campanyes «tot o res» i la taquilla amb QR de la teva comunitat. Ho estem preparant tot per obrir molt aviat.",
-    "badgeRefund": "Si no s'arriba a la meta, es retorna el 100 %",
-    "badgeProvider": "L'entitat tria lliurement el seu proveïdor",
-    "badgePayments": "Cobraments i devolucions gestionats per PAYCOMET"
+    "title": "On les bones idees de la teva escola o club sumen i es fan realitat.",
+    "subtitle": "La plataforma independent perquè la teva comunitat proposi, decideixi i financi millores: campanyes «tot o res» amb devolució automàtica si no s’arriba a la meta, taquilla digital amb QR i llibertat total per triar proveïdor. Sense quota d’alta i sense manejar efectiu.",
+    "ctaSignup": "🏫 Dona d’alta la meva escola, AMPA o club gratis",
+    "ctaFind": "🔍 Cerca la meva escola o club",
+    "ctaLogin": "🔐 Inicia la sessió",
+    "badgeRefund": "Si no s’arriba a la meta, es retorna el 100 %",
+    "badgeProvider": "L’entitat tria lliurement el seu proveïdor",
+    "badgePayments": "Cobraments i devolucions gestionats per PAYCOMET",
+    "finder": {
+      "title": "Troba la teva escola o club",
+      "intro": "Si la teva comunitat ja és a KORUM, entra a la seva pàgina per veure’n les iniciatives."
+    },
+    "steps": {
+      "title": "Com funciona, en 4 passos",
+      "items": [
+        {
+          "title": "Proposeu i sumeu signatures",
+          "text": "Qualsevol família proposa una millora i la comunitat la recolza amb la seva signatura."
+        },
+        {
+          "title": "Doble signatura de l’entitat",
+          "text": "Dues persones de l’entitat l’aproven i trieu lliurement el vostre proveïdor."
+        },
+        {
+          "title": "Aporten en 10 segons",
+          "text": "Les famílies aporten amb Bizum o targeta. És tot o res: si no s’arriba a la meta, es retorna el 100 %."
+        },
+        {
+          "title": "Gaudiu de l’Abans i el Després",
+          "text": "Amb la meta assolida es paga la millora i tota la comunitat en veu el resultat."
+        }
+      ]
+    },
+    "calculator": {
+      "title": "Quant cal reunir?",
+      "intro": "Calcula la meta del teu projecte amb les mateixes regles que fa servir la plataforma. Amb una aportació mitjana de 15 a 25 € i uns pocs comerços del barri, les metes solen assolir-se."
+    },
+    "audiences": {
+      "title": "Pensat per a cada comunitat",
+      "cards": [
+        {
+          "title": "Entitats",
+          "bullets": [
+            "Sense efectiu i sense fulls de càlcul",
+            "Doble signatura mancomunada de dues persones",
+            "Cobrament directe a l’entitat o al seu proveïdor",
+            "Model 182 a punt amb un clic si l’entitat s’acull a la Llei 49/2002",
+            "Mode porteria amb QR i medalles anuals"
+          ],
+          "link": "Descobreix els avantatges per a entitats"
+        },
+        {
+          "title": "Famílies",
+          "bullets": [
+            "Aportar en 10 segons, sense registre",
+            "Devolució automàtica del 100 % si no s’arriba a la meta",
+            "Reptes per curs o equip, sempre en positiu",
+            "Entrades amb QR al mòbil"
+          ],
+          "link": "Veure com funciona"
+        },
+        {
+          "title": "Comerços",
+          "bullets": [
+            "Visibilitat davant les famílies del barri",
+            "Categoria Or, Plata o Bronze",
+            "El 100 % del patrocini arriba a la iniciativa",
+            "Justificant del patrocini i factura del fee, a l’instant"
+          ],
+          "link": "Veure com participen els comerços"
+        }
+      ]
+    },
+    "money": {
+      "title": "Com es tracten els diners",
+      "text": "Els pagaments els processa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és la tecnologia: no guarda els vostres diners. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona.",
+      "link": "Llegeix més sobre seguretat i transparència"
+    },
+    "final": {
+      "title": "Comença avui, sense cost d’alta",
+      "text": "Dona d’alta la teva entitat en tres passos i comença a recollir les idees de la teva comunitat."
+    }
   },
   "status": {
     "initiative": {
@@ -324,6 +401,541 @@
       "kept": "Per obligació legal conservem les dades comptables i fiscals mínimes de les teves aportacions, sense vincular-les al teu compte.",
       "keep": "Per conservar-lo, n’hi ha prou d’iniciar la sessió.",
       "cta": "Entrar al meu compte"
+    }
+  },
+  "nav": {
+    "menu": "Menú",
+    "login": "Inicia la sessió",
+    "signup": "Dona d’alta la meva entitat",
+    "footerAudiences": "Per a qui",
+    "footerInfo": "Informació",
+    "footerLanguage": "Idioma al peu de pàgina",
+    "pages": {
+      "colegios": "Per a escoles",
+      "clubes": "Per a clubs",
+      "culturales": "Per a entitats culturals",
+      "comercios": "Per a comerços",
+      "comoFunciona": "Com funciona",
+      "precios": "Preus",
+      "seguridad": "Seguretat i transparència",
+      "faq": "Preguntes freqüents"
+    }
+  },
+  "cookies": {
+    "title": "Galetes opcionals",
+    "text": "Fem servir galetes que no són imprescindibles. Només s’activaran si les acceptes; si les rebutges, KORUM funciona igual.",
+    "accept": "Accepta",
+    "reject": "Rebutja",
+    "purposes": {
+      "analytics": "Estadístiques d’ús",
+      "preferences": "Preferències",
+      "marketing": "Publicitat"
+    }
+  },
+  "finder": {
+    "label": "Nom de la teva escola, club o entitat",
+    "placeholder": "Per exemple, Cervantes",
+    "hint": "Escriu almenys 2 lletres. Es cerca per nom o per província.",
+    "searching": "Cercant…",
+    "results": "{count, plural, one {# entitat trobada} other {# entitats trobades}}",
+    "error": "Ara mateix no hem pogut fer la cerca.",
+    "retry": "Torna-ho a provar",
+    "emptyTitle": "No trobem «{query}»",
+    "emptyText": "Pot ser que la teva entitat encara no sigui a KORUM. Donar-la d’alta és gratuït i porta uns minuts.",
+    "emptyAction": "Dona d’alta la meva entitat gratis",
+    "vertical": {
+      "SCHOOL": "Escola",
+      "SPORTS_CLUB": "Club esportiu",
+      "CULTURAL": "Entitat cultural"
+    },
+    "noResults": "Sense resultats. Pots donar d’alta la teva entitat gratis."
+  },
+  "calculator": {
+    "formLabel": "Dades per al simulador",
+    "verticalLabel": "Tipus d’entitat",
+    "vertical": {
+      "SCHOOL": "Escola o AMPA/AFA",
+      "SPORTS_CLUB": "Club esportiu",
+      "CULTURAL": "Entitat cultural"
+    },
+    "objectiveLabel": "Què voleu aconseguir?",
+    "objective": {
+      "climate": "Climatització de les aules",
+      "shade": "Ombra al pati",
+      "boards": "Pissarres digitals",
+      "scoreboard": "Marcador LED",
+      "trip": "Viatge de final de curs",
+      "custom": "Un altre objectiu",
+      "instruments": "Instruments i vestuari"
+    },
+    "costLabel": "Pressupost del vostre proveïdor",
+    "costHint": "És un import d’exemple: canvia’l pel vostre pressupost.",
+    "costError": "Escriu un import més gran que zero i de fins a {max}.",
+    "families": {
+      "SCHOOL": "Nombre de famílies del centre",
+      "SPORTS_CLUB": "Nombre de socis i famílies",
+      "CULTURAL": "Nombre de persones de la comunitat"
+    },
+    "familiesError": "Escriu un nombre enter d’1 a {max}.",
+    "sponsorsLabel": "Comerços del barri que patrocinen: {count}",
+    "sponsorsValue": "{count, plural, =0 {cap comerç} one {# comerç} other {# comerços}}",
+    "sponsorsHint": "Cada comerç aporta {level}, que arriben íntegres a la iniciativa (el seu fee de gestió va a part i el paga el comerç).",
+    "resultTitle": "La teva iniciativa, en xifres",
+    "goal": "Meta que es publicarà: <strong>{amount}</strong>",
+    "breakdown": {
+      "net": "Per pagar la millora, amb reserva de contingència",
+      "commission": "Comissió de KORUM (exempt: {exempt})",
+      "maintenance": "Manteniment de la plataforma",
+      "gateway": "Passarel·la de pagament, amb l’arrodoniment a l’euro"
+    },
+    "remaining": "Entre les famílies cal reunir <strong>{amount}</strong> {sponsors}.",
+    "noSponsors": "(sense comerços)",
+    "withSponsors": "({count, plural, one {amb # comerç} other {amb # comerços}})",
+    "coveredBySponsors": "Amb aquests comerços la meta queda coberta!",
+    "atAverage": "Amb {average} de mitjana caldrien {count, plural, one {# aportació} other {# aportacions}}: el {pct} de la comunitat.",
+    "tooMuch": "Amb {average} de mitjana no n’hi hauria prou ni amb tota la comunitat: suma comerços o ajusta l’objectiu.",
+    "ifHalf": "Si participa una de cada dues famílies, l’aportació mitjana seria de <strong>{average}</strong>.",
+    "disclaimer": "Xifres orientatives amb les tarifes vigents: els primers {exempt} de cada curs no paguen comissió. La meta final la calcula l’Estudi amb el vostre pressupost real.",
+    "needData": "Completa el pressupost i el nombre de persones per veure el càlcul.",
+    "announce": "Meta que es publicarà: {goal}. Per reunir entre les famílies: {remaining}."
+  },
+  "marketing": {
+    "ogAlt": "KORUM: on les bones idees sumen i s’aconsegueixen",
+    "updated": "Actualitzat el",
+    "breadcrumbLabel": "Ruta de navegació",
+    "breadcrumbHome": "Inici",
+    "cta": {
+      "signup": "Dona d’alta la meva entitat gratis",
+      "find": "Cerca la meva escola o club",
+      "howItWorks": "Veure com funciona"
+    },
+    "llms": {
+      "summary": "KORUM és una plataforma tecnològica per a escoles (a través de la seva AMPA/AFA o del seu titular), clubs esportius de base i entitats culturals. Reuneix una bústia d’idees amb quòrum, campanyes de mecenatge «tot o res», taquilla i rifes amb QR, comerços amics i Mi Hucha.",
+      "money": "Els cobraments, les retencions i les devolucions els executa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM no és una entitat financera ni custodia fons. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona, al mitjà de pagament original. KORUM mai no intermedia ni cobra comissions a proveïdors d’obres o equipament: l’entitat tria lliurement.",
+      "figuresTitle": "Tarifes vigents",
+      "figures": [
+        "Alta d’entitats: gratuïta.",
+        "Els primers {exempt} de cada curs no paguen comissió; després, {t1Rate}, {t2Rate} o {t3Rate} segons la mida de la iniciativa (trams fins a {t1Max} i {t2Max}).",
+        "Passarel·la de pagament: {gatewayRate} més {gatewayFixed} per aportació, inclosa a la meta que veuen les famílies.",
+        "Entrades i butlletes: «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu.",
+        "Patrocini de comerços: el 100 % del nivell triat arriba a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre.",
+        "Durada màxima d’una campanya: {maxDays} dies."
+      ],
+      "pagesTitle": "Pàgines"
+    },
+    "pricing": {
+      "title": "Tarifes vigents",
+      "caption": "Tarifes de KORUM",
+      "colConcept": "Concepte",
+      "colPrice": "Què es paga",
+      "noteFlat": "El net és el que necessita l’entitat per pagar la millora. La tarifa es decideix pel net total de la iniciativa i s’aplica només a la part que supera l’exempt.",
+      "noteMarginal": "El net és el que necessita l’entitat per pagar la millora. Cada tram paga únicament la part del net que cau dins seu.",
+      "exemptLabel": "Primers {exempt} de cada curs",
+      "exemptValue": "Sense comissió",
+      "tier1Label": "Net de fins a {t1Max}",
+      "tier1Value": "{t1Rate} sobre la part que supera l’exempt",
+      "tier2Label": "Net de {t1Max} a {t2Max}",
+      "tier2Value": "{t2Rate} sobre la part que supera l’exempt",
+      "tier3Label": "Net de més de {t2Max}",
+      "tier3Value": "{t3Rate} sobre la part que supera l’exempt",
+      "maintLabel": "Manteniment de la plataforma",
+      "maintOff": "Sense quota de manteniment",
+      "maintOn": "{maintFee} per campanya, amb un topall anual de {maintCap}",
+      "gatewayLabel": "Passarel·la de pagament (Paycomet)",
+      "gatewayValue": "{gatewayRate} més {gatewayFixed} per aportació, inclosos a la meta que veuen les famílies",
+      "ticketsLabel": "Entrades i butlletes",
+      "ticketsValue": "«Despeses de gestió digital»: {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar",
+      "sponsorsLabel": "Patrocini de comerços",
+      "sponsorsValue": "El 100 % del nivell triat arriba a la iniciativa. El fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i el paga el comerç",
+      "voluntaryLabel": "Aportació voluntària a KORUM",
+      "voluntaryValue": "Opcional i desmarcada per defecte; l’import es tria des de zero. No canvia res de la donació",
+      "setupLabel": "Alta de l’entitat",
+      "setupValue": "Gratuïta",
+      "durationLabel": "Durada màxima d’una campanya",
+      "durationValue": "{maxDays} dies des de la seva publicació",
+      "disclaimer": "La meta final de cada iniciativa la calcula l’Estudi de l’entitat amb el seu pressupost real; el simulador de la portada en dona una estimació."
+    },
+    "pages": {
+      "colegios": {
+        "title": "Recaptar fons per a escoles i AMPA/AFA",
+        "description": "Financia climatització, ombra o pissarres digitals amb campanyes tot o res, doble signatura i devolució del 100 % si no s’arriba a la meta.",
+        "h1": "Com finançar millores a la teva escola sense manejar efectiu",
+        "answer": "KORUM permet que una escola o la seva AMPA/AFA proposi una millora, l’aprovi amb doble signatura i la financi amb les aportacions de les famílies en una campanya «tot o res»: si no s’arriba a la meta, es retorna el 100 % a cada persona. Els primers {exempt} de cada curs no paguen comissió.",
+        "sections": [
+          {
+            "title": "Què pot fer la teva escola",
+            "bullets": [
+              "Obrir una bústia d’idees amb quòrum perquè les famílies proposin i recolzin millores.",
+              "Llançar campanyes «tot o res» per a climatització, ombra al pati, pissarres digitals o el viatge de final de curs.",
+              "Vendre entrades i butlletes de rifa amb QR en festivals i festes, amb control d’aforament.",
+              "Plantejar reptes per curs (d’Infantil 3 anys a 4t d’ESO) i celebrar el que s’aconsegueix.",
+              "Exportar el Model 182 amb un clic si l’entitat s’acull a la Llei 49/2002."
+            ]
+          },
+          {
+            "title": "Qui signa i qui cobra",
+            "paragraphs": [
+              "Una escola pública participa sempre a través de la seva AMPA/AFA, que és l’entitat titular dels fons. Les escoles concertades i privades es donen d’alta a través del seu titular.",
+              "Aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents: la direcció del centre i la presidència de l’AMPA/AFA. Els diners es cobren amb Paycomet, queden retinguts fins a assolir la meta i es paguen a l’entitat o directament al seu proveïdor amb la factura davant."
+            ]
+          },
+          {
+            "title": "Llibertat total per triar proveïdor",
+            "paragraphs": [
+              "KORUM mai no intermedia ni homologa proveïdors d’obres o equipament, ni els cobra comissions. La vostra entitat introdueix el pressupost del proveïdor que prefereixi i la plataforma calcula la meta."
+            ]
+          },
+          {
+            "title": "Reptes per curs, sempre en positiu",
+            "paragraphs": [
+              "Els cursos sumen famílies participants per desbloquejar un premi col·lectiu. Es celebra el que s’aconsegueix («3rB ja suma 28 famílies»); mai no s’assenyala ningú ni es comparen imports entre cursos."
+            ]
+          },
+          {
+            "title": "Quant costa",
+            "paragraphs": [
+              "Donar d’alta l’escola és gratuït. Els primers {exempt} de cada curs no paguen comissió; a partir d’aquí, la comissió va del {t1Rate} al {t3Rate} segons la mida de la iniciativa. Totes les tarifes són a la pàgina de preus."
+            ]
+          }
+        ],
+        "ctaTitle": "Comença amb la bústia d’idees de la teva escola",
+        "ctaText": "L’alta és gratuïta i porta uns minuts. Sense manejar efectiu i amb la devolució del 100 % si no s’arriba a la meta."
+      },
+      "clubes": {
+        "title": "Recaptar fons per a clubs esportius",
+        "description": "Financia material, desplaçaments o instal·lacions del club amb campanyes tot o res, entrades i rifes amb QR, i devolució del 100 % si no s’arriba.",
+        "h1": "Com recaptar fons per a un club esportiu de base",
+        "answer": "KORUM dona a un club esportiu de base una manera ordenada de recaptar: campanyes «tot o res» per a material, desplaçaments o instal·lacions, entrades i rifes amb QR per als seus esdeveniments i reptes per equip en positiu. Si una campanya no arriba a la meta, es retorna el 100 %. Els primers {exempt} de cada temporada no paguen comissió.",
+        "sections": [
+          {
+            "title": "Pensat per a com funciona un club",
+            "bullets": [
+              "Equips per categoria (Prebenjamí, Benjamí, Aleví, Infantil, Cadet, Juvenil, Sènior…) més l’afició i els antics jugadors.",
+              "Doble signatura entre la gestió principal del club i la seva tresoreria o presidència.",
+              "Campanyes per a equipacions, material, desplaçaments o millores de les instal·lacions.",
+              "Model 182 amb un clic si l’entitat s’acull a la Llei 49/2002."
+            ]
+          },
+          {
+            "title": "Entrades, rifes i porteria",
+            "paragraphs": [
+              "Ven entrades amb aforament controlat i butlletes de rifa numerades. Els voluntaris validen a la porta amb la càmera del mòbil, amb un PIN de l’esdeveniment i sense instal·lar res. El sorteig de la rifa es fa en pantalla i deixa una acta.",
+              "Les rifes i tómboles són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia: l’entitat confirma que compleix la normativa de la seva abans de publicar."
+            ]
+          },
+          {
+            "title": "Reptes per equip, sense pressió",
+            "paragraphs": [
+              "Cada equip suma famílies per desbloquejar un premi col·lectiu. Els reptes es mostren només en positiu i cada club pot desactivar-los."
+            ]
+          },
+          {
+            "title": "Independència de proveïdors",
+            "paragraphs": [
+              "KORUM mai no intermedia proveïdors ni els cobra comissions: el club tria lliurement a qui compra i pressuposta."
+            ]
+          },
+          {
+            "title": "Quant costa",
+            "paragraphs": [
+              "L’alta és gratuïta i els primers {exempt} de cada temporada no paguen comissió. Les entrades i butlletes porten unes «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar."
+            ]
+          }
+        ],
+        "ctaTitle": "Dona d’alta el teu club en uns minuts",
+        "ctaText": "Obre campanyes, ven entrades amb QR i celebra cada meta amb la teva afició."
+      },
+      "culturales": {
+        "title": "Finançar projectes d’entitats culturals",
+        "description": "Bandes, corals, teatres i associacions: financia projectes amb campanyes tot o res, entrades QR i devolució del 100 % si no s’arriba a la meta.",
+        "h1": "Com finançar els projectes d’una entitat cultural",
+        "answer": "KORUM ajuda una associació, banda, coral, escola o grup de teatre a finançar instruments, vestuari, gires o activitats amb campanyes «tot o res»: els diners només s’utilitzen si s’assoleix la meta i, si no, es retorna el 100 % a cada persona. Els primers {exempt} de cada any no paguen comissió.",
+        "sections": [
+          {
+            "title": "Per a qui és",
+            "bullets": [
+              "Associacions culturals, bandes de música, corals i orquestres.",
+              "Grups de teatre, dansa i escoles de música.",
+              "Fundacions i patronats que organitzen activitats amb la seva comunitat."
+            ]
+          },
+          {
+            "title": "Què pots fer",
+            "bullets": [
+              "Finançar instruments, vestuari, escenografia, gires o reformes del local.",
+              "Vendre entrades amb QR per a concerts i funcions, amb l’aforament controlat.",
+              "Organitzar la teva comunitat en grups que configures tu: alumnat o integrants, famílies, professorat o monitors, socis i amics, antics membres.",
+              "Decidir amb quòrum i doble signatura quins projectes es fan."
+            ]
+          },
+          {
+            "title": "Transparència amb els teus socis",
+            "paragraphs": [
+              "Cada campanya mostra la seva guardiola identificada, la seva data límit i com es reparteix la meta en quatre línies que sumen exactament el total. Qui aporta sap on van els seus diners i què passa si no s’arriba."
+            ]
+          },
+          {
+            "title": "Quant costa",
+            "paragraphs": [
+              "L’alta és gratuïta. Els primers {exempt} de cada any no paguen comissió; després, del {t1Rate} al {t3Rate} segons la mida del projecte."
+            ]
+          }
+        ],
+        "ctaTitle": "Dona d’alta la teva entitat cultural",
+        "ctaText": "Obre la bústia d’idees de la teva comunitat i llança la teva primera campanya amb la devolució del 100 % si no s’arriba a la meta."
+      },
+      "comercios": {
+        "title": "Patrocinar l’escola o club del teu barri",
+        "description": "Patrocina l’escola o el club del teu barri: el 100 % arriba a la iniciativa, guanyes visibilitat davant les famílies i reps el justificant a l’instant.",
+        "h1": "Com patrocinar l’escola o el club del teu barri",
+        "answer": "Un comerç patrocina una iniciativa triant un nivell de 100, 250 o 500 €. El 100 % d’aquest import arriba íntegre a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i l’assumeix el comerç, que rep a l’instant el justificant del patrocini i la factura del fee.",
+        "sections": [
+          {
+            "title": "Què obté el teu comerç",
+            "bullets": [
+              "Aparèixer com a comerç amic a la pàgina de l’entitat, a la categoria Or, Plata o Bronze, sense mostrar imports en públic.",
+              "Visibilitat davant les famílies del barri durant tot el curs.",
+              "Un avantatge o cupó propi per a les famílies, si vols oferir-lo.",
+              "Justificant del patrocini i factura del fee de gestió, per email a l’instant."
+            ]
+          },
+          {
+            "title": "Com participar",
+            "steps": [
+              {
+                "title": "Cerca l’entitat del teu barri",
+                "text": "Troba l’escola, club o entitat cultural que vols donar suport."
+              },
+              {
+                "title": "Tria el nivell",
+                "text": "Selecciona 100, 250 o 500 € i paga amb targeta o Bizum."
+              },
+              {
+                "title": "Rep el justificant i la factura",
+                "text": "El justificant del patrocini i la factura del fee et arriben per email a l’instant, sense tràmits."
+              },
+              {
+                "title": "Apareix com a comerç amic",
+                "text": "El teu comerç es mostra a la seva categoria durant el curs."
+              }
+            ]
+          },
+          {
+            "title": "Si la campanya no arriba a la meta",
+            "paragraphs": [
+              "El patrocini es reassigna segons la regla de l’entitat. Si no hi ha una altra campanya activa, es guarda en una borsa de crèdit a nom del comerç durant un termini limitat i, si no s’utilitza, se li reemborsa."
+            ]
+          }
+        ],
+        "ctaTitle": "Dona suport al teu barri",
+        "ctaText": "Cerca l’escola o el club que vols patrocinar i comença en pocs minuts."
+      },
+      "comoFunciona": {
+        "title": "Com funciona la plataforma",
+        "description": "De la idea a la millora en 4 passos: idees amb quòrum, doble signatura, aportacions tot o res amb Paycomet i devolució del 100 % si no s’arriba.",
+        "h1": "Com funciona KORUM, pas a pas",
+        "answer": "A KORUM una comunitat proposa una millora, la recolza amb signatures, l’aproven dues persones de l’entitat i les famílies la financen amb aportacions «tot o res»: els diners es cobren amb Paycomet i, si no s’arriba a la meta en termini, es retorna el 100 % a cada persona.",
+        "sections": [
+          {
+            "title": "De la idea a la millora",
+            "steps": [
+              {
+                "title": "Proposeu i sumeu signatures",
+                "text": "Una família proposa una idea amb un àlies privat. Les altres la recolzen amb la seva signatura fins a assolir el quòrum."
+              },
+              {
+                "title": "Doble signatura de l’entitat",
+                "text": "Dues persones diferents de l’entitat aproven la idea. L’entitat tria lliurement el seu proveïdor i la plataforma calcula la meta."
+              },
+              {
+                "title": "Les famílies aporten en 10 segons",
+                "text": "Amb Bizum o targeta i només amb el seu email. Cada iniciativa té la seva guardiola identificada i la seva data límit."
+              },
+              {
+                "title": "Gaudiu de l’Abans i el Després",
+                "text": "En assolir la meta es paga la millora amb la factura del proveïdor davant i es publica el resultat."
+              }
+            ]
+          },
+          {
+            "title": "Què passa amb els diners",
+            "paragraphs": [
+              "Els cobraments els processa Paycomet i els diners queden retinguts fins a assolir la meta. KORUM els registra en un llibre major de doble partida, al cèntim. Si l’última aportació supera la meta, l’excedent es lliura íntegre a l’entitat com a reserva addicional del projecte."
+            ]
+          },
+          {
+            "title": "I si no s’arriba a la meta",
+            "paragraphs": [
+              "Una campanya dura com a màxim {maxDays} dies. Si en aquest termini no arriba al 100 % i l’entitat no decideix redimensionar-la, Paycomet retorna automàticament el 100 % del que s’ha cobrat a cada persona, aportació voluntària inclosa, al mitjà de pagament original."
+            ]
+          },
+          {
+            "title": "Qui hi intervé",
+            "bullets": [
+              "Les famílies i socis proposen, signen i aporten.",
+              "L’entitat aprova amb doble signatura, tria proveïdor i rep els diners.",
+              "Els comerços del barri patrocinen i guanyen visibilitat.",
+              "Paycomet executa els cobraments, les retencions i les devolucions.",
+              "KORUM posa la tecnologia i no guarda els diners."
+            ]
+          }
+        ],
+        "ctaTitle": "La teva comunitat està a punt per començar?",
+        "ctaText": "L’alta és gratuïta i porta uns minuts."
+      },
+      "precios": {
+        "title": "Preus i tarifes",
+        "description": "Alta gratuïta. Els primers {exempt} de cada curs sense comissió; després, del {t1Rate} al {t3Rate}. Consulta totes les tarifes amb detall.",
+        "h1": "Preus de KORUM: què es paga i qui ho paga",
+        "answer": "Donar d’alta una entitat és gratuït. KORUM cobra una comissió per trams només sobre el que supera els primers {exempt} de cada curs, i el cost de la passarel·la de pagament ja va inclòs a la meta que veuen les famílies.",
+        "sections": [
+          {
+            "title": "Què inclou la meta que veuen les famílies",
+            "paragraphs": [
+              "La fitxa pública de cada iniciativa reparteix la meta en quatre línies que sumen exactament el total:"
+            ],
+            "bullets": [
+              "Pressupost del proveïdor i equipament.",
+              "Instal·lació i adequació tècnica.",
+              "Reserva de manteniment, riscos i contingència.",
+              "Passarel·la de pagament, plataforma, gestió i garantia de devolució."
+            ]
+          },
+          {
+            "title": "Qui paga què",
+            "bullets": [
+              "L’entitat no paga per donar-se d’alta.",
+              "Les famílies aporten a la meta i, si volen, una aportació voluntària a KORUM que arriba desmarcada.",
+              "Els comerços paguen el nivell de patrocini, que arriba íntegre, més el fee de gestió publicitària.",
+              "Qui compra una entrada o una butlleta paga les «Despeses de gestió digital», sempre a la vista."
+            ]
+          },
+          {
+            "title": "L’aportació voluntària a KORUM",
+            "paragraphs": [
+              "És opcional i no canvia res de la donació. Amb ella es manté el servei que garanteix a totes les famílies que el 100 % de la seva donació arriba al centre, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del seu certificat o justificant."
+            ]
+          }
+        ],
+        "ctaTitle": "Calcula la meta del teu projecte",
+        "ctaText": "Dona d’alta la teva entitat gratis i l’Estudi calcularà la meta exacta amb el teu pressupost."
+      },
+      "seguridad": {
+        "title": "Seguretat i transparència",
+        "description": "Qui gestiona els diners, com s’aproven les despeses, què passa si no s’arriba a la meta i com es protegeixen les teves dades a KORUM.",
+        "h1": "Seguretat i transparència: qui gestiona els diners i les dades",
+        "answer": "Els pagaments els processa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és la tecnologia: no guarda els vostres diners. Cada iniciativa té la seva pròpia guardiola identificada i els diners queden retinguts a Paycomet fins a assolir la meta.",
+        "sections": [
+          {
+            "title": "Què és i què no és KORUM",
+            "paragraphs": [
+              "KORUM és una plataforma tecnològica: no és una entitat financera ni custodia fons. Els cobraments, les retencions, els repartiments i les devolucions els executa Paycomet.",
+              "KORUM mai no intermedia ni homologa proveïdors d’obres o equipament ni els cobra comissions: cada entitat tria lliurement."
+            ]
+          },
+          {
+            "title": "Com s’aproven les despeses",
+            "paragraphs": [
+              "Aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents de l’entitat, totes dues amb verificació en dos passos. El pagament es fa amb la factura del proveïdor davant i queda registrat en un llibre major que no es pot editar: els errors es corregeixen amb un contraassentament."
+            ]
+          },
+          {
+            "title": "Si no s’arriba a la meta",
+            "paragraphs": [
+              "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica."
+            ]
+          },
+          {
+            "title": "Les teves dades",
+            "bullets": [
+              "Sense galetes de seguiment ni píxels de tercers: l’analítica de visites no fa servir galetes.",
+              "El NIF que s’aporta per al certificat fiscal es guarda xifrat.",
+              "Les idees de les famílies i el procés de pagament no s’indexen als cercadors.",
+              "Les fotos de l’Abans i el Després només es publiquen si l’entitat confirma que no hi apareixen menors reconeixibles.",
+              "Pots demanar una còpia o la supressió de les teves dades en qualsevol moment."
+            ]
+          }
+        ],
+        "ctaTitle": "Transparència des del primer dia",
+        "ctaText": "Dona d’alta la teva entitat i comprova cada pas al teu panell."
+      },
+      "faq": {
+        "title": "Preguntes freqüents",
+        "description": "Respostes clares sobre diners, devolucions, doble signatura, comissions, rifes, certificats fiscals i dades personals a KORUM.",
+        "h1": "Preguntes freqüents sobre KORUM",
+        "answer": "Aquí responem, en llenguatge planer, el que més ens pregunten les entitats, les famílies i els comerços.",
+        "sections": [
+          {
+            "title": "Sobre els diners",
+            "faq": [
+              {
+                "q": "Qui guarda els diners?",
+                "a": "Paycomet, entitat de pagament autoritzada pel Banc d’Espanya, processa els cobraments i reté els diners fins a assolir la meta. KORUM és la tecnologia i no guarda els vostres diners."
+              },
+              {
+                "q": "Què passa si no s’arriba a la meta?",
+                "a": "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica, inclosa l’aportació voluntària a KORUM."
+              },
+              {
+                "q": "Què passa si se supera la meta?",
+                "a": "La iniciativa passa a assolida, tanca noves aportacions i l’excedent es lliura íntegre a l’entitat com a reserva addicional del projecte."
+              },
+              {
+                "q": "Quant dura una campanya?",
+                "a": "Com a màxim {maxDays} dies des de la seva publicació, perquè Paycomet només permet repartir els fons durant un termini limitat des de cada cobrament."
+              }
+            ]
+          },
+          {
+            "title": "Sobre les entitats",
+            "faq": [
+              {
+                "q": "Quant costa fer servir KORUM?",
+                "a": "L’alta és gratuïta. Els primers {exempt} de cada curs no paguen comissió; després, del {t1Rate} al {t3Rate} segons la mida de la iniciativa. Les tarifes completes són a la pàgina de preus."
+              },
+              {
+                "q": "Pot donar-se d’alta una escola pública?",
+                "a": "Sí, sempre a través de la seva AMPA/AFA, que és l’entitat titular dels fons. Les escoles concertades i privades ho fan a través del seu titular."
+              },
+              {
+                "q": "Podem triar el nostre proveïdor?",
+                "a": "Sí, sempre. KORUM mai no intermedia ni homologa proveïdors d’obres o equipament ni els cobra comissions."
+              },
+              {
+                "q": "Qui signa les decisions de l’entitat?",
+                "a": "Dues persones diferents: la gestió principal (direcció, presidència del club…) i un cosignant (presidència de l’AMPA/AFA, tresoreria del club…). Calen les dues per aprovar una idea i per alliberar fons."
+              },
+              {
+                "q": "Podem fer rifes?",
+                "a": "Sí, amb butlletes numerades i sorteig certificat en pantalla. Les rifes són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia: l’entitat confirma que compleix la seva normativa abans de publicar."
+              }
+            ]
+          },
+          {
+            "title": "Sobre famílies i comerços",
+            "faq": [
+              {
+                "q": "Cal que em registri per aportar?",
+                "a": "No. Per aportar o comprar entrades n’hi ha prou amb el teu email, on reps a l’instant el rebut o les entrades. Per proposar o signar idees sí que cal un compte verificat."
+              },
+              {
+                "q": "Rebré un certificat fiscal?",
+                "a": "Només si l’entitat té acreditat el règim de la Llei 49/2002. En cas contrari reps un justificant nominatiu d’aportació."
+              },
+              {
+                "q": "Què rep un comerç que patrocina?",
+                "a": "Apareix com a comerç amic a la seva categoria (Or, Plata o Bronze), rep a l’instant el justificant del patrocini i la factura del fee, i el 100 % del nivell triat arriba a la iniciativa."
+              },
+              {
+                "q": "Com es protegeixen les meves dades?",
+                "a": "No fem servir galetes de seguiment, el NIF es guarda xifrat i pots demanar una còpia o la supressió de les teves dades quan vulguis."
+              }
+            ]
+          }
+        ],
+        "ctaTitle": "A punt per començar?",
+        "ctaText": "Dona d’alta la teva entitat gratis i resol la resta sobre la marxa."
+      }
     }
   }
 }

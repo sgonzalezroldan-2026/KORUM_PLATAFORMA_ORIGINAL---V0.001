@@ -72,3 +72,19 @@ export async function getPublicInitiative(db: KorumPrismaClient, slug: string, i
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
   return initiative;
 }
+
+/** Tope del directorio que se carga para el buscador de la portada: con más entidades que esto hará falta un índice de búsqueda. */
+export const PUBLIC_DIRECTORY_LIMIT = 2000;
+
+/**
+ * Directorio público para el buscador de la portada (Entorno 0): solo nombre, enlace, tipo y provincia de las entidades no archivadas que
+ * aceptan aparecer en buscadores (`publicIndexing`). Una entidad que lo desactiva no se lista, aunque su enlace directo siga funcionando.
+ */
+export async function listPublicDirectory(db: KorumPrismaClient) {
+  return db.organization.findMany({
+    where: { archivedAt: null, publicIndexing: true },
+    select: { slug: true, name: true, vertical: true, province: true },
+    orderBy: [{ name: 'asc' }, { slug: 'asc' }],
+    take: PUBLIC_DIRECTORY_LIMIT
+  });
+}

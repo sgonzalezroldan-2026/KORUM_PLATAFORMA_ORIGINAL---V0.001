@@ -44,6 +44,16 @@
 
 La detección de idioma por el navegador y la cookie de idioma están **desactivadas a propósito** (`localeDetection: false`, `localeCookie: false`): la URL decide el idioma, para SEO, enlaces compartidos y privacidad.
 
+### 2.1 Web pública de marketing (Sprint 3.1)
+
+- **Rutas:** la portada y las 8 páginas pilar (`/para-colegios`, `/para-clubes`, `/para-entidades-culturales`, `/para-comercios`, `/como-funciona`, `/precios`, `/seguridad-y-transparencia`, `/preguntas-frecuentes`) tienen **el mismo nombre de ruta en los tres idiomas** (`/ca/precios`, `/en/precios`); el idioma lo decide solo el prefijo. Cada página es una carpeta con un `page.tsx` de 10 líneas (no una ruta dinámica `[pillar]`, que chocaría con `[orgSlug]` del Entorno 1) y todas se dibujan con `PillarPage`. La lista de páginas vive en `src/lib/seo/marketing-routes.ts` y de ella salen el menú, el pie, el sitemap, `robots.txt` y `llms.txt`.
+- **Contenido:** cada página pilar es un objeto de `messages/*.json` (`marketing.pages.<clave>`) validado con Zod al leerlo. Las cifras (primeros 1.000 €, tramos, pasarela, gastos de gestión digital, fee de patrocinio, duración de una campaña) se escriben como marcas `{exempt}`, `{t1Rate}`… y se sustituyen con las tarifas de `GlobalConfig`: lo que lee una persona antes de darse de alta es lo que aplica el Estudio.
+- **Tarifas en páginas estáticas:** `getPublicPlatformConfig` (`src/services/marketing/public-config.ts`) lee `GlobalConfig` y los ajustes `seo.*` con caché de 60 s y 2,5 s de espera máxima; si la base de datos falla o no existe (compilación, E2E) usa `DEFAULT_PUBLIC_PRICING` y lo registra. Las páginas llevan `revalidate = 600` y siguen siendo estáticas (`●`): un cambio en el motor de reglas se ve en la web en ≤ 10 minutos. Una prueba de integración comprueba que los valores de lanzamiento coinciden con los del esquema de Prisma.
+- **Simulador de la portada:** `simulateImpact` (`src/core/finance/impact-simulator.ts`) llama a la misma `calculateStudioBudgetTCO` que el Estudio, con una entidad nueva (todo el exento disponible, sin medalla, contingencia del 10 %), así que su meta coincide al céntimo con la del Estudio. Los importes de ejemplo de cada objetivo son solo valores iniciales del campo de presupuesto.
+- **Buscador de entidades:** `GET /api/entities?q=…` devuelve nombre, enlace, tipo y provincia de las entidades no archivadas con `publicIndexing` (nunca CIF, IBAN ni contactos), con caché de 60 s en el borde. La entidad que desactiva `publicIndexing` no se lista (aunque su enlace directo siga funcionando). Filtra por nombre y provincia sin acentos; el límite de peticiones se pone en el borde en el Sprint 6.1.
+- **Cookies:** hoy no hay ninguna no esencial. `src/config/cookies.ts` es su registro (vacío): añadir una cookie ahí hace aparecer en todo el sitio el aviso con «Rechazar» y «Aceptar» idénticos; sin registros no se monta ni se descarga.
+- **Tarjetas sociales de marketing:** `/api/og/marketing?locale=&page=&v=`, PNG 1200×630 de unos 50–65 KB; solo acepta idiomas y páginas conocidos.
+
 ---
 
 ## 3. Infraestructura
