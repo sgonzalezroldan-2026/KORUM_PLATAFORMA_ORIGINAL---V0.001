@@ -323,7 +323,8 @@ describe('decisión del 01-11-2026 · un evento ya celebrado no se reabre por un
   /** Campaña lograda con su liquidación firmada por dos personas distintas; después sube la meta por encima de lo recaudado. */
   async function signedPayout(format: 'TICKETING' | 'BUDGET', closesAt: Date) {
     const { organization, initiative } = await setup({ format, goalCents: 3_000, bracketFeeCents: 200, gatewayFeeCents: 100, closesAt });
-    for (let i = 0; i < 3; i += 1) await paidDonation(organization.id, initiative.id, 1_000, { createdAt: new Date() });
+    // Pagos iniciados antes de la fecha del evento: uno iniciado después se devuelve entero (Sprint 3.4) y no contaría.
+    for (let i = 0; i < 3; i += 1) await paidDonation(organization.id, initiative.id, 1_000, { createdAt: new Date(Math.min(Date.now(), closesAt.getTime()) - HOUR) });
     await db.initiative.update({ where: { id: initiative.id }, data: { goalCents: 5_000 } });
     const payout = await db.escrowPayout.create({
       data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 2_700, korumFeeSettledCents: 200 }

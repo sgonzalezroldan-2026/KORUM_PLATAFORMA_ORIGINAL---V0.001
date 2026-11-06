@@ -53,7 +53,7 @@ export function CookieNotice({ cookies }: { cookies: readonly NonEssentialCookie
   const buttonClass = 'inline-flex min-h-11 min-w-32 items-center justify-center rounded-lg border-2 border-varsity-navy bg-white px-4 font-bold text-varsity-navy hover:bg-varsity-navy/10';
 
   return (
-    <section aria-labelledby={titleId} className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-varsity-navy bg-white p-4 shadow-vault">
+    <section aria-labelledby={titleId} className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-varsity-navy bg-white p-4 shadow-vault print:hidden">
       <div className="mx-auto flex max-w-4xl flex-col gap-3">
         <h2 id={titleId} className="font-corp text-lg font-extrabold text-varsity-navy">
           {t('title')}

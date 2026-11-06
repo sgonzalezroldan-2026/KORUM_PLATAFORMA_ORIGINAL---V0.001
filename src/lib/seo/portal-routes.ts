@@ -8,8 +8,12 @@ import { siteUrl } from './marketing-routes';
 export const portalPath = (orgSlug: string): string => `/${orgSlug}`;
 export const initiativePath = (orgSlug: string, initiativeId: number): string => `/${orgSlug}/iniciativas/${initiativeId}`;
 export const passPath = (orgSlug: string, passUuid: string): string => `/${orgSlug}/entrada/${passUuid}`;
-/** Pago de una iniciativa: lo construye el Sprint 3.4 (el pago es un modal de la propia ficha). */
+/** Pago de una iniciativa (Sprint 3.4): la ficha con el checkout abierto encima, para que el enlace funcione también compartido o recargado. */
 export const checkoutPath = (orgSlug: string, initiativeId: number): string => `/${orgSlug}/iniciativas/${initiativeId}/aportar`;
+/** Vuelta del pago (`?pedido=&sig=`): celebración, espera de la confirmación o explicación del rechazo. */
+export const checkoutResultPath = (orgSlug: string, initiativeId: number): string => `${checkoutPath(orgSlug, initiativeId)}/resultado`;
+/** Página de pago simulada (`?pedido=&sig=`): solo existe con `PAYCOMET_MODE=mock`. */
+export const paymentSimulatorPath = (orgSlug: string, initiativeId: number): string => `${checkoutPath(orgSlug, initiativeId)}/simulador`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */
 export const INITIATIVE_ID_PATTERN = /^[1-9]\d{0,8}$/;
 /** Mi Hucha (Sprint 3.7). */

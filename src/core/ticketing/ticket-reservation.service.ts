@@ -1,4 +1,6 @@
 import { randomBytes } from 'node:crypto';
+import { MAX_TICKETS_PER_ORDER } from '@/core/checkout/checkout-limits';
+import { spanishFiscalYear } from '@/core/checkout/checkout-rules';
 import { calculateStudioTicketingTCO } from '@/core/finance/tco.service';
 import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import type { PaymentMethod } from '@/generated/prisma/enums';
@@ -11,7 +13,7 @@ import { inTransaction, QUEUED_TRANSACTION, type Db } from '@/lib/db';
  */
 
 export const TICKET_HOLD_MS = 15 * 60_000;
-export const MAX_TICKETS_PER_ORDER = 20;
+export { MAX_TICKETS_PER_ORDER };
 
 export type TicketReservationBlock = 'NOT_FOUND' | 'NOT_ON_SALE' | 'INVALID_QUANTITY' | 'SOLD_OUT';
 
@@ -125,7 +127,7 @@ export async function reserveTickets(db: Db, input: TicketReservationInput, now:
         initiativeId: input.initiativeId,
         ...buyer,
         locale: input.locale ?? initiative.organization.contentLocale,
-        fiscalYear: now.getUTCFullYear(),
+        fiscalYear: spanishFiscalYear(now),
         type: 'TICKET',
         groupName: input.groupName ?? null,
         ticketQuantity: input.quantity,

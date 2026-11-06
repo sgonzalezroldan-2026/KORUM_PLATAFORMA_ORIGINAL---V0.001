@@ -2,14 +2,21 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import QRCode from 'qrcode';
+import { PassActions } from '@/components/checkout/pass-actions';
 import { EmptyState } from '@/components/ui/empty-state';
 import { buildPassQrPayload, verifyPassViewSignature } from '@/core/ticketing/qr-signature';
 import { getEnv } from '@/config/env';
 import { isLocale } from '@/i18n/routing';
 import { getPrisma } from '@/lib/prisma';
+import { absoluteUrl } from '@/lib/seo/marketing-routes';
+import { passPath } from '@/lib/seo/portal-routes';
 import { getPassForView } from '@/repositories/public.repository';
 
-export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: 'no-referrer' };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: isLocale(locale) ? locale : 'es', namespace: 'portal.pass' });
+  return { title: t('title'), robots: { index: false, follow: false }, referrer: 'no-referrer' };
+}
 
 interface PageProps {
   params: Promise<{ locale: string; orgSlug: string; passUuid: string }>;
@@ -20,7 +27,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const VIEW_SIGNATURE = /^[A-Za-z0-9_-]{43}$/;
 
 /**
- * Pase del invitado (Sprint 3.3; el pase imprimible y la celebración llegan con el 3.4). El enlace lleva la firma de **visualización**
+ * Pase del invitado (Sprint 3.3), imprimible y con envío por WhatsApp (Sprint 3.4; la celebración está en la vuelta del pago). El enlace lleva la firma de **visualización**
  * (`verifyPassViewSignature`), distinta de la del QR de la puerta: aquí nunca se acepta la firma de la puerta y el QR solo se compone en el
  * servidor después de comprobar esta. Enlace sin firma válida, pase de otra entidad o inexistente responden lo mismo: no se revela cuál es.
  */
@@ -52,7 +59,7 @@ export default async function PassPage({ params, searchParams }: PageProps) {
     <section className="korum-trust-vault mx-auto max-w-md space-y-4 p-6 text-center" aria-labelledby="pass-title">
       <h1 id="pass-title" className="font-joy text-2xl font-bold text-varsity-navy">
         <span aria-hidden="true">{'🎟️ '}</span>
-        {t('title')}
+        {pass.subtype === 'RAFFLE' ? t('titleRaffle') : t('title')}
       </h1>
       <p className="font-corp text-lg font-extrabold text-varsity-navy">{pass.initiative.title}</p>
       <p className="text-sm text-ink-soft">
@@ -68,6 +75,7 @@ export default async function PassPage({ params, searchParams }: PageProps) {
       ) : null}
       <p className="font-mono text-sm text-ink-soft">{t('serial', { serial: pass.serialCode })}</p>
       <p className="text-sm font-semibold text-emerald-900">{t('show')}</p>
+      <PassActions title={pass.initiative.title} url={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} />
     </section>
   );
 }

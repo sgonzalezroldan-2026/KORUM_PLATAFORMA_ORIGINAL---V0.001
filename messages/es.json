@@ -1551,12 +1551,192 @@
       "invalid": {
         "title": "No podemos abrir esta entrada",
         "description": "Comprueba que has abierto el enlace completo del email o pide que te lo reenvíen."
-      }
+      },
+      "print": "Imprimir",
+      "shareWhatsapp": "Enviar por WhatsApp",
+      "shareWarning": "Quien tenga este enlace puede usar la entrada: envíalo solo a quien vaya a ir.",
+      "shareMessage": "Tu entrada para «{title}»: {url}",
+      "actions": "Acciones de la entrada",
+      "titleRaffle": "Tus papeletas"
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",
       "description": "Vuelve a intentarlo en unos segundos."
     },
-    "loading": "Cargando las iniciativas…"
+    "loading": "Cargando las iniciativas…",
+    "checkout": {
+      "metaTitle": "Aportar a «{title}»",
+      "custody": "El dinero queda retenido en Paycomet hasta lograr la meta",
+      "close": "Cerrar el pago",
+      "recipient": "Recibe los fondos: {legalName}",
+      "donation": {
+        "legend": "Elige tu aportación",
+        "suggested": "sugerido",
+        "otherLabel": "Otro importe (€)",
+        "otherHint": "Desde {min} hasta {max}.",
+        "error": "Escribe un importe entre {min} y {max}."
+      },
+      "ticket": {
+        "badge": {
+          "EVENT": "Entrada con aforo",
+          "RAFFLE": "Papeleta de rifa numerada"
+        },
+        "available": "Quedan {available} de {max}",
+        "venue": "Lugar: {venue}",
+        "quantity": {
+          "EVENT": "Entradas",
+          "RAFFLE": "Papeletas"
+        },
+        "less": "Quitar una",
+        "more": "Añadir una",
+        "unitAdd": "Precio: {price} + {fee} de Gastos de gestión digital",
+        "unitInc": "Precio: {price} (Gastos de gestión digital incluidos)",
+        "limit": "Puedes elegir como máximo {max} en esta compra.",
+        "soldOut": "{count, plural, =0 {Ya no quedan plazas libres. ¡Gracias por intentarlo!} one {Solo queda # plaza libre.} other {Solo quedan # plazas libres.}}",
+        "useAvailable": "{count, plural, one {Elegir # plaza} other {Elegir # plazas}}"
+      },
+      "group": {
+        "label": {
+          "SCHOOL": "¿A qué curso sumamos tu participación en el reto?",
+          "SPORTS_CLUB": "¿A qué equipo sumamos tu participación en el reto?",
+          "CULTURAL": "¿A qué grupo sumamos tu participación en el reto?"
+        },
+        "none": "Prefiero no elegir",
+        "hint": "Solo cuenta para el reto: nadie verá tu nombre ni tu importe."
+      },
+      "plaque": "Placa conmemorativa: al completarse, lucirá una placa en agradecimiento a todas las familias que han participado.",
+      "guarantee": {
+        "title": "🛡️ Apoyar a KORUM con una aportación voluntaria (+{amount})",
+        "descriptionCertificate": "Es opcional y no cambia nada de tu donación. Con ella sostienes el servicio que garantiza a todas las familias: (1) que el 100% de tu donación llega al centro sin descuentos bancarios, (2) la devolución automática si no se alcanza la meta y (3) la emisión automática de tu Certificado Fiscal de donación (Ley 49/2002).",
+        "descriptionReceipt": "Es opcional y no cambia nada de tu donación. Con ella sostienes el servicio que garantiza a todas las familias: (1) que el 100% de tu donación llega al centro sin descuentos bancarios, (2) la devolución automática si no se alcanza la meta y (3) la emisión automática de tu Justificante Nominativo de Aportación.",
+        "adjust": "Elegir otro importe para mi aportación voluntaria (desde 0 €)",
+        "legend": "Importe de tu aportación voluntaria a KORUM",
+        "otherLabel": "Otro importe (€)",
+        "error": "Escribe un importe entre 0 € y {max}."
+      },
+      "email": {
+        "label": "📧 Tu email para enviarte al instante tu recibo o tus entradas QR",
+        "error": "Revisa el email: lo necesitamos para enviarte el recibo o las entradas.",
+        "signedIn": "Te enviaremos el recibo a {email}."
+      },
+      "fiscal": {
+        "toggle": "Quiero mi certificado fiscal",
+        "hint": "Para desgravar tu donación (Ley 49/2002). Solo se usa para tu certificado y para la declaración anual de la entidad (Modelo 182), y se guarda cifrado.",
+        "taxId": "NIF o NIE",
+        "fullName": "Apellidos y nombre",
+        "fullNameHint": "Primero los apellidos, como en tu documento.",
+        "province": "Provincia",
+        "provincePlaceholder": "Elige tu provincia",
+        "taxIdError": "Este NIF no parece correcto. Revisa las letras y los números.",
+        "fieldsError": "Completa tus apellidos y nombre y la provincia, o desmarca el certificado.",
+        "retryNotice": "Por tu seguridad, vuelve a escribir tu NIF."
+      },
+      "summary": {
+        "label": "Resumen del pago",
+        "donation": "{donation} al proyecto + {guarantee} de aportación voluntaria a KORUM",
+        "donationOnly": "{donation} al proyecto",
+        "ticketsAdd": "{count} × {price} + {fee} de Gastos de gestión digital",
+        "ticketsInc": "{count} × {price} (Gastos de gestión digital incluidos)",
+        "total": "Total"
+      },
+      "pay": {
+        "bizum": "Pagar {total} con Bizum",
+        "card": "Tarjeta, Apple Pay o Google Pay",
+        "pending": "Abriendo el pago seguro…",
+        "secure": "Pagas en la página segura de Paycomet. KORUM nunca ve los datos de tu tarjeta."
+      },
+      "refundNote": "Si no se llega a la meta en el plazo, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
+      "refundNoteTickets": "Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
+      "errors": {
+        "form": "Revisa los datos marcados y vuelve a intentarlo.",
+        "quantity": "Elige entre 1 y {max}.",
+        "closed": "Esta iniciativa ya no admite aportaciones. ¡Gracias por querer sumar!",
+        "rateLimited": "Has hecho muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
+        "unavailable": "No hemos podido abrir el pago seguro. No se te ha cobrado nada: vuelve a intentarlo en unos minutos.",
+        "network": "Se ha cortado la conexión. No se te ha cobrado nada: comprueba tu conexión y vuelve a intentarlo."
+      },
+      "closed": {
+        "title": "Ya no se puede aportar",
+        "achieved": "¡Meta conseguida! Esta iniciativa ya no necesita más aportaciones.",
+        "soldOut": "¡Aforo completo! Ya no quedan plazas.",
+        "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones."
+      },
+      "custodyTickets": "Pago seguro con Paycomet"
+    },
+    "simulator": {
+      "metaTitle": "Pago simulado",
+      "title": "Pago simulado (modo de pruebas)",
+      "intro": "Esta pantalla sustituye a la página de Paycomet mientras KORUM funciona sin cobros reales. No se mueve dinero de verdad.",
+      "amount": "Importe",
+      "method": "Forma de pago",
+      "methods": {
+        "BIZUM": "Bizum",
+        "CARD": "Tarjeta, Apple Pay o Google Pay"
+      },
+      "confirm": "Confirmar el pago",
+      "reject": "Rechazar el pago",
+      "working": "Procesando…",
+      "invalid": {
+        "title": "Este pago ya no está pendiente",
+        "description": "Vuelve a la iniciativa para empezar de nuevo."
+      },
+      "failed": "No se ha podido completar. Vuelve a intentarlo."
+    },
+    "result": {
+      "metaTitle": "Tu aportación",
+      "back": "Volver a la iniciativa",
+      "confirmed": {
+        "title": "¡Gracias! Tu aportación ya suma",
+        "titleTickets": {
+          "EVENT": "¡Listo! Tus entradas ya son tuyas",
+          "RAFFLE": "¡Listo! Tus papeletas ya son tuyas"
+        },
+        "paid": "Has pagado {total}",
+        "goalReached": "¡Con tu aportación se ha logrado el 100 %!",
+        "soldOut": "¡Con tu compra se ha completado el aforo!",
+        "count": "Ya suman {count, plural, one {# aportación} other {# aportaciones}}",
+        "progressLabel": "Avance de «{title}»",
+        "group": "{group} ya suma {count, plural, one {# familia} other {# familias}} · reto: {target}",
+        "receipt": "Te hemos enviado el recibo por email.",
+        "ticketsEmail": "También te lo hemos enviado por email, con un enlace para abrirlo cuando quieras.",
+        "viewPass": {
+          "EVENT": "Ver e imprimir mi entrada",
+          "RAFFLE": "Ver e imprimir mis papeletas"
+        },
+        "serial": "Código {serial}",
+        "share": "Comparte la iniciativa para que se sumen más familias.",
+        "pct": "{pct} % conseguido"
+      },
+      "pending": {
+        "title": "Estamos confirmando tu pago…",
+        "description": "Suele tardar unos segundos. Esta página se actualiza sola.",
+        "refresh": "Comprobar ahora",
+        "stopped": "Si todavía no se ha confirmado, vuelve a comprobarlo en unos minutos."
+      },
+      "unconfirmed": {
+        "title": "Aún no tenemos la confirmación de tu pago",
+        "description": "Si te han hecho el cargo, te llegará el recibo por email. Si no, no se te ha cobrado nada y puedes volver a intentarlo."
+      },
+      "failed": {
+        "title": {
+          "BIZUM": "Bizum no ha confirmado el pago",
+          "CARD": "La tarjeta no ha confirmado el pago"
+        },
+        "description": "No se te ha cobrado nada. Hemos guardado lo que habías elegido.",
+        "retry": "Probar otra vez",
+        "switchTo": {
+          "BIZUM": "Pagar con Bizum",
+          "CARD": "Pagar con tarjeta"
+        }
+      },
+      "returned": {
+        "title": "Te devolvemos el 100 %",
+        "description": "El pago llegó cuando la iniciativa ya no admitía más aportaciones. Te lo devolvemos todo al mismo medio de pago, sin que tengas que hacer nada."
+      },
+      "invalid": {
+        "title": "No podemos abrir este resultado",
+        "description": "Comprueba que has abierto el enlace completo o vuelve a la iniciativa."
+      }
+    }
   }
 }

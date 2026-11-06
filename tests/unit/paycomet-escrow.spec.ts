@@ -10,7 +10,7 @@ import { openField, sealField } from '@/lib/encryption';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { notificationHash, verifyPaycometNotification, type NotificationSecrets } from '@/services/payments/paycomet-notification';
 import { PaycometAdapter } from '@/services/payments/paycomet.adapter';
-import { PaymentProviderError, type PaymentProvider, type RefundRequest, type SplitTransferRequest } from '@/services/payments/payment-provider';
+import { PaymentProviderError, type HostedPaymentRequest, type PaymentProvider, type RefundRequest, type SplitTransferRequest } from '@/services/payments/payment-provider';
 import { MAX_WEBHOOK_BODY_BYTES, readBodyWithLimit } from '@/services/payments/paycomet-webhook.service';
 import { POST } from '@/app/api/webhooks/paycomet/route';
 import { mockNotificationSecrets } from '@/services/payments/provider-factory';
@@ -245,7 +245,9 @@ describe('QA-P02 · el dinero solo vuelve al cobro original', () => {
     expectTypeOf<keyof RefundRequest>().toEqualTypeOf<'order' | 'authCode' | 'amountCents' | 'originalIp'>();
     expectTypeOf<keyof SplitTransferRequest>().toEqualTypeOf<'order' | 'authCode' | 'splitId' | 'amountCents'>();
     // `listCharges` (Sprint 2.4) solo lee y `deleteCard` (Sprint 2.5) solo borra una tarjeta: ninguno mueve dinero ni admite destino.
-    expectTypeOf<keyof PaymentProvider>().toEqualTypeOf<'mode' | 'name' | 'charge' | 'tokenizeCard' | 'deleteCard' | 'refund' | 'splitTransfer' | 'listCharges' | 'verifyNotification'>();
+    // `startHostedPayment` (Sprint 3.4) abre la página de pago de un cobro a KORUM: solo URLs de vuelta, ninguna cuenta de destino.
+    expectTypeOf<keyof PaymentProvider>().toEqualTypeOf<'mode' | 'name' | 'charge' | 'startHostedPayment' | 'tokenizeCard' | 'deleteCard' | 'refund' | 'splitTransfer' | 'listCharges' | 'verifyNotification'>();
+    expectTypeOf<keyof HostedPaymentRequest>().toEqualTypeOf<'order' | 'amountCents' | 'method' | 'originalIp' | 'locale' | 'urlOk' | 'urlKo' | 'description'>();
   });
 
   it('ningún archivo de pagos ni el webhook aceptan un IBAN', () => {

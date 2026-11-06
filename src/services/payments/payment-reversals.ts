@@ -36,7 +36,7 @@ export const isSettled = (payoutStatus: string | undefined): boolean => payoutSt
 export type ContributionRow = NonNullable<Awaited<ReturnType<typeof loadContribution>>>;
 
 function loadContribution(db: Db, where: { id: number } | { paycometOrder: string }) {
-  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, payout: { select: { status: true } } } } } });
+  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, closesAt: true, payout: { select: { status: true } } } } } });
 }
 
 /** Bloquea la iniciativa del cobro y lo lee después: lo que se lea ya no puede cambiar hasta confirmar la transacción. */

@@ -5,6 +5,8 @@ import {
   PaymentProviderError,
   type ChargeRequest,
   type ChargeResult,
+  type HostedPaymentRequest,
+  type HostedPaymentResult,
   type NotificationCheck,
   type PaymentProvider,
   type PspCharge,
@@ -49,7 +51,7 @@ const stableCode = (prefix: string, text: string) => `${prefix}${createHash('sha
 export class MockPaycometProvider implements PaymentProvider {
   readonly mode = 'mock' as const;
   readonly name = 'paycomet';
-  readonly calls: Array<{ operation: 'charge' | 'refund' | 'split'; order: string; amountCents: number; authCode?: string; splitId?: string }> = [];
+  readonly calls: Array<{ operation: 'charge' | 'hosted' | 'refund' | 'split'; order: string; amountCents: number; authCode?: string; splitId?: string }> = [];
   /** Tarjetas cuyo borrado se ha pedido (`idUser`). */
   readonly deletedCards: number[] = [];
   private readonly charges = new Map<string, MockCharge>();
@@ -80,6 +82,15 @@ export class MockPaycometProvider implements PaymentProvider {
     this.calls.push({ operation: 'charge', order: request.order, amountCents: request.amountCents });
     this.registerCharge(request.order, request.amountCents);
     return { order: request.order, authCode: this.charges.get(request.order)?.authCode ?? null, challengeUrl: null };
+  }
+
+  /**
+   * Sin página externa: el checkout lleva a la persona al simulador de KORUM (`/aportar/simulador`), donde confirma o rechaza el pago. El
+   * cobro solo existe en el simulador cuando se confirma (`buildNotification` con `OK`).
+   */
+  async startHostedPayment(request: HostedPaymentRequest): Promise<HostedPaymentResult> {
+    this.calls.push({ operation: 'hosted', order: request.order, amountCents: request.amountCents });
+    return { order: request.order, challengeUrl: null };
   }
 
   async tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult> {

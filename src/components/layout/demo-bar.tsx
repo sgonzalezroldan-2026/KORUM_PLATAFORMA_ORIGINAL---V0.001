@@ -13,7 +13,7 @@ export function DemoBar() {
     { href: '/admin', label: t('console') }
   ];
   return (
-    <aside aria-label={t('label')} className="bg-varsity-navy-deep text-varsity-ivory">
+    <aside aria-label={t('label')} className="bg-varsity-navy-deep text-varsity-ivory print:hidden">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1 text-sm">
         <p className="font-bold text-varsity-gold">{t('notice')}</p>
         <nav aria-label={t('environments')} className="flex flex-wrap gap-x-3">

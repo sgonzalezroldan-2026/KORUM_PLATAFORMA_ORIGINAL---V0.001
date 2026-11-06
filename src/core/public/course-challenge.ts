@@ -34,11 +34,16 @@ export function defaultGroupTemplate(vertical: string): ParticipationGroupCluste
   return OFFICIAL_SCHOOL_13_COURSES;
 }
 
-/** Nombres de los grupos en el orden de la entidad: los suyos si los personalizó (y son válidos) o los de la plantilla de su vertical. */
-export function orderedGroupNames(vertical: string, participationGroupsJson: unknown): string[] {
+/** Grupos de la entidad con sus bloques (Infantil, Primaria, ESO, Comunidad…): los suyos si los personalizó (y son válidos) o la plantilla. */
+export function orderedGroupClusters(vertical: string, participationGroupsJson: unknown): ParticipationGroupCluster[] {
   const parsed = clusterSchema.safeParse(participationGroupsJson);
   const clusters = parsed.success && parsed.data.some((cluster) => cluster.items.length > 0) ? parsed.data : defaultGroupTemplate(vertical);
-  return clusters.flatMap((cluster) => cluster.items);
+  return clusters.filter((cluster) => cluster.items.length > 0);
+}
+
+/** Nombres de los grupos en el orden de la entidad: los suyos si los personalizó (y son válidos) o los de la plantilla de su vertical. */
+export function orderedGroupNames(vertical: string, participationGroupsJson: unknown): string[] {
+  return orderedGroupClusters(vertical, participationGroupsJson).flatMap((cluster) => cluster.items);
 }
 
 /**

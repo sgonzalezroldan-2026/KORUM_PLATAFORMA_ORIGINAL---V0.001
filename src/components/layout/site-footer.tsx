@@ -15,7 +15,7 @@ export function SiteFooter() {
   ] as const;
 
   return (
-    <footer className="border-t-2 border-varsity-navy/10 bg-white">
+    <footer className="border-t-2 border-varsity-navy/10 bg-white print:hidden">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8">
         <div className="mobile-stack grid gap-8 md:grid-cols-3">
           <div className="flex flex-col gap-3">

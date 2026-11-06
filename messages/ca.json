@@ -1551,12 +1551,192 @@
       "invalid": {
         "title": "No podem obrir aquesta entrada",
         "description": "Comprova que has obert l’enllaç complet del correu o demana que te’l tornin a enviar."
-      }
+      },
+      "print": "Imprimir",
+      "shareWhatsapp": "Enviar per WhatsApp",
+      "shareWarning": "Qui tingui aquest enllaç pot fer servir l’entrada: envia’l només a qui hi hagi d’anar.",
+      "shareMessage": "La teva entrada per a «{title}»: {url}",
+      "actions": "Accions de l’entrada",
+      "titleRaffle": "Les teves butlletes"
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",
       "description": "Torna-ho a provar d’aquí a uns segons."
     },
-    "loading": "Carregant les iniciatives…"
+    "loading": "Carregant les iniciatives…",
+    "checkout": {
+      "metaTitle": "Aportar a «{title}»",
+      "custody": "Els diners queden retinguts a Paycomet fins a assolir la meta",
+      "close": "Tancar el pagament",
+      "recipient": "Rep els fons: {legalName}",
+      "donation": {
+        "legend": "Tria la teva aportació",
+        "suggested": "suggerit",
+        "otherLabel": "Un altre import (€)",
+        "otherHint": "Des de {min} fins a {max}.",
+        "error": "Escriu un import entre {min} i {max}."
+      },
+      "ticket": {
+        "badge": {
+          "EVENT": "Entrada amb aforament",
+          "RAFFLE": "Butlleta de rifa numerada"
+        },
+        "available": "En queden {available} de {max}",
+        "venue": "Lloc: {venue}",
+        "quantity": {
+          "EVENT": "Entrades",
+          "RAFFLE": "Butlletes"
+        },
+        "less": "Treure’n una",
+        "more": "Afegir-ne una",
+        "unitAdd": "Preu: {price} + {fee} de Despeses de gestió digital",
+        "unitInc": "Preu: {price} (Despeses de gestió digital incloses)",
+        "limit": "En aquesta compra en pots triar com a màxim {max}.",
+        "soldOut": "{count, plural, =0 {Ja no queden places lliures. Gràcies per intentar-ho!} one {Només queda # plaça lliure.} other {Només queden # places lliures.}}",
+        "useAvailable": "{count, plural, one {Triar # plaça} other {Triar # places}}"
+      },
+      "group": {
+        "label": {
+          "SCHOOL": "A quin curs sumem la teva participació en el repte?",
+          "SPORTS_CLUB": "A quin equip sumem la teva participació en el repte?",
+          "CULTURAL": "A quin grup sumem la teva participació en el repte?"
+        },
+        "none": "Prefereixo no triar",
+        "hint": "Només compta per al repte: ningú no veurà el teu nom ni el teu import."
+      },
+      "plaque": "Placa commemorativa: quan es completi, lluirà una placa d’agraïment a totes les famílies que hi han participat.",
+      "guarantee": {
+        "title": "🛡️ Donar suport a KORUM amb una aportació voluntària (+{amount})",
+        "descriptionCertificate": "És opcional i no canvia res de la teva donació. Amb ella sostens el servei que garanteix a totes les famílies: (1) que el 100% de la teva donació arriba al centre sense descomptes bancaris, (2) la devolució automàtica si no s’assoleix la meta i (3) l’emissió automàtica del teu Certificat Fiscal de donació (Llei 49/2002).",
+        "descriptionReceipt": "És opcional i no canvia res de la teva donació. Amb ella sostens el servei que garanteix a totes les famílies: (1) que el 100% de la teva donació arriba al centre sense descomptes bancaris, (2) la devolució automàtica si no s’assoleix la meta i (3) l’emissió automàtica del teu Justificant Nominatiu d’Aportació.",
+        "adjust": "Triar un altre import per a la meva aportació voluntària (des de 0 €)",
+        "legend": "Import de la teva aportació voluntària a KORUM",
+        "otherLabel": "Un altre import (€)",
+        "error": "Escriu un import entre 0 € i {max}."
+      },
+      "email": {
+        "label": "📧 El teu correu per enviar-te a l’instant el rebut o les entrades QR",
+        "error": "Revisa el correu: el necessitem per enviar-te el rebut o les entrades.",
+        "signedIn": "T’enviarem el rebut a {email}."
+      },
+      "fiscal": {
+        "toggle": "Vull el meu certificat fiscal",
+        "hint": "Per desgravar la teva donació (Llei 49/2002). Només s’utilitza per al teu certificat i per a la declaració anual de l’entitat (Model 182), i es desa xifrat.",
+        "taxId": "NIF o NIE",
+        "fullName": "Cognoms i nom",
+        "fullNameHint": "Primer els cognoms, com al teu document.",
+        "province": "Província",
+        "provincePlaceholder": "Tria la teva província",
+        "taxIdError": "Aquest NIF no sembla correcte. Revisa les lletres i els números.",
+        "fieldsError": "Completa els cognoms i el nom i la província, o desmarca el certificat.",
+        "retryNotice": "Per la teva seguretat, torna a escriure el teu NIF."
+      },
+      "summary": {
+        "label": "Resum del pagament",
+        "donation": "{donation} al projecte + {guarantee} d’aportació voluntària a KORUM",
+        "donationOnly": "{donation} al projecte",
+        "ticketsAdd": "{count} × {price} + {fee} de Despeses de gestió digital",
+        "ticketsInc": "{count} × {price} (Despeses de gestió digital incloses)",
+        "total": "Total"
+      },
+      "pay": {
+        "bizum": "Pagar {total} amb Bizum",
+        "card": "Targeta, Apple Pay o Google Pay",
+        "pending": "Obrint el pagament segur…",
+        "secure": "Pagues a la pàgina segura de Paycomet. KORUM no veu mai les dades de la teva targeta."
+      },
+      "refundNote": "Si no s’arriba a la meta dins el termini, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
+      "refundNoteTickets": "Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
+      "errors": {
+        "form": "Revisa les dades marcades i torna-ho a provar.",
+        "quantity": "Tria entre 1 i {max}.",
+        "closed": "Aquesta iniciativa ja no admet aportacions. Gràcies per voler sumar!",
+        "rateLimited": "Has fet molts intents seguits. Espera uns minuts i torna-ho a provar.",
+        "unavailable": "No hem pogut obrir el pagament segur. No se t’ha cobrat res: torna-ho a provar d’aquí a uns minuts.",
+        "network": "S’ha tallat la connexió. No se t’ha cobrat res: comprova la connexió i torna-ho a provar."
+      },
+      "closed": {
+        "title": "Ja no s’hi pot aportar",
+        "achieved": "Meta assolida! Aquesta iniciativa ja no necessita més aportacions.",
+        "soldOut": "Aforament complet! Ja no queden places.",
+        "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions."
+      },
+      "custodyTickets": "Pagament segur amb Paycomet"
+    },
+    "simulator": {
+      "metaTitle": "Pagament simulat",
+      "title": "Pagament simulat (mode de proves)",
+      "intro": "Aquesta pantalla substitueix la pàgina de Paycomet mentre KORUM funciona sense cobraments reals. No es mouen diners de debò.",
+      "amount": "Import",
+      "method": "Forma de pagament",
+      "methods": {
+        "BIZUM": "Bizum",
+        "CARD": "Targeta, Apple Pay o Google Pay"
+      },
+      "confirm": "Confirmar el pagament",
+      "reject": "Rebutjar el pagament",
+      "working": "Processant…",
+      "invalid": {
+        "title": "Aquest pagament ja no està pendent",
+        "description": "Torna a la iniciativa per començar de nou."
+      },
+      "failed": "No s’ha pogut completar. Torna-ho a provar."
+    },
+    "result": {
+      "metaTitle": "La teva aportació",
+      "back": "Tornar a la iniciativa",
+      "confirmed": {
+        "title": "Gràcies! La teva aportació ja suma",
+        "titleTickets": {
+          "EVENT": "Fet! Les entrades ja són teves",
+          "RAFFLE": "Fet! Les butlletes ja són teves"
+        },
+        "paid": "Has pagat {total}",
+        "goalReached": "Amb la teva aportació s’ha assolit el 100 %!",
+        "soldOut": "Amb la teva compra s’ha completat l’aforament!",
+        "count": "Ja sumen {count, plural, one {# aportació} other {# aportacions}}",
+        "progressLabel": "Avanç de «{title}»",
+        "group": "{group} ja suma {count, plural, one {# família} other {# famílies}} · repte: {target}",
+        "receipt": "T’hem enviat el rebut per correu.",
+        "ticketsEmail": "També te l’hem enviat per correu, amb un enllaç per obrir-lo quan vulguis.",
+        "viewPass": {
+          "EVENT": "Veure i imprimir la meva entrada",
+          "RAFFLE": "Veure i imprimir les meves butlletes"
+        },
+        "serial": "Codi {serial}",
+        "share": "Comparteix la iniciativa perquè s’hi sumin més famílies.",
+        "pct": "{pct} % aconseguit"
+      },
+      "pending": {
+        "title": "Estem confirmant el teu pagament…",
+        "description": "Sol trigar uns segons. Aquesta pàgina s’actualitza sola.",
+        "refresh": "Comprovar ara",
+        "stopped": "Si encara no s’ha confirmat, torna-ho a comprovar d’aquí a uns minuts."
+      },
+      "unconfirmed": {
+        "title": "Encara no tenim la confirmació del pagament",
+        "description": "Si t’han fet el càrrec, et arribarà el rebut per correu. Si no, no se t’ha cobrat res i ho pots tornar a provar."
+      },
+      "failed": {
+        "title": {
+          "BIZUM": "Bizum no ha confirmat el pagament",
+          "CARD": "La targeta no ha confirmat el pagament"
+        },
+        "description": "No se t’ha cobrat res. Hem desat el que havies triat.",
+        "retry": "Tornar-ho a provar",
+        "switchTo": {
+          "BIZUM": "Pagar amb Bizum",
+          "CARD": "Pagar amb targeta"
+        }
+      },
+      "returned": {
+        "title": "Et retornem el 100 %",
+        "description": "El pagament va arribar quan la iniciativa ja no admetia més aportacions. T’ho retornem tot al mateix mitjà de pagament, sense que hagis de fer res."
+      },
+      "invalid": {
+        "title": "No podem obrir aquest resultat",
+        "description": "Comprova que has obert l’enllaç complet o torna a la iniciativa."
+      }
+    }
   }
 }

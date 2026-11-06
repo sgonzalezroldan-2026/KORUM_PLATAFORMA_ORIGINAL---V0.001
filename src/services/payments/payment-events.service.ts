@@ -1,3 +1,4 @@
+import { spanishFiscalYear } from '@/core/checkout/checkout-rules';
 import { postJournal } from '@/core/finance/ledger.service';
 import { bpsOf } from '@/core/finance/money';
 import { donationOrTicketPayinLines, gatewayFeeLines, matchingReleaseLines } from '@/core/finance/payment-journals';
@@ -81,10 +82,13 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     throw new PaymentReconciliationError(`Cobro ${order}: el total no cuadra con el importe y la aportación voluntaria.`);
   }
 
+  // Una donación cuenta en el ejercicio en que se **cobra** (hora de España), no en el que se empezó a pagar: la iniciada el 31-12 a las 23:58 y
+  // confirmada pasada la medianoche es del año nuevo para el Modelo 182 y el certificado.
+  const fiscalYear = contribution.type === 'DONATION' ? spanishFiscalYear(occurredAt) : contribution.fiscalYear;
   // Dos notificaciones distintas del mismo pedido no pueden acreditarlo dos veces.
   const { count } = await tx.contribution.updateMany({
     where: { id: contribution.id, status: { in: ['PENDING', 'FAILED'] } },
-    data: { status: 'COMPLETED', paycometAuthCode: notification.authCode }
+    data: { status: 'COMPLETED', paycometAuthCode: notification.authCode, fiscalYear }
   });
   if (count === 0) return;
 
@@ -117,12 +121,19 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   });
   if (!initiative.firstPayinAt) await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { firstPayinAt: occurredAt } });
   if (contribution.groupName) {
-    await tx.initiativeCourseProgress.updateMany({ where: { initiativeId: contribution.initiativeId, groupName: contribution.groupName }, data: { familiesCount: { increment: 1 } } });
+    // El primer pago de un curso crea su fila del reto (el checkout solo admite grupos de la entidad): sin ella, ese curso nunca sumaría.
+    await tx.initiativeCourseProgress.upsert({
+      where: { initiativeId_groupName: { initiativeId: contribution.initiativeId, groupName: contribution.groupName } },
+      create: { initiativeId: contribution.initiativeId, groupName: contribution.groupName, familiesCount: 1 },
+      update: { familiesCount: { increment: 1 } }
+    });
   }
 
   // Suma a la campaña mientras recauda o, lograda la meta, hasta aprobar la liquidación: es el excedente de la entidad (Regla 02 §1).
-  // Después ya no cabe en ninguna liquidación: el dinero entró, así que se devuelve entero.
-  const accepting = initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status));
+  // Después ya no cabe en ninguna liquidación: el dinero entró, así que se devuelve entero. Un pago **iniciado** después de la fecha límite
+  // tampoco cuenta aunque la tarea de vencimiento aún no haya pasado (corre una vez al día): el checkout ya lo rechaza, y esto cubre la carrera.
+  const startedAfterDeadline = initiative.status === 'FUNDRAISING' && contribution.createdAt >= contribution.initiative.closesAt;
+  const accepting = !startedAfterDeadline && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
   if (!accepting) {
     if (contribution.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
     await approveRefundInTx(tx, contribution.id, { lateCharge: true });
@@ -139,7 +150,7 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     }
     capacityFull = seat.capacityFull;
   }
-  const bonusCents = contribution.type === 'DONATION' ? await releaseMatching(tx, contribution, order, occurredAt) : 0;
+  const bonusCents = contribution.type === 'DONATION' ? await releaseMatching(tx, { ...contribution, fiscalYear }, order, occurredAt) : 0;
   if (initiative.status === 'FUNDRAISING' && (capacityFull || initiative.raisedCents + bonusCents >= initiative.goalCents)) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'GOAL_REACHED', stepIndex: 5 } });
     // Quienes firman saben al instante que toca liquidar; el aviso sale en el propio flujo del cobro (Sprint 2.6).

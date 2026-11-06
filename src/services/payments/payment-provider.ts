@@ -26,6 +26,27 @@ export interface ChargeResult {
   challengeUrl: string | null;
 }
 
+/**
+ * Pago de una familia en la página segura de la entidad de pago (checkout, Sprint 3.4): KORUM nunca ve la tarjeta. La persona vuelve a
+ * `urlOk` o `urlKo`, pero lo que cuenta es el webhook: la vuelta solo enseña el estado que ya está guardado.
+ */
+export interface HostedPaymentRequest {
+  order: string;
+  amountCents: number;
+  method: Extract<ChargeMethod, 'CARD' | 'BIZUM'>;
+  originalIp: string;
+  locale: 'es' | 'ca' | 'en';
+  urlOk: string;
+  urlKo: string;
+  description?: string;
+}
+
+export interface HostedPaymentResult {
+  order: string;
+  /** Página de pago a la que se envía a la persona. `null` en el simulador, que tiene su propia página dentro de KORUM. */
+  challengeUrl: string | null;
+}
+
 export interface TokenizeRequest {
   /** Token de un solo uso del formulario de tarjeta (JET-ID): KORUM nunca ve ni guarda el número de la tarjeta. */
   jetToken: string;
@@ -88,6 +109,7 @@ export interface PaymentProvider {
   readonly mode: PaymentMode;
   readonly name: string;
   charge(request: ChargeRequest): Promise<ChargeResult>;
+  startHostedPayment(request: HostedPaymentRequest): Promise<HostedPaymentResult>;
   tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult>;
   /** Borra una tarjeta guardada en el proveedor (supresión de la cuenta). Borrar una que ya no existe no es un error. */
   deleteCard(card: TokenizeResult): Promise<void>;

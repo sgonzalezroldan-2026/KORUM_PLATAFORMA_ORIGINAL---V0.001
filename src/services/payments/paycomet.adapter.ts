@@ -5,6 +5,8 @@ import {
   type ChargeRequest,
   type ChargeResult,
   type ChargeMethod,
+  type HostedPaymentRequest,
+  type HostedPaymentResult,
   type NotificationCheck,
   type PaymentProvider,
   type PspCharge,
@@ -42,6 +44,7 @@ const OPERATION_AUTHORIZATION = 1;
 const STATE_CORRECT = 1;
 const SAFE_ORDER = /^[A-Za-z0-9_-]{1,70}$/;
 const paymentResponse = z.object({ order: z.coerce.string().optional(), authCode: z.coerce.string().nullish(), challengeUrl: z.url({ protocol: /^https$/ }).nullish() });
+const formResponse = z.object({ challengeUrl: z.url({ protocol: /^https$/ }) });
 const cardResponse = z.object({ idUser: z.coerce.number().int().positive(), tokenUser: z.string().min(1) });
 const refundResponse = z.object({ authCode: z.coerce.string().nullish() });
 const searchResponse = z.object({
@@ -96,6 +99,34 @@ export class PaycometAdapter implements PaymentProvider {
     });
     const parsed = this.parse(paymentResponse, body, 'cobro');
     return { order: request.order, authCode: parsed.authCode ?? null, challengeUrl: parsed.challengeUrl ?? null };
+  }
+
+  /**
+   * `POST /v1/form` con `operationType 1` (autorización): Paycomet devuelve la URL de su página de pago, donde la persona paga con tarjeta,
+   * Apple Pay, Google Pay o Bizum y vuelve a `urlOk`/`urlKo`. Suposición contra la especificación, sin probar en el sandbox: confirmar los
+   * nombres de los campos, el código de idioma y que el resultado llega por la notificación habitual (tareas aplazadas, ficha 6.1).
+   */
+  async startHostedPayment(request: HostedPaymentRequest): Promise<HostedPaymentResult> {
+    this.assertSafeOrder(request.order);
+    const body = await this.post('/v1/form', {
+      operationType: OPERATION_AUTHORIZATION,
+      language: request.locale,
+      terminal: this.terminal,
+      payment: {
+        terminal: this.terminal,
+        order: request.order,
+        amount: String(request.amountCents),
+        currency: CURRENCY,
+        methods: [METHOD_ID[request.method]],
+        originalIp: request.originalIp,
+        secure: 1,
+        urlOk: request.urlOk,
+        urlKo: request.urlKo,
+        ...(request.description ? { productDescription: request.description } : {})
+      }
+    });
+    const parsed = this.parse(formResponse, body, 'página de pago');
+    return { order: request.order, challengeUrl: parsed.challengeUrl };
   }
 
   async tokenizeCard(request: TokenizeRequest): Promise<TokenizeResult> {

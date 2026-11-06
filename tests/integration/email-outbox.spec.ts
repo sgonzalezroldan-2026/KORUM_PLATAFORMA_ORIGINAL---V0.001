@@ -322,6 +322,9 @@ describe('QA-NOT02 · tarea OUTBOX_DISPATCH', () => {
     const { organization, initiative } = await scenario();
     const provider = new FakeProvider();
     const message = await queue(organization.id, initiative.id, { nextAttemptAt: new Date(Date.now() - MINUTE) });
+    // La tarea envía todo lo pendiente del esquema compartido: lo que dejan otras suites (cientos de recibos y pases) se aplaza para que esta
+    // prueba solo mida su propio mensaje y no agote su tiempo según el orden en que corran los archivos (Sprint 3.4).
+    await db.outboxMessage.updateMany({ where: { status: 'PENDING', id: { not: message.id } }, data: { nextAttemptAt: new Date(Date.now() + 24 * 60 * MINUTE) } });
     const deps: JobDeps = {
       paymentProvider: () => Promise.reject(new Error('no se usa')),
       invoicingProvider: () => {

@@ -11,7 +11,7 @@ export function PortalHeader({ orgSlug }: { orgSlug: string }) {
   const nav = useTranslations('nav');
 
   return (
-    <header className="border-b-2 border-varsity-navy/10 bg-white">
+    <header className="border-b-2 border-varsity-navy/10 bg-white print:hidden">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="inline-flex min-h-11 min-w-11 shrink-0 items-center rounded-lg">
           {/* El selector de idioma y «Entrar» comparten la fila: por debajo de 480 px solo cabe el isotipo, que no puede encogerse. */}

@@ -14,17 +14,32 @@ export interface RateLimitRule {
 }
 
 export async function reserveAttempt(db: Db, key: string, rule: RateLimitRule, now: Date = new Date()): Promise<boolean> {
+  return reserveUnits(db, key, rule, 1, now);
+}
+
+/**
+ * Como `reserveAttempt`, pero un intento consume `units` del cupo (p. ej. las plazas que retiene una compra de entradas): se limita lo que se
+ * bloquea, no solo cuántas veces se pide. Admitido solo si caben todas las unidades; si no, no consume nada.
+ */
+export async function reserveUnits(db: Db, key: string, rule: RateLimitRule, units: number, now: Date = new Date()): Promise<boolean> {
+  if (!Number.isSafeInteger(units) || units < 1 || units > rule.limit) return false;
   const nowMs = BigInt(now.getTime());
   await db.rateLimit.createMany({ data: [{ id: key, key, count: 0, lastRequest: nowMs }], skipDuplicates: true });
   if (rule.windowMs !== null) {
     await db.rateLimit.updateMany({ where: { key, lastRequest: { lte: nowMs - BigInt(rule.windowMs) } }, data: { count: 0, lastRequest: nowMs } });
   }
-  const { count } = await db.rateLimit.updateMany({ where: { key, count: { lt: rule.limit } }, data: { count: { increment: 1 }, lastRequest: nowMs } });
+  const { count } = await db.rateLimit.updateMany({ where: { key, count: { lte: rule.limit - units } }, data: { count: { increment: units }, lastRequest: nowMs } });
   return count === 1;
 }
 
 export async function releaseAttempt(db: Db, key: string): Promise<void> {
-  await db.rateLimit.updateMany({ where: { key, count: { gt: 0 } }, data: { count: { decrement: 1 } } });
+  await releaseUnits(db, key, 1);
+}
+
+/** Devuelve unidades consumidas por un intento que al final no hizo nada (sin restar por debajo de cero). */
+export async function releaseUnits(db: Db, key: string, units: number): Promise<void> {
+  const { count } = await db.rateLimit.updateMany({ where: { key, count: { gte: units } }, data: { count: { decrement: units } } });
+  if (count === 0) await db.rateLimit.updateMany({ where: { key, count: { gt: 0 } }, data: { count: 0 } });
 }
 
 export async function countAttempts(db: Db, key: string): Promise<number> {

@@ -222,3 +222,23 @@
     min-width: 0;
   }
 }
+
+/* Celebración tras pagar: confeti breve (solo con movimiento permitido; el componente ya no se pinta con `prefers-reduced-motion`) */
+@keyframes korum-confetti-fall {
+  0% { transform: translateY(-2rem) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(85vh) rotate(540deg); opacity: 0; }
+}
+.korum-confetti {
+  animation: korum-confetti-fall 1.6s ease-in forwards;
+}
+
+/* Pase imprimible: hoja blanca, sin sombras ni fondos de patio; la cabecera, el pie y los botones llevan `print:hidden` */
+@media print {
+  body, .korum-paper-dots, .korum-court-grid {
+    background: #ffffff !important;
+  }
+  .korum-trust-vault {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}

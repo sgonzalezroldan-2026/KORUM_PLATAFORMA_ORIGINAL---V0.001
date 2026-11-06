@@ -1551,12 +1551,192 @@
       "invalid": {
         "title": "We can’t open this ticket",
         "description": "Check that you opened the full link from the email, or ask for it to be sent again."
-      }
+      },
+      "print": "Print",
+      "shareWhatsapp": "Send via WhatsApp",
+      "shareWarning": "Anyone with this link can use the ticket: only send it to the person who is going.",
+      "shareMessage": "Your ticket for “{title}”: {url}",
+      "actions": "Ticket actions",
+      "titleRaffle": "Your raffle tickets"
     },
     "error": {
       "title": "We couldn’t load the community",
       "description": "Please try again in a few seconds."
     },
-    "loading": "Loading the initiatives…"
+    "loading": "Loading the initiatives…",
+    "checkout": {
+      "metaTitle": "Contribute to “{title}”",
+      "custody": "The money is held by Paycomet until the goal is reached",
+      "close": "Close payment",
+      "recipient": "Funds go to: {legalName}",
+      "donation": {
+        "legend": "Choose your contribution",
+        "suggested": "suggested",
+        "otherLabel": "Other amount (€)",
+        "otherHint": "From {min} to {max}.",
+        "error": "Enter an amount between {min} and {max}."
+      },
+      "ticket": {
+        "badge": {
+          "EVENT": "Ticket with limited capacity",
+          "RAFFLE": "Numbered raffle ticket"
+        },
+        "available": "{available} of {max} left",
+        "venue": "Venue: {venue}",
+        "quantity": {
+          "EVENT": "Tickets",
+          "RAFFLE": "Raffle tickets"
+        },
+        "less": "Remove one",
+        "more": "Add one",
+        "unitAdd": "Price: {price} + {fee} digital handling fee",
+        "unitInc": "Price: {price} (digital handling fee included)",
+        "limit": "You can choose up to {max} in this purchase.",
+        "soldOut": "{count, plural, =0 {There are no places left. Thanks for trying!} one {Only # place left.} other {Only # places left.}}",
+        "useAvailable": "{count, plural, one {Choose # place} other {Choose # places}}"
+      },
+      "group": {
+        "label": {
+          "SCHOOL": "Which year group should your participation count towards in the challenge?",
+          "SPORTS_CLUB": "Which team should your participation count towards in the challenge?",
+          "CULTURAL": "Which group should your participation count towards in the challenge?"
+        },
+        "none": "I’d rather not choose",
+        "hint": "It only counts for the challenge: nobody will see your name or amount."
+      },
+      "plaque": "Commemorative plaque: once completed, a plaque will thank every family that took part.",
+      "guarantee": {
+        "title": "🛡️ Support KORUM with a voluntary contribution (+{amount})",
+        "descriptionCertificate": "It is optional and changes nothing about your donation. It sustains the service that guarantees every family: (1) that 100% of your donation reaches the school with no bank deductions, (2) an automatic refund if the goal is not reached and (3) the automatic issue of your donation Tax Certificate (Law 49/2002).",
+        "descriptionReceipt": "It is optional and changes nothing about your donation. It sustains the service that guarantees every family: (1) that 100% of your donation reaches the school with no bank deductions, (2) an automatic refund if the goal is not reached and (3) the automatic issue of your Named Contribution Receipt.",
+        "adjust": "Choose another amount for my voluntary contribution (from €0)",
+        "legend": "Amount of your voluntary contribution to KORUM",
+        "otherLabel": "Other amount (€)",
+        "error": "Enter an amount between €0 and {max}."
+      },
+      "email": {
+        "label": "📧 Your email so we can instantly send your receipt or QR tickets",
+        "error": "Check your email: we need it to send your receipt or tickets.",
+        "signedIn": "We will send the receipt to {email}."
+      },
+      "fiscal": {
+        "toggle": "I want my tax certificate",
+        "hint": "To claim tax relief on your donation (Law 49/2002). It is only used for your certificate and for the organisation’s annual return (Form 182), and it is stored encrypted.",
+        "taxId": "NIF or NIE",
+        "fullName": "Surnames and first name",
+        "fullNameHint": "Surnames first, as on your ID document.",
+        "province": "Province",
+        "provincePlaceholder": "Choose your province",
+        "taxIdError": "This NIF does not look right. Check the letters and numbers.",
+        "fieldsError": "Fill in your surnames and first name and the province, or untick the certificate.",
+        "retryNotice": "For your security, please type your NIF again."
+      },
+      "summary": {
+        "label": "Payment summary",
+        "donation": "{donation} to the project + {guarantee} voluntary contribution to KORUM",
+        "donationOnly": "{donation} to the project",
+        "ticketsAdd": "{count} × {price} + {fee} digital handling fee",
+        "ticketsInc": "{count} × {price} (digital handling fee included)",
+        "total": "Total"
+      },
+      "pay": {
+        "bizum": "Pay {total} with Bizum",
+        "card": "Card, Apple Pay or Google Pay",
+        "pending": "Opening the secure payment…",
+        "secure": "You pay on Paycomet’s secure page. KORUM never sees your card details."
+      },
+      "refundNote": "If the goal is not reached in time, we refund 100% of what you paid to the same payment method.",
+      "refundNoteTickets": "If the event is cancelled, we refund 100% of what you paid to the same payment method.",
+      "errors": {
+        "form": "Please check the highlighted details and try again.",
+        "quantity": "Choose between 1 and {max}.",
+        "closed": "This initiative no longer accepts contributions. Thank you for wanting to help!",
+        "rateLimited": "You have made many attempts in a row. Wait a few minutes and try again.",
+        "unavailable": "We could not open the secure payment. You have not been charged: please try again in a few minutes.",
+        "network": "The connection dropped. You have not been charged: check your connection and try again."
+      },
+      "closed": {
+        "title": "Contributions are closed",
+        "achieved": "Goal reached! This initiative does not need any more contributions.",
+        "soldOut": "Sold out! There are no places left.",
+        "ended": "This initiative has passed its deadline and no longer accepts contributions."
+      },
+      "custodyTickets": "Secure payment with Paycomet"
+    },
+    "simulator": {
+      "metaTitle": "Simulated payment",
+      "title": "Simulated payment (test mode)",
+      "intro": "This screen replaces Paycomet’s page while KORUM runs without real charges. No real money moves.",
+      "amount": "Amount",
+      "method": "Payment method",
+      "methods": {
+        "BIZUM": "Bizum",
+        "CARD": "Card, Apple Pay or Google Pay"
+      },
+      "confirm": "Confirm payment",
+      "reject": "Reject payment",
+      "working": "Processing…",
+      "invalid": {
+        "title": "This payment is no longer pending",
+        "description": "Go back to the initiative to start again."
+      },
+      "failed": "It could not be completed. Please try again."
+    },
+    "result": {
+      "metaTitle": "Your contribution",
+      "back": "Back to the initiative",
+      "confirmed": {
+        "title": "Thank you! Your contribution is already counting",
+        "titleTickets": {
+          "EVENT": "Done! Your tickets are yours",
+          "RAFFLE": "Done! Your raffle tickets are yours"
+        },
+        "paid": "You paid {total}",
+        "goalReached": "Your contribution has taken it to 100%!",
+        "soldOut": "Your purchase has sold out the event!",
+        "count": "{count, plural, one {# contribution so far} other {# contributions so far}}",
+        "progressLabel": "Progress of “{title}”",
+        "group": "{group} already has {count, plural, one {# family} other {# families}} · challenge: {target}",
+        "receipt": "We have emailed you the receipt.",
+        "ticketsEmail": "We have also emailed it to you, with a link to open it whenever you like.",
+        "viewPass": {
+          "EVENT": "View and print my ticket",
+          "RAFFLE": "View and print my raffle tickets"
+        },
+        "serial": "Code {serial}",
+        "share": "Share the initiative so more families join in.",
+        "pct": "{pct}% reached"
+      },
+      "pending": {
+        "title": "We are confirming your payment…",
+        "description": "It usually takes a few seconds. This page updates by itself.",
+        "refresh": "Check now",
+        "stopped": "If it is still not confirmed, check again in a few minutes."
+      },
+      "unconfirmed": {
+        "title": "We have not received confirmation of your payment yet",
+        "description": "If you have been charged, the receipt will reach you by email. If not, you have not been charged and you can try again."
+      },
+      "failed": {
+        "title": {
+          "BIZUM": "Bizum did not confirm the payment",
+          "CARD": "Your card did not confirm the payment"
+        },
+        "description": "You have not been charged. We have kept what you had chosen.",
+        "retry": "Try again",
+        "switchTo": {
+          "BIZUM": "Pay with Bizum",
+          "CARD": "Pay by card"
+        }
+      },
+      "returned": {
+        "title": "We are refunding 100%",
+        "description": "The payment arrived when the initiative no longer accepted contributions. We are refunding everything to the same payment method, with nothing for you to do."
+      },
+      "invalid": {
+        "title": "We cannot open this result",
+        "description": "Check that you opened the full link, or go back to the initiative."
+      }
+    }
   }
 }
