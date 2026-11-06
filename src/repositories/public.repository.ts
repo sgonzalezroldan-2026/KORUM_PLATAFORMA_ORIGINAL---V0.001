@@ -1,3 +1,4 @@
+import { academicYearFor } from '@/core/finance/academic-year';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { ResourceNotFoundError } from './tenant-guard';
 
@@ -16,11 +17,19 @@ const PUBLIC_ORGANIZATION_VIEW = {
   legalForm: true,
   vertical: true,
   province: true,
+  city: true,
+  postalCode: true,
   medalRank: true,
   brandPrimary: true,
   brandSecondary: true,
   contentLocale: true,
-  publicIndexing: true
+  /** Gastos de gestión digital de la taquilla: tarifa pública, se enseña en la ficha. */
+  ticketFeeFixedCents: true,
+  ticketFeeBps: true,
+  /** Grupos del reto por curso, equipo o grupo (solo sus nombres). */
+  participationGroupsJson: true,
+  publicIndexing: true,
+  updatedAt: true
 } as const;
 
 const PUBLIC_INITIATIVE_VIEW = {
@@ -43,10 +52,22 @@ const PUBLIC_INITIATIVE_VIEW = {
   ticketPriceCents: true,
   ticketMax: true,
   ticketsSold: true,
+  /** Plazas retenidas por pagos en curso: las libres son `ticketMax − ticketsSold − ticketsHeld`. */
+  ticketsHeld: true,
+  ticketFeeMode: true,
+  ticketVenue: true,
   plaqueEnabled: true,
   rewardEnabled: true,
-  rewardText: true
+  rewardText: true,
+  targetFamiliesPerCourse: true,
+  academicYear: true,
+  /** Versiona la tarjeta para WhatsApp: cambia con cada aportación. */
+  updatedAt: true,
+  translationsJson: true,
+  courses: { select: { groupName: true, familiesCount: true } }
 } as const;
+
+const PUBLIC_STATUSES = ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] as const;
 
 export async function getPublicOrganization(db: KorumPrismaClient, slug: string) {
   const organization = await db.organization.findFirst({ where: { slug, archivedAt: null }, select: PUBLIC_ORGANIZATION_VIEW });
@@ -63,18 +84,109 @@ export async function listPublicInitiatives(db: KorumPrismaClient, slug: string)
   });
 }
 
-/** Ficha pública de una iniciativa (abierta o ya conseguida). Una iniciativa en preparación o cancelada no es pública. */
+/**
+ * Ficha pública de una iniciativa (abierta o ya conseguida). Una iniciativa en preparación o cancelada no es pública. Además de la
+ * iniciativa devuelve lo que la ficha necesita de su entidad: el vertical y los grupos (orden del reto por curso) y los gastos de gestión
+ * digital de la taquilla, que son una tarifa pública.
+ */
 export async function getPublicInitiative(db: KorumPrismaClient, slug: string, initiativeId: number) {
   const initiative = await db.initiative.findFirst({
-    where: { id: initiativeId, status: { in: ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] }, organization: { slug, archivedAt: null } },
-    select: PUBLIC_INITIATIVE_VIEW
+    where: { id: initiativeId, status: { in: [...PUBLIC_STATUSES] }, organization: { slug, archivedAt: null } },
+    select: {
+      ...PUBLIC_INITIATIVE_VIEW,
+      organization: { select: { vertical: true, participationGroupsJson: true, ticketFeeFixedCents: true, ticketFeeBps: true } }
+    }
   });
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
   return initiative;
 }
 
+/**
+ * Datos mínimos de una iniciativa pública para su tarjeta social (`/api/og/initiative/[id]`), que se pide solo por identificador. Solo
+ * iniciativas públicas de entidades no archivadas; cualquier otra devuelve el mismo `404` que una inexistente.
+ */
+export async function getPublicInitiativeCard(db: KorumPrismaClient, initiativeId: number) {
+  const initiative = await db.initiative.findFirst({
+    where: { id: initiativeId, status: { in: [...PUBLIC_STATUSES] }, organization: { archivedAt: null } },
+    select: {
+      id: true,
+      title: true,
+      format: true,
+      status: true,
+      raisedCents: true,
+      goalCents: true,
+      ticketsSold: true,
+      ticketsHeld: true,
+      ticketMax: true,
+      closesAt: true,
+      rewardEnabled: true,
+      rewardText: true,
+      targetFamiliesPerCourse: true,
+      updatedAt: true,
+      courses: { select: { groupName: true, familiesCount: true } },
+      organization: { select: { name: true, brandPrimary: true, brandSecondary: true } }
+    }
+  });
+  if (!initiative) throw new ResourceNotFoundError('Iniciativa');
+  return initiative;
+}
+
+/**
+ * Barra de impacto de la portada: lo sumado en el curso vigente entre familias y comercios amigos, y cuántas mejoras se han logrado en total.
+ * Son agregados de la entidad, nunca de una persona o un curso.
+ */
+export async function getPublicImpact(db: KorumPrismaClient, slug: string, now: Date = new Date()) {
+  const where = { organization: { slug, archivedAt: null }, status: { in: [...PUBLIC_STATUSES] } };
+  const academicYear = academicYearFor(now);
+  const [raised, achievements] = await Promise.all([
+    db.initiative.aggregate({ where: { ...where, academicYear }, _sum: { raisedCents: true } }),
+    db.initiative.count({ where: { organization: where.organization, status: { in: ['GOAL_REACHED', 'CLOSED'] } } })
+  ]);
+  return { academicYear, raisedCents: raised._sum.raisedCents ?? 0, achievementsCount: achievements };
+}
+
+/**
+ * Datos internos de la pizarra de una iniciativa pública, **solo para que el servidor derive hechos públicos** (el desglose de 4 líneas que la
+ * entidad decide enseñar y el sello «0 % de comisión»). Nunca se reenvían tal cual al navegador ni se mezclan con `listPublicInitiatives`, que
+ * devuelve únicamente campos públicos (Regla 01 §4, `tenant-isolation.spec.ts`). Se piden siempre junto a la entidad.
+ */
+export async function listPricingFacts(db: KorumPrismaClient, slug: string, initiativeIds: readonly number[]) {
+  if (initiativeIds.length === 0) return [];
+  return db.initiative.findMany({
+    where: { id: { in: [...initiativeIds] }, status: { in: [...PUBLIC_STATUSES] }, organization: { slug, archivedAt: null } },
+    select: { id: true, costMatCents: true, costInstCents: true, contingencyBps: true, bracketFeeCents: true, maintFeeCents: true, quotaReservedAt: true }
+  });
+}
+
+/** Lo que decide si una entidad se indexa (`publicIndexing` y KYB verificado). Aparte de la vista pública: el estado del KYB no es público. */
+export async function getIndexingFacts(db: KorumPrismaClient, slug: string) {
+  const facts = await db.organization.findFirst({ where: { slug, archivedAt: null }, select: { publicIndexing: true, kybStatus: true } });
+  if (!facts) throw new ResourceNotFoundError('Entidad');
+  return facts;
+}
+
+/** Entidades que pueden indexarse (portada pública): no archivadas, con KYB verificado y que no han desactivado `publicIndexing`. */
+const INDEXABLE_ORGANIZATION = { archivedAt: null, publicIndexing: true, kybStatus: 'VERIFIED' } as const;
+
+/** Portadas para el sitemap: nunca entra una entidad que desactiva `publicIndexing` (QA-SEO03). */
+export async function listIndexableOrganizations(db: KorumPrismaClient) {
+  return db.organization.findMany({ where: INDEXABLE_ORGANIZATION, select: { slug: true, updatedAt: true }, orderBy: { slug: 'asc' }, take: PUBLIC_DIRECTORY_LIMIT });
+}
+
+/** Iniciativas públicas de entidades indexables, para el sitemap (`FUNDRAISING`, `GOAL_REACHED` y `CLOSED`). */
+export async function listIndexableInitiatives(db: KorumPrismaClient) {
+  return db.initiative.findMany({
+    where: { status: { in: [...PUBLIC_STATUSES] }, organization: INDEXABLE_ORGANIZATION },
+    select: { id: true, updatedAt: true, organization: { select: { slug: true } } },
+    orderBy: { id: 'asc' },
+    take: SITEMAP_INITIATIVES_LIMIT
+  });
+}
+
 /** Tope del directorio que se carga para el buscador de la portada: con más entidades que esto hará falta un índice de búsqueda. */
 export const PUBLIC_DIRECTORY_LIMIT = 2000;
+/** Un sitemap admite 50.000 URL; cada iniciativa ocupa 3 (una por idioma). Con más hará falta `generateSitemaps`. */
+export const SITEMAP_INITIATIVES_LIMIT = 10_000;
 
 /**
  * Directorio público para el buscador de la portada (Entorno 0): solo nombre, enlace, tipo y provincia de las entidades no archivadas que
@@ -100,5 +212,25 @@ export async function listGateEvents(db: KorumPrismaClient, slug: string, now: D
     select: { id: true, title: true, organization: { select: { id: true, name: true } } },
     orderBy: { gatePinExpiresAt: 'asc' },
     take: 20
+  });
+}
+
+/**
+ * Pase de entrada para su dueño, desde el enlace del email (`/[orgSlug]/entrada/[passUuid]?sig=…`). Se busca siempre junto a la entidad de la
+ * URL: un pase de otra entidad responde igual que uno inexistente. No devuelve el email de quien compró ni el contenido del QR: el QR lo
+ * compone la página solo después de comprobar la firma de visualización.
+ */
+export async function getPassForView(db: KorumPrismaClient, slug: string, passUuid: string) {
+  return db.ticketPass.findFirst({
+    where: { uuid: passUuid, initiative: { organization: { slug, archivedAt: null } } },
+    select: {
+      uuid: true,
+      serialCode: true,
+      subtype: true,
+      quantity: true,
+      raffleNumbers: true,
+      revokedAt: true,
+      initiative: { select: { id: true, title: true, ticketVenue: true, closesAt: true, organization: { select: { name: true } } } }
+    }
   });
 }

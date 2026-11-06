@@ -29,7 +29,7 @@ export function SiteFooter() {
               <ul className="mt-2 flex flex-col">
                 {PILLAR_PAGES.filter((page) => page.group === group.id).map((page) => (
                   <li key={page.key}>
-                    <Link href={page.path} className="inline-flex min-h-11 items-center rounded-lg underline-offset-4 hover:underline">
+                    <Link href={page.path} className="inline-flex min-h-11 min-w-11 items-center rounded-lg underline-offset-4 hover:underline">
                       {t(`pages.${page.key}`)}
                     </Link>
                   </li>

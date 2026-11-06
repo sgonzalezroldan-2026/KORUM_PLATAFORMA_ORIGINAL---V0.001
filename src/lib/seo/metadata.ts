@@ -17,7 +17,12 @@ export interface PageSeo {
   description: string;
   /** Texto alternativo de la imagen social. */
   imageAlt: string;
-  ogPage: PillarKey | 'home';
+  /** Tarjeta social de marketing. Las páginas de entidades e iniciativas pasan `imageUrl` en su lugar. */
+  ogPage?: PillarKey | 'home';
+  /** URL absoluta de una tarjeta propia (la de la iniciativa, versionada). Tiene prioridad sobre `ogPage`. */
+  imageUrl?: string;
+  /** Páginas privadas o de una entidad que no quiere indexarse: `noindex, nofollow`. */
+  noindex?: boolean;
   /** La portada lleva su propio título completo; el resto recibe ` · KORUM`. */
   absoluteTitle?: boolean;
 }
@@ -28,12 +33,13 @@ export interface PageSeo {
  */
 export function buildPageMetadata(seo: PageSeo): Metadata {
   const url = absoluteUrl(seo.locale, seo.path);
-  const image = { url: ogImageUrl(seo.locale, seo.ogPage), ...OG_IMAGE_SIZE, alt: seo.imageAlt };
+  const image = { url: seo.imageUrl ?? ogImageUrl(seo.locale, seo.ogPage ?? 'home'), ...OG_IMAGE_SIZE, alt: seo.imageAlt };
   const fullTitle = seo.absoluteTitle ? seo.title : `${seo.title}${TITLE_SUFFIX}`;
 
   return {
     title: seo.absoluteTitle ? { absolute: seo.title } : seo.title,
     description: seo.description,
+    ...(seo.noindex ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical: url, languages: languageAlternates(seo.path) },
     openGraph: {
       type: 'website',
@@ -47,4 +53,13 @@ export function buildPageMetadata(seo: PageSeo): Metadata {
     },
     twitter: { card: 'summary_large_image', title: fullTitle, description: seo.description, images: [{ url: image.url, alt: seo.imageAlt }] }
   };
+}
+
+/** Recorta un texto a `max` caracteres sin partir una palabra a la mitad cuando puede evitarlo, y añade «…». */
+export function fitText(text: string, max: number): string {
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[\s,.;:–-]+$/, '')}…`;
 }

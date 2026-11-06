@@ -1333,5 +1333,230 @@
     "family": "Familias",
     "panel": "Panel de la entidad",
     "console": "Consola"
+  },
+  "portal": {
+    "hero": {
+      "kind": {
+        "SCHOOL": "Comunidad escolar",
+        "SPORTS_CLUB": "Club deportivo",
+        "CULTURAL": "Entidad cultural"
+      },
+      "tagline": {
+        "SCHOOL": "Donde las buenas ideas de las familias suman y se convierten en mejoras reales",
+        "SPORTS_CLUB": "Donde las buenas ideas del club suman y se convierten en mejoras reales",
+        "CULTURAL": "Donde las buenas ideas de la comunidad suman y se convierten en mejoras reales"
+      },
+      "vault": "El dinero queda retenido en Paycomet hasta lograr la meta",
+      "logo": "Escudo de {name}"
+    },
+    "impact": {
+      "label": {
+        "SCHOOL": "Impulso colectivo · curso {year}",
+        "SPORTS_CLUB": "Impulso colectivo · temporada {year}",
+        "CULTURAL": "Impulso colectivo · curso {year}"
+      },
+      "raised": {
+        "SCHOOL": "{amount} sumados entre familias y comercios amigos",
+        "SPORTS_CLUB": "{amount} sumados entre socios y comercios amigos",
+        "CULTURAL": "{amount} sumados entre la comunidad y comercios amigos"
+      },
+      "refund": "Devolución del 100 % si una iniciativa no logra su meta",
+      "achievements": "{count, plural, =0 {Aquí irán las mejoras logradas} one {1 mejora lograda} other {# mejoras logradas}}"
+    },
+    "hucha": {
+      "name": "Mi Hucha",
+      "PLEDGE": "Aportación mensual",
+      "REGULATED_WALLET": "Monedero",
+      "tip": {
+        "PLEDGE": "Programa una aportación mensual a la iniciativa que elijas. Tú decides el importe y puedes parar cuando quieras.",
+        "REGULATED_WALLET": "Consulta tu saldo, haz una recarga o retira lo que no uses."
+      }
+    },
+    "nav": {
+      "label": "Secciones de la comunidad",
+      "initiatives": "Iniciativas y taquilla"
+    },
+    "filter": {
+      "toggle": "Filtrar",
+      "activeCount": "{count, plural, one {# filtro activo} other {# filtros activos}}",
+      "title": "Filtrar las iniciativas por",
+      "category": "Categoría",
+      "allCategories": "Todas las categorías",
+      "urgency": "Fecha y avance",
+      "stage": "Etapa",
+      "allStages": "Todas las etapas",
+      "urgencyOptions": {
+        "ALL": "Cualquier fecha",
+        "SOON": "Cierre cercano (menos de 20 días)",
+        "ALMOST": "Recta final (75 % o más)",
+        "TICKETING": "Solo taquilla y rifas"
+      },
+      "clear": "Limpiar filtros",
+      "results": "{count, plural, =0 {Ninguna iniciativa con estos filtros} one {# iniciativa} other {# iniciativas}}"
+    },
+    "catalog": {
+      "heading": "Iniciativas abiertas",
+      "empty": {
+        "title": "Todavía no hay campañas abiertas",
+        "description": "Cuando la comunidad ponga en marcha una nueva iniciativa, la verás aquí con su meta y su fecha límite."
+      },
+      "noMatch": {
+        "title": "No hay iniciativas con estos filtros",
+        "reset": "Ver todas las iniciativas abiertas"
+      }
+    },
+    "card": {
+      "viewDetails": "Ver detalles",
+      "open": "Abrir la ficha de {title}",
+      "share": "Compartir {title}",
+      "stage": "Etapa: {stage}",
+      "price": "Entrada {price}",
+      "matching": "Matching 2x",
+      "matchingTip": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
+      "zeroCommission": "0 % de comisión de la plataforma",
+      "raisedOf": "{raised} de {goal}",
+      "percent": "{pct} %",
+      "progress": "Progreso de {title}",
+      "ticketsSold": "{sold} vendidas · aforo {max}",
+      "ticketsLeft": "{count, plural, =0 {Ya agotadas} one {# disponible} other {# disponibles}}",
+      "contributions": "{count, plural, one {# aportación} other {# aportaciones}}",
+      "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
+      "completed": "¡Completado!",
+      "refund": "Devolución del 100 % si no se logra la meta",
+      "soldOut": "Aforo completo · entradas agotadas",
+      "goalReached": "¡100 % conseguido! Cerrado",
+      "contribute": "Aportar ahora",
+      "buyTickets": "Comprar entradas",
+      "buyRaffle": "Comprar papeletas",
+      "closed": "Cerrada"
+    },
+    "detail": {
+      "back": "Volver a las iniciativas",
+      "share": "Compartir",
+      "vault": {
+        "label": "Hucha de la iniciativa",
+        "refund": "Devolución del 100 % si no se logra la meta",
+        "independence": "Independencia total de proveedores",
+        "deadline": "Fecha límite"
+      },
+      "plaque": "Incluye placa conmemorativa de la promoción",
+      "matching": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
+      "matchingBy": "Gracias a {sponsor}, tu aportación se duplica mientras quede bolsa.",
+      "goal": "Meta: {goal} ({pct} %)",
+      "ticketsOf": "{sold} / {max}",
+      "ticketsAvailable": "Disponibles: {count}",
+      "contributionsDone": "{count, plural, one {# aportación realizada} other {# aportaciones realizadas}}",
+      "completedFull": "Completado al 100 %",
+      "closed": "¡100 % conseguido! Aportaciones cerradas",
+      "ticketsSoldOut": "¡Aforo completo! Entradas agotadas",
+      "ticketsHeading": "Información de taquilla digital",
+      "ticketLines": {
+        "price": "Importe íntegro por entrada para la entidad",
+        "fee": "Gastos de gestión digital",
+        "total": "Total por entrada",
+        "priceInc": "Precio de la entrada",
+        "feeInc": "Incluye gastos de gestión digital",
+        "center": "La entidad recibe por entrada",
+        "venue": "Lugar: {venue}"
+      },
+      "breakdown": {
+        "heading": "Desglose del presupuesto de la iniciativa",
+        "exact": "Suma exacta de la meta",
+        "provider": "Presupuesto de proveedor y equipamiento",
+        "install": "Instalación y adecuación técnica",
+        "contingency": "Reserva de mantenimiento, riesgos y contingencia ({percent})",
+        "gateway": "Pasarela de pago, plataforma, gestión y garantía de devolución",
+        "total": "Total objetivo a recaudar",
+        "footnote": "💡 Transparencia total: el importe total ya incluye el coste de la pasarela de pago, el servicio de la plataforma, la gestión y la devolución del 100% si la iniciativa no se consigue, para que al centro le quede exactamente lo necesario para pagar los costes reales.",
+        "hidden": "Presupuesto validado por la entidad ({goal}): el importe solicitado ya incluye la pasarela de pago, la plataforma, la gestión y la devolución del 100 % si no se consigue en plazo."
+      },
+      "challenge": {
+        "heading": "Reto colectivo: desbloqueamos «{reward}»",
+        "headingNoReward": "Reto colectivo",
+        "intro": "Cuando un {unit} llega a {target} familias participantes, desbloquea el premio para todo ese {unit}.",
+        "unit": {
+          "SCHOOL": "curso",
+          "SPORTS_CLUB": "equipo",
+          "CULTURAL": "grupo"
+        },
+        "line": "{group} ya suma {count, plural, one {# familia} other {# familias}} · reto: {target}",
+        "missing": "{missing, plural, one {Solo falta # familia} other {Solo faltan # familias}}",
+        "reached": "🎉 ¡Reto conseguido!",
+        "progress": "Avance de {group}",
+        "empty": "Todavía ningún grupo ha empezado el reto. Tu aportación puede ser la primera de tu grupo."
+      },
+      "cta": {
+        "contribute": "Aportar a esta iniciativa",
+        "buyTickets": "Comprar entradas",
+        "buyRaffle": "Comprar papeletas"
+      },
+      "contributionsClosed": "Esta iniciativa ya no admite aportaciones"
+    },
+    "share": {
+      "title": "Compartir en KORUM",
+      "close": "Cerrar",
+      "message": "¡Súmate en KORUM a «{title}» en {entity}!",
+      "groupLabel": "Compartir con tu grupo",
+      "groupAll": "Toda la comunidad",
+      "groupHint": "La imagen del enlace celebra el avance de ese grupo, sin nombres ni comparaciones.",
+      "previewLabel": "Mensaje que se enviará",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "more": "Más opciones",
+      "copy": "Copiar enlace",
+      "copied": "Enlace copiado",
+      "copiedHint": "Ya puedes pegarlo donde quieras.",
+      "copyFailed": "No se ha podido copiar",
+      "copyFailedHint": "Selecciona el enlace y cópialo a mano.",
+      "emailSubject": "{title} · {entity}"
+    },
+    "breadcrumb": {
+      "home": "Inicio"
+    },
+    "meta": {
+      "entityTitle": "{name} · Iniciativas y logros",
+      "entityDescription": {
+        "SCHOOL": "Apoya las mejoras de {name}: iniciativas abiertas con su meta clara y la devolución del 100 % si no se logra.",
+        "SPORTS_CLUB": "Apoya a {name}: iniciativas y entradas abiertas, con su meta clara y la devolución del 100 % si no se logra.",
+        "CULTURAL": "Apoya a {name}: iniciativas y entradas abiertas, con su meta clara y la devolución del 100 % si no se logra."
+      },
+      "entityImageAlt": "Portada de {name} en KORUM",
+      "initiativeTitle": "{title} · {entity}",
+      "initiativeDescription": "{pct} % conseguido. {text}",
+      "initiativeImageAlt": "{title}: {pct} % conseguido"
+    },
+    "og": {
+      "progress": "{pct} % conseguido",
+      "tickets": "{sold} de {max} entradas vendidas",
+      "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
+      "goalReached": "¡Meta conseguida!",
+      "challengeMissing": "{missing, plural, one {¡Solo falta # familia} other {¡Solo faltan # familias}} en {group} para {reward}!",
+      "challengeMissingNoReward": "{missing, plural, one {¡Solo falta # familia} other {¡Solo faltan # familias}} en {group} para lograr el reto!",
+      "challengeReached": "{group} ya ha conseguido «{reward}»",
+      "challengeReachedNoReward": "{group} ya ha conseguido el reto",
+      "forEntity": "con {entity}"
+    },
+    "pass": {
+      "title": "Tu entrada",
+      "event": "Evento",
+      "quantity": "{count, plural, one {# entrada} other {# entradas}}",
+      "numbers": "Tus números de la rifa",
+      "qrAlt": "Código QR para entrar",
+      "show": "Enséñalo en la puerta, en el móvil o impreso.",
+      "serial": "Código {serial}",
+      "revoked": {
+        "title": "Esta entrada ya no es válida",
+        "description": "Se ha reembolsado o anulado, así que no abrirá la puerta. Si crees que es un error, escribe a la entidad."
+      },
+      "invalid": {
+        "title": "No podemos abrir esta entrada",
+        "description": "Comprueba que has abierto el enlace completo del email o pide que te lo reenvíen."
+      }
+    },
+    "error": {
+      "title": "No hemos podido cargar la comunidad",
+      "description": "Vuelve a intentarlo en unos segundos."
+    },
+    "loading": "Cargando las iniciativas…"
   }
 }

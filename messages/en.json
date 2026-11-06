@@ -1333,5 +1333,230 @@
     "family": "Families",
     "panel": "Organisation panel",
     "console": "Console"
+  },
+  "portal": {
+    "hero": {
+      "kind": {
+        "SCHOOL": "School community",
+        "SPORTS_CLUB": "Sports club",
+        "CULTURAL": "Cultural group"
+      },
+      "tagline": {
+        "SCHOOL": "Where families’ good ideas add up and become real improvements",
+        "SPORTS_CLUB": "Where the club’s good ideas add up and become real improvements",
+        "CULTURAL": "Where the community’s good ideas add up and become real improvements"
+      },
+      "vault": "The money is held at Paycomet until the goal is reached",
+      "logo": "{name} crest"
+    },
+    "impact": {
+      "label": {
+        "SCHOOL": "Community boost · school year {year}",
+        "SPORTS_CLUB": "Community boost · season {year}",
+        "CULTURAL": "Community boost · year {year}"
+      },
+      "raised": {
+        "SCHOOL": "{amount} raised by families and local partners",
+        "SPORTS_CLUB": "{amount} raised by members and local partners",
+        "CULTURAL": "{amount} raised by the community and local partners"
+      },
+      "refund": "100% refunded if an initiative misses its goal",
+      "achievements": "{count, plural, =0 {Achievements will appear here} one {1 improvement achieved} other {# improvements achieved}}"
+    },
+    "hucha": {
+      "name": "My Piggy Bank",
+      "PLEDGE": "Monthly pledge",
+      "REGULATED_WALLET": "Wallet",
+      "tip": {
+        "PLEDGE": "Set up a monthly contribution to the initiative you choose. You pick the amount and can stop any time.",
+        "REGULATED_WALLET": "Check your balance, top it up or withdraw what you don’t use."
+      }
+    },
+    "nav": {
+      "label": "Community sections",
+      "initiatives": "Initiatives and tickets"
+    },
+    "filter": {
+      "toggle": "Filter",
+      "activeCount": "{count, plural, one {# active filter} other {# active filters}}",
+      "title": "Filter initiatives by",
+      "category": "Category",
+      "allCategories": "All categories",
+      "urgency": "Date and progress",
+      "stage": "Stage",
+      "allStages": "All stages",
+      "urgencyOptions": {
+        "ALL": "Any date",
+        "SOON": "Closing soon (under 20 days)",
+        "ALMOST": "Final stretch (75% or more)",
+        "TICKETING": "Tickets and raffles only"
+      },
+      "clear": "Clear filters",
+      "results": "{count, plural, =0 {No initiatives match these filters} one {# initiative} other {# initiatives}}"
+    },
+    "catalog": {
+      "heading": "Open initiatives",
+      "empty": {
+        "title": "There are no open campaigns yet",
+        "description": "When the community launches a new initiative, you’ll see it here with its goal and deadline."
+      },
+      "noMatch": {
+        "title": "No initiatives match these filters",
+        "reset": "Show all open initiatives"
+      }
+    },
+    "card": {
+      "viewDetails": "View details",
+      "open": "Open the page for {title}",
+      "share": "Share {title}",
+      "stage": "Stage: {stage}",
+      "price": "Ticket {price}",
+      "matching": "Matching 2x",
+      "matchingTip": "Matching 2x is on: your contribution is doubled while the pool lasts.",
+      "zeroCommission": "0% platform commission",
+      "raisedOf": "{raised} of {goal}",
+      "percent": "{pct}%",
+      "progress": "Progress of {title}",
+      "ticketsSold": "{sold} sold · capacity {max}",
+      "ticketsLeft": "{count, plural, =0 {Sold out} one {# left} other {# left}}",
+      "contributions": "{count, plural, one {# contribution} other {# contributions}}",
+      "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
+      "completed": "Complete!",
+      "refund": "100% refunded if the goal is missed",
+      "soldOut": "Full house · tickets sold out",
+      "goalReached": "100% reached! Closed",
+      "contribute": "Contribute now",
+      "buyTickets": "Buy tickets",
+      "buyRaffle": "Buy raffle tickets",
+      "closed": "Closed"
+    },
+    "detail": {
+      "back": "Back to the initiatives",
+      "share": "Share",
+      "vault": {
+        "label": "Initiative piggy bank",
+        "refund": "100% refunded if the goal is missed",
+        "independence": "Full independence from suppliers",
+        "deadline": "Deadline"
+      },
+      "plaque": "Includes a commemorative class plaque",
+      "matching": "Matching 2x is on: your contribution is doubled while the pool lasts.",
+      "matchingBy": "Thanks to {sponsor}, your contribution is doubled while the pool lasts.",
+      "goal": "Goal: {goal} ({pct}%)",
+      "ticketsOf": "{sold} / {max}",
+      "ticketsAvailable": "Available: {count}",
+      "contributionsDone": "{count, plural, one {# contribution made} other {# contributions made}}",
+      "completedFull": "100% complete",
+      "closed": "100% reached! Contributions are closed",
+      "ticketsSoldOut": "Full house! Tickets sold out",
+      "ticketsHeading": "Digital ticketing details",
+      "ticketLines": {
+        "price": "Full amount per ticket for the organisation",
+        "fee": "Digital handling fee",
+        "total": "Total per ticket",
+        "priceInc": "Ticket price",
+        "feeInc": "Includes the digital handling fee",
+        "center": "The organisation receives per ticket",
+        "venue": "Venue: {venue}"
+      },
+      "breakdown": {
+        "heading": "Initiative budget breakdown",
+        "exact": "Adds up exactly to the goal",
+        "provider": "Supplier and equipment budget",
+        "install": "Installation and technical fit-out",
+        "contingency": "Maintenance, risk and contingency reserve ({percent})",
+        "gateway": "Payment gateway, platform, handling and refund guarantee",
+        "total": "Total target to raise",
+        "footnote": "💡 Full transparency: the total already covers the payment gateway cost, the platform service, handling and the 100% refund if the initiative is not achieved, so the school is left with exactly what it needs to pay the real costs.",
+        "hidden": "Budget validated by the organisation ({goal}): the amount requested already covers the payment gateway, the platform, handling and the 100% refund if the goal is not reached in time."
+      },
+      "challenge": {
+        "heading": "Group challenge: let’s unlock “{reward}”",
+        "headingNoReward": "Group challenge",
+        "intro": "When a {unit} reaches {target} participating families, the reward is unlocked for that whole {unit}.",
+        "unit": {
+          "SCHOOL": "class",
+          "SPORTS_CLUB": "team",
+          "CULTURAL": "group"
+        },
+        "line": "{group} has already gathered {count, plural, one {# family} other {# families}} · challenge: {target}",
+        "missing": "{missing, plural, one {Just # family to go} other {Just # families to go}}",
+        "reached": "🎉 Challenge achieved!",
+        "progress": "Progress of {group}",
+        "empty": "No group has started the challenge yet. Your contribution could be the first for your group."
+      },
+      "cta": {
+        "contribute": "Contribute to this initiative",
+        "buyTickets": "Buy tickets",
+        "buyRaffle": "Buy raffle tickets"
+      },
+      "contributionsClosed": "This initiative is no longer taking contributions"
+    },
+    "share": {
+      "title": "Share on KORUM",
+      "close": "Close",
+      "message": "Join in on KORUM for “{title}” at {entity}!",
+      "groupLabel": "Share with your group",
+      "groupAll": "The whole community",
+      "groupHint": "The link’s image celebrates that group’s progress, with no names and no comparisons.",
+      "previewLabel": "Message that will be sent",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "more": "More options",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "copiedHint": "You can paste it anywhere now.",
+      "copyFailed": "Could not copy",
+      "copyFailedHint": "Select the link and copy it by hand.",
+      "emailSubject": "{title} · {entity}"
+    },
+    "breadcrumb": {
+      "home": "Home"
+    },
+    "meta": {
+      "entityTitle": "{name} · Initiatives and achievements",
+      "entityDescription": {
+        "SCHOOL": "Support the improvements at {name}: open initiatives with a clear goal and a 100% refund if it is not reached.",
+        "SPORTS_CLUB": "Support {name}: open initiatives and tickets with a clear goal and a 100% refund if it is not reached.",
+        "CULTURAL": "Support {name}: open initiatives and tickets with a clear goal and a 100% refund if it is not reached."
+      },
+      "entityImageAlt": "Home page of {name} on KORUM",
+      "initiativeTitle": "{title} · {entity}",
+      "initiativeDescription": "{pct}% reached. {text}",
+      "initiativeImageAlt": "{title}: {pct}% reached"
+    },
+    "og": {
+      "progress": "{pct}% reached",
+      "tickets": "{sold} of {max} tickets sold",
+      "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
+      "goalReached": "Goal reached!",
+      "challengeMissing": "{missing, plural, one {Just # family to go} other {Just # families to go}} for {group} to unlock {reward}!",
+      "challengeMissingNoReward": "{missing, plural, one {Just # family to go} other {Just # families to go}} for {group} to reach the challenge!",
+      "challengeReached": "{group} has already unlocked “{reward}”",
+      "challengeReachedNoReward": "{group} has already reached the challenge",
+      "forEntity": "with {entity}"
+    },
+    "pass": {
+      "title": "Your ticket",
+      "event": "Event",
+      "quantity": "{count, plural, one {# ticket} other {# tickets}}",
+      "numbers": "Your raffle numbers",
+      "qrAlt": "QR code to get in",
+      "show": "Show it at the door, on your phone or printed.",
+      "serial": "Code {serial}",
+      "revoked": {
+        "title": "This ticket is no longer valid",
+        "description": "It has been refunded or cancelled, so it will not open the door. If you think this is a mistake, write to the organisation."
+      },
+      "invalid": {
+        "title": "We can’t open this ticket",
+        "description": "Check that you opened the full link from the email, or ask for it to be sent again."
+      }
+    },
+    "error": {
+      "title": "We couldn’t load the community",
+      "description": "Please try again in a few seconds."
+    },
+    "loading": "Loading the initiatives…"
   }
 }

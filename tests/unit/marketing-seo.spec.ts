@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { parsePillarContent, collectFaq } from '@/components/marketing/pillar-content';
 import { simulateImpact, SIMULATOR_AVERAGE_CONTRIBUTION_CENTS, SIMULATOR_LIMITS, SIMULATOR_SPONSOR_LEVEL_CENTS } from '@/core/finance/impact-simulator';
 import { formatBps } from '@/core/finance/money';
@@ -18,6 +18,11 @@ import en from '../../messages/en.json';
 import es from '../../messages/es.json';
 
 const CATALOGS = { es, ca, en } as const;
+
+// El sitemap lee las entidades y las iniciativas públicas: aquí se sustituye la base de datos por datos de prueba.
+const repository = vi.hoisted(() => ({ listIndexableOrganizations: vi.fn(), listIndexableInitiatives: vi.fn() }));
+vi.mock('@/lib/prisma', () => ({ getPrisma: () => ({}) }));
+vi.mock('@/repositories/public.repository', () => repository);
 
 describe('QA-M01 · simulador de impacto (misma pizarra TCO que el Estudio)', () => {
   const baseCost = 500_000;
@@ -302,17 +307,40 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
     expect(custom.some((rule) => list(rule.allow).includes('/$'))).toBe(false);
   });
 
-  it('el sitemap lista solo la portada, las 8 páginas pilar y el alta de entidades, en los 3 idiomas y con sus alternativas', () => {
-    const entries = sitemap();
-    expect(entries).toHaveLength((MARKETING_PATHS.length + 1) * LOCALES.length);
-    expect(entries.filter((entry) => new URL(entry.url).pathname.endsWith('/registro-comunidad'))).toHaveLength(LOCALES.length);
-    expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
-    for (const entry of entries) {
-      expect(entry.lastModified).toBe(MARKETING_CONTENT_UPDATED);
-      expect(Object.keys(entry.alternates?.languages ?? {}).sort()).toEqual(['ca', 'en', 'es', 'x-default']);
-      expect(new URL(entry.url).pathname).not.toMatch(/\/(panel|admin|api|login|acceso|invitacion|ideas)(\/|$)/);
-    }
-    expect(MARKETING_CONTENT_UPDATED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  describe('sitemap', () => {
+    afterEach(() => vi.resetAllMocks());
+
+    it('sin base de datos lista solo la portada, las 8 páginas pilar y el alta, en los 3 idiomas y con sus alternativas', async () => {
+      repository.listIndexableOrganizations.mockRejectedValue(new Error('sin base de datos'));
+      const entries = await sitemap();
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 1) * LOCALES.length);
+      expect(entries.filter((entry) => new URL(entry.url).pathname.endsWith('/registro-comunidad'))).toHaveLength(LOCALES.length);
+      expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
+      for (const entry of entries) {
+        expect(entry.lastModified).toBe(MARKETING_CONTENT_UPDATED);
+        expect(Object.keys(entry.alternates?.languages ?? {}).sort()).toEqual(['ca', 'en', 'es', 'x-default']);
+        expect(new URL(entry.url).pathname).not.toMatch(/\/(panel|admin|api|login|acceso|invitacion|ideas)(\/|$)/);
+      }
+      expect(MARKETING_CONTENT_UPDATED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+
+    it('añade las portadas de las entidades indexables y sus iniciativas públicas, con alternativas de idioma (QA-SEO03)', async () => {
+      const touched = new Date('2026-11-01T10:00:00Z');
+      repository.listIndexableOrganizations.mockResolvedValue([{ slug: 'cervantes', updatedAt: touched }]);
+      repository.listIndexableInitiatives.mockResolvedValue([{ id: 7, updatedAt: touched, organization: { slug: 'cervantes' } }]);
+      const entries = await sitemap();
+      const urls = entries.map((entry) => entry.url);
+      for (const locale of LOCALES) {
+        expect(urls).toContain(absoluteUrl(locale, '/cervantes'));
+        expect(urls).toContain(absoluteUrl(locale, '/cervantes/iniciativas/7'));
+      }
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 2) * LOCALES.length);
+      const initiative = entries.find((entry) => entry.url === absoluteUrl('ca', '/cervantes/iniciativas/7'));
+      expect(initiative?.lastModified).toBe(touched);
+      expect(initiative?.alternates?.languages).toEqual(languageAlternates('/cervantes/iniciativas/7'));
+      // Ideas, checkout, Mi cuenta y entradas nunca están: el repositorio solo ofrece portadas e iniciativas.
+      expect(urls.some((url) => /\/(ideas|aportar|mi-cuenta|entrada)(\/|$)/.test(url))).toBe(false);
+    });
   });
 
   it('llms.txt resume KORUM, las cifras y las páginas pilar de cada idioma', () => {

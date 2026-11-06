@@ -58,8 +58,13 @@ describe('QA-C05 · catálogos de traducción', () => {
     // En la exportación de datos (Sprint 2.5): «Sí», «No», «Idea», «Iniciativa», «NIF», «Completada» y «Fallida» son iguales en catalán.
     const SAME_IN_CATALAN = new Set(['ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED', 'calculator.objective.scoreboard', 'nav.menu',
       // Acceso, alta y paneles (Sprint 3.2): «Entrar», «Verificar», «Continuar», «Forma jurídica», «AMPA / AFA», «Hola», «Consola», «Crítica».
-      'auth.login.enter', 'auth.secondFactor.verify', 'registration.continue', 'registration.fields.legalForm', 'registration.legalForm.PARENTS_ASSOCIATION', 'panel.welcome', 'admin.headerTitle', 'admin.severity.CRITICAL', 'demo.console']);
-    const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email']);
+      'auth.login.enter', 'auth.secondFactor.verify', 'registration.continue', 'registration.fields.legalForm', 'registration.legalForm.PARENTS_ASSOCIATION', 'panel.welcome', 'admin.headerTitle', 'admin.severity.CRITICAL', 'demo.console',
+      // Portal público (Sprint 3.3): «Matching 2x» y «WhatsApp» son nombres propios; el resto son frases que en catalán se escriben igual.
+      'portal.card.matching', 'portal.card.percent', 'portal.card.price', 'portal.card.raisedOf', 'portal.card.stage', 'portal.detail.breakdown.exact', 'portal.detail.goal', 'portal.detail.ticketsAvailable',
+      'portal.detail.ticketsOf', 'portal.filter.stage', 'portal.filter.toggle', 'portal.meta.initiativeTitle', 'portal.share.emailSubject', 'portal.share.whatsapp']);
+    const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
+      // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
+      'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

@@ -8,7 +8,7 @@ import { Link } from '@/i18n/navigation';
 export function DemoBar() {
   const t = useTranslations('demo');
   const links = [
-    { href: '/', label: t('family') },
+    { href: '/cervantes', label: t('family') },
     { href: '/panel/cervantes', label: t('panel') },
     { href: '/admin', label: t('console') }
   ];

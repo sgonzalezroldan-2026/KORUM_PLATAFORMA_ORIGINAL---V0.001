@@ -1333,5 +1333,230 @@
     "family": "Famílies",
     "panel": "Panell de l'entitat",
     "console": "Consola"
+  },
+  "portal": {
+    "hero": {
+      "kind": {
+        "SCHOOL": "Comunitat escolar",
+        "SPORTS_CLUB": "Club esportiu",
+        "CULTURAL": "Entitat cultural"
+      },
+      "tagline": {
+        "SCHOOL": "On les bones idees de les famílies sumen i es converteixen en millores reals",
+        "SPORTS_CLUB": "On les bones idees del club sumen i es converteixen en millores reals",
+        "CULTURAL": "On les bones idees de la comunitat sumen i es converteixen en millores reals"
+      },
+      "vault": "Els diners queden retinguts a Paycomet fins que s’assoleix la meta",
+      "logo": "Escut de {name}"
+    },
+    "impact": {
+      "label": {
+        "SCHOOL": "Impuls col·lectiu · curs {year}",
+        "SPORTS_CLUB": "Impuls col·lectiu · temporada {year}",
+        "CULTURAL": "Impuls col·lectiu · curs {year}"
+      },
+      "raised": {
+        "SCHOOL": "{amount} sumats entre famílies i comerços amics",
+        "SPORTS_CLUB": "{amount} sumats entre socis i comerços amics",
+        "CULTURAL": "{amount} sumats entre la comunitat i comerços amics"
+      },
+      "refund": "Devolució del 100 % si una iniciativa no assoleix la meta",
+      "achievements": "{count, plural, =0 {Aquí hi anirà el que s’aconsegueixi} one {1 millora aconseguida} other {# millores aconseguides}}"
+    },
+    "hucha": {
+      "name": "La meva Guardiola",
+      "PLEDGE": "Aportació mensual",
+      "REGULATED_WALLET": "Moneder",
+      "tip": {
+        "PLEDGE": "Programa una aportació mensual a la iniciativa que triïs. Tu decideixes l’import i pots parar quan vulguis.",
+        "REGULATED_WALLET": "Consulta el teu saldo, fes una recàrrega o retira el que no facis servir."
+      }
+    },
+    "nav": {
+      "label": "Seccions de la comunitat",
+      "initiatives": "Iniciatives i taquilla"
+    },
+    "filter": {
+      "toggle": "Filtrar",
+      "activeCount": "{count, plural, one {# filtre actiu} other {# filtres actius}}",
+      "title": "Filtra les iniciatives per",
+      "category": "Categoria",
+      "allCategories": "Totes les categories",
+      "urgency": "Data i avenç",
+      "stage": "Etapa",
+      "allStages": "Totes les etapes",
+      "urgencyOptions": {
+        "ALL": "Qualsevol data",
+        "SOON": "Tancament proper (menys de 20 dies)",
+        "ALMOST": "Recta final (75 % o més)",
+        "TICKETING": "Només taquilla i rifes"
+      },
+      "clear": "Neteja els filtres",
+      "results": "{count, plural, =0 {Cap iniciativa amb aquests filtres} one {# iniciativa} other {# iniciatives}}"
+    },
+    "catalog": {
+      "heading": "Iniciatives obertes",
+      "empty": {
+        "title": "Encara no hi ha campanyes obertes",
+        "description": "Quan la comunitat posi en marxa una nova iniciativa, la veuràs aquí amb la seva meta i la seva data límit."
+      },
+      "noMatch": {
+        "title": "No hi ha iniciatives amb aquests filtres",
+        "reset": "Mostra totes les iniciatives obertes"
+      }
+    },
+    "card": {
+      "viewDetails": "Veure detalls",
+      "open": "Obre la fitxa de {title}",
+      "share": "Comparteix {title}",
+      "stage": "Etapa: {stage}",
+      "price": "Entrada {price}",
+      "matching": "Matching 2x",
+      "matchingTip": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
+      "zeroCommission": "0 % de comissió de la plataforma",
+      "raisedOf": "{raised} de {goal}",
+      "percent": "{pct} %",
+      "progress": "Progrés de {title}",
+      "ticketsSold": "{sold} venudes · aforament {max}",
+      "ticketsLeft": "{count, plural, =0 {Ja exhaurides} one {# disponible} other {# disponibles}}",
+      "contributions": "{count, plural, one {# aportació} other {# aportacions}}",
+      "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
+      "completed": "Completada!",
+      "refund": "Devolució del 100 % si no s’assoleix la meta",
+      "soldOut": "Aforament complet · entrades exhaurides",
+      "goalReached": "100 % aconseguit! Tancada",
+      "contribute": "Aporta ara",
+      "buyTickets": "Compra entrades",
+      "buyRaffle": "Compra butlletes",
+      "closed": "Tancada"
+    },
+    "detail": {
+      "back": "Torna a les iniciatives",
+      "share": "Comparteix",
+      "vault": {
+        "label": "Guardiola de la iniciativa",
+        "refund": "Devolució del 100 % si no s’assoleix la meta",
+        "independence": "Independència total de proveïdors",
+        "deadline": "Data límit"
+      },
+      "plaque": "Inclou placa commemorativa de la promoció",
+      "matching": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
+      "matchingBy": "Gràcies a {sponsor}, la teva aportació es duplica mentre quedi bossa.",
+      "goal": "Meta: {goal} ({pct} %)",
+      "ticketsOf": "{sold} / {max}",
+      "ticketsAvailable": "Disponibles: {count}",
+      "contributionsDone": "{count, plural, one {# aportació feta} other {# aportacions fetes}}",
+      "completedFull": "Completada al 100 %",
+      "closed": "100 % aconseguit! Aportacions tancades",
+      "ticketsSoldOut": "Aforament complet! Entrades exhaurides",
+      "ticketsHeading": "Informació de taquilla digital",
+      "ticketLines": {
+        "price": "Import íntegre per entrada per a l’entitat",
+        "fee": "Despeses de gestió digital",
+        "total": "Total per entrada",
+        "priceInc": "Preu de l’entrada",
+        "feeInc": "Inclou despeses de gestió digital",
+        "center": "L’entitat rep per entrada",
+        "venue": "Lloc: {venue}"
+      },
+      "breakdown": {
+        "heading": "Desglossament del pressupost de la iniciativa",
+        "exact": "Suma exacta de la meta",
+        "provider": "Pressupost de proveïdor i equipament",
+        "install": "Instal·lació i adequació tècnica",
+        "contingency": "Reserva de manteniment, riscos i contingència ({percent})",
+        "gateway": "Passarel·la de pagament, plataforma, gestió i garantia de devolució",
+        "total": "Total objectiu a recaptar",
+        "footnote": "💡 Transparència total: l’import total ja inclou el cost de la passarel·la de pagament, el servei de la plataforma, la gestió i la devolució del 100 % si la iniciativa no s’aconsegueix, perquè al centre li quedi exactament el necessari per pagar els costos reals.",
+        "hidden": "Pressupost validat per l’entitat ({goal}): l’import sol·licitat ja inclou la passarel·la de pagament, la plataforma, la gestió i la devolució del 100 % si no s’aconsegueix dins de termini."
+      },
+      "challenge": {
+        "heading": "Repte col·lectiu: desbloquegem «{reward}»",
+        "headingNoReward": "Repte col·lectiu",
+        "intro": "Quan un {unit} arriba a {target} famílies participants, desbloqueja el premi per a tot aquest {unit}.",
+        "unit": {
+          "SCHOOL": "curs",
+          "SPORTS_CLUB": "equip",
+          "CULTURAL": "grup"
+        },
+        "line": "{group} ja suma {count, plural, one {# família} other {# famílies}} · repte: {target}",
+        "missing": "{missing, plural, one {Només falta # família} other {Només falten # famílies}}",
+        "reached": "🎉 Repte aconseguit!",
+        "progress": "Avenç de {group}",
+        "empty": "Encara cap grup ha començat el repte. La teva aportació pot ser la primera del teu grup."
+      },
+      "cta": {
+        "contribute": "Aporta a aquesta iniciativa",
+        "buyTickets": "Compra entrades",
+        "buyRaffle": "Compra butlletes"
+      },
+      "contributionsClosed": "Aquesta iniciativa ja no admet aportacions"
+    },
+    "share": {
+      "title": "Comparteix a KORUM",
+      "close": "Tanca",
+      "message": "Suma’t a KORUM a «{title}» a {entity}!",
+      "groupLabel": "Comparteix amb el teu grup",
+      "groupAll": "Tota la comunitat",
+      "groupHint": "La imatge de l’enllaç celebra l’avenç d’aquest grup, sense noms ni comparacions.",
+      "previewLabel": "Missatge que s’enviarà",
+      "whatsapp": "WhatsApp",
+      "email": "Correu electrònic",
+      "more": "Més opcions",
+      "copy": "Copia l’enllaç",
+      "copied": "Enllaç copiat",
+      "copiedHint": "Ja el pots enganxar allà on vulguis.",
+      "copyFailed": "No s’ha pogut copiar",
+      "copyFailedHint": "Selecciona l’enllaç i copia’l a mà.",
+      "emailSubject": "{title} · {entity}"
+    },
+    "breadcrumb": {
+      "home": "Inici"
+    },
+    "meta": {
+      "entityTitle": "{name} · Iniciatives i èxits",
+      "entityDescription": {
+        "SCHOOL": "Dona suport a les millores de {name}: iniciatives obertes amb la meta clara i la devolució del 100 % si no s’assoleix.",
+        "SPORTS_CLUB": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix.",
+        "CULTURAL": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix."
+      },
+      "entityImageAlt": "Portada de {name} a KORUM",
+      "initiativeTitle": "{title} · {entity}",
+      "initiativeDescription": "{pct} % aconseguit. {text}",
+      "initiativeImageAlt": "{title}: {pct} % aconseguit"
+    },
+    "og": {
+      "progress": "{pct} % aconseguit",
+      "tickets": "{sold} de {max} entrades venudes",
+      "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
+      "goalReached": "Meta aconseguida!",
+      "challengeMissing": "{missing, plural, one {Només falta # família} other {Només falten # famílies}} a {group} per a {reward}!",
+      "challengeMissingNoReward": "{missing, plural, one {Només falta # família} other {Només falten # famílies}} a {group} per assolir el repte!",
+      "challengeReached": "{group} ja ha aconseguit «{reward}»",
+      "challengeReachedNoReward": "{group} ja ha aconseguit el repte",
+      "forEntity": "amb {entity}"
+    },
+    "pass": {
+      "title": "La teva entrada",
+      "event": "Esdeveniment",
+      "quantity": "{count, plural, one {# entrada} other {# entrades}}",
+      "numbers": "Els teus números de la rifa",
+      "qrAlt": "Codi QR per entrar",
+      "show": "Ensenya’l a la porta, al mòbil o imprès.",
+      "serial": "Codi {serial}",
+      "revoked": {
+        "title": "Aquesta entrada ja no és vàlida",
+        "description": "S’ha reemborsat o anul·lat, així que no obrirà la porta. Si creus que és un error, escriu a l’entitat."
+      },
+      "invalid": {
+        "title": "No podem obrir aquesta entrada",
+        "description": "Comprova que has obert l’enllaç complet del correu o demana que te’l tornin a enviar."
+      }
+    },
+    "error": {
+      "title": "No hem pogut carregar la comunitat",
+      "description": "Torna-ho a provar d’aquí a uns segons."
+    },
+    "loading": "Carregant les iniciatives…"
   }
 }

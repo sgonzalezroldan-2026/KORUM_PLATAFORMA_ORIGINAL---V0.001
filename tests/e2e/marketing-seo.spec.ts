@@ -82,11 +82,12 @@ test.describe('QA-SEO02 · robots.txt, sitemap.xml y llms.txt', () => {
     expect(body).toMatch(/User-Agent: GPTBot[\s\S]*?Disallow: \/\n/);
   });
 
-  test('sitemap.xml lista las 9 páginas y el alta de entidades en los 3 idiomas con sus alternativas y nada privado', async ({ request }) => {
+  test('sitemap.xml lista las 9 páginas, el alta de entidades y las portadas públicas en los 3 idiomas con sus alternativas y nada privado', async ({ request }) => {
     const response = await request.get('/sitemap.xml');
     expect(response.status()).toBe(200);
     const body = await response.text();
-    expect(body.match(/<loc>/g)).toHaveLength((ALL_PATHS.length + 1) * 3);
+    // Las 10 páginas fijas en 3 idiomas, más las portadas de las entidades y sus iniciativas públicas (Sprint 3.3, probadas en family-catalog-detail).
+    expect(body.match(/<loc>/g)?.length ?? 0).toBeGreaterThanOrEqual((ALL_PATHS.length + 1) * 3);
     expect(body).toContain('/ca/registro-comunidad</loc>');
     expect(body).toContain('hreflang="x-default"');
     expect(body).not.toMatch(/\/(panel|admin|api|login|ideas)(\/|<)/);

@@ -16,7 +16,7 @@ Objetivo: que quien busque *"cómo recaudar dinero para el AMPA"*, *"ventiladore
 | `/` y páginas de marketing (`/para-colegios`, `/para-clubes`, `/para-entidades-culturales`, `/para-comercios`, `/como-funciona`, `/precios`, `/seguridad-y-transparencia`, `/preguntas-frecuentes`, `/guias/*`) | Sí | Páginas pilar del SEO, en los 3 idiomas |
 | `/registro-comunidad` | Sí | Página de conversión |
 | `/[orgSlug]` (portada de la entidad) | Sí, si `organization.publicIndexing` | La entidad lo decide en el alta; por defecto sí |
-| `/[orgSlug]/iniciativa/[id]` en `FUNDRAISING`, `GOAL_REACHED` o `CLOSED` | Sí, si la entidad indexa | Las cerradas alimentan *Logros*: contenido duradero |
+| `/[orgSlug]/iniciativas/[id]` en `FUNDRAISING`, `GOAL_REACHED` o `CLOSED` | Sí, si la entidad indexa | Las cerradas alimentan *Logros*: contenido duradero |
 | `/[orgSlug]/ideas` y detalle de ideas | **No** (`noindex`) | Propuestas de familias: privacidad |
 | Checkout, Mi Hucha, Mi cuenta, entradas, `/login` | **No** | |
 | `/panel/*`, `/admin/*`, portería | **No** + `Disallow` | Privado |
