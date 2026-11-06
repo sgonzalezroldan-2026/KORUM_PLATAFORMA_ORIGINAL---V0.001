@@ -380,13 +380,13 @@
     },
     "sponsor": {
       "renewalNotice": {
-        "subject": "Tu patrocinio con {organization} se renueva el {date}",
-        "preheader": "Todavía puedes cancelarlo.",
-        "title": "Tu patrocinio se renueva pronto",
-        "body": "El {date} se renovará tu patrocinio de {amount} con {organization}. Si no quieres renovarlo, puedes cancelarlo antes de esa fecha.",
+        "subject": "Tu distintivo de Comercio amigo de {organization} caduca el {date}",
+        "preheader": "Si quieres seguir, puedes renovarlo.",
+        "title": "Tu distintivo caduca pronto",
+        "body": "El {date} caduca tu distintivo de Comercio amigo de {organization} (patrocinio de {amount}). No hacemos ningún cobro automático: si quieres seguir, renuévalo antes de esa fecha desde la página de comercios amigos.",
         "amount": "Importe",
-        "date": "Fecha de renovación",
-        "cta": "Gestionar mi patrocinio"
+        "date": "Fecha de caducidad",
+        "cta": "Renovar mi patrocinio"
       }
     },
     "tax": {
@@ -1374,7 +1374,8 @@
     },
     "nav": {
       "label": "Secciones de la comunidad",
-      "initiatives": "Iniciativas y taquilla"
+      "initiatives": "Iniciativas y taquilla",
+      "sponsors": "Comercios amigos"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1523,7 +1524,9 @@
       "entityImageAlt": "Portada de {name} en KORUM",
       "initiativeTitle": "{title} · {entity}",
       "initiativeDescription": "{pct} % conseguido. {text}",
-      "initiativeImageAlt": "{title}: {pct} % conseguido"
+      "initiativeImageAlt": "{title}: {pct} % conseguido",
+      "sponsorsTitle": "{name} · Comercios amigos",
+      "sponsorsDescription": "Los negocios del barrio que apoyan a {name}, por categoría Oro, Plata y Bronce, con ventajas para las familias."
     },
     "og": {
       "progress": "{pct} % conseguido",
@@ -1661,7 +1664,62 @@
         "soldOut": "¡Aforo completo! Ya no quedan plazas.",
         "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones."
       },
-      "custodyTickets": "Pago seguro con Paycomet"
+      "custodyTickets": "Pago seguro con Paycomet",
+      "tabs": {
+        "label": "Quién aporta",
+        "family": "Soy familia o vecino",
+        "sponsor": "Soy comercio local"
+      },
+      "sponsor": {
+        "intro": {
+          "title": "Patrocinio 100 % íntegro + categoría Bronce, Plata u Oro",
+          "body": "El importe que elijas llega íntegro a la iniciativa y tu negocio figurará con su distinción durante 12 meses en el directorio de Comercios amigos."
+        },
+        "tier": {
+          "legend": "1. Elige tu categoría de Comercio amigo",
+          "ORO": "Oro",
+          "PLATA": "Plata (sugerido)",
+          "BRONCE": "Bronce",
+          "whole": "El importe llega íntegro a la iniciativa. La gestión publicitaria y su IVA se suman aparte."
+        },
+        "matching": {
+          "label": "Destinar mi patrocinio a la bolsa Matching 2x",
+          "help": "Duplicará las donaciones de las familias hasta agotar tu importe, cuando el centro apruebe tu comercio."
+        },
+        "fields": {
+          "businessName": "Nombre comercial",
+          "taxId": "CIF o NIF de facturación",
+          "contactPerson": "Persona de contacto",
+          "phone": "Teléfono",
+          "email": "Email para la factura y para pedirte el logotipo",
+          "sector": "Tipo de negocio (opcional)",
+          "sectorPlaceholder": "Panadería, librería…",
+          "promo": "Descuento o ventaja para las familias (opcional)",
+          "promoPlaceholder": "15 % de descuento en tienda",
+          "promoCode": "Código o cupón (opcional)",
+          "promoCodePlaceholder": "CERVANTES15",
+          "promoCodeHint": "Solo letras sin acento, números, guion y guion bajo."
+        },
+        "perk": {
+          "legend": "Opcional: ventaja para las familias"
+        },
+        "renewal": "Recordatorio de renovación: avísame por email 30 días antes de que venza mi distintivo.",
+        "legal": "El centro revisará si tu comercio encaja con sus valores y normativa; si no lo admite, te devolvemos el 100 % de lo que has pagado (importe, gestión publicitaria e IVA). Si la iniciativa venciera sin completarse, tu patrocinio pasa a otra iniciativa activa del centro; si no hay ninguna, te lo devolvemos. En ambos casos te avisamos.",
+        "summary": "{amount} íntegros a la iniciativa + {fee} de gestión publicitaria ({pct} %) + {vat} de IVA",
+        "errors": {
+          "form": "Revisa los datos marcados.",
+          "required": "Este dato es obligatorio.",
+          "email": "Escribe un email válido.",
+          "taxId": "Revisa el CIF o NIF: no parece válido.",
+          "phone": "Escribe un teléfono válido.",
+          "tier": "Elige uno de los niveles.",
+          "matching": "La bolsa Matching 2x de esta iniciativa ya está reservada.",
+          "closed": "Esta iniciativa ya no admite patrocinios.",
+          "rateLimited": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar.",
+          "unavailable": "No hemos podido abrir la página de pago. No se te ha cobrado nada; prueba de nuevo en unos minutos.",
+          "network": "No hemos podido conectar. No se te ha cobrado nada; vuelve a probarlo."
+        }
+      }
     },
     "simulator": {
       "metaTitle": "Pago simulado",
@@ -1736,6 +1794,100 @@
       "invalid": {
         "title": "No podemos abrir este resultado",
         "description": "Comprueba que has abierto el enlace completo o vuelve a la iniciativa."
+      },
+      "sponsor": {
+        "title": "¡Gracias, {name}!",
+        "whole": {
+          "escrow": "Tus {amount} llegan íntegros a la hucha de la iniciativa",
+          "pool": "Tus {amount} quedan en la bolsa Matching 2x: duplicarán las donaciones de las familias cuando el centro apruebe tu comercio"
+        },
+        "review": "El centro revisará tu comercio. En cuanto lo apruebe, aparecerás en el directorio como Comercio amigo {level}. Si no lo admitiera, te devolveríamos el 100 % de lo que has pagado.",
+        "documents": "Descarga tus documentos (puedes imprimirlos o guardarlos en PDF):",
+        "justificante": "Justificante del patrocinio",
+        "factura": "Factura de KORUM",
+        "directory": "Ver Comercios amigos",
+        "level": {
+          "ORO": "ORO",
+          "PLATA": "PLATA",
+          "BRONCE": "BRONCE"
+        },
+        "reminder": "Te enviaremos un recordatorio por email 30 días antes de que venza tu distintivo."
+      }
+    },
+    "sponsors": {
+      "breadcrumb": "Comercios amigos",
+      "badge": "Comercio vecino comprometido",
+      "title": "Negocios del barrio que impulsan a {name}",
+      "intro": "Reconocemos por su categoría (Oro, Plata y Bronce) a los comercios amigos que apoyan nuestras iniciativas y ofrecen ventajas a las familias.",
+      "share": "Compartir",
+      "sharePage": "¡Conoce los comercios del barrio que apoyan a {name} en KORUM!",
+      "collaborate": "Colaborar como comercio",
+      "listLabel": "Comercios amigos",
+      "empty": {
+        "title": "Aún no hay comercios amigos",
+        "description": "Cuando un comercio del barrio apoye una iniciativa y el centro lo apruebe, aparecerá aquí con su categoría y sus ventajas para las familias."
+      },
+      "level": {
+        "ORO": "Comercio amigo · Categoría ORO",
+        "PLATA": "Comercio amigo · Categoría PLATA",
+        "BRONCE": "Comercio amigo · Categoría BRONCE"
+      },
+      "sectorFallback": "Comercio del barrio",
+      "noPerk": "Apoya a nuestra comunidad.",
+      "seeCode": "Ver mi cupón",
+      "codeTitle": "Cupón de {name}",
+      "close": "Cerrar",
+      "copy": "Copiar código",
+      "copied": "Código copiado",
+      "shareWhatsapp": "Compartir por WhatsApp",
+      "shareMessage": "¡Gracias a {name} por apoyar a {entity} en KORUM! Cupón: {code}",
+      "shareCard": "Compartir",
+      "shareMessageNoCode": "¡Gracias a {name} por apoyar a {entity} en KORUM!"
+    },
+    "sponsorDocs": {
+      "platform": "KORUM · plataforma tecnológica",
+      "returned": "Este cobro se ha devuelto: el documento se conserva solo como constancia.",
+      "print": "Imprimir o guardar en PDF",
+      "invalid": {
+        "title": "No encontramos este documento",
+        "description": "El enlace no es válido o ha caducado. Abre el que te enviamos al pagar o escríbenos desde el soporte."
+      },
+      "level": {
+        "ORO": "Oro",
+        "PLATA": "Plata",
+        "BRONCE": "Bronce"
+      },
+      "justificante": {
+        "title": "Justificante de patrocinio",
+        "sponsor": "Comercio",
+        "taxId": "CIF o NIF",
+        "recipient": "Entidad que recibe el importe",
+        "initiative": "Iniciativa",
+        "destination": "Destino",
+        "pool": "Bolsa Matching 2x de la iniciativa",
+        "escrow": "Hucha de la iniciativa",
+        "category": "Categoría",
+        "amount": "Importe íntegro",
+        "date": "Fecha del pago",
+        "whole": "El 100 % de este importe ({amount}) llega íntegro a la iniciativa. La gestión publicitaria de KORUM y su IVA se cobran aparte y constan en la factura.",
+        "notInvoice": "Este justificante acredita tu patrocinio; no sustituye a la factura de KORUM ni es un certificado fiscal."
+      },
+      "factura": {
+        "title": "Factura",
+        "number": "Número",
+        "date": "Fecha",
+        "issuer": "Emisor",
+        "issuerTaxId": "NIF del emisor",
+        "recipient": "Destinatario",
+        "recipientTaxId": "CIF o NIF del destinatario",
+        "concept": "Concepto",
+        "base": "Base imponible",
+        "vat": "IVA ({rate} %)",
+        "total": "Total de la factura",
+        "verifactu": "Factura registrada para su verificación (Veri*factu)",
+        "verify": "Verificar en la Agencia Tributaria",
+        "none": "Este patrocinio no genera factura de KORUM.",
+        "issuerFallback": "KORUM (plataforma tecnológica)"
       }
     }
   }

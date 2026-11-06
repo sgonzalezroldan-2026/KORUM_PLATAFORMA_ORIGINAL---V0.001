@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ClearCheckoutDraft, Confetti, PendingRefresh, RisingProgress } from '@/components/checkout/checkout-celebration';
+import { SponsorshipResult } from '@/components/checkout/sponsorship-result';
 import { ShareButton } from '@/components/portal/share-button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getEnv } from '@/config/env';
@@ -17,6 +18,7 @@ import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { checkoutPath, INITIATIVE_ID_PATTERN, initiativePath, passPath } from '@/lib/seo/portal-routes';
 import { getCheckoutResult } from '@/repositories/checkout.repository';
+import { getSponsorshipResult } from '@/repositories/sponsorship.repository';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -47,7 +49,14 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
   const env = getEnv();
   const initiativeId = Number(id);
 
-  const row = verifyCheckoutResult(env.DATA_HMAC_SECRET, order, first(query.sig)) ? await getCheckoutResult(getPrisma(), orgSlug, initiativeId, order) : null;
+  const signature = first(query.sig);
+  const verified = verifyCheckoutResult(env.DATA_HMAC_SECRET, order, signature);
+  const row = verified ? await getCheckoutResult(getPrisma(), orgSlug, initiativeId, order) : null;
+  if (!row && verified) {
+    // Un pedido `KS…` es de un comercio: tiene su propia vuelta (documentos, revisión del centro).
+    const sponsorship = await getSponsorshipResult(getPrisma(), orgSlug, initiativeId, order);
+    if (sponsorship) return <SponsorshipResult row={sponsorship} orgSlug={orgSlug} initiativeId={initiativeId} locale={locale} order={order} signature={signature} />;
+  }
   if (!row) return <EmptyState icon="🧾" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" action={<Link href={initiativePath(orgSlug, initiativeId)} className={`${linkClass} bg-varsity-navy text-white`}>{t('back')}</Link>} />;
 
   const { initiative } = row;

@@ -928,6 +928,7 @@ model Sponsor {
   paymentMethodToken  PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
   invoices            Invoice[]
   escrowLedgerEntries EscrowLedgerEntry[]
+  contribution        Contribution?
 
   @@index([organizationId, status])
 }
@@ -1077,6 +1078,8 @@ model Contribution {
   organizationId             String
   initiativeId               Int
   userId                     String?
+  /// Solo SPONSORSHIP: el comercio que paga. Un cobro de patrocinio corresponde a un único comercio (y un comercio, a un único cobro).
+  sponsorId                  Int?                @unique
   guestEmail                 String?
   canonicalEmail             String?
   locale                     Locale              @default(es)
@@ -1113,6 +1116,7 @@ model Contribution {
   organization               Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative                 Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   user                       User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sponsor                    Sponsor?            @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
   ticketPass                 TicketPass?
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]

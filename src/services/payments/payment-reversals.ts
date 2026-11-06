@@ -74,6 +74,11 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
   return release.amountCents;
 }
 
+/** Un patrocinio devuelto o contracargado ya no es un comercio amigo vigente, aunque la iniciativa ya estuviera liquidada. */
+async function markSponsorRefunded(tx: Db, contribution: Pick<ContributionRow, 'type' | 'sponsorId'>): Promise<void> {
+  if (contribution.type === 'SPONSORSHIP' && contribution.sponsorId) await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' } });
+}
+
 /**
  * Quita el cobro de los contadores de la iniciativa, en la misma transacción que su asiento. Si baja de la meta antes de liquidar,
  * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. Una rifa ya sorteada no se reabre: no puede volver a vender
@@ -83,9 +88,15 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
 async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
   const releasedTickets = await revokePassInTx(tx, contribution.id, at);
+  // El patrocinio destinado a la bolsa Matching 2x nunca sumó a lo recaudado: deshacerlo no resta nada de la hucha. El comercio deja de estar vigente.
+  let leavesRaised = contribution.amountCents + bonusCents;
+  if (contribution.type === 'SPONSORSHIP' && contribution.sponsorId) {
+    const sponsor = await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' }, select: { isMatchingPool: true } });
+    if (sponsor.isMatchingPool) leavesRaised = bonusCents;
+  }
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
-    data: { raisedCents: { decrement: contribution.amountCents + bonusCents }, totalContributions: { decrement: 1 }, ticketsSold: { decrement: releasedTickets } },
+    data: { raisedCents: { decrement: leavesRaised }, totalContributions: { decrement: 1 }, ticketsSold: { decrement: releasedTickets } },
     select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
   });
   if (contribution.groupName) {
@@ -233,6 +244,7 @@ export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNoti
     await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'REFUNDED', refundedCents: contribution.totalChargedCents, refundedAt: occurredAt } });
     // Ya liquidada, el aforo no se recalcula; pero el pase de quien ha recuperado su dinero deja de valer.
     await revokePassInTx(tx, contribution.id, occurredAt);
+    await markSponsorRefunded(tx, contribution);
     await postJournal(tx, {
       idempotencyKey: `payment:refund-after-settlement:${contribution.id}`,
       kind: 'ESCROW_REFUND_DONOR',
@@ -279,7 +291,10 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
     lines: chargebackLines(mode, mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution) : [], contribution.organizationId, contribution.totalChargedCents)
   });
   if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution, laterOf(occurredAt));
-  else await revokePassInTx(tx, contribution.id, occurredAt);
+  else {
+    await revokePassInTx(tx, contribution.id, occurredAt);
+    await markSponsorRefunded(tx, contribution);
+  }
   await tx.auditLog.create({
     data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.chargeback', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { mode, amountCents: notification.amountCents, initiativeId: contribution.initiativeId } }
   });

@@ -1,6 +1,7 @@
 import { GUARANTEE_MAX_CENTS, MAX_TICKETS_PER_ORDER, type CheckoutMethod } from '@/core/checkout/checkout-limits';
 import { maxSelectableTickets, type TicketPricing } from '@/core/checkout/checkout-summary';
 import { MoneyParseError, parseEurosToCents, type MoneyLocale } from '@/core/finance/money';
+import { clearSponsorDraft } from './sponsor-draft';
 
 /**
  * Lo que la familia va eligiendo en el checkout y cómo se convierte en la petición al servidor. Sin React, para probarlo aparte. Se guarda en
@@ -188,8 +189,9 @@ export function draftFromHint(offer: CheckoutOffer, hint: RetryHint, method: Che
   };
 }
 
-/** Borra el borrador guardado (pago confirmado). Si el navegador no deja, no hay nada que borrar. */
+/** Borra el borrador guardado (pago confirmado), también el del comercio. Si el navegador no deja, no hay nada que borrar. */
 export function clearDraft(initiativeId: number): void {
+  clearSponsorDraft(initiativeId);
   try {
     window.sessionStorage.removeItem(storageKey(initiativeId));
   } catch {

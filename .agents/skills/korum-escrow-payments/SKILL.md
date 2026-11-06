@@ -74,7 +74,8 @@ Según la documentación de *split transfer* de Paycomet, un reparto solo puede 
 
 - El 100 % del nivel elegido suma a la iniciativa; el fee (`15 %` + IVA) se cobra encima.
 - Documentos: justificante del patrocinio y factura de KORUM por el fee, registrada en Veri\*factu (§10).
-- Renovación anual con token `JET-ID` (`PaymentMethodToken`, cifrado) y preaviso por email 30 días antes (`SPONSOR_RENEWAL_NOTICE`).
+- **Implementación (Sprint 3.5, detalle en DECISIONES_TECNICAS §2.3):** `startSponsorship` crea `Sponsor` `PENDING` + `Contribution` `SPONSORSHIP` (`Contribution.sponsorId`) y envía a la página de pago; el nivel se valida contra `Organization.sponsorTiersCents` y el fee y el IVA (21 %, suposición pendiente de la asesoría) los calcula el servidor (`calculateSponsorCharge`). `completeSponsorshipInTx` asienta `PAYIN_SPONSOR` (`sponsorshipPayinLines`: 100 % a `INITIATIVE_ESCROW` o a `MATCHING_POOL`, fee a `KORUM_REVENUE_SPONSOR_FEE`, IVA a `TAX_PAYABLE_VAT`) y emite la factura del fee **en la misma transacción**; el NIF emisor se lee antes de abrirla (`loadInvoicingContext`). El comercio sigue `PENDING` hasta que el centro lo aprueba (Sprint 4.2) y la bolsa Matching 2x no se activa hasta entonces.
+- La renovación anual **no usa tarjeta guardada** (el checkout usa la página de Paycomet): el comercio recibe un preaviso por email 30 días antes (`SPONSOR_RENEWAL_NOTICE`) y, en el Sprint 4.2, un enlace de pago.
 - Si la campaña patrocinada falla, el importe se reasigna según la regla de la entidad (`SOONEST`, `PROPORTIONAL`, `MANUAL`); si no hay campaña activa, pasa a `CREDIT_POOL` con aviso al comercio.
 
 ## 7. Mi Hucha según `hucha.mode`

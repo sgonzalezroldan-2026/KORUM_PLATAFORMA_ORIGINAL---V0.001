@@ -192,7 +192,8 @@ export const sponsorRenewalNotice: TemplateDefinition<z.infer<typeof renewalPayl
       title: t('sponsor.renewalNotice.title'),
       paragraphs: [t('sponsor.renewalNotice.body', { organization: organization.name, date, amount })],
       facts: [{ label: t('sponsor.renewalNotice.amount'), value: amount }, { label: t('sponsor.renewalNotice.date'), value: date }],
-      button: { label: t('sponsor.renewalNotice.cta'), url: context.url('/login') },
+      // El preaviso es un recordatorio: no hay cobro automático. El enlace lleva a donde se puede renovar (los comercios amigos de la entidad).
+      button: { label: t('sponsor.renewalNotice.cta'), url: context.url(`/${organization.slug}/comercios`) },
       footer: 'transactional'
     };
   }

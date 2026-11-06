@@ -9,14 +9,15 @@ import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { INITIATIVE_ID_PATTERN, initiativePath } from '@/lib/seo/portal-routes';
 import { getCheckoutContext } from '@/repositories/checkout.repository';
+import { getSponsorshipContext } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { buildCheckoutOffer } from '@/services/checkout/checkout-offer';
 import { loadInitiativePage, loadPortalOrganization } from '@/services/portal/portal-data';
-import { startCheckoutAction } from './actions';
+import { startCheckoutAction, startSponsorshipAction } from './actions';
 
 interface PageProps {
   params: Promise<{ locale: string; orgSlug: string; id: string }>;
-  searchParams: Promise<{ grupo?: string | string[]; reintento?: string | string[]; metodo?: string | string[]; importe?: string | string[]; aportacion?: string | string[]; cantidad?: string | string[] }>;
+  searchParams: Promise<{ modo?: string | string[]; grupo?: string | string[]; reintento?: string | string[]; metodo?: string | string[]; importe?: string | string[]; aportacion?: string | string[]; cantidad?: string | string[] }>;
 }
 
 const first = (value: string | string[] | undefined): string => (Array.isArray(value) ? (value[0] ?? '') : (value ?? ''));
@@ -61,6 +62,14 @@ export default async function CheckoutPage({ params, searchParams }: PageProps) 
   }
   const [organization, page, context, session] = loaded;
   const method = first(query.metodo);
+  // Un comercio puede patrocinar mientras la campaña recauda un presupuesto (no una taquilla o rifa): entonces la pestaña «Soy comercio local» existe.
+  const sponsorship = await getSponsorshipContext(getPrisma(), orgSlug, initiativeId).catch((error: unknown) => {
+    if (error instanceof ResourceNotFoundError) return null;
+    throw error;
+  });
+  const sponsor = sponsorship && sponsorship.status === 'FUNDRAISING' && sponsorship.closesAt > new Date() && sponsorship.organization.sponsorTiersCents.length > 0
+    ? { tiersCents: [...sponsorship.organization.sponsorTiersCents].sort((a, b) => a - b), feeBps: sponsorship.organization.sponsorFeeBps, matchingAvailable: !sponsorship.matchingPoolTaken }
+    : null;
   const offer = buildCheckoutOffer({ orgSlug, title: page.title, contentLang: page.contentLang, detail: page.detail, context, requestedGroup: requested, sessionEmail: session?.email ?? null, now: new Date() });
 
   return (
@@ -76,7 +85,7 @@ export default async function CheckoutPage({ params, searchParams }: PageProps) 
       />
       <CheckoutModal offer={offer} restore={first(query.reintento) === '1'} restoreMethod={method === 'CARD' || method === 'BIZUM' ? method : null}
         retryHint={{ amountCents: hintNumber(query.importe), guaranteeCents: hintNumber(query.aportacion), quantity: hintNumber(query.cantidad) }}
-        startAction={startCheckoutAction} />
+        startAction={startCheckoutAction} sponsor={sponsor} initialTab={first(query.modo) === 'comercio' ? 'sponsor' : 'family'} startSponsorAction={startSponsorshipAction} />
     </>
   );
 }

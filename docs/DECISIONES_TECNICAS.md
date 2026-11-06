@@ -64,6 +64,19 @@ La detección de idioma por el navegador y la cookie de idioma están **desactiv
 - **Simulador (`PAYCOMET_MODE=mock`):** `/aportar/simulador?pedido=&sig=` sustituye a la página de Paycomet en desarrollo, demostración y E2E. Confirmar o rechazar fabrica la misma notificación firmada que Paycomet y la entrega a `handlePaymentWebhook`: asiento, pase y emails siguen el camino real. Con `sandbox` o `live` la ruta responde 404.
 - **Ejercicio fiscal de una donación:** el año natural en la hora de España (`spanishFiscalYear`), para el Modelo 182.
 
+### 2.3 Patrocinio de comercios (Sprint 3.5)
+
+- **Mismo camino que las familias:** la pestaña «Soy comercio local» vive en el mismo diálogo (`?modo=comercio` la abre) y usa la página de pago de Paycomet, el pedido aleatorio (`KS` + 16 hex), la vuelta firmada y el simulador. Solo se patrocinan campañas `FUNDRAISING` de formato `BUDGET` (no taquilla ni rifa). Mismo límite por red que las donaciones (`CHECKOUT_RULE`).
+- **Lo que decide el servidor:** el comercio elige solo uno de los niveles de la entidad (`Organization.sponsorTiersCents`: cualquier otro importe se rechaza, nunca se redondea); la categoría sale del nivel (el mayor es ORO, el menor BRONCE y el del medio PLATA); el fee (`Organization.sponsorFeeBps`, 15 % por defecto) y su IVA se calculan en servidor. **IVA del fee: 21 % (`SPONSOR_FEE_VAT_BPS`), suposición hasta que la asesoría fiscal lo confirme.** Ejemplo: 250,00 € + 37,50 € + 7,88 € = 295,38 €.
+- **Qué se crea:** `Sponsor` en `PENDING` y sin `paidAt` + su `Contribution` `SPONSORSHIP` `PENDING` (enlazada con `Contribution.sponsorId`, único). El CIF o NIF se valida y se cifra (`sealSponsorTaxId`) antes de guardarlo. Si no hay página de pago fiable, el cobro queda `FAILED` y el comercio sin `paidAt`.
+- **Al confirmarse el cobro** (`sponsorship-events.ts`, dentro de la transacción del webhook): asiento `PAYIN_SPONSOR` (`PSP_CLEARING` al debe; al haber, el 100 % del nivel en `INITIATIVE_ESCROW` —o en `MATCHING_POOL` con el comercio como dimensión si eligió la bolsa—, el fee en `KORUM_REVENUE_SPONSOR_FEE` y el IVA en `TAX_PAYABLE_VAT`), comisión de la pasarela, `raisedCents` y `totalContributions` (la bolsa Matching 2x no suma a lo recaudado: solo cuenta como aportación), `GOAL_REACHED` si completa la meta, y **la factura del fee** (`issueInvoice`, clave `sponsor:fee:{id}`, base = fee, IVA al 21 %) en la misma transacción: un cobro sin su factura no se asienta.
+- **NIF emisor:** sale de `invoicing.issuerNif` (consola, con respaldo `VERIFACTU_ISSUER_NIF`) y se lee **antes** de abrir la transacción (`loadInvoicingContext`): dentro necesitaría una segunda conexión y con una sola —la base local— se bloquearía. Sin NIF emisor, un patrocinio con fee falla (500) y Paycomet reintenta la notificación cuando se configure.
+- **Cobro tardío:** si la campaña ya no admite aportaciones, el cobro se asienta, queda `REFUND_PENDING` y `MASS_REFUND` lo devuelve entero (nivel + fee + IVA); el comercio pasa a `REFUNDED` y no se factura nada. `MASS_REFUND` recoge los `REFUND_PENDING` de patrocinios, pero **no** los `COMPLETED` de una campaña fallida: esos se reasignan (Regla 02 §5, Sprint 4.2).
+- **Aprobación del centro (Sprint 4.2):** el patrocinio sigue `PENDING` tras pagar y no sale en el directorio hasta que el centro lo apruebe; mientras tanto la bolsa Matching 2x queda en el pasivo del comercio y **no se activa** en la iniciativa (`matchingPoolTotalCents` y `matchingPoolRemainingCents` siguen en 0): `releaseMatching` exige un patrocinador `APPROVED`.
+- **Directorio público** (`/{orgSlug}/comercios`, regenerado cada minuto): solo `APPROVED` y vigentes (`expiresAt`), en orden ORO > PLATA > BRONCE y, a igual categoría, el más antiguo primero. Solo devuelve nombre, tipo de negocio, categoría, ventaja y código: nunca importe, fee, CIF, contacto ni email.
+- **Documentos** (`/{orgSlug}/comercios/documentos/{justificante|factura}?pedido=&sig=`): firmados con el mismo HMAC que la vuelta del pago, `noindex` y `no-referrer`; el CIF se descifra solo en servidor. El **justificante** acredita el 100 % íntegro; la **factura** es la del fee. Son hojas imprimibles (sin PDF generado).
+- **Aplazado, no eliminado (Sprint 4.2):** moderación del comercio (aprobar/rechazar, con la reversión de la bolsa y la **factura rectificativa** si se devuelve un fee ya facturado), cobro de la renovación anual (enlace de pago, no tarjeta guardada), reembolso de `CREDIT_POOL`, reasignación a otra campaña, email `sponsor.welcome` con los enlaces de los documentos.
+
 ---
 
 ## 3. Infraestructura
@@ -182,8 +195,8 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 | `INVOICE_SUBMIT` | Cada 10 min | Diaria | Envía en orden las facturas pendientes a Veri\*factu y avisa de las que llevan más de 1 h en `SENT` |
 | `MONTHLY_TOPUP` | Diaria | Diaria | **Sprint 2.4: solo detecta** las aportaciones mensuales vencidas y abre una alerta. El cobro llega con Mi Hucha (3.7) |
 | `SPONSOR_RENEWAL_NOTICE` | Diaria | Diaria | Preaviso por email a 30 días del vencimiento de comercios con renovación automática |
-| `SPONSOR_RENEWAL_CHARGE` | Diaria | Diaria | **Sprint 2.4: solo detecta** renovaciones vencidas y abre una alerta. El cobro llega con el Sprint 3.5 |
-| `CREDIT_POOL_EXPIRY` | Diaria | Diaria | **Sprint 2.4: solo detecta** bolsas de patrocinio pasadas de 85 días desde su cobro y abre una alerta. El reembolso al comercio llega con el Sprint 3.5 |
+| `SPONSOR_RENEWAL_CHARGE` | Diaria | Diaria | **Sprint 2.4: solo detecta** renovaciones vencidas y abre una alerta. El cobro llega con el Sprint 4.2: sin tarjeta guardada (el checkout usa la página de Paycomet), será un enlace de pago por email |
+| `CREDIT_POOL_EXPIRY` | Diaria | Diaria | **Sprint 2.4: solo detecta** bolsas de patrocinio pasadas de 85 días desde su cobro y abre una alerta. El reembolso al comercio llega con el Sprint 4.2 |
 | `SPLIT_WINDOW_GUARD` | Diaria | Diaria | Avisa cuando faltan 15 días para la ventana de 90 días de Paycomet |
 | `PSP_RECONCILIATION` | Diaria (madrugada) | Diaria | Concilia los cobros de Paycomet con los de KORUM, uno a uno |
 | `QUOTA_RENEWAL` | Diaria | Diaria | Renueva los cupos anuales de cada entidad desde el 22 de agosto |
@@ -220,4 +233,5 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 - [ ] Pago, reparto, reembolso y contracargo probados en el sandbox real de Paycomet.
 - [ ] Search Console y Bing Webmaster Tools verificados; sitemap enviado.
 - [ ] Textos legales publicados en los 3 idiomas y visto bueno del abogado.
+- [ ] `invoicing.issuerNif` **e** `invoicing.issuerName` configurados en `/admin/ajustes` (el NIF emisor es imprescindible: sin él, un patrocinio con fee no se asienta; la razón social sale en la factura) y el IVA del fee confirmado por la asesoría fiscal (hoy 21 %, `SPONSOR_FEE_VAT_BPS`).
 - [ ] `docs/MANUAL_OPERACION.md` escrito.

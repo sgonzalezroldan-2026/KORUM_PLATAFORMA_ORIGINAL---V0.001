@@ -380,13 +380,13 @@
     },
     "sponsor": {
       "renewalNotice": {
-        "subject": "El teu patrocini amb {organization} es renova el {date}",
-        "preheader": "Encara el pots cancel·lar.",
-        "title": "El teu patrocini es renova aviat",
-        "body": "El {date} es renovarà el teu patrocini de {amount} amb {organization}. Si no vols renovar-lo, el pots cancel·lar abans d’aquesta data.",
+        "subject": "El teu distintiu de Comerç amic de {organization} caduca el {date}",
+        "preheader": "Si vols continuar, el pots renovar.",
+        "title": "El teu distintiu caduca aviat",
+        "body": "El {date} caduca el teu distintiu de Comerç amic de {organization} (patrocini de {amount}). No fem cap cobrament automàtic: si vols continuar, renova'l abans d'aquesta data des de la pàgina de comerços amics.",
         "amount": "Import",
-        "date": "Data de renovació",
-        "cta": "Gestionar el meu patrocini"
+        "date": "Data de caducitat",
+        "cta": "Renovar el meu patrocini"
       }
     },
     "tax": {
@@ -1374,7 +1374,8 @@
     },
     "nav": {
       "label": "Seccions de la comunitat",
-      "initiatives": "Iniciatives i taquilla"
+      "initiatives": "Iniciatives i taquilla",
+      "sponsors": "Comerços amics"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1523,7 +1524,9 @@
       "entityImageAlt": "Portada de {name} a KORUM",
       "initiativeTitle": "{title} · {entity}",
       "initiativeDescription": "{pct} % aconseguit. {text}",
-      "initiativeImageAlt": "{title}: {pct} % aconseguit"
+      "initiativeImageAlt": "{title}: {pct} % aconseguit",
+      "sponsorsTitle": "{name} · Comerços amics",
+      "sponsorsDescription": "Els negocis del barri que donen suport a {name}, per categoria Or, Plata i Bronze, amb avantatges per a les famílies."
     },
     "og": {
       "progress": "{pct} % aconseguit",
@@ -1661,7 +1664,62 @@
         "soldOut": "Aforament complet! Ja no queden places.",
         "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions."
       },
-      "custodyTickets": "Pagament segur amb Paycomet"
+      "custodyTickets": "Pagament segur amb Paycomet",
+      "tabs": {
+        "label": "Qui aporta",
+        "family": "Sóc família o veí",
+        "sponsor": "Sóc comerç local"
+      },
+      "sponsor": {
+        "intro": {
+          "title": "Patrocini 100 % íntegre + categoria Bronze, Plata o Or",
+          "body": "L'import que triïs arriba íntegre a la iniciativa i el teu negoci figurarà amb la seva distinció durant 12 mesos al directori de Comerços amics."
+        },
+        "tier": {
+          "legend": "1. Tria la teva categoria de Comerç amic",
+          "ORO": "Or",
+          "PLATA": "Plata (suggerit)",
+          "BRONCE": "Bronze",
+          "whole": "L'import arriba íntegre a la iniciativa. La gestió publicitària i el seu IVA se sumen a part."
+        },
+        "matching": {
+          "label": "Destinar el meu patrocini a la borsa Matching 2x",
+          "help": "Duplicarà les donacions de les famílies fins a esgotar el teu import, quan el centre aprovi el teu comerç."
+        },
+        "fields": {
+          "businessName": "Nom comercial",
+          "taxId": "CIF o NIF de facturació",
+          "contactPerson": "Persona de contacte",
+          "phone": "Telèfon",
+          "email": "Email per a la factura i per demanar-te el logotip",
+          "sector": "Tipus de negoci (opcional)",
+          "sectorPlaceholder": "Fleca, llibreria…",
+          "promo": "Descompte o avantatge per a les famílies (opcional)",
+          "promoPlaceholder": "15 % de descompte a la botiga",
+          "promoCode": "Codi o cupó (opcional)",
+          "promoCodePlaceholder": "CERVANTES15",
+          "promoCodeHint": "Només lletres sense accent, números, guió i guió baix."
+        },
+        "perk": {
+          "legend": "Opcional: avantatge per a les famílies"
+        },
+        "renewal": "Recordatori de renovació: avisa'm per email 30 dies abans que caduqui el meu distintiu.",
+        "legal": "El centre revisarà si el teu comerç s'ajusta als seus valors i normativa; si no l'admet, et retornem el 100 % del que has pagat (import, gestió publicitària i IVA). Si la iniciativa vencés sense completar-se, el teu patrocini passa a una altra iniciativa activa del centre; si no n'hi ha cap, te'l retornem. En tots dos casos t'avisem.",
+        "summary": "{amount} íntegres a la iniciativa + {fee} de gestió publicitària ({pct} %) + {vat} d'IVA",
+        "errors": {
+          "form": "Revisa les dades marcades.",
+          "required": "Aquesta dada és obligatòria.",
+          "email": "Escriu un email vàlid.",
+          "taxId": "Revisa el CIF o NIF: no sembla vàlid.",
+          "phone": "Escriu un telèfon vàlid.",
+          "tier": "Tria un dels nivells.",
+          "matching": "La borsa Matching 2x d'aquesta iniciativa ja està reservada.",
+          "closed": "Aquesta iniciativa ja no admet patrocinis.",
+          "rateLimited": "Massa intents seguits. Espera uns minuts i torna-ho a provar.",
+          "unavailable": "No hem pogut obrir la pàgina de pagament. No se t'ha cobrat res; torna-ho a provar d'aquí a uns minuts.",
+          "network": "No hem pogut connectar. No se t'ha cobrat res; torna-ho a provar."
+        }
+      }
     },
     "simulator": {
       "metaTitle": "Pagament simulat",
@@ -1736,6 +1794,100 @@
       "invalid": {
         "title": "No podem obrir aquest resultat",
         "description": "Comprova que has obert l’enllaç complet o torna a la iniciativa."
+      },
+      "sponsor": {
+        "title": "Gràcies, {name}!",
+        "whole": {
+          "escrow": "Els teus {amount} arriben íntegres a la guardiola de la iniciativa",
+          "pool": "Els teus {amount} queden a la borsa Matching 2x: duplicaran les donacions de les famílies quan el centre aprovi el teu comerç"
+        },
+        "review": "El centre revisarà el teu comerç. Tan bon punt l'aprovi, apareixeràs al directori com a Comerç amic {level}. Si no l'admetés, et retornaríem el 100 % del que has pagat.",
+        "documents": "Descarrega els teus documents (els pots imprimir o desar en PDF):",
+        "justificante": "Justificant del patrocini",
+        "factura": "Factura de KORUM",
+        "directory": "Veure Comerços amics",
+        "level": {
+          "ORO": "OR",
+          "PLATA": "PLATA",
+          "BRONCE": "BRONZE"
+        },
+        "reminder": "T'enviarem un recordatori per email 30 dies abans que caduqui el teu distintiu."
+      }
+    },
+    "sponsors": {
+      "breadcrumb": "Comerços amics",
+      "badge": "Comerç veí compromès",
+      "title": "Negocis del barri que impulsen {name}",
+      "intro": "Reconeixem per la seva categoria (Or, Plata i Bronze) els comerços amics que donen suport a les nostres iniciatives i ofereixen avantatges a les famílies.",
+      "share": "Compartir",
+      "sharePage": "Coneix els comerços del barri que donen suport a {name} a KORUM!",
+      "collaborate": "Col·laborar com a comerç",
+      "listLabel": "Comerços amics",
+      "empty": {
+        "title": "Encara no hi ha comerços amics",
+        "description": "Quan un comerç del barri doni suport a una iniciativa i el centre l'aprovi, apareixerà aquí amb la seva categoria i els seus avantatges per a les famílies."
+      },
+      "level": {
+        "ORO": "Comerç amic · Categoria OR",
+        "PLATA": "Comerç amic · Categoria PLATA",
+        "BRONCE": "Comerç amic · Categoria BRONZE"
+      },
+      "sectorFallback": "Comerç del barri",
+      "noPerk": "Dona suport a la nostra comunitat.",
+      "seeCode": "Veure el meu cupó",
+      "codeTitle": "Cupó de {name}",
+      "close": "Tancar",
+      "copy": "Copiar codi",
+      "copied": "Codi copiat",
+      "shareWhatsapp": "Compartir per WhatsApp",
+      "shareMessage": "Gràcies a {name} per donar suport a {entity} a KORUM! Cupó: {code}",
+      "shareCard": "Compartir",
+      "shareMessageNoCode": "Gràcies a {name} per donar suport a {entity} a KORUM!"
+    },
+    "sponsorDocs": {
+      "platform": "KORUM · plataforma tecnològica",
+      "returned": "Aquest cobrament s'ha retornat: el document es conserva només com a constància.",
+      "print": "Imprimir o desar en PDF",
+      "invalid": {
+        "title": "No trobem aquest document",
+        "description": "L'enllaç no és vàlid o ha caducat. Obre el que et vam enviar en pagar o escriu-nos des del suport."
+      },
+      "level": {
+        "ORO": "Or",
+        "PLATA": "Plata",
+        "BRONCE": "Bronze"
+      },
+      "justificante": {
+        "title": "Justificant de patrocini",
+        "sponsor": "Comerç",
+        "taxId": "CIF o NIF",
+        "recipient": "Entitat que rep l'import",
+        "initiative": "Iniciativa",
+        "destination": "Destí",
+        "pool": "Borsa Matching 2x de la iniciativa",
+        "escrow": "Guardiola de la iniciativa",
+        "category": "Categoria",
+        "amount": "Import íntegre",
+        "date": "Data del pagament",
+        "whole": "El 100 % d'aquest import ({amount}) arriba íntegre a la iniciativa. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura.",
+        "notInvoice": "Aquest justificant acredita el teu patrocini; no substitueix la factura de KORUM ni és un certificat fiscal."
+      },
+      "factura": {
+        "title": "Factura",
+        "number": "Número",
+        "date": "Data",
+        "issuer": "Emissor",
+        "issuerTaxId": "NIF de l'emissor",
+        "recipient": "Destinatari",
+        "recipientTaxId": "CIF o NIF del destinatari",
+        "concept": "Concepte",
+        "base": "Base imposable",
+        "vat": "IVA ({rate} %)",
+        "total": "Total de la factura",
+        "verifactu": "Factura registrada per a la seva verificació (Veri*factu)",
+        "verify": "Verificar a l'Agència Tributària",
+        "none": "Aquest patrocini no genera factura de KORUM.",
+        "issuerFallback": "KORUM (plataforma tecnològica)"
       }
     }
   }

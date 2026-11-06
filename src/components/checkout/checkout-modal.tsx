@@ -1,16 +1,19 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useId, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { KorumMark } from '@/components/brand/korum-mark';
 import { useHydrated } from '@/components/ui/use-hydrated';
 import type { CheckoutMethod } from '@/core/checkout/checkout-limits';
 import { useRouter } from '@/i18n/navigation';
 import { initiativePath } from '@/lib/seo/portal-routes';
 import type { CheckoutStart } from '@/services/checkout/checkout.service';
+import type { SponsorshipStart } from '@/services/checkout/sponsorship.service';
 import { isLocale } from '@/i18n/routing';
 import { draftFromHint, initialDraft, loadDraft, type CheckoutOffer, type RetryHint } from './checkout-draft';
 import { CheckoutForm } from './checkout-form';
+import { initialSponsorDraft, loadSponsorDraft, type SponsorDraft, type SponsorOffer } from './sponsor-draft';
+import { SponsorForm } from './sponsor-form';
 
 /**
  * Checkout en 10 segundos (`id="checkout-modal"`, `function openCheckoutModal` del prototipo; QA-F04 · QA-F07 · QA-F10). Diálogo nativo encima
@@ -26,21 +29,41 @@ export interface CheckoutModalProps {
   /** Lo elegido según la aportación rechazada (por si `sessionStorage` está vacío en esta pestaña). */
   retryHint: RetryHint | null;
   startAction: (payload: unknown) => Promise<CheckoutStart>;
+  /** Condiciones del patrocinio de esta iniciativa, o `null` si no admite comercios (taquilla, rifa o campaña cerrada). */
+  sponsor: SponsorOffer | null;
+  /** Pestaña con la que se abre el diálogo (`?modo=comercio`). */
+  initialTab: 'family' | 'sponsor';
+  startSponsorAction: (payload: unknown) => Promise<SponsorshipStart>;
 }
 
-export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startAction }: CheckoutModalProps) {
+export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startAction, sponsor, initialTab, startSponsorAction }: CheckoutModalProps) {
   const t = useTranslations('portal.checkout');
   const router = useRouter();
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
   const dialog = useRef<HTMLDialogElement>(null);
   const headingId = useId();
+  const tabsId = useId();
+  const showTabs = sponsor !== null && offer.kind === 'DONATION' && offer.closedReason === null;
+  const [tab, setTab] = useState<'family' | 'sponsor'>(showTabs ? initialTab : 'family');
+  // Lo escrito en la pestaña de comercio se conserva en memoria al pasar a la de familia y volver (el formulario se desmonta al cambiar).
+  const [typed, setTyped] = useState<{ draft: SponsorDraft; taxId: string } | null>(null);
   // `false` en el servidor y al hidratar, `true` después: lo que dependa del navegador no descuadra el HTML.
   const hydrated = useHydrated();
   const restored = useMemo(() => {
     if (!hydrated || !restore) return null;
     return loadDraft(offer, restoreMethod) ?? (retryHint ? draftFromHint(offer, retryHint, restoreMethod, locale) : null);
   }, [hydrated, restore, offer, restoreMethod, retryHint, locale]);
+  const restoredSponsor = useMemo(() => (hydrated && restore && sponsor ? loadSponsorDraft(offer.initiativeId, sponsor) : null), [hydrated, restore, sponsor, offer.initiativeId]);
+
+  // Flechas, Inicio y Fin cambian de pestaña, como en cualquier lista de pestañas (WAI-ARIA).
+  const moveTab = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' || event.key === 'ArrowLeft' ? 'family' : 'sponsor';
+    setTab(next);
+    document.getElementById(`${tabsId}-${next}`)?.focus();
+  };
 
   useEffect(() => {
     const node = dialog.current;
@@ -89,7 +112,36 @@ export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startA
             </button>
           </div>
         ) : (
-          <CheckoutForm key={restored ? 'restored' : 'fresh'} offer={offer} initial={restored ?? initialDraft(offer)} askTaxIdAgain={restored?.wantsCertificate ?? false} startAction={startAction} />
+          <>
+            {showTabs ? (
+              <div role="tablist" aria-label={t('tabs.label')} className="grid grid-cols-2 gap-1 rounded-2xl bg-patio-cream p-1">
+                {(['family', 'sponsor'] as const).map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="tab"
+                    id={`${tabsId}-${value}`}
+                    aria-selected={tab === value}
+                    aria-controls={`${tabsId}-panel`}
+                    tabIndex={tab === value ? 0 : -1}
+                    onClick={() => setTab(value)}
+                    onKeyDown={moveTab}
+                    className={`min-h-11 rounded-xl px-2 text-sm font-extrabold ${tab === value ? 'bg-varsity-navy text-white shadow' : 'text-ink-soft hover:bg-white'}`}
+                  >
+                    <span aria-hidden="true">{value === 'family' ? '💛 ' : '🏪 '}</span>
+                    {t(`tabs.${value}`)}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div role={showTabs ? 'tabpanel' : undefined} id={showTabs ? `${tabsId}-panel` : undefined} aria-labelledby={showTabs ? `${tabsId}-${tab}` : undefined} tabIndex={showTabs ? 0 : undefined}>
+              {tab === 'sponsor' && sponsor ? (
+                <SponsorForm key={restoredSponsor ? 'restored' : 'fresh'} orgSlug={offer.orgSlug} initiativeId={offer.initiativeId} offer={sponsor} initial={typed?.draft ?? restoredSponsor ?? initialSponsorDraft(sponsor)} initialTaxId={typed?.taxId ?? ''} onChange={(draft, taxId) => setTyped({ draft, taxId })} startAction={startSponsorAction} />
+              ) : (
+                <CheckoutForm key={restored ? 'restored' : 'fresh'} offer={offer} initial={restored ?? initialDraft(offer)} askTaxIdAgain={restored?.wantsCertificate ?? false} startAction={startAction} />
+              )}
+            </div>
+          </>
         )}
       </div>
     </dialog>

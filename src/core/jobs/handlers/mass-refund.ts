@@ -30,12 +30,14 @@ export const STUCK_REFUND_AFTER_MS = 2 * 3_600_000;
 export const REFUND_TIME_BUDGET_MS = 240_000;
 const FETCH_FACTOR = 4;
 const REFUNDABLE_TYPES = ['DONATION', 'TICKET'] as const;
+/** Un patrocinio cobrado tarde (campaña ya cerrada) queda `REFUND_PENDING` y se devuelve aquí; los de una campaña fallida se reasignan, no se devuelven. */
+const PENDING_REFUND_TYPES = [...REFUNDABLE_TYPES, 'SPONSORSHIP'] as const;
 const rejectedKey = (contributionId: number) => `REFUND_REJECTED:${contributionId}`;
 
 async function loadCandidates(db: Db, limit: number, excludedIds: number[]): Promise<number[]> {
   const exclude = excludedIds.length > 0 ? { id: { notIn: excludedIds } } : {};
   const pending = await db.contribution.findMany({
-    where: { ...exclude, status: 'REFUND_PENDING', refundSendingAt: null, type: { in: [...REFUNDABLE_TYPES] }, paycometOrder: { not: null } },
+    where: { ...exclude, status: 'REFUND_PENDING', refundSendingAt: null, type: { in: [...PENDING_REFUND_TYPES] }, paycometOrder: { not: null } },
     orderBy: { id: 'asc' },
     take: limit,
     select: { id: true }

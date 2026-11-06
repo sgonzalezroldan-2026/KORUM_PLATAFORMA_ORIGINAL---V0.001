@@ -380,13 +380,13 @@
     },
     "sponsor": {
       "renewalNotice": {
-        "subject": "Your sponsorship with {organization} renews on {date}",
-        "preheader": "You can still cancel it.",
-        "title": "Your sponsorship renews soon",
-        "body": "On {date} your sponsorship of {amount} with {organization} will renew. If you do not want to renew it, you can cancel before that date.",
+        "subject": "Your Friendly business badge for {organization} expires on {date}",
+        "preheader": "If you want to continue, you can renew it.",
+        "title": "Your badge expires soon",
+        "body": "Your Friendly business badge for {organization} (a {amount} sponsorship) expires on {date}. We make no automatic charge: if you want to continue, renew it before then from the friendly businesses page.",
         "amount": "Amount",
-        "date": "Renewal date",
-        "cta": "Manage my sponsorship"
+        "date": "Expiry date",
+        "cta": "Renew my sponsorship"
       }
     },
     "tax": {
@@ -1374,7 +1374,8 @@
     },
     "nav": {
       "label": "Community sections",
-      "initiatives": "Initiatives and tickets"
+      "initiatives": "Initiatives and tickets",
+      "sponsors": "Friendly businesses"
     },
     "filter": {
       "toggle": "Filter",
@@ -1523,7 +1524,9 @@
       "entityImageAlt": "Home page of {name} on KORUM",
       "initiativeTitle": "{title} · {entity}",
       "initiativeDescription": "{pct}% reached. {text}",
-      "initiativeImageAlt": "{title}: {pct}% reached"
+      "initiativeImageAlt": "{title}: {pct}% reached",
+      "sponsorsTitle": "{name} · Friendly businesses",
+      "sponsorsDescription": "The local businesses that support {name}, by Gold, Silver and Bronze category, with perks for families."
     },
     "og": {
       "progress": "{pct}% reached",
@@ -1661,7 +1664,62 @@
         "soldOut": "Sold out! There are no places left.",
         "ended": "This initiative has passed its deadline and no longer accepts contributions."
       },
-      "custodyTickets": "Secure payment with Paycomet"
+      "custodyTickets": "Secure payment with Paycomet",
+      "tabs": {
+        "label": "Who is contributing",
+        "family": "I'm a family or neighbour",
+        "sponsor": "I'm a local business"
+      },
+      "sponsor": {
+        "intro": {
+          "title": "100 % whole sponsorship + Bronze, Silver or Gold category",
+          "body": "The amount you choose reaches the initiative in full, and your business will appear with its category for 12 months in the Friendly businesses directory."
+        },
+        "tier": {
+          "legend": "1. Choose your Friendly business category",
+          "ORO": "Gold",
+          "PLATA": "Silver (suggested)",
+          "BRONCE": "Bronze",
+          "whole": "The amount reaches the initiative in full. The advertising management fee and its VAT are added on top."
+        },
+        "matching": {
+          "label": "Put my sponsorship into the Matching 2x pool",
+          "help": "It will double families' donations until your amount runs out, once the school or club approves your business."
+        },
+        "fields": {
+          "businessName": "Business name",
+          "taxId": "Tax ID for invoicing (CIF or NIF)",
+          "contactPerson": "Contact person",
+          "phone": "Phone",
+          "email": "Email for the invoice and to ask for your logo",
+          "sector": "Type of business (optional)",
+          "sectorPlaceholder": "Bakery, bookshop…",
+          "promo": "Discount or perk for families (optional)",
+          "promoPlaceholder": "15 % off in store",
+          "promoCode": "Code or coupon (optional)",
+          "promoCodePlaceholder": "CERVANTES15",
+          "promoCodeHint": "Letters without accents, numbers, hyphen and underscore only."
+        },
+        "perk": {
+          "legend": "Optional: perk for families"
+        },
+        "renewal": "Renewal reminder: email me 30 days before my badge expires.",
+        "legal": "The school or club will check that your business fits its values and rules; if it is not admitted, we refund 100 % of what you paid (amount, advertising management and VAT). If the initiative ends without reaching its goal, your sponsorship moves to another active initiative; if there is none, we refund it. Either way, we let you know.",
+        "summary": "{amount} in full to the initiative + {fee} advertising management ({pct} %) + {vat} VAT",
+        "errors": {
+          "form": "Check the highlighted fields.",
+          "required": "This field is required.",
+          "email": "Enter a valid email.",
+          "taxId": "Check the tax ID: it does not look valid.",
+          "phone": "Enter a valid phone number.",
+          "tier": "Choose one of the levels.",
+          "matching": "This initiative's Matching 2x pool is already taken.",
+          "closed": "This initiative no longer accepts sponsorships.",
+          "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
+          "unavailable": "We could not open the payment page. You have not been charged; please try again in a few minutes.",
+          "network": "We could not connect. You have not been charged; please try again."
+        }
+      }
     },
     "simulator": {
       "metaTitle": "Simulated payment",
@@ -1736,6 +1794,100 @@
       "invalid": {
         "title": "We cannot open this result",
         "description": "Check that you opened the full link, or go back to the initiative."
+      },
+      "sponsor": {
+        "title": "Thank you, {name}!",
+        "whole": {
+          "escrow": "Your {amount} reaches the initiative's piggy bank in full",
+          "pool": "Your {amount} stays in the Matching 2x pool: it will double families' donations once the school or club approves your business"
+        },
+        "review": "The school or club will review your business. As soon as it approves it, you will appear in the directory as a {level} Friendly business. If it were not admitted, we would refund 100 % of what you paid.",
+        "documents": "Download your documents (you can print them or save them as PDF):",
+        "justificante": "Sponsorship receipt",
+        "factura": "KORUM invoice",
+        "directory": "See Friendly businesses",
+        "level": {
+          "ORO": "GOLD",
+          "PLATA": "SILVER",
+          "BRONCE": "BRONZE"
+        },
+        "reminder": "We will email you a reminder 30 days before your badge expires."
+      }
+    },
+    "sponsors": {
+      "breadcrumb": "Friendly businesses",
+      "badge": "Committed local business",
+      "title": "Local businesses backing {name}",
+      "intro": "We recognise, by category (Gold, Silver and Bronze), the friendly businesses that support our initiatives and offer perks to families.",
+      "share": "Share",
+      "sharePage": "Meet the local businesses that support {name} on KORUM!",
+      "collaborate": "Support as a business",
+      "listLabel": "Friendly businesses",
+      "empty": {
+        "title": "No friendly businesses yet",
+        "description": "Once a local business backs an initiative and the school or club approves it, it will appear here with its category and its perks for families."
+      },
+      "level": {
+        "ORO": "Friendly business · GOLD category",
+        "PLATA": "Friendly business · SILVER category",
+        "BRONCE": "Friendly business · BRONZE category"
+      },
+      "sectorFallback": "Local business",
+      "noPerk": "Supports our community.",
+      "seeCode": "See my coupon",
+      "codeTitle": "{name} coupon",
+      "close": "Close",
+      "copy": "Copy code",
+      "copied": "Code copied",
+      "shareWhatsapp": "Share on WhatsApp",
+      "shareMessage": "Thanks to {name} for supporting {entity} on KORUM! Coupon: {code}",
+      "shareCard": "Share",
+      "shareMessageNoCode": "Thanks to {name} for supporting {entity} on KORUM!"
+    },
+    "sponsorDocs": {
+      "platform": "KORUM · technology platform",
+      "returned": "This payment has been refunded: the document is kept only as a record.",
+      "print": "Print or save as PDF",
+      "invalid": {
+        "title": "We cannot find this document",
+        "description": "The link is not valid or has expired. Open the one we sent you when you paid, or write to us from support."
+      },
+      "level": {
+        "ORO": "Gold",
+        "PLATA": "Silver",
+        "BRONCE": "Bronze"
+      },
+      "justificante": {
+        "title": "Sponsorship receipt",
+        "sponsor": "Business",
+        "taxId": "Tax ID",
+        "recipient": "Organisation receiving the amount",
+        "initiative": "Initiative",
+        "destination": "Destination",
+        "pool": "The initiative's Matching 2x pool",
+        "escrow": "The initiative's piggy bank",
+        "category": "Category",
+        "amount": "Amount in full",
+        "date": "Payment date",
+        "whole": "100 % of this amount ({amount}) reaches the initiative in full. KORUM's advertising management fee and its VAT are charged separately and appear on the invoice.",
+        "notInvoice": "This receipt proves your sponsorship; it does not replace KORUM's invoice and it is not a tax certificate."
+      },
+      "factura": {
+        "title": "Invoice",
+        "number": "Number",
+        "date": "Date",
+        "issuer": "Issuer",
+        "issuerTaxId": "Issuer tax ID",
+        "recipient": "Recipient",
+        "recipientTaxId": "Recipient tax ID",
+        "concept": "Description",
+        "base": "Taxable amount",
+        "vat": "VAT ({rate} %)",
+        "total": "Invoice total",
+        "verifactu": "Invoice registered for verification (Veri*factu)",
+        "verify": "Verify with the Tax Agency",
+        "none": "This sponsorship does not generate a KORUM invoice.",
+        "issuerFallback": "KORUM (technology platform)"
       }
     }
   }

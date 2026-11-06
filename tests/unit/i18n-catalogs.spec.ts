@@ -63,12 +63,17 @@ describe('QA-C05 · catálogos de traducción', () => {
       'portal.card.matching', 'portal.card.percent', 'portal.card.price', 'portal.card.raisedOf', 'portal.card.stage', 'portal.detail.breakdown.exact', 'portal.detail.goal', 'portal.detail.ticketsAvailable',
       'portal.detail.ticketsOf', 'portal.filter.stage', 'portal.filter.toggle', 'portal.meta.initiativeTitle', 'portal.share.emailSubject', 'portal.share.whatsapp',
       // Checkout (Sprint 3.4): «NIF o NIE», «Aportar a…», «Total», «Imprimir» y «Bizum» se escriben igual en catalán.
-      'portal.checkout.fiscal.taxId', 'portal.checkout.metaTitle', 'portal.checkout.summary.total', 'portal.pass.print', 'portal.simulator.methods.BIZUM']);
+      'portal.checkout.fiscal.taxId', 'portal.checkout.metaTitle', 'portal.checkout.summary.total', 'portal.pass.print', 'portal.simulator.methods.BIZUM',
+      // Patrocinio de comercios (Sprint 3.5): «Compartir», «Plata», «Factura de KORUM», «Total», «Iniciativa», «Número»… y el cupón de ejemplo se escriben igual en catalán.
+      'portal.checkout.sponsor.fields.promoCodePlaceholder', 'portal.result.sponsor.factura', 'portal.result.sponsor.level.PLATA', 'portal.sponsorDocs.factura.number', 'portal.sponsorDocs.factura.title', 'portal.sponsorDocs.factura.total',
+      'portal.sponsorDocs.factura.vat', 'portal.sponsorDocs.justificante.initiative', 'portal.sponsorDocs.justificante.taxId', 'portal.sponsorDocs.level.PLATA', 'portal.sponsors.share', 'portal.sponsors.shareCard']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
       'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp',
       // Checkout (Sprint 3.4): «Total» y «Bizum» son iguales en inglés.
-      'portal.checkout.summary.total', 'portal.simulator.methods.BIZUM']);
+      'portal.checkout.summary.total', 'portal.simulator.methods.BIZUM',
+      // Patrocinio de comercios (Sprint 3.5): el cupón de ejemplo es un código.
+      'portal.checkout.sponsor.fields.promoCodePlaceholder']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

@@ -6,6 +6,7 @@ import { localizeRow, toCardData, toDetailData, type InitiativeCardData, type In
 import { getPrisma } from '@/lib/prisma';
 import { isIndexable } from '@/lib/seo/indexing';
 import { getIndexingFacts, getPublicImpact, getPublicInitiative, getPublicOrganization, listPricingFacts, listPublicInitiatives } from '@/repositories/public.repository';
+import { findSponsorableInitiative, listFriendlySponsors } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { getSetting } from '@/services/settings/settings.service';
 
@@ -109,3 +110,10 @@ export const loadInitiativePage = cache(async (slug: string, initiativeId: numbe
     title: localized.row.title
   };
 });
+
+/** Comercios amigos aprobados y vigentes de la entidad, y la iniciativa a la que un comercio nuevo podría patrocinar (si hay alguna). */
+export async function loadSponsorDirectory(slug: string, now: Date) {
+  const db = getPrisma();
+  const [sponsors, sponsorable] = await Promise.all([listFriendlySponsors(db, slug, now), findSponsorableInitiative(db, slug, now)]);
+  return { sponsors, sponsorableInitiativeId: sponsorable?.id ?? null };
+}

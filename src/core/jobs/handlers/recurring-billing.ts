@@ -58,7 +58,7 @@ export const sponsorRenewalNoticeHandler: JobHandler = async ({ db, now, batchSi
   return { processed, hasMore: false, detail: { notified } };
 };
 
-/** `SPONSOR_RENEWAL_CHARGE`: patrocinios con renovación automática ya vencidos. El cobro llega con el Sprint 3.5. */
+/** `SPONSOR_RENEWAL_CHARGE`: patrocinios con renovación automática ya vencidos. El cobro de la renovación llega con el Sprint 4.2 (junto a la moderación de comercios): no hay tarjeta guardada, así que será un enlace de pago. */
 export const sponsorRenewalChargeHandler: JobHandler = async ({ db, now }) => {
   const where = { status: 'APPROVED', autoRenew: true, expiresAt: { lte: now } } as const;
   const [due, oldest] = await Promise.all([db.sponsor.count({ where }), db.sponsor.findFirst({ where, orderBy: { expiresAt: 'asc' }, select: { expiresAt: true } })]);
@@ -66,7 +66,7 @@ export const sponsorRenewalChargeHandler: JobHandler = async ({ db, now }) => {
   return { processed: due, hasMore: false };
 };
 
-/** `CREDIT_POOL_EXPIRY`: bolsas de patrocinio que superan el tope de la ventana de Paycomet. El reembolso al comercio llega con el Sprint 3.5. */
+/** `CREDIT_POOL_EXPIRY`: bolsas de patrocinio que superan el tope de la ventana de Paycomet. El reembolso al comercio llega con el Sprint 4.2. */
 export const creditPoolExpiryHandler: JobHandler = async ({ db, now }) => {
   const where = { status: 'CREDIT_POOL', paidAt: { not: null, lte: new Date(now.getTime() - CREDIT_POOL_HARD_CAP_DAYS * DAY_MS) } } as const;
   const [due, oldest] = await Promise.all([db.sponsor.count({ where }), db.sponsor.findFirst({ where, orderBy: { paidAt: 'asc' }, select: { paidAt: true } })]);

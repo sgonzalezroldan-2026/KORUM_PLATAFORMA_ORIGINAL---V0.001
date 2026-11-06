@@ -6,6 +6,7 @@ import { getPrisma } from '@/lib/prisma';
 import { releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
 import { WEBHOOK_INVALID_RULE } from '@/lib/rate-limit-rules';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
+import { loadInvoicingContext } from '@/services/invoicing/invoicing-context';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
 import { handlePaymentWebhook, readBodyWithLimit } from '@/services/payments/paycomet-webhook.service';
 import { getPaymentProvider } from '@/services/payments/provider-factory';
@@ -37,7 +38,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!(await reserveAttempt(db, attemptKey, WEBHOOK_INVALID_RULE))) return new Response(null, { status: 429 });
 
   const provider = await getPaymentProvider(db);
-  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET });
+  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db) });
   if (result.status !== 401) await releaseAttempt(db, attemptKey);
   if (result.outcome === 'PROCESSED') {
     after(async () => {

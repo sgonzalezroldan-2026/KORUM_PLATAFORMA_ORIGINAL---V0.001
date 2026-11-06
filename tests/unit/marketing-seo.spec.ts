@@ -333,8 +333,9 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
       for (const locale of LOCALES) {
         expect(urls).toContain(absoluteUrl(locale, '/cervantes'));
         expect(urls).toContain(absoluteUrl(locale, '/cervantes/iniciativas/7'));
+        expect(urls).toContain(absoluteUrl(locale, '/cervantes/comercios'));
       }
-      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 2) * LOCALES.length);
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 1 + 2) * LOCALES.length);
       const initiative = entries.find((entry) => entry.url === absoluteUrl('ca', '/cervantes/iniciativas/7'));
       expect(initiative?.lastModified).toBe(touched);
       expect(initiative?.alternates?.languages).toEqual(languageAlternates('/cervantes/iniciativas/7'));

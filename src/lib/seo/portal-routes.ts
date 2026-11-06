@@ -14,6 +14,12 @@ export const checkoutPath = (orgSlug: string, initiativeId: number): string => `
 export const checkoutResultPath = (orgSlug: string, initiativeId: number): string => `${checkoutPath(orgSlug, initiativeId)}/resultado`;
 /** Página de pago simulada (`?pedido=&sig=`): solo existe con `PAYCOMET_MODE=mock`. */
 export const paymentSimulatorPath = (orgSlug: string, initiativeId: number): string => `${checkoutPath(orgSlug, initiativeId)}/simulador`;
+/** Comercios amigos de la entidad (Sprint 3.5). */
+export const sponsorsPath = (orgSlug: string): string => `/${orgSlug}/comercios`;
+/** Justificante o factura de un patrocinio (`?pedido=&sig=`): solo lo recibe quien pagó. */
+export const SPONSOR_DOCUMENTS = ['justificante', 'factura'] as const;
+export type SponsorDocumentKind = (typeof SPONSOR_DOCUMENTS)[number];
+export const sponsorDocumentPath = (orgSlug: string, kind: SponsorDocumentKind): string => `/${orgSlug}/comercios/documentos/${kind}`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */
 export const INITIATIVE_ID_PATTERN = /^[1-9]\d{0,8}$/;
 /** Mi Hucha (Sprint 3.7). */

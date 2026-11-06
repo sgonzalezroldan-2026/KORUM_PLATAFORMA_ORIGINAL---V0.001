@@ -8,7 +8,8 @@ import { isLocale } from '@/i18n/routing';
 import { breadcrumbJsonLd, entityJsonLd } from '@/lib/seo/json-ld';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { initiativePath, portalPath } from '@/lib/seo/portal-routes';
+import { initiativePath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
+import { Link } from '@/i18n/navigation';
 import { loadPortalHome, loadPortalOrganization } from '@/services/portal/portal-data';
 
 interface PageProps {
@@ -69,6 +70,12 @@ export default async function PortalPage({ params }: PageProps) {
           <li aria-current="page" className="inline-flex min-h-11 items-center rounded-xl bg-white px-4 font-extrabold text-varsity-navy shadow-sm">
             <span aria-hidden="true">{'🚀 '}</span>
             {t('nav.initiatives')}
+          </li>
+          <li>
+            <Link href={sponsorsPath(orgSlug)} className="inline-flex min-h-11 items-center rounded-xl px-4 font-bold text-ink-soft hover:bg-white">
+              <span aria-hidden="true">{'🏪 '}</span>
+              {t('nav.sponsors')}
+            </Link>
           </li>
         </ul>
       </nav>

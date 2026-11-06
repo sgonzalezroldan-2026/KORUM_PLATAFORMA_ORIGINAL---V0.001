@@ -13,8 +13,10 @@ import { getPrisma } from '@/lib/prisma';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import { checkoutResultPath } from '@/lib/seo/portal-routes';
 import { startCheckout, type CheckoutStart } from '@/services/checkout/checkout.service';
+import { startSponsorship, type SponsorshipStart } from '@/services/checkout/sponsorship.service';
 import { settleSimulatedPayment } from '@/services/checkout/payment-simulator';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
+import { loadInvoicingContext } from '@/services/invoicing/invoicing-context';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { getPaymentProvider, PaymentConfigurationError } from '@/services/payments/provider-factory';
@@ -44,6 +46,20 @@ export async function startCheckoutAction(payload: unknown): Promise<CheckoutSta
   return startCheckout({ db, provider, keyring: getKeyring(), hmacSecret: env.DATA_HMAC_SECRET }, payload, { session: session ? { userId: session.userId, email: session.email } : null, ip });
 }
 
+/** Pago de un comercio (pestaña «Soy comercio local»). Mismas garantías que el de las familias: la entidad sale del `orgSlug` y los importes los recalcula el servidor. */
+export async function startSponsorshipAction(payload: unknown): Promise<SponsorshipStart> {
+  const db = getPrisma();
+  const env = getEnv();
+  let provider;
+  try {
+    provider = await getPaymentProvider(db);
+  } catch (error) {
+    if (error instanceof PaymentConfigurationError) return { status: 'UNAVAILABLE' };
+    throw error;
+  }
+  return startSponsorship({ db, provider, keyring: getKeyring(), hmacSecret: env.DATA_HMAC_SECRET }, payload, { session: null, ip: await clientIp() });
+}
+
 const simulatorInput = z.object({
   orgSlug: z.string().min(1).max(80),
   initiativeId: z.number().int().positive(),
@@ -65,7 +81,7 @@ export async function settleSimulatedPaymentAction(raw: unknown): Promise<{ url:
   const provider = await getPaymentProvider(db);
   if (!(provider instanceof MockPaycometProvider)) return null;
 
-  const outcome = await settleSimulatedPayment(db, provider, input, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET });
+  const outcome = await settleSimulatedPayment(db, provider, input, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db) });
   if (outcome === 'INVALID') return null;
   if (outcome === 'SETTLED') {
     // Como el webhook real: el recibo y las entradas salen en el propio flujo del cobro, cuando ya se ha respondido.

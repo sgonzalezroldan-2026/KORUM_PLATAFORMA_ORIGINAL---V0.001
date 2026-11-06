@@ -16,6 +16,7 @@ vi.mock('next/server', () => ({ after }));
 vi.mock('@/lib/error-reporting', () => ({ reportError }));
 vi.mock('@/services/email/outbox-deps', () => ({ buildOutboxDeps: () => ({}) }));
 vi.mock('@/services/email/outbox-processor', () => ({ dispatchOutbox }));
+vi.mock('@/services/invoicing/invoicing-context', () => ({ loadInvoicingContext: async () => undefined }));
 vi.mock('@/services/payments/provider-factory', () => ({ getPaymentProvider }));
 vi.mock('@/services/payments/paycomet-webhook.service', async (importOriginal) => ({ ...(await importOriginal<Record<string, unknown>>()), handlePaymentWebhook }));
 

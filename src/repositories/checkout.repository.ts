@@ -51,7 +51,7 @@ export type CheckoutContext = Awaited<ReturnType<typeof getCheckoutContext>>;
 /** Aportación pendiente de un pedido para el simulador de pagos (solo `PAYCOMET_MODE=mock`): importe y método, nada de la persona. */
 export async function getSimulatedPayment(db: KorumPrismaClient, slug: string, initiativeId: number, order: string) {
   return db.contribution.findFirst({
-    where: { paycometOrder: order, initiativeId, type: { in: ['DONATION', 'TICKET'] }, organization: { slug, archivedAt: null } },
+    where: { paycometOrder: order, initiativeId, type: { in: ['DONATION', 'TICKET', 'SPONSORSHIP'] }, organization: { slug, archivedAt: null } },
     select: { totalChargedCents: true, paymentMethod: true, status: true, type: true }
   });
 }

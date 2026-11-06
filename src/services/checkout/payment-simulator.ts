@@ -2,6 +2,7 @@ import { verifyPaymentSimulator } from '@/core/checkout/checkout-rules';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { getSimulatedPayment } from '@/repositories/checkout.repository';
 import type { MockPaycometProvider } from '@/services/payments/mock-paycomet';
+import type { InvoicingContext } from '@/services/payments/sponsorship-events';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
 
 /**
@@ -20,7 +21,7 @@ export async function settleSimulatedPayment(
   db: KorumPrismaClient,
   provider: MockPaycometProvider,
   input: { orgSlug: string; initiativeId: number; order: string; signature: string; approve: boolean },
-  secrets: { hmacSecret: string; qrSecret: string },
+  secrets: { hmacSecret: string; qrSecret: string; invoicing?: InvoicingContext },
   now: Date = new Date()
 ): Promise<SimulatorOutcome> {
   if (!verifyPaymentSimulator(secrets.hmacSecret, input.order, input.signature)) return 'INVALID';
@@ -29,6 +30,6 @@ export async function settleSimulatedPayment(
   if (payment.status !== 'PENDING') return 'NOT_PENDING';
 
   const notification = provider.buildNotification({ kind: 'PAYMENT', order: input.order, amountCents: payment.totalChargedCents, response: input.approve ? 'OK' : 'KO', bankDateTime: bankDateTime(now) });
-  const result = await handlePaymentWebhook(db, provider, notification.rawBody, notification.contentType, now, { qrSecret: secrets.qrSecret });
+  const result = await handlePaymentWebhook(db, provider, notification.rawBody, notification.contentType, now, { qrSecret: secrets.qrSecret, invoicing: secrets.invoicing });
   return result.outcome === 'PROCESSED' || result.outcome === 'DUPLICATE' ? 'SETTLED' : 'INVALID';
 }

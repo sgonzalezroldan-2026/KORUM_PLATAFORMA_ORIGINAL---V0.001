@@ -15,6 +15,8 @@ export const E2E_SERVER_ENV: Record<string, string> = {
   QR_HMAC_SECRET: 'e2e-qr-hmac-secret-0123456789abcdefgh',
   CRON_SECRET: 'e2e-cron-secret-0123456789abcdefghij',
   PAYCOMET_MODE: 'mock',
+  // NIF emisor de las facturas del fee de los patrocinios (Sprint 3.5): sin él, el cobro de un comercio no se asienta.
+  VERIFACTU_ISSUER_NIF: 'A58818501',
   NEXT_PUBLIC_DEMO_MODE: 'true',
   NEXT_PUBLIC_APP_URL: E2E_BASE_URL,
   NEXT_TELEMETRY_DISABLED: '1',

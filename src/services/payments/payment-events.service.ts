@@ -9,6 +9,7 @@ import type { Db } from '@/lib/db';
 import { queueContributionReceipt } from '@/services/email/outbox-writers';
 import { applyChargebackInTx, applyConfirmedRefundInTx, approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
 import type { PaymentNotification } from './payment-provider';
+import { completeSponsorshipInTx, type InvoicingContext } from './sponsorship-events';
 
 /**
  * Efecto de cada notificación de la entidad de pago, dentro de la transacción del webhook: el asiento y los contadores se confirman
@@ -62,6 +63,8 @@ async function releaseMatching(
 /** Lo que necesita el webhook además de la notificación. El secreto del QR va aparte: sin él, una entrada falla y se reintenta. */
 export interface PaymentEventOptions {
   qrSecret?: string;
+  /** NIF emisor y claves para facturar el fee de un patrocinio dentro del cobro. Se resuelve **antes** de abrir la transacción (necesita otra conexión); sin él, un patrocinio falla y se reintenta. */
+  invoicing?: InvoicingContext;
 }
 
 async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions): Promise<void> {
@@ -74,8 +77,12 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   if (notification.amountCents !== contribution.totalChargedCents) {
     throw new PaymentReconciliationError(`Cobro ${order} confirmado por ${notification.amountCents} y se esperaban ${contribution.totalChargedCents}.`);
   }
+  if (contribution.type === 'SPONSORSHIP') {
+    await completeSponsorshipInTx(tx, contribution, { order, authCode: notification.authCode }, occurredAt, options.invoicing);
+    return;
+  }
   if (contribution.type !== 'DONATION' && contribution.type !== 'TICKET') {
-    throw new PaymentReconciliationError(`Cobro ${order} de tipo ${contribution.type}: este tipo se confirma con su propio flujo (patrocinios, Sprint 3.5).`);
+    throw new PaymentReconciliationError(`Cobro ${order} de tipo ${contribution.type}: este tipo no se confirma por este flujo.`);
   }
   const serviceFeeCents = contribution.totalChargedCents - contribution.amountCents - contribution.guaranteeContributionCents;
   if (serviceFeeCents < 0 || (contribution.type === 'DONATION' && serviceFeeCents !== 0)) {

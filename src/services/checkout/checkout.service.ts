@@ -1,4 +1,4 @@
-import { acceptedGroup, checkoutInputSchema, isTrustedChallengeUrl, signCheckoutResult, signPaymentSimulator, type CheckoutInput } from '@/core/checkout/checkout-rules';
+import { acceptedGroup, checkoutInputSchema, type CheckoutInput } from '@/core/checkout/checkout-rules';
 import { createDonationIntent, DonationIntentError } from '@/core/checkout/donation-intent.service';
 import { provinceByCode } from '@/core/onboarding/provinces';
 import { orderedGroupNames } from '@/core/public/course-challenge';
@@ -10,12 +10,11 @@ import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { releaseUnits, reserveAttempt, reserveUnits } from '@/lib/rate-limit';
 import { CHECKOUT_RULE, CHECKOUT_SEATS_RULE, seatHoldLimit } from '@/lib/rate-limit-rules';
-import { absoluteUrl, localizedPath } from '@/lib/seo/marketing-routes';
-import { checkoutResultPath, paymentSimulatorPath } from '@/lib/seo/portal-routes';
 import { getCheckoutContext } from '@/repositories/checkout.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { loadLockedContribution } from '@/services/payments/payment-reversals';
-import { PaymentProviderError, type PaymentProvider } from '@/services/payments/payment-provider';
+import type { PaymentProvider } from '@/services/payments/payment-provider';
+import { startHostedRedirect } from './hosted-checkout';
 
 /**
  * Inicio del pago de una familia (checkout, Sprint 3.4). Valida lo que llega del navegador, crea la aportación `PENDING` (donación) o retiene
@@ -135,26 +134,8 @@ export async function startCheckout(deps: CheckoutDeps, raw: unknown, context: C
   if (created.status !== 'CREATED') return created;
 
   const { order } = created;
-  const query = (signature: string) => `?${new URLSearchParams({ pedido: order, sig: signature }).toString()}`;
-  const resultUrl = `${absoluteUrl(input.locale, checkoutResultPath(input.orgSlug, input.initiativeId))}${query(signCheckoutResult(deps.hmacSecret, order))}`;
-
-  try {
-    const hosted = await deps.provider.startHostedPayment({
-      order,
-      amountCents: created.totalChargedCents,
-      method: input.method,
-      originalIp: context.ip ?? '0.0.0.0',
-      locale: input.locale,
-      urlOk: resultUrl,
-      urlKo: resultUrl
-    });
-    if (deps.provider.mode === 'mock') {
-      return { status: 'REDIRECT', url: `${localizedPath(input.locale, paymentSimulatorPath(input.orgSlug, input.initiativeId))}${query(signPaymentSimulator(deps.hmacSecret, order))}` };
-    }
-    if (hosted.challengeUrl && isTrustedChallengeUrl(hosted.challengeUrl)) return { status: 'REDIRECT', url: hosted.challengeUrl };
-  } catch (error) {
-    if (!(error instanceof PaymentProviderError)) throw error;
-  }
+  const url = await startHostedRedirect(deps.provider, deps.hmacSecret, { order, totalChargedCents: created.totalChargedCents, method: input.method, orgSlug: input.orgSlug, initiativeId: input.initiativeId, locale: input.locale, ip: context.ip });
+  if (url) return { status: 'REDIRECT', url };
   // Sin página de pago fiable no se cobra nada: la aportación queda fallida y las plazas vuelven al aforo.
   await abandonPendingCheckout(deps.db, order);
   return { status: 'UNAVAILABLE' };

@@ -3,7 +3,7 @@ import { LOCALES } from '@/i18n/routing';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl, languageAlternates, MARKETING_CONTENT_UPDATED, PILLAR_PAGES } from '@/lib/seo/marketing-routes';
-import { initiativePath, portalPath } from '@/lib/seo/portal-routes';
+import { initiativePath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
 import { listIndexableInitiatives, listIndexableOrganizations } from '@/repositories/public.repository';
 
 /**
@@ -36,6 +36,7 @@ async function loadDynamicEntries(): Promise<MetadataRoute.Sitemap> {
   ]);
   return [
     ...organizations.flatMap((organization) => entry(portalPath(organization.slug), organization.updatedAt, 0.7, 'daily')),
+    ...organizations.flatMap((organization) => entry(sponsorsPath(organization.slug), organization.updatedAt, 0.5, 'weekly')),
     ...initiatives.flatMap((initiative) => entry(initiativePath(initiative.organization.slug, initiative.id), initiative.updatedAt, 0.6, 'weekly'))
   ];
 }

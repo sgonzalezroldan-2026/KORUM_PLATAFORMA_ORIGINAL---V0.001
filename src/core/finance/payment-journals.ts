@@ -27,6 +27,25 @@ export function donationOrTicketPayinLines(
   return lines;
 }
 
+/**
+ * Cobro de un patrocinio de comercio (Regla 02 §5): el 100 % del nivel va íntegro a la hucha de la iniciativa —o a la bolsa *Matching 2x* si
+ * el comercio la eligió—, y el fee de gestión publicitaria y su IVA quedan como ingreso e IVA repercutido de KORUM.
+ */
+export function sponsorshipPayinLines(
+  scope: Scope,
+  input: { sponsorId: number; amountCents: number; feeCents: number; vatCents: number; totalChargedCents: number; toMatchingPool: boolean }
+): JournalLine[] {
+  const lines: JournalLine[] = [
+    { account: 'PSP_CLEARING', direction: 'DEBIT', amountCents: input.totalChargedCents, organizationId: scope.organizationId },
+    input.toMatchingPool
+      ? { account: 'MATCHING_POOL', direction: 'CREDIT', amountCents: input.amountCents, ...scope, sponsorId: input.sponsorId }
+      : { account: 'INITIATIVE_ESCROW', direction: 'CREDIT', amountCents: input.amountCents, ...scope }
+  ];
+  if (input.feeCents > 0) lines.push({ account: 'KORUM_REVENUE_SPONSOR_FEE', direction: 'CREDIT', amountCents: input.feeCents, organizationId: scope.organizationId });
+  if (input.vatCents > 0) lines.push({ account: 'TAX_PAYABLE_VAT', direction: 'CREDIT', amountCents: input.vatCents, organizationId: scope.organizationId });
+  return lines;
+}
+
 export function gatewayFeeLines(organizationId: string, feeCents: number): JournalLine[] {
   return [
     { account: 'GATEWAY_FEES_EXPENSE', direction: 'DEBIT', amountCents: feeCents, organizationId },

@@ -77,12 +77,12 @@ export function spanishFiscalYear(date: Date): number {
   return Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric' }).format(date));
 }
 
-/** Pedido de una donación: aleatorio, sin email ni NIF (QA del Sprint 2.1). Las entradas usan `KT` (`reserveTickets`). */
+/** Pedido de una donación: aleatorio, sin email ni NIF (QA del Sprint 2.1). Las entradas usan `KT` (`reserveTickets`) y los patrocinios `KS`. */
 export function newDonationOrder(): string {
   return `KD${randomBytes(8).toString('hex').toUpperCase()}`;
 }
 
-const ORDER_PATTERN = /^K[DT][0-9A-F]{16}$/;
+const ORDER_PATTERN = /^K[DST][0-9A-F]{16}$/;
 const SIGNATURE_PATTERN = /^[0-9a-f]{64}$/;
 
 export const isCheckoutOrder = (value: string): boolean => ORDER_PATTERN.test(value);

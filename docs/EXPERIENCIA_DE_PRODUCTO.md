@@ -45,7 +45,7 @@
 
 ## 4. Catálogo de emails y notificaciones
 
-**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `auth.invitation` (Sprint 3.2), `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome`, `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
+**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `auth.invitation` (Sprint 3.2), `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome` (Sprint 4.2: con los enlaces del justificante y la factura), `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
 
 Reglas: solo emails **transaccionales** por defecto (los comerciales exigen consentimiento); remitente *"{Entidad} vía KORUM"*; idioma de la persona; versión HTML y de texto; botón principal único; sin adjuntos pesados (enlaces de descarga). WhatsApp se usa **solo para compartir enlaces** (`wa.me`); no se envían mensajes automáticos por WhatsApp.
 
