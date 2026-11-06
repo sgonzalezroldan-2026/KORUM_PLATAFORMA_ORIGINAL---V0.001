@@ -82,9 +82,23 @@ export const PUBLIC_DIRECTORY_LIMIT = 2000;
  */
 export async function listPublicDirectory(db: KorumPrismaClient) {
   return db.organization.findMany({
-    where: { archivedAt: null, publicIndexing: true },
-    select: { slug: true, name: true, vertical: true, province: true },
+    // Solo entidades verificadas (KYB): un alta recién hecha, sin comprobar, no puede aparecer como «AMPA CEIP Cervantes» (auditoría del 3.2, I2).
+    where: { archivedAt: null, publicIndexing: true, kybStatus: 'VERIFIED' },
+    select: { slug: true, name: true, vertical: true, province: true, city: true, postalCode: true },
     orderBy: [{ name: 'asc' }, { slug: 'asc' }],
     take: PUBLIC_DIRECTORY_LIMIT
+  });
+}
+
+/**
+ * Eventos de una entidad con la portería abierta (PIN vigente), para la pantalla de entrada de los voluntarios. Solo el título y el
+ * identificador: nada del aforo, el dinero ni las personas, que solo ve quien ya ha entrado con el PIN (QA-SEC05).
+ */
+export async function listGateEvents(db: KorumPrismaClient, slug: string, now: Date = new Date()) {
+  return db.initiative.findMany({
+    where: { organization: { slug, archivedAt: null }, format: 'TICKETING', gatePinHash: { not: null }, gatePinExpiresAt: { gt: now } },
+    select: { id: true, title: true, organization: { select: { id: true, name: true } } },
+    orderBy: { gatePinExpiresAt: 'asc' },
+    take: 20
   });
 }

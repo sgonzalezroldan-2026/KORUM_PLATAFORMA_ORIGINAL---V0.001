@@ -19,7 +19,10 @@ export class PreviewEmailProvider implements EmailProvider {
     this.sent.push(message);
     const id = `preview-${createHash('sha256').update(message.idempotencyKey).digest('hex').slice(0, 16)}`;
     // En Vercel el disco es de solo lectura, y en producción los enlaces y códigos de un solo uso no deben quedar en ficheros.
-    const canWrite = this.options.writeFiles ?? (!process.env.VERCEL && process.env.NODE_ENV !== 'production');
+    // `KORUM_EMAIL_PREVIEW_FILES=1` solo lo pone el servidor de las pruebas de navegador sobre la compilación de producción (`next start`,
+    // como la CI), que necesita leer los códigos de acceso; en Vercel nunca se escribe.
+    const testServer = process.env.KORUM_EMAIL_PREVIEW_FILES === '1';
+    const canWrite = this.options.writeFiles ?? (!process.env.VERCEL && (process.env.NODE_ENV !== 'production' || testServer));
     if (!canWrite) return { providerMessageId: id };
 
     const directory = this.options.directory ?? path.join(process.cwd(), '.email-preview');

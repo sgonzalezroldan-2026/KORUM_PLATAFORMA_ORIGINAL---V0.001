@@ -8,6 +8,9 @@ export interface PublicEntityHit {
   name: string;
   vertical: 'SCHOOL' | 'SPORTS_CLUB' | 'CULTURAL';
   province: string;
+  /** Municipio y código postal que la entidad declaró en el alta (Sprint 3.2); las anteriores no los tienen. */
+  city?: string | null;
+  postalCode?: string | null;
 }
 
 export const ENTITY_SEARCH_MIN_LENGTH = 2;
@@ -31,7 +34,7 @@ export function cleanSearchQuery(raw: string): string | null {
 }
 
 /**
- * Entidades cuyo nombre o provincia contienen **todas** las palabras escritas. Primero las que empiezan por lo escrito; después, por orden
+ * Entidades cuyo nombre, municipio, código postal o provincia contienen **todas** las palabras escritas. Primero las que empiezan por lo escrito; después, por orden
  * alfabético. Función pura: el filtrado en tiempo real y la prueba usan la misma.
  */
 export function filterEntities(entities: readonly PublicEntityHit[], rawQuery: string, limit: number = ENTITY_SEARCH_RESULT_LIMIT): PublicEntityHit[] {
@@ -39,7 +42,7 @@ export function filterEntities(entities: readonly PublicEntityHit[], rawQuery: s
   if (!query) return [];
   const words = query.split(' ');
   const matches = entities.filter((entity) => {
-    const haystack = normalizeForSearch(`${entity.name} ${entity.province}`);
+    const haystack = normalizeForSearch([entity.name, entity.city, entity.postalCode, entity.province].filter(Boolean).join(' '));
     return words.every((word) => haystack.includes(word));
   });
   const startsWithQuery = (entity: PublicEntityHit) => normalizeForSearch(entity.name).startsWith(query);

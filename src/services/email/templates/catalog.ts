@@ -1,5 +1,6 @@
 import type { EmailContent, TemplateContext, TemplateDefinition } from './email-content';
 import {
+  authInvitation,
   authMagicLink,
   authOtp,
   gatePinRevoked,
@@ -51,6 +52,7 @@ function register<Payload>(templateKey: string, definition: TemplateDefinition<P
 const ENTRIES = [
   register('auth.magicLink', authMagicLink),
   register('auth.otp', authOtp),
+  register('auth.invitation', authInvitation),
   register('contribution.receipt', contributionReceipt),
   register('ticket.pass', ticketPass),
   register('gate.pinRevoked', gatePinRevoked),

@@ -302,14 +302,15 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
     expect(custom.some((rule) => list(rule.allow).includes('/$'))).toBe(false);
   });
 
-  it('el sitemap lista solo la portada y las 8 páginas pilar, en los 3 idiomas y con sus alternativas', () => {
+  it('el sitemap lista solo la portada, las 8 páginas pilar y el alta de entidades, en los 3 idiomas y con sus alternativas', () => {
     const entries = sitemap();
-    expect(entries).toHaveLength(MARKETING_PATHS.length * LOCALES.length);
+    expect(entries).toHaveLength((MARKETING_PATHS.length + 1) * LOCALES.length);
+    expect(entries.filter((entry) => new URL(entry.url).pathname.endsWith('/registro-comunidad'))).toHaveLength(LOCALES.length);
     expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
     for (const entry of entries) {
       expect(entry.lastModified).toBe(MARKETING_CONTENT_UPDATED);
       expect(Object.keys(entry.alternates?.languages ?? {}).sort()).toEqual(['ca', 'en', 'es', 'x-default']);
-      expect(new URL(entry.url).pathname).not.toMatch(/\/(panel|admin|api|login|registro-comunidad|ideas)(\/|$)/);
+      expect(new URL(entry.url).pathname).not.toMatch(/\/(panel|admin|api|login|acceso|invitacion|ideas)(\/|$)/);
     }
     expect(MARKETING_CONTENT_UPDATED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });

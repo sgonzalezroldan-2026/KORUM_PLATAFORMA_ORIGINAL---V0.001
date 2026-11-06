@@ -50,6 +50,34 @@ export const authOtp: TemplateDefinition<z.infer<typeof otpPayload>> = {
   })
 };
 
+const invitationPayload = z.object({
+  url: z.url({ protocol: /^https?$/ }),
+  hours: z.number().int().positive().max(168),
+  organizationName: z.string().min(1).max(120).nullable(),
+  roleLabel: z.string().min(1).max(60).nullable()
+});
+/** Invitación a activar una cuenta con contraseña: la segunda persona firmante de una entidad, o el primer Super-Admin (sin entidad). */
+export const authInvitation: TemplateDefinition<z.infer<typeof invitationPayload>> = {
+  schema: invitationPayload,
+  secretFields: ['url'],
+  build: (payload, { t }): EmailContent => {
+    const organization = payload.organizationName;
+    return {
+      subject: organization !== null ? t('auth.invitation.subject', { organization }) : t('auth.invitation.subjectPlatform'),
+      preheader: t('auth.invitation.preheader'),
+      title: organization !== null ? t('auth.invitation.title', { organization }) : t('auth.invitation.titlePlatform'),
+      paragraphs: [
+        organization !== null ? t('auth.invitation.body', { organization, role: payload.roleLabel ?? '' }) : t('auth.invitation.bodyPlatform'),
+        t('auth.invitation.security', { hours: payload.hours })
+      ],
+      facts: [],
+      button: { label: t('auth.invitation.cta'), url: payload.url },
+      footnote: t('auth.invitation.footnote'),
+      footer: 'account'
+    };
+  }
+};
+
 const gatePayload = z.object({ initiativeId: z.number().int().positive() });
 export const gatePinRevoked: TemplateDefinition<z.infer<typeof gatePayload>> = {
   schema: gatePayload,

@@ -1,6 +1,6 @@
 import { getAccountBalance } from '@/core/finance/ledger-balances';
 import { releaseInitiativeQuotas } from '@/core/finance/quota-reservation';
-import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
+import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { inTransaction, type Db } from '@/lib/db';
 import { refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
 import { retryDelayMs } from '../job-schedule';
@@ -163,15 +163,16 @@ export const massRefundHandler: JobHandler = async ({ db, now, batchSize, deps, 
 
 /**
  * Vuelve a dar a una devolución agotada sus intentos (lo decide una persona, p. ej. tras arreglar algo con Paycomet). Queda en la auditoría.
- * Solo una cuenta de Super-Admin con verificación en dos pasos puede hacerlo (`assertSuperadminWithTwoFactor`).
+ * Solo un Super-Admin verificado puede hacerlo (`VerifiedSuperadminActor`, emitido por la capa de sesión).
  */
-export async function reactivateRejectedRefund(db: Db, contributionId: number, resolvedById: string, now: Date = new Date()): Promise<boolean> {
-  await assertSuperadminWithTwoFactor(db, resolvedById, 'payment.reactivate_refund', String(contributionId));
+export async function reactivateRejectedRefund(db: Db, actor: VerifiedSuperadminActor, contributionId: number, now: Date = new Date()): Promise<boolean> {
+  assertVerifiedSuperadmin(actor, 'payment.reactivate_refund', now);
   return inTransaction(db, async (tx) => {
+    await revalidateActor(tx, actor, 'payment.reactivate_refund', now);
     const contribution = await tx.contribution.findUniqueOrThrow({ where: { id: contributionId }, select: { organizationId: true } });
     const { count } = await tx.opsAlert.updateMany({ where: { dedupeKey: rejectedKey(contributionId), status: 'OPEN' }, data: { occurrences: 0, lastSeenAt: new Date(now.getTime() - 24 * 3_600_000) } });
     if (count === 0) return false;
-    await tx.auditLog.create({ data: { actorType: 'USER', actorUserId: resolvedById, organizationId: contribution.organizationId, action: 'payment.refund_reactivated', targetType: 'Contribution', targetId: String(contributionId), metadataJson: {} } });
+    await tx.auditLog.create({ data: { actorType: 'USER', actorUserId: actor.userId, organizationId: contribution.organizationId, action: 'payment.refund_reactivated', targetType: 'Contribution', targetId: String(contributionId), metadataJson: {} } });
     return true;
   });
 }

@@ -30,7 +30,15 @@ export interface Membership {
 
 export type SessionActor =
   | { kind: 'anonymous'; requestMeta?: RequestMeta }
-  | { kind: 'user'; userId: string; isSuperadmin: boolean; memberships: readonly Membership[]; requestMeta?: RequestMeta }
+  | {
+      kind: 'user';
+      userId: string;
+      isSuperadmin: boolean;
+      memberships: readonly Membership[];
+      /** La sesión superó el segundo factor (TOTP o código de respaldo). Lo fija la capa de sesión; sin él no se firma (doble firma). */
+      secondFactor?: boolean;
+      requestMeta?: RequestMeta;
+    }
   /** Sesión de portería abierta con el PIN de un evento: solo ve y valida **su** evento. */
   | { kind: 'gate'; gateSessionId: string; organizationId: string; initiativeId: number; requestMeta?: RequestMeta };
 

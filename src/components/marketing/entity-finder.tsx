@@ -89,7 +89,7 @@ export function EntityFinder() {
                 <span className="text-sm text-ink-soft">
                   {t(`vertical.${hit.vertical}`)}
                   {' · '}
-                  {hit.province}
+                  {hit.city ? `${hit.city} (${hit.province})` : hit.province}
                 </span>
               </Link>
             </li>

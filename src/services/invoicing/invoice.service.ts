@@ -1,5 +1,5 @@
 import { bpsOf } from '@/core/finance/money';
-import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
+import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import type { Keyring } from '@/core/security/crypto';
 import { validateTaxId } from '@/core/tax/tax-id';
 import { sealInvoiceRecipientTaxId } from '@/core/tax/tax-id-vault';
@@ -165,23 +165,24 @@ export class InvoiceNotAllowedError extends Error {
 
 export type UnknownInvoiceResolution =
   /** El proveedor no la tiene: vuelve a la cola de envío. */
-  | { registered: false; resolvedById: string }
+  | { registered: false }
   /** El proveedor la tiene, con este estado y esta referencia. */
-  | { registered: true; status: 'ACCEPTED' | 'ACCEPTED_WITH_ERRORS' | 'REJECTED'; providerReference: string | null; resolvedById: string };
+  | { registered: true; status: 'ACCEPTED' | 'ACCEPTED_WITH_ERRORS' | 'REJECTED'; providerReference: string | null };
 
 /**
- * Resuelve una factura de resultado desconocido, cuando una persona (solo Super-Admin con verificación en dos pasos, `assertSuperadminWithTwoFactor`) ya ha comprobado en el
+ * Resuelve una factura de resultado desconocido, cuando una persona (solo un Super-Admin verificado, `VerifiedSuperadminActor`) ya ha comprobado en el
  * proveedor qué pasó. Mientras una esté en `SENT`, el envío de todas las siguientes se detiene. Queda en la auditoría.
  */
-export async function resolveUnknownInvoice(db: Db, invoiceId: number, resolution: UnknownInvoiceResolution): Promise<void> {
-  await assertSuperadminWithTwoFactor(db, resolution.resolvedById, 'invoice.resolve_unknown', String(invoiceId));
+export async function resolveUnknownInvoice(db: Db, actor: VerifiedSuperadminActor, invoiceId: number, resolution: UnknownInvoiceResolution, now: Date = new Date()): Promise<void> {
+  assertVerifiedSuperadmin(actor, 'invoice.resolve_unknown', now);
   await inTransaction(db, async (tx) => {
+    await revalidateActor(tx, actor, 'invoice.resolve_unknown', now);
     const invoice = await tx.invoice.findUniqueOrThrow({ where: { id: invoiceId }, select: { organizationId: true } });
     const data = resolution.registered ? { verifactuStatus: resolution.status, providerReference: resolution.providerReference } : { verifactuStatus: 'PENDING' as const, sentAt: null };
     const { count } = await tx.invoice.updateMany({ where: { id: invoiceId, verifactuStatus: 'SENT' }, data });
     if (count === 0) throw new InvoiceNotAllowedError(invoiceId, 'no está pendiente de resolver');
     await tx.auditLog.create({
-      data: { actorType: 'USER', actorUserId: resolution.resolvedById, organizationId: invoice.organizationId, action: 'invoice.registration_resolved', targetType: 'Invoice', targetId: String(invoiceId), metadataJson: { registered: resolution.registered } }
+      data: { actorType: 'USER', actorUserId: actor.userId, organizationId: invoice.organizationId, action: 'invoice.registration_resolved', targetType: 'Invoice', targetId: String(invoiceId), metadataJson: { registered: resolution.registered } }
     });
   });
 }

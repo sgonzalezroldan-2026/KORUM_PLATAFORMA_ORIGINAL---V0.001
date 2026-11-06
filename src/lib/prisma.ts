@@ -93,6 +93,23 @@ const globalForPrisma = globalThis as unknown as { korumPrisma?: KorumPrismaClie
  * datos, y se reutiliza entre recargas en desarrollo para no agotar conexiones.
  */
 export function getPrisma(): KorumPrismaClient {
-  globalForPrisma.korumPrisma ??= createPrismaClient({ connectionString: getEnv().DATABASE_URL });
+  globalForPrisma.korumPrisma ??= createPrismaClient(connectionFromUrl(getEnv().DATABASE_URL));
   return globalForPrisma.korumPrisma;
+}
+
+/**
+ * `?schema=` en `DATABASE_URL` (como lo entiende `prisma migrate`) elige el esquema de PostgreSQL: lo usan las pruebas de navegador, que
+ * trabajan en un esquema propio (`korum_e2e`). `pg` no conoce ese parámetro ni `connection_limit`, así que se quitan de la cadena y se pasan
+ * al adaptador.
+ */
+export function connectionFromUrl(databaseUrl: string): CreatePrismaClientOptions {
+  const parsed = new URL(databaseUrl);
+  const schema = parsed.searchParams.get('schema') ?? undefined;
+  // `connection_limit` (también de Prisma): la base local sin Docker (PGlite) solo admite una conexión a la vez.
+  const limit = Number(parsed.searchParams.get('connection_limit') ?? '') || undefined;
+  parsed.searchParams.delete('schema');
+  parsed.searchParams.delete('connection_limit');
+  // Con una sola conexión las transacciones se ponen en cola: los 2 s que Prisma da para conseguir conexión son de un servidor con pool.
+  const queued = limit === 1 ? { transactionOptions: { maxWait: 60_000, timeout: 120_000 } } : {};
+  return { connectionString: schema || limit ? parsed.toString() : databaseUrl, schema, maxConnections: limit, ...queued };
 }

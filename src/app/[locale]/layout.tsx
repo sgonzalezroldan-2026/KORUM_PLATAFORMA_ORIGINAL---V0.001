@@ -5,6 +5,7 @@ import { Fredoka, Plus_Jakarta_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { CookieNotice } from '@/components/layout/cookie-notice';
+import { DemoBar } from '@/components/layout/demo-bar';
 import { ToastProvider } from '@/components/ui/toast-provider';
 import { NON_ESSENTIAL_COOKIES } from '@/config/cookies';
 import { routing } from '@/i18n/routing';
@@ -63,6 +64,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           >
             {t('skipToContent')}
           </a>
+          {/* Solo en el entorno de demostración (Regla 01 §6); en producción no se monta. */}
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ? <DemoBar /> : null}
           <ToastProvider>{children}</ToastProvider>
           {/* Sin cookies no esenciales registradas no se monta nada: el aviso solo existe cuando hace falta (CUMPLIMIENTO §6). */}
           {NON_ESSENTIAL_COOKIES.length > 0 ? <CookieNotice cookies={NON_ESSENTIAL_COOKIES} /> : null}

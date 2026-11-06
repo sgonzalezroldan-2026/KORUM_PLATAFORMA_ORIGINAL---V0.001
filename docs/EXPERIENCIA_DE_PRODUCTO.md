@@ -45,13 +45,14 @@
 
 ## 4. Catálogo de emails y notificaciones
 
-**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome`, `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
+**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `auth.invitation` (Sprint 3.2), `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome`, `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
 
 Reglas: solo emails **transaccionales** por defecto (los comerciales exigen consentimiento); remitente *"{Entidad} vía KORUM"*; idioma de la persona; versión HTML y de texto; botón principal único; sin adjuntos pesados (enlaces de descarga). WhatsApp se usa **solo para compartir enlaces** (`wa.me`); no se envían mensajes automáticos por WhatsApp.
 
 | `templateKey` | Cuándo | A quién | Contenido y botón |
 | :--- | :--- | :--- | :--- |
 | `auth.magicLink` / `auth.otp` | Al iniciar sesión | Persona | Enlace o código, caducidad visible |
+| `auth.invitation` | Al dar de alta una entidad (cofirmante) o el primer Super-Admin | Persona invitada | Enlace de un solo uso (72 h) para crear la contraseña; recuerda que después se activa la verificación en dos pasos |
 | `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
 | `ticket.pass` | Entrada o papeleta comprada | Comprador | QR adjunto, número de serie, fecha y lugar; *Ver mi entrada* (el calendario va como `.ics` adjunto) |
 | `gate.pinRevoked` | 20 intentos fallidos de PIN en un evento | Firmantes | Que el PIN se ha revocado por seguridad y que las sesiones abiertas siguen; *Generar otro PIN* |

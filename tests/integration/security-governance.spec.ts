@@ -39,7 +39,7 @@ afterAll(async () => {
   await db.$disconnect();
 });
 
-const actorFor = (userId: string, overrides: Partial<Extract<SessionActor, { kind: 'user' }>> = {}, memberships: Array<{ organizationId: string; role: MemberRole }> = []): SessionActor => ({ kind: 'user', userId, isSuperadmin: false, memberships, ...overrides });
+const actorFor = (userId: string, overrides: Partial<Extract<SessionActor, { kind: 'user' }>> = {}, memberships: Array<{ organizationId: string; role: MemberRole }> = []): SessionActor => ({ kind: 'user', userId, isSuperadmin: false, memberships, secondFactor: true, ...overrides });
 
 async function createIdea(organizationId: string, overrides: { phase?: 'PUBLIC_VOTING' | 'DOUBLE_CHECK' | 'PHASE0_MOD'; expiresAt?: Date; verifiedVotes?: number; authorCanonicalEmail?: string } = {}) {
   return db.idea.create({
@@ -601,6 +601,19 @@ describe('QA-SEC03 · doble firma', () => {
     await expect(requestSignature(db, SECRET, cosignerActor, organization.id, target, NOW)).rejects.toMatchObject({ reason: 'TWO_FACTOR_REQUIRED' });
     await db.user.update({ where: { id: director.id }, data: { isSuperadmin: true } });
     await expect(requestSignature(db, SECRET, directorActor, organization.id, target, NOW)).rejects.toMatchObject({ reason: 'NOT_A_SIGNER' });
+  });
+
+  it('con 2FA en la cuenta pero una sesión abierta solo con el enlace mágico, no se firma ni se completa una firma (Sprint 3.2)', async () => {
+    const { organization, cosigner, cosignerActor } = await team();
+    const { target } = await ideaTarget(organization.id);
+    const emailOnly = { ...cosignerActor, secondFactor: false } as SessionActor;
+    await expect(requestSignature(db, SECRET, emailOnly, organization.id, target, NOW)).rejects.toMatchObject({ reason: 'TWO_FACTOR_REQUIRED' });
+    expect(await db.auditLog.count({ where: { actorUserId: cosigner.id, action: 'double_check.denied' } })).toBeGreaterThan(0);
+
+    // Con la sesión verificada pide el enlace; si quien lo usa no superó el segundo factor, la firma no se hace.
+    const { token, otp } = await requestSignature(db, SECRET, cosignerActor, organization.id, target, NOW);
+    const result = await completeSignature(db, SECRET, emailOnly, { token, otp }, NOW);
+    expect(result).toEqual({ status: 'NOT_ALLOWED', reason: 'TWO_FACTOR_REQUIRED' });
   });
 
   it('una liquidación a proveedor no se puede firmar sin su factura', async () => {

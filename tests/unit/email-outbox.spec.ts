@@ -41,6 +41,7 @@ const initiative = (ticketSubtype: 'EVENT' | 'RAFFLE' | null = null) => ({
 /** Un payload válido por plantilla. Si se añade una plantilla al catálogo sin ejemplo aquí, el test de cobertura falla. */
 const SAMPLES: Record<string, unknown> = {
   'auth.magicLink': { url: 'https://korum.test/auth/verify?t=abc123', minutes: 15 },
+  'auth.invitation': { url: 'https://korum.test/invitacion#t=abc.def', hours: 72, organizationName: 'CEIP Cervantes', roleLabel: 'Presidencia del AFA' },
   'auth.otp': { code: '123456', minutes: 10 },
   'contribution.receipt': { initiativeId: 7, amountCents: 2_500, guaranteeCents: 150, totalCents: 2_650, reference: 'KOR-2026-0001', groupName: '3º de Primaria', fiscalCertificate: true },
   'ticket.pass': { passUuid: PASS_UUID, serialCode: 'PASE-2026-000012', initiativeId: 7, quantity: 2, raffleNumbers: [] },

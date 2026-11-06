@@ -271,6 +271,18 @@
         "body": "Enter this code to sign in. It expires in {minutes} minutes.",
         "codeLabel": "Code",
         "footnote": "If you did not ask for it, ignore this message and do not share the code with anyone."
+      },
+      "invitation": {
+        "subject": "You're invited to co-sign for {organization} on KORUM",
+        "subjectPlatform": "Activate your KORUM Super-Admin account",
+        "preheader": "Create your password and turn on two-step verification.",
+        "title": "{organization} is counting on you",
+        "titlePlatform": "Activate your KORUM account",
+        "body": "You have been appointed {role} of {organization}. Your signature, together with that of the person who runs the organisation, is needed to approve ideas and release funds: no single person can do it alone.",
+        "bodyPlatform": "A KORUM Super-Admin account has been created with this email. Create your password to access the console.",
+        "security": "The link expires in {hours} hours and works only once. When you sign in we will ask you to turn on two-step verification with a phone app.",
+        "cta": "Create my password",
+        "footnote": "Don't recognise this invitation or this organisation? Ignore this email: unless you accept it, you won't have any role and nothing will be activated."
       }
     },
     "receipt": {
@@ -435,7 +447,7 @@
   "finder": {
     "label": "Name of your school, club or organisation",
     "placeholder": "For example, Cervantes",
-    "hint": "Type at least 2 letters. We search by name or province.",
+    "hint": "Type at least 2 letters. Search by name, town, postcode or province.",
     "searching": "Searching…",
     "results": "{count, plural, one {# organisation found} other {# organisations found}}",
     "error": "We could not run the search right now.",
@@ -937,5 +949,389 @@
         "ctaText": "Register your organisation for free and sort out the rest as you go."
       }
     }
+  },
+  "auth": {
+    "signOut": "Sign out",
+    "login": {
+      "metaTitle": "Sign in",
+      "metaDescription": "Sign in to KORUM with an email link or code, or with your password if you sign for your organisation.",
+      "title": "Sign in to KORUM",
+      "subtitle": "Families and local businesses sign in without a password. People who sign for an organisation use a password and their authenticator app.",
+      "noAccount": "Is your organisation not on KORUM yet?",
+      "register": "Register it for free",
+      "modeLabel": "How you want to sign in",
+      "mode": {
+        "email": "Families and businesses",
+        "password": "Signatories and team"
+      },
+      "steps": {
+        "emailEnter": "Sign in with your email",
+        "passwordEnter": "Sign in with your password",
+        "link-sent": "Check your inbox",
+        "code": "Enter the code",
+        "second-factor": "Two-step verification",
+        "reset-request": "Recover your password",
+        "reset-code": "Create a new password"
+      },
+      "emailIntro": "We'll send you a link to sign in with one click. If you prefer, we'll send you a 6-digit code.",
+      "email": "Your email",
+      "sendLink": "Send me the link",
+      "sendCode": "I'd rather have a 6-digit code",
+      "linkSent": "If {email} can sign in to KORUM, a link is already in its inbox. It expires in {minutes} minutes and works only once.",
+      "useCodeInstead": "Send me a code instead",
+      "changeEmail": "Use another email",
+      "codeSent": "We've sent a code to {email}. It expires in {minutes} minutes.",
+      "code": "6-digit code",
+      "enter": "Sign in",
+      "passwordIntro": "For the head, treasurer or chair of the organisation and for the KORUM team. Next we'll ask for the code from your app.",
+      "password": "Password",
+      "forgot": "I've forgotten my password",
+      "resetIntro": "We'll email you a code to create a new password. Your two-step verification stays on.",
+      "back": "Back",
+      "newPassword": "New password",
+      "passwordHint": "At least 12 characters. A sentence you'll remember makes a good password.",
+      "savePassword": "Save the new password",
+      "resetDone": "Password changed. You can now sign in with it.",
+      "sendResetCode": "Send me the code"
+    },
+    "errors": {
+      "INVALID_EMAIL_OR_PASSWORD": "The email or password is not correct.",
+      "EMAIL_NOT_VERIFIED": "You haven't verified your email yet. We've sent you a message to do so.",
+      "INVALID_OTP": "The code is not correct. Check it and try again.",
+      "OTP_EXPIRED": "The code has expired. Ask for a new one.",
+      "TOO_MANY_ATTEMPTS": "Too many attempts with this code. Ask for a new one.",
+      "INVALID_EMAIL": "Enter a valid email.",
+      "PASSWORD_TOO_SHORT": "The password must be at least 12 characters long.",
+      "INVALID_PASSWORD": "The password is not correct.",
+      "RATE_LIMITED": "Too many attempts in a row. Wait a few minutes and try again.",
+      "KORUM_SAME_INBOX": "You already have an account with this same inbox. Sign in with the email you used the first time.",
+      "KORUM_DISPOSABLE_EMAIL": "We don't accept temporary email addresses. Use your usual email.",
+      "KORUM_INVALID_EMAIL": "Enter a valid email.",
+      "KORUM_ACCOUNT_CLOSED": "This account was closed at its holder's request and can no longer be used.",
+      "LINK_INVALID": "The link no longer works: it has expired or was already used. Ask for another one.",
+      "INVALID_CODE": "The app code is not correct. Check that your phone's clock is right.",
+      "INVALID_BACKUP_CODE": "That backup code is not valid or was already used.",
+      "ACCOUNT_TEMPORARILY_LOCKED": "For security, verification is locked for a few minutes after several failed attempts.",
+      "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Too many attempts. Enter your password again to start over.",
+      "INVALID_TWO_FACTOR_COOKIE": "Too much time has passed. Enter your password again.",
+      "KORUM_SECOND_FACTOR_LIMIT": "Too many codes in a row. Wait 15 minutes and try again.",
+      "TOTP_ALREADY_ENABLED": "Two-step verification is already on for your account.",
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Your account has no password. Create one with “I've forgotten my password”.",
+      "UNKNOWN": "That didn't work. Try again in a few seconds."
+    },
+    "secondFactor": {
+      "intro": "Open your authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) and enter the KORUM code.",
+      "backupIntro": "Enter one of the backup codes you saved. Each one works only once.",
+      "backupCode": "Backup code",
+      "code": "App code",
+      "verify": "Verify",
+      "useApp": "Use the app code",
+      "useBackup": "I've lost my phone: use a backup code",
+      "back": "Back to password"
+    },
+    "twoFactor": {
+      "metaTitle": "Two-step verification",
+      "setupTitle": "Turn on two-step verification",
+      "verifyTitle": "Confirm it's you",
+      "why": "Anyone who signs for an organisation or runs KORUM needs two proofs: their password and a code from their phone. So even if someone gets into your email, they can't approve or release funds in your name.",
+      "intro": "Confirm your password to begin. You'll need an authenticator app on your phone.",
+      "password": "Your password",
+      "start": "Start",
+      "scanTitle": "Scan the code with your app",
+      "scanIntro": "Open your authenticator app, add an account and scan this code. If you can't scan it, type the key in by hand.",
+      "qrAlt": "QR code to add KORUM to your authenticator app",
+      "qrLoading": "Preparing the code…",
+      "manualKey": "Key to type in by hand",
+      "backupTitle": "Your backup codes",
+      "backupIntro": "Keep them somewhere safe (for example, printed). They let you in if you lose your phone; each one works once. We won't show them again.",
+      "backupSaved": "I've saved the backup codes",
+      "firstCode": "First code from the app",
+      "confirm": "Turn on and continue"
+    },
+    "invitation": {
+      "metaTitle": "Activate your account",
+      "title": "Activate your account",
+      "checking": "Checking the invitation…",
+      "invalid": "This invitation no longer works: it has expired or was already used. Ask the person who runs your organisation to send you another.",
+      "alreadyActive": "You already have a KORUM account with {email}. Sign in with it and open the email link again to accept the role.",
+      "goToLogin": "Go to sign in",
+      "platformIntro": "You are about to activate the KORUM Super-Admin account for {email}.",
+      "intro": "{organization} has appointed you {role}. You are about to activate the account for {email}.",
+      "nextSteps": "Create your password. Next you'll turn on two-step verification with a phone app: without it you can't sign.",
+      "password": "Create your password",
+      "passwordHint": "At least 12 characters. A sentence you'll remember makes a good password.",
+      "repeat": "Repeat the password",
+      "mismatch": "The two passwords don't match.",
+      "submit": "Create password and continue",
+      "weak": "The password must be between 12 and 128 characters long.",
+      "unknown": "That didn't work. Try again in a few seconds.",
+      "otherAccount": "You are signed in with another account. This invitation is for {email}: sign in with it and open the email link again.",
+      "acceptRole": "Accept the role"
+    }
+  },
+  "registration": {
+    "metaTitle": "Register your school, PTA or club",
+    "metaDescription": "Free 3-step registration for schools (through their parents' association or owner), clubs and cultural organisations, with dual signature.",
+    "title": "Register your community",
+    "intro": "Three steps and you're in, with no sign-up fee. The first {exempt} you raise each school year carry no platform commission.",
+    "haveAccount": "Already have an account?",
+    "login": "Sign in",
+    "formLabel": "Registration form",
+    "progress": "Registration steps",
+    "stepLabel": "Step {number} of {total}",
+    "steps": {
+      "community": "Community and legal holder",
+      "signers": "The two signatories",
+      "activation": "Activation"
+    },
+    "back": "Back",
+    "continue": "Continue",
+    "submit": "Register",
+    "fixErrors": "{count, plural, one {Check the highlighted field.} other {Check the # highlighted fields.}}",
+    "choose": "Choose an option",
+    "vertical": {
+      "label": "What kind of organisation are you?",
+      "SCHOOL": "School",
+      "SPORTS_CLUB": "Sports club",
+      "CULTURAL": "Cultural organisation"
+    },
+    "legalTitle": "Holder of the funds",
+    "legalIntro": "This is the organisation with a tax ID that receives the money and signs. Before your first campaign with payments you'll upload its documents.",
+    "publicTitle": "Your page on KORUM",
+    "fields": {
+      "name": "Public name",
+      "slug": "Your page address",
+      "province": "Province",
+      "city": "Town",
+      "postalCode": "Postcode",
+      "legalName": "Legal name of the holder",
+      "legalForm": "Legal form",
+      "centerOwnership": "School ownership",
+      "ley49": "We are covered by Law 49/2002 (tax certificates for donations)",
+      "contentLocale": "Language you'll write your campaigns in",
+      "publicIndexing": "Show our page in search engines",
+      "roleLabel": "Role",
+      "personName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "password": "Password",
+      "passwordRepeat": "Repeat the password",
+      "representationDeclared": "I declare that I represent {legalName} and that the details are true."
+    },
+    "hints": {
+      "name": "As families know you, e.g. “CEIP Cervantes”.",
+      "slug": "It will look like this: {url}. Lowercase letters, numbers and hyphens only.",
+      "legalName": "E.g. “AFA CEIP Cervantes” or “Club Bàsquet Vallès”.",
+      "publicSchool": "A state school registers through its parents' association (AMPA/AFA).",
+      "ley49": "Only if the organisation can prove it. Otherwise families receive a named contribution receipt.",
+      "ley49Owner": "The owner of a private or state-funded private school cannot issue donation certificates here.",
+      "contentLocale": "The KORUM site is available in Spanish, Catalan and English; your texts, in this language.",
+      "publicIndexing": "You can change it at any time from the panel.",
+      "roleLabel": "How it will appear next to their signature.",
+      "password": "At least 12 characters. Next you'll turn on two-step verification."
+    },
+    "legalForm": {
+      "PARENTS_ASSOCIATION": "Parents' association (AMPA / AFA)",
+      "SCHOOL_OWNER": "Owner of a private or state-funded private school",
+      "FOUNDATION": "Foundation",
+      "SPORTS_ENTITY": "Sports club or organisation",
+      "CULTURAL_ASSOCIATION": "Cultural association",
+      "OTHER_NONPROFIT": "Other non-profit organisation"
+    },
+    "ownership": {
+      "PUBLIC": "State",
+      "CONCERTED": "State-funded private",
+      "PRIVATE": "Private"
+    },
+    "contentLocale": {
+      "es": "Spanish",
+      "ca": "Catalan",
+      "en": "English"
+    },
+    "signers": {
+      "intro": "Approving ideas and releasing funds takes two signatures from two different people. Neither can do it alone.",
+      "directorTitle": "First signature: you",
+      "directorIntro": "You'll manage the organisation on KORUM. You'll sign in with your email and this password.",
+      "cosignerTitle": "Second signature",
+      "cosignerIntro": "We'll send them an invitation to activate their account. It must be another person, with their own email."
+    },
+    "roles": {
+      "SCHOOL": {
+        "director": "Head of school",
+        "cosigner": "Chair of the parents' association"
+      },
+      "SPORTS_CLUB": {
+        "director": "Club president",
+        "cosigner": "Club treasurer"
+      },
+      "CULTURAL": {
+        "director": "President of the organisation",
+        "cosigner": "Treasurer of the organisation"
+      }
+    },
+    "activation": {
+      "title": "Here's {name}",
+      "exempt": "The first <strong>{amount}</strong> this school year, with no platform commission.",
+      "groups": "{count} groups for the challenges ({vertical}), which you can adjust.",
+      "signers": "Dual signature: {director} and {cosigner}.",
+      "kyb": "Before the first campaign with payments you'll upload the holder's documents (tax ID, statutes or minutes, ID of the representative and account ownership).",
+      "money": "Families' money is held by PAYCOMET until each goal is reached. KORUM is the technology: it doesn't hold your money."
+    },
+    "fieldErrors": {
+      "vertical": "Choose the kind of organisation.",
+      "name": "Enter a name between 2 and 80 characters long.",
+      "slug": "Use 3 to 40 lowercase letters, numbers or hyphens.",
+      "provinceCode": "Choose the province.",
+      "city": "Enter the town.",
+      "postalCode": "The postcode has 5 digits.",
+      "legalName": "Enter the holder's legal name.",
+      "legalForm": "Choose the legal form.",
+      "centerOwnership": "Choose the school ownership.",
+      "ley49": "Check this option.",
+      "contentLocale": "Choose a language.",
+      "publicIndexing": "Check this option.",
+      "email": "Enter a valid email.",
+      "phone": "Enter a phone number with 9 to 15 digits.",
+      "roleLabel": "Enter the role (3 to 60 characters).",
+      "password": "The password must be at least 12 characters long.",
+      "passwordRepeat": "The two passwords don't match.",
+      "representationDeclared": "Tick the box to continue."
+    },
+    "issues": {
+      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "A state school can only register through its parents' association.",
+      "SCHOOL_OWNER_NO_LEY49": "The owner of a private or state-funded private school cannot tick Law 49/2002.",
+      "LEGAL_FORM_NOT_FOR_VERTICAL": "That legal form doesn't match this kind of organisation.",
+      "OWNERSHIP_REQUIRED": "Choose whether the school is state, state-funded private or private.",
+      "UNKNOWN_PROVINCE": "Choose the province from the list.",
+      "POSTAL_CODE_PROVINCE_MISMATCH": "That postcode doesn't belong to the chosen province.",
+      "SLUG_INVALID": "Use 3 to 40 lowercase letters, numbers or hyphens (not starting or ending with a hyphen).",
+      "SLUG_RESERVED": "KORUM already uses that address. Try another one."
+    },
+    "failures": {
+      "SLUG_TAKEN": "Another organisation already uses that address. Try another one.",
+      "SAME_INBOX": "The two signatures must belong to two people with different emails.",
+      "COSIGNER_UNAVAILABLE": "That email can't sign for an organisation. Use another person's email.",
+      "DIRECTOR_EMAIL_IN_USE": "That email already has a KORUM account. Sign in with it and come back to this form, or use another email.",
+      "DISPOSABLE_EMAIL": "We don't accept temporary email addresses. Use a usual email.",
+      "RATE_LIMITED": "Too many registrations from this connection. Try again in an hour.",
+      "UNKNOWN": "We couldn't complete the registration. Try again in a few seconds."
+    },
+    "verify": {
+      "title": "{name} is now on KORUM!",
+      "created": "We've sent a code to {email} to verify your email, and the invitation to {cosigner}.",
+      "resent": "We've sent you a new code.",
+      "code": "6-digit code",
+      "submit": "Verify and continue",
+      "resend": "Send me another code"
+    },
+    "codeErrors": {
+      "INVALID_OTP": "The code is not correct. Check it and try again.",
+      "OTP_EXPIRED": "The code has expired. Ask for another one.",
+      "TOO_MANY_ATTEMPTS": "Too many attempts with this code. Ask for another one.",
+      "RATE_LIMITED": "Too many attempts in a row. Wait a few minutes.",
+      "UNKNOWN": "That didn't work. Try again in a few seconds."
+    }
+  },
+  "panel": {
+    "headerSubtitle": "Organisation panel",
+    "welcome": "Hello, {name}",
+    "intro": "From here you'll manage ideas, campaigns and payments, always with both signatures.",
+    "wallet": {
+      "title": "Organisation piggy bank",
+      "explain": "This is the identifier of your piggy bank on KORUM. Each campaign's money is held by PAYCOMET until the goal is reached.",
+      "exempt": "No platform commission this school year: <strong>{remaining}</strong> available out of {total}."
+    },
+    "signers": {
+      "title": "Dual signature ({ready} of {total} ready)",
+      "role": {
+        "DIRECTOR": "First signature",
+        "COSIGNER": "Second signature"
+      },
+      "status": {
+        "ACTIVE": "Ready to sign (two-step verification on)",
+        "NEEDS_TWO_FACTOR": "Two-step verification still needs turning on",
+        "INVITED": "Invitation sent: account not yet activated"
+      },
+      "resend": "Resend the invitation",
+      "resendResult": {
+        "SENT": "Invitation sent again.",
+        "NOT_NEEDED": "Not needed: the account is already active, or it was sent very recently.",
+        "FORBIDDEN": "Only the first signatory can resend the invitation.",
+        "ERROR": "It couldn't be sent. Try again in a few seconds."
+      }
+    },
+    "kyb": {
+      "title": "Holder's documents",
+      "status": {
+        "PENDING": "Pending. You can prepare ideas and campaigns; to publish the first one with payments you need the documents.",
+        "SUBMITTED": "Sent. We're reviewing them.",
+        "VERIFIED": "Verified. You can publish campaigns with payments.",
+        "REJECTED": "A document needs correcting. Check the message we've sent you."
+      },
+      "documents": "Tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate (plus proof of Law 49/2002 if you ticked it). They are uploaded privately."
+    }
+  },
+  "gate": {
+    "mode": "Door mode",
+    "chooseTitle": "Which event are you on the door for?",
+    "emptyTitle": "No door is open",
+    "emptyText": "The organisation opens the door for each event with a PIN. Ask the organiser for it.",
+    "capacityTitle": "Live attendance",
+    "capacity": "{checkedIn} of {capacity} people inside",
+    "insideHint": "You're on the door for this event. When you finish, close the session.",
+    "pinIntro": "Enter the 6-digit PIN the event organiser gave you.",
+    "pin": "Event PIN",
+    "enter": "Open the door",
+    "leave": "Close the door on this phone",
+    "errors": {
+      "INVALID": "The PIN is not correct or is no longer active.",
+      "LOCKED": "Too many attempts from this connection. Wait 15 minutes or ask the organiser for help."
+    }
+  },
+  "admin": {
+    "headerTitle": "KORUM console",
+    "title": "Platform overview",
+    "organizations": "Active organisations",
+    "pendingKyb": "Organisations with pending documents",
+    "alertsTitle": "{count, plural, =0 {No open alerts} one {# open alert} other {# open alerts}}",
+    "noAlertsTitle": "All good",
+    "noAlertsText": "There are no open alerts right now.",
+    "alertMeta": "{count, plural, one {# time} other {# times}} · last: {date}",
+    "severity": {
+      "INFO": "Notice",
+      "WARNING": "Warning",
+      "CRITICAL": "Critical"
+    },
+    "alertType": {
+      "JOB_FAILED": "A scheduled task has failed",
+      "REFUND_REJECTED": "Paycomet has rejected a refund",
+      "REFUND_STUCK": "Refund not confirmed",
+      "SPLIT_WINDOW_EXPIRING": "The 90-day payout window is ending",
+      "RECONCILIATION_MISMATCH": "Mismatch in the Paycomet reconciliation",
+      "CHARGEBACK_UNCONFIRMED": "Chargeback not confirmed",
+      "INVOICE_STUCK": "Invoice pending in Veri*factu",
+      "SPONSOR_RENEWAL_DUE": "Sponsorship renewal pending",
+      "CREDIT_POOL_EXPIRED": "Sponsorship pool expired",
+      "MONTHLY_TOPUP_DUE": "Monthly contributions due",
+      "ESCROW_LEFTOVER": "Money left in a refunded piggy bank",
+      "CARD_DELETE_FAILED": "A saved card could not be deleted",
+      "PRIVACY_REQUEST_OVERDUE": "Privacy request past its deadline",
+      "ENCRYPTION_KEY_MISSING": "An encryption key is missing",
+      "PRIVACY_ERASURE_FAILED": "Erasing an inactive account failed",
+      "EMAIL_DELIVERY_FAILED": "Some emails cannot be sent"
+    }
+  },
+  "forbidden": {
+    "title": "You don't have access to this page",
+    "description": "You're signed in with an account that doesn't have permission here. If you sign for another organisation or use another account, sign in with it.",
+    "switchAccount": "Sign in with another account"
+  },
+  "demo": {
+    "label": "Demo environment",
+    "notice": "Demo · simulated payments",
+    "environments": "Demo environments",
+    "family": "Families",
+    "panel": "Organisation panel",
+    "console": "Console"
   }
 }

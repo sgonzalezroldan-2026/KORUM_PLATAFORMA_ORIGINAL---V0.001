@@ -111,7 +111,8 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 - Tipos: `npm run typecheck` · Lint: `npm run lint`
 - Tests unitarios (Vitest): `npm run test:unit`
 - Tests de integración con PostgreSQL real (libro mayor, triggers, concurrencia): `npm run test:integration` (base local sin Docker: `npm run db:dev`)
-- Tests E2E de escritorio (`1440px`) y móvil (`430px`) con accesibilidad (Playwright + axe): `npm run test:e2e`
+- Tests E2E de escritorio (`1440px`) y móvil (`430px`) con accesibilidad (Playwright + axe): `npm run test:e2e` (necesitan la base local de `npm run db:dev` o `E2E_DATABASE_URL`: crean, migran y siembran su propio esquema `korum_e2e`; para certificar, mejor contra la compilación de producción con `CI=1`)
+- Alta del primer Super-Admin: `npm run superadmin:bootstrap` (invita a `SUPERADMIN_BOOTSTRAP_EMAIL` si aún no hay ninguno)
 - Migraciones: `npm run db:migrate` (aplica `prisma/migrations/`); las migraciones del libro mayor se escriben a mano y el escáner vigila que no se pierdan sus triggers. Datos de demostración: `npm run db:seed` (idempotente, ~25 s en la base local; nunca en producción real) y `npm run db:reset` (borra la base, migra y siembra; ambos solo en bases locales o de demostración y nunca con `PAYCOMET_MODE=live`, vigilado por `seed-guard`). Los E2E en modo CI (`CI=1`, sobre `npm run build`) necesitan compilar con `NEXT_PUBLIC_DEMO_MODE=true`, como hace el CI: sin eso la galería `/dev/ui` no existe en la compilación
 
 ---

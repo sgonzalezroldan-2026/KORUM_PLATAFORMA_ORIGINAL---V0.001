@@ -168,3 +168,8 @@ export async function revokeGateSession(db: KorumPrismaClient, actor: SessionAct
     await tx.auditLog.create({ data: { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, organizationId, action: 'gate.session_revoked', targetType: 'GateSession', targetId: gateSessionId, metadataJson: { initiativeId: session!.initiativeId } } });
   });
 }
+
+/** El voluntario cierra la portería en su móvil: la sesión deja de valer en el servidor, no solo se borra la cookie (auditoría del 3.2, M8). */
+export async function closeGateSessionByToken(db: Db, secret: string, token: string, now: Date = new Date()): Promise<void> {
+  await db.gateSession.updateMany({ where: { tokenHash: hashToken(secret, token), revokedAt: null }, data: { revokedAt: now } });
+}

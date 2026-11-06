@@ -10,7 +10,7 @@ import { PaymentProviderError } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { executePendingRefund, refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
 import { approvePayout, executeApprovedPayout, PayoutNotAllowedError, resolveUnknownSplit } from '@/services/payments/split-transfer.service';
-import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, uniqueId, verifiedSuperadmin } from './test-database';
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración' };
 const IP = '10.0.0.1';
@@ -356,9 +356,9 @@ describe('QA-P02 · reembolso al medio de pago original', () => {
     expect(await statusOf(viaWebhook.id)).toBe('REFUNDED');
 
     // Una persona comprueba que no se hizo: se puede volver a pedir, y queda en la auditoría.
-    const person = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    await resolveUnknownRefund(db, viaPerson.id, { refunded: false, resolvedById: person.id });
-    await expect(resolveUnknownRefund(db, viaPerson.id, { refunded: true, resolvedById: person.id })).rejects.toBeInstanceOf(RefundNotAllowedError);
+    const { actor: person } = await verifiedSuperadmin(db);
+    await resolveUnknownRefund(db, person, viaPerson.id, { refunded: false });
+    await expect(resolveUnknownRefund(db, person, viaPerson.id, { refunded: true })).rejects.toBeInstanceOf(RefundNotAllowedError);
     expect(await refundContribution(db, retry, viaPerson.id, IP)).toMatchObject({ refunded: true });
     expect(retry.calls).toHaveLength(1);
     expect(await db.auditLog.count({ where: { action: 'payment.refund_resolved', targetId: String(viaPerson.id) } })).toBe(1);
@@ -713,13 +713,13 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
     expect(retry.calls.map((call) => call.order)).not.toContain(firstOrder);
 
     const unknown = await db.escrowPayoutSplit.findFirstOrThrow({ where: { payoutId: payout.id, status: 'SENDING' } });
-    const person = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    await expect(resolveUnknownSplit(db, unknown.id, { splitAuthCode: '  ', resolvedById: person.id }, now)).rejects.toThrow(/vacío/);
-    await resolveUnknownSplit(db, unknown.id, { splitAuthCode: 'S-COMPROBADO', resolvedById: person.id }, now);
+    const { actor: person } = await verifiedSuperadmin(db, now);
+    await expect(resolveUnknownSplit(db, person, unknown.id, { splitAuthCode: '  ' }, now)).rejects.toThrow(/vacío/);
+    await resolveUnknownSplit(db, person, unknown.id, { splitAuthCode: 'S-COMPROBADO' }, now);
     expect(await executeApprovedPayout(db, retry, payout.id, now)).toEqual({ status: 'EXECUTED', doneCents: 2_700 });
     expect(retry.calls.map((call) => call.order)).not.toContain(firstOrder);
     expect(await db.auditLog.count({ where: { action: 'payout.split_resolved', targetId: String(unknown.id) } })).toBe(1);
-    await expect(resolveUnknownSplit(db, unknown.id, { splitAuthCode: null, resolvedById: person.id }, now)).rejects.toBeInstanceOf(PayoutNotAllowedError);
+    await expect(resolveUnknownSplit(db, person, unknown.id, { splitAuthCode: null }, now)).rejects.toBeInstanceOf(PayoutNotAllowedError);
     expect(await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: unknown.id } })).toMatchObject({ status: 'DONE' });
   });
 

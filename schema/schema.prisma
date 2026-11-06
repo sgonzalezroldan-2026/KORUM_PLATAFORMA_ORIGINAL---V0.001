@@ -617,11 +617,16 @@ model Verification {
 }
 
 model TwoFactor {
-  id          String @id
-  secret      String
-  backupCodes String
-  userId      String
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                      String    @id
+  /// Secreto TOTP y códigos de respaldo, cifrados por Better Auth con BETTER_AUTH_SECRET.
+  secret                  String
+  backupCodes             String
+  userId                  String
+  /// El secreto solo vale cuando la persona ha introducido un primer código correcto.
+  verified                Boolean   @default(true)
+  failedVerificationCount Int       @default(0)
+  lockedUntil             DateTime?
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -670,6 +675,9 @@ model Organization {
   vertical                 OrganizationVertical @default(SCHOOL)
   province                 String
   provinceCode             String?
+  /// Municipio y código postal que declara la entidad en el alta: el buscador de la portada los usa (ARQUITECTURA_LANDING §1.1).
+  city                     String?
+  postalCode               String?
   contactEmail             String?
   contactPhone             String?
   cif                      String?              @unique

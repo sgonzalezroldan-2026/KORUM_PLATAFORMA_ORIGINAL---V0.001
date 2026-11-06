@@ -271,6 +271,18 @@
         "body": "Introduce este código para entrar. Caduca en {minutes} minutos.",
         "codeLabel": "Código",
         "footnote": "Si no lo has pedido tú, ignora este mensaje y no compartas el código con nadie."
+      },
+      "invitation": {
+        "subject": "Te invitan a firmar por {organization} en KORUM",
+        "subjectPlatform": "Activa tu cuenta de Super-Admin de KORUM",
+        "preheader": "Crea tu contraseña y activa la verificación en dos pasos.",
+        "title": "{organization} cuenta contigo",
+        "titlePlatform": "Activa tu cuenta de KORUM",
+        "body": "Te han nombrado {role} de {organization}. Tu firma, junto a la de la persona que dirige la entidad, es necesaria para aprobar las ideas y liberar los fondos: ninguna persona puede hacerlo sola.",
+        "bodyPlatform": "Se ha creado la cuenta de Super-Admin de KORUM con este email. Crea tu contraseña para entrar en la consola.",
+        "security": "El enlace caduca en {hours} horas y solo sirve una vez. Al entrar te pediremos activar la verificación en dos pasos con una app del móvil.",
+        "cta": "Crear mi contraseña",
+        "footnote": "¿No reconoces esta invitación o esta entidad? Ignora este email: si no la aceptas, no tendrás ningún cargo ni se activará nada."
       }
     },
     "receipt": {
@@ -435,7 +447,7 @@
   "finder": {
     "label": "Nombre de tu colegio, club o entidad",
     "placeholder": "Por ejemplo, Cervantes",
-    "hint": "Escribe al menos 2 letras. Se busca por nombre o por provincia.",
+    "hint": "Escribe al menos 2 letras. Se busca por nombre, municipio, código postal o provincia.",
     "searching": "Buscando…",
     "results": "{count, plural, one {# entidad encontrada} other {# entidades encontradas}}",
     "error": "No hemos podido buscar ahora mismo.",
@@ -937,5 +949,389 @@
         "ctaText": "Da de alta tu entidad gratis y resuelve el resto sobre la marcha."
       }
     }
+  },
+  "auth": {
+    "signOut": "Cerrar sesión",
+    "login": {
+      "metaTitle": "Iniciar sesión",
+      "metaDescription": "Entra en KORUM con un enlace o un código por email, o con tu contraseña si firmas por tu entidad.",
+      "title": "Entra en KORUM",
+      "subtitle": "Las familias y los comercios entran sin contraseña. Quien firma por una entidad usa contraseña y su app de verificación.",
+      "noAccount": "¿Vuestra entidad aún no está en KORUM?",
+      "register": "Dadla de alta gratis",
+      "modeLabel": "Cómo quieres entrar",
+      "mode": {
+        "email": "Familias y comercios",
+        "password": "Firmantes y equipo"
+      },
+      "steps": {
+        "emailEnter": "Entra con tu email",
+        "passwordEnter": "Entra con tu contraseña",
+        "link-sent": "Revisa tu correo",
+        "code": "Escribe el código",
+        "second-factor": "Verificación en dos pasos",
+        "reset-request": "Recupera tu contraseña",
+        "reset-code": "Crea una contraseña nueva"
+      },
+      "emailIntro": "Te enviamos un enlace para entrar con un solo clic. Si lo prefieres, te mandamos un código de 6 dígitos.",
+      "email": "Tu email",
+      "sendLink": "Enviarme el enlace",
+      "sendCode": "Prefiero un código de 6 dígitos",
+      "linkSent": "Si {email} puede entrar en KORUM, ya tiene un enlace en su correo. Caduca en {minutes} minutos y solo sirve una vez.",
+      "useCodeInstead": "Mejor envíame un código",
+      "changeEmail": "Usar otro email",
+      "codeSent": "Hemos enviado un código a {email}. Caduca en {minutes} minutos.",
+      "code": "Código de 6 dígitos",
+      "enter": "Entrar",
+      "passwordIntro": "Para la dirección, la tesorería o la presidencia de la entidad y para el equipo de KORUM. Después te pediremos el código de tu app.",
+      "password": "Contraseña",
+      "forgot": "He olvidado mi contraseña",
+      "resetIntro": "Te enviaremos un código a tu email para crear una contraseña nueva. Tu verificación en dos pasos seguirá activa.",
+      "back": "Volver",
+      "newPassword": "Contraseña nueva",
+      "passwordHint": "Al menos 12 caracteres. Una frase que recuerdes es una buena contraseña.",
+      "savePassword": "Guardar la contraseña nueva",
+      "resetDone": "Contraseña cambiada. Ya puedes entrar con ella.",
+      "sendResetCode": "Enviarme el código"
+    },
+    "errors": {
+      "INVALID_EMAIL_OR_PASSWORD": "El email o la contraseña no son correctos.",
+      "EMAIL_NOT_VERIFIED": "Aún no has verificado tu email. Te hemos enviado un mensaje para hacerlo.",
+      "INVALID_OTP": "El código no es correcto. Revísalo e inténtalo de nuevo.",
+      "OTP_EXPIRED": "El código ha caducado. Pide uno nuevo.",
+      "TOO_MANY_ATTEMPTS": "Demasiados intentos con este código. Pide uno nuevo.",
+      "INVALID_EMAIL": "Escribe un email válido.",
+      "PASSWORD_TOO_SHORT": "La contraseña debe tener al menos 12 caracteres.",
+      "INVALID_PASSWORD": "La contraseña no es correcta.",
+      "RATE_LIMITED": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar.",
+      "KORUM_SAME_INBOX": "Ya tienes una cuenta con esta misma bandeja de correo. Entra con el email que usaste la primera vez.",
+      "KORUM_DISPOSABLE_EMAIL": "No admitimos emails temporales. Usa tu email habitual.",
+      "KORUM_INVALID_EMAIL": "Escribe un email válido.",
+      "KORUM_ACCOUNT_CLOSED": "Esta cuenta se cerró a petición de su titular y ya no puede usarse.",
+      "LINK_INVALID": "El enlace ya no sirve: ha caducado o ya se usó. Pide otro.",
+      "INVALID_CODE": "El código de la app no es correcto. Comprueba que la hora del móvil es la correcta.",
+      "INVALID_BACKUP_CODE": "Ese código de respaldo no es válido o ya se usó.",
+      "ACCOUNT_TEMPORARILY_LOCKED": "Por seguridad, la verificación está bloqueada unos minutos tras varios fallos.",
+      "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Demasiados intentos. Vuelve a escribir tu contraseña para empezar de nuevo.",
+      "INVALID_TWO_FACTOR_COOKIE": "Ha pasado demasiado tiempo. Vuelve a escribir tu contraseña.",
+      "KORUM_SECOND_FACTOR_LIMIT": "Demasiados códigos seguidos. Espera 15 minutos y vuelve a probar.",
+      "TOTP_ALREADY_ENABLED": "La verificación en dos pasos ya está activa en tu cuenta.",
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Tu cuenta no tiene contraseña. Crea una con «He olvidado mi contraseña».",
+      "UNKNOWN": "No ha funcionado. Inténtalo de nuevo en unos segundos."
+    },
+    "secondFactor": {
+      "intro": "Abre tu app de verificación (Google Authenticator, Microsoft Authenticator, 1Password…) y escribe el código de KORUM.",
+      "backupIntro": "Escribe uno de los códigos de respaldo que guardaste. Cada uno sirve una sola vez.",
+      "backupCode": "Código de respaldo",
+      "code": "Código de la app",
+      "verify": "Verificar",
+      "useApp": "Usar el código de la app",
+      "useBackup": "He perdido el móvil: usar un código de respaldo",
+      "back": "Volver a la contraseña"
+    },
+    "twoFactor": {
+      "metaTitle": "Verificación en dos pasos",
+      "setupTitle": "Activa la verificación en dos pasos",
+      "verifyTitle": "Confirma que eres tú",
+      "why": "Quien firma por una entidad o gestiona KORUM necesita dos pruebas: su contraseña y un código de su móvil. Así, aunque alguien entre en tu correo, no puede aprobar ni liberar fondos en tu nombre.",
+      "intro": "Confirma tu contraseña para empezar. Necesitarás una app de verificación en el móvil.",
+      "password": "Tu contraseña",
+      "start": "Empezar",
+      "scanTitle": "Escanea el código con tu app",
+      "scanIntro": "Abre la app de verificación, añade una cuenta y escanea este código. Si no puedes escanearlo, escribe la clave a mano.",
+      "qrAlt": "Código QR para añadir KORUM a tu app de verificación",
+      "qrLoading": "Preparando el código…",
+      "manualKey": "Clave para escribir a mano",
+      "backupTitle": "Tus códigos de respaldo",
+      "backupIntro": "Guárdalos en un lugar seguro (por ejemplo, impresos). Sirven para entrar si pierdes el móvil; cada uno, una sola vez. No volveremos a mostrarlos.",
+      "backupSaved": "He guardado los códigos de respaldo",
+      "firstCode": "Primer código de la app",
+      "confirm": "Activar y continuar"
+    },
+    "invitation": {
+      "metaTitle": "Activa tu cuenta",
+      "title": "Activa tu cuenta",
+      "checking": "Comprobando la invitación…",
+      "invalid": "Esta invitación ya no sirve: ha caducado o ya se usó. Pide a la persona que dirige vuestra entidad que te envíe otra.",
+      "alreadyActive": "Ya tienes cuenta en KORUM con {email}. Inicia sesión con ella y vuelve a abrir el enlace del email para aceptar el cargo.",
+      "goToLogin": "Ir a iniciar sesión",
+      "platformIntro": "Vas a activar la cuenta de Super-Admin de KORUM para {email}.",
+      "intro": "{organization} te ha nombrado {role}. Vas a activar la cuenta de {email}.",
+      "nextSteps": "Crea tu contraseña. Después activarás la verificación en dos pasos con una app del móvil: sin ella no se puede firmar.",
+      "password": "Crea tu contraseña",
+      "passwordHint": "Al menos 12 caracteres. Una frase que recuerdes es una buena contraseña.",
+      "repeat": "Repite la contraseña",
+      "mismatch": "Las dos contraseñas no coinciden.",
+      "submit": "Crear contraseña y continuar",
+      "weak": "La contraseña debe tener entre 12 y 128 caracteres.",
+      "unknown": "No ha funcionado. Inténtalo de nuevo en unos segundos.",
+      "otherAccount": "Has iniciado sesión con otra cuenta. Esta invitación es para {email}: entra con ella y vuelve a abrir el enlace del email.",
+      "acceptRole": "Aceptar el cargo"
+    }
+  },
+  "registration": {
+    "metaTitle": "Dar de alta tu colegio, AMPA o club",
+    "metaDescription": "Alta gratuita en 3 pasos para colegios (a través de su AMPA/AFA o su titular), clubes y entidades culturales, con doble firma.",
+    "title": "Dad de alta vuestra comunidad",
+    "intro": "Tres pasos y estáis dentro, sin cuota de alta. Los primeros {exempt} que recaudéis cada curso no pagan comisión de plataforma.",
+    "haveAccount": "¿Ya tenéis cuenta?",
+    "login": "Iniciar sesión",
+    "formLabel": "Formulario de alta",
+    "progress": "Pasos del alta",
+    "stepLabel": "Paso {number} de {total}",
+    "steps": {
+      "community": "Comunidad y titular legal",
+      "signers": "Las dos personas firmantes",
+      "activation": "Activación"
+    },
+    "back": "Atrás",
+    "continue": "Continuar",
+    "submit": "Dar de alta",
+    "fixErrors": "{count, plural, one {Revisa el campo marcado.} other {Revisa los # campos marcados.}}",
+    "choose": "Elige una opción",
+    "vertical": {
+      "label": "¿Qué tipo de entidad sois?",
+      "SCHOOL": "Colegio",
+      "SPORTS_CLUB": "Club deportivo",
+      "CULTURAL": "Entidad cultural"
+    },
+    "legalTitle": "Titular de los fondos",
+    "legalIntro": "Es la entidad con CIF que recibe el dinero y firma. Antes de vuestra primera campaña con cobro subiréis sus documentos.",
+    "publicTitle": "Vuestra página en KORUM",
+    "fields": {
+      "name": "Nombre público",
+      "slug": "Dirección de vuestra página",
+      "province": "Provincia",
+      "city": "Municipio",
+      "postalCode": "Código postal",
+      "legalName": "Razón social del titular",
+      "legalForm": "Forma jurídica",
+      "centerOwnership": "Titularidad del colegio",
+      "ley49": "Estamos acogidos a la Ley 49/2002 (certificados fiscales de donación)",
+      "contentLocale": "Idioma en el que escribiréis vuestras campañas",
+      "publicIndexing": "Que nuestra página aparezca en buscadores",
+      "roleLabel": "Cargo",
+      "personName": "Nombre y apellidos",
+      "email": "Email",
+      "phone": "Teléfono",
+      "password": "Contraseña",
+      "passwordRepeat": "Repite la contraseña",
+      "representationDeclared": "Declaro que represento a {legalName} y que los datos son ciertos."
+    },
+    "hints": {
+      "name": "Como os conocen las familias, p. ej. «CEIP Cervantes».",
+      "slug": "Quedará así: {url}. Solo minúsculas, números y guiones.",
+      "legalName": "P. ej. «AFA CEIP Cervantes» o «Club Bàsquet Vallès».",
+      "publicSchool": "Un colegio público se da de alta a través de su AMPA/AFA.",
+      "ley49": "Solo si la entidad lo puede acreditar. Si no, las familias recibirán un justificante nominativo.",
+      "ley49Owner": "La titularidad de un colegio privado o concertado no puede emitir certificados de donación por aquí.",
+      "contentLocale": "La web de KORUM se ve en castellano, catalán e inglés; vuestros textos, en este idioma.",
+      "publicIndexing": "Podéis cambiarlo cuando queráis desde el panel.",
+      "roleLabel": "Como aparecerá junto a su firma.",
+      "password": "Al menos 12 caracteres. Después activarás la verificación en dos pasos."
+    },
+    "legalForm": {
+      "PARENTS_ASSOCIATION": "AMPA / AFA",
+      "SCHOOL_OWNER": "Titular de un colegio privado o concertado",
+      "FOUNDATION": "Fundación",
+      "SPORTS_ENTITY": "Club o entidad deportiva",
+      "CULTURAL_ASSOCIATION": "Asociación cultural",
+      "OTHER_NONPROFIT": "Otra entidad sin ánimo de lucro"
+    },
+    "ownership": {
+      "PUBLIC": "Público",
+      "CONCERTED": "Concertado",
+      "PRIVATE": "Privado"
+    },
+    "contentLocale": {
+      "es": "Castellano",
+      "ca": "Catalán",
+      "en": "Inglés"
+    },
+    "signers": {
+      "intro": "Para aprobar ideas y liberar fondos hacen falta dos firmas de dos personas distintas. Ninguna puede hacerlo sola.",
+      "directorTitle": "Primera firma: tú",
+      "directorIntro": "Gestionarás la entidad en KORUM. Entrarás con tu email y esta contraseña.",
+      "cosignerTitle": "Segunda firma",
+      "cosignerIntro": "Le enviaremos una invitación para que active su cuenta. Tiene que ser otra persona, con su propio email."
+    },
+    "roles": {
+      "SCHOOL": {
+        "director": "Dirección del centro",
+        "cosigner": "Presidencia del AMPA/AFA"
+      },
+      "SPORTS_CLUB": {
+        "director": "Presidencia del club",
+        "cosigner": "Tesorería del club"
+      },
+      "CULTURAL": {
+        "director": "Presidencia de la entidad",
+        "cosigner": "Tesorería de la entidad"
+      }
+    },
+    "activation": {
+      "title": "Así queda {name}",
+      "exempt": "Los primeros <strong>{amount}</strong> de este curso, sin comisión de plataforma.",
+      "groups": "{count} grupos para los retos ({vertical}), que podréis ajustar.",
+      "signers": "Doble firma: {director} y {cosigner}.",
+      "kyb": "Antes de la primera campaña con cobro subiréis los documentos del titular (CIF, estatutos o acta, DNI de quien representa y titularidad de la cuenta).",
+      "money": "El dinero de las familias queda retenido en PAYCOMET hasta lograr cada meta. KORUM es la tecnología: no guarda vuestro dinero."
+    },
+    "fieldErrors": {
+      "vertical": "Elige el tipo de entidad.",
+      "name": "Escribe un nombre de entre 2 y 80 caracteres.",
+      "slug": "Usa entre 3 y 40 minúsculas, números o guiones.",
+      "provinceCode": "Elige la provincia.",
+      "city": "Escribe el municipio.",
+      "postalCode": "El código postal tiene 5 cifras.",
+      "legalName": "Escribe la razón social del titular.",
+      "legalForm": "Elige la forma jurídica.",
+      "centerOwnership": "Elige la titularidad del colegio.",
+      "ley49": "Revisa esta opción.",
+      "contentLocale": "Elige un idioma.",
+      "publicIndexing": "Revisa esta opción.",
+      "email": "Escribe un email válido.",
+      "phone": "Escribe un teléfono de 9 a 15 cifras.",
+      "roleLabel": "Escribe el cargo (entre 3 y 60 caracteres).",
+      "password": "La contraseña debe tener al menos 12 caracteres.",
+      "passwordRepeat": "Las dos contraseñas no coinciden.",
+      "representationDeclared": "Marca la casilla para continuar."
+    },
+    "issues": {
+      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "Un colegio público solo puede darse de alta a través de su AMPA/AFA.",
+      "SCHOOL_OWNER_NO_LEY49": "La titularidad de un colegio privado o concertado no puede marcar la Ley 49/2002.",
+      "LEGAL_FORM_NOT_FOR_VERTICAL": "Esa forma jurídica no corresponde a este tipo de entidad.",
+      "OWNERSHIP_REQUIRED": "Elige si el colegio es público, concertado o privado.",
+      "UNKNOWN_PROVINCE": "Elige la provincia de la lista.",
+      "POSTAL_CODE_PROVINCE_MISMATCH": "Ese código postal no es de la provincia elegida.",
+      "SLUG_INVALID": "Usa entre 3 y 40 minúsculas, números o guiones (sin empezar ni acabar en guion).",
+      "SLUG_RESERVED": "Esa dirección la usa KORUM. Prueba con otra."
+    },
+    "failures": {
+      "SLUG_TAKEN": "Otra entidad ya usa esa dirección. Prueba con otra.",
+      "SAME_INBOX": "Las dos firmas tienen que ser de dos personas con emails distintos.",
+      "COSIGNER_UNAVAILABLE": "Ese email no puede firmar por una entidad. Usa el de otra persona.",
+      "DIRECTOR_EMAIL_IN_USE": "Ese email ya tiene cuenta en KORUM. Inicia sesión con él y vuelve a este formulario, o usa otro email.",
+      "DISPOSABLE_EMAIL": "No admitimos emails temporales. Usa un email habitual.",
+      "RATE_LIMITED": "Se han hecho demasiadas altas desde esta conexión. Inténtalo dentro de una hora.",
+      "UNKNOWN": "No hemos podido completar el alta. Inténtalo de nuevo en unos segundos."
+    },
+    "verify": {
+      "title": "¡{name} ya está en KORUM!",
+      "created": "Hemos enviado un código a {email} para verificar tu email, y la invitación a {cosigner}.",
+      "resent": "Te hemos enviado un código nuevo.",
+      "code": "Código de 6 dígitos",
+      "submit": "Verificar y continuar",
+      "resend": "Enviarme otro código"
+    },
+    "codeErrors": {
+      "INVALID_OTP": "El código no es correcto. Revísalo e inténtalo de nuevo.",
+      "OTP_EXPIRED": "El código ha caducado. Pide otro.",
+      "TOO_MANY_ATTEMPTS": "Demasiados intentos con este código. Pide otro.",
+      "RATE_LIMITED": "Demasiados intentos seguidos. Espera unos minutos.",
+      "UNKNOWN": "No ha funcionado. Inténtalo de nuevo en unos segundos."
+    }
+  },
+  "panel": {
+    "headerSubtitle": "Panel de la entidad",
+    "welcome": "Hola, {name}",
+    "intro": "Desde aquí gestionaréis las ideas, las campañas y los pagos, siempre con las dos firmas.",
+    "wallet": {
+      "title": "Hucha de la entidad",
+      "explain": "Es el identificador de vuestra hucha en KORUM. El dinero de cada campaña queda retenido en PAYCOMET hasta lograr la meta.",
+      "exempt": "Sin comisión de plataforma este curso: <strong>{remaining}</strong> disponibles de {total}."
+    },
+    "signers": {
+      "title": "Doble firma ({ready} de {total} listas)",
+      "role": {
+        "DIRECTOR": "Primera firma",
+        "COSIGNER": "Segunda firma"
+      },
+      "status": {
+        "ACTIVE": "Lista para firmar (verificación en dos pasos activa)",
+        "NEEDS_TWO_FACTOR": "Falta activar la verificación en dos pasos",
+        "INVITED": "Invitación enviada: aún no ha activado su cuenta"
+      },
+      "resend": "Reenviar la invitación",
+      "resendResult": {
+        "SENT": "Invitación enviada de nuevo.",
+        "NOT_NEEDED": "No hace falta: ya ha activado su cuenta, o se ha enviado hace muy poco.",
+        "FORBIDDEN": "Solo la primera firma puede reenviar la invitación.",
+        "ERROR": "No se ha podido enviar. Inténtalo de nuevo en unos segundos."
+      }
+    },
+    "kyb": {
+      "title": "Documentos del titular",
+      "status": {
+        "PENDING": "Pendientes. Podéis preparar ideas y campañas; para publicar la primera con cobro hacen falta los documentos.",
+        "SUBMITTED": "Enviados. Los estamos revisando.",
+        "VERIFIED": "Verificados. Podéis publicar campañas con cobro.",
+        "REJECTED": "Hay que corregir algún documento. Revisad el mensaje que os hemos enviado."
+      },
+      "documents": "CIF, estatutos o acta, DNI de quien representa a la entidad y certificado de titularidad de la cuenta (y la acreditación de la Ley 49/2002 si la marcasteis). Se suben de forma privada."
+    }
+  },
+  "gate": {
+    "mode": "Modo portería",
+    "chooseTitle": "¿En qué evento estás en la puerta?",
+    "emptyTitle": "No hay ninguna portería abierta",
+    "emptyText": "La entidad abre la portería de cada evento con un PIN. Pídeselo a quien organiza.",
+    "capacityTitle": "Aforo en directo",
+    "capacity": "{checkedIn} de {capacity} personas dentro",
+    "insideHint": "Estás en la portería de este evento. Al terminar, cierra la sesión.",
+    "pinIntro": "Escribe el PIN de 6 cifras que te ha dado quien organiza el evento.",
+    "pin": "PIN del evento",
+    "enter": "Entrar en la portería",
+    "leave": "Cerrar la portería en este móvil",
+    "errors": {
+      "INVALID": "El PIN no es correcto o ya no está activo.",
+      "LOCKED": "Demasiados intentos desde esta conexión. Espera 15 minutos o pide ayuda a quien organiza."
+    }
+  },
+  "admin": {
+    "headerTitle": "Consola de KORUM",
+    "title": "Resumen de la plataforma",
+    "organizations": "Entidades activas",
+    "pendingKyb": "Entidades con documentos pendientes",
+    "alertsTitle": "{count, plural, =0 {Sin alertas abiertas} one {# alerta abierta} other {# alertas abiertas}}",
+    "noAlertsTitle": "Todo en orden",
+    "noAlertsText": "No hay alertas abiertas en este momento.",
+    "alertMeta": "{count, plural, one {# vez} other {# veces}} · última: {date}",
+    "severity": {
+      "INFO": "Aviso",
+      "WARNING": "Atención",
+      "CRITICAL": "Crítica"
+    },
+    "alertType": {
+      "JOB_FAILED": "Una tarea programada ha fallado",
+      "REFUND_REJECTED": "Paycomet ha rechazado una devolución",
+      "REFUND_STUCK": "Devolución sin confirmar",
+      "SPLIT_WINDOW_EXPIRING": "Vence la ventana de reparto de 90 días",
+      "RECONCILIATION_MISMATCH": "Descuadre en la conciliación con Paycomet",
+      "CHARGEBACK_UNCONFIRMED": "Contracargo sin confirmar",
+      "INVOICE_STUCK": "Factura pendiente en Veri*factu",
+      "SPONSOR_RENEWAL_DUE": "Renovación de patrocinio pendiente",
+      "CREDIT_POOL_EXPIRED": "Bolsa de patrocinio vencida",
+      "MONTHLY_TOPUP_DUE": "Aportaciones mensuales pendientes de cobro",
+      "ESCROW_LEFTOVER": "Dinero pendiente en una hucha devuelta",
+      "CARD_DELETE_FAILED": "No se pudo borrar una tarjeta guardada",
+      "PRIVACY_REQUEST_OVERDUE": "Solicitud de privacidad fuera de plazo",
+      "ENCRYPTION_KEY_MISSING": "Falta una clave de cifrado",
+      "PRIVACY_ERASURE_FAILED": "Falló la supresión de una cuenta inactiva",
+      "EMAIL_DELIVERY_FAILED": "Hay emails que no se pueden enviar"
+    }
+  },
+  "forbidden": {
+    "title": "No tienes acceso a esta página",
+    "description": "Has iniciado sesión con una cuenta que no tiene permiso aquí. Si firmas por otra entidad o usas otra cuenta, entra con ella.",
+    "switchAccount": "Entrar con otra cuenta"
+  },
+  "demo": {
+    "label": "Entorno de demostración",
+    "notice": "Demostración · cobros simulados",
+    "environments": "Entornos de la demostración",
+    "family": "Familias",
+    "panel": "Panel de la entidad",
+    "console": "Consola"
   }
 }

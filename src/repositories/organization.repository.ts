@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { listPendingCosignerInvitations } from '@/core/onboarding/invitations';
 import { authorizeSuperadmin, authorizeTenant, recordAudit, ResourceNotFoundError, type SessionActor } from './tenant-guard';
 
 /** Entidades (tenants). Cada función autoriza primero y solo después consulta. Los campos se eligen uno a uno (`select`). */
@@ -79,4 +80,33 @@ export async function updateOrganizationBranding(db: KorumPrismaClient, actor: S
     await recordAudit(tx, actor, { action: 'organization.branding.updated', organizationId, targetType: 'Organization', targetId: organizationId, metadata: { before, after: branding } }, { required: true });
   });
   return branding;
+}
+
+export type SignerStatus = 'ACTIVE' | 'NEEDS_TWO_FACTOR' | 'INVITED';
+
+/**
+ * Personas firmantes de la entidad y en qué punto está cada una (Sprint 3.2): invitada (aún no ha aceptado), activa sin TOTP o lista para
+ * firmar. Solo nombre, cargo y estado: ni el email ni el teléfono de la otra persona.
+ */
+export async function listSigners(db: KorumPrismaClient, actor: SessionActor, organizationId: string) {
+  await authorizeTenant(db, actor, organizationId, { roles: STAFF, action: 'organization.signers', targetType: 'Organization' });
+  const [members, pending] = await Promise.all([
+    db.organizationMember.findMany({
+      where: { organizationId, role: { in: [...STAFF] } },
+      orderBy: [{ role: 'desc' }, { id: 'asc' }],
+      select: { role: true, roleLabel: true, user: { select: { id: true, name: true, twoFactorEnabled: true, gdprAnonymizedAt: true } } }
+    }),
+    listPendingCosignerInvitations(db, organizationId)
+  ]);
+  const signers = members
+    .filter((member) => member.user.gdprAnonymizedAt === null)
+    .map((member) => ({ userId: member.user.id, name: member.user.name, role: member.role as (typeof STAFF)[number], roleLabel: member.roleLabel, status: (member.user.twoFactorEnabled ? 'ACTIVE' : 'NEEDS_TWO_FACTOR') as SignerStatus }));
+  // Invitaciones aún sin aceptar: la segunda firma no existe todavía, pero el panel dice a quién se ha invitado.
+  // De quien aún no es miembro solo se usa lo que escribió quien invitó: nunca los datos de su cuenta (I4).
+  const active = await db.user.findMany({ where: { id: { in: pending.map((invitation) => invitation.userId) }, gdprAnonymizedAt: null }, select: { id: true } });
+  for (const invitation of pending) {
+    if (!active.some((user) => user.id === invitation.userId) || signers.some((signer) => signer.userId === invitation.userId && signer.role === 'COSIGNER')) continue;
+    signers.push({ userId: invitation.userId, name: invitation.displayName ?? '', role: 'COSIGNER', roleLabel: invitation.roleLabel, status: 'INVITED' });
+  }
+  return signers;
 }

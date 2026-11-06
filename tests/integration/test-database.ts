@@ -1,6 +1,7 @@
 import { inject } from 'vitest';
 import type { Prisma } from '@/generated/prisma/client';
 import { createKeyring } from '@/core/security/crypto';
+import { markSessionReauthenticated, verifySuperadminSession } from '@/core/security/verified-actor';
 import { createPrismaClient, type KorumPrismaClient } from '@/lib/prisma';
 import { PreviewEmailProvider } from '@/services/email/preview-email-provider';
 import { MemoryStorage } from '@/services/storage/memory-storage';
@@ -92,4 +93,16 @@ export function createInitiative(db: KorumPrismaClient, organizationId: string, 
       ...overrides
     }
   });
+}
+
+/**
+ * Super-Admin con 2FA y una sesión que superó el TOTP hace un minuto respecto a `now`: lo que emite la capa de sesión (Sprint 3.2) para las
+ * operaciones que exigen un `VerifiedSuperadminActor` (ajustes, secretos, resoluciones manuales de dinero y facturas).
+ */
+export async function verifiedSuperadmin(db: KorumPrismaClient, now: Date = new Date(), operation = 'test.operation') {
+  const admin = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
+  const session = await db.session.create({ data: { id: uniqueId('ses'), token: uniqueId('tok'), userId: admin.id, expiresAt: new Date(now.getTime() + 3_600_000) } });
+  await markSessionReauthenticated(db, session.id, { secondFactor: true }, new Date(now.getTime() - 60_000));
+  const actor = await verifySuperadminSession(db, { userId: admin.id, sessionId: session.id, operation }, now);
+  return { admin, session, actor };
 }

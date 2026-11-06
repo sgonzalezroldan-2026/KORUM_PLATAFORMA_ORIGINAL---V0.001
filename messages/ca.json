@@ -271,6 +271,18 @@
         "body": "Introdueix aquest codi per entrar. Caduca en {minutes} minuts.",
         "codeLabel": "Codi",
         "footnote": "Si no l’has demanat tu, ignora aquest missatge i no comparteixis el codi amb ningú."
+      },
+      "invitation": {
+        "subject": "Et conviden a signar per {organization} a KORUM",
+        "subjectPlatform": "Activa el teu compte de Super-Admin de KORUM",
+        "preheader": "Crea la teva contrasenya i activa la verificació en dos passos.",
+        "title": "{organization} compta amb tu",
+        "titlePlatform": "Activa el teu compte de KORUM",
+        "body": "T'han nomenat {role} de {organization}. La teva signatura, juntament amb la de la persona que dirigeix l'entitat, és necessària per aprovar les idees i alliberar els fons: cap persona no ho pot fer sola.",
+        "bodyPlatform": "S'ha creat el compte de Super-Admin de KORUM amb aquest correu. Crea la teva contrasenya per entrar a la consola.",
+        "security": "L'enllaç caduca d'aquí a {hours} hores i només serveix una vegada. En entrar et demanarem que activis la verificació en dos passos amb una app del mòbil.",
+        "cta": "Crear la meva contrasenya",
+        "footnote": "No reconeixes aquesta invitació o aquesta entitat? Ignora aquest correu: si no l'acceptes, no tindràs cap càrrec ni s'activarà res."
       }
     },
     "receipt": {
@@ -435,7 +447,7 @@
   "finder": {
     "label": "Nom de la teva escola, club o entitat",
     "placeholder": "Per exemple, Cervantes",
-    "hint": "Escriu almenys 2 lletres. Es cerca per nom o per província.",
+    "hint": "Escriu almenys 2 lletres. Es cerca per nom, municipi, codi postal o província.",
     "searching": "Cercant…",
     "results": "{count, plural, one {# entitat trobada} other {# entitats trobades}}",
     "error": "Ara mateix no hem pogut fer la cerca.",
@@ -937,5 +949,389 @@
         "ctaText": "Dona d’alta la teva entitat gratis i resol la resta sobre la marxa."
       }
     }
+  },
+  "auth": {
+    "signOut": "Tancar la sessió",
+    "login": {
+      "metaTitle": "Iniciar sessió",
+      "metaDescription": "Entra a KORUM amb un enllaç o un codi per correu, o amb la teva contrasenya si signes per la teva entitat.",
+      "title": "Entra a KORUM",
+      "subtitle": "Les famílies i els comerços entren sense contrasenya. Qui signa per una entitat fa servir contrasenya i la seva app de verificació.",
+      "noAccount": "La vostra entitat encara no és a KORUM?",
+      "register": "Doneu-la d'alta gratis",
+      "modeLabel": "Com vols entrar",
+      "mode": {
+        "email": "Famílies i comerços",
+        "password": "Signants i equip"
+      },
+      "steps": {
+        "emailEnter": "Entra amb el teu correu",
+        "passwordEnter": "Entra amb la teva contrasenya",
+        "link-sent": "Revisa el teu correu",
+        "code": "Escriu el codi",
+        "second-factor": "Verificació en dos passos",
+        "reset-request": "Recupera la teva contrasenya",
+        "reset-code": "Crea una contrasenya nova"
+      },
+      "emailIntro": "T'enviem un enllaç per entrar amb un sol clic. Si ho prefereixes, t'enviem un codi de 6 xifres.",
+      "email": "El teu correu",
+      "sendLink": "Envieu-me l'enllaç",
+      "sendCode": "Prefereixo un codi de 6 xifres",
+      "linkSent": "Si {email} pot entrar a KORUM, ja té un enllaç al correu. Caduca d'aquí a {minutes} minuts i només serveix una vegada.",
+      "useCodeInstead": "Millor envieu-me un codi",
+      "changeEmail": "Fer servir un altre correu",
+      "codeSent": "Hem enviat un codi a {email}. Caduca d'aquí a {minutes} minuts.",
+      "code": "Codi de 6 xifres",
+      "enter": "Entrar",
+      "passwordIntro": "Per a la direcció, la tresoreria o la presidència de l'entitat i per a l'equip de KORUM. Després et demanarem el codi de la teva app.",
+      "password": "Contrasenya",
+      "forgot": "He oblidat la contrasenya",
+      "resetIntro": "T'enviarem un codi al correu per crear una contrasenya nova. La verificació en dos passos continuarà activa.",
+      "back": "Tornar",
+      "newPassword": "Contrasenya nova",
+      "passwordHint": "Almenys 12 caràcters. Una frase que recordis és una bona contrasenya.",
+      "savePassword": "Desar la contrasenya nova",
+      "resetDone": "Contrasenya canviada. Ja pots entrar-hi.",
+      "sendResetCode": "Envieu-me el codi"
+    },
+    "errors": {
+      "INVALID_EMAIL_OR_PASSWORD": "El correu o la contrasenya no són correctes.",
+      "EMAIL_NOT_VERIFIED": "Encara no has verificat el teu correu. T'hem enviat un missatge per fer-ho.",
+      "INVALID_OTP": "El codi no és correcte. Revisa'l i torna-ho a provar.",
+      "OTP_EXPIRED": "El codi ha caducat. Demana'n un de nou.",
+      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana'n un de nou.",
+      "INVALID_EMAIL": "Escriu un correu vàlid.",
+      "PASSWORD_TOO_SHORT": "La contrasenya ha de tenir almenys 12 caràcters.",
+      "INVALID_PASSWORD": "La contrasenya no és correcta.",
+      "RATE_LIMITED": "Massa intents seguits. Espera uns minuts i torna-ho a provar.",
+      "KORUM_SAME_INBOX": "Ja tens un compte amb aquesta mateixa bústia de correu. Entra amb el correu que vas fer servir la primera vegada.",
+      "KORUM_DISPOSABLE_EMAIL": "No admetem correus temporals. Fes servir el teu correu habitual.",
+      "KORUM_INVALID_EMAIL": "Escriu un correu vàlid.",
+      "KORUM_ACCOUNT_CLOSED": "Aquest compte es va tancar a petició del seu titular i ja no es pot fer servir.",
+      "LINK_INVALID": "L'enllaç ja no serveix: ha caducat o ja es va fer servir. Demana'n un altre.",
+      "INVALID_CODE": "El codi de l'app no és correcte. Comprova que l'hora del mòbil és la correcta.",
+      "INVALID_BACKUP_CODE": "Aquest codi de recuperació no és vàlid o ja es va fer servir.",
+      "ACCOUNT_TEMPORARILY_LOCKED": "Per seguretat, la verificació queda bloquejada uns minuts després de diversos errors.",
+      "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Massa intents. Torna a escriure la contrasenya per començar de nou.",
+      "INVALID_TWO_FACTOR_COOKIE": "Ha passat massa temps. Torna a escriure la contrasenya.",
+      "KORUM_SECOND_FACTOR_LIMIT": "Massa codis seguits. Espera 15 minuts i torna-ho a provar.",
+      "TOTP_ALREADY_ENABLED": "La verificació en dos passos ja és activa al teu compte.",
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "El teu compte no té contrasenya. Crea'n una amb «He oblidat la contrasenya».",
+      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons."
+    },
+    "secondFactor": {
+      "intro": "Obre la teva app de verificació (Google Authenticator, Microsoft Authenticator, 1Password…) i escriu el codi de KORUM.",
+      "backupIntro": "Escriu un dels codis de recuperació que vas desar. Cadascun serveix una sola vegada.",
+      "backupCode": "Codi de recuperació",
+      "code": "Codi de l'app",
+      "verify": "Verificar",
+      "useApp": "Fer servir el codi de l'app",
+      "useBackup": "He perdut el mòbil: fer servir un codi de recuperació",
+      "back": "Tornar a la contrasenya"
+    },
+    "twoFactor": {
+      "metaTitle": "Verificació en dos passos",
+      "setupTitle": "Activa la verificació en dos passos",
+      "verifyTitle": "Confirma que ets tu",
+      "why": "Qui signa per una entitat o gestiona KORUM necessita dues proves: la contrasenya i un codi del mòbil. Així, encara que algú entri al teu correu, no pot aprovar ni alliberar fons en nom teu.",
+      "intro": "Confirma la teva contrasenya per començar. Necessitaràs una app de verificació al mòbil.",
+      "password": "La teva contrasenya",
+      "start": "Començar",
+      "scanTitle": "Escaneja el codi amb la teva app",
+      "scanIntro": "Obre l'app de verificació, afegeix un compte i escaneja aquest codi. Si no el pots escanejar, escriu la clau a mà.",
+      "qrAlt": "Codi QR per afegir KORUM a la teva app de verificació",
+      "qrLoading": "Preparant el codi…",
+      "manualKey": "Clau per escriure a mà",
+      "backupTitle": "Els teus codis de recuperació",
+      "backupIntro": "Desa'ls en un lloc segur (per exemple, impresos). Serveixen per entrar si perds el mòbil; cadascun, una sola vegada. No els tornarem a mostrar.",
+      "backupSaved": "He desat els codis de recuperació",
+      "firstCode": "Primer codi de l'app",
+      "confirm": "Activar i continuar"
+    },
+    "invitation": {
+      "metaTitle": "Activa el teu compte",
+      "title": "Activa el teu compte",
+      "checking": "Comprovant la invitació…",
+      "invalid": "Aquesta invitació ja no serveix: ha caducat o ja es va fer servir. Demana a la persona que dirigeix la vostra entitat que te n'enviï una altra.",
+      "alreadyActive": "Ja tens compte a KORUM amb {email}. Inicia sessió amb ell i torna a obrir l'enllaç del correu per acceptar el càrrec.",
+      "goToLogin": "Anar a iniciar sessió",
+      "platformIntro": "Activaràs el compte de Super-Admin de KORUM per a {email}.",
+      "intro": "{organization} t'ha nomenat {role}. Activaràs el compte de {email}.",
+      "nextSteps": "Crea la teva contrasenya. Després activaràs la verificació en dos passos amb una app del mòbil: sense ella no es pot signar.",
+      "password": "Crea la teva contrasenya",
+      "passwordHint": "Almenys 12 caràcters. Una frase que recordis és una bona contrasenya.",
+      "repeat": "Repeteix la contrasenya",
+      "mismatch": "Les dues contrasenyes no coincideixen.",
+      "submit": "Crear la contrasenya i continuar",
+      "weak": "La contrasenya ha de tenir entre 12 i 128 caràcters.",
+      "unknown": "No ha funcionat. Torna-ho a provar d'aquí a uns segons.",
+      "otherAccount": "Has iniciat sessió amb un altre compte. Aquesta invitació és per a {email}: entra-hi i torna a obrir l'enllaç del correu.",
+      "acceptRole": "Acceptar el càrrec"
+    }
+  },
+  "registration": {
+    "metaTitle": "Donar d'alta la teva escola, AFA o club",
+    "metaDescription": "Alta gratuïta en 3 passos per a escoles (a través de la seva AFA o el seu titular), clubs i entitats culturals, amb doble signatura.",
+    "title": "Doneu d'alta la vostra comunitat",
+    "intro": "Tres passos i ja hi sou, sense quota d'alta. Els primers {exempt} que recapteu cada curs no paguen comissió de plataforma.",
+    "haveAccount": "Ja teniu compte?",
+    "login": "Iniciar sessió",
+    "formLabel": "Formulari d'alta",
+    "progress": "Passos de l'alta",
+    "stepLabel": "Pas {number} de {total}",
+    "steps": {
+      "community": "Comunitat i titular legal",
+      "signers": "Les dues persones signants",
+      "activation": "Activació"
+    },
+    "back": "Enrere",
+    "continue": "Continuar",
+    "submit": "Donar d'alta",
+    "fixErrors": "{count, plural, one {Revisa el camp marcat.} other {Revisa els # camps marcats.}}",
+    "choose": "Tria una opció",
+    "vertical": {
+      "label": "Quin tipus d'entitat sou?",
+      "SCHOOL": "Escola",
+      "SPORTS_CLUB": "Club esportiu",
+      "CULTURAL": "Entitat cultural"
+    },
+    "legalTitle": "Titular dels fons",
+    "legalIntro": "És l'entitat amb CIF que rep els diners i signa. Abans de la vostra primera campanya amb cobrament en pujareu els documents.",
+    "publicTitle": "La vostra pàgina a KORUM",
+    "fields": {
+      "name": "Nom públic",
+      "slug": "Adreça de la vostra pàgina",
+      "province": "Província",
+      "city": "Municipi",
+      "postalCode": "Codi postal",
+      "legalName": "Raó social del titular",
+      "legalForm": "Forma jurídica",
+      "centerOwnership": "Titularitat de l'escola",
+      "ley49": "Estem acollits a la Llei 49/2002 (certificats fiscals de donació)",
+      "contentLocale": "Idioma en què escriureu les vostres campanyes",
+      "publicIndexing": "Que la nostra pàgina aparegui als cercadors",
+      "roleLabel": "Càrrec",
+      "personName": "Nom i cognoms",
+      "email": "Correu electrònic",
+      "phone": "Telèfon",
+      "password": "Contrasenya",
+      "passwordRepeat": "Repeteix la contrasenya",
+      "representationDeclared": "Declaro que represento {legalName} i que les dades són certes."
+    },
+    "hints": {
+      "name": "Com us coneixen les famílies, p. ex. «Escola Cervantes».",
+      "slug": "Quedarà així: {url}. Només minúscules, números i guionets.",
+      "legalName": "P. ex. «AFA Escola Cervantes» o «Club Bàsquet Vallès».",
+      "publicSchool": "Una escola pública es dona d'alta a través de la seva AFA.",
+      "ley49": "Només si l'entitat ho pot acreditar. Si no, les famílies rebran un justificant nominatiu.",
+      "ley49Owner": "La titularitat d'una escola privada o concertada no pot emetre certificats de donació per aquí.",
+      "contentLocale": "El web de KORUM es veu en castellà, català i anglès; els vostres textos, en aquest idioma.",
+      "publicIndexing": "Ho podeu canviar quan vulgueu des del panell.",
+      "roleLabel": "Com apareixerà al costat de la seva signatura.",
+      "password": "Almenys 12 caràcters. Després activaràs la verificació en dos passos."
+    },
+    "legalForm": {
+      "PARENTS_ASSOCIATION": "AMPA / AFA",
+      "SCHOOL_OWNER": "Titular d'una escola privada o concertada",
+      "FOUNDATION": "Fundació",
+      "SPORTS_ENTITY": "Club o entitat esportiva",
+      "CULTURAL_ASSOCIATION": "Associació cultural",
+      "OTHER_NONPROFIT": "Una altra entitat sense ànim de lucre"
+    },
+    "ownership": {
+      "PUBLIC": "Pública",
+      "CONCERTED": "Concertada",
+      "PRIVATE": "Privada"
+    },
+    "contentLocale": {
+      "es": "Castellà",
+      "ca": "Català",
+      "en": "Anglès"
+    },
+    "signers": {
+      "intro": "Per aprovar idees i alliberar fons calen dues signatures de dues persones diferents. Cap no ho pot fer sola.",
+      "directorTitle": "Primera signatura: tu",
+      "directorIntro": "Gestionaràs l'entitat a KORUM. Entraràs amb el teu correu i aquesta contrasenya.",
+      "cosignerTitle": "Segona signatura",
+      "cosignerIntro": "Li enviarem una invitació perquè activi el seu compte. Ha de ser una altra persona, amb el seu propi correu."
+    },
+    "roles": {
+      "SCHOOL": {
+        "director": "Direcció del centre",
+        "cosigner": "Presidència de l'AFA"
+      },
+      "SPORTS_CLUB": {
+        "director": "Presidència del club",
+        "cosigner": "Tresoreria del club"
+      },
+      "CULTURAL": {
+        "director": "Presidència de l'entitat",
+        "cosigner": "Tresoreria de l'entitat"
+      }
+    },
+    "activation": {
+      "title": "Així queda {name}",
+      "exempt": "Els primers <strong>{amount}</strong> d'aquest curs, sense comissió de plataforma.",
+      "groups": "{count} grups per als reptes ({vertical}), que podreu ajustar.",
+      "signers": "Doble signatura: {director} i {cosigner}.",
+      "kyb": "Abans de la primera campanya amb cobrament pujareu els documents del titular (CIF, estatuts o acta, DNI de qui representa i titularitat del compte).",
+      "money": "Els diners de les famílies queden retinguts a PAYCOMET fins a assolir cada meta. KORUM és la tecnologia: no guarda els vostres diners."
+    },
+    "fieldErrors": {
+      "vertical": "Tria el tipus d'entitat.",
+      "name": "Escriu un nom d'entre 2 i 80 caràcters.",
+      "slug": "Fes servir entre 3 i 40 minúscules, números o guionets.",
+      "provinceCode": "Tria la província.",
+      "city": "Escriu el municipi.",
+      "postalCode": "El codi postal té 5 xifres.",
+      "legalName": "Escriu la raó social del titular.",
+      "legalForm": "Tria la forma jurídica.",
+      "centerOwnership": "Tria la titularitat de l'escola.",
+      "ley49": "Revisa aquesta opció.",
+      "contentLocale": "Tria un idioma.",
+      "publicIndexing": "Revisa aquesta opció.",
+      "email": "Escriu un correu vàlid.",
+      "phone": "Escriu un telèfon de 9 a 15 xifres.",
+      "roleLabel": "Escriu el càrrec (entre 3 i 60 caràcters).",
+      "password": "La contrasenya ha de tenir almenys 12 caràcters.",
+      "passwordRepeat": "Les dues contrasenyes no coincideixen.",
+      "representationDeclared": "Marca la casella per continuar."
+    },
+    "issues": {
+      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "Una escola pública només es pot donar d'alta a través de la seva AFA.",
+      "SCHOOL_OWNER_NO_LEY49": "La titularitat d'una escola privada o concertada no pot marcar la Llei 49/2002.",
+      "LEGAL_FORM_NOT_FOR_VERTICAL": "Aquesta forma jurídica no correspon a aquest tipus d'entitat.",
+      "OWNERSHIP_REQUIRED": "Tria si l'escola és pública, concertada o privada.",
+      "UNKNOWN_PROVINCE": "Tria la província de la llista.",
+      "POSTAL_CODE_PROVINCE_MISMATCH": "Aquest codi postal no és de la província triada.",
+      "SLUG_INVALID": "Fes servir entre 3 i 40 minúscules, números o guionets (sense començar ni acabar en guionet).",
+      "SLUG_RESERVED": "Aquesta adreça la fa servir KORUM. Prova'n una altra."
+    },
+    "failures": {
+      "SLUG_TAKEN": "Una altra entitat ja fa servir aquesta adreça. Prova'n una altra.",
+      "SAME_INBOX": "Les dues signatures han de ser de dues persones amb correus diferents.",
+      "COSIGNER_UNAVAILABLE": "Aquest correu no pot signar per una entitat. Fes servir el d'una altra persona.",
+      "DIRECTOR_EMAIL_IN_USE": "Aquest correu ja té compte a KORUM. Inicia sessió amb ell i torna a aquest formulari, o fes servir un altre correu.",
+      "DISPOSABLE_EMAIL": "No admetem correus temporals. Fes servir un correu habitual.",
+      "RATE_LIMITED": "S'han fet massa altes des d'aquesta connexió. Torna-ho a provar d'aquí a una hora.",
+      "UNKNOWN": "No hem pogut completar l'alta. Torna-ho a provar d'aquí a uns segons."
+    },
+    "verify": {
+      "title": "{name} ja és a KORUM!",
+      "created": "Hem enviat un codi a {email} per verificar el teu correu, i la invitació a {cosigner}.",
+      "resent": "T'hem enviat un codi nou.",
+      "code": "Codi de 6 xifres",
+      "submit": "Verificar i continuar",
+      "resend": "Envieu-me un altre codi"
+    },
+    "codeErrors": {
+      "INVALID_OTP": "El codi no és correcte. Revisa'l i torna-ho a provar.",
+      "OTP_EXPIRED": "El codi ha caducat. Demana'n un altre.",
+      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana'n un altre.",
+      "RATE_LIMITED": "Massa intents seguits. Espera uns minuts.",
+      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons."
+    }
+  },
+  "panel": {
+    "headerSubtitle": "Panell de l'entitat",
+    "welcome": "Hola, {name}",
+    "intro": "Des d'aquí gestionareu les idees, les campanyes i els pagaments, sempre amb les dues signatures.",
+    "wallet": {
+      "title": "Guardiola de l'entitat",
+      "explain": "És l'identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta.",
+      "exempt": "Sense comissió de plataforma aquest curs: <strong>{remaining}</strong> disponibles de {total}."
+    },
+    "signers": {
+      "title": "Doble signatura ({ready} de {total} a punt)",
+      "role": {
+        "DIRECTOR": "Primera signatura",
+        "COSIGNER": "Segona signatura"
+      },
+      "status": {
+        "ACTIVE": "A punt per signar (verificació en dos passos activa)",
+        "NEEDS_TWO_FACTOR": "Falta activar la verificació en dos passos",
+        "INVITED": "Invitació enviada: encara no ha activat el compte"
+      },
+      "resend": "Tornar a enviar la invitació",
+      "resendResult": {
+        "SENT": "Invitació enviada de nou.",
+        "NOT_NEEDED": "No cal: ja ha activat el compte, o s'ha enviat fa molt poc.",
+        "FORBIDDEN": "Només la primera signatura pot tornar a enviar la invitació.",
+        "ERROR": "No s'ha pogut enviar. Torna-ho a provar d'aquí a uns segons."
+      }
+    },
+    "kyb": {
+      "title": "Documents del titular",
+      "status": {
+        "PENDING": "Pendents. Podeu preparar idees i campanyes; per publicar-ne la primera amb cobrament calen els documents.",
+        "SUBMITTED": "Enviats. Els estem revisant.",
+        "VERIFIED": "Verificats. Podeu publicar campanyes amb cobrament.",
+        "REJECTED": "Cal corregir algun document. Reviseu el missatge que us hem enviat."
+      },
+      "documents": "CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte (i l'acreditació de la Llei 49/2002 si la vau marcar). Es pugen de manera privada."
+    }
+  },
+  "gate": {
+    "mode": "Mode porteria",
+    "chooseTitle": "A quin esdeveniment ets a la porta?",
+    "emptyTitle": "No hi ha cap porteria oberta",
+    "emptyText": "L'entitat obre la porteria de cada esdeveniment amb un PIN. Demana'l a qui organitza.",
+    "capacityTitle": "Aforament en directe",
+    "capacity": "{checkedIn} de {capacity} persones a dins",
+    "insideHint": "Ets a la porteria d'aquest esdeveniment. En acabar, tanca la sessió.",
+    "pinIntro": "Escriu el PIN de 6 xifres que t'ha donat qui organitza l'esdeveniment.",
+    "pin": "PIN de l'esdeveniment",
+    "enter": "Entrar a la porteria",
+    "leave": "Tancar la porteria en aquest mòbil",
+    "errors": {
+      "INVALID": "El PIN no és correcte o ja no és actiu.",
+      "LOCKED": "Massa intents des d'aquesta connexió. Espera 15 minuts o demana ajuda a qui organitza."
+    }
+  },
+  "admin": {
+    "headerTitle": "Consola de KORUM",
+    "title": "Resum de la plataforma",
+    "organizations": "Entitats actives",
+    "pendingKyb": "Entitats amb documents pendents",
+    "alertsTitle": "{count, plural, =0 {Sense alertes obertes} one {# alerta oberta} other {# alertes obertes}}",
+    "noAlertsTitle": "Tot en ordre",
+    "noAlertsText": "No hi ha alertes obertes en aquest moment.",
+    "alertMeta": "{count, plural, one {# vegada} other {# vegades}} · última: {date}",
+    "severity": {
+      "INFO": "Avís",
+      "WARNING": "Atenció",
+      "CRITICAL": "Crítica"
+    },
+    "alertType": {
+      "JOB_FAILED": "Una tasca programada ha fallat",
+      "REFUND_REJECTED": "Paycomet ha rebutjat una devolució",
+      "REFUND_STUCK": "Devolució sense confirmar",
+      "SPLIT_WINDOW_EXPIRING": "Venç la finestra de repartiment de 90 dies",
+      "RECONCILIATION_MISMATCH": "Desquadrament a la conciliació amb Paycomet",
+      "CHARGEBACK_UNCONFIRMED": "Retrocessió sense confirmar",
+      "INVOICE_STUCK": "Factura pendent a Veri*factu",
+      "SPONSOR_RENEWAL_DUE": "Renovació de patrocini pendent",
+      "CREDIT_POOL_EXPIRED": "Bossa de patrocini vençuda",
+      "MONTHLY_TOPUP_DUE": "Aportacions mensuals pendents de cobrament",
+      "ESCROW_LEFTOVER": "Diners pendents en una guardiola retornada",
+      "CARD_DELETE_FAILED": "No s'ha pogut esborrar una targeta desada",
+      "PRIVACY_REQUEST_OVERDUE": "Sol·licitud de privacitat fora de termini",
+      "ENCRYPTION_KEY_MISSING": "Falta una clau de xifratge",
+      "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d'un compte inactiu",
+      "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar"
+    }
+  },
+  "forbidden": {
+    "title": "No tens accés a aquesta pàgina",
+    "description": "Has iniciat sessió amb un compte que no té permís aquí. Si signes per una altra entitat o fas servir un altre compte, entra-hi.",
+    "switchAccount": "Entrar amb un altre compte"
+  },
+  "demo": {
+    "label": "Entorn de demostració",
+    "notice": "Demostració · cobraments simulats",
+    "environments": "Entorns de la demostració",
+    "family": "Famílies",
+    "panel": "Panell de l'entitat",
+    "console": "Consola"
   }
 }

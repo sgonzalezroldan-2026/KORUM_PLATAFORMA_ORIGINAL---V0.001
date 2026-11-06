@@ -16,6 +16,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // forbidden() y unauthorized(): un acceso sin permiso responde 403 de verdad (QA-M02), con su página traducida.
+  experimental: { authInterrupts: true },
   images: {
     formats: ['image/avif', 'image/webp']
   },

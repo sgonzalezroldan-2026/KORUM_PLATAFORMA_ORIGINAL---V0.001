@@ -125,12 +125,13 @@ async function targetOrganization(db: Db, target: SignatureTarget): Promise<stri
  * Qué impide a esta persona firmar ahora, con las firmas que siguen valiendo. La comparten pedir el enlace y usarlo: entre ambos momentos
  * pueden haber cambiado el cargo, el 2FA o las firmas de los demás.
  */
-async function signerBlock(tx: Db, locked: LockedTarget, evaluation: DoubleCheckEvaluation, userId: string, memberships: readonly SignerMembership[]): Promise<{ block: DoubleCheckBlock } | { membership: SignerMembership }> {
+async function signerBlock(tx: Db, locked: LockedTarget, evaluation: DoubleCheckEvaluation, userId: string, memberships: readonly SignerMembership[], sessionSecondFactor: boolean): Promise<{ block: DoubleCheckBlock } | { membership: SignerMembership }> {
   if (memberships.length > 1) return { block: 'HOLDS_BOTH_ROLES' };
   const membership = memberships[0];
   if (!membership) return { block: 'NOT_A_SIGNER' };
   const { twoFactorEnabled } = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { twoFactorEnabled: true } });
-  if (!twoFactorEnabled) return { block: 'TWO_FACTOR_REQUIRED' };
+  // La cuenta tiene 2FA y, además, ESTA sesión lo superó: quien solo controla el correo (enlace mágico) no puede firmar.
+  if (!twoFactorEnabled || !sessionSecondFactor) return { block: 'TWO_FACTOR_REQUIRED' };
 
   const invalidIds = new Set(evaluation.invalid.map((entry) => entry.signatureId));
   const valid = locked.signatures.filter((signature) => !invalidIds.has(signature.id) && signature.targetType === locked.context.targetType);
@@ -171,7 +172,7 @@ export async function requestSignature(db: KorumPrismaClient, secret: string, ac
       if (locked.block) throw new DoubleCheckNotAllowedError(locked.block);
       const memberships = (await loadSignerMemberships(tx, organizationId, [actor.userId])).get(actor.userId) ?? [];
       const evaluation = await evaluateDoubleCheck(tx, secret, locked.context, locked.signatures);
-      const decision = await signerBlock(tx, locked, evaluation, actor.userId, memberships);
+      const decision = await signerBlock(tx, locked, evaluation, actor.userId, memberships, actor.secondFactor === true);
       if ('block' in decision) throw new DoubleCheckNotAllowedError(decision.block);
       return issueChallenge(tx, secret, target, locked.context, { userId: actor.userId, role: decision.membership.role }, now);
     });
@@ -236,7 +237,7 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
     }
     const memberships = (await loadSignerMemberships(tx, challenge.organizationId, [actor.userId])).get(actor.userId) ?? [];
     const evaluation = await evaluateDoubleCheck(tx, secret, locked.context, locked.signatures);
-    const decision = await signerBlock(tx, locked, evaluation, actor.userId, memberships);
+    const decision = await signerBlock(tx, locked, evaluation, actor.userId, memberships, actor.secondFactor === true);
     if ('block' in decision) return notAllowed(decision.block);
     const { membership } = decision;
     if (membership.role !== signerRole) return notAllowed('NOT_A_SIGNER');

@@ -9,7 +9,6 @@ const ALL_PATHS = ['/', ...PILLARS];
 const urlOf = (locale: keyof typeof PREFIX, path: string) => (path === '/' ? PREFIX[locale] || '/' : `${PREFIX[locale]}${path}`);
 
 /** El Entorno 0 enlaza a /login y /registro-comunidad, que llegan en el Sprint 3.2: hasta entonces responden 404. */
-const NOT_BUILT_YET = /\/(login|registro-comunidad)$/;
 
 async function metaContent(page: Page, selector: string) {
   return page.locator(selector).first().getAttribute('content');
@@ -83,11 +82,12 @@ test.describe('QA-SEO02 · robots.txt, sitemap.xml y llms.txt', () => {
     expect(body).toMatch(/User-Agent: GPTBot[\s\S]*?Disallow: \/\n/);
   });
 
-  test('sitemap.xml lista las 9 páginas en los 3 idiomas con sus alternativas y nada privado', async ({ request }) => {
+  test('sitemap.xml lista las 9 páginas y el alta de entidades en los 3 idiomas con sus alternativas y nada privado', async ({ request }) => {
     const response = await request.get('/sitemap.xml');
     expect(response.status()).toBe(200);
     const body = await response.text();
-    expect(body.match(/<loc>/g)).toHaveLength(ALL_PATHS.length * 3);
+    expect(body.match(/<loc>/g)).toHaveLength((ALL_PATHS.length + 1) * 3);
+    expect(body).toContain('/ca/registro-comunidad</loc>');
     expect(body).toContain('hreflang="x-default"');
     expect(body).not.toMatch(/\/(panel|admin|api|login|ideas)(\/|<)/);
     for (const path of PILLARS) expect(body).toContain(`${path}</loc>`);
@@ -258,7 +258,9 @@ for (const width of [360, 390, 1280, 1366]) {
 }
 
 test.describe('Navegación y enlaces internos', () => {
-  test('todos los enlaces internos de la portada y de las páginas pilar existen (salvo los del Sprint 3.2)', async ({ page, request }) => {
+  test('todos los enlaces internos de la portada y de las páginas pilar existen, también /login y /registro-comunidad', async ({ page, request }) => {
+    // Recorre 9 páginas y comprueba cada enlace (desde el 3.2 también /login, el alta, el panel y la consola): necesita más de 30 s en desarrollo.
+    test.setTimeout(120_000);
     const seen = new Set<string>();
     for (const path of ALL_PATHS) {
       await page.goto(path);
@@ -267,7 +269,6 @@ test.describe('Navegación y enlaces internos', () => {
     }
     expect(seen.size).toBeGreaterThan(10);
     for (const href of seen) {
-      if (NOT_BUILT_YET.test(href)) continue;
       const response = await request.get(href);
       expect(response.status(), href).toBe(200);
     }

@@ -14,15 +14,17 @@ const marker = uniqueId('Zeta');
 let visible: { id: string; slug: string };
 let hidden: { id: string };
 let archived: { id: string };
+let unverified: { id: string; slug: string };
 
 beforeAll(async () => {
   db = createTestClient();
   // La fila global la crea la semilla; en el esquema de pruebas se asegura con los valores por defecto del esquema de Prisma.
   await db.globalConfig.upsert({ where: { id: 'GLOBAL' }, create: { id: 'GLOBAL' }, update: {} });
   const base = { cif: uniqueId('G'), iban: 'ES91 2100 0418 4502 0005 1332', contactEmail: `${uniqueId('c')}@entidad.example`, contactPhone: '600000000' };
-  visible = await createOrganization(db, { ...base, name: `Colegio ${marker} Visible`, province: 'Málaga', vertical: 'SCHOOL' });
-  hidden = await createOrganization(db, { ...base, cif: uniqueId('G'), name: `Colegio ${marker} Oculto`, publicIndexing: false });
-  archived = await createOrganization(db, { ...base, cif: uniqueId('G'), name: `Colegio ${marker} Archivado`, archivedAt: new Date() });
+  visible = await createOrganization(db, { ...base, name: `Colegio ${marker} Visible`, province: 'Málaga', city: 'Ronda', postalCode: '29400', vertical: 'SCHOOL', kybStatus: 'VERIFIED' });
+  unverified = await createOrganization(db, { ...base, cif: uniqueId('G'), name: `Colegio ${marker} Sinverificar` });
+  hidden = await createOrganization(db, { ...base, cif: uniqueId('G'), name: `Colegio ${marker} Oculto`, publicIndexing: false, kybStatus: 'VERIFIED' });
+  archived = await createOrganization(db, { ...base, cif: uniqueId('G'), name: `Colegio ${marker} Archivado`, archivedAt: new Date(), kybStatus: 'VERIFIED' });
 }, 120_000);
 
 afterAll(async () => {
@@ -31,16 +33,18 @@ afterAll(async () => {
 });
 
 describe('directorio público del buscador', () => {
-  it('lista solo entidades no archivadas que aceptan aparecer en buscadores', async () => {
+  it('lista solo entidades verificadas (KYB), no archivadas y que aceptan aparecer en buscadores', async () => {
     const slugs = (await listPublicDirectory(db)).map((entity) => entity.slug);
     expect(slugs).toContain(visible.slug);
     expect(slugs).not.toContain(hidden.id);
     expect(slugs).not.toContain(archived.id);
+    // Un alta recién hecha, sin verificar, no aparece: nadie puede presentarse como un colegio ajeno (Sprint 3.2).
+    expect(slugs).not.toContain(unverified.slug);
   });
 
   it('devuelve solo nombre, enlace, tipo y provincia: ni CIF, ni IBAN, ni contactos', async () => {
     const entity = (await listPublicDirectory(db)).find((candidate) => candidate.slug === visible.slug);
-    expect(Object.keys(entity ?? {}).sort()).toEqual(['name', 'province', 'slug', 'vertical']);
+    expect(Object.keys(entity ?? {}).sort()).toEqual(['city', 'name', 'postalCode', 'province', 'slug', 'vertical']);
     expect(JSON.stringify(await searchPublicEntities(db, marker))).not.toMatch(/ES91|@entidad\.example|600000000|cif/i);
   });
 
@@ -49,6 +53,10 @@ describe('directorio público del buscador', () => {
     expect((await searchPublicEntities(db, `${marker} malaga`)).map((entity) => entity.slug)).toEqual([visible.slug]);
     expect(await searchPublicEntities(db, `${marker} oculto`)).toEqual([]);
     expect(await searchPublicEntities(db, `${marker} archivado`)).toEqual([]);
+    // Municipio y código postal del alta (Sprint 3.2).
+    expect((await searchPublicEntities(db, `${marker} ronda`)).map((entity) => entity.slug)).toEqual([visible.slug]);
+    expect((await searchPublicEntities(db, `${marker} 29400`)).map((entity) => entity.slug)).toEqual([visible.slug]);
+    expect(await searchPublicEntities(db, `${marker} sinverificar`)).toEqual([]);
     expect(await searchPublicEntities(db, 'a')).toEqual([]);
   });
 });

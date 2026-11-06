@@ -3,7 +3,7 @@ import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
 import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
-import { assertSuperadminWithTwoFactor } from '@/core/security/superadmin-guard';
+import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
 import { payoutTargetDigest } from '@/core/security/signature-hash';
 import { inTransaction, type Db } from '@/lib/db';
@@ -197,19 +197,20 @@ export async function executeApprovedPayout(db: Db, provider: PaymentProvider, p
  * Resuelve un reparto de resultado desconocido, cuando una persona ya ha comprobado en Paycomet qué pasó: con `splitAuthCode` se hizo; con
  * `null`, no se hizo y vuelve a estar pendiente. Solo actúa si sigue en `SENDING`: dos resoluciones cruzadas no pueden pagar dos veces.
  */
-/** Solo una cuenta de Super-Admin con verificación en dos pasos puede resolverlo (`assertSuperadminWithTwoFactor`), como `resolveUnknownRefund`. */
-export async function resolveUnknownSplit(db: Db, splitId: number, resolution: { splitAuthCode: string | null; resolvedById: string }, now: Date = new Date()): Promise<void> {
-  await assertSuperadminWithTwoFactor(db, resolution.resolvedById, 'payout.resolve_unknown_split', String(splitId));
+/** Solo un Super-Admin verificado (`VerifiedSuperadminActor`) puede resolverlo, como `resolveUnknownRefund`. */
+export async function resolveUnknownSplit(db: Db, actor: VerifiedSuperadminActor, splitId: number, resolution: { splitAuthCode: string | null }, now: Date = new Date()): Promise<void> {
+  assertVerifiedSuperadmin(actor, 'payout.resolve_unknown_split', now);
   const code = resolution.splitAuthCode;
   if (code !== null && code.trim() === '') throw new RangeError('El código de autorización del reparto no puede estar vacío');
   const split = await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: splitId }, include: { payout: { select: { organizationId: true, initiativeId: true } } } });
   await inTransaction(db, async (tx) => {
+    await revalidateActor(tx, actor, 'payout.resolve_unknown_split', now);
     const applied = code !== null ? await recordSplitDone(tx, split, split.payout, code, now) : (await tx.escrowPayoutSplit.updateMany({ where: { id: splitId, status: 'SENDING' }, data: { status: 'PENDING', errorMessage: null } })).count === 1;
     if (!applied) throw new PayoutNotAllowedError(split.payoutId, `el reparto ${splitId} ya no tiene un resultado desconocido`);
     await tx.auditLog.create({
       data: {
         actorType: 'USER',
-        actorUserId: resolution.resolvedById,
+        actorUserId: actor.userId,
         organizationId: split.payout.organizationId,
         action: 'payout.split_resolved',
         targetType: 'EscrowPayoutSplit',

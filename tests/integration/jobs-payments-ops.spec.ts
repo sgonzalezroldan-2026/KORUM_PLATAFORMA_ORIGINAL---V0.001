@@ -18,7 +18,7 @@ import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.servi
 import { PaymentProviderError, type PaymentProvider } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { approvePayout, PayoutNotAllowedError } from '@/services/payments/split-transfer.service';
-import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, testJobDeps, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, testJobDeps, uniqueId, verifiedSuperadmin } from './test-database';
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración' };
 const HMAC_SECRET = 'secreto-de-integracion-de-las-firmas-0123456789';
@@ -153,8 +153,8 @@ describe('QA-OPS01 · MASS_REFUND', () => {
     expect(refundAttempts.get(donation.paycometOrder!)).toBe(1);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `REFUND_STUCK:${donation.id}` } })).toMatchObject({ severity: 'CRITICAL', status: 'OPEN' });
 
-    const admin = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    await resolveUnknownRefund(db, donation.id, { refunded: true, resolvedById: admin.id });
+    const { actor: admin } = await verifiedSuperadmin(db);
+    await resolveUnknownRefund(db, admin, donation.id, { refunded: true });
     await run('MASS_REFUND', massRefundHandler, new Date(start.getTime() + 40 * 11 * MINUTE), mockDeps);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `REFUND_STUCK:${donation.id}` } })).toMatchObject({ status: 'RESOLVED' });
     expect(refundAttempts.get(donation.paycometOrder!)).toBe(1);
@@ -266,10 +266,10 @@ describe('INVOICE_SUBMIT · facturas Veri*factu', () => {
     await run('INVOICE_SUBMIT', invoiceSubmitHandler, later, jobDeps);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `INVOICE_STUCK:${stuck.id}` } })).toMatchObject({ severity: 'CRITICAL', status: 'OPEN', organizationId: stuck.organizationId });
 
-    const admin = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    await resolveUnknownInvoice(db, stuck.id, { registered: true, status: 'ACCEPTED', providerReference: 'AEAT-OK', resolvedById: admin.id });
+    const { actor: admin } = await verifiedSuperadmin(db);
+    await resolveUnknownInvoice(db, admin, stuck.id, { registered: true, status: 'ACCEPTED', providerReference: 'AEAT-OK' });
     expect(await db.invoice.findUniqueOrThrow({ where: { id: stuck.id } })).toMatchObject({ verifactuStatus: 'ACCEPTED', providerReference: 'AEAT-OK' });
-    await expect(resolveUnknownInvoice(db, stuck.id, { registered: false, resolvedById: admin.id })).rejects.toBeInstanceOf(InvoiceNotAllowedError);
+    await expect(resolveUnknownInvoice(db, admin, stuck.id, { registered: false })).rejects.toBeInstanceOf(InvoiceNotAllowedError);
     expect(await db.auditLog.count({ where: { action: 'invoice.registration_resolved', targetId: String(stuck.id) } })).toBe(1);
 
     // La alerta se cierra y las demás siguen su curso.
@@ -284,8 +284,8 @@ describe('INVOICE_SUBMIT · facturas Veri*factu', () => {
     const organization = await createOrganization(db);
     const invoice = await issueInvoice(db, invoiceInput(organization.id));
     await db.invoice.update({ where: { id: invoice.id }, data: { verifactuStatus: 'SENT', sentAt: new Date() } });
-    const admin = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    await resolveUnknownInvoice(db, invoice.id, { registered: false, resolvedById: admin.id });
+    const { actor: admin } = await verifiedSuperadmin(db);
+    await resolveUnknownInvoice(db, admin, invoice.id, { registered: false });
     expect(await db.invoice.findUniqueOrThrow({ where: { id: invoice.id } })).toMatchObject({ verifactuStatus: 'PENDING', sentAt: null });
   });
 });
@@ -356,7 +356,7 @@ describe('límite de peticiones de firma', () => {
     const organization = await createOrganization(db, { paycometSplitId: uniqueId('split'), kybStatus: 'VERIFIED' });
     const director = await createUser(db, { twoFactorEnabled: true });
     await db.organizationMember.create({ data: { organizationId: organization.id, userId: director.id, role: 'DIRECTOR' } });
-    const actor = { kind: 'user' as const, userId: director.id, isSuperadmin: false, memberships: [{ organizationId: organization.id, role: 'DIRECTOR' as const }] };
+    const actor = { kind: 'user' as const, userId: director.id, isSuperadmin: false, memberships: [{ organizationId: organization.id, role: 'DIRECTOR' as const }], secondFactor: true };
     const idea = await db.idea.create({ data: { organizationId: organization.id, alias: uniqueId('#FAM'), authorCanonicalEmail: `${uniqueId('autor')}@pruebas.example`, title: 'Taller', category: 'Cultura', description: 'x', phase: 'DOUBLE_CHECK', verifiedVotes: 5, expiresAt: new Date(Date.now() + DAY) } });
     const target = { targetType: 'IDEA_APPROVAL' as const, ideaId: idea.id };
     const now = new Date();
@@ -426,8 +426,8 @@ describe('MASS_REFUND · espera entre intentos, configuración y restos en la hu
 
     // Paycomet ya funciona y una persona la reactiva.
     refundFailures.delete(order);
-    const admin = await createUser(db, { isSuperadmin: true, twoFactorEnabled: true });
-    expect(await reactivateRejectedRefund(db, donation.id, admin.id, now)).toBe(true);
+    const { actor: admin } = await verifiedSuperadmin(db, now);
+    expect(await reactivateRejectedRefund(db, admin, donation.id, now)).toBe(true);
     await massRefundHandler(ctx(now));
     expect(await statusOf(donation.id)).toBe('REFUNDED');
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `REFUND_REJECTED:${donation.id}` } })).toMatchObject({ status: 'RESOLVED' });

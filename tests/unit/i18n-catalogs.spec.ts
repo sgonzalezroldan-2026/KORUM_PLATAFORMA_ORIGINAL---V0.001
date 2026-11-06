@@ -56,8 +56,10 @@ describe('QA-C05 · catálogos de traducción', () => {
   it('en catalán y en inglés no quedan textos copiados del castellano salvo nombres propios o palabras idénticas', () => {
     // «Avisos» se escribe igual en castellano y en catalán; los nombres de idioma y de marca no se traducen.
     // En la exportación de datos (Sprint 2.5): «Sí», «No», «Idea», «Iniciativa», «NIF», «Completada» y «Fallida» son iguales en catalán.
-    const SAME_IN_CATALAN = new Set(['ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED', 'calculator.objective.scoreboard', 'nav.menu']);
-    const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea']);
+    const SAME_IN_CATALAN = new Set(['ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED', 'calculator.objective.scoreboard', 'nav.menu',
+      // Acceso, alta y paneles (Sprint 3.2): «Entrar», «Verificar», «Continuar», «Forma jurídica», «AMPA / AFA», «Hola», «Consola», «Crítica».
+      'auth.login.enter', 'auth.secondFactor.verify', 'registration.continue', 'registration.fields.legalForm', 'registration.legalForm.PARENTS_ASSOCIATION', 'panel.welcome', 'admin.headerTitle', 'admin.severity.CRITICAL', 'demo.console']);
+    const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));
