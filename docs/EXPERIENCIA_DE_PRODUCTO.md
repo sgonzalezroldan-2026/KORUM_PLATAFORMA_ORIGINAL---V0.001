@@ -45,7 +45,7 @@
 
 ## 4. Catálogo de emails y notificaciones
 
-**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `auth.invitation` (Sprint 3.2), `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome` (Sprint 4.2: con los enlaces del justificante y la factura), `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `privacy.exportReady`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje.
+**Estado tras el Sprint 2.6:** implementadas y en es/ca/en las plantillas `auth.magicLink`, `auth.otp`, `auth.invitation` (Sprint 3.2), `contribution.receipt`, `ticket.pass`, `gate.pinRevoked`, `initiative.goalReached`, `initiative.expired`, `refund.issued`, `doubleCheck.pending`, `split.windowExpiring`, `split.windowExpired`, `sponsor.renewalNotice`, `tax.certificateReady`, `model182.reminder` y `privacy.inactivityNotice`. El resto (`initiative.achievementPhotos`, `payout.executed`, `sponsor.welcome` (Sprint 4.2: con los enlaces del justificante y la factura), `sponsor.creditPool`, `pledge.*`, `org.kybStatus`, `support.reply`) se añade al catálogo en el sprint que escribe ese mensaje. **Sprint 3.7:** `tax.certificateReady` ya lo escribe la tarea del 2 de enero (`MODEL182_REMINDER`), y `privacy.exportReady` no se usa: la exportación se descarga al momento desde *Mi cuenta*, sin enlace por email (DECISIONES_TECNICAS §2.5).
 
 Reglas: solo emails **transaccionales** por defecto (los comerciales exigen consentimiento); remitente *"{Entidad} vía KORUM"*; idioma de la persona; versión HTML y de texto; botón principal único; sin adjuntos pesados (enlaces de descarga). WhatsApp se usa **solo para compartir enlaces** (`wa.me`); no se envían mensajes automáticos por WhatsApp.
 
@@ -70,7 +70,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | `tax.certificateReady` | Enero | Donantes con NIF en entidades con Ley 49/2002 | Descargar certificado |
 | `model182.reminder` | 2 de enero | Firmantes de entidades con Ley 49/2002 | Descargar el Modelo 182 |
 | `org.kybStatus` | Cambia el estado del KYB | Firmantes | Qué falta o confirmación |
-| `privacy.exportReady` | Exportación lista | Persona | Descarga (enlace caducable) |
+| `privacy.exportReady` | *(no se usa: la exportación se descarga al momento desde Mi cuenta, Sprint 3.7)* | — | — |
 | `privacy.inactivityNotice` | 3 años sin actividad (`DATA_RETENTION_PURGE`) | Persona | Que su cuenta se suprimirá el día `eraseOn` si no vuelve a entrar, qué se conserva por ley y que basta con iniciar sesión para conservarla; *Entrar en mi cuenta* |
 | `support.reply` | Respuesta a un ticket | Remitente | Respuesta y enlace al hilo |
 

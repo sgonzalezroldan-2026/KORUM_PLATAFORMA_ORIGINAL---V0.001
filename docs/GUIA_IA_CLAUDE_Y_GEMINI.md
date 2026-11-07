@@ -86,7 +86,7 @@ En Claude Code, los subagentes ya tienen su modelo **y su esfuerzo** fijados en 
 | `korum-family-viral-builder`, `korum-backoffice-bi-builder`, `ux-school-director-reviewer` | Sonnet 5.5 · alto | Flash 3.8 · alto |
 | `qa-e2e-verifier`, `korum-seo-discoverability-specialist`, `korum-brand-visual-director`, `korum-community-target-psychologist` | Sonnet 5.5 · medio | Flash 3.8 · alto |
 
-Esos son los valores por defecto. Cuando la ficha de un sprint pide otro modelo para un agente (línea **Agente constructor:**), el orquestador lo indica al lanzarlo: por ejemplo, `korum-family-viral-builder` con `opus` en los sprints 3.4 y 3.7, y `korum-backoffice-bi-builder` con `opus` en el 4.2 y el 4.4. Para el resto basta con elegir el modelo de la sesión principal.
+Esos son los valores por defecto. Cuando la ficha de un sprint pide otro modelo para un agente (línea **Agente constructor:**), el orquestador lo indica al lanzarlo: por ejemplo, `korum-family-viral-builder` con `opus` en los sprints 3.4, 3.7 y 3.8, y `korum-backoffice-bi-builder` con `opus` en el 4.2 y el 4.4. Para el resto basta con elegir el modelo de la sesión principal.
 
 ### 3.4 Cómo ahorrar tokens sin perder calidad
 

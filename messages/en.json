@@ -167,7 +167,8 @@
         "savedCards": "Saved cards",
         "monthlyPledges": "Monthly contributions",
         "notifications": "Emails we have sent you",
-        "supportTickets": "Support requests"
+        "supportTickets": "Support requests",
+        "passkeys": "Passkeys"
       },
       "fields": {
         "name": "Name",
@@ -216,7 +217,8 @@
         "template": "Email type",
         "subject": "Subject",
         "message": "Message",
-        "reply": "Reply"
+        "reply": "Reply",
+        "synced": "Synced across devices"
       },
       "types": {
         "DONATION": "Donation",
@@ -238,6 +240,26 @@
         "DEVICE_FINGERPRINT": "Device fingerprint (fraud prevention)",
         "MARKETING_EMAILS": "Newsletter emails",
         "PUBLIC_SUPPORTER_NAME": "Show my name among supporters"
+      },
+      "requestTypes": {
+        "ACCESS": "Access",
+        "EXPORT": "Data download",
+        "RECTIFICATION": "Correction",
+        "ERASURE": "Account deletion",
+        "OBJECTION": "Objection"
+      },
+      "requestStatuses": {
+        "RECEIVED": "Received",
+        "IN_PROGRESS": "In progress",
+        "COMPLETED": "Completed",
+        "REJECTED": "Could not be handled"
+      },
+      "emailStatuses": {
+        "PENDING": "Pending",
+        "SENDING": "Sending",
+        "SENT": "Sent",
+        "FAILED": "Could not be sent",
+        "CANCELLED": "Cancelled"
       }
     }
   },
@@ -413,6 +435,16 @@
       "kept": "By legal obligation we keep the minimum accounting and tax data of your contributions, unlinked from your account.",
       "keep": "To keep it, just sign in.",
       "cta": "Sign in to my account"
+    },
+    "account": {
+      "passkeyAdded": {
+        "subject": "A passkey has been added to your account",
+        "preheader": "If it wasn't you, let us know.",
+        "title": "New passkey",
+        "body": "A passkey has just been added to your KORUM account: it can be used to sign in without an email or password. If it was you, there's nothing you need to do.",
+        "footnote": "If it wasn't you, go to My account, remove the passkey and contact support.",
+        "cta": "Review my passkeys"
+      }
     }
   },
   "nav": {
@@ -431,7 +463,8 @@
       "precios": "Pricing",
       "seguridad": "Security and transparency",
       "faq": "Frequently asked questions"
-    }
+    },
+    "account": "My account"
   },
   "cookies": {
     "title": "Optional cookies",
@@ -992,7 +1025,9 @@
       "passwordHint": "At least 12 characters. A sentence you'll remember makes a good password.",
       "savePassword": "Save the new password",
       "resetDone": "Password changed. You can now sign in with it.",
-      "sendResetCode": "Send me the code"
+      "sendResetCode": "Send me the code",
+      "passkey": "Sign in with a passkey",
+      "passkeyIntro": "Saved a passkey on this phone or computer? Sign in with your fingerprint, face or PIN."
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "The email or password is not correct.",
@@ -1017,7 +1052,8 @@
       "KORUM_SECOND_FACTOR_LIMIT": "Too many codes in a row. Wait 15 minutes and try again.",
       "TOTP_ALREADY_ENABLED": "Two-step verification is already on for your account.",
       "CREDENTIAL_ACCOUNT_NOT_FOUND": "Your account has no password. Create one with “I've forgotten my password”.",
-      "UNKNOWN": "That didn't work. Try again in a few seconds."
+      "UNKNOWN": "That didn't work. Try again in a few seconds.",
+      "PASSKEY_FAILED": "We couldn't check the passkey. Try again or sign in with an email link."
     },
     "secondFactor": {
       "intro": "Open your authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) and enter the KORUM code.",
@@ -2060,6 +2096,195 @@
         "description": "When an initiative reaches its goal and the school finishes the improvement, you will see it here with its before and after.",
         "action": "See open initiatives"
       }
+    }
+  },
+  "account": {
+    "metaTitle": "My account",
+    "title": "My account",
+    "signedInAs": "Signed in as {email}",
+    "sectionsLabel": "My account sections",
+    "sections": {
+      "contributions": "Contributions",
+      "passes": "Tickets",
+      "documents": "Certificates",
+      "privacy": "Privacy",
+      "security": "Passkeys",
+      "language": "Language"
+    },
+    "contributions": {
+      "title": "My contributions",
+      "line": "{organization} · {date} · {type}",
+      "type": {
+        "DONATION": "Donation",
+        "TICKET": "Tickets"
+      },
+      "includesGuarantee": "Includes your voluntary contribution to KORUM.",
+      "status": {
+        "PENDING": "Awaiting confirmation",
+        "COMPLETED": "Completed",
+        "REFUND_PENDING": "Refund in progress",
+        "REFUNDED": "Refunded",
+        "CHARGEBACK": "Reversed (payment dispute)",
+        "FAILED": "Not completed"
+      },
+      "emptyTitle": "You haven't contributed with this account yet",
+      "emptyText": "When you support an initiative or buy tickets with this email, they will show up here.",
+      "emptyAction": "Find my school or club"
+    },
+    "passes": {
+      "title": "My tickets",
+      "where": "{organization} · {date}",
+      "numbers": "Numbers: {numbers}",
+      "quantity": "{count, plural, one {# ticket} other {# tickets}}",
+      "serial": "Code: {serial}",
+      "revoked": "This ticket has been cancelled (because of a refund or a payment dispute) and is no longer valid at the door.",
+      "viewEvent": "View my ticket",
+      "viewRaffle": "View my raffle tickets",
+      "emptyTitle": "You have no tickets",
+      "emptyText": "Tickets and raffle tickets you buy with this email will show up here, ready to show at the door."
+    },
+    "documents": {
+      "metaTitle": "Certificates and receipts",
+      "summary": "{count, plural, one {You have # donation with a document} other {You have # donations with a document}}: tax certificate or receipt, ready to print.",
+      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets and raffle tickets don't come with a donation document.",
+      "open": "View certificates and receipts",
+      "openOne": "View document",
+      "back": "Back to My account",
+      "backToList": "Back to certificates and receipts",
+      "title": "Certificates and receipts",
+      "intro": "One per donation. The tax certificate is for your income tax return if the organisation is under Spain's Law 49/2002 and you gave your tax ID when contributing; otherwise you get a named receipt, with no tax effect. Tickets and raffle tickets don't come with a donation document.",
+      "year": "Tax year {year}",
+      "line": "{initiative} · {date}",
+      "kind": {
+        "TAX_CERTIFICATE": "Tax certificate (Law 49/2002)",
+        "NOMINATIVE_RECEIPT": "Named contribution receipt"
+      },
+      "emptyTitle": "No documents yet",
+      "emptyText": "When you make a donation, its tax certificate or receipt will be here.",
+      "sheet": {
+        "platform": "Issued through KORUM, a technology platform",
+        "draft": "DRAFT · Wording pending review by the tax adviser. Not yet valid.",
+        "certificateTitle": "Donation certificate",
+        "receiptTitle": "Named contribution receipt",
+        "reference": "Reference",
+        "recipient": "Organisation receiving the donation",
+        "recipientTaxId": "Organisation tax ID",
+        "donor": "Donor",
+        "donorUnknown": "Not given",
+        "donorTaxId": "Donor tax ID",
+        "province": "Province code",
+        "initiative": "Initiative",
+        "amount": "Amount donated",
+        "date": "Date",
+        "fiscalYear": "Tax year",
+        "certificateText": "The organisation, under the tax regime of Spain's Law 49/2002, certifies that it has received this donation irrevocably.",
+        "receiptText": "Receipt for the contribution received by the organisation. It has no tax effect: the organisation is not under Law 49/2002 or no tax ID was given when contributing.",
+        "guaranteeNote": "Your voluntary contribution to KORUM, if you made one, is not part of the donation and does not appear on this document.",
+        "print": "Print or save as PDF"
+      },
+      "maskedTaxId": "Your tax ID is hidden. To see it in full and print the certificate, confirm it's you.",
+      "revealTaxId": "Show the full tax ID"
+    },
+    "privacy": {
+      "title": "Privacy and your data",
+      "consents": {
+        "title": "Permissions",
+        "fingerprintText": "Browser fingerprint for the ideas box: it helps check that nobody signs several times from the same device. It is only used if you accept it when signing an idea, and it is stored as an irreversible code, never in plain form.",
+        "granted": "Status: allowed.",
+        "notGranted": "Status: not allowed. If you like, you can allow it when you sign an idea in the ideas box.",
+        "withdrawn": "Permission withdrawn. We have deleted the fingerprint from all your devices.",
+        "withdraw": "Withdraw permission"
+      },
+      "export": {
+        "title": "Download my data",
+        "text": "A copy of everything KORUM keeps about you: in JSON, to take it to another service, and in PDF, to read it. If needed, we'll ask for an email code to confirm it's you.",
+        "json": "Download as JSON",
+        "pdf": "Download as PDF",
+        "preparing": "Preparing…",
+        "downloaded": "Download ready. Look for it in your browser's downloads folder.",
+        "rateLimited": "You have downloaded your data many times today. Please try again tomorrow.",
+        "failed": "We couldn't prepare the download. Please try again in a few minutes."
+      },
+      "requests": {
+        "title": "My requests",
+        "none": "You haven't made any requests yet.",
+        "type": {
+          "ACCESS": "Access",
+          "EXPORT": "Data download",
+          "RECTIFICATION": "Correction",
+          "ERASURE": "Account deletion",
+          "OBJECTION": "Objection"
+        },
+        "status": {
+          "RECEIVED": "Received",
+          "IN_PROGRESS": "In progress",
+          "COMPLETED": "Completed",
+          "REJECTED": "Could not be handled"
+        }
+      }
+    },
+    "erase": {
+      "title": "Delete my account",
+      "deleted": "We will delete your name, your email, your sessions, your passkeys and your saved cards, and remove your email from your purchases, tickets, signatures and ideas. This cannot be undone.",
+      "kept": "By law we keep, with nothing that identifies you, the amounts and dates of your contributions. And if you gave your tax ID for a tax certificate, the organisation must keep that tax ID, your name and your province for 6 years for the Spanish tax authority (Form 182).",
+      "signIn": "Afterwards you can create a new account with the same email, but it will start empty.",
+      "understand": "I understand my account will be deleted forever",
+      "button": "Delete my account",
+      "blocked": {
+        "SUPERADMIN_ACCOUNT": "A Super-Admin account can't be deleted from here.",
+        "ACTIVE_SIGNER": "You sign for an organisation. Before deleting your account, someone else must take over your role from the organisation's dashboard.",
+        "WALLET_BALANCE": "You have a balance in your Piggy Bank. It must be returned to your payment method first."
+      },
+      "rateLimited": "You have made many attempts today. Please try again tomorrow.",
+      "failed": "We couldn't delete the account. Please try again in a few minutes.",
+      "done": {
+        "title": "Your account has been deleted",
+        "text": "We no longer keep your name or your email. Only an irreversible code remains, which stops the same idea being signed twice. Thank you for adding up with us.",
+        "retained": "{count, plural, one {We no longer keep your name or your email. Only an irreversible code that stops the same idea being signed twice remains, plus the tax details of # donation with a certificate, which the law requires us to keep.} other {We no longer keep your name or your email. Only an irreversible code that stops the same idea being signed twice remains, plus the tax details of # donations with a certificate, which the law requires us to keep.}}",
+        "home": "Go to the home page"
+      },
+      "erasing": "Deleting…"
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "intro": "Sign in with the fingerprint, face or PIN of your phone or computer, without waiting for an email. The passkey stays on your device: KORUM never sees your fingerprint or your face.",
+      "signerNote": "As your account has two-step verification, to add a passkey we'll ask for the code from your authenticator app.",
+      "none": "You have no saved passkeys.",
+      "unnamed": "Unnamed passkey",
+      "added": "Added on {date}",
+      "synced": "synced across your devices",
+      "remove": "Remove",
+      "removeLabel": "Remove the passkey {name}",
+      "nameLabel": "Passkey name (optional)",
+      "nameHint": "For example, “Home phone”. It helps you recognise it.",
+      "add": "Add a passkey on this device",
+      "unsupported": "This browser doesn't support passkeys. You can keep signing in with an email link or code.",
+      "messages": {
+        "added": "Passkey added. Next time you can sign in with it.",
+        "removed": "Passkey removed.",
+        "cancelled": "You cancelled creating the passkey. Nothing was saved.",
+        "alreadyRegistered": "This device already has a passkey saved for your account.",
+        "failed": "We couldn't save the passkey. Please try again.",
+        "twoFactorFirst": "As you sign for an organisation, first turn on two-step verification (your code app) and then you can add a passkey."
+      }
+    },
+    "language": {
+      "title": "Language",
+      "intro": "The language of your emails and of this page.",
+      "label": "Account language",
+      "save": "Save language",
+      "saved": "Language saved.",
+      "failed": "We couldn't save the language. Please try again."
+    },
+    "reauth": {
+      "title": "Confirm it's you",
+      "intro": "To protect your data, we'll send a 6-digit code to {email}.",
+      "send": "Send code",
+      "codeSent": "Enter the code we sent to {email}. It expires in {minutes} minutes.",
+      "code": "6-digit code",
+      "confirm": "Confirm",
+      "resend": "Send another code",
+      "cancel": "Cancel"
     }
   }
 }

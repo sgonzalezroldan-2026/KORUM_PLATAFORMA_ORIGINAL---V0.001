@@ -1,5 +1,6 @@
 'use client';
 
+import { passkeyClient } from '@better-auth/passkey/client';
 import { emailOTPClient, magicLinkClient, twoFactorClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
@@ -8,7 +9,7 @@ import { createAuthClient } from 'better-auth/react';
  * (`twoFactorRedirect` en la respuesta), sin redirección automática: la página decide adónde volver.
  */
 export const authClient = createAuthClient({
-  plugins: [magicLinkClient(), emailOTPClient(), twoFactorClient()]
+  plugins: [magicLinkClient(), emailOTPClient(), twoFactorClient(), passkeyClient()]
 });
 
 /** Cabecera con el idioma de la página: Better Auth la usa al crear una cuenta nueva y para escribir el email en su idioma. */

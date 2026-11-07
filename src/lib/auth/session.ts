@@ -18,7 +18,10 @@ export interface AuthSession {
   sessionId: string;
   email: string;
   twoFactorEnabled: boolean;
-  /** Esta sesión superó el TOTP o un código de respaldo (al entrar o después). Un enlace mágico solo no lo cumple. */
+  /**
+   * La cuenta tiene el 2FA activado **y** esta sesión superó el TOTP, un código de respaldo o una llave de acceso. Un enlace mágico solo no lo
+   * cumple, y una llave en una cuenta sin TOTP tampoco: no puede sustituir al 2FA obligatorio de quien firma (auditoría del 3.7, I1).
+   */
   secondFactor: boolean;
 }
 
@@ -35,13 +38,8 @@ export const getAuthSession = cache(async (): Promise<AuthSession | null> => {
   if (!result) return null;
   const row = await getPrisma().session.findUnique({ where: { id: result.session.id }, select: { secondFactorVerifiedAt: true } });
   if (!row) return null;
-  return {
-    userId: result.user.id,
-    sessionId: result.session.id,
-    email: result.user.email,
-    twoFactorEnabled: Boolean((result.user as { twoFactorEnabled?: boolean | null }).twoFactorEnabled),
-    secondFactor: row.secondFactorVerifiedAt !== null
-  };
+  const twoFactorEnabled = Boolean((result.user as { twoFactorEnabled?: boolean | null }).twoFactorEnabled);
+  return { userId: result.user.id, sessionId: result.session.id, email: result.user.email, twoFactorEnabled, secondFactor: twoFactorEnabled && row.secondFactorVerifiedAt !== null };
 });
 
 /** Actor de la petición actual para los repositorios (`authorizeTenant`). */

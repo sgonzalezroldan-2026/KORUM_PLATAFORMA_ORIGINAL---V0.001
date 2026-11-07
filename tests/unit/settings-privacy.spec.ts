@@ -179,7 +179,7 @@ function sampleExport(contributions = 1): PersonalDataExport {
       amountCents: 2500, guaranteeContributionCents: 200, totalChargedCents: 2700, refundedCents: 0, group: '3º de Primaria', donorFullName: 'Núria', donorTaxId: '12345678Z', donorProvinceCode: '08', asGuest: false
     })),
     tickets: [], consents: [{ purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: '2026-11-05', source: 'cuenta', createdAt: '2026-11-02T00:00:00.000Z' }],
-    privacyRequests: [], memberships: [], ideaSignatures: [], devices: [], savedCards: [], monthlyPledges: [],
+    privacyRequests: [], memberships: [], ideaSignatures: [], devices: [], savedCards: [], passkeys: [{ name: "Móvil de casa", createdAt: "2026-11-01T10:00:00.000Z", deviceType: "multiDevice", synced: true }], monthlyPledges: [],
     notifications: [{ template: 'contribution.receipt', status: 'SENT', createdAt: '2026-10-01T09:01:00.000Z', sentAt: '2026-10-01T09:01:05.000Z' }],
     supportTickets: [], unreadableTaxIds: 0
   };

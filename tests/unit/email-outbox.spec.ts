@@ -55,7 +55,8 @@ const SAMPLES: Record<string, unknown> = {
   'sponsor.renewalNotice': { sponsorId: 3, amountCents: 25_000, expiresAt: IN_3_DAYS },
   'tax.certificateReady': { fiscalYear: 2026 },
   'model182.reminder': { fiscalYear: 2026 },
-  'privacy.inactivityNotice': { eraseOn: IN_3_DAYS }
+  'privacy.inactivityNotice': { eraseOn: IN_3_DAYS },
+  'account.passkeyAdded': {}
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

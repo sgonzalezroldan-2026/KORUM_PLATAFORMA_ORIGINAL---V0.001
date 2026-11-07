@@ -46,6 +46,8 @@ export interface PersonalDataExport {
   ideaSignatures: Array<{ idea: string; status: string; reasonKey: string; accountOrder: number; createdAt: string }>;
   devices: Array<{ firstSeenAt: string; lastSeenAt: string; accountOrder: number; fingerprintStored: boolean }>;
   savedCards: Array<{ brand: string | null; last4: string | null; expires: string | null; createdAt: string; revokedAt: string | null }>;
+  /** Llaves de acceso (Sprint 3.7): nombre y fechas; nunca la clave pública ni el identificador de la credencial. */
+  passkeys: Array<{ name: string | null; createdAt: string | null; deviceType: string; synced: boolean }>;
   monthlyPledges: Array<{ organization: string | null; monthlyAmountCents: number; executedMonths: number; totalMonths: number; active: boolean; createdAt: string }>;
   notifications: Array<{ template: string; status: string; createdAt: string; sentAt: string | null }>;
   supportTickets: Array<{ ticketCode: string; subject: string; message: string; status: string; reply: string | null; createdAt: string }>;
@@ -67,7 +69,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
   // Lo que se compró como invitada con este email solo es de esta cuenta si el email está verificado.
   const verified = user.emailVerified;
   const ownContributions: Prisma.ContributionWhereInput = verified ? { OR: [{ userId }, { canonicalEmail: user.canonicalEmail }] } : { userId };
-  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support] = await Promise.all([
+  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys] = await Promise.all([
     db.contribution.findMany({ where: ownContributions, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.ticketPass.findMany({ where: { OR: [{ contribution: ownContributions }, ...(verified ? [{ holderEmail: user.email }] : [])] }, orderBy: { id: 'asc' }, include: { initiative: { select: { title: true } } } }),
     db.consentRecord.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] }),
@@ -78,7 +80,8 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     db.paymentMethodToken.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { brand: true, last4: true, expiresMonth: true, expiresYear: true, createdAt: true, revokedAt: true } }),
     db.walletSubscription.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } } } }),
     db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
-    verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([])
+    verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([]),
+    db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } })
   ]);
 
   let unreadableTaxIds = 0;
@@ -139,6 +142,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
       createdAt: card.createdAt.toISOString(),
       revokedAt: iso(card.revokedAt)
     })),
+    passkeys: passkeys.map((row) => ({ name: row.name, createdAt: iso(row.createdAt), deviceType: row.deviceType, synced: row.backedUp })),
     monthlyPledges: pledges.map((row) => ({ organization: row.organization?.name ?? null, monthlyAmountCents: row.monthlyAmountCents, executedMonths: row.executedMonths, totalMonths: row.totalMonths, active: row.active, createdAt: row.createdAt.toISOString() })),
     notifications: messages.map((row) => ({ template: row.templateKey, status: row.status, createdAt: row.createdAt.toISOString(), sentAt: iso(row.sentAt) })),
     supportTickets: support.map((row) => ({ ticketCode: row.ticketCode, subject: row.subject, message: row.message, status: row.status, reply: row.replyMessage, createdAt: row.createdAt.toISOString() })),

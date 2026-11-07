@@ -6,6 +6,8 @@ import type { Db } from '@/lib/db';
 import { clearAttempts, countAttempts, lastAttemptAt, reserveAttempt } from '@/lib/rate-limit';
 import { AUTH_REQUEST_PREFIX, AUTH_SECOND_FACTOR_FAILURE_RULE, AUTH_SECOND_FACTOR_RULE } from '@/lib/rate-limit-rules';
 import { coarseUserAgent } from '@/repositories/tenant-guard';
+import type { AuthEmailDeps } from './auth-emails';
+import { guardPasskeyRegistration, PASSKEY_REGISTRATION_PATHS, recordPasskeyAdded, retirePreviousSession, SESSION_REPLACING_PATHS } from './passkey-hooks';
 import { hashAuditIp } from '@/services/audit/audit.service';
 import { dataHmac } from '@/core/security/data-hmac';
 
@@ -115,7 +117,9 @@ export const IDENTITY_PROOF_PATHS: Readonly<Record<string, 'email' | 'second-fac
   '/sign-in/email-otp': 'email',
   '/email-otp/verify-email': 'email',
   '/two-factor/verify-totp': 'second-factor',
-  '/two-factor/verify-backup-code': 'second-factor'
+  '/two-factor/verify-backup-code': 'second-factor',
+  // La llave exige la verificación de la persona en el dispositivo (`userVerification: 'required'`): algo que se tiene y algo que se es o se sabe.
+  '/passkey/verify-authentication': 'second-factor'
 };
 
 /** Sesión que deja una prueba correcta: la recién creada o, si ya había sesión (reautenticación), la que devuelve la respuesta. */
@@ -128,6 +132,12 @@ async function provenSessionId(db: Db, context: { newSession?: { session: { id: 
 }
 
 const SECOND_FACTOR_PATHS = new Set(['/two-factor/verify-totp', '/two-factor/verify-backup-code']);
+
+const freshProof = (date: Date | null | undefined, now: Date) => {
+  if (!date) return false;
+  const elapsed = now.getTime() - date.getTime();
+  return elapsed >= 0 && elapsed <= REAUTH_WINDOW_MS;
+};
 const failureKey = (userId: string) => `${AUTH_SECOND_FACTOR_FAILURE_RULE.prefix}${userId}`;
 const blocked = (status: 'FORBIDDEN' | 'TOO_MANY_REQUESTS' | 'BAD_REQUEST', code: string) => new APIError(status, { code, message: code });
 
@@ -139,10 +149,14 @@ const blocked = (status: 'FORBIDDEN' | 'TOO_MANY_REQUESTS' | 'BAD_REQUEST', code
  *   que devuelven el secreto, generan códigos de respaldo o desactivan el 2FA están apagadas (`disabledPaths` en `auth-config.ts`).
  * - **Probar códigos con una sesión abierta tiene tope.** Better Auth solo bloquea la cuenta al entrar con contraseña. Aquí: 10 intentos por
  *   persona cada 15 minutos y, tras 8 fallos seguidos, bloqueo de 24 horas y cierre de sus sesiones sin segundo factor (gancho `after`).
+ * - **Añadir una llave de acceso exige una prueba reciente** (Sprint 3.7). Una llave abre sesiones con segundo factor: si bastara la sesión de
+ *   un enlace mágico, quien controle el correo de quien firma por una entidad registraría su propia llave y firmaría por ella. Con 2FA activado
+ *   hace falta el TOTP de esta sesión en los últimos 10 minutos; sin 2FA, el código por email o el enlace en los últimos 10 minutos.
  */
 export function buildSecondFactorGuard(deps: HookDeps) {
   return createAuthMiddleware(async (ctx) => {
     const now = deps.now?.() ?? new Date();
+    if (ctx.path && PASSKEY_REGISTRATION_PATHS.has(ctx.path)) return guardPasskeyRegistration(ctx, deps);
     if (ctx.path === '/two-factor/enable') {
       if ((ctx.body as { method?: unknown } | undefined)?.method === 'otp') throw blocked('BAD_REQUEST', 'KORUM_TOTP_ONLY');
       const session = await getSessionFromCtx(ctx);
@@ -151,9 +165,7 @@ export function buildSecondFactorGuard(deps: HookDeps) {
         deps.db.user.findUnique({ where: { id: session.user.id }, select: { twoFactorEnabled: true } }),
         deps.db.session.findUnique({ where: { id: session.session.id }, select: { secondFactorVerifiedAt: true } })
       ]);
-      const elapsed = row?.secondFactorVerifiedAt ? now.getTime() - row.secondFactorVerifiedAt.getTime() : null;
-      const fresh = elapsed !== null && elapsed >= 0 && elapsed <= REAUTH_WINDOW_MS;
-      if (user?.twoFactorEnabled && !fresh) throw blocked('FORBIDDEN', 'KORUM_SECOND_FACTOR_REQUIRED');
+      if (user?.twoFactorEnabled && !freshProof(row?.secondFactorVerifiedAt, now)) throw blocked('FORBIDDEN', 'KORUM_SECOND_FACTOR_REQUIRED');
       return;
     }
     if (!ctx.path || !SECOND_FACTOR_PATHS.has(ctx.path)) return;
@@ -180,13 +192,16 @@ async function trackSessionSecondFactor(deps: HookDeps, context: { newSession?: 
   }
 }
 
-export function buildIdentityProofHook(deps: HookDeps) {
+export function buildIdentityProofHook(deps: HookDeps, emails: AuthEmailDeps) {
   return createAuthMiddleware(async (ctx) => {
     if (ctx.path && SECOND_FACTOR_PATHS.has(ctx.path)) await trackSessionSecondFactor(deps, ctx.context, (await getSessionFromCtx(ctx).catch(() => null))?.user.id ?? null);
+    if (ctx.path === '/passkey/verify-registration') return recordPasskeyAdded(ctx, deps, emails);
     const proof = ctx.path ? IDENTITY_PROOF_PATHS[ctx.path] : undefined;
     if (!proof) return;
     const sessionId = await provenSessionId(deps.db, ctx.context);
     if (sessionId) await markSessionReauthenticated(deps.db, sessionId, { secondFactor: proof === 'second-factor' }, deps.now?.());
+    // Confirmar la identidad con la sesión ya abierta crea otra: la anterior de esa misma persona se cierra (auditoría del 3.7, I2).
+    if (sessionId && ctx.path && SESSION_REPLACING_PATHS.has(ctx.path)) await retirePreviousSession(ctx, deps);
   });
 }
 

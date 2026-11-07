@@ -14,7 +14,8 @@ import { AUTH_EMAIL_RULE } from '@/lib/rate-limit-rules';
  * superarlo no se escribe nada y no se avisa: la respuesta es la misma, para no revelar si la dirección existe.
  */
 
-export type AuthEmailTemplate = 'auth.magicLink' | 'auth.otp' | 'auth.invitation';
+/** `account.passkeyAdded`: aviso de seguridad al añadir una llave de acceso (Sprint 3.7). */
+export type AuthEmailTemplate = 'auth.magicLink' | 'auth.otp' | 'auth.invitation' | 'account.passkeyAdded';
 
 export type DispatchEmails = (ids: readonly number[]) => void;
 

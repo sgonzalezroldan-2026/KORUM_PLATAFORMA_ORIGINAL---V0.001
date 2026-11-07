@@ -89,12 +89,13 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
   ]));
   section('tickets', data.tickets.map((row) => [['serial', row.serialCode], ['initiative', row.initiative], ['quantity', String(row.quantity)], ['checkedIn', String(row.checkedInCount)], ['raffleNumbers', row.raffleNumbers.join(', ')], ['revoked', date(row.revokedAt)]]));
   section('consents', data.consents.map((row) => [['date', date(row.createdAt)], ['purpose', translated('purposes', row.purpose)], ['granted', yesNo(row.granted)], ['policyVersion', row.policyVersion], ['source', row.source]]));
-  section('privacyRequests', data.privacyRequests.map((row) => [['date', date(row.createdAt)], ['type', row.type], ['status', row.status], ['dueAt', date(row.dueAt)], ['completedAt', date(row.completedAt)]]));
+  section('privacyRequests', data.privacyRequests.map((row) => [['date', date(row.createdAt)], ['type', translated('requestTypes', row.type)], ['status', translated('requestStatuses', row.status)], ['dueAt', date(row.dueAt)], ['completedAt', date(row.completedAt)]]));
   section('memberships', data.memberships.map((row) => [['organization', row.organization], ['role', row.roleLabel ?? row.role], ['date', date(row.since)]]));
   section('ideaSignatures', data.ideaSignatures.map((row) => [['date', date(row.createdAt)], ['idea', row.idea], ['status', row.status], ['accountOrder', String(row.accountOrder)]]));
   section('devices', data.devices.map((row) => [['firstSeen', date(row.firstSeenAt)], ['lastSeen', date(row.lastSeenAt)], ['accountOrder', String(row.accountOrder)], ['fingerprint', yesNo(row.fingerprintStored)]]));
   section('savedCards', data.savedCards.map((row) => [['card', `${row.brand ?? ''} ${row.last4 ? `•••• ${row.last4}` : ''}`.trim()], ['expires', row.expires ?? ''], ['date', date(row.createdAt)], ['revoked', date(row.revokedAt)]]));
-  section('notifications', data.notifications.map((row) => [['date', date(row.createdAt)], ['template', row.template], ['status', row.status], ['completedAt', date(row.sentAt)]]));
+  section('passkeys', data.passkeys.map((row) => [['name', row.name ?? ''], ['date', date(row.createdAt)], ['synced', yesNo(row.synced)]]));
+  section('notifications', data.notifications.map((row) => [['date', date(row.createdAt)], ['template', row.template], ['status', translated('emailStatuses', row.status)], ['completedAt', date(row.sentAt)]]));
   section('supportTickets', data.supportTickets.map((row) => [['date', date(row.createdAt)], ['serial', row.ticketCode], ['subject', row.subject], ['message', row.message], ['reply', row.reply ?? ''], ['status', row.status]]));
   section('monthlyPledges', data.monthlyPledges.map((row) => [['organization', row.organization ?? ''], ['monthly', money(row.monthlyAmountCents)], ['progress', `${row.executedMonths}/${row.totalMonths}`], ['active', yesNo(row.active)]]));
   return lines;

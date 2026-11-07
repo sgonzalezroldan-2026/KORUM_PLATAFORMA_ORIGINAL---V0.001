@@ -3,6 +3,7 @@ import { KorumLogo } from '@/components/brand/korum-logo';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { Link } from '@/i18n/navigation';
 import { PILLAR_PAGES, type PillarKey } from '@/lib/seo/marketing-routes';
+import { AccountLink } from './account-link';
 import { MobileMenu } from './mobile-menu';
 
 /**
@@ -20,7 +21,7 @@ export function SiteHeader() {
   const common = useTranslations('common');
 
   return (
-    <header className="relative border-b-2 border-varsity-navy/10 bg-white">
+    <header className="relative border-b-2 border-varsity-navy/10 bg-white print:hidden">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="inline-flex min-h-11 min-w-11 items-center rounded-lg">
           {/* Por debajo de 400 px solo cabe el isotipo: con el nombre, la cabecera se saldría de la pantalla a 360 px. */}
@@ -40,9 +41,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Link href="/login" className="hidden min-h-11 items-center whitespace-nowrap rounded-lg px-3 font-semibold text-varsity-navy hover:bg-varsity-navy/10 xl:inline-flex">
-            {t('login')}
-          </Link>
+          <AccountLink className="hidden min-h-11 items-center whitespace-nowrap rounded-lg px-3 font-semibold text-varsity-navy hover:bg-varsity-navy/10 xl:inline-flex" />
           <Link href="/registro-comunidad" className="tactile-btn hidden !min-h-11 whitespace-nowrap xl:inline-flex">
             {t('signup')}
           </Link>

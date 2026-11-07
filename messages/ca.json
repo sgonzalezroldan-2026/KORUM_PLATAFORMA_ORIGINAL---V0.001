@@ -167,7 +167,8 @@
         "savedCards": "Targetes desades",
         "monthlyPledges": "Aportacions mensuals",
         "notifications": "Correus que t'hem enviat",
-        "supportTickets": "Consultes de suport"
+        "supportTickets": "Consultes de suport",
+        "passkeys": "Claus d'accés"
       },
       "fields": {
         "name": "Nom",
@@ -216,7 +217,8 @@
         "template": "Tipus de correu",
         "subject": "Assumpte",
         "message": "Missatge",
-        "reply": "Resposta"
+        "reply": "Resposta",
+        "synced": "Sincronitzada entre dispositius"
       },
       "types": {
         "DONATION": "Donació",
@@ -238,6 +240,26 @@
         "DEVICE_FINGERPRINT": "Empremta del dispositiu (antifrau)",
         "MARKETING_EMAILS": "Correus informatius",
         "PUBLIC_SUPPORTER_NAME": "Mostrar el meu nom entre qui dona suport"
+      },
+      "requestTypes": {
+        "ACCESS": "Accés",
+        "EXPORT": "Descàrrega de dades",
+        "RECTIFICATION": "Rectificació",
+        "ERASURE": "Supressió del compte",
+        "OBJECTION": "Oposició"
+      },
+      "requestStatuses": {
+        "RECEIVED": "Rebuda",
+        "IN_PROGRESS": "En curs",
+        "COMPLETED": "Completada",
+        "REJECTED": "No s'ha pogut atendre"
+      },
+      "emailStatuses": {
+        "PENDING": "Pendent",
+        "SENDING": "S'està enviant",
+        "SENT": "Enviat",
+        "FAILED": "No s'ha pogut enviar",
+        "CANCELLED": "Cancel·lat"
       }
     }
   },
@@ -413,6 +435,16 @@
       "kept": "Per obligació legal conservem les dades comptables i fiscals mínimes de les teves aportacions, sense vincular-les al teu compte.",
       "keep": "Per conservar-lo, n’hi ha prou d’iniciar la sessió.",
       "cta": "Entrar al meu compte"
+    },
+    "account": {
+      "passkeyAdded": {
+        "subject": "S'ha afegit una clau d'accés al teu compte",
+        "preheader": "Si no has estat tu, avisa'ns.",
+        "title": "Nova clau d'accés",
+        "body": "S'acaba d'afegir una clau d'accés al teu compte de KORUM: amb ella es pot entrar sense correu ni contrasenya. Si has estat tu, no cal que facis res.",
+        "footnote": "Si no has estat tu, entra a El meu compte, treu la clau i escriu-nos al suport.",
+        "cta": "Revisar les meves claus"
+      }
     }
   },
   "nav": {
@@ -431,7 +463,8 @@
       "precios": "Preus",
       "seguridad": "Seguretat i transparència",
       "faq": "Preguntes freqüents"
-    }
+    },
+    "account": "El meu compte"
   },
   "cookies": {
     "title": "Galetes opcionals",
@@ -992,7 +1025,9 @@
       "passwordHint": "Almenys 12 caràcters. Una frase que recordis és una bona contrasenya.",
       "savePassword": "Desar la contrasenya nova",
       "resetDone": "Contrasenya canviada. Ja pots entrar-hi.",
-      "sendResetCode": "Envieu-me el codi"
+      "sendResetCode": "Envieu-me el codi",
+      "passkey": "Entrar amb clau d'accés",
+      "passkeyIntro": "Vas desar una clau d'accés en aquest mòbil o ordinador? Entra amb l'empremta, la cara o el PIN."
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "El correu o la contrasenya no són correctes.",
@@ -1017,7 +1052,8 @@
       "KORUM_SECOND_FACTOR_LIMIT": "Massa codis seguits. Espera 15 minuts i torna-ho a provar.",
       "TOTP_ALREADY_ENABLED": "La verificació en dos passos ja és activa al teu compte.",
       "CREDENTIAL_ACCOUNT_NOT_FOUND": "El teu compte no té contrasenya. Crea'n una amb «He oblidat la contrasenya».",
-      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons."
+      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons.",
+      "PASSKEY_FAILED": "No hem pogut comprovar la clau d'accés. Torna-ho a provar o entra amb un enllaç per correu."
     },
     "secondFactor": {
       "intro": "Obre la teva app de verificació (Google Authenticator, Microsoft Authenticator, 1Password…) i escriu el codi de KORUM.",
@@ -2060,6 +2096,195 @@
         "description": "Quan una iniciativa arribi a la seva meta i el centre acabi la millora, la veuràs aquí amb el seu abans i el seu després.",
         "action": "Veure iniciatives obertes"
       }
+    }
+  },
+  "account": {
+    "metaTitle": "El meu compte",
+    "title": "El meu compte",
+    "signedInAs": "Has entrat com a {email}",
+    "sectionsLabel": "Apartats d'El meu compte",
+    "sections": {
+      "contributions": "Aportacions",
+      "passes": "Entrades",
+      "documents": "Certificats",
+      "privacy": "Privadesa",
+      "security": "Claus d'accés",
+      "language": "Idioma"
+    },
+    "contributions": {
+      "title": "Les meves aportacions",
+      "line": "{organization} · {date} · {type}",
+      "type": {
+        "DONATION": "Donació",
+        "TICKET": "Entrades o paperetes"
+      },
+      "includesGuarantee": "Inclou la teva aportació voluntària a KORUM.",
+      "status": {
+        "PENDING": "Pendent de confirmar",
+        "COMPLETED": "Completada",
+        "REFUND_PENDING": "Devolució en curs",
+        "REFUNDED": "Retornada",
+        "CHARGEBACK": "Anul·lada (reclamació del pagament)",
+        "FAILED": "No completada"
+      },
+      "emptyTitle": "Encara no has aportat amb aquest compte",
+      "emptyText": "Quan donis suport a una iniciativa o compris entrades amb aquest correu, apareixeran aquí.",
+      "emptyAction": "Cercar el meu centre o club"
+    },
+    "passes": {
+      "title": "Les meves entrades i paperetes",
+      "where": "{organization} · {date}",
+      "numbers": "Números: {numbers}",
+      "quantity": "{count, plural, one {# entrada} other {# entrades}}",
+      "serial": "Codi: {serial}",
+      "revoked": "Aquesta entrada està anul·lada (per una devolució o una reclamació del pagament) i ja no val a la porta.",
+      "viewEvent": "Veure la meva entrada",
+      "viewRaffle": "Veure les meves paperetes",
+      "emptyTitle": "No tens entrades",
+      "emptyText": "Les entrades i paperetes que compris amb aquest correu apareixeran aquí, a punt per ensenyar-les a la porta."
+    },
+    "documents": {
+      "metaTitle": "Certificats i justificants",
+      "summary": "{count, plural, one {Tens # donació amb document} other {Tens # donacions amb document}}: certificat fiscal o justificant, a punt per imprimir.",
+      "none": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant. Les entrades i paperetes no donen document de donació.",
+      "open": "Veure certificats i justificants",
+      "openOne": "Veure document",
+      "back": "Tornar a El meu compte",
+      "backToList": "Tornar a certificats i justificants",
+      "title": "Certificats i justificants",
+      "intro": "Un per donació. El certificat fiscal serveix per a la declaració de la renda si l'entitat està acollida a la Llei 49/2002 i vas donar el teu NIF en aportar; si no, tens un justificant nominatiu, sense efectes fiscals. Les entrades i paperetes no donen document de donació.",
+      "year": "Exercici {year}",
+      "line": "{initiative} · {date}",
+      "kind": {
+        "TAX_CERTIFICATE": "Certificat fiscal (Llei 49/2002)",
+        "NOMINATIVE_RECEIPT": "Justificant nominatiu d'aportació"
+      },
+      "emptyTitle": "Encara no hi ha documents",
+      "emptyText": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant.",
+      "sheet": {
+        "platform": "Emès a través de KORUM, plataforma tecnològica",
+        "draft": "ESBORRANY · Text pendent de revisió per l'assessoria fiscal. Encara no té validesa.",
+        "certificateTitle": "Certificat de donació",
+        "receiptTitle": "Justificant nominatiu d'aportació",
+        "reference": "Referència",
+        "recipient": "Entitat que rep la donació",
+        "recipientTaxId": "NIF de l'entitat",
+        "donor": "Donant",
+        "donorUnknown": "No indicat",
+        "donorTaxId": "NIF del donant",
+        "province": "Codi de província",
+        "initiative": "Iniciativa",
+        "amount": "Import donat",
+        "date": "Data",
+        "fiscalYear": "Exercici",
+        "certificateText": "L'entitat, acollida al règim fiscal de la Llei 49/2002, certifica que ha rebut aquesta donació de manera irrevocable.",
+        "receiptText": "Justificant de l'aportació rebuda per l'entitat. No té efectes fiscals: l'entitat no està acollida a la Llei 49/2002 o no es va indicar el NIF en aportar.",
+        "guaranteeNote": "L'aportació voluntària a KORUM, si la vas fer, no forma part de la donació i no apareix en aquest document.",
+        "print": "Imprimir o desar en PDF"
+      },
+      "maskedTaxId": "El NIF apareix ocult. Per veure'l sencer i imprimir el certificat, confirma que ets tu.",
+      "revealTaxId": "Mostrar el NIF sencer"
+    },
+    "privacy": {
+      "title": "Privadesa i les teves dades",
+      "consents": {
+        "title": "Permisos",
+        "fingerprintText": "Empremta del navegador per a la bústia d'idees: ajuda a comprovar que ningú signa diverses vegades des del mateix dispositiu. Només s'utilitza si l'acceptes en signar una idea i es desa com un codi irreversible, mai tal qual.",
+        "granted": "Estat: permesa.",
+        "notGranted": "Estat: no permesa. Si vols, la pots permetre en signar una idea a la bústia.",
+        "withdrawn": "Permís retirat. Hem esborrat l'empremta de tots els teus dispositius.",
+        "withdraw": "Retirar el permís"
+      },
+      "export": {
+        "title": "Descarregar les meves dades",
+        "text": "Una còpia de tot el que KORUM desa sobre tu: en JSON, per portar-la a un altre servei, i en PDF, per llegir-la. Si cal, et demanarem un codi per correu per confirmar que ets tu.",
+        "json": "Descarregar en JSON",
+        "pdf": "Descarregar en PDF",
+        "preparing": "Preparant…",
+        "downloaded": "Descàrrega a punt. Cerca-la a la carpeta de descàrregues del navegador.",
+        "rateLimited": "Avui has descarregat les teves dades moltes vegades. Torna-ho a provar demà.",
+        "failed": "No hem pogut preparar la descàrrega. Torna-ho a provar d'aquí a uns minuts."
+      },
+      "requests": {
+        "title": "Les meves sol·licituds",
+        "none": "Encara no has fet cap sol·licitud.",
+        "type": {
+          "ACCESS": "Accés",
+          "EXPORT": "Descàrrega de dades",
+          "RECTIFICATION": "Rectificació",
+          "ERASURE": "Supressió del compte",
+          "OBJECTION": "Oposició"
+        },
+        "status": {
+          "RECEIVED": "Rebuda",
+          "IN_PROGRESS": "En curs",
+          "COMPLETED": "Completada",
+          "REJECTED": "No s'ha pogut atendre"
+        }
+      }
+    },
+    "erase": {
+      "title": "Suprimir el meu compte",
+      "deleted": "Esborrarem el teu nom, el teu correu, les teves sessions, les teves claus d'accés i les teves targetes desades, i traurem el teu correu de les teves compres, entrades, signatures i idees. No es pot desfer.",
+      "kept": "Per llei conservem, sense res que t'identifiqui, els imports i les dates de les teves aportacions. I si vas donar el teu NIF per a un certificat fiscal, l'entitat ha de desar aquest NIF, el teu nom i la teva província durant 6 anys per a Hisenda (Model 182).",
+      "signIn": "Després podràs crear un altre compte amb el mateix correu, però començarà buit.",
+      "understand": "Entenc que el meu compte s'esborra per sempre",
+      "button": "Suprimir el meu compte",
+      "blocked": {
+        "SUPERADMIN_ACCOUNT": "Un compte de Super-Admin no es pot suprimir des d'aquí.",
+        "ACTIVE_SIGNER": "Signes per una entitat. Abans de suprimir el teu compte, una altra persona ha d'ocupar el teu càrrec des del panell de l'entitat.",
+        "WALLET_BALANCE": "Tens saldo a la teva Guardiola. Primer te l'hem de retornar al teu mitjà de pagament."
+      },
+      "rateLimited": "Avui has fet molts intents. Torna-ho a provar demà.",
+      "failed": "No hem pogut suprimir el compte. Torna-ho a provar d'aquí a uns minuts.",
+      "done": {
+        "title": "El teu compte s'ha suprimit",
+        "text": "Ja no desem el teu nom ni el teu correu. Només queda un codi irreversible que impedeix signar dues vegades la mateixa idea. Gràcies per haver sumat.",
+        "retained": "{count, plural, one {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donació amb certificat, que la llei obliga a conservar.} other {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donacions amb certificat, que la llei obliga a conservar.}}",
+        "home": "Anar a la portada"
+      },
+      "erasing": "Suprimint…"
+    },
+    "passkeys": {
+      "title": "Claus d'accés",
+      "intro": "Entra amb l'empremta, la cara o el PIN del teu mòbil o ordinador, sense esperar cap correu. La clau es queda al teu dispositiu: KORUM mai no veu la teva empremta ni la teva cara.",
+      "signerNote": "Com que el teu compte té verificació en dos passos, per afegir una clau et demanarem el codi de la teva app de verificació.",
+      "none": "No tens cap clau desada.",
+      "unnamed": "Clau sense nom",
+      "added": "Afegida el {date}",
+      "synced": "sincronitzada entre els teus dispositius",
+      "remove": "Treure",
+      "removeLabel": "Treure la clau {name}",
+      "nameLabel": "Nom de la clau (opcional)",
+      "nameHint": "Per exemple, «Mòbil de casa». T'ajuda a reconèixer-la.",
+      "add": "Afegir una clau en aquest dispositiu",
+      "unsupported": "Aquest navegador no admet claus d'accés. Pots continuar entrant amb un enllaç o un codi per correu.",
+      "messages": {
+        "added": "Clau afegida. La propera vegada podràs entrar amb ella.",
+        "removed": "Clau treta.",
+        "cancelled": "Has cancel·lat la creació de la clau. No s'ha desat res.",
+        "alreadyRegistered": "Aquest dispositiu ja té una clau desada per al teu compte.",
+        "failed": "No hem pogut desar la clau. Torna-ho a provar.",
+        "twoFactorFirst": "Com que signes per una entitat, primer activa la verificació en dos passos (la teva app de codis) i després podràs afegir una clau."
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "intro": "L'idioma dels teus correus i d'aquesta pàgina.",
+      "label": "Idioma del compte",
+      "save": "Desar l'idioma",
+      "saved": "Idioma desat.",
+      "failed": "No hem pogut desar l'idioma. Torna-ho a provar."
+    },
+    "reauth": {
+      "title": "Confirma que ets tu",
+      "intro": "Per protegir les teves dades, t'enviarem un codi de 6 xifres a {email}.",
+      "send": "Enviar codi",
+      "codeSent": "Escriu el codi que t'hem enviat a {email}. Caduca d'aquí a {minutes} minuts.",
+      "code": "Codi de 6 xifres",
+      "confirm": "Confirmar",
+      "resend": "Enviar un altre codi",
+      "cancel": "Cancel·lar"
     }
   }
 }

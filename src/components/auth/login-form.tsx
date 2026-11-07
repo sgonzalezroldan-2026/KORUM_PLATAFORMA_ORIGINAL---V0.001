@@ -3,13 +3,15 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useRef, useState, type FormEvent } from 'react';
+import { useHydrated } from '@/components/ui/use-hydrated';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
 import { CodeField, Field, FormAlert, linkButton, primaryButton, secondaryButton } from './auth-ui';
 import { SecondFactorForm } from './second-factor-form';
 
 /**
  * Acceso por rol (ARQUITECTURA_LANDING §2). Familias y comercios: enlace mágico o código por email, sin contraseña. Firmantes y Super-Admin:
- * contraseña y, después, el código de su app de verificación. Tras entrar se va a `/acceso/continuar`, que lleva a cada persona a su sitio.
+ * contraseña y, después, el código de su app de verificación. Cualquiera que haya registrado una llave de acceso en *Mi cuenta* (Sprint 3.7) puede
+ * entrar con ella, sin email ni contraseña. Tras entrar se va a `/acceso/continuar`, que lleva a cada persona a su sitio.
  */
 
 type Mode = 'email' | 'password';
@@ -27,7 +29,8 @@ const KNOWN_ERRORS = new Set([
   'KORUM_SAME_INBOX',
   'KORUM_DISPOSABLE_EMAIL',
   'KORUM_INVALID_EMAIL',
-  'KORUM_ACCOUNT_CLOSED'
+  'KORUM_ACCOUNT_CLOSED',
+  'PASSKEY_FAILED'
 ]);
 
 export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl: string; loginUrl: string; initialError: string | null }) {
@@ -44,6 +47,8 @@ export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl
   const [notice, setNotice] = useState<string | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const router = useRouter();
+  const hydrated = useHydrated();
+  const passkeysSupported = hydrated && 'PublicKeyCredential' in window;
 
   const message = (key: string | null) => (key ? te(KNOWN_ERRORS.has(key) || key === 'LINK_INVALID' ? key : 'UNKNOWN') : null);
   const go = (next: Step) => {
@@ -105,6 +110,15 @@ export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl
       else finish();
     });
   };
+  const signInWithPasskey = () =>
+    run(async () => {
+      const result = await authClient.signIn.passkey();
+      if (!result?.error) return finish();
+      // Cerrar el diálogo del sistema no es un error que haya que explicar.
+      const code = 'code' in result.error ? result.error.code : undefined;
+      if (code === 'AUTH_CANCELLED' || code === 'ERROR_CEREMONY_ABORTED') return;
+      return { error: code === 'KORUM_ACCOUNT_CLOSED' || code === 'RATE_LIMITED' ? result.error : { code: 'PASSKEY_FAILED' } };
+    });
   const requestReset = (event: FormEvent) => {
     event.preventDefault();
     void run(async () => {
@@ -205,6 +219,16 @@ export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl
             {t('forgot')}
           </button>
         </form>
+      ) : null}
+
+      {step === 'enter' && passkeysSupported ? (
+        <div className="flex flex-col gap-2 border-t-2 border-varsity-navy/10 pt-4">
+          <p className="text-sm text-ink-soft">{t('passkeyIntro')}</p>
+          <button type="button" className={secondaryButton} disabled={busy} onClick={() => void signInWithPasskey()} data-testid="passkey-sign-in">
+            <span aria-hidden="true">{'🔑 '}</span>
+            {t('passkey')}
+          </button>
+        </div>
       ) : null}
 
       {step === 'second-factor' ? <SecondFactorForm onDone={finish} onBack={() => go('enter')} /> : null}

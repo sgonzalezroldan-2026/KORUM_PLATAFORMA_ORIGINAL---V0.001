@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useState, type KeyboardEvent } from 'react';
 import { Link } from '@/i18n/navigation';
+import { AccountLink } from './account-link';
 import { PILLAR_PAGES } from '@/lib/seo/marketing-routes';
 
 /**
@@ -44,9 +45,7 @@ export function MobileMenu() {
               </li>
             ))}
             <li>
-              <Link href="/login" onClick={() => setOpen(false)} className="flex min-h-11 items-center font-semibold text-varsity-navy">
-                {t('login')}
-              </Link>
+              <AccountLink onNavigate={() => setOpen(false)} className="flex min-h-11 items-center font-semibold text-varsity-navy" />
             </li>
             <li className="pt-2">
               <Link href="/registro-comunidad" onClick={() => setOpen(false)} className="tactile-btn w-full">

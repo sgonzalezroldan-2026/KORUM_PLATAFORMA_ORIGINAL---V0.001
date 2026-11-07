@@ -100,6 +100,17 @@ export async function verifyAccountSession(db: Db, input: SessionInput, now: Dat
   return issue({ kind: 'verified-account', userId: input.userId, sessionId: input.sessionId }, latest!);
 }
 
+/**
+ * Solo para la interfaz de *Mi cuenta*: dice si esta sesión ya demostró la identidad hace menos de `REAUTH_WINDOW_MS`, para pedir el código por
+ * email **antes** de intentar exportar o suprimir. No emite ningún actor ni escribe en la auditoría (preguntarlo no es un intento denegado);
+ * la operación vuelve a comprobarlo todo con `verifyAccountSession`.
+ */
+export async function accountReauthIsFresh(db: Db, input: { userId: string; sessionId: string }, now: Date = new Date()): Promise<boolean> {
+  const { user, session } = await loadSession(db, { ...input, operation: 'account.reauth_status' });
+  if (!user || user.gdprAnonymizedAt !== null || !user.emailVerified || !session || session.expiresAt <= now) return false;
+  return fresh(session.reauthenticatedAt, now) || fresh(session.secondFactorVerifiedAt, now);
+}
+
 /** Comprueba que el actor salió de este módulo y que su reautenticación sigue vigente. */
 export function assertVerifiedActor(actor: VerifiedActor, kind: VerifiedActor['kind'], operation: string, now: Date = new Date()): void {
   const deadline = deadlines.get(actor);

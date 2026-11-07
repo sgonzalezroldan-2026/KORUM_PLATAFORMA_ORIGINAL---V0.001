@@ -26,7 +26,7 @@ export const DEFAULT_CRAWLER_POLICY: CrawlerPolicy = {
 };
 
 /** Zonas privadas, en cada idioma: el panel, la consola y la API (salvo las imágenes sociales, que las redes necesitan leer). */
-const PRIVATE_PREFIXES = ['/panel/', '/admin/'];
+const PRIVATE_PREFIXES = ['/panel/', '/admin/', '/mi-cuenta/'];
 
 function privateDisallows(): string[] {
   const prefixes = LOCALES.flatMap((locale) => PRIVATE_PREFIXES.map((prefix) => (locale === routing.defaultLocale ? prefix : `/${locale}${prefix}`)));

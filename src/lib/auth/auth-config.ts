@@ -1,3 +1,4 @@
+import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
@@ -12,6 +13,9 @@ import { buildDatabaseHooks, buildIdentityProofHook, buildRateLimitStorage, buil
  * - **Familias y comercios:** enlace mágico (15 min, un solo uso) o código de 6 dígitos por email (10 min, 5 intentos). Sin contraseña.
  * - **Firmantes y Super-Admin:** contraseña (mín. 12) + TOTP obligatorio, que exige la capa de sesión (`session.ts`). No hay alta pública
  *   con contraseña: las cuentas con contraseña nacen en el alta de una entidad o por invitación (`src/core/onboarding/`).
+ * - **Llaves de acceso (passkeys, Sprint 3.7):** opcionales para cualquier cuenta. Se registran en *Mi cuenta* con una prueba de identidad
+ *   reciente (`buildSecondFactorGuard`) y exigen verificación de la persona en el dispositivo (huella, cara o PIN): por eso entrar con una
+ *   llave cuenta como segundo factor (`IDENTITY_PROOF_PATHS`).
  * - Tokens y códigos guardados con hash; sesiones de 30 días sin caché en cookie (una sesión cerrada deja de valer al momento).
  * - Límites por red y ruta sobre `RateLimit` con claves propias, y por destinatario en los emails (`auth-emails.ts`).
  * - Sin telemetría de Better Auth.
@@ -66,6 +70,8 @@ export function createKorumAuth(deps: KorumAuthDeps) {
       max: 60,
       customStorage: buildRateLimitStorage(hookDeps),
       customRules: {
+        // Las cabeceras preguntan por la sesión en cada página pública (`AccountLink`): sin tope propio, cada visita escribiría en `RateLimit`.
+        '/get-session': false,
         '/sign-in/magic-link': { window: 600, max: 5 },
         '/email-otp/send-verification-otp': { window: 600, max: 5 },
         '/sign-in/email-otp': { window: 600, max: 10 },
@@ -73,7 +79,11 @@ export function createKorumAuth(deps: KorumAuthDeps) {
         '/email-otp/reset-password': { window: 900, max: 10 },
         '/sign-in/email': { window: 900, max: 10 },
         '/two-factor/verify-totp': { window: 900, max: 15 },
-        '/two-factor/verify-backup-code': { window: 900, max: 15 }
+        '/two-factor/verify-backup-code': { window: 900, max: 15 },
+        '/passkey/generate-authenticate-options': { window: 600, max: 30 },
+        '/passkey/verify-authentication': { window: 900, max: 15 },
+        '/passkey/generate-register-options': { window: 900, max: 10 },
+        '/passkey/verify-registration': { window: 900, max: 10 }
       }
     },
     advanced: {
@@ -82,10 +92,11 @@ export function createKorumAuth(deps: KorumAuthDeps) {
       ipAddress: { ipAddressHeaders: ['x-forwarded-for', 'x-real-ip'] }
     },
     databaseHooks: buildDatabaseHooks(hookDeps),
-    hooks: { before: buildSecondFactorGuard(hookDeps), after: buildIdentityProofHook(hookDeps) },
+    hooks: { before: buildSecondFactorGuard(hookDeps), after: buildIdentityProofHook(hookDeps, emailDeps) },
     // Rutas del doble factor que, con la contraseña sola, darían el secreto o códigos nuevos o quitarían el 2FA (auditoría del 3.2, B1). La
     // interfaz no las usa: el secreto sale de `enable`, que en una cuenta con 2FA exige el TOTP reciente (`buildSecondFactorGuard`).
-    disabledPaths: ['/two-factor/get-totp-uri', '/two-factor/generate-backup-codes', '/two-factor/disable', '/two-factor/send-otp', '/two-factor/verify-otp'],
+    // `/passkey/delete-passkey`: quitar una llave pasa por la acción de *Mi cuenta*, que lo deja en la auditoría.
+    disabledPaths: ['/two-factor/get-totp-uri', '/two-factor/generate-backup-codes', '/two-factor/disable', '/two-factor/send-otp', '/two-factor/verify-otp', '/passkey/delete-passkey', '/passkey/update-passkey'],
     plugins: [
       magicLink({
         expiresIn: MAGIC_LINK_MINUTES * 60,
@@ -104,6 +115,13 @@ export function createKorumAuth(deps: KorumAuthDeps) {
         }
       }),
       twoFactor({ issuer: 'KORUM', backupCodeOptions: { amount: 10, length: 10 }, accountLockout: { enabled: true } }),
+      passkey({
+        rpID: new URL(deps.baseURL).hostname,
+        rpName: 'KORUM',
+        origin: new URL(deps.baseURL).origin,
+        // `required`: sin la huella, la cara o el PIN del dispositivo, una llave sería solo «algo que se tiene» y no valdría como segundo factor.
+        authenticatorSelection: { residentKey: 'preferred', userVerification: 'required' }
+      }),
       nextCookies()
     ]
   });

@@ -115,9 +115,10 @@ describe('ganchos de Better Auth', () => {
     await expect(hooks.session.create.before({ ...session, userId: 'no-existe' })).rejects.toMatchObject({ body: { code: 'KORUM_ACCOUNT_CLOSED' } });
   });
 
-  it('solo las pruebas de identidad marcan la sesión, y solo el TOTP o el código de respaldo cuentan como segundo factor', () => {
+  it('solo las pruebas de identidad marcan la sesión, y solo el TOTP, el código de respaldo o una llave de acceso cuentan como segundo factor', () => {
     expect(IDENTITY_PROOF_PATHS['/sign-in/email']).toBeUndefined();
-    expect(Object.entries(IDENTITY_PROOF_PATHS).filter(([, proof]) => proof === 'second-factor').map(([path]) => path).sort()).toEqual(['/two-factor/verify-backup-code', '/two-factor/verify-totp']);
+    // La llave exige verificar a la persona en el dispositivo (Sprint 3.7): se tiene y se es o se sabe.
+    expect(Object.entries(IDENTITY_PROOF_PATHS).filter(([, proof]) => proof === 'second-factor').map(([path]) => path).sort()).toEqual(['/passkey/verify-authentication', '/two-factor/verify-backup-code', '/two-factor/verify-totp']);
   });
 
   it('los errores de Better Auth se traducen por su código; un 429 es «demasiados intentos»', () => {

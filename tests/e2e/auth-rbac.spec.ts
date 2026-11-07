@@ -162,7 +162,8 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
 
     // Sesión nueva: la contraseña sola no abre el panel; con el código de la app, sí.
     await page.getByRole('button', { name: 'Cerrar sesión' }).click();
-    await expect(page).toHaveURL(/\/$/);
+    // Cerrar sesión borra la sesión en la base y después navega: con la base local de una sola conexión puede pasar de 7 s.
+    await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
     await page.goto(`/panel/ceip-prueba-${suffix}`);
     await page.getByRole('button', { name: 'Firmantes y equipo' }).click();
     await page.getByLabel('Tu email').fill(director);

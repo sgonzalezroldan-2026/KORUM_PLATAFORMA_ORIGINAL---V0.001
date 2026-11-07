@@ -60,3 +60,12 @@ export const IDEA_SIGN_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:sign:us
 
 /** Propuestas de ideas por red: el límite por persona (3 al día) lo aplica el servicio; este frena a quien abre cuentas nuevas desde una misma red. */
 export const IDEA_PROPOSAL_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:propose:ip:', limit: 12, windowMs: 60 * 60_000 };
+
+/**
+ * Exportaciones de datos personales por persona (Mi cuenta, Sprint 3.7): cada descarga descifra NIF y recorre todo su historial, y deja una
+ * solicitud RGPD. Diez al día cubren de sobra el JSON y el PDF de varias pruebas; más que eso es un guion o una cuenta robada.
+ */
+export const ACCOUNT_EXPORT_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:export:user:', limit: 10, windowMs: 24 * 3_600_000 };
+
+/** Intentos de suprimir la cuenta por persona: cada uno abre una solicitud y, si está bloqueado, deja rastro en la auditoría. */
+export const ACCOUNT_ERASURE_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:erase:user:', limit: 5, windowMs: 24 * 3_600_000 };

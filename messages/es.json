@@ -167,7 +167,8 @@
         "savedCards": "Tarjetas guardadas",
         "monthlyPledges": "Aportaciones mensuales",
         "notifications": "Emails que te hemos enviado",
-        "supportTickets": "Consultas de soporte"
+        "supportTickets": "Consultas de soporte",
+        "passkeys": "Llaves de acceso"
       },
       "fields": {
         "name": "Nombre",
@@ -216,7 +217,8 @@
         "template": "Tipo de email",
         "subject": "Asunto",
         "message": "Mensaje",
-        "reply": "Respuesta"
+        "reply": "Respuesta",
+        "synced": "Sincronizada entre dispositivos"
       },
       "types": {
         "DONATION": "Donación",
@@ -238,6 +240,26 @@
         "DEVICE_FINGERPRINT": "Huella del dispositivo (antifraude)",
         "MARKETING_EMAILS": "Emails informativos",
         "PUBLIC_SUPPORTER_NAME": "Mostrar mi nombre entre quienes apoyan"
+      },
+      "requestTypes": {
+        "ACCESS": "Acceso",
+        "EXPORT": "Descarga de datos",
+        "RECTIFICATION": "Rectificación",
+        "ERASURE": "Supresión de la cuenta",
+        "OBJECTION": "Oposición"
+      },
+      "requestStatuses": {
+        "RECEIVED": "Recibida",
+        "IN_PROGRESS": "En curso",
+        "COMPLETED": "Completada",
+        "REJECTED": "No se pudo atender"
+      },
+      "emailStatuses": {
+        "PENDING": "Pendiente",
+        "SENDING": "Enviándose",
+        "SENT": "Enviado",
+        "FAILED": "No se pudo enviar",
+        "CANCELLED": "Cancelado"
       }
     }
   },
@@ -413,6 +435,16 @@
       "kept": "Por obligación legal conservamos los datos contables y fiscales mínimos de tus aportaciones, sin vincularlos a tu cuenta.",
       "keep": "Para conservarla, basta con iniciar sesión.",
       "cta": "Entrar en mi cuenta"
+    },
+    "account": {
+      "passkeyAdded": {
+        "subject": "Se ha añadido una llave de acceso a tu cuenta",
+        "preheader": "Si no has sido tú, avísanos.",
+        "title": "Nueva llave de acceso",
+        "body": "Se acaba de añadir una llave de acceso a tu cuenta de KORUM: con ella se puede entrar sin email ni contraseña. Si has sido tú, no tienes que hacer nada.",
+        "footnote": "Si no has sido tú, entra en Mi cuenta, quita la llave y escríbenos al soporte.",
+        "cta": "Revisar mis llaves"
+      }
     }
   },
   "nav": {
@@ -431,7 +463,8 @@
       "precios": "Precios",
       "seguridad": "Seguridad y transparencia",
       "faq": "Preguntas frecuentes"
-    }
+    },
+    "account": "Mi cuenta"
   },
   "cookies": {
     "title": "Cookies opcionales",
@@ -992,7 +1025,9 @@
       "passwordHint": "Al menos 12 caracteres. Una frase que recuerdes es una buena contraseña.",
       "savePassword": "Guardar la contraseña nueva",
       "resetDone": "Contraseña cambiada. Ya puedes entrar con ella.",
-      "sendResetCode": "Enviarme el código"
+      "sendResetCode": "Enviarme el código",
+      "passkey": "Entrar con llave de acceso",
+      "passkeyIntro": "¿Guardaste una llave de acceso en este móvil u ordenador? Entra con tu huella, tu cara o tu PIN."
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "El email o la contraseña no son correctos.",
@@ -1017,7 +1052,8 @@
       "KORUM_SECOND_FACTOR_LIMIT": "Demasiados códigos seguidos. Espera 15 minutos y vuelve a probar.",
       "TOTP_ALREADY_ENABLED": "La verificación en dos pasos ya está activa en tu cuenta.",
       "CREDENTIAL_ACCOUNT_NOT_FOUND": "Tu cuenta no tiene contraseña. Crea una con «He olvidado mi contraseña».",
-      "UNKNOWN": "No ha funcionado. Inténtalo de nuevo en unos segundos."
+      "UNKNOWN": "No ha funcionado. Inténtalo de nuevo en unos segundos.",
+      "PASSKEY_FAILED": "No hemos podido comprobar la llave de acceso. Prueba otra vez o entra con un enlace por email."
     },
     "secondFactor": {
       "intro": "Abre tu app de verificación (Google Authenticator, Microsoft Authenticator, 1Password…) y escribe el código de KORUM.",
@@ -2060,6 +2096,195 @@
         "description": "Cuando una iniciativa llegue a su meta y el centro termine la mejora, la verás aquí con su antes y su después.",
         "action": "Ver iniciativas abiertas"
       }
+    }
+  },
+  "account": {
+    "metaTitle": "Mi cuenta",
+    "title": "Mi cuenta",
+    "signedInAs": "Has entrado como {email}",
+    "sectionsLabel": "Apartados de Mi cuenta",
+    "sections": {
+      "contributions": "Aportaciones",
+      "passes": "Entradas",
+      "documents": "Certificados",
+      "privacy": "Privacidad",
+      "security": "Llaves de acceso",
+      "language": "Idioma"
+    },
+    "contributions": {
+      "title": "Mis aportaciones",
+      "line": "{organization} · {date} · {type}",
+      "type": {
+        "DONATION": "Donación",
+        "TICKET": "Entradas o papeletas"
+      },
+      "includesGuarantee": "Incluye tu aportación voluntaria a KORUM.",
+      "status": {
+        "PENDING": "Pendiente de confirmar",
+        "COMPLETED": "Completada",
+        "REFUND_PENDING": "Devolución en curso",
+        "REFUNDED": "Devuelta",
+        "CHARGEBACK": "Anulada (reclamación del pago)",
+        "FAILED": "No completada"
+      },
+      "emptyTitle": "Aún no has aportado con esta cuenta",
+      "emptyText": "Cuando apoyes una iniciativa o compres entradas con este email, aparecerán aquí.",
+      "emptyAction": "Buscar mi centro o club"
+    },
+    "passes": {
+      "title": "Mis entradas y papeletas",
+      "where": "{organization} · {date}",
+      "numbers": "Números: {numbers}",
+      "quantity": "{count, plural, one {# entrada} other {# entradas}}",
+      "serial": "Código: {serial}",
+      "revoked": "Esta entrada está anulada (por una devolución o una reclamación del pago) y ya no vale en la puerta.",
+      "viewEvent": "Ver mi entrada",
+      "viewRaffle": "Ver mis papeletas",
+      "emptyTitle": "No tienes entradas",
+      "emptyText": "Las entradas y papeletas que compres con este email aparecerán aquí, listas para enseñar en la puerta."
+    },
+    "documents": {
+      "metaTitle": "Certificados y justificantes",
+      "summary": "{count, plural, one {Tienes # donación con documento} other {Tienes # donaciones con documento}}: certificado fiscal o justificante, listo para imprimir.",
+      "none": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante. Las entradas y papeletas no dan documento de donación.",
+      "open": "Ver certificados y justificantes",
+      "openOne": "Ver documento",
+      "back": "Volver a Mi cuenta",
+      "backToList": "Volver a certificados y justificantes",
+      "title": "Certificados y justificantes",
+      "intro": "Uno por donación. El certificado fiscal sirve para tu declaración de la renta si la entidad está acogida a la Ley 49/2002 y diste tu NIF al aportar; si no, tienes un justificante nominativo, sin efectos fiscales. Las entradas y papeletas no dan documento de donación.",
+      "year": "Ejercicio {year}",
+      "line": "{initiative} · {date}",
+      "kind": {
+        "TAX_CERTIFICATE": "Certificado fiscal (Ley 49/2002)",
+        "NOMINATIVE_RECEIPT": "Justificante nominativo de aportación"
+      },
+      "emptyTitle": "Todavía no hay documentos",
+      "emptyText": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante.",
+      "sheet": {
+        "platform": "Emitido a través de KORUM, plataforma tecnológica",
+        "draft": "BORRADOR · Texto pendiente de revisión por la asesoría fiscal. Todavía no tiene validez.",
+        "certificateTitle": "Certificado de donación",
+        "receiptTitle": "Justificante nominativo de aportación",
+        "reference": "Referencia",
+        "recipient": "Entidad que recibe la donación",
+        "recipientTaxId": "NIF de la entidad",
+        "donor": "Donante",
+        "donorUnknown": "No indicado",
+        "donorTaxId": "NIF del donante",
+        "province": "Código de provincia",
+        "initiative": "Iniciativa",
+        "amount": "Importe donado",
+        "date": "Fecha",
+        "fiscalYear": "Ejercicio",
+        "certificateText": "La entidad, acogida al régimen fiscal de la Ley 49/2002, certifica que ha recibido esta donación de forma irrevocable.",
+        "receiptText": "Justificante de la aportación recibida por la entidad. No tiene efectos fiscales: la entidad no está acogida a la Ley 49/2002 o no se indicó el NIF al aportar.",
+        "guaranteeNote": "La aportación voluntaria a KORUM, si la hiciste, no forma parte de la donación y no aparece en este documento.",
+        "print": "Imprimir o guardar en PDF"
+      },
+      "maskedTaxId": "El NIF aparece oculto. Para verlo completo e imprimir el certificado, confirma que eres tú.",
+      "revealTaxId": "Mostrar el NIF completo"
+    },
+    "privacy": {
+      "title": "Privacidad y tus datos",
+      "consents": {
+        "title": "Permisos",
+        "fingerprintText": "Huella del navegador para el buzón de ideas: ayuda a comprobar que nadie firma varias veces desde el mismo dispositivo. Solo se usa si la aceptas al firmar una idea y se guarda como un código irreversible, nunca tal cual.",
+        "granted": "Estado: permitida.",
+        "notGranted": "Estado: no permitida. Si quieres, puedes permitirla al firmar una idea en el buzón.",
+        "withdrawn": "Permiso retirado. Hemos borrado la huella de todos tus dispositivos.",
+        "withdraw": "Retirar el permiso"
+      },
+      "export": {
+        "title": "Descargar mis datos",
+        "text": "Una copia de todo lo que KORUM guarda sobre ti: en JSON, para llevarla a otro servicio, y en PDF, para leerla. Si hace falta, te pediremos un código por email para confirmar que eres tú.",
+        "json": "Descargar en JSON",
+        "pdf": "Descargar en PDF",
+        "preparing": "Preparando…",
+        "downloaded": "Descarga lista. Búscala en la carpeta de descargas de tu navegador.",
+        "rateLimited": "Has descargado tus datos muchas veces hoy. Vuelve a intentarlo mañana.",
+        "failed": "No hemos podido preparar la descarga. Inténtalo de nuevo en unos minutos."
+      },
+      "requests": {
+        "title": "Mis solicitudes",
+        "none": "Todavía no has hecho ninguna solicitud.",
+        "type": {
+          "ACCESS": "Acceso",
+          "EXPORT": "Descarga de datos",
+          "RECTIFICATION": "Rectificación",
+          "ERASURE": "Supresión de la cuenta",
+          "OBJECTION": "Oposición"
+        },
+        "status": {
+          "RECEIVED": "Recibida",
+          "IN_PROGRESS": "En curso",
+          "COMPLETED": "Completada",
+          "REJECTED": "No se pudo atender"
+        }
+      }
+    },
+    "erase": {
+      "title": "Suprimir mi cuenta",
+      "deleted": "Borraremos tu nombre, tu email, tus sesiones, tus llaves de acceso y tus tarjetas guardadas, y quitaremos tu email de tus compras, entradas, firmas e ideas. No se puede deshacer.",
+      "kept": "Por ley conservamos, sin nada que te identifique, los importes y las fechas de tus aportaciones. Y si diste tu NIF para un certificado fiscal, la entidad debe guardar ese NIF, tu nombre y tu provincia durante 6 años para Hacienda (Modelo 182).",
+      "signIn": "Después podrás crear otra cuenta con el mismo email, pero empezará vacía.",
+      "understand": "Entiendo que mi cuenta se borra para siempre",
+      "button": "Suprimir mi cuenta",
+      "blocked": {
+        "SUPERADMIN_ACCOUNT": "Una cuenta de Super-Admin no se puede suprimir desde aquí.",
+        "ACTIVE_SIGNER": "Firmas por una entidad. Antes de suprimir tu cuenta, otra persona debe ocupar tu cargo desde el panel de la entidad.",
+        "WALLET_BALANCE": "Tienes saldo en tu Hucha. Primero hay que devolvértelo a tu medio de pago."
+      },
+      "rateLimited": "Has hecho muchos intentos hoy. Vuelve a intentarlo mañana.",
+      "failed": "No hemos podido suprimir la cuenta. Inténtalo de nuevo en unos minutos.",
+      "done": {
+        "title": "Tu cuenta se ha suprimido",
+        "text": "Ya no guardamos tu nombre ni tu email. Solo queda un código irreversible que impide firmar dos veces la misma idea. Gracias por haber sumado.",
+        "retained": "{count, plural, one {Ya no guardamos tu nombre ni tu email. Solo quedan un código irreversible que impide firmar dos veces la misma idea y los datos fiscales de # donación con certificado, que la ley obliga a conservar.} other {Ya no guardamos tu nombre ni tu email. Solo quedan un código irreversible que impide firmar dos veces la misma idea y los datos fiscales de # donaciones con certificado, que la ley obliga a conservar.}}",
+        "home": "Ir a la portada"
+      },
+      "erasing": "Suprimiendo…"
+    },
+    "passkeys": {
+      "title": "Llaves de acceso",
+      "intro": "Entra con la huella, la cara o el PIN de tu móvil u ordenador, sin esperar un email. La llave se queda en tu dispositivo: KORUM nunca ve tu huella ni tu cara.",
+      "signerNote": "Como tu cuenta tiene verificación en dos pasos, para añadir una llave te pediremos el código de tu app de verificación.",
+      "none": "No tienes ninguna llave guardada.",
+      "unnamed": "Llave sin nombre",
+      "added": "Añadida el {date}",
+      "synced": "sincronizada entre tus dispositivos",
+      "remove": "Quitar",
+      "removeLabel": "Quitar la llave {name}",
+      "nameLabel": "Nombre de la llave (opcional)",
+      "nameHint": "Por ejemplo, «Móvil de casa». Te ayuda a reconocerla.",
+      "add": "Añadir una llave en este dispositivo",
+      "unsupported": "Este navegador no admite llaves de acceso. Puedes seguir entrando con un enlace o un código por email.",
+      "messages": {
+        "added": "Llave añadida. La próxima vez podrás entrar con ella.",
+        "removed": "Llave quitada.",
+        "cancelled": "Has cancelado la creación de la llave. No se ha guardado nada.",
+        "alreadyRegistered": "Este dispositivo ya tiene una llave guardada para tu cuenta.",
+        "failed": "No hemos podido guardar la llave. Inténtalo de nuevo.",
+        "twoFactorFirst": "Como firmas por una entidad, primero activa la verificación en dos pasos (tu app de códigos) y después podrás añadir una llave."
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "intro": "El idioma de tus emails y de esta página.",
+      "label": "Idioma de la cuenta",
+      "save": "Guardar idioma",
+      "saved": "Idioma guardado.",
+      "failed": "No hemos podido guardar el idioma. Inténtalo de nuevo."
+    },
+    "reauth": {
+      "title": "Confirma que eres tú",
+      "intro": "Para proteger tus datos, te enviaremos un código de 6 dígitos a {email}.",
+      "send": "Enviar código",
+      "codeSent": "Escribe el código que te hemos enviado a {email}. Caduca en {minutes} minutos.",
+      "code": "Código de 6 dígitos",
+      "confirm": "Confirmar",
+      "resend": "Enviar otro código",
+      "cancel": "Cancelar"
     }
   }
 }

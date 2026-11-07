@@ -132,6 +132,8 @@ export async function startCheckout(deps: CheckoutDeps, raw: unknown, context: C
     throw error;
   }
   if (created.status !== 'CREATED') return created;
+  // Aportar con la cuenta es actividad (heredado del 3.2): sin esto, la purga por inactividad tomaría por abandonada una cuenta que solo aporta.
+  if (context.session) await deps.db.user.updateMany({ where: { id: context.session.userId, gdprAnonymizedAt: null }, data: { lastActiveAt: now } });
 
   const { order } = created;
   const url = await startHostedRedirect(deps.provider, deps.hmacSecret, { order, totalChargedCents: created.totalChargedCents, method: input.method, orgSlug: input.orgSlug, initiativeId: input.initiativeId, locale: input.locale, ip: context.ip });

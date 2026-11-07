@@ -29,7 +29,7 @@
 
 Nunca mezcles lógica de entornos distintos en un mismo componente de vista. Rutas (con `localePrefix: 'as-needed'`: el castellano va sin prefijo, `/ca/...` y `/en/...` con él):
 - `src/app/[locale]/(marketing)/...` y `src/app/[locale]/(auth)/...` → **Entorno 0**: landing, calculadora, onboarding y acceso.
-- `src/app/[locale]/(public)/[orgSlug]/...` → **Entorno 1**: familias, socios y comercios.
+- `src/app/[locale]/(public)/[orgSlug]/...` → **Entorno 1**: familias, socios y comercios. *Mi cuenta*, que es de la persona y no de una entidad, vive en `src/app/[locale]/(account)/mi-cuenta/...` (Sprint 3.7).
 - `src/app/[locale]/(dashboard)/panel/[orgSlug]/...` → **Entorno 2**: panel de la entidad, incluida la subruta `/panel/[orgSlug]/porteria` (acceso con PIN del evento).
 - `src/app/[locale]/(superadmin)/admin/...` → **Entorno 3**: consola del Super-Admin, incluida `/admin/ajustes`.
 - `src/app/api/og/...` (tarjetas sociales), `src/app/api/webhooks/paycomet/route.ts`, `src/app/api/cron/[job]/route.ts` (protegido con `CRON_SECRET`).

@@ -24,6 +24,7 @@ description: >-
    - `src/app/[locale]/(marketing)/page.tsx` → landing, buscador de entidades y calculadora.
    - `src/app/[locale]/(auth)/login/page.tsx` y `registro-comunidad/page.tsx` → acceso y alta.
    - `src/app/[locale]/(public)/[orgSlug]/...` → Entorno 1 (familias, socios y comercios).
+   - `src/app/[locale]/(account)/mi-cuenta/...` → *Mi cuenta* (Sprint 3.7): de la persona en todas sus comunidades, `force-dynamic` y `noindex`; los datos salen de `account.repository.ts` con el `userId` de la sesión.
    - `src/app/[locale]/(dashboard)/panel/[orgSlug]/...` → Entorno 2 y `/panel/[orgSlug]/porteria`.
    - `src/app/[locale]/(superadmin)/admin/...` → Entorno 3 y `/admin/ajustes`.
    - `src/app/api/og/initiative/[id]/route.tsx` → tarjetas sociales (ver [korum-seo-discoverability](../korum-seo-discoverability/SKILL.md)).
@@ -78,5 +79,6 @@ Toda vista con datos implementa sus cuatro estados con el texto que indica [docs
   - **`generateMetadata` y el `layout` corren a la vez:** cualquier lectura que pueda no encontrar la entidad (`loadPortalOrganization`) convierte el error en `notFound()` ella misma; si no, el error escapa desde los metadatos y la respuesta es `500` solo en producción.
   - Un archivo de `page.tsx`, `layout.tsx` o `route.ts` no puede exportar nada que Next no reconozca (por ejemplo, una constante): las piezas compartidas viven en `src/lib/` o `src/services/`.
 - **Páginas del portal que dependen de la sesión (Sprint 3.6, `/{orgSlug}/ideas`):** llevan `export const dynamic = 'force-dynamic'`. El `layout` del portal declara `revalidate = 60` y `generateStaticParams`, y la tabla de `npm run build` las marca `●` aunque no se guarden; sin `force-dynamic` una página que muestra «Ya has firmado» podría servirse en caché a otra persona. La prueba de que no está en `prerender-manifest.json` (`dynamicRoutes`) es que no tiene HTML generado. Las imágenes públicas se piden siempre a `/api/files/public/{id}`.
+- **Sesión en páginas compartidas (Sprint 3.7):** una cabecera que vive en una página generada una vez (portada, marketing) nunca lee la sesión en el servidor: «Mi cuenta» o «Iniciar sesión» lo decide `AccountLink` en el navegador (`authClient.useSession`). Un dato que depende de la persona en una página en caché se pide igual, con un componente de cliente.
 - **Subir ficheros desde el panel:** una ruta (`/api/panel/...`) y no una Server Action (tope global de 1 MB): comprueba `Origin`, la longitud antes de leer el cuerpo, la sesión con segundo factor y llama a un servicio que reescribe la imagen sin metadatos antes de `uploadFile`. Un `route.ts` no puede exportar constantes.
 - **Lint de textos en JSX:** la regla `react/jsx-no-literals` también rechaza emojis y signos sueltos (`:`, `(`). Un emoji decorativo va como `<span aria-hidden="true">{'🔒 '}</span>` y una frase compuesta, en una plantilla (`{`💚 ${t('…')}`}`).
