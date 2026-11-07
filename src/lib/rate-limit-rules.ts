@@ -51,3 +51,12 @@ export function seatHoldLimit(ticketMax: number): number {
   const capacity = Math.max(1, Math.floor(ticketMax));
   return Math.min(capacity, Math.max(CHECKOUT_SEATS_RULE.limit, Math.ceil(capacity / 4)));
 }
+
+/**
+ * Firmas de ideas por persona (Sprint 3.6): firmar es un clic y cada firma escribe en la auditoría; el tope impide que una cuenta robada o un
+ * guion rellene el buzón de filas. Es muy superior a lo que firma una familia (unas pocas ideas abiertas a la vez).
+ */
+export const IDEA_SIGN_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:sign:user:', limit: 40, windowMs: 10 * 60_000 };
+
+/** Propuestas de ideas por red: el límite por persona (3 al día) lo aplica el servicio; este frena a quien abre cuentas nuevas desde una misma red. */
+export const IDEA_PROPOSAL_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:propose:ip:', limit: 12, windowMs: 60 * 60_000 };

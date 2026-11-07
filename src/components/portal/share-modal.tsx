@@ -16,6 +16,8 @@ export interface ShareTarget {
   url: string;
   /** Grupos del reto por curso, equipo o grupo, en el orden de la entidad. Vacío si el reto está desactivado. */
   groups: ShareGroup[];
+  /** Mensaje propio para ideas y logros; sin él, el de una iniciativa abierta («Súmate…»). */
+  message?: string;
 }
 
 export interface ShareModalProps {
@@ -64,7 +66,7 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
 
   // Siempre hay un `<dialog>` en el árbol (el navegador lo abre y cierra); su contenido solo existe mientras hay algo que compartir.
   const link = target ? buildShareUrl(target.url, group) : '';
-  const message = target ? t('message', { title: target.title, entity: target.entityName }) : '';
+  const message = target ? (target.message ?? t('message', { title: target.title, entity: target.entityName })) : '';
   const text = `${message} ${link}`;
 
   async function copyLink() {

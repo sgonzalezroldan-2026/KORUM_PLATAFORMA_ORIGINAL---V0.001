@@ -56,7 +56,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
 | `ticket.pass` | Entrada o papeleta comprada | Comprador | QR adjunto, número de serie, fecha y lugar; *Ver mi entrada* (el calendario va como `.ics` adjunto) |
 | `gate.pinRevoked` | 20 intentos fallidos de PIN en un evento | Firmantes | Que el PIN se ha revocado por seguridad y que las sesiones abiertas siguen; *Generar otro PIN* |
-| `initiative.goalReached` | Campaña al 100 % | Firmantes (el aviso a donantes y *Compartir el logro* llegan con el Sprint 3.6) | Celebración y próximos pasos; *Ir al panel* |
+| `initiative.goalReached` | Campaña al 100 % | Firmantes (el aviso a donantes y *Compartir el logro* por email llegan con el Sprint 4.4; la página *Logros* y su botón de compartir ya existen desde el 3.6) | Celebración y próximos pasos; *Ir al panel* |
 | `initiative.achievementPhotos` | Publicadas las fotos | Donantes | Antes y Después; *Ver cómo ha quedado* |
 | `initiative.expired` | Vence sin meta | Firmantes | Opciones: redimensionar o reembolsar; *Decidir ahora* |
 | `refund.issued` | Reembolso ejecutado | Donante | Importe devuelto y medio; plazo bancario orientativo |

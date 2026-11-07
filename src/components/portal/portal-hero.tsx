@@ -1,10 +1,13 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { formatCents, type MoneyLocale } from '@/core/finance/money';
+import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
+import { achievementsPath } from '@/lib/seo/portal-routes';
 import type { VisibleHuchaMode } from '@/core/public/catalog';
 import { HuchaPill } from './hucha-pill';
 
 export interface PortalHeroProps {
+  orgSlug: string;
   name: string;
   vertical: 'SCHOOL' | 'SPORTS_CLUB' | 'CULTURAL';
   /** Color de acento de la entidad (`#RRGGBB`): se valida antes de pintarlo. */
@@ -31,7 +34,7 @@ export function monogram(name: string): string {
  * custodia en lenguaje llano (el dinero queda retenido en Paycomet; nunca «banco» ni «escrow»), la píldora de Mi Hucha según su modo y la
  * barra de impacto colectivo del curso. Fondo azul marino con el color de la entidad como acento: el texto blanco mantiene el contraste.
  */
-export function PortalHero({ name, vertical, accent, contentLang, huchaMode, impact }: PortalHeroProps) {
+export function PortalHero({ orgSlug, name, vertical, accent, contentLang, huchaMode, impact }: PortalHeroProps) {
   const t = useTranslations('portal');
   const current = useLocale();
   const locale: MoneyLocale = isLocale(current) ? current : 'es';
@@ -77,10 +80,11 @@ export function PortalHero({ name, vertical, accent, contentLang, huchaMode, imp
             <p className="text-sm font-semibold text-emerald-800">{t('impact.refund')}</p>
           </div>
         </div>
-        <p className="rounded-xl bg-emerald-50 px-4 py-2 font-joy text-base font-bold text-emerald-900">
+        <Link href={achievementsPath(orgSlug)} className="inline-flex min-h-11 items-center rounded-xl bg-emerald-50 px-4 py-2 font-joy text-base font-bold text-emerald-900 underline underline-offset-4">
           <span aria-hidden="true">{'✨ '}</span>
           {t('impact.achievements', { count: impact.achievementsCount })}
-        </p>
+          <span aria-hidden="true">{' →'}</span>
+        </Link>
       </div>
     </section>
   );

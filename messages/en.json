@@ -1269,6 +1269,55 @@
         "REJECTED": "A document needs correcting. Check the message we've sent you."
       },
       "documents": "Tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate (plus proof of Law 49/2002 if you ticked it). They are uploaded privately."
+    },
+    "achievements": {
+      "cardTitle": "Achievements and Before / After photos",
+      "cardText": "Upload the photos of each finished improvement and write the thank-you message families will see.",
+      "cardLink": "Go to achievements",
+      "title": "Organization achievements",
+      "intro": "The Before and After photos and the thank-you message appear in the “Achievements” section of the portal. We rewrite each photo without its location or phone details before publishing it.",
+      "viewPublic": "See how families see it",
+      "listLabel": "Initiatives with an achievement",
+      "empty": {
+        "title": "No initiatives with an achievement yet",
+        "description": "Once a campaign is open or achieved, you can upload its photos and thank-you message here."
+      },
+      "beforeDone": "Before photo published",
+      "beforeMissing": "Before photo missing",
+      "afterDone": "After photo published",
+      "afterMissing": "After photo missing",
+      "slotLabel": "Which photo are you uploading",
+      "slotBefore": "Before the improvement",
+      "slotAfter": "After the improvement",
+      "fileLabel": "Photo",
+      "fileHelp": "JPG, PNG or WebP up to {max} MB. Uploading another replaces the previous one.",
+      "minorsLabel": "No identifiable minors appear in the photo",
+      "minorsHelp": "You confirm that no minor’s face can be recognised and that you hold the necessary image permissions. The organization is responsible for the images it publishes.",
+      "upload": "Publish photo",
+      "uploading": "Uploading…",
+      "photoSaved": "Photo published. Families can now see it under Achievements.",
+      "thanksLabel": "Thank-you message from the school",
+      "thanksPlaceholder": "Thank you to all the families for making it possible…",
+      "thanksHelp": "Up to {max} characters. It is public: do not write names of people or minors. Leave empty to remove it.",
+      "saveThanks": "Save thank-you message",
+      "saving": "Saving…",
+      "thanksSaved": "Thank-you message saved.",
+      "errors": {
+        "noFile": "Choose a photo first.",
+        "TOO_LARGE": "The photo is too large. Reduce its size (maximum {max} MB) and try again.",
+        "CONFIRMATION_REQUIRED": "Tick the box: no identifiable minors may appear.",
+        "UNREADABLE_IMAGE": "We could not read the image. Try another photo.",
+        "INITIATIVE_NOT_EDITABLE": "This initiative no longer accepts photos.",
+        "FORBIDDEN": "You do not have permission for this. Sign in with a signer account that has two-step verification.",
+        "NOT_FOUND": "We could not find that initiative.",
+        "FILE_TYPE_NOT_ALLOWED": "Only JPG, PNG or WebP photos are accepted.",
+        "FILE_UNRECOGNIZED_TYPE": "Only JPG, PNG or WebP photos are accepted.",
+        "FILE_MIME_MISMATCH": "The file is not the photo it seems to be. Try another.",
+        "FILE_EXTENSION_MISMATCH": "The file name does not match its type. Try another photo.",
+        "FILE_TOO_LARGE": "The photo is too large. Reduce its size and try again.",
+        "generic": "We could not save it. Please try again in a few seconds."
+      },
+      "required": "required"
     }
   },
   "gate": {
@@ -1318,7 +1367,8 @@
       "PRIVACY_REQUEST_OVERDUE": "Privacy request past its deadline",
       "ENCRYPTION_KEY_MISSING": "An encryption key is missing",
       "PRIVACY_ERASURE_FAILED": "Erasing an inactive account failed",
-      "EMAIL_DELIVERY_FAILED": "Some emails cannot be sent"
+      "EMAIL_DELIVERY_FAILED": "Some emails cannot be sent",
+      "TRUSTED_IP_MISSING": "Families’ IP addresses are not reaching the idea box: everyone would fall in the same group"
     }
   },
   "forbidden": {
@@ -1375,7 +1425,9 @@
     "nav": {
       "label": "Community sections",
       "initiatives": "Initiatives and tickets",
-      "sponsors": "Friendly businesses"
+      "sponsors": "Friendly businesses",
+      "ideas": "Idea box",
+      "achievements": "Achievements"
     },
     "filter": {
       "toggle": "Filter",
@@ -1399,7 +1451,8 @@
       "heading": "Open initiatives",
       "empty": {
         "title": "There are no open campaigns yet",
-        "description": "When the community launches a new initiative, you’ll see it here with its goal and deadline."
+        "description": "Got an idea for the school? Suggest it in the Idea box.",
+        "action": "Suggest an idea"
       },
       "noMatch": {
         "title": "No initiatives match these filters",
@@ -1526,7 +1579,11 @@
       "initiativeDescription": "{pct}% reached. {text}",
       "initiativeImageAlt": "{title}: {pct}% reached",
       "sponsorsTitle": "{name} · Friendly businesses",
-      "sponsorsDescription": "The local businesses that support {name}, by Gold, Silver and Bronze category, with perks for families."
+      "sponsorsDescription": "The local businesses that support {name}, by Gold, Silver and Bronze category, with perks for families.",
+      "ideasTitle": "{name} · Idea box",
+      "ideasDescription": "Ideas from families to improve {name}. Each idea is signed with a verified email and only an anonymous code is shown.",
+      "achievementsTitle": "{name} · Achievements",
+      "achievementsDescription": "What the {name} community has already achieved together, with the before and after of each improvement."
     },
     "og": {
       "progress": "{pct}% reached",
@@ -1888,6 +1945,120 @@
         "verify": "Verify with the Tax Agency",
         "none": "This sponsorship does not generate a KORUM invoice.",
         "issuerFallback": "KORUM (technology platform)"
+      }
+    },
+    "ideas": {
+      "badge": "Community quorum",
+      "title": "What can we improve at {name}?",
+      "intro": "Share your suggestion privately: nobody sees your name, only a code. If the school accepts it and it gets {min} signatures from people with a verified email (one per person; two people from the same family can sign from the same device) within {days} days, it moves on to budgeting.",
+      "propose": "Suggest an idea",
+      "proposeLogin": "Sign in to suggest an idea",
+      "listLabel": "Community ideas",
+      "shareMessage": "Sign on KORUM to support this idea at {entity}: “{title}”!",
+      "systemMessage": "Suggestion registered with code {alias}. The school will review it before opening signatures.",
+      "empty": {
+        "title": "There are no open ideas yet",
+        "description": "Be the first person to suggest an improvement. Your name stays hidden: only a code is shown."
+      },
+      "card": {
+        "code": "Code {alias}",
+        "signatures": "{count} of {needed} signatures",
+        "days": "{days, plural, =0 {Last day} one {# day left} other {# days left}}",
+        "progressLabel": "Signatures for “{title}”",
+        "approved": "Quorum reached",
+        "sign": "Sign in support",
+        "signing": "Signing…",
+        "signed": "You have signed, thank you!",
+        "loginToSign": "Sign in to sign",
+        "closed": "Signing period closed",
+        "waitingCenter": "With the school",
+        "share": "Share",
+        "signAria": "Sign in support: {title}",
+        "shareAria": "Share: {title}"
+      },
+      "protection": {
+        "title": "How we make sure each person signs once",
+        "cookie": "When you sign we store our own cookie on this device: it is needed to keep the vote fair, and it lets mum and dad sign from the same phone or computer.",
+        "checkboxLabel": "Help protect the vote (optional)",
+        "checkboxHelp": "We also keep a pseudonymous code calculated from technical details of your browser (browser type, language, screen and time zone) to recognise this device even if cookies are deleted. It is only used so each family signs once, it is not shared, and you can withdraw it with one click. Voting works the same without it.",
+        "granted": "You have turned on the extra browser protection.",
+        "withdraw": "Withdraw my consent",
+        "withdrawn": "Done: we have deleted the fingerprint from your devices."
+      },
+      "result": {
+        "signedVerified": "Thank you! Your signature now counts for this idea.",
+        "signedReview": "Your signature is registered, but for now it does not count towards the total because it was made from a device with several accounts.",
+        "quorum": "Quorum reached! The idea now goes to the Principal and the Chair, together with its audit report.",
+        "already": "You had already signed this idea. Only one signature per person counts.",
+        "EMAIL_NOT_VERIFIED": "To sign we need you to confirm your email. Sign in again with the link or code we sent you.",
+        "INVALID_EMAIL": "We cannot use your account email to sign. Sign in with another valid email.",
+        "DISPOSABLE_EMAIL": "Temporary emails cannot be used to sign. Sign in with your usual email.",
+        "ACCOUNT_ANONYMIZED": "This account is no longer active.",
+        "IDEA_CLOSED": "The signing period for this idea has ended.",
+        "NOT_FOUND": "We could not find that idea. It may no longer be in the box.",
+        "RATE_LIMITED": "You have signed many ideas in a row. Wait a few minutes and carry on.",
+        "INVALID_INPUT": "We did not understand the request. Reload the page and try again.",
+        "LOGIN_REQUIRED": "Sign in with your email to sign or suggest an idea.",
+        "generic": "We could not register your signature. Please try again in a few seconds.",
+        "signedBurst": "Your signature is registered, but for now it does not count towards the total: many signatures are arriving at once from the same network. The school will be able to review it.",
+        "dismiss": "Close notice"
+      },
+      "dialog": {
+        "title": "Suggest an idea",
+        "close": "Close",
+        "privacy": "Your name will not be shown: the idea gets an anonymous code. Do not write children’s names or personal details.",
+        "titleLabel": "Idea title",
+        "titlePlaceholder": "E.g. Fresh drinking fountains in the playground",
+        "categoryLabel": "Type of improvement",
+        "categoryPlaceholder": "Choose a type",
+        "descriptionLabel": "Why would it help?",
+        "descriptionPlaceholder": "Tell us what you would change and who it would help.",
+        "counter": "{count} of {max} characters",
+        "submit": "Send suggestion to the school",
+        "sending": "Sending…",
+        "doneTitle": "Suggestion sent!",
+        "doneBody": "Your code is {alias}.",
+        "doneNext": "The school will review it before opening signatures. Once it is published you will see it in the box and can share it.",
+        "doneClose": "Got it",
+        "errors": {
+          "summary": "Please check the marked fields.",
+          "titleShort": "The title needs at least {min} characters.",
+          "category": "Choose the type of improvement.",
+          "descriptionShort": "Tell us a bit more: at least {min} characters.",
+          "LOGIN_REQUIRED": "Sign in with your email to suggest an idea.",
+          "INVALID_INPUT": "Please check the title, the type and the explanation.",
+          "ORGANIZATION_NOT_FOUND": "We could not find this community.",
+          "INVALID_CATEGORY": "That type of improvement is not available. Choose another from the list.",
+          "TOO_MANY_TODAY": "You have already sent three ideas today. You can suggest more tomorrow.",
+          "TOO_MANY_OPEN": "You already have several open ideas. Wait for the school to respond to one.",
+          "ALIAS_EXHAUSTED": "We could not create your code. Please try again in a few seconds.",
+          "ACCOUNT_NOT_ALLOWED": "To suggest an idea your email must be verified. Sign in again with the link or code.",
+          "RATE_LIMITED": "Many ideas have been sent from this network. Wait a while and try again."
+        }
+      }
+    },
+    "achievements": {
+      "badge": "KORUM pride",
+      "title": "What we have already achieved together",
+      "intro": "Compare the before and after of each finished improvement and share it with family and friends.",
+      "breadcrumb": "Achievements",
+      "listLabel": "Achievements",
+      "raised": "Achieved · {amount}",
+      "share": "Share achievement",
+      "shareMessage": "Look how “{title}” turned out thanks to the {entity} community! 🎉",
+      "thanksFrom": "Message from the school:",
+      "viewInitiative": "See the initiative",
+      "before": "Before",
+      "after": "After",
+      "beforeAlt": "“{title}” before the improvement",
+      "afterAlt": "“{title}” after the improvement",
+      "compareLabel": "Slide to compare the before and the after",
+      "compareValue": "Showing {after}% of the after and {before}% of the before",
+      "noPhotos": "The school will publish the before and after photos here.",
+      "empty": {
+        "title": "No achievements to show yet",
+        "description": "When an initiative reaches its goal and the school finishes the improvement, you will see it here with its before and after.",
+        "action": "See open initiatives"
       }
     }
   }

@@ -6,6 +6,8 @@ import { useId, useMemo, useRef, useState } from 'react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { countActiveFilters, matchesFilters, NO_FILTERS, distinctOptions, type CatalogFilters, type UrgencyFilter } from '@/core/public/catalog';
 import type { InitiativeCardData } from '@/core/public/view-model';
+import { Link } from '@/i18n/navigation';
+import { ideasPath } from '@/lib/seo/portal-routes';
 import { InitiativeCard } from './initiative-card';
 import { ShareModal, type ShareGroup, type ShareTarget } from './share-modal';
 
@@ -44,7 +46,19 @@ export function InitiativeCatalog({ orgSlug, entityName, cards, urls, groups, co
   const active = countActiveFilters(filters);
 
   if (cards.length === 0) {
-    return <EmptyState icon="🌱" playful title={t('catalog.empty.title')} description={t('catalog.empty.description')} />;
+    return (
+      <EmptyState
+        icon="🌱"
+        playful
+        title={t('catalog.empty.title')}
+        description={t('catalog.empty.description')}
+        action={
+          <Link href={ideasPath(orgSlug)} className="tactile-btn rounded-2xl! font-joy text-sm">
+            {t('catalog.empty.action')}
+          </Link>
+        }
+      />
+    );
   }
 
   return (

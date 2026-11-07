@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { ImageMetadataError, stripImageMetadata } from '@/core/media/strip-image-metadata';
 import type { FilePurpose } from '@/generated/prisma/enums';
 import type { Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -51,9 +52,20 @@ export async function uploadFile(db: Db, storage: StorageProvider, input: Upload
   if (input.declaredMimeType.split(';')[0]?.trim().toLowerCase() !== detected) throw new FileRejectedError('MIME_MISMATCH');
   if (!extensionMatches(input.fileName, detected)) throw new FileRejectedError('EXTENSION_MISMATCH');
 
+  // Toda imagen que va al cubo público sale sin metadatos, la suba quien la suba (heredado del Sprint 2.4): quien llama no puede olvidarlo.
+  let body = input.bytes;
+  if (rule.visibility === 'PUBLIC') {
+    try {
+      body = stripImageMetadata(input.bytes).bytes;
+    } catch (error) {
+      if (error instanceof ImageMetadataError) throw new FileRejectedError('UNRECOGNIZED_TYPE');
+      throw error;
+    }
+  }
+
   const bucket = rule.visibility === 'PUBLIC' ? PUBLIC_BUCKET : PRIVATE_BUCKET;
   const objectKey = `${input.organizationId ?? 'platform'}/${input.purpose.toLowerCase()}/${randomUUID()}.${extensionOf(detected)}`;
-  await storage.put({ bucket, objectKey, body: input.bytes, contentType: detected });
+  await storage.put({ bucket, objectKey, body, contentType: detected });
   try {
     return await db.fileAsset.create({
       data: {
@@ -62,8 +74,8 @@ export async function uploadFile(db: Db, storage: StorageProvider, input: Upload
         visibility: rule.visibility,
         purpose: input.purpose,
         mimeType: detected,
-        sizeBytes: input.bytes.length,
-        sha256: createHash('sha256').update(input.bytes).digest('hex'),
+        sizeBytes: body.length,
+        sha256: createHash('sha256').update(body).digest('hex'),
         organizationId: input.organizationId,
         uploadedById: input.uploadedById,
         retainUntil: input.retainUntil ?? null

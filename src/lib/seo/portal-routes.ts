@@ -31,3 +31,8 @@ export function ogInitiativeUrl(locale: Locale, initiativeId: number, version: n
   if (groupSlug) query.set('grupo', groupSlug);
   return `${siteUrl()}/api/og/initiative/${initiativeId}?${query.toString()}`;
 }
+
+/** Buzón de ideas de la entidad (Sprint 3.6). Las ideas llevan `noindex`: son propuestas de familias, no contenido de la entidad. */
+export const ideasPath = (orgSlug: string): string => `/${orgSlug}/ideas`;
+/** Logros conseguidos con su comparador Antes / Después (Sprint 3.6). */
+export const achievementsPath = (orgSlug: string): string => `/${orgSlug}/logros`;

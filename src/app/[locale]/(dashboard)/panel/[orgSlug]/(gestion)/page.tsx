@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { formatCents } from '@/core/finance/money';
 import { ResendInvitationButton } from '@/components/panel/resend-invitation-button';
+import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
 import { getPrisma } from '@/lib/prisma';
@@ -62,6 +63,16 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
           {isDirector && signers.some((signer) => signer.role === 'COSIGNER' && signer.status === 'INVITED') ? <ResendInvitationButton orgSlug={organization.slug} /> : null}
         </section>
       </div>
+
+      <section aria-labelledby="panel-achievements" className="korum-notebook-sheet flex flex-col gap-2">
+        <h2 id="panel-achievements" className="font-corp text-lg font-extrabold text-varsity-navy">
+          {t('achievements.cardTitle')}
+        </h2>
+        <p className="text-sm text-ink-soft">{t('achievements.cardText')}</p>
+        <Link href={`/panel/${organization.slug}/logros`} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline underline-offset-4">
+          {t('achievements.cardLink')}
+        </Link>
+      </section>
 
       <section aria-labelledby="panel-kyb" className="korum-notebook-sheet flex flex-col gap-2">
         <h2 id="panel-kyb" className="font-corp text-lg font-extrabold text-varsity-navy">

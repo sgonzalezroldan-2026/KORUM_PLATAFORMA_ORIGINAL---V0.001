@@ -53,6 +53,8 @@ El email canónico está en `src/core/security/email-normalizer.ts` y el orden l
 
 Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde la misma red en menos de 10 minutos.` · `1ª cuenta familiar en este dispositivo (verificada).` · `2ª cuenta familiar en el mismo dispositivo (padre/madre, verificada).` · `⚠️ {n}ª cuenta firmando desde el mismo dispositivo (máximo 2 por familia).`
 
+- **Interfaz y petición (Sprint 3.6):** `signIdeaForRequest` y `proposeIdeaForRequest` (`src/services/ideas/idea-requests.service.ts`) las llama la Server Action del buzón, que entrega la IP de `trustedClientIp` y la cookie `korum_device`; sin IP válida se abre la alerta `TRUSTED_IP_MISSING`. La firma y la supresión usan el **mismo** `DATA_HMAC_SECRET`. El alias de una idea es siempre `#FAM-NNNN` y lo genera el servidor (`generateIdeaAlias`). La huella solo se calcula y envía tras el consentimiento y se retira con un clic en el propio buzón.
+
 ## 3. Doble firma mancomunada (`DIRECTOR` + `COSIGNER`)
 
 - La doble firma exige **dos registros en `DoubleCheckSignature` de dos personas distintas**, una con rol `DIRECTOR` y otra con rol `COSIGNER`, para:

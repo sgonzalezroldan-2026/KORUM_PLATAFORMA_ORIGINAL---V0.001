@@ -334,8 +334,12 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
         expect(urls).toContain(absoluteUrl(locale, '/cervantes'));
         expect(urls).toContain(absoluteUrl(locale, '/cervantes/iniciativas/7'));
         expect(urls).toContain(absoluteUrl(locale, '/cervantes/comercios'));
+        expect(urls).toContain(absoluteUrl(locale, '/cervantes/logros'));
+        // Las propuestas de familias nunca entran (ficha del Sprint 3.6).
+        expect(urls).not.toContain(absoluteUrl(locale, '/cervantes/ideas'));
       }
-      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 1 + 2) * LOCALES.length);
+      // Portada, comercios y logros de la entidad, más su iniciativa, además de las páginas fijas.
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 1 + 2 + 1) * LOCALES.length);
       const initiative = entries.find((entry) => entry.url === absoluteUrl('ca', '/cervantes/iniciativas/7'));
       expect(initiative?.lastModified).toBe(touched);
       expect(initiative?.alternates?.languages).toEqual(languageAlternates('/cervantes/iniciativas/7'));

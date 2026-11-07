@@ -25,7 +25,9 @@ import { SupabaseStorage } from '@/services/storage/supabase-storage';
 
 const bytes = (...values: number[]) => new Uint8Array(values);
 const PDF = new Uint8Array([...new TextEncoder().encode('%PDF-1.7\n'), ...new Uint8Array(32)]);
-const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...new Uint8Array(32)]);
+/** PNG mínimo pero válido (IHDR, IDAT, IEND): las imágenes públicas pasan por el limpiador de metadatos y uno truncado se rechaza. */
+const pngChunk = (type: string, body: number[]) => [0, 0, 0, body.length, ...type.split('').map((letter) => letter.charCodeAt(0)), ...body, 0, 0, 0, 0];
+const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...pngChunk('IHDR', new Array(13).fill(0)), ...pngChunk('IDAT', [1, 2, 3, 4]), ...pngChunk('IEND', [])]);
 const JPEG = bytes(0xff, 0xd8, 0xff, 0xe0, 0, 0x10, 0x4a, 0x46, 0x49, 0x46);
 const WEBP = bytes(0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38);
 

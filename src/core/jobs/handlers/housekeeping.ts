@@ -2,7 +2,7 @@ import { rotateEncryptedData } from '@/core/security/key-rotation';
 import { FAILURE_WINDOW_MS } from '@/core/ticketing/gate-session.service';
 import type { Db } from '@/lib/db';
 import { purgeStaleAttempts, type PurgeRule } from '@/lib/rate-limit';
-import { AUTH_EMAIL_RULE, AUTH_REQUEST_PURGE_RULE, AUTH_SECOND_FACTOR_FAILURE_RULE, AUTH_SECOND_FACTOR_RULE, CHECKOUT_RULE, CHECKOUT_SEATS_RULE, REGISTRATION_RULE, SIGNATURE_REQUEST_RULE, WEBHOOK_INVALID_RULE } from '@/lib/rate-limit-rules';
+import { AUTH_EMAIL_RULE, AUTH_REQUEST_PURGE_RULE, AUTH_SECOND_FACTOR_FAILURE_RULE, AUTH_SECOND_FACTOR_RULE, CHECKOUT_RULE, CHECKOUT_SEATS_RULE, IDEA_PROPOSAL_RULE, IDEA_SIGN_RULE, REGISTRATION_RULE, SIGNATURE_REQUEST_RULE, WEBHOOK_INVALID_RULE } from '@/lib/rate-limit-rules';
 import type { JobHandler } from '../job-types';
 
 const DAY_MS = 86_400_000;
@@ -13,7 +13,7 @@ export const REJECTED_WEBHOOK_RETENTION_DAYS = 90;
 export const CHALLENGE_GRACE_DAYS = 7;
 
 /** Contadores con ventana que hay que purgar. Los de `windowMs: null` (p. ej. `gate-pin:event:*`) no están aquí a propósito. */
-export const RATE_LIMIT_PURGE_RULES: readonly PurgeRule[] = [{ prefix: 'gate-pin:ip:', windowMs: FAILURE_WINDOW_MS }, WEBHOOK_INVALID_RULE, SIGNATURE_REQUEST_RULE, AUTH_EMAIL_RULE, AUTH_REQUEST_PURGE_RULE, AUTH_SECOND_FACTOR_RULE, AUTH_SECOND_FACTOR_FAILURE_RULE, REGISTRATION_RULE, CHECKOUT_RULE, CHECKOUT_SEATS_RULE];
+export const RATE_LIMIT_PURGE_RULES: readonly PurgeRule[] = [{ prefix: 'gate-pin:ip:', windowMs: FAILURE_WINDOW_MS }, WEBHOOK_INVALID_RULE, SIGNATURE_REQUEST_RULE, AUTH_EMAIL_RULE, AUTH_REQUEST_PURGE_RULE, AUTH_SECOND_FACTOR_RULE, AUTH_SECOND_FACTOR_FAILURE_RULE, REGISTRATION_RULE, CHECKOUT_RULE, CHECKOUT_SEATS_RULE, IDEA_SIGN_RULE, IDEA_PROPOSAL_RULE];
 
 async function purgeRejectedWebhooks(db: Db, now: Date, limit: number): Promise<number> {
   const cutoff = new Date(now.getTime() - REJECTED_WEBHOOK_RETENTION_DAYS * DAY_MS);

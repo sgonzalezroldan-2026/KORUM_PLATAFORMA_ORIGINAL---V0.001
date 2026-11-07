@@ -51,6 +51,11 @@ export class MemoryStorage implements StorageProvider {
     return this.objects.get(MemoryStorage.id(grant.bucket, grant.objectKey)) ?? null;
   }
 
+  /** Bytes de un objeto del cubo público, para servirlo en desarrollo (no hay URL pública real). */
+  readPublic(bucket: string, objectKey: string): StoredObject | null {
+    return this.objects.get(MemoryStorage.id(bucket, objectKey)) ?? null;
+  }
+
   has(bucket: string, objectKey: string): boolean {
     return this.objects.has(MemoryStorage.id(bucket, objectKey));
   }

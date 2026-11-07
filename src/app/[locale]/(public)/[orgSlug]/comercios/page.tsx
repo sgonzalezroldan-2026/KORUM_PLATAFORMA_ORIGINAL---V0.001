@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { PortalNav } from '@/components/portal/portal-nav';
 import { SponsorCard } from '@/components/portal/sponsor-card';
 import { JsonLd } from '@/components/seo/json-ld';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -56,20 +57,7 @@ export default async function SponsorsPage({ params }: PageProps) {
   return (
     <div className="space-y-6">
       <JsonLd data={[breadcrumbJsonLd(locale, [{ name: nav('breadcrumb.home'), path: '/' }, { name: organization.name, path: portalPath(orgSlug) }, { name: t('breadcrumb'), path: sponsorsPath(orgSlug) }])]} />
-      <nav aria-label={nav('nav.label')}>
-        <ul className="flex flex-wrap gap-2">
-          <li>
-            <Link href={portalPath(orgSlug)} className="inline-flex min-h-11 items-center rounded-xl px-4 font-bold text-ink-soft hover:bg-white">
-              <span aria-hidden="true">{'🚀 '}</span>
-              {nav('nav.initiatives')}
-            </Link>
-          </li>
-          <li aria-current="page" className="inline-flex min-h-11 items-center rounded-xl bg-white px-4 font-extrabold text-varsity-navy shadow-sm">
-            <span aria-hidden="true">{'🏪 '}</span>
-            {nav('nav.sponsors')}
-          </li>
-        </ul>
-      </nav>
+      <PortalNav orgSlug={orgSlug} current="sponsors" />
 
       <section aria-labelledby="sponsors-title" className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-amber-300 bg-amber-50 p-6">
         <div className="max-w-xl space-y-2">

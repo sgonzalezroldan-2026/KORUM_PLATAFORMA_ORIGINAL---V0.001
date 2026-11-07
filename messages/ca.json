@@ -1269,6 +1269,55 @@
         "REJECTED": "Cal corregir algun document. Reviseu el missatge que us hem enviat."
       },
       "documents": "CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte (i l'acreditació de la Llei 49/2002 si la vau marcar). Es pugen de manera privada."
+    },
+    "achievements": {
+      "cardTitle": "Èxits i fotos Abans / Després",
+      "cardText": "Puja les fotos de cada millora acabada i escriu l’agraïment que veuran les famílies.",
+      "cardLink": "Anar a èxits",
+      "title": "Èxits de l’entitat",
+      "intro": "Les fotos d’Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal. Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
+      "viewPublic": "Veure com ho veuen les famílies",
+      "listLabel": "Iniciatives amb èxit",
+      "empty": {
+        "title": "Encara no hi ha iniciatives amb èxit",
+        "description": "Quan una campanya estigui oberta o aconseguida, podreu pujar aquí les seves fotos i el seu agraïment."
+      },
+      "beforeDone": "Foto de l’abans publicada",
+      "beforeMissing": "Falta la foto de l’abans",
+      "afterDone": "Foto del després publicada",
+      "afterMissing": "Falta la foto del després",
+      "slotLabel": "Quina foto puges",
+      "slotBefore": "Abans de la millora",
+      "slotAfter": "Després de la millora",
+      "fileLabel": "Foto",
+      "fileHelp": "JPG, PNG o WebP de fins a {max} MB. Si en puges una altra, substitueix l’anterior.",
+      "minorsLabel": "A la foto no apareixen menors identificables",
+      "minorsHelp": "Confirmes que no es reconeix el rostre de cap menor i que teniu els permisos d’imatge necessaris. L’entitat és responsable de les imatges que publica.",
+      "upload": "Publicar foto",
+      "uploading": "Pujant…",
+      "photoSaved": "Foto publicada. Ja la veuen les famílies a Èxits aconseguits.",
+      "thanksLabel": "Missatge d’agraïment del centre",
+      "thanksPlaceholder": "Gràcies a totes les famílies per fer-ho possible…",
+      "thanksHelp": "Màxim {max} caràcters. És públic: no posis noms de persones ni de menors. Deixa-ho buit per treure’l.",
+      "saveThanks": "Guardar agraïment",
+      "saving": "Guardant…",
+      "thanksSaved": "Agraïment guardat.",
+      "errors": {
+        "noFile": "Tria primer una foto.",
+        "TOO_LARGE": "La foto pesa massa. Redueix-ne la mida (màxim {max} MB) i torna-ho a provar.",
+        "CONFIRMATION_REQUIRED": "Marca la casella: no poden aparèixer menors identificables.",
+        "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Prova amb una altra foto.",
+        "INITIATIVE_NOT_EDITABLE": "Aquesta iniciativa ja no admet fotos.",
+        "FORBIDDEN": "No tens permís per a això. Entra amb un compte de signant amb la verificació en dos passos.",
+        "NOT_FOUND": "No hem trobat aquesta iniciativa.",
+        "FILE_TYPE_NOT_ALLOWED": "Només s’admeten fotos JPG, PNG o WebP.",
+        "FILE_UNRECOGNIZED_TYPE": "Només s’admeten fotos JPG, PNG o WebP.",
+        "FILE_MIME_MISMATCH": "L’arxiu no és la foto que sembla. Prova amb una altra.",
+        "FILE_EXTENSION_MISMATCH": "El nom de l’arxiu no correspon al seu tipus. Prova amb una altra foto.",
+        "FILE_TOO_LARGE": "La foto pesa massa. Redueix-ne la mida i torna-ho a provar.",
+        "generic": "No ho hem pogut guardar. Torna-ho a provar d’aquí a uns segons."
+      },
+      "required": "obligatori"
     }
   },
   "gate": {
@@ -1318,7 +1367,8 @@
       "PRIVACY_REQUEST_OVERDUE": "Sol·licitud de privacitat fora de termini",
       "ENCRYPTION_KEY_MISSING": "Falta una clau de xifratge",
       "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d'un compte inactiu",
-      "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar"
+      "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar",
+      "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup"
     }
   },
   "forbidden": {
@@ -1375,7 +1425,9 @@
     "nav": {
       "label": "Seccions de la comunitat",
       "initiatives": "Iniciatives i taquilla",
-      "sponsors": "Comerços amics"
+      "sponsors": "Comerços amics",
+      "ideas": "Bústia d’idees",
+      "achievements": "Èxits aconseguits"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1399,7 +1451,8 @@
       "heading": "Iniciatives obertes",
       "empty": {
         "title": "Encara no hi ha campanyes obertes",
-        "description": "Quan la comunitat posi en marxa una nova iniciativa, la veuràs aquí amb la seva meta i la seva data límit."
+        "description": "Tens una idea per a l’escola? Proposa-la a la Bústia.",
+        "action": "Proposar idea"
       },
       "noMatch": {
         "title": "No hi ha iniciatives amb aquests filtres",
@@ -1526,7 +1579,11 @@
       "initiativeDescription": "{pct} % aconseguit. {text}",
       "initiativeImageAlt": "{title}: {pct} % aconseguit",
       "sponsorsTitle": "{name} · Comerços amics",
-      "sponsorsDescription": "Els negocis del barri que donen suport a {name}, per categoria Or, Plata i Bronze, amb avantatges per a les famílies."
+      "sponsorsDescription": "Els negocis del barri que donen suport a {name}, per categoria Or, Plata i Bronze, amb avantatges per a les famílies.",
+      "ideasTitle": "{name} · Bústia d’idees",
+      "ideasDescription": "Propostes de les famílies per millorar {name}. Cada idea se signa amb l’email verificat i només es mostra un codi anònim.",
+      "achievementsTitle": "{name} · Èxits aconseguits",
+      "achievementsDescription": "Tot el que la comunitat de {name} ja ha aconseguit junta, amb l’abans i el després de cada millora."
     },
     "og": {
       "progress": "{pct} % aconseguit",
@@ -1888,6 +1945,120 @@
         "verify": "Verificar a l'Agència Tributària",
         "none": "Aquest patrocini no genera factura de KORUM.",
         "issuerFallback": "KORUM (plataforma tecnològica)"
+      }
+    },
+    "ideas": {
+      "badge": "Quòrum de la comunitat",
+      "title": "Què podem millorar a {name}?",
+      "intro": "Comparteix el teu suggeriment amb privadesa: ningú no veu el teu nom, només un codi. Si el centre l’accepta i suma {min} signatures de persones amb l’email verificat (una per persona; dues persones d’una mateixa família poden signar des del mateix dispositiu) en menys de {days} dies, passarà a pressupostar-se.",
+      "propose": "Proposar una idea",
+      "proposeLogin": "Entra per proposar una idea",
+      "listLabel": "Idees de la comunitat",
+      "shareMessage": "Signa a KORUM per donar suport a aquesta idea a {entity}: «{title}»!",
+      "systemMessage": "Proposta registrada amb el codi {alias}. El centre la revisarà abans d’obrir les signatures.",
+      "empty": {
+        "title": "Encara no hi ha idees obertes",
+        "description": "Sigues la primera persona a proposar una millora. El teu nom no es veurà: només un codi."
+      },
+      "card": {
+        "code": "Codi {alias}",
+        "signatures": "{count} de {needed} signatures",
+        "days": "{days, plural, =0 {Últim dia} one {Queda # dia} other {Queden # dies}}",
+        "progressLabel": "Signatures de «{title}»",
+        "approved": "Quòrum aconseguit",
+        "sign": "Signar suport",
+        "signing": "Signant…",
+        "signed": "Ja has signat, gràcies!",
+        "loginToSign": "Entra per signar",
+        "closed": "Termini de signatures tancat",
+        "waitingCenter": "En mans del centre",
+        "share": "Compartir",
+        "signAria": "Signar suport: {title}",
+        "shareAria": "Compartir: {title}"
+      },
+      "protection": {
+        "title": "Com vetllem perquè cada persona signi una vegada",
+        "cookie": "En signar guardem una galeta (cookie) pròpia en aquest dispositiu: és necessària perquè la votació sigui justa i permet que mare i pare signin des del mateix mòbil o ordinador.",
+        "checkboxLabel": "Ajudar a protegir la votació (opcional)",
+        "checkboxHelp": "Guardem a més un codi pseudònim calculat amb dades tècniques del teu navegador (tipus de navegador, idioma, pantalla i zona horària) per reconèixer aquest dispositiu encara que s’esborrin les galetes. Només serveix perquè cada família signi una vegada, no es comparteix i pots retirar-ho amb un clic. Sense ell, la votació funciona igual.",
+        "granted": "Has activat la protecció extra del navegador.",
+        "withdraw": "Retirar el meu consentiment",
+        "withdrawn": "Fet: hem esborrat l’empremta dels teus dispositius."
+      },
+      "result": {
+        "signedVerified": "Gràcies! La teva signatura ja compta per a aquesta idea.",
+        "signedReview": "La teva signatura queda registrada, però per ara no suma al recompte perquè s’ha fet des d’un dispositiu amb diversos comptes.",
+        "quorum": "Quòrum aconseguit! La idea passa a Direcció i a la Presidència, amb el seu informe d’auditoria.",
+        "already": "Ja havies signat aquesta idea. Només compta una signatura per persona.",
+        "EMAIL_NOT_VERIFIED": "Per signar necessitem que confirmis el teu email. Entra de nou amb l’enllaç o el codi que et vam enviar.",
+        "INVALID_EMAIL": "No podem fer servir l’email del teu compte per signar. Entra amb un altre email vàlid.",
+        "DISPOSABLE_EMAIL": "Els emails temporals no serveixen per signar. Entra amb el teu email habitual.",
+        "ACCOUNT_ANONYMIZED": "Aquest compte ja no està actiu.",
+        "IDEA_CLOSED": "El termini de signatures d’aquesta idea ja ha acabat.",
+        "NOT_FOUND": "No hem trobat aquesta idea. Pot ser que ja no sigui a la bústia.",
+        "RATE_LIMITED": "Has signat moltes idees seguides. Espera uns minuts i continua.",
+        "INVALID_INPUT": "No hem entès la petició. Recarrega la pàgina i torna-ho a provar.",
+        "LOGIN_REQUIRED": "Entra amb el teu email per signar o proposar una idea.",
+        "generic": "No hem pogut registrar la teva signatura. Torna-ho a provar d’aquí a uns segons.",
+        "signedBurst": "La teva signatura queda registrada, però per ara no suma al recompte: estan arribant moltes signatures alhora des de la mateixa xarxa. El centre la podrà revisar.",
+        "dismiss": "Tancar l’avís"
+      },
+      "dialog": {
+        "title": "Proposar una idea",
+        "close": "Tancar",
+        "privacy": "El teu nom no es mostrarà: la idea portarà un codi anònim. No escriguis noms d’infants ni dades personals.",
+        "titleLabel": "Títol de la idea",
+        "titlePlaceholder": "Ex.: Fonts d’aigua fresca al pati",
+        "categoryLabel": "Tipus de millora",
+        "categoryPlaceholder": "Tria un tipus",
+        "descriptionLabel": "Per què ajudaria?",
+        "descriptionPlaceholder": "Explica’ns què canviaries i a qui ajudaria.",
+        "counter": "{count} de {max} caràcters",
+        "submit": "Enviar proposta al centre",
+        "sending": "Enviant…",
+        "doneTitle": "Proposta enviada!",
+        "doneBody": "El teu codi és {alias}.",
+        "doneNext": "El centre la revisarà abans d’obrir les signatures. Quan estigui publicada la veuràs a la bústia i la podràs compartir.",
+        "doneClose": "Entesos",
+        "errors": {
+          "summary": "Revisa els camps marcats.",
+          "titleShort": "El títol necessita almenys {min} caràcters.",
+          "category": "Tria el tipus de millora.",
+          "descriptionShort": "Explica’ns una mica més: almenys {min} caràcters.",
+          "LOGIN_REQUIRED": "Entra amb el teu email per proposar una idea.",
+          "INVALID_INPUT": "Revisa el títol, el tipus i l’explicació.",
+          "ORGANIZATION_NOT_FOUND": "No hem trobat aquesta comunitat.",
+          "INVALID_CATEGORY": "Aquest tipus de millora no està disponible. Tria’n un altre de la llista.",
+          "TOO_MANY_TODAY": "Avui ja has enviat tres idees. Demà en podràs proposar més.",
+          "TOO_MANY_OPEN": "Ja tens diverses idees obertes. Espera que el centre en respongui alguna.",
+          "ALIAS_EXHAUSTED": "No hem pogut crear el teu codi. Torna-ho a provar d’aquí a uns segons.",
+          "ACCOUNT_NOT_ALLOWED": "Per proposar una idea el teu email ha d’estar verificat. Entra de nou amb l’enllaç o el codi.",
+          "RATE_LIMITED": "S’han enviat moltes idees des d’aquesta xarxa. Espera una estona i torna-ho a provar."
+        }
+      }
+    },
+    "achievements": {
+      "badge": "Orgull KORUM",
+      "title": "Tot el que ja hem aconseguit junts",
+      "intro": "Compara l’abans i el després de cada millora acabada i comparteix-ho amb familiars i amics.",
+      "breadcrumb": "Èxits aconseguits",
+      "listLabel": "Èxits aconseguits",
+      "raised": "Èxit aconseguit · {amount}",
+      "share": "Compartir l’èxit",
+      "shareMessage": "Mireu com ha quedat «{title}» gràcies a la comunitat de {entity}! 🎉",
+      "thanksFrom": "Missatge del centre:",
+      "viewInitiative": "Veure la iniciativa",
+      "before": "Abans",
+      "after": "Després",
+      "beforeAlt": "Estat de «{title}» abans de la millora",
+      "afterAlt": "Estat de «{title}» després de la millora",
+      "compareLabel": "Llisca per comparar l’abans i el després",
+      "compareValue": "Es veu el {after} % del després i el {before} % de l’abans",
+      "noPhotos": "El centre publicarà aquí les fotos de l’abans i el després.",
+      "empty": {
+        "title": "Encara no hi ha èxits per mostrar",
+        "description": "Quan una iniciativa arribi a la seva meta i el centre acabi la millora, la veuràs aquí amb el seu abans i el seu després.",
+        "action": "Veure iniciatives obertes"
       }
     }
   }

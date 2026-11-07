@@ -48,7 +48,7 @@ export async function withE2eDb<T>(fn: (client: pg.Client) => Promise<T>): Promi
       return await runWithE2eDb(fn);
     } catch (error) {
       const message = (error as Error).message ?? '';
-      const mixedProtocol = (error as { code?: string }).code === '08P01' || /bind message supplies|prepared statement/.test(message);
+      const mixedProtocol = (error as { code?: string }).code === '08P01' || /bind message supplies|prepared statement|Connection terminated/.test(message);
       if (!mixedProtocol || attempt >= 4) throw error;
       await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
     }

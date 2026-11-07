@@ -1269,6 +1269,55 @@
         "REJECTED": "Hay que corregir algún documento. Revisad el mensaje que os hemos enviado."
       },
       "documents": "CIF, estatutos o acta, DNI de quien representa a la entidad y certificado de titularidad de la cuenta (y la acreditación de la Ley 49/2002 si la marcasteis). Se suben de forma privada."
+    },
+    "achievements": {
+      "cardTitle": "Logros y fotos Antes / Después",
+      "cardText": "Sube las fotos de cada mejora terminada y escribe el agradecimiento que verán las familias.",
+      "cardLink": "Ir a logros",
+      "title": "Logros de la entidad",
+      "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal. Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
+      "viewPublic": "Ver cómo lo ven las familias",
+      "listLabel": "Iniciativas con logro",
+      "empty": {
+        "title": "Todavía no hay iniciativas con logro",
+        "description": "Cuando una campaña esté abierta o conseguida, podréis subir aquí sus fotos y su agradecimiento."
+      },
+      "beforeDone": "Foto del antes publicada",
+      "beforeMissing": "Falta la foto del antes",
+      "afterDone": "Foto del después publicada",
+      "afterMissing": "Falta la foto del después",
+      "slotLabel": "Qué foto subes",
+      "slotBefore": "Antes de la mejora",
+      "slotAfter": "Después de la mejora",
+      "fileLabel": "Foto",
+      "fileHelp": "JPG, PNG o WebP de hasta {max} MB. Si subes otra, sustituye a la anterior.",
+      "minorsLabel": "En la foto no aparecen menores identificables",
+      "minorsHelp": "Confirmas que no se reconoce el rostro de ningún menor y que tenéis los permisos de imagen necesarios. La entidad es responsable de las imágenes que publica.",
+      "upload": "Publicar foto",
+      "uploading": "Subiendo…",
+      "photoSaved": "Foto publicada. Ya la ven las familias en Logros conseguidos.",
+      "thanksLabel": "Mensaje de agradecimiento del centro",
+      "thanksPlaceholder": "Gracias a todas las familias por hacerlo posible…",
+      "thanksHelp": "Máximo {max} caracteres. Es público: no pongas nombres de personas ni de menores. Déjalo vacío para quitarlo.",
+      "saveThanks": "Guardar agradecimiento",
+      "saving": "Guardando…",
+      "thanksSaved": "Agradecimiento guardado.",
+      "errors": {
+        "noFile": "Elige primero una foto.",
+        "TOO_LARGE": "La foto pesa demasiado. Reduce su tamaño (máximo {max} MB) e inténtalo de nuevo.",
+        "CONFIRMATION_REQUIRED": "Marca la casilla: no pueden aparecer menores identificables.",
+        "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Prueba con otra foto.",
+        "INITIATIVE_NOT_EDITABLE": "Esta iniciativa ya no admite fotos.",
+        "FORBIDDEN": "No tienes permiso para esto. Entra con una cuenta de firmante con la verificación en dos pasos.",
+        "NOT_FOUND": "No hemos encontrado esa iniciativa.",
+        "FILE_TYPE_NOT_ALLOWED": "Solo se admiten fotos JPG, PNG o WebP.",
+        "FILE_UNRECOGNIZED_TYPE": "Solo se admiten fotos JPG, PNG o WebP.",
+        "FILE_MIME_MISMATCH": "El archivo no es la foto que parece. Prueba con otra.",
+        "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Prueba con otra foto.",
+        "FILE_TOO_LARGE": "La foto pesa demasiado. Reduce su tamaño e inténtalo de nuevo.",
+        "generic": "No hemos podido guardarlo. Inténtalo de nuevo en unos segundos."
+      },
+      "required": "obligatorio"
     }
   },
   "gate": {
@@ -1318,7 +1367,8 @@
       "PRIVACY_REQUEST_OVERDUE": "Solicitud de privacidad fuera de plazo",
       "ENCRYPTION_KEY_MISSING": "Falta una clave de cifrado",
       "PRIVACY_ERASURE_FAILED": "Falló la supresión de una cuenta inactiva",
-      "EMAIL_DELIVERY_FAILED": "Hay emails que no se pueden enviar"
+      "EMAIL_DELIVERY_FAILED": "Hay emails que no se pueden enviar",
+      "TRUSTED_IP_MISSING": "No llega la IP de las familias al firmar ideas: todas quedarían en el mismo grupo"
     }
   },
   "forbidden": {
@@ -1375,7 +1425,9 @@
     "nav": {
       "label": "Secciones de la comunidad",
       "initiatives": "Iniciativas y taquilla",
-      "sponsors": "Comercios amigos"
+      "sponsors": "Comercios amigos",
+      "ideas": "Buzón de ideas",
+      "achievements": "Logros conseguidos"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1399,7 +1451,8 @@
       "heading": "Iniciativas abiertas",
       "empty": {
         "title": "Todavía no hay campañas abiertas",
-        "description": "Cuando la comunidad ponga en marcha una nueva iniciativa, la verás aquí con su meta y su fecha límite."
+        "description": "¿Tienes una idea para el cole? Propónla en el Buzón.",
+        "action": "Proponer idea"
       },
       "noMatch": {
         "title": "No hay iniciativas con estos filtros",
@@ -1526,7 +1579,11 @@
       "initiativeDescription": "{pct} % conseguido. {text}",
       "initiativeImageAlt": "{title}: {pct} % conseguido",
       "sponsorsTitle": "{name} · Comercios amigos",
-      "sponsorsDescription": "Los negocios del barrio que apoyan a {name}, por categoría Oro, Plata y Bronce, con ventajas para las familias."
+      "sponsorsDescription": "Los negocios del barrio que apoyan a {name}, por categoría Oro, Plata y Bronce, con ventajas para las familias.",
+      "ideasTitle": "{name} · Buzón de ideas",
+      "ideasDescription": "Propuestas de las familias para mejorar {name}. Cada idea se firma con el email verificado y solo se enseña un código anónimo.",
+      "achievementsTitle": "{name} · Logros conseguidos",
+      "achievementsDescription": "Lo que la comunidad de {name} ya ha conseguido juntos, con el antes y el después de cada mejora."
     },
     "og": {
       "progress": "{pct} % conseguido",
@@ -1888,6 +1945,120 @@
         "verify": "Verificar en la Agencia Tributaria",
         "none": "Este patrocinio no genera factura de KORUM.",
         "issuerFallback": "KORUM (plataforma tecnológica)"
+      }
+    },
+    "ideas": {
+      "badge": "Quórum de la comunidad",
+      "title": "¿Qué podemos mejorar en {name}?",
+      "intro": "Comparte tu sugerencia con privacidad: nadie ve tu nombre, solo un código. Si el centro la acepta y suma {min} firmas de personas con el email verificado (una por persona; dos personas de una misma familia pueden firmar desde el mismo dispositivo) en menos de {days} días, pasará a presupuestarse.",
+      "propose": "Proponer una idea",
+      "proposeLogin": "Entra para proponer una idea",
+      "listLabel": "Ideas de la comunidad",
+      "shareMessage": "¡Firma en KORUM para apoyar esta idea en {entity}: «{title}»!",
+      "systemMessage": "Propuesta registrada con el código {alias}. El centro la revisará antes de abrir las firmas.",
+      "empty": {
+        "title": "Todavía no hay ideas abiertas",
+        "description": "Sé la primera persona en proponer una mejora. Tu nombre no se verá: solo un código."
+      },
+      "card": {
+        "code": "Código {alias}",
+        "signatures": "{count} de {needed} firmas",
+        "days": "{days, plural, =0 {Último día} one {Queda # día} other {Quedan # días}}",
+        "progressLabel": "Firmas de «{title}»",
+        "approved": "Quórum logrado",
+        "sign": "Firmar apoyo",
+        "signing": "Firmando…",
+        "signed": "Ya has firmado, ¡gracias!",
+        "loginToSign": "Entra para firmar",
+        "closed": "Plazo de firmas cerrado",
+        "waitingCenter": "En manos del centro",
+        "share": "Compartir",
+        "signAria": "Firmar apoyo: {title}",
+        "shareAria": "Compartir: {title}"
+      },
+      "protection": {
+        "title": "Cómo cuidamos que cada persona firme una vez",
+        "cookie": "Al firmar guardamos una cookie propia en este dispositivo: es necesaria para que la votación sea justa y permite que madre y padre firmen desde el mismo móvil u ordenador.",
+        "checkboxLabel": "Ayudar a proteger la votación (opcional)",
+        "checkboxHelp": "Guardamos además un código seudónimo calculado con datos técnicos de tu navegador (tipo de navegador, idioma, pantalla y zona horaria) para reconocer este dispositivo aunque se borren las cookies. Solo sirve para que cada familia firme una vez, no se comparte y puedes retirarlo con un clic. Sin él, la votación funciona igual.",
+        "granted": "Has activado la protección extra del navegador.",
+        "withdraw": "Retirar mi consentimiento",
+        "withdrawn": "Hecho: hemos borrado la huella de tus dispositivos."
+      },
+      "result": {
+        "signedVerified": "¡Gracias! Tu firma ya cuenta para esta idea.",
+        "signedReview": "Tu firma queda registrada, pero por ahora no suma al recuento porque se ha hecho desde un dispositivo con varias cuentas.",
+        "quorum": "¡Quórum logrado! La idea pasa a Dirección y a la Presidencia, junto con su informe de auditoría.",
+        "already": "Ya habías firmado esta idea. Solo cuenta una firma por persona.",
+        "EMAIL_NOT_VERIFIED": "Para firmar necesitamos que confirmes tu email. Entra de nuevo con el enlace o el código que te enviamos.",
+        "INVALID_EMAIL": "No podemos usar el email de tu cuenta para firmar. Entra con otro email válido.",
+        "DISPOSABLE_EMAIL": "Los emails temporales no sirven para firmar. Entra con tu email habitual.",
+        "ACCOUNT_ANONYMIZED": "Esta cuenta ya no está activa.",
+        "IDEA_CLOSED": "El plazo de firmas de esta idea ya ha terminado.",
+        "NOT_FOUND": "No hemos encontrado esa idea. Puede que ya no esté en el buzón.",
+        "RATE_LIMITED": "Has firmado muchas ideas seguidas. Espera unos minutos y sigue.",
+        "INVALID_INPUT": "No hemos entendido la petición. Recarga la página e inténtalo de nuevo.",
+        "LOGIN_REQUIRED": "Entra con tu email para firmar o proponer una idea.",
+        "generic": "No hemos podido registrar tu firma. Inténtalo de nuevo en unos segundos.",
+        "signedBurst": "Tu firma queda registrada, pero por ahora no suma al recuento: están llegando muchas firmas a la vez desde la misma red. El centro podrá revisarla.",
+        "dismiss": "Cerrar aviso"
+      },
+      "dialog": {
+        "title": "Proponer una idea",
+        "close": "Cerrar",
+        "privacy": "Tu nombre no se mostrará: la idea llevará un código anónimo. No escribas nombres de niños ni datos personales.",
+        "titleLabel": "Título de la idea",
+        "titlePlaceholder": "Ej.: Fuentes de agua fresca en el patio",
+        "categoryLabel": "Tipo de mejora",
+        "categoryPlaceholder": "Elige un tipo",
+        "descriptionLabel": "¿Por qué ayudaría?",
+        "descriptionPlaceholder": "Cuéntanos qué cambiaría y a quién ayudaría.",
+        "counter": "{count} de {max} caracteres",
+        "submit": "Enviar propuesta al centro",
+        "sending": "Enviando…",
+        "doneTitle": "¡Propuesta enviada!",
+        "doneBody": "Tu código es {alias}.",
+        "doneNext": "El centro la revisará antes de abrir las firmas. Cuando esté publicada la verás en el buzón y podrás compartirla.",
+        "doneClose": "Entendido",
+        "errors": {
+          "summary": "Revisa los campos marcados.",
+          "titleShort": "El título necesita al menos {min} caracteres.",
+          "category": "Elige el tipo de mejora.",
+          "descriptionShort": "Cuéntanos un poco más: al menos {min} caracteres.",
+          "LOGIN_REQUIRED": "Entra con tu email para proponer una idea.",
+          "INVALID_INPUT": "Revisa el título, el tipo y la explicación.",
+          "ORGANIZATION_NOT_FOUND": "No hemos encontrado esta comunidad.",
+          "INVALID_CATEGORY": "Ese tipo de mejora no está disponible. Elige otro de la lista.",
+          "TOO_MANY_TODAY": "Hoy ya has enviado tres ideas. Mañana podrás proponer más.",
+          "TOO_MANY_OPEN": "Ya tienes varias ideas abiertas. Espera a que el centro responda a alguna.",
+          "ALIAS_EXHAUSTED": "No hemos podido crear tu código. Inténtalo de nuevo en unos segundos.",
+          "ACCOUNT_NOT_ALLOWED": "Para proponer una idea tu email tiene que estar verificado. Entra de nuevo con el enlace o el código.",
+          "RATE_LIMITED": "Se han enviado muchas ideas desde esta red. Espera un rato e inténtalo de nuevo."
+        }
+      }
+    },
+    "achievements": {
+      "badge": "Orgullo KORUM",
+      "title": "Lo que ya hemos logrado juntos",
+      "intro": "Compara el antes y el después de cada mejora terminada y compártelo con familiares y amigos.",
+      "breadcrumb": "Logros conseguidos",
+      "listLabel": "Logros conseguidos",
+      "raised": "Logro conseguido · {amount}",
+      "share": "Compartir logro",
+      "shareMessage": "¡Mirad cómo ha quedado «{title}» gracias a la comunidad de {entity}! 🎉",
+      "thanksFrom": "Mensaje del centro:",
+      "viewInitiative": "Ver la iniciativa",
+      "before": "Antes",
+      "after": "Después",
+      "beforeAlt": "Estado de «{title}» antes de la mejora",
+      "afterAlt": "Estado de «{title}» después de la mejora",
+      "compareLabel": "Deslizar para comparar el antes y el después",
+      "compareValue": "Se ve el {after} % del después y el {before} % del antes",
+      "noPhotos": "El centro publicará aquí las fotos del antes y el después.",
+      "empty": {
+        "title": "Aún no hay logros que enseñar",
+        "description": "Cuando una iniciativa llegue a su meta y el centro termine la mejora, la verás aquí con su antes y su después.",
+        "action": "Ver iniciativas abiertas"
       }
     }
   }

@@ -64,7 +64,7 @@ export type SignIdeaResult =
   | { status: 'ALREADY_SIGNED' }
   | { status: 'SIGNED'; audit: SignatureAuditResult; quorumReached: boolean; /** Cookie que hay que enviar al navegador, si es nueva. */ newDeviceCookie: string | null };
 
-function canonicalEmailOf(user: { email: string; emailVerified: boolean; gdprAnonymizedAt: Date | null }): string {
+export function canonicalEmailOf(user: { email: string; emailVerified: boolean; gdprAnonymizedAt: Date | null }): string {
   if (user.gdprAnonymizedAt) throw new IdeaSignatureRejectedError('ACCOUNT_ANONYMIZED');
   if (!user.emailVerified) throw new IdeaSignatureRejectedError('EMAIL_NOT_VERIFIED');
   let canonicalEmail: string;

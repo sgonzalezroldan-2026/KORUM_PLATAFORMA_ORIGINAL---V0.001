@@ -63,7 +63,7 @@ export const SETTING_DEFINITIONS = {
   'seo.verification.bing': def(text(200), { auditValue: true }),
   'platform.company': def(company, { auditValue: false }),
   'pricing.acknowledgements': def(z.array(acknowledgement), { defaultValue: [], auditValue: false }),
-  'privacy.policyVersion': def(z.string().regex(/^\d{4}-\d{2}-\d{2}(\.\d+)?$/), { auditValue: true })
+  'privacy.policyVersion': def(z.string().regex(/^\d{4}-\d{2}-\d{2}(\.\d+)?$/), { defaultValue: '2026-11-01', auditValue: true })
 } satisfies Record<string, SettingDefinition<unknown>>;
 
 export const LEGAL_DOCUMENTS = ['terminos', 'privacidad', 'cookies', 'aviso-legal'] as const;
