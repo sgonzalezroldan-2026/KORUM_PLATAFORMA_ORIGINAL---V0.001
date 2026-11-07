@@ -56,7 +56,10 @@ const SAMPLES: Record<string, unknown> = {
   'tax.certificateReady': { fiscalYear: 2026 },
   'model182.reminder': { fiscalYear: 2026 },
   'privacy.inactivityNotice': { eraseOn: IN_3_DAYS },
-  'account.passkeyAdded': {}
+  'account.passkeyAdded': {},
+  'pledge.charged': { initiativeId: 1, amountCents: 1_000, feeCents: 25, totalCents: 1_025, reference: 'KH0123456789ABCDEF', cycle: 2, totalMonths: 9, fiscalCertificate: true },
+  'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },
+  'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

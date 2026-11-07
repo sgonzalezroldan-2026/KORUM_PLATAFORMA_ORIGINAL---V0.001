@@ -66,7 +66,8 @@ test.describe('QA-F01 · portada de la entidad', () => {
     const hucha = page.getByRole('link', { name: /Mi Hucha/ });
     await expect(hucha).toBeVisible();
     await expect(hucha).toContainText('Aportación mensual');
-    await expect(hucha).toHaveAttribute('href', '/mi-hucha');
+    // Abre Mi Hucha con el alta de la aportación mensual a esta entidad (Sprint 3.8).
+    await expect(hucha).toHaveAttribute('href', '/mi-hucha?entidad=cervantes');
 
     await expectNoMissingTranslations(page);
     await expectNoHorizontalOverflow(page);

@@ -17,6 +17,11 @@ export interface ChargeRequest {
   /** Token de la tarjeta guardada o recién tokenizada. Obligatorio en todo lo que no sea Bizum. */
   card?: { idUser: number; tokenUser: string };
   description?: string;
+  /**
+   * Cobro iniciado por KORUM sin la persona delante (cada mes de Mi Hucha), con la tarjeta que guardó en un primer pago autenticado. Va como
+   * operación recurrente exenta de autenticación reforzada (MIT). **A confirmar con Paycomet** (CUMPLIMIENTO §2, punto 6).
+   */
+  merchantInitiated?: boolean;
 }
 
 export interface ChargeResult {
@@ -39,6 +44,11 @@ export interface HostedPaymentRequest {
   urlOk: string;
   urlKo: string;
   description?: string;
+  /**
+   * Primer pago de una aportación mensual: Paycomet guarda la tarjeta para los meses siguientes y la notificación del cobro trae su token
+   * (`IdUser` + `TokenUser`). Solo con tarjeta: Bizum no se puede guardar.
+   */
+  saveCard?: boolean;
 }
 
 export interface HostedPaymentResult {
@@ -101,6 +111,11 @@ export interface PaymentNotification {
   occurredAt: Date | null;
   /** Solo campos de la operación: nunca el token de la tarjeta ni datos de quien paga. Es lo que se guarda en `WebhookEvent`. */
   payload: Record<string, string>;
+  /**
+   * Tarjeta guardada en un pago con `saveCard`. Nunca entra en `payload` (no se guarda en claro): quien la recibe la cifra en el acto. Paycomet
+   * no incluye estos campos en la firma; una entrega repetida con otro token es un duplicado y no se procesa.
+   */
+  card?: { idUser: number; tokenUser: string; brand: string | null } | null;
 }
 
 export type NotificationCheck = { valid: true; notification: PaymentNotification } | { valid: false; reason: string };

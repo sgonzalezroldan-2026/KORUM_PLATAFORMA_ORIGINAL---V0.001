@@ -52,7 +52,7 @@ export type CheckoutContext = Awaited<ReturnType<typeof getCheckoutContext>>;
 export async function getSimulatedPayment(db: KorumPrismaClient, slug: string, initiativeId: number, order: string) {
   return db.contribution.findFirst({
     where: { paycometOrder: order, initiativeId, type: { in: ['DONATION', 'TICKET', 'SPONSORSHIP'] }, organization: { slug, archivedAt: null } },
-    select: { totalChargedCents: true, paymentMethod: true, status: true, type: true }
+    select: { totalChargedCents: true, paymentMethod: true, status: true, type: true, walletSubscriptionId: true }
   });
 }
 

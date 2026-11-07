@@ -60,6 +60,7 @@ export default async function PaymentSimulatorPage({ params, searchParams }: Pag
         <dt className="font-bold text-ink-soft">{t('method')}</dt>
         <dd className="text-end font-extrabold text-varsity-navy">{t(`methods.${payment.paymentMethod === 'BIZUM' ? 'BIZUM' : 'CARD'}`)}</dd>
       </dl>
+      {payment.walletSubscriptionId !== null ? <p className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">{t('savesCard')}</p> : null}
       <SimulatorButtons orgSlug={orgSlug} initiativeId={initiativeId} order={order} signature={signature} settle={settleSimulatedPaymentAction} />
     </section>
   );

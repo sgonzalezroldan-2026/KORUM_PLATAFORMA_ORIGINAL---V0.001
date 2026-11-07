@@ -22,8 +22,11 @@ export type SponsorDocumentKind = (typeof SPONSOR_DOCUMENTS)[number];
 export const sponsorDocumentPath = (orgSlug: string, kind: SponsorDocumentKind): string => `/${orgSlug}/comercios/documentos/${kind}`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */
 export const INITIATIVE_ID_PATTERN = /^[1-9]\d{0,8}$/;
-/** Mi Hucha (Sprint 3.7). */
+/** Mi Hucha (Sprint 3.8): de la persona, fuera del portal de una entidad. Con `?entidad=` abre el alta de la aportación mensual a esa entidad. */
 export const HUCHA_PATH = '/mi-hucha';
+export const huchaForOrganizationPath = (orgSlug: string): string => `${HUCHA_PATH}?${new URLSearchParams({ entidad: orgSlug }).toString()}`;
+/** Vuelta del primer pago de la aportación mensual: Mi Hucha enseña si quedó activada. Solo lo ve su titular (la página exige su sesión). */
+export const huchaResultPath = (order: string): string => `${HUCHA_PATH}?${new URLSearchParams({ pedido: order }).toString()}`;
 
 /** Tarjeta social de una iniciativa (1200×630). `version` (la fecha de su última modificación) obliga a WhatsApp y Facebook a pedir una imagen nueva. */
 export function ogInitiativeUrl(locale: Locale, initiativeId: number, version: number, groupSlug?: string | null): string {

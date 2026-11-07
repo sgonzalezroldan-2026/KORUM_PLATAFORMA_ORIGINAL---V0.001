@@ -14,6 +14,10 @@ interface Scope {
 
 export const PAYIN_KINDS = ['PAYIN_DONATION', 'PAYIN_TICKET', 'PAYIN_SPONSOR'] as const satisfies readonly LedgerJournalKind[];
 
+/**
+ * Cobro de una donación o de una entrada. `serviceFeeCents` es lo que se cobra encima para KORUM: en una entrada, los gastos de gestión digital;
+ * en una donación, solo existe en la aportación mensual de Mi Hucha (su gestión por cargo, Sprint 3.8). La campaña recibe siempre el 100 %.
+ */
 export function donationOrTicketPayinLines(
   scope: Scope,
   input: { type: 'DONATION' | 'TICKET'; amountCents: number; guaranteeCents: number; serviceFeeCents: number; totalChargedCents: number }
@@ -23,7 +27,8 @@ export function donationOrTicketPayinLines(
     { account: 'INITIATIVE_ESCROW', direction: 'CREDIT', amountCents: input.amountCents, ...scope }
   ];
   if (input.guaranteeCents > 0) lines.push({ account: 'KORUM_REVENUE_GUARANTEE', direction: 'CREDIT', amountCents: input.guaranteeCents, organizationId: scope.organizationId });
-  if (input.serviceFeeCents > 0) lines.push({ account: 'KORUM_REVENUE_TICKET_FEE', direction: 'CREDIT', amountCents: input.serviceFeeCents, organizationId: scope.organizationId });
+  const feeAccount = input.type === 'TICKET' ? 'KORUM_REVENUE_TICKET_FEE' : 'KORUM_REVENUE_TOPUP_FEE';
+  if (input.serviceFeeCents > 0) lines.push({ account: feeAccount, direction: 'CREDIT', amountCents: input.serviceFeeCents, organizationId: scope.organizationId });
   return lines;
 }
 

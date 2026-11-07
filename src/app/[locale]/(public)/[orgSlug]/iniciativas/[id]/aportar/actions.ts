@@ -11,7 +11,7 @@ import { getAuthSession } from '@/lib/auth/session';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { localizedPath } from '@/lib/seo/marketing-routes';
-import { checkoutResultPath } from '@/lib/seo/portal-routes';
+import { checkoutResultPath, huchaResultPath } from '@/lib/seo/portal-routes';
 import { startCheckout, type CheckoutStart } from '@/services/checkout/checkout.service';
 import { startSponsorship, type SponsorshipStart } from '@/services/checkout/sponsorship.service';
 import { settleSimulatedPayment } from '@/services/checkout/payment-simulator';
@@ -81,7 +81,7 @@ export async function settleSimulatedPaymentAction(raw: unknown): Promise<{ url:
   const provider = await getPaymentProvider(db);
   if (!(provider instanceof MockPaycometProvider)) return null;
 
-  const outcome = await settleSimulatedPayment(db, provider, input, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db) });
+  const outcome = await settleSimulatedPayment(db, provider, input, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db), keyring: getKeyring() });
   if (outcome === 'INVALID') return null;
   if (outcome === 'SETTLED') {
     // Como el webhook real: el recibo y las entradas salen en el propio flujo del cobro, cuando ya se ha respondido.
@@ -93,6 +93,8 @@ export async function settleSimulatedPaymentAction(raw: unknown): Promise<{ url:
       }
     });
   }
+  // El primer pago de Mi Hucha vuelve a Mi Hucha, como con Paycomet: allí se ve si la aportación mensual quedó activada.
+  if (input.order.startsWith('KH')) return { url: localizedPath(locale, huchaResultPath(input.order)) };
   const query = new URLSearchParams({ pedido: input.order, sig: signCheckoutResult(env.DATA_HMAC_SECRET, input.order) });
   return { url: `${localizedPath(locale, checkoutResultPath(input.orgSlug, input.initiativeId))}?${query.toString()}` };
 }

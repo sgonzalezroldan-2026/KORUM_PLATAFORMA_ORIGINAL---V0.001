@@ -218,7 +218,10 @@
         "subject": "Asunto",
         "message": "Mensaje",
         "reply": "Respuesta",
-        "synced": "Sincronizada entre dispositivos"
+        "synced": "Sincronizada entre dispositivos",
+        "pledgeFee": "Gestión por mes",
+        "pledgeCampaign": "Campaña preferida",
+        "nextCharge": "Próximo cobro"
       },
       "types": {
         "DONATION": "Donación",
@@ -260,6 +263,13 @@
         "SENT": "Enviado",
         "FAILED": "No se pudo enviar",
         "CANCELLED": "Cancelado"
+      },
+      "pledgeStatuses": {
+        "PENDING": "Esperando el primer pago",
+        "ACTIVE": "Activa",
+        "PAUSED": "En pausa",
+        "CANCELLED": "Cancelada",
+        "FINISHED": "Terminada"
       }
     }
   },
@@ -444,6 +454,35 @@
         "body": "Se acaba de añadir una llave de acceso a tu cuenta de KORUM: con ella se puede entrar sin email ni contraseña. Si has sido tú, no tienes que hacer nada.",
         "footnote": "Si no has sido tú, entra en Mi cuenta, quita la llave y escríbenos al soporte.",
         "cta": "Revisar mis llaves"
+      }
+    },
+    "pledge": {
+      "month": "Mes",
+      "monthValue": "{cycle} de {total}",
+      "fee": "Gestión de Mi Hucha",
+      "cta": "Pausar o cambiar mi aportación",
+      "charged": {
+        "subject": "Tu aportación mensual a {organization} ya ha llegado",
+        "preheader": "Este mes ha ido a «{initiative}».",
+        "title": "¡Este mes también sumas!",
+        "body": "Hemos cobrado tu aportación mensual de {amount} y ha ido íntegra a «{initiative}», de {organization}.",
+        "fiscalCertificate": "Si indicaste tu NIF al programarla, cada mes donado se incluirá en tu certificado fiscal de donación (Ley 49/2002), que podrás descargar en enero. La gestión de Mi Hucha no cuenta para el certificado."
+      },
+      "skipped": {
+        "subject": "Este mes no te hemos cobrado tu aportación a {organization}",
+        "preheader": "No había ninguna campaña recaudando.",
+        "title": "Este mes no hay cobro",
+        "body": "{organization} no tiene ahora mismo ninguna campaña recaudando, así que este mes no te hemos cobrado los {amount} de tu aportación mensual.",
+        "next": "No tienes que hacer nada: el mes que viene lo intentaremos de nuevo con la campaña que esté abierta.",
+        "last": "Era el último mes de tu aportación, así que ya ha terminado. Si quieres seguir, puedes programar una nueva en Mi Hucha."
+      },
+      "failed": {
+        "subject": "No hemos podido cobrar tu aportación mensual a {organization}",
+        "preheader": "La hemos puesto en pausa.",
+        "title": "El cobro de este mes no ha salido",
+        "body": "Hemos intentado cobrar tu aportación mensual de {amount} para {organization} y no ha sido posible. No se te ha cobrado nada.",
+        "paused": "Hemos puesto tu aportación en pausa para no volver a intentarlo con una tarjeta que no funciona. Si quieres seguir, puedes reanudarla en Mi Hucha.",
+        "cardGone": "La tarjeta guardada ya no se puede usar. Si quieres seguir aportando cada mes, cancela esta aportación y programa una nueva en Mi Hucha."
       }
     }
   },
@@ -1397,7 +1436,7 @@
       "INVOICE_STUCK": "Factura pendiente en Veri*factu",
       "SPONSOR_RENEWAL_DUE": "Renovación de patrocinio pendiente",
       "CREDIT_POOL_EXPIRED": "Bolsa de patrocinio vencida",
-      "MONTHLY_TOPUP_DUE": "Aportaciones mensuales pendientes de cobro",
+      "MONTHLY_TOPUP_DUE": "Cobros mensuales de Mi Hucha sin confirmar",
       "ESCROW_LEFTOVER": "Dinero pendiente en una hucha devuelta",
       "CARD_DELETE_FAILED": "No se pudo borrar una tarjeta guardada",
       "PRIVACY_REQUEST_OVERDUE": "Solicitud de privacidad fuera de plazo",
@@ -1831,7 +1870,8 @@
         "title": "Este pago ya no está pendiente",
         "description": "Vuelve a la iniciativa para empezar de nuevo."
       },
-      "failed": "No se ha podido completar. Vuelve a intentarlo."
+      "failed": "No se ha podido completar. Vuelve a intentarlo.",
+      "savesCard": "Es el primer mes de una aportación mensual: al confirmar, Paycomet guarda la tarjeta para los meses siguientes."
     },
     "result": {
       "metaTitle": "Tu aportación",
@@ -2285,6 +2325,151 @@
       "confirm": "Confirmar",
       "resend": "Enviar otro código",
       "cancel": "Cancelar"
+    }
+  },
+  "hucha": {
+    "metaTitle": "Mi Hucha",
+    "title": "Mi Hucha",
+    "intro": "Aporta cada mes a tu centro, club o entidad sin tener que acordarte. No hay saldo: cada mes se cobra en tu tarjeta y va íntegro a una campaña que esté recaudando. Puedes pausarla, cambiarla o cancelarla cuando quieras.",
+    "walletIntro": "Esta modalidad de Mi Hucha todavía no está disponible.",
+    "walletSoon": {
+      "title": "Esta modalidad de Mi Hucha aún no está disponible",
+      "text": "Mientras tanto, puedes seguir aportando con Bizum o tarjeta en cada campaña.",
+      "action": "Ir a Mi cuenta"
+    },
+    "start": {
+      "title": "Programar una aportación mensual",
+      "titleFor": "Aportar cada mes a {organization}",
+      "pick": "Elige la entidad a la que quieres aportar cada mes. También puedes entrar en su página y pulsar «Mi Hucha».",
+      "find": "Buscar mi centro o club",
+      "notFound": "No encontramos esa entidad. Elige una de tu lista o búscala desde la portada.",
+      "noCampaignTitle": "{organization} no tiene ahora ninguna campaña recaudando",
+      "noCampaignText": "La aportación mensual siempre va a una campaña abierta. Vuelve cuando publiquen la próxima.",
+      "visit": "Ver la página de {organization}"
+    },
+    "mine": {
+      "title": "Mis aportaciones mensuales",
+      "emptyTitle": "Todavía no aportas cada mes",
+      "emptyText": "Cuando programes una aportación mensual, aquí verás cuánto llevas aportado, el próximo cobro y a qué campaña va."
+    },
+    "form": {
+      "amountLegend": "¿Cuánto quieres aportar cada mes?",
+      "perMonth": "{amount} al mes",
+      "otherLabel": "Otro importe al mes (€)",
+      "otherHint": "Entre {min} y {max} al mes.",
+      "monthsLabel": "¿Durante cuántos meses?",
+      "months": {
+        "3": "3 meses (un trimestre)",
+        "6": "6 meses",
+        "9": "9 meses (el curso escolar)",
+        "12": "12 meses"
+      },
+      "campaignLabel": "¿A qué campaña va?",
+      "campaignSoonest": "Cada mes, a la campaña que antes cierre",
+      "campaignHint": "Si la campaña que elijas termina, los meses siguientes irán a la que antes cierre.",
+      "summary": {
+        "pickAmount": "Elige un importe para ver el resumen.",
+        "monthly": "Cada mes: {amount} para la campaña + {fee} de gestión de Mi Hucha = {total}",
+        "schedule": "El primer mes se cobra hoy y los siguientes el día {day} de cada mes, durante {months} meses.",
+        "commitment": "Como mucho, {total} en total. Si un mes no hay ninguna campaña abierta, ese mes no se cobra."
+      },
+      "cardNotice": "Pagarás el primer mes en la página segura de Paycomet, que guarda tu tarjeta para los meses siguientes: KORUM nunca la ve. Si cancelas o termina, la borramos.",
+      "submit": "Pagar el primer mes y activar",
+      "submitting": "Preparando el pago…",
+      "errors": {
+        "amount": "Escribe un importe entre {min} y {max} al mes.",
+        "campaign": "Esa campaña ya no está recaudando. Elige otra o deja «la que antes cierre».",
+        "noCampaign": "Esta entidad ya no tiene ninguna campaña recaudando. Vuelve cuando publiquen la próxima.",
+        "alreadyActive": "Ya tienes una aportación mensual con esta entidad. Puedes cambiarla, pausarla o cancelarla más abajo.",
+        "rateLimited": "Has hecho muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
+        "unavailable": "Ahora mismo no podemos abrir la página de pago. No se ha cobrado nada; prueba de nuevo en unos minutos.",
+        "disabled": "Mi Hucha no está disponible en este momento.",
+        "login": "Tu sesión ha caducado. Vuelve a entrar para continuar.",
+        "form": "Revisa los datos e inténtalo de nuevo."
+      }
+    },
+    "pledge": {
+      "monthly": "{amount} al mes",
+      "status": {
+        "PENDING": "Esperando el primer pago",
+        "ACTIVE": "Activa",
+        "PAUSED": "En pausa",
+        "CANCELLED": "Cancelada",
+        "FINISHED": "Terminada"
+      },
+      "reason": {
+        "CHARGE_FAILED": "La pusimos en pausa porque el último cobro no salió. Si tu tarjeta ya funciona, puedes reanudarla.",
+        "CARD_UNAVAILABLE": "La tarjeta guardada ya no se puede usar. Para seguir, cancela esta aportación y programa una nueva.",
+        "CARD_NOT_SAVED": "Tu primer mes llegó a la campaña, pero no pudimos guardar la tarjeta. Si quieres seguir cada mes, prográmala de nuevo.",
+        "ACCOUNT_ERASED": "Se canceló al suprimir la cuenta.",
+        "CHARGEBACK": "La cancelamos porque se reclamó uno de los cobros a la tarjeta. No volveremos a cobrar con ella.",
+        "PAUSE_EXPIRED": "La cancelamos porque llevaba más de 6 meses en pausa, y borramos la tarjeta guardada. Puedes programar una nueva cuando quieras."
+      },
+      "progress": "Meses",
+      "progressValue": "{done} de {total}",
+      "contributed": "Llevas aportado",
+      "charge": "Cada mes se cobra",
+      "chargeValue": "{amount} + {fee} de gestión",
+      "next": "Próximo cobro",
+      "card": "Tarjeta",
+      "cardGeneric": "Tarjeta guardada",
+      "skipped": "Meses sin cobro",
+      "skippedValue": "{count, plural, one {# mes sin campaña abierta} other {# meses sin campaña abierta}}",
+      "campaignLabel": "Campaña preferida",
+      "campaignSoonest": "La que antes cierre",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "cancel": "Cancelar la aportación",
+      "cancelConfirmTitle": "Confirmar la cancelación",
+      "cancelConfirm": "¿Seguro que quieres cancelarla? No se volverá a cobrar nada y borraremos tu tarjeta guardada. Lo ya aportado sigue en su campaña.",
+      "cancelYes": "Sí, cancelar",
+      "cancelNo": "No, mantenerla",
+      "cancelling": "Cancelando…",
+      "history": "{count, plural, one {Ver el mes cobrado} other {Ver los # meses}}",
+      "historyLine": "Mes {cycle} · {campaign}",
+      "monthStatus": {
+        "PENDING": "Confirmando",
+        "COMPLETED": "Cobrado",
+        "FAILED": "No cobrado",
+        "REFUND_PENDING": "Devolviéndose",
+        "REFUNDED": "Devuelto",
+        "CHARGEBACK": "Anulado (reclamación del pago)"
+      },
+      "done": {
+        "pause": "Aportación en pausa. No se cobrará nada hasta que la reanudes.",
+        "resume": "Aportación reanudada. El próximo cobro será en su día de cobro.",
+        "cancel": "Aportación cancelada. No se volverá a cobrar y hemos pedido borrar tu tarjeta.",
+        "campaign": "Campaña cambiada. Se aplica desde el próximo cobro."
+      },
+      "errors": {
+        "NOT_FOUND": "Esta aportación ya no se puede cambiar. Recarga la página.",
+        "CARD_UNAVAILABLE": "La tarjeta guardada ya no se puede usar. Cancela esta aportación y programa una nueva.",
+        "INVALID": "No se ha podido hacer el cambio. Recarga la página e inténtalo de nuevo.",
+        "LOGIN_REQUIRED": "Tu sesión ha caducado. Vuelve a entrar para continuar."
+      }
+    },
+    "result": {
+      "activated": {
+        "title": "¡Aportación mensual activada!",
+        "text": "Ya hemos cobrado el primer mes y ha ido íntegro a una campaña de {organization}. Te avisaremos por email cada mes."
+      },
+      "cardNotSaved": {
+        "title": "Tu primer mes ha llegado",
+        "text": "Tu aportación ha ido a {organization}, pero no pudimos guardar la tarjeta para los meses siguientes. Si quieres, prográmala de nuevo."
+      },
+      "pending": {
+        "title": "Estamos confirmando tu pago",
+        "text": "Paycomet aún no nos ha confirmado el primer mes para {organization}. Suele tardar unos segundos.",
+        "reload": "Comprobar de nuevo"
+      },
+      "failed": {
+        "title": "El pago no se ha completado",
+        "text": "No se ha cobrado nada y tu aportación a {organization} no se ha activado. Puedes intentarlo otra vez."
+      },
+      "notActive": {
+        "title": "Tu aportación ha llegado",
+        "text": "Este mes ha ido íntegro a una campaña de {organization}, pero la aportación mensual no ha quedado activa (ya tenías otra o la sustituiste). Revisa tus aportaciones más abajo."
+      }
     }
   }
 }

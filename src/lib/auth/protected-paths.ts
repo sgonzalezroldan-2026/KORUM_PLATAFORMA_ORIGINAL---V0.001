@@ -1,9 +1,9 @@
 /**
  * Rutas que exigen sesión (con o sin prefijo de idioma): la consola (`/admin`), el panel de una entidad (`/panel/{slug}`, **salvo** su
- * portería, que entra con el PIN del evento), la configuración del doble factor y *Mi cuenta* (Sprint 3.7). Las usa el proxy para mandar a `/login` sin consultar la
+ * portería, que entra con el PIN del evento), la configuración del doble factor, *Mi cuenta* (Sprint 3.7) y Mi Hucha (Sprint 3.8). Las usa el proxy para mandar a `/login` sin consultar la
  * base de datos; la comprobación real la hacen los layouts.
  */
-const PROTECTED = /^(?:\/(?:ca|en))?\/(?:admin(?:\/|$)|panel\/[^/]+(?!\/porteria(?:\/|$))(?:\/|$)|acceso\/doble-factor(?:\/|$)|mi-cuenta(?:\/|$))/;
+const PROTECTED = /^(?:\/(?:ca|en))?\/(?:admin(?:\/|$)|panel\/[^/]+(?!\/porteria(?:\/|$))(?:\/|$)|acceso\/doble-factor(?:\/|$)|mi-cuenta(?:\/|$)|mi-hucha(?:\/|$))/;
 
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED.test(pathname);

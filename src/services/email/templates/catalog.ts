@@ -15,6 +15,7 @@ import {
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
 import { accountPasskeyAdded } from './definitions-account';
+import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 
 /**
  * Catálogo de plantillas (`templateKey` → definición). Las claves son las de EXPERIENCIA_DE_PRODUCTO §4. Una clave que no está aquí no
@@ -67,7 +68,10 @@ const ENTRIES = [
   register('tax.certificateReady', taxCertificateReady),
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),
-  register('account.passkeyAdded', accountPasskeyAdded)
+  register('account.passkeyAdded', accountPasskeyAdded),
+  register('pledge.charged', pledgeCharged),
+  register('pledge.skipped', pledgeSkipped),
+  register('pledge.failed', pledgeFailed)
 ];
 
 export const TEMPLATE_CATALOG: ReadonlyMap<string, RegisteredTemplate> = new Map(ENTRIES);

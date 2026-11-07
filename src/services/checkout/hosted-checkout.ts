@@ -10,10 +10,22 @@ import { PaymentProviderError, type PaymentProvider } from '@/services/payments/
 export async function startHostedRedirect(
   provider: PaymentProvider,
   hmacSecret: string,
-  input: { order: string; totalChargedCents: number; method: 'CARD' | 'BIZUM'; orgSlug: string; initiativeId: number; locale: 'es' | 'ca' | 'en'; ip: string | null }
+  input: {
+    order: string;
+    totalChargedCents: number;
+    method: 'CARD' | 'BIZUM';
+    orgSlug: string;
+    initiativeId: number;
+    locale: 'es' | 'ca' | 'en';
+    ip: string | null;
+    /** Vuelta propia (Mi Hucha vuelve a `/mi-hucha`); por defecto, la pantalla de resultado del checkout con su firma. */
+    returnUrl?: string;
+    /** Primer pago de una aportación mensual: Paycomet guarda la tarjeta. */
+    saveCard?: boolean;
+  }
 ): Promise<string | null> {
   const query = (signature: string) => `?${new URLSearchParams({ pedido: input.order, sig: signature }).toString()}`;
-  const resultUrl = `${absoluteUrl(input.locale, checkoutResultPath(input.orgSlug, input.initiativeId))}${query(signCheckoutResult(hmacSecret, input.order))}`;
+  const resultUrl = input.returnUrl ?? `${absoluteUrl(input.locale, checkoutResultPath(input.orgSlug, input.initiativeId))}${query(signCheckoutResult(hmacSecret, input.order))}`;
   try {
     const hosted = await provider.startHostedPayment({
       order: input.order,
@@ -22,7 +34,8 @@ export async function startHostedRedirect(
       originalIp: input.ip ?? '0.0.0.0',
       locale: input.locale,
       urlOk: resultUrl,
-      urlKo: resultUrl
+      urlKo: resultUrl,
+      ...(input.saveCard ? { saveCard: true } : {})
     });
     if (provider.mode === 'mock') {
       return `${localizedPath(input.locale, paymentSimulatorPath(input.orgSlug, input.initiativeId))}${query(signPaymentSimulator(hmacSecret, input.order))}`;

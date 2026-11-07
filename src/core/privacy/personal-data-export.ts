@@ -48,7 +48,21 @@ export interface PersonalDataExport {
   savedCards: Array<{ brand: string | null; last4: string | null; expires: string | null; createdAt: string; revokedAt: string | null }>;
   /** Llaves de acceso (Sprint 3.7): nombre y fechas; nunca la clave pública ni el identificador de la credencial. */
   passkeys: Array<{ name: string | null; createdAt: string | null; deviceType: string; synced: boolean }>;
-  monthlyPledges: Array<{ organization: string | null; monthlyAmountCents: number; executedMonths: number; totalMonths: number; active: boolean; createdAt: string }>;
+  monthlyPledges: Array<{
+    organization: string | null;
+    monthlyAmountCents: number;
+    feePerMonthCents: number;
+    executedMonths: number;
+    skippedMonths: number;
+    totalMonths: number;
+    chargeDay: number;
+    nextChargeAt: string | null;
+    preferredInitiative: string | null;
+    status: string;
+    statusReason: string | null;
+    termsVersion: string | null;
+    createdAt: string;
+  }>;
   notifications: Array<{ template: string; status: string; createdAt: string; sentAt: string | null }>;
   supportTickets: Array<{ ticketCode: string; subject: string; message: string; status: string; reply: string | null; createdAt: string }>;
   /** NIF guardados que ninguna clave puede descifrar (se avisa a la plataforma; el resto de la exportación es completo). */
@@ -78,7 +92,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     db.ideaSignatureAudit.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { idea: { select: { title: true } } } }),
     db.deviceAccount.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { device: { select: { firstSeenAt: true, lastSeenAt: true, fingerprintHmac: true } } } }),
     db.paymentMethodToken.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { brand: true, last4: true, expiresMonth: true, expiresYear: true, createdAt: true, revokedAt: true } }),
-    db.walletSubscription.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } } } }),
+    db.walletSubscription.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
     verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([]),
     db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } })
@@ -143,7 +157,21 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
       revokedAt: iso(card.revokedAt)
     })),
     passkeys: passkeys.map((row) => ({ name: row.name, createdAt: iso(row.createdAt), deviceType: row.deviceType, synced: row.backedUp })),
-    monthlyPledges: pledges.map((row) => ({ organization: row.organization?.name ?? null, monthlyAmountCents: row.monthlyAmountCents, executedMonths: row.executedMonths, totalMonths: row.totalMonths, active: row.active, createdAt: row.createdAt.toISOString() })),
+    monthlyPledges: pledges.map((row) => ({
+      organization: row.organization?.name ?? null,
+      monthlyAmountCents: row.monthlyAmountCents,
+      feePerMonthCents: row.feePerMonthCents,
+      executedMonths: row.executedMonths,
+      skippedMonths: row.skippedMonths,
+      totalMonths: row.totalMonths,
+      chargeDay: row.chargeDay,
+      nextChargeAt: row.status === 'ACTIVE' ? row.nextChargeAt.toISOString() : null,
+      preferredInitiative: row.initiative?.title ?? null,
+      status: row.status,
+      statusReason: row.statusReason,
+      termsVersion: row.termsVersion,
+      createdAt: row.createdAt.toISOString()
+    })),
     notifications: messages.map((row) => ({ template: row.templateKey, status: row.status, createdAt: row.createdAt.toISOString(), sentAt: iso(row.sentAt) })),
     supportTickets: support.map((row) => ({ ticketCode: row.ticketCode, subject: row.subject, message: row.message, status: row.status, reply: row.replyMessage, createdAt: row.createdAt.toISOString() })),
     unreadableTaxIds: 0

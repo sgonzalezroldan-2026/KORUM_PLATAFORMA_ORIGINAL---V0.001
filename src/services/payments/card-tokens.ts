@@ -8,7 +8,45 @@ import { PaymentProviderError, type PaymentProvider } from './payment-provider';
  * identificador de su fila en el contexto**: copiados a la tarjeta de otra persona, no se pueden descifrar.
  */
 
-/** La fila se crea vacía y se rellena en la misma transacción, porque el contexto de cifrado necesita su identificador. */
+interface CardToStore {
+  userId: string | null;
+  idUser: number;
+  tokenUser: string;
+  brand?: string | null;
+  last4?: string | null;
+  expiresMonth?: number;
+  expiresYear?: number;
+  /** Se guarda ya revocada: no se cobrará con ella, solo se conserva para pedir a Paycomet que la borre. */
+  revokedAt?: Date;
+}
+
+/**
+ * Guarda una tarjeta ya tokenizada, dentro de la transacción de quien llama (el webhook del primer pago de Mi Hucha la guarda junto al cobro).
+ * La fila se crea vacía y se rellena en la misma transacción, porque el contexto de cifrado necesita su identificador.
+ */
+export async function storeCardTokenInTx(tx: Db, providerName: string, card: CardToStore, keyring: Keyring): Promise<{ paymentMethodTokenId: number }> {
+  const row = await tx.paymentMethodToken.create({
+    data: {
+      userId: card.userId,
+      provider: providerName,
+      idUserEnc: '',
+      tokenUserEnc: '',
+      keyVersion: keyring.currentVersion,
+      brand: card.brand ?? null,
+      last4: card.last4 ?? null,
+      expiresMonth: card.expiresMonth ?? null,
+      expiresYear: card.expiresYear ?? null,
+      revokedAt: card.revokedAt ?? null
+    },
+    select: { id: true }
+  });
+  const idUserSealed = sealValue(keyring, String(card.idUser), CRYPTO_CONTEXT.cardIdUser(row.id));
+  const tokenUserSealed = sealValue(keyring, card.tokenUser, CRYPTO_CONTEXT.cardTokenUser(row.id));
+  await tx.paymentMethodToken.update({ where: { id: row.id }, data: { idUserEnc: idUserSealed.sealed, tokenUserEnc: tokenUserSealed.sealed, keyVersion: idUserSealed.keyVersion } });
+  return { paymentMethodTokenId: row.id };
+}
+
+/** Cambia el token de un solo uso del formulario (JET-ID) por la tarjeta guardada y la guarda cifrada. */
 export async function tokenizeAndStoreCard(
   db: Db,
   provider: PaymentProvider,
@@ -16,26 +54,7 @@ export async function tokenizeAndStoreCard(
   keyring: Keyring
 ): Promise<{ paymentMethodTokenId: number }> {
   const { idUser, tokenUser } = await provider.tokenizeCard({ jetToken: input.jetToken });
-  return inTransaction(db, async (tx) => {
-    const row = await tx.paymentMethodToken.create({
-      data: {
-        userId: input.userId,
-        provider: provider.name,
-        idUserEnc: '',
-        tokenUserEnc: '',
-        keyVersion: keyring.currentVersion,
-        brand: input.brand ?? null,
-        last4: input.last4 ?? null,
-        expiresMonth: input.expiresMonth ?? null,
-        expiresYear: input.expiresYear ?? null
-      },
-      select: { id: true }
-    });
-    const idUserSealed = sealValue(keyring, String(idUser), CRYPTO_CONTEXT.cardIdUser(row.id));
-    const tokenUserSealed = sealValue(keyring, tokenUser, CRYPTO_CONTEXT.cardTokenUser(row.id));
-    await tx.paymentMethodToken.update({ where: { id: row.id }, data: { idUserEnc: idUserSealed.sealed, tokenUserEnc: tokenUserSealed.sealed, keyVersion: idUserSealed.keyVersion } });
-    return { paymentMethodTokenId: row.id };
-  });
+  return inTransaction(db, (tx) => storeCardTokenInTx(tx, provider.name, { ...input, idUser, tokenUser }, keyring));
 }
 
 function openCard(keyring: Keyring, row: { id: number; idUserEnc: string; tokenUserEnc: string; keyVersion: number }): { idUser: number; tokenUser: string } {

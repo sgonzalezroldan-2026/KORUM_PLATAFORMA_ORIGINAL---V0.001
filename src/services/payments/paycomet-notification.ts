@@ -43,7 +43,11 @@ const fieldsSchema = z.object({
   AuthCode: unsigned(/^[\x21-\x7e]{1,40}$/),
   ErrorID: unsigned(/^\d{1,10}$/),
   MethodId: unsigned(/^\d{1,5}$/),
-  paycometId: unsigned(/^\d{1,20}$/)
+  paycometId: unsigned(/^\d{1,20}$/),
+  // Tarjeta guardada (primer pago de Mi Hucha). No entran en `payload`: se cifran al recibirlos.
+  IdUser: unsigned(/^[1-9]\d{0,11}$/),
+  TokenUser: unsigned(/^[!-~]{1,64}$/),
+  CardBrand: unsigned(/^[A-Za-z0-9 _-]{1,30}$/)
 });
 
 export type NotificationFields = z.output<typeof fieldsSchema>;
@@ -93,7 +97,7 @@ export function verifyPaycometNotification(rawBody: string, contentType: string 
   // La firma incluye estos dos valores, pero la de otro producto de la misma cuenta también sería correcta para su propia contraseña.
   if (fields.AccountCode !== secrets.accountCode || fields.TpvID !== secrets.terminal) return { valid: false, reason: 'WRONG_TERMINAL' };
 
-  const { TransactionType, Order, Amount, Currency, BankDateTime, Response, AuthCode, ErrorID, MethodId, paycometId } = fields;
+  const { TransactionType, Order, Amount, Currency, BankDateTime, Response, AuthCode, ErrorID, MethodId, paycometId, IdUser, TokenUser, CardBrand } = fields;
   const payload: Record<string, string> = { TransactionType, Order, Amount, Currency, BankDateTime, Response };
   for (const [key, value] of Object.entries({ AuthCode, ErrorID, MethodId, paycometId })) {
     if (value !== undefined) payload[key] = value;
@@ -112,7 +116,8 @@ export function verifyPaycometNotification(rawBody: string, contentType: string 
       currency: Currency,
       authCode: AuthCode ?? null,
       occurredAt: parseBankDate(BankDateTime),
-      payload
+      payload,
+      card: IdUser && TokenUser ? { idUser: Number(IdUser), tokenUser: TokenUser, brand: CardBrand ?? null } : null
     }
   };
 }

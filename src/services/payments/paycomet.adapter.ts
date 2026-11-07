@@ -92,8 +92,11 @@ export class PaycometAdapter implements PaymentProvider {
         currency: CURRENCY,
         methodId: METHOD_ID[request.method],
         originalIp: request.originalIp,
-        secure: 1,
+        // Sin la persona delante (Mi Hucha) no hay autenticación reforzada: operación recurrente con la excepción MIT. **A confirmar con Paycomet**
+        // (CUMPLIMIENTO §9, Sprint 3.8 b): nombres y valores de `secure`, `trxType` y `scaException`, y la IP que se envía (la del servidor).
+        secure: request.merchantInitiated ? 0 : 1,
         ...(request.card ? { idUser: request.card.idUser, tokenUser: request.card.tokenUser } : {}),
+        ...(request.merchantInitiated ? { trxType: 'R', scaException: 'MIT' } : {}),
         ...(request.description ? { productDescription: request.description } : {})
       }
     });
@@ -105,6 +108,8 @@ export class PaycometAdapter implements PaymentProvider {
    * `POST /v1/form` con `operationType 1` (autorización): Paycomet devuelve la URL de su página de pago, donde la persona paga con tarjeta,
    * Apple Pay, Google Pay o Bizum y vuelve a `urlOk`/`urlKo`. Suposición contra la especificación, sin probar en el sandbox: confirmar los
    * nombres de los campos, el código de idioma y que el resultado llega por la notificación habitual (tareas aplazadas, ficha 6.1).
+   * Con `saveCard` (primer pago de Mi Hucha) se marca como primer cobro de una serie recurrente (`trxType: 'R'`) para que Paycomet guarde la
+   * tarjeta y la notificación traiga `IdUser` y `TokenUser`: también a confirmar en el sandbox.
    */
   async startHostedPayment(request: HostedPaymentRequest): Promise<HostedPaymentResult> {
     this.assertSafeOrder(request.order);
@@ -122,6 +127,7 @@ export class PaycometAdapter implements PaymentProvider {
         secure: 1,
         urlOk: request.urlOk,
         urlKo: request.urlKo,
+        ...(request.saveCard ? { trxType: 'R' } : {}),
         ...(request.description ? { productDescription: request.description } : {})
       }
     });

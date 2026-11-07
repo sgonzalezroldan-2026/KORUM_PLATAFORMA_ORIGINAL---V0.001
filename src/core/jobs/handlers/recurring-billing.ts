@@ -1,12 +1,14 @@
 import type { Db } from '@/lib/db';
+import { reportError } from '@/lib/error-reporting';
+import { chargePledgeCycle } from '@/services/pledges/pledge-billing';
+import { pledgeModeEnabled, retirePledgeCard } from '@/services/pledges/pledge.service';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert } from '../ops-alerts';
 
 /**
- * Tareas de cobros recurrentes (patrocinios y Mi Hucha). Los cobros y reembolsos reales dependen de piezas que aún no existen —el
- * checkout y las tarjetas guardadas (Sprint 3.4), la confirmación de patrocinios con su factura (3.5) y Mi Hucha (3.7)—, y el cobro de
- * un patrocinio hoy se rechaza a propósito. Por eso aquí **no se mueve dinero**: cada tarea detecta lo que ya ha vencido y lo deja en
- * una alerta agregada para el Super-Admin, que desaparece sola cuando no queda nada. Solo el preaviso de renovación es completo.
+ * Tareas de cobros recurrentes (patrocinios y Mi Hucha). Mi Hucha cobra cada mes con la tarjeta guardada (Sprint 3.8). Los patrocinios aún
+ * no mueven dinero aquí (renovación y bolsa vencida llegan con el Sprint 4.2): esas tareas detectan lo que ya ha vencido y lo dejan en una
+ * alerta agregada para el Super-Admin, que desaparece sola cuando no queda nada.
  * Las alertas no llevan datos del comercio ni de la familia: solo recuentos y fechas.
  */
 
@@ -74,10 +76,70 @@ export const creditPoolExpiryHandler: JobHandler = async ({ db, now }) => {
   return { processed: due, hasMore: false };
 };
 
-/** `MONTHLY_TOPUP`: aportaciones mensuales programadas con fecha cumplida. El cobro llega con Mi Hucha (Sprint 3.7). */
-export const monthlyTopupHandler: JobHandler = async ({ db, now }) => {
-  const due = await db.walletSubscription.findMany({ where: { active: true, nextChargeAt: { lte: now } }, select: { executedMonths: true, totalMonths: true } });
-  const pending = due.filter((subscription) => subscription.executedMonths < subscription.totalMonths).length;
-  await syncAggregate(db, { type: 'MONTHLY_TOPUP_DUE', severity: 'INFO', count: pending, detail: {} }, now);
-  return { processed: pending, hasMore: false };
+/** Un cobro mensual sin confirmar pasado este tiempo (resultado desconocido) se avisa en la consola: alguien tiene que mirarlo en Paycomet. */
+export const PLEDGE_UNCONFIRMED_AFTER_MS = 2 * 3_600_000;
+/** Pasado este tiempo de ejecución no se empiezan más cobros: la función de Vercel tiene un límite. */
+export const PLEDGE_TIME_BUDGET_MS = 240_000;
+/**
+ * Plazo máximo de una aportación en pausa (6 meses): pasado, se cancela y se borra la tarjeta guardada. Sin plazo, una pausa olvidada (una
+ * tarjeta caducada) conservaría la tarjeta y la cuenta para siempre (minimización, CUMPLIMIENTO §6). A validar por el abogado.
+ */
+export const PLEDGE_MAX_PAUSE_DAYS = 180;
+
+/** Cancela las aportaciones en pausa desde hace más del plazo y pide borrar sus tarjetas. */
+async function expireLongPauses(db: Db, deps: Parameters<JobHandler>[0]['deps'], now: Date, batchSize: number): Promise<number> {
+  const expired = await db.walletSubscription.findMany({
+    where: { status: 'PAUSED', statusChangedAt: { lt: new Date(now.getTime() - PLEDGE_MAX_PAUSE_DAYS * 86_400_000) } },
+    take: batchSize,
+    select: { id: true, paymentMethodTokenId: true }
+  });
+  for (const pledge of expired) {
+    const { count } = await db.walletSubscription.updateMany({ where: { id: pledge.id, status: 'PAUSED' }, data: { status: 'CANCELLED', statusReason: 'PAUSE_EXPIRED', statusChangedAt: now } });
+    if (count === 1 && pledge.paymentMethodTokenId !== null) await retirePledgeCard({ db, keyring: deps.keyring(), paymentProvider: deps.paymentProvider }, pledge.paymentMethodTokenId, now);
+  }
+  return expired.length;
+}
+
+/**
+ * `MONTHLY_TOPUP` (Sprint 3.8): cobra el mes de cada aportación mensual de Mi Hucha que ha vencido (`chargePledgeCycle`). Solo en modo
+ * `PLEDGE`: si el Super-Admin desactiva Mi Hucha, no se cobra nada, y al reactivarla no se cobran los meses atrasados (cada mes se calcula desde
+ * hoy). Paycomet, la IP del servidor y el llavero se resuelven antes de reservar ningún mes. La alerta `MONTHLY_TOPUP_DUE` cuenta los cobros con
+ * resultado desconocido que siguen sin confirmar, sin datos de las familias.
+ */
+export const monthlyTopupHandler: JobHandler = async ({ db, now, batchSize, deadline, deps }) => {
+  const detail = { charged: 0, skipped: 0, failed: 0, unknown: 0, errors: 0, pauseExpired: 0 };
+  let processed = 0;
+  let hasMore = false;
+  if (await pledgeModeEnabled(db)) {
+    const due = await db.walletSubscription.findMany({ where: { status: 'ACTIVE', nextChargeAt: { lte: now } }, orderBy: [{ nextChargeAt: 'asc' }, { id: 'asc' }], take: batchSize, select: { id: true } });
+    if (due.length > 0) {
+      const billing = { db, provider: await deps.paymentProvider(), keyring: deps.keyring(), originalIp: await deps.refundOriginalIp() };
+      const stopAt = Math.min(deadline ?? Number.POSITIVE_INFINITY, Date.now() + PLEDGE_TIME_BUDGET_MS);
+      let lastError: unknown = null;
+      for (const { id } of due) {
+        if (Date.now() > stopAt) {
+          hasMore = true;
+          break;
+        }
+        // Un fallo inesperado en una aportación no deja sin cobrar a las demás (como `MASS_REFUND`). Su mes ya está reservado o no se tocó.
+        try {
+          const outcome = await chargePledgeCycle(billing, id, now);
+          if (outcome === 'NOT_DUE') continue;
+          processed += 1;
+          detail[outcome === 'CHARGED' ? 'charged' : outcome === 'SKIPPED' ? 'skipped' : outcome === 'FAILED' ? 'failed' : 'unknown'] += 1;
+        } catch (error) {
+          detail.errors += 1;
+          lastError = error;
+          reportError(error, { stage: 'monthly-topup', pledgeId: id });
+        }
+      }
+      // Solo falla la tarea si nada avanzó: apunta a un problema general (base de datos, configuración).
+      if (lastError && processed === 0) throw lastError;
+      hasMore ||= due.length === batchSize;
+    }
+  }
+  detail.pauseExpired = await expireLongPauses(db, deps, now, batchSize);
+  const unconfirmed = await db.contribution.count({ where: { status: 'PENDING', pledgeCycle: { gt: 1 }, createdAt: { lte: new Date(now.getTime() - PLEDGE_UNCONFIRMED_AFTER_MS) } } });
+  await syncAggregate(db, { type: 'MONTHLY_TOPUP_DUE', severity: 'WARNING', count: unconfirmed + detail.errors, detail: {} }, now);
+  return { processed, hasMore, detail };
 };

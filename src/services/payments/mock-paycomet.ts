@@ -36,6 +36,8 @@ export interface MockPaycometOptions {
   failRefund?: MockFailure;
   failSplit?: MockFailure;
   failDeleteCard?: MockFailure;
+  /** Fuerza un fallo en un cobro con tarjeta guardada (Mi Hucha). */
+  failCharge?: MockFailure;
 }
 
 interface MockCharge {
@@ -79,6 +81,7 @@ export class MockPaycometProvider implements PaymentProvider {
 
   async charge(request: ChargeRequest): Promise<ChargeResult> {
     if (request.method !== 'BIZUM' && !request.card) throw new PaymentProviderError('Un cobro con tarjeta necesita su token', 'MOCK_NO_CARD');
+    this.throwIfFailing(this.options.failCharge, request.order);
     this.calls.push({ operation: 'charge', order: request.order, amountCents: request.amountCents });
     this.registerCharge(request.order, request.amountCents);
     return { order: request.order, authCode: this.charges.get(request.order)?.authCode ?? null, challengeUrl: null };
@@ -130,8 +133,22 @@ export class MockPaycometProvider implements PaymentProvider {
     return verifyPaycometNotification(rawBody, contentType, this.options.secrets);
   }
 
-  /** La notificación que enviaría Paycomet, ya firmada: el cuerpo y su tipo, listos para entregar al webhook. */
-  buildNotification(input: { kind: keyof typeof TRANSACTION_TYPE; order: string; amountCents: number; response?: 'OK' | 'KO'; authCode?: string; bankDateTime?: string }) {
+  /** Tarjeta que «guarda» el simulador en el primer pago de Mi Hucha: determinista por pedido, como la tokenización. */
+  savedCardFor(order: string): { idUser: number; tokenUser: string; brand: string } {
+    const digest = createHash('sha256').update(`saved-card:${order}`).digest();
+    return { idUser: (digest.readUInt32BE(0) % 900_000_000) + 1, tokenUser: digest.subarray(4, 20).toString('hex'), brand: 'VISA' };
+  }
+
+  /** La notificación que enviaría Paycomet, ya firmada: el cuerpo y su tipo, listos para entregar al webhook. Con `card`, la de un pago que guarda la tarjeta. */
+  buildNotification(input: {
+    kind: keyof typeof TRANSACTION_TYPE;
+    order: string;
+    amountCents: number;
+    response?: 'OK' | 'KO';
+    authCode?: string;
+    bankDateTime?: string;
+    card?: { idUser: number; tokenUser: string; brand: string };
+  }) {
     const fields = {
       TransactionType: TRANSACTION_TYPE[input.kind],
       Order: input.order,
@@ -145,6 +162,7 @@ export class MockPaycometProvider implements PaymentProvider {
       AccountCode: this.options.secrets.accountCode,
       TpvID: this.options.secrets.terminal,
       AuthCode: input.authCode ?? stableCode('A', input.order),
+      ...(input.card ? { IdUser: String(input.card.idUser), TokenUser: input.card.tokenUser, CardBrand: input.card.brand } : {}),
       NotificationHash: notificationHash(fields, this.options.secrets)
     });
     return { rawBody: body.toString(), contentType: 'application/x-www-form-urlencoded' };

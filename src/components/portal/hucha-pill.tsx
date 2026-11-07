@@ -4,20 +4,21 @@ import { useTranslations } from 'next-intl';
 import type { VisibleHuchaMode } from '@/core/public/catalog';
 import { DelayedTooltip } from '@/components/ui/delayed-tooltip';
 import { Link } from '@/i18n/navigation';
-import { HUCHA_PATH } from '@/lib/seo/portal-routes';
+import { huchaForOrganizationPath } from '@/lib/seo/portal-routes';
 
 /**
  * Píldora de Mi Hucha de la cabecera. Según el modo que fija el Super-Admin: `PLEDGE` es una aportación mensual programada (no hay saldo que
  * enseñar, KORUM nunca lo guarda) y `REGULATED_WALLET` un monedero que custodia una entidad autorizada. En `DISABLED` no se dibuja.
- * El saldo del monedero y la pantalla de Mi Hucha llegan con el Sprint 3.7: la portada es estática y no lee la sesión.
+ * En `PLEDGE` abre Mi Hucha con el alta de la aportación mensual a esta entidad (Sprint 3.8). La portada es estática y no lee la sesión: si no
+ * la hay, Mi Hucha manda a iniciar sesión y vuelve aquí.
  */
-export function HuchaPill({ mode }: { mode: VisibleHuchaMode }) {
+export function HuchaPill({ mode, orgSlug }: { mode: VisibleHuchaMode; orgSlug: string }) {
   const t = useTranslations('portal.hucha');
 
   return (
     <DelayedTooltip content={t(`tip.${mode}`)}>
       <Link
-        href={HUCHA_PATH}
+        href={huchaForOrganizationPath(orgSlug)}
         prefetch={false}
         className="tactile-btn bg-white! text-varsity-navy! shadow-[0_4px_0_var(--color-patio-rule-strong)]!"
       >

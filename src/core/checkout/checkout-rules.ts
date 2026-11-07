@@ -82,7 +82,8 @@ export function newDonationOrder(): string {
   return `KD${randomBytes(8).toString('hex').toUpperCase()}`;
 }
 
-const ORDER_PATTERN = /^K[DST][0-9A-F]{16}$/;
+/** `KD` donación, `KT` entrada, `KS` patrocinio y `KH` primer pago de Mi Hucha (que también pasa por la página de pago). */
+const ORDER_PATTERN = /^K[DSTH][0-9A-F]{16}$/;
 const SIGNATURE_PATTERN = /^[0-9a-f]{64}$/;
 
 export const isCheckoutOrder = (value: string): boolean => ORDER_PATTERN.test(value);

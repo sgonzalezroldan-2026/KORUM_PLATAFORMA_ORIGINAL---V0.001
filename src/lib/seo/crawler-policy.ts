@@ -25,8 +25,8 @@ export const DEFAULT_CRAWLER_POLICY: CrawlerPolicy = {
   training: allowed('GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot', 'Applebot-Extended', 'Meta-ExternalAgent')
 };
 
-/** Zonas privadas, en cada idioma: el panel, la consola y la API (salvo las imágenes sociales, que las redes necesitan leer). */
-const PRIVATE_PREFIXES = ['/panel/', '/admin/', '/mi-cuenta/'];
+/** Zonas privadas, en cada idioma: el panel, la consola, *Mi cuenta*, Mi Hucha y la API (salvo las imágenes sociales, que las redes necesitan leer). */
+const PRIVATE_PREFIXES = ['/panel/', '/admin/', '/mi-cuenta/', '/mi-hucha'];
 
 function privateDisallows(): string[] {
   const prefixes = LOCALES.flatMap((locale) => PRIVATE_PREFIXES.map((prefix) => (locale === routing.defaultLocale ? prefix : `/${locale}${prefix}`)));

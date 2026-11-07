@@ -218,7 +218,10 @@
         "subject": "Assumpte",
         "message": "Missatge",
         "reply": "Resposta",
-        "synced": "Sincronitzada entre dispositius"
+        "synced": "Sincronitzada entre dispositius",
+        "pledgeFee": "Gestió per mes",
+        "pledgeCampaign": "Campanya preferida",
+        "nextCharge": "Proper cobrament"
       },
       "types": {
         "DONATION": "Donació",
@@ -260,6 +263,13 @@
         "SENT": "Enviat",
         "FAILED": "No s'ha pogut enviar",
         "CANCELLED": "Cancel·lat"
+      },
+      "pledgeStatuses": {
+        "PENDING": "Esperant el primer pagament",
+        "ACTIVE": "Activa",
+        "PAUSED": "En pausa",
+        "CANCELLED": "Cancel·lada",
+        "FINISHED": "Acabada"
       }
     }
   },
@@ -444,6 +454,35 @@
         "body": "S'acaba d'afegir una clau d'accés al teu compte de KORUM: amb ella es pot entrar sense correu ni contrasenya. Si has estat tu, no cal que facis res.",
         "footnote": "Si no has estat tu, entra a El meu compte, treu la clau i escriu-nos al suport.",
         "cta": "Revisar les meves claus"
+      }
+    },
+    "pledge": {
+      "month": "Mes",
+      "monthValue": "{cycle} de {total}",
+      "fee": "Gestió de la Guardiola",
+      "cta": "Pausar o canviar la meva aportació",
+      "charged": {
+        "subject": "La teva aportació mensual a {organization} ja ha arribat",
+        "preheader": "Aquest mes ha anat a «{initiative}».",
+        "title": "Aquest mes també sumes!",
+        "body": "Hem cobrat la teva aportació mensual de {amount} i ha anat íntegra a «{initiative}», de {organization}.",
+        "fiscalCertificate": "Si vas indicar el teu NIF en programar-la, cada mes donat s’inclourà al teu certificat fiscal de donació (Llei 49/2002), que podràs descarregar al gener. La gestió de la Guardiola no compta per al certificat."
+      },
+      "skipped": {
+        "subject": "Aquest mes no t’hem cobrat la teva aportació a {organization}",
+        "preheader": "No hi havia cap campanya recaptant.",
+        "title": "Aquest mes no hi ha cobrament",
+        "body": "{organization} ara mateix no té cap campanya recaptant, així que aquest mes no t’hem cobrat els {amount} de la teva aportació mensual.",
+        "next": "No has de fer res: el mes que ve ho tornarem a provar amb la campanya que estigui oberta.",
+        "last": "Era l’últim mes de la teva aportació, així que ja ha acabat. Si vols continuar, en pots programar una de nova a la Guardiola."
+      },
+      "failed": {
+        "subject": "No hem pogut cobrar la teva aportació mensual a {organization}",
+        "preheader": "L’hem posada en pausa.",
+        "title": "El cobrament d’aquest mes no ha sortit",
+        "body": "Hem intentat cobrar la teva aportació mensual de {amount} per a {organization} i no ha estat possible. No se t’ha cobrat res.",
+        "paused": "Hem posat la teva aportació en pausa per no tornar-ho a provar amb una targeta que no funciona. Si vols continuar, la pots reprendre a la Guardiola.",
+        "cardGone": "La targeta desada ja no es pot fer servir. Si vols continuar aportant cada mes, cancel·la aquesta aportació i programa’n una de nova a la Guardiola."
       }
     }
   },
@@ -1397,7 +1436,7 @@
       "INVOICE_STUCK": "Factura pendent a Veri*factu",
       "SPONSOR_RENEWAL_DUE": "Renovació de patrocini pendent",
       "CREDIT_POOL_EXPIRED": "Bossa de patrocini vençuda",
-      "MONTHLY_TOPUP_DUE": "Aportacions mensuals pendents de cobrament",
+      "MONTHLY_TOPUP_DUE": "Cobraments mensuals de la Guardiola sense confirmar",
       "ESCROW_LEFTOVER": "Diners pendents en una guardiola retornada",
       "CARD_DELETE_FAILED": "No s'ha pogut esborrar una targeta desada",
       "PRIVACY_REQUEST_OVERDUE": "Sol·licitud de privacitat fora de termini",
@@ -1831,7 +1870,8 @@
         "title": "Aquest pagament ja no està pendent",
         "description": "Torna a la iniciativa per començar de nou."
       },
-      "failed": "No s’ha pogut completar. Torna-ho a provar."
+      "failed": "No s’ha pogut completar. Torna-ho a provar.",
+      "savesCard": "És el primer mes d’una aportació mensual: en confirmar, Paycomet desa la targeta per als mesos següents."
     },
     "result": {
       "metaTitle": "La teva aportació",
@@ -2285,6 +2325,151 @@
       "confirm": "Confirmar",
       "resend": "Enviar un altre codi",
       "cancel": "Cancel·lar"
+    }
+  },
+  "hucha": {
+    "metaTitle": "La meva Guardiola",
+    "title": "La meva Guardiola",
+    "intro": "Aporta cada mes al teu centre, club o entitat sense haver-te’n de recordar. No hi ha saldo: cada mes es cobra a la teva targeta i va íntegre a una campanya que estigui recaptant. La pots pausar, canviar o cancel·lar quan vulguis.",
+    "walletIntro": "Aquesta modalitat de la Guardiola encara no està disponible.",
+    "walletSoon": {
+      "title": "Aquesta modalitat de la Guardiola encara no està disponible",
+      "text": "Mentrestant, pots continuar aportant amb Bizum o targeta a cada campanya.",
+      "action": "Anar al meu compte"
+    },
+    "start": {
+      "title": "Programar una aportació mensual",
+      "titleFor": "Aportar cada mes a {organization}",
+      "pick": "Tria l’entitat a la qual vols aportar cada mes. També pots entrar a la seva pàgina i prémer «La meva Guardiola».",
+      "find": "Cercar el meu centre o club",
+      "notFound": "No trobem aquesta entitat. Tria’n una de la teva llista o cerca-la des de la portada.",
+      "noCampaignTitle": "{organization} ara no té cap campanya recaptant",
+      "noCampaignText": "L’aportació mensual sempre va a una campanya oberta. Torna quan publiquin la propera.",
+      "visit": "Veure la pàgina de {organization}"
+    },
+    "mine": {
+      "title": "Les meves aportacions mensuals",
+      "emptyTitle": "Encara no aportes cada mes",
+      "emptyText": "Quan programis una aportació mensual, aquí veuràs quant portes aportat, el proper cobrament i a quina campanya va."
+    },
+    "form": {
+      "amountLegend": "Quant vols aportar cada mes?",
+      "perMonth": "{amount} al mes",
+      "otherLabel": "Un altre import al mes (€)",
+      "otherHint": "Entre {min} i {max} al mes.",
+      "monthsLabel": "Durant quants mesos?",
+      "months": {
+        "3": "3 mesos (un trimestre)",
+        "6": "6 mesos",
+        "9": "9 mesos (el curs escolar)",
+        "12": "12 mesos"
+      },
+      "campaignLabel": "A quina campanya va?",
+      "campaignSoonest": "Cada mes, a la campanya que tanqui abans",
+      "campaignHint": "Si la campanya que triïs acaba, els mesos següents aniran a la que tanqui abans.",
+      "summary": {
+        "pickAmount": "Tria un import per veure el resum.",
+        "monthly": "Cada mes: {amount} per a la campanya + {fee} de gestió de la Guardiola = {total}",
+        "schedule": "El primer mes es cobra avui i els següents el dia {day} de cada mes, durant {months} mesos.",
+        "commitment": "Com a màxim, {total} en total. Si un mes no hi ha cap campanya oberta, aquell mes no es cobra."
+      },
+      "cardNotice": "Pagaràs el primer mes a la pàgina segura de Paycomet, que desa la teva targeta per als mesos següents: KORUM no la veu mai. Si cancel·les o acaba, l’esborrem.",
+      "submit": "Pagar el primer mes i activar",
+      "submitting": "Preparant el pagament…",
+      "errors": {
+        "amount": "Escriu un import entre {min} i {max} al mes.",
+        "campaign": "Aquesta campanya ja no està recaptant. Tria’n una altra o deixa «la que tanqui abans».",
+        "noCampaign": "Aquesta entitat ja no té cap campanya recaptant. Torna quan publiquin la propera.",
+        "alreadyActive": "Ja tens una aportació mensual amb aquesta entitat. La pots canviar, pausar o cancel·lar més avall.",
+        "rateLimited": "Has fet molts intents seguits. Espera uns minuts i torna-ho a provar.",
+        "unavailable": "Ara mateix no podem obrir la pàgina de pagament. No s’ha cobrat res; torna-ho a provar d’aquí a uns minuts.",
+        "disabled": "La Guardiola no està disponible en aquest moment.",
+        "login": "La teva sessió ha caducat. Torna a entrar per continuar.",
+        "form": "Revisa les dades i torna-ho a provar."
+      }
+    },
+    "pledge": {
+      "monthly": "{amount} al mes",
+      "status": {
+        "PENDING": "Esperant el primer pagament",
+        "ACTIVE": "Activa",
+        "PAUSED": "En pausa",
+        "CANCELLED": "Cancel·lada",
+        "FINISHED": "Acabada"
+      },
+      "reason": {
+        "CHARGE_FAILED": "La vam posar en pausa perquè l’últim cobrament no va sortir. Si la teva targeta ja funciona, la pots reprendre.",
+        "CARD_UNAVAILABLE": "La targeta desada ja no es pot fer servir. Per continuar, cancel·la aquesta aportació i programa’n una de nova.",
+        "CARD_NOT_SAVED": "El teu primer mes va arribar a la campanya, però no vam poder desar la targeta. Si vols continuar cada mes, torna-la a programar.",
+        "ACCOUNT_ERASED": "Es va cancel·lar en suprimir el compte.",
+        "CHARGEBACK": "La vam cancel·lar perquè es va reclamar un dels cobraments a la targeta. No hi tornarem a cobrar.",
+        "PAUSE_EXPIRED": "La vam cancel·lar perquè feia més de 6 mesos que estava en pausa, i vam esborrar la targeta desada. En pots programar una de nova quan vulguis."
+      },
+      "progress": "Mesos",
+      "progressValue": "{done} de {total}",
+      "contributed": "Portes aportat",
+      "charge": "Cada mes es cobra",
+      "chargeValue": "{amount} + {fee} de gestió",
+      "next": "Proper cobrament",
+      "card": "Targeta",
+      "cardGeneric": "Targeta desada",
+      "skipped": "Mesos sense cobrament",
+      "skippedValue": "{count, plural, one {# mes sense campanya oberta} other {# mesos sense campanya oberta}}",
+      "campaignLabel": "Campanya preferida",
+      "campaignSoonest": "La que tanqui abans",
+      "pause": "Pausar",
+      "resume": "Reprendre",
+      "cancel": "Cancel·lar l’aportació",
+      "cancelConfirmTitle": "Confirmar la cancel·lació",
+      "cancelConfirm": "Segur que la vols cancel·lar? No es tornarà a cobrar res i esborrarem la teva targeta desada. El que ja has aportat continua a la seva campanya.",
+      "cancelYes": "Sí, cancel·lar",
+      "cancelNo": "No, mantenir-la",
+      "cancelling": "Cancel·lant…",
+      "history": "{count, plural, one {Veure el mes cobrat} other {Veure els # mesos}}",
+      "historyLine": "Mes {cycle} · {campaign}",
+      "monthStatus": {
+        "PENDING": "Confirmant",
+        "COMPLETED": "Cobrat",
+        "FAILED": "No cobrat",
+        "REFUND_PENDING": "Retornant-se",
+        "REFUNDED": "Retornat",
+        "CHARGEBACK": "Anul·lat (reclamació del pagament)"
+      },
+      "done": {
+        "pause": "Aportació en pausa. No es cobrarà res fins que la reprenguis.",
+        "resume": "Aportació represa. El proper cobrament serà el seu dia de cobrament.",
+        "cancel": "Aportació cancel·lada. No es tornarà a cobrar i hem demanat esborrar la teva targeta.",
+        "campaign": "Campanya canviada. S’aplica des del proper cobrament."
+      },
+      "errors": {
+        "NOT_FOUND": "Aquesta aportació ja no es pot canviar. Recarrega la pàgina.",
+        "CARD_UNAVAILABLE": "La targeta desada ja no es pot fer servir. Cancel·la aquesta aportació i programa’n una de nova.",
+        "INVALID": "No s’ha pogut fer el canvi. Recarrega la pàgina i torna-ho a provar.",
+        "LOGIN_REQUIRED": "La teva sessió ha caducat. Torna a entrar per continuar."
+      }
+    },
+    "result": {
+      "activated": {
+        "title": "Aportació mensual activada!",
+        "text": "Ja hem cobrat el primer mes i ha anat íntegre a una campanya de {organization}. T’avisarem per correu cada mes."
+      },
+      "cardNotSaved": {
+        "title": "El teu primer mes ha arribat",
+        "text": "La teva aportació ha anat a {organization}, però no vam poder desar la targeta per als mesos següents. Si vols, torna-la a programar."
+      },
+      "pending": {
+        "title": "Estem confirmant el teu pagament",
+        "text": "Paycomet encara no ens ha confirmat el primer mes per a {organization}. Sol trigar uns segons.",
+        "reload": "Comprovar de nou"
+      },
+      "failed": {
+        "title": "El pagament no s’ha completat",
+        "text": "No s’ha cobrat res i la teva aportació a {organization} no s’ha activat. Ho pots tornar a provar."
+      },
+      "notActive": {
+        "title": "La teva aportació ha arribat",
+        "text": "Aquest mes ha anat íntegre a una campanya de {organization}, però l’aportació mensual no ha quedat activa (ja en tenies una altra o la vas substituir). Revisa les teves aportacions més avall."
+      }
     }
   }
 }

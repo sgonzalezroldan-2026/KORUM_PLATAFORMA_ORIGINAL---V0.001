@@ -14,7 +14,10 @@ async function recipientOf(tx: Db, contribution: { userId: string | null; guestE
   return user && !user.gdprAnonymizedAt ? user.email : null;
 }
 
-/** Recibo de una donación confirmada (`contribution.receipt`). Las entradas llevan su propio email con el QR (`ticket.pass`). */
+/**
+ * Recibo de una donación confirmada (`contribution.receipt`). Las entradas llevan su propio email con el QR (`ticket.pass`). Un mes de Mi Hucha
+ * lleva el suyo (`pledge.charged`): el mismo recibo más el mes, la gestión y el enlace para pausar o cambiar.
+ */
 export async function queueContributionReceipt(tx: Db, contributionId: number): Promise<void> {
   const contribution = await tx.contribution.findUniqueOrThrow({
     where: { id: contributionId },
@@ -31,12 +34,42 @@ export async function queueContributionReceipt(tx: Db, contributionId: number): 
       totalChargedCents: true,
       groupName: true,
       paycometOrder: true,
+      pledgeCycle: true,
+      walletSubscription: { select: { totalMonths: true } },
       organization: { select: { ley49: true, ley49VerifiedAt: true } }
     }
   });
   if (contribution.type !== 'DONATION' || !contribution.paycometOrder) return;
   const toAddress = await recipientOf(tx, contribution);
   if (!toAddress) return;
+  // Certificado fiscal solo si el régimen está acreditado (Regla 02 §9); si no, justificante nominativo.
+  const fiscalCertificate = contribution.organization.ley49 && contribution.organization.ley49VerifiedAt !== null;
+  if (contribution.walletSubscription && contribution.pledgeCycle !== null) {
+    await tx.outboxMessage.createMany({
+      data: [
+        {
+          idempotencyKey: `pledge.charged:${contribution.id}`,
+          templateKey: 'pledge.charged',
+          locale: contribution.locale,
+          toAddress,
+          userId: contribution.userId,
+          organizationId: contribution.organizationId,
+          payloadJson: {
+            initiativeId: contribution.initiativeId,
+            amountCents: contribution.amountCents,
+            feeCents: contribution.totalChargedCents - contribution.amountCents,
+            totalCents: contribution.totalChargedCents,
+            reference: contribution.paycometOrder,
+            cycle: contribution.pledgeCycle,
+            totalMonths: contribution.walletSubscription.totalMonths,
+            fiscalCertificate
+          }
+        }
+      ],
+      skipDuplicates: true
+    });
+    return;
+  }
   await tx.outboxMessage.createMany({
     data: [
       {
@@ -53,8 +86,7 @@ export async function queueContributionReceipt(tx: Db, contributionId: number): 
           totalCents: contribution.totalChargedCents,
           reference: contribution.paycometOrder,
           groupName: contribution.groupName,
-          // Certificado fiscal solo si el régimen está acreditado (Regla 02 §9); si no, justificante nominativo.
-          fiscalCertificate: contribution.organization.ley49 && contribution.organization.ley49VerifiedAt !== null
+          fiscalCertificate
         }
       }
     ],

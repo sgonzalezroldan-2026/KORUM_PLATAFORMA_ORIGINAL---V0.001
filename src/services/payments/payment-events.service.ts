@@ -3,10 +3,12 @@ import { postJournal } from '@/core/finance/ledger.service';
 import { bpsOf } from '@/core/finance/money';
 import { donationOrTicketPayinLines, gatewayFeeLines, matchingReleaseLines } from '@/core/finance/payment-journals';
 import { notifySigners } from '@/core/jobs/notify';
+import type { Keyring } from '@/core/security/crypto';
 import { settleTicketSeatInTx } from '@/core/ticketing/ticket-issuance';
 import { releaseTicketHoldInTx } from '@/core/ticketing/ticket-reservation.service';
 import type { Db } from '@/lib/db';
 import { queueContributionReceipt } from '@/services/email/outbox-writers';
+import { pledgeChargedBackInTx, pledgeChargeFailedInTx, settlePledgePaymentInTx } from '@/services/pledges/pledge-events';
 import { applyChargebackInTx, applyConfirmedRefundInTx, approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
 import type { PaymentNotification } from './payment-provider';
 import { completeSponsorshipInTx, type InvoicingContext } from './sponsorship-events';
@@ -65,6 +67,13 @@ export interface PaymentEventOptions {
   qrSecret?: string;
   /** NIF emisor y claves para facturar el fee de un patrocinio dentro del cobro. Se resuelve **antes** de abrir la transacción (necesita otra conexión); sin él, un patrocinio falla y se reintenta. */
   invoicing?: InvoicingContext;
+  /**
+   * Llavero para cifrar la tarjeta que guarda el primer pago de Mi Hucha. Se pide solo entonces (una función: el resto de cobros no lo necesita).
+   * Sin él, ese cobro falla y se reintenta (no se pierde la tarjeta).
+   */
+  keyring?: () => Keyring;
+  /** Proveedor que guarda la tarjeta (`PaymentMethodToken.provider`). Lo pone el webhook. */
+  cardProvider?: string;
 }
 
 async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions): Promise<void> {
@@ -84,8 +93,10 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   if (contribution.type !== 'DONATION' && contribution.type !== 'TICKET') {
     throw new PaymentReconciliationError(`Cobro ${order} de tipo ${contribution.type}: este tipo no se confirma por este flujo.`);
   }
+  // Encima de una donación solo se cobra la gestión de Mi Hucha, y solo en sus cobros mensuales (que no llevan aportación voluntaria).
+  const pledge = contribution.walletSubscriptionId !== null;
   const serviceFeeCents = contribution.totalChargedCents - contribution.amountCents - contribution.guaranteeContributionCents;
-  if (serviceFeeCents < 0 || (contribution.type === 'DONATION' && serviceFeeCents !== 0)) {
+  if (serviceFeeCents < 0 || (contribution.type === 'DONATION' && !pledge && serviceFeeCents !== 0) || (pledge && contribution.guaranteeContributionCents !== 0)) {
     throw new PaymentReconciliationError(`Cobro ${order}: el total no cuadra con el importe y la aportación voluntaria.`);
   }
 
@@ -98,6 +109,8 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     data: { status: 'COMPLETED', paycometAuthCode: notification.authCode, fiscalYear }
   });
   if (count === 0) return;
+  // El primer cobro de Mi Hucha guarda la tarjeta y activa la aportación mensual, vaya donde vaya el dinero de ese mes.
+  if (pledge) await settlePledgePaymentInTx(tx, contribution, notification, occurredAt, options);
 
   const scope = { organizationId: contribution.organizationId, initiativeId: contribution.initiativeId };
   const common = { ...scope, contributionId: contribution.id, paycometReference: order, occurredAt, createdById: 'webhook' };
@@ -178,14 +191,19 @@ export async function applyPaymentNotification(tx: Db, notification: PaymentNoti
       const contribution = await loadLockedContribution(tx, { paycometOrder: notification.order });
       const { count } = await tx.contribution.updateMany({ where: { paycometOrder: notification.order, status: 'PENDING' }, data: { status: 'FAILED' } });
       if (count === 1 && contribution?.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
+      if (count === 1 && contribution?.walletSubscriptionId) await pledgeChargeFailedInTx(tx, contribution, receivedAt);
       return;
     }
     case 'REFUND_COMPLETED':
       await applyConfirmedRefundInTx(tx, notification, occurredAt);
       return;
-    case 'CHARGEBACK':
+    case 'CHARGEBACK': {
       await applyChargebackInTx(tx, notification, occurredAt);
+      // Un mes de Mi Hucha reclamado al banco: no se vuelve a cobrar con esa tarjeta.
+      const charged = await tx.contribution.findUnique({ where: { paycometOrder: notification.order }, select: { walletSubscriptionId: true } });
+      if (charged?.walletSubscriptionId) await pledgeChargedBackInTx(tx, charged.walletSubscriptionId, occurredAt);
       return;
+    }
     case 'REFUND_FAILED':
       // Sigue en `REFUND_PENDING`, y ahora se sabe que no se hizo: ya se puede volver a pedir.
       await clearRefundClaimInTx(tx, notification.order, notification.occurredAt);

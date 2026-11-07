@@ -104,7 +104,7 @@ export async function deleteCardsOf(db: Db, deps: Pick<ErasureDeps, 'paymentProv
   return result;
 }
 
-async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string): Promise<number> {
+async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, now: Date): Promise<number> {
   // Las compras como invitada solo se atribuyen a la cuenta si su email está verificado: si no, serían las de quien sí lo controla.
   const mine: Prisma.ContributionWhereInput = user.emailVerified ? { OR: [{ userId: user.id }, { canonicalEmail: user.canonicalEmail }] } : { userId: user.id };
   // Primero las entradas (se localizan por su compra) y después las compras, que pierden el email con el que se encuentran.
@@ -130,7 +130,7 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string): P
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
   if (user.emailVerified) await tx.supportTicket.updateMany({ where: { senderEmail: user.email }, data: { senderEmail: null } });
   await tx.consentRecord.updateMany({ where: { userId: user.id }, data: { subjectEmailHmac: null } });
-  await tx.walletSubscription.updateMany({ where: { userId: user.id, active: true }, data: { active: false } });
+  await tx.walletSubscription.updateMany({ where: { userId: user.id, status: { in: ['PENDING', 'ACTIVE', 'PAUSED'] } }, data: { status: 'CANCELLED', statusReason: 'ACCOUNT_ERASED', statusChangedAt: now } });
   await clearFingerprintsOf(tx, user.id);
   return fiscal.count;
 }
@@ -195,7 +195,7 @@ export async function erasePersonalData(db: Db, deps: ErasureDeps, input: { user
     const lateBlock = await blockOf(tx, user);
     if (lateBlock) throw new ErasureBlockedError(lateBlock);
 
-    const retained = await anonymizeRecords(tx, user, deps.hmacSecret);
+    const retained = await anonymizeRecords(tx, user, deps.hmacSecret, now);
     await wipeAccount(tx, user, now);
     if (input.requestId !== undefined) {
       await tx.privacyRequest.updateMany({ where: { id: input.requestId, userId: user.id, status: { in: ['RECEIVED', 'IN_PROGRESS'] } }, data: { status: 'COMPLETED', completedAt: now } });

@@ -66,7 +66,7 @@ export function PortalHero({ orgSlug, name, vertical, accent, contentLang, hucha
             </p>
           </div>
         </div>
-        {huchaMode ? <HuchaPill mode={huchaMode} /> : null}
+        {huchaMode ? <HuchaPill mode={huchaMode} orgSlug={orgSlug} /> : null}
       </div>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 text-varsity-navy">

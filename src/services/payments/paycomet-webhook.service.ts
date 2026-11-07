@@ -65,7 +65,7 @@ export async function handlePaymentWebhook(db: KorumPrismaClient, provider: Paym
       // Si otra entrega va por delante, esto espera a que confirme y entonces ya no encuentra la fila pendiente.
       const claim = await tx.webhookEvent.updateMany({ where: { ...key, status: { in: ['RECEIVED', 'FAILED'] } }, data: { status: 'PROCESSED', processedAt: now, errorMessage: null, attempts: { increment: 1 } } });
       if (claim.count === 0) return false;
-      await applyPaymentNotification(tx, notification, now, options);
+      await applyPaymentNotification(tx, notification, now, { ...options, cardProvider: provider.name });
       return true;
     }, QUEUED_TRANSACTION);
     return { status: 200, outcome: processed ? 'PROCESSED' : 'DUPLICATE' };

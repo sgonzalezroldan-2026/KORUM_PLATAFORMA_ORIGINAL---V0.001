@@ -218,7 +218,10 @@
         "subject": "Subject",
         "message": "Message",
         "reply": "Reply",
-        "synced": "Synced across devices"
+        "synced": "Synced across devices",
+        "pledgeFee": "Handling per month",
+        "pledgeCampaign": "Preferred campaign",
+        "nextCharge": "Next charge"
       },
       "types": {
         "DONATION": "Donation",
@@ -260,6 +263,13 @@
         "SENT": "Sent",
         "FAILED": "Could not be sent",
         "CANCELLED": "Cancelled"
+      },
+      "pledgeStatuses": {
+        "PENDING": "Waiting for the first payment",
+        "ACTIVE": "Active",
+        "PAUSED": "Paused",
+        "CANCELLED": "Cancelled",
+        "FINISHED": "Finished"
       }
     }
   },
@@ -444,6 +454,35 @@
         "body": "A passkey has just been added to your KORUM account: it can be used to sign in without an email or password. If it was you, there's nothing you need to do.",
         "footnote": "If it wasn't you, go to My account, remove the passkey and contact support.",
         "cta": "Review my passkeys"
+      }
+    },
+    "pledge": {
+      "month": "Month",
+      "monthValue": "{cycle} of {total}",
+      "fee": "Piggy Bank handling",
+      "cta": "Pause or change my pledge",
+      "charged": {
+        "subject": "Your monthly pledge to {organization} has arrived",
+        "preheader": "This month it went to “{initiative}”.",
+        "title": "You’re adding up again this month!",
+        "body": "We have charged your monthly pledge of {amount} and all of it went to “{initiative}”, run by {organization}.",
+        "fiscalCertificate": "If you gave your tax ID when you set it up, each donated month will be included in your donation tax certificate (Spanish Law 49/2002), available to download in January. The Piggy Bank handling fee does not count towards the certificate."
+      },
+      "skipped": {
+        "subject": "We have not charged your pledge to {organization} this month",
+        "preheader": "There was no campaign raising funds.",
+        "title": "No charge this month",
+        "body": "{organization} has no campaign raising funds right now, so we have not charged the {amount} of your monthly pledge this month.",
+        "next": "You don’t need to do anything: next month we will try again with whichever campaign is open.",
+        "last": "This was the last month of your pledge, so it has now ended. If you want to continue, you can set up a new one in your Piggy Bank."
+      },
+      "failed": {
+        "subject": "We could not charge your monthly pledge to {organization}",
+        "preheader": "We have paused it.",
+        "title": "This month’s charge did not go through",
+        "body": "We tried to charge your monthly pledge of {amount} for {organization} and it was not possible. You have not been charged anything.",
+        "paused": "We have paused your pledge so we don’t keep trying with a card that doesn’t work. If you want to continue, you can resume it in your Piggy Bank.",
+        "cardGone": "The saved card can no longer be used. If you want to keep giving every month, cancel this pledge and set up a new one in your Piggy Bank."
       }
     }
   },
@@ -1397,7 +1436,7 @@
       "INVOICE_STUCK": "Invoice pending in Veri*factu",
       "SPONSOR_RENEWAL_DUE": "Sponsorship renewal pending",
       "CREDIT_POOL_EXPIRED": "Sponsorship pool expired",
-      "MONTHLY_TOPUP_DUE": "Monthly contributions due",
+      "MONTHLY_TOPUP_DUE": "Unconfirmed Piggy Bank monthly charges",
       "ESCROW_LEFTOVER": "Money left in a refunded piggy bank",
       "CARD_DELETE_FAILED": "A saved card could not be deleted",
       "PRIVACY_REQUEST_OVERDUE": "Privacy request past its deadline",
@@ -1831,7 +1870,8 @@
         "title": "This payment is no longer pending",
         "description": "Go back to the initiative to start again."
       },
-      "failed": "It could not be completed. Please try again."
+      "failed": "It could not be completed. Please try again.",
+      "savesCard": "This is the first month of a monthly pledge: when you confirm, Paycomet saves the card for the following months."
     },
     "result": {
       "metaTitle": "Your contribution",
@@ -2285,6 +2325,151 @@
       "confirm": "Confirm",
       "resend": "Send another code",
       "cancel": "Cancel"
+    }
+  },
+  "hucha": {
+    "metaTitle": "My Piggy Bank",
+    "title": "My Piggy Bank",
+    "intro": "Give to your school, club or organisation every month without having to remember. There is no balance: each month your card is charged and the full amount goes to a campaign that is raising funds. You can pause, change or cancel it whenever you like.",
+    "walletIntro": "This Piggy Bank option is not available yet.",
+    "walletSoon": {
+      "title": "This Piggy Bank option is not available yet",
+      "text": "Meanwhile, you can keep giving with Bizum or card on each campaign.",
+      "action": "Go to My account"
+    },
+    "start": {
+      "title": "Set up a monthly pledge",
+      "titleFor": "Give to {organization} every month",
+      "pick": "Choose the organisation you want to give to every month. You can also open its page and tap “My Piggy Bank”.",
+      "find": "Find my school or club",
+      "notFound": "We could not find that organisation. Choose one from your list or search for it from the home page.",
+      "noCampaignTitle": "{organization} has no campaign raising funds right now",
+      "noCampaignText": "A monthly pledge always goes to an open campaign. Come back when they publish the next one.",
+      "visit": "See {organization}’s page"
+    },
+    "mine": {
+      "title": "My monthly pledges",
+      "emptyTitle": "You don’t give monthly yet",
+      "emptyText": "Once you set up a monthly pledge, you will see here how much you have given, the next charge and which campaign it goes to."
+    },
+    "form": {
+      "amountLegend": "How much would you like to give each month?",
+      "perMonth": "{amount} a month",
+      "otherLabel": "Another monthly amount (€)",
+      "otherHint": "Between {min} and {max} a month.",
+      "monthsLabel": "For how many months?",
+      "months": {
+        "3": "3 months (one term)",
+        "6": "6 months",
+        "9": "9 months (the school year)",
+        "12": "12 months"
+      },
+      "campaignLabel": "Which campaign does it go to?",
+      "campaignSoonest": "Each month, the campaign that closes soonest",
+      "campaignHint": "If the campaign you choose ends, the following months will go to the one that closes soonest.",
+      "summary": {
+        "pickAmount": "Choose an amount to see the summary.",
+        "monthly": "Each month: {amount} for the campaign + {fee} Piggy Bank handling = {total}",
+        "schedule": "The first month is charged today and the following ones on day {day} of each month, for {months} months.",
+        "commitment": "At most {total} in total. If there is no open campaign in a given month, that month is not charged."
+      },
+      "cardNotice": "You will pay the first month on Paycomet’s secure page, which saves your card for the following months: KORUM never sees it. If you cancel or it ends, we delete it.",
+      "submit": "Pay the first month and activate",
+      "submitting": "Preparing the payment…",
+      "errors": {
+        "amount": "Enter an amount between {min} and {max} a month.",
+        "campaign": "That campaign is no longer raising funds. Choose another one or leave “the one that closes soonest”.",
+        "noCampaign": "This organisation no longer has any campaign raising funds. Come back when they publish the next one.",
+        "alreadyActive": "You already have a monthly pledge with this organisation. You can change, pause or cancel it below.",
+        "rateLimited": "You have made many attempts in a row. Wait a few minutes and try again.",
+        "unavailable": "We cannot open the payment page right now. Nothing has been charged; please try again in a few minutes.",
+        "disabled": "The Piggy Bank is not available right now.",
+        "login": "Your session has expired. Sign in again to continue.",
+        "form": "Check the details and try again."
+      }
+    },
+    "pledge": {
+      "monthly": "{amount} a month",
+      "status": {
+        "PENDING": "Waiting for the first payment",
+        "ACTIVE": "Active",
+        "PAUSED": "Paused",
+        "CANCELLED": "Cancelled",
+        "FINISHED": "Finished"
+      },
+      "reason": {
+        "CHARGE_FAILED": "We paused it because the last charge did not go through. If your card works now, you can resume it.",
+        "CARD_UNAVAILABLE": "The saved card can no longer be used. To continue, cancel this pledge and set up a new one.",
+        "CARD_NOT_SAVED": "Your first month reached the campaign, but we could not save the card. If you want to keep giving monthly, set it up again.",
+        "ACCOUNT_ERASED": "It was cancelled when the account was deleted.",
+        "CHARGEBACK": "We cancelled it because a charge was disputed with the card issuer. We will not charge that card again.",
+        "PAUSE_EXPIRED": "We cancelled it because it had been paused for more than 6 months, and we deleted the saved card. You can set up a new one whenever you like."
+      },
+      "progress": "Months",
+      "progressValue": "{done} of {total}",
+      "contributed": "Given so far",
+      "charge": "Charged each month",
+      "chargeValue": "{amount} + {fee} handling",
+      "next": "Next charge",
+      "card": "Card",
+      "cardGeneric": "Saved card",
+      "skipped": "Months not charged",
+      "skippedValue": "{count, plural, one {# month with no open campaign} other {# months with no open campaign}}",
+      "campaignLabel": "Preferred campaign",
+      "campaignSoonest": "The one that closes soonest",
+      "pause": "Pause",
+      "resume": "Resume",
+      "cancel": "Cancel the pledge",
+      "cancelConfirmTitle": "Confirm cancellation",
+      "cancelConfirm": "Are you sure you want to cancel it? Nothing more will be charged and we will delete your saved card. What you have already given stays in its campaign.",
+      "cancelYes": "Yes, cancel",
+      "cancelNo": "No, keep it",
+      "cancelling": "Cancelling…",
+      "history": "{count, plural, one {See the charged month} other {See the # months}}",
+      "historyLine": "Month {cycle} · {campaign}",
+      "monthStatus": {
+        "PENDING": "Confirming",
+        "COMPLETED": "Charged",
+        "FAILED": "Not charged",
+        "REFUND_PENDING": "Being refunded",
+        "REFUNDED": "Refunded",
+        "CHARGEBACK": "Cancelled (payment dispute)"
+      },
+      "done": {
+        "pause": "Pledge paused. Nothing will be charged until you resume it.",
+        "resume": "Pledge resumed. The next charge will be on its usual day.",
+        "cancel": "Pledge cancelled. Nothing more will be charged and we have asked for your card to be deleted.",
+        "campaign": "Campaign changed. It applies from the next charge."
+      },
+      "errors": {
+        "NOT_FOUND": "This pledge can no longer be changed. Reload the page.",
+        "CARD_UNAVAILABLE": "The saved card can no longer be used. Cancel this pledge and set up a new one.",
+        "INVALID": "The change could not be made. Reload the page and try again.",
+        "LOGIN_REQUIRED": "Your session has expired. Sign in again to continue."
+      }
+    },
+    "result": {
+      "activated": {
+        "title": "Monthly pledge activated!",
+        "text": "We have charged the first month and all of it went to a campaign run by {organization}. We will email you every month."
+      },
+      "cardNotSaved": {
+        "title": "Your first month has arrived",
+        "text": "Your contribution went to {organization}, but we could not save the card for the following months. If you like, set it up again."
+      },
+      "pending": {
+        "title": "We are confirming your payment",
+        "text": "Paycomet has not confirmed the first month for {organization} yet. It usually takes a few seconds.",
+        "reload": "Check again"
+      },
+      "failed": {
+        "title": "The payment was not completed",
+        "text": "Nothing has been charged and your pledge to {organization} has not been activated. You can try again."
+      },
+      "notActive": {
+        "title": "Your contribution has arrived",
+        "text": "This month went in full to a campaign run by {organization}, but the monthly pledge did not become active (you already had another one or replaced it). Check your pledges below."
+      }
     }
   }
 }

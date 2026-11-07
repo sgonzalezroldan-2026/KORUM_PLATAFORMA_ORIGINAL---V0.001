@@ -1,6 +1,7 @@
 import { after } from 'next/server';
 import { hashIpSubnet } from '@/core/security/device-signals';
 import { getEnv } from '@/config/env';
+import { getKeyring } from '@/config/keyring';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
@@ -38,7 +39,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!(await reserveAttempt(db, attemptKey, WEBHOOK_INVALID_RULE))) return new Response(null, { status: 429 });
 
   const provider = await getPaymentProvider(db);
-  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db) });
+  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db), keyring: getKeyring });
   if (result.status !== 401) await releaseAttempt(db, attemptKey);
   if (result.outcome === 'PROCESSED') {
     after(async () => {

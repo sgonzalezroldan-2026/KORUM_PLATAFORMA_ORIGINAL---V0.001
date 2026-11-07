@@ -97,7 +97,7 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
   section('passkeys', data.passkeys.map((row) => [['name', row.name ?? ''], ['date', date(row.createdAt)], ['synced', yesNo(row.synced)]]));
   section('notifications', data.notifications.map((row) => [['date', date(row.createdAt)], ['template', row.template], ['status', translated('emailStatuses', row.status)], ['completedAt', date(row.sentAt)]]));
   section('supportTickets', data.supportTickets.map((row) => [['date', date(row.createdAt)], ['serial', row.ticketCode], ['subject', row.subject], ['message', row.message], ['reply', row.reply ?? ''], ['status', row.status]]));
-  section('monthlyPledges', data.monthlyPledges.map((row) => [['organization', row.organization ?? ''], ['monthly', money(row.monthlyAmountCents)], ['progress', `${row.executedMonths}/${row.totalMonths}`], ['active', yesNo(row.active)]]));
+  section('monthlyPledges', data.monthlyPledges.map((row) => [['organization', row.organization ?? ''], ['monthly', money(row.monthlyAmountCents)], ['pledgeFee', money(row.feePerMonthCents)], ['progress', `${row.executedMonths}/${row.totalMonths}`], ['pledgeCampaign', row.preferredInitiative ?? ''], ['nextCharge', row.nextChargeAt ? date(row.nextChargeAt) : ''], ['status', translated('pledgeStatuses', row.status)]]));
   return lines;
 }
 

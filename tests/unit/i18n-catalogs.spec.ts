@@ -73,7 +73,10 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Mi cuenta (Sprint 3.7): «Completada», «Idioma», «Permisos», «Iniciativa», «Confirmar», «Números: …» y los patrones sin texto se escriben igual en catalán.
       'account.contributions.line', 'account.contributions.status.COMPLETED', 'account.contributions.status.FAILED', 'account.documents.line', 'account.documents.sheet.initiative',
       'account.language.title', 'account.passes.numbers', 'account.passes.where', 'account.privacy.consents.title', 'account.privacy.requests.status.COMPLETED', 'account.reauth.confirm',
-      'account.sections.language', 'privacy.export.requestStatuses.COMPLETED']);
+      'account.sections.language', 'privacy.export.requestStatuses.COMPLETED',
+      // Mi Hucha (Sprint 3.8): «Activa», «En pausa», «Pausar», «Mes», «… al mes», «Aportar cada mes a…» y los patrones sin texto se escriben igual en catalán.
+      'privacy.export.pledgeStatuses.ACTIVE', 'privacy.export.pledgeStatuses.PAUSED', 'email.pledge.month', 'email.pledge.monthValue', 'hucha.start.titleFor', 'hucha.form.perMonth',
+      'hucha.pledge.monthly', 'hucha.pledge.status.ACTIVE', 'hucha.pledge.status.PAUSED', 'hucha.pledge.progressValue', 'hucha.pledge.pause', 'hucha.pledge.historyLine']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
       'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp',

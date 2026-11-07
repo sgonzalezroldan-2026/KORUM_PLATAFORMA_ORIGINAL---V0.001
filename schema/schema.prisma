@@ -200,6 +200,38 @@ enum WalletTxType {
   REFUND_TO_ORIGIN
 }
 
+/// Estado de una aportación mensual de Mi Hucha (Sprint 3.8).
+enum PledgeStatus {
+  /// Esperando el primer pago, que guarda la tarjeta.
+  PENDING
+  ACTIVE
+  PAUSED
+  CANCELLED
+  /// Cumplidos todos sus meses.
+  FINISHED
+}
+
+enum PledgeStatusReason {
+  /// La propia familia la pausó o canceló.
+  BY_FAMILY
+  /// El cobro del mes fue rechazado (o pedía autenticación): se pausa hasta que la familia la reanude.
+  CHARGE_FAILED
+  /// La tarjeta guardada ya no se puede usar (revocada o ilegible).
+  CARD_UNAVAILABLE
+  /// El primer pago no se completó: no llegó a empezar.
+  FIRST_PAYMENT_FAILED
+  /// El primer pago entró pero Paycomet no devolvió la tarjeta guardada.
+  CARD_NOT_SAVED
+  /// Sustituida por otra que la familia empezó con la misma entidad antes de pagar esta.
+  REPLACED
+  /// La cuenta se suprimió.
+  ACCOUNT_ERASED
+  /// La familia reclamó al banco un cobro (contracargo): no se le vuelve a cobrar con esa tarjeta.
+  CHARGEBACK
+  /// Llevaba en pausa más del plazo máximo: se cancela y se borra la tarjeta (minimización).
+  PAUSE_EXPIRED
+}
+
 enum WalletTxStatus {
   PENDING
   COMPLETED
@@ -868,6 +900,7 @@ model Initiative {
   courses             InitiativeCourseProgress[]
   sponsors            Sponsor[]
   contributions       Contribution[]
+  pledges             WalletSubscription[]
   ticketPasses        TicketPass[]
   raffleNumbers       RaffleNumber[]
   raffleDraws         RaffleDraw[]
@@ -1114,11 +1147,15 @@ model Contribution {
   refundedAt                 DateTime?
   /// Devolución pedida a Paycomet sin confirmar: mientras esté puesta no se vuelve a pedir, para no devolver dos veces.
   refundSendingAt            DateTime?
+  /// Solo las donaciones de una aportación mensual (Mi Hucha `PLEDGE`): de cuál y de qué mes. Un mes nunca se cobra dos veces.
+  walletSubscriptionId       Int?
+  pledgeCycle                Int?
   createdAt                  DateTime            @default(now())
   organization               Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative                 Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   user                       User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
   sponsor                    Sponsor?            @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  walletSubscription         WalletSubscription? @relation(fields: [walletSubscriptionId], references: [id], onDelete: Restrict)
   ticketPass                 TicketPass?
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]
@@ -1130,6 +1167,7 @@ model Contribution {
   @@index([organizationId, fiscalYear, type])
   @@index([donorTaxIdHmac, fiscalYear])
   @@index([canonicalEmail])
+  @@unique([walletSubscriptionId, pledgeCycle])
 }
 
 model TicketPass {
@@ -1335,24 +1373,41 @@ model WalletTransaction {
   @@index([userId, createdAt])
 }
 
-/// Recarga mensual programada (modo REGULATED_WALLET) o aportación mensual comprometida a una entidad (modo PLEDGE).
+/// Aportación mensual programada a una entidad (modo PLEDGE, Sprint 3.8): cada mes se cobra con la tarjeta guardada en Paycomet y va como
+/// donación a una campaña activa. Nunca hay saldo. El modo REGULATED_WALLET (recarga del monedero) está aplazado.
 model WalletSubscription {
-  id                   Int                @id @default(autoincrement())
+  id                   Int                 @id @default(autoincrement())
   userId               String
   organizationId       String?
-  paymentMethodTokenId Int
+  /// Campaña preferida; si deja de recaudar (o es nula), cada mes va a la que antes cierre de la entidad.
+  initiativeId         Int?
+  /// Nula hasta que se confirma el primer cobro, que es el que guarda la tarjeta.
+  paymentMethodTokenId Int?
   monthlyAmountCents   Int
-  feePerMonthCents     Int                @default(25)
-  totalMonths          Int                @default(9)
-  executedMonths       Int                @default(0)
-  active               Boolean            @default(true)
+  /// Gestión de Mi Hucha por cargo, fijada al darse de alta (topupFeeCents + importe × topupFeeBps): un cambio de la consola no la altera.
+  feePerMonthCents     Int                 @default(25)
+  totalMonths          Int                 @default(9)
+  /// Meses ya tratados: cobrados, intentados o sin campaña activa.
+  executedMonths       Int                 @default(0)
+  /// De esos, los que no se cobraron porque la entidad no tenía ninguna campaña recaudando.
+  skippedMonths        Int                 @default(0)
+  /// Día del mes del cobro (1-28), el del primer pago.
+  chargeDay            Int                 @default(5)
+  status               PledgeStatus        @default(PENDING)
+  statusReason         PledgeStatusReason?
+  statusChangedAt      DateTime?
+  /// Versión de los textos legales vigente (`privacy.policyVersion`) cuando la familia aceptó la aportación: prueba del mandato del cobro mensual.
+  termsVersion         String?
   nextChargeAt         DateTime
-  createdAt            DateTime           @default(now())
-  user                 User               @relation(fields: [userId], references: [id], onDelete: Restrict)
-  organization         Organization?      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  paymentMethodToken   PaymentMethodToken @relation(fields: [paymentMethodTokenId], references: [id], onDelete: Restrict)
+  createdAt            DateTime            @default(now())
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  organization         Organization?       @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative           Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  paymentMethodToken   PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: Restrict)
+  contributions        Contribution[]
 
-  @@index([active, nextChargeAt])
+  @@index([status, nextChargeAt])
+  @@index([userId, status])
 }
 
 // -----------------------------------------------------------------------------

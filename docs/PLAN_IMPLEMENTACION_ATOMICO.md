@@ -24,6 +24,8 @@ El promotor ha decidido **dejar para más adelante, hasta ver el resultado del p
 | **Proveedor de facturación Veri\*factu** | Elegir proveedor homologado ([DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §4) | Adaptador `InvoicingProvider` simulado | Sprint 6.1 (la obligatoriedad real llega en 2027) |
 | **Activar `REGULATED_WALLET` de Mi Hucha** | Confirmación escrita de un proveedor de monederos y revisión legal | La Hucha funciona en modo `PLEDGE` (Sprint 3.8). **Queda por construir al activarlo** (aplazado por el promotor el 2026-11-07, sin número de sprint): recarga puntual y mensual, retirada solo al medio de pago original (FIFO de recargas) con el aviso oficial de la Regla 03 §3, **pagar con Mi Hucha en el checkout** (solo con saldo suficiente, asiento de cargo al monedero y botón en `checkout-form.tsx`, `CHECKOUT_METHODS`) y el saldo en la portada con un componente de cliente que lo pida con la sesión | Solo si se quiere activar ese modo |
 
+**Requisito de Mi Hucha antes de cobros reales (auditoría del Sprint 3.8):** la tarjeta que trae la notificación del primer pago (`IdUser`, `TokenUser`) no va firmada por Paycomet. En el 6.1, con el sandbox, se comprueba contra la operación del pedido antes de guardarla (o se confirma que va firmada), y se añaden los datos de recurrencia del 3DS. Preguntas (d), (e) y (f) de Paycomet en [CUMPLIMIENTO §9](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md).
+
 Reglas mientras estén aplazadas: (1) **no se publica el sitio con cobros reales**; (2) el simulador se identifica como tal en pantalla (`PAYCOMET_MODE=mock`); (3) cada vez que un sprint toque una de estas áreas, la bitácora recoge qué suposición se ha usado, para revisarla el día que lleguen las respuestas; (4) el asistente recuerda esta lista al cerrar el Sprint 5.6 y al abrir el 6.1.
 
 ## Mejoras pendientes de planificar
@@ -231,7 +233,7 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Constructor / auditores:** `korum-family-viral-builder` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-F06` (Mi cuenta), `QA-REG03`, `QA-PRIV01`, `QA-PRIV02`.
 
-- [ ] **SPRINT 3.8 — Mi Hucha en modo `PLEDGE`: aportación mensual programada con tarjeta guardada:**
+- [x] **SPRINT 3.8 — Mi Hucha en modo `PLEDGE`: aportación mensual programada con tarjeta guardada:**
   - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-family-viral-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).
   - **Heredado del Sprint 3.4 (para el 3.8):** el **cobro con tarjeta guardada** de `MONTHLY_TOPUP` (aportación mensual `PLEDGE`): el checkout del 3.4 no guarda tarjetas (se paga en la página de Paycomet), así que guardar la tarjeta exige su propio paso en la página de pago (tokenización) y su notificación firmada.
   - **Heredado del Sprint 2.4:** `MONTHLY_TOPUP` solo **detecta** las aportaciones mensuales vencidas (alerta `MONTHLY_TOPUP_DUE`): el cobro mensual se hace aquí, con su asiento y su `Contribution` `DONATION` en la iniciativa activa que elija la familia (o la que cierre antes); si la entidad no tiene ninguna activa, ese mes no se cobra y se avisa (skill de pagos §7). Plantillas `pledge.*`.

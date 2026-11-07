@@ -247,7 +247,8 @@ describe('QA-P02 · el dinero solo vuelve al cobro original', () => {
     // `listCharges` (Sprint 2.4) solo lee y `deleteCard` (Sprint 2.5) solo borra una tarjeta: ninguno mueve dinero ni admite destino.
     // `startHostedPayment` (Sprint 3.4) abre la página de pago de un cobro a KORUM: solo URLs de vuelta, ninguna cuenta de destino.
     expectTypeOf<keyof PaymentProvider>().toEqualTypeOf<'mode' | 'name' | 'charge' | 'startHostedPayment' | 'tokenizeCard' | 'deleteCard' | 'refund' | 'splitTransfer' | 'listCharges' | 'verifyNotification'>();
-    expectTypeOf<keyof HostedPaymentRequest>().toEqualTypeOf<'order' | 'amountCents' | 'method' | 'originalIp' | 'locale' | 'urlOk' | 'urlKo' | 'description'>();
+    // `saveCard` (Sprint 3.8, primer pago de Mi Hucha) solo pide guardar la tarjeta de quien paga: tampoco es un destino.
+    expectTypeOf<keyof HostedPaymentRequest>().toEqualTypeOf<'order' | 'amountCents' | 'method' | 'originalIp' | 'locale' | 'urlOk' | 'urlKo' | 'description' | 'saveCard'>();
   });
 
   it('ningún archivo de pagos ni el webhook aceptan un IBAN', () => {

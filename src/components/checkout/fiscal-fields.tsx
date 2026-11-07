@@ -6,6 +6,8 @@ import type { CheckoutDraft, CheckoutOffer } from './checkout-draft';
 import { FieldError } from './checkout-fields';
 
 export type FiscalError = 'taxId' | 'fields' | null;
+/** Lo que guarda el navegador del certificado (nunca el NIF). También lo usa el alta de Mi Hucha. */
+export type FiscalDraft = Pick<CheckoutDraft, 'wantsCertificate' | 'fullName' | 'provinceCode'>;
 
 const inputClass = 'min-h-11 w-full rounded-xl border-2 border-patio-rule-strong bg-white px-3 font-semibold text-ink aria-invalid:border-red-700';
 
@@ -22,9 +24,9 @@ export function FiscalFields({
   error,
   askAgain
 }: {
-  offer: CheckoutOffer;
-  draft: CheckoutDraft;
-  update: (patch: Partial<CheckoutDraft>) => void;
+  offer: Pick<CheckoutOffer, 'certificate' | 'provinces'>;
+  draft: FiscalDraft;
+  update: (patch: Partial<FiscalDraft>) => void;
   taxId: string;
   onTaxIdChange: (value: string) => void;
   error: FiscalError;

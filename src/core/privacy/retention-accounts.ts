@@ -29,7 +29,7 @@ function inactiveCandidate(now: Date): Prisma.UserWhereInput {
     walletBalanceCents: 0,
     lastActiveAt: { lt: since },
     memberships: { none: { role: { in: [...SIGNER_ROLES] } } },
-    walletSubscriptions: { none: { active: true } },
+    walletSubscriptions: { none: { status: { in: ['ACTIVE', 'PAUSED'] } } },
     contributions: { none: { createdAt: { gte: since } } }
   };
 }
@@ -107,9 +107,9 @@ export async function eraseUnresponsiveAccounts(db: Db, deps: ErasureDeps, now: 
   return result;
 }
 
-/** Tarjetas de cuentas suprimidas que Paycomet aún no confirmó borrar. Paycomet caído o sin configurar no rompe la tarea. */
+/** Tarjetas revocadas que Paycomet aún no confirmó borrar: de cuentas suprimidas o de aportaciones de Mi Hucha ya terminadas o canceladas. Paycomet caído o sin configurar no rompe la tarea. */
 export async function retryCardDeletions(db: Db, deps: { paymentProvider: () => Promise<PaymentProvider>; keyring: Keyring }, now: Date, limit: number): Promise<{ deleted: number; failed: number }> {
-  const pending = await db.paymentMethodToken.findMany({ where: { providerDeletedAt: null, revokedAt: { not: null }, NOT: { idUserEnc: '' }, user: { gdprAnonymizedAt: { not: null } } }, orderBy: { id: 'asc' }, take: limit, select: { id: true } });
+  const pending = await db.paymentMethodToken.findMany({ where: { providerDeletedAt: null, revokedAt: { not: null }, NOT: { idUserEnc: '' }, OR: [{ user: { gdprAnonymizedAt: { not: null } } }, { subscriptions: { some: { status: { in: ['CANCELLED', 'FINISHED'] } } } }] }, orderBy: { id: 'asc' }, take: limit, select: { id: true } });
   if (pending.length === 0) return { deleted: 0, failed: 0 };
   const before = new Set(pending.map((card) => card.id));
   const outcome = await deleteCardsOf(db, deps, { id: { in: [...before] } }, now);
