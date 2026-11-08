@@ -897,6 +897,8 @@ model Initiative {
   /// Traducciones opcionales del contenido: { "ca": { "title": "...", "description": "..." }, "en": {...} }.
   translationsJson           Json?
   coverFileId                String?
+  /// Idea del buzón de la que nació (al completar su doble firma, PRD §4.2). Única: una idea crea una sola iniciativa.
+  sourceIdeaId               Int?             @unique
   beforeFileId               String?
   afterFileId                String?
   createdAt                  DateTime         @default(now())
@@ -904,6 +906,7 @@ model Initiative {
 
   organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   coverFile           FileAsset?                 @relation("InitiativeCover", fields: [coverFileId], references: [id], onDelete: SetNull)
+  sourceIdea          Idea?                      @relation(fields: [sourceIdeaId], references: [id], onDelete: Restrict)
   beforeFile          FileAsset?                 @relation("InitiativeBefore", fields: [beforeFileId], references: [id], onDelete: SetNull)
   afterFile           FileAsset?                 @relation("InitiativeAfter", fields: [afterFileId], references: [id], onDelete: SetNull)
   courses             InitiativeCourseProgress[]
@@ -1000,6 +1003,7 @@ model Idea {
   doubleCheckChallenges DoubleCheckChallenge[]
   messages              IdeaMessage[]
   doubleCheckSignatures DoubleCheckSignature[]
+  initiative            Initiative?
 
   @@index([organizationId, phase])
 }

@@ -1,6 +1,7 @@
-import { randomBytes, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { hashPassword } from 'better-auth/crypto';
 import { academicYearFor } from '@/core/finance/academic-year';
+import { newWalletId } from '@/core/finance/wallet-id';
 import { InvalidEmailError, isDisposableEmail, normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import type { Locale } from '@/generated/prisma/enums';
 import { inTransaction, type Db } from '@/lib/db';
@@ -56,9 +57,6 @@ export interface RegistrationResult {
   /** La cuenta de quien dirige es nueva: hay que verificar su email con el código antes de entrar. */
   directorNeedsVerification: boolean;
 }
-
-const WALLET_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const walletId = () => `WLT-ESC-${[...randomBytes(6)].map((byte) => WALLET_ALPHABET[byte % WALLET_ALPHABET.length]).join('')}`;
 
 function canonical(email: string, field: 'director.email' | 'cosigner.email'): string {
   try {
@@ -116,7 +114,7 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
         postalCode: input.postalCode,
         contactEmail: input.director.email,
         contactPhone: input.director.phone,
-        walletId: walletId(),
+        walletId: newWalletId(),
         ley49: input.ley49,
         exemptLimitCents: rules.exemptLimitCents,
         exemptRemainingCents: rules.exemptLimitCents,

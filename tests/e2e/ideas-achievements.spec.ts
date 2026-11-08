@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { codeIn, emailTo, uniqueEmail, withE2eDb } from './auth-support';
+import { codeTo, uniqueEmail, withE2eDb } from './auth-support';
 import { E2E_BASE_URL } from './e2e-env';
 import { expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
@@ -43,7 +43,7 @@ async function signInToIdeas(page: Page, email: string) {
   const since = Date.now();
   await page.getByRole('button', { name: 'Prefiero un código de 6 dígitos' }).click();
   await expect(page.getByRole('heading', { name: 'Escribe el código' })).toBeFocused({ timeout: 30_000 });
-  await page.getByLabel('Código de 6 dígitos').fill(codeIn(await emailTo(email, since)));
+  await page.getByLabel('Código de 6 dígitos').fill(await codeTo(email, since));
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await server(page).toHaveURL(/\/cervantes\/ideas$/);
 }

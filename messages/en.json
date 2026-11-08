@@ -499,6 +499,39 @@
         "code": "Question code",
         "cta": "See my questions"
       }
+    },
+    "idea": {
+      "quorumReached": {
+        "subject": "Quorum reached: “{title}” is waiting for your dual sign-off",
+        "preheader": "An idea in the ideas box now has enough signatures.",
+        "title": "An idea has reached the quorum!",
+        "body": "The proposal “{title}” ({alias}) now has the verified signatures your organisation requires.",
+        "next": "To turn it into an initiative, two signatures are needed: the head’s and the co-signer’s. Go to Approvals and request your signing link.",
+        "cta": "Go to Approvals"
+      },
+      "centerReplied": {
+        "reply": {
+          "subject": "{organization} has replied to your proposal",
+          "preheader": "You have a new message about your idea.",
+          "title": "You have a new message",
+          "body": "{organization} has replied to your proposal {alias}. For your privacy we do not copy the message here: read it in your account."
+        },
+        "rejected": {
+          "subject": "News about your proposal at {organization}",
+          "preheader": "The organisation explains its decision.",
+          "title": "Your proposal has not gone ahead",
+          "body": "{organization} has reviewed your proposal {alias} and could not approve it. They explain why in the chat in your account. Thank you for taking part!"
+        },
+        "approved": {
+          "subject": "Your proposal is now collecting signatures at {organization}",
+          "preheader": "The organisation has published your idea in the ideas box.",
+          "title": "Your idea is now in the ideas box!",
+          "body": "{organization} has reviewed your proposal {alias} and published it so families can support it with their signature. Share it to help it reach the minimum.",
+          "edited": "The organisation edited the text when publishing it. You can see it in your account and ask them in the chat if something does not look right."
+        },
+        "cta": "Read it in my account",
+        "footnote": "You are receiving this notice because you suggested an idea in the organisation’s ideas box."
+      }
     }
   },
   "nav": {
@@ -1411,6 +1444,7 @@
     "nav": {
       "label": "Panel sections",
       "dashboard": "Dashboard",
+      "approvals": "Approvals",
       "achievements": "Achievements"
     },
     "header": {
@@ -1613,6 +1647,174 @@
         "FORBIDDEN": "You do not have permission to download this file.",
         "GENERIC": "It could not be downloaded. Try again in a few seconds."
       }
+    },
+    "approvals": {
+      "metaTitle": "Approvals",
+      "title": "Approvals and dual sign-off",
+      "intro": "Review families’ proposals, talk to them through their anonymous code and approve, with two signatures, the ideas that reach the quorum.",
+      "antifraud": "Up to 2 family accounts per device count (both parents). A 3rd account on the same device or a burst of signatures from the same network is marked as suspicious and does not count until you review it.",
+      "openTitle": "{count, plural, =0 {Nothing pending} one {# idea in progress} other {# ideas in progress}}",
+      "closedTitle": "{count, plural, one {Latest closed idea} other {Latest # closed ideas}}",
+      "empty": {
+        "title": "No proposals waiting",
+        "description": "When a family suggests an idea in the ideas box, it will appear here so you can review it before signatures open.",
+        "cta": "See the ideas box"
+      },
+      "phases": {
+        "PHASE0_MOD": "🛡️ Initial review",
+        "PUBLIC_VOTING": "🗳️ Collecting signatures",
+        "DOUBLE_CHECK": "✅ Quorum reached · dual sign-off",
+        "CONVERTED": "🚀 Turned into an initiative",
+        "REJECTED": "❌ Declined"
+      },
+      "meta": "{category} · {votes} of {needed} verified signatures · proposed on {date}.",
+      "daysLeft": "{count, plural, =0 {Signatures close today.} one {# day of signatures left.} other {# days of signatures left.}}",
+      "signDaysLeft": "{count, plural, =0 {The dual sign-off is due today.} one {# day left for the dual sign-off.} other {# days left for the dual sign-off.}}",
+      "progressLabel": "Progress towards the quorum",
+      "edit": {
+        "legend": "Review the text before publishing it",
+        "title": "Title",
+        "category": "Category",
+        "description": "Description",
+        "hint": "Title of 8 to 90 characters and description of 20 to 600. You can fix typos or clarify the proposal: the family will be notified. The signature period starts on the day you approve it."
+      },
+      "converted": "Dual sign-off complete: it is now an initiative being budgeted (wallet {wallet}).",
+      "convertedLink": "See it on the dashboard",
+      "actions": {
+        "approve": "Approve and open for signatures",
+        "reject": "Decline"
+      },
+      "reject": {
+        "label": "Reason for {alias} (they will read it in their chat)",
+        "hint": "At least 10 characters. Explain it kindly and without personal details. The family will get a notice to read it.",
+        "confirm": "Decline the idea"
+      },
+      "notices": {
+        "approved": "Idea published: signatures can now be collected in the ideas box.",
+        "approvedQuorum": "Idea published with quorum already reached: it is now waiting for the dual sign-off.",
+        "rejected": "Idea declined. The reason is in its chat and the family will get a notice."
+      },
+      "errors": {
+        "INVALID_INPUT": "Please check the fields: the title needs 8 to 90 characters, the description 20 to 600 and the reason at least 10.",
+        "NOT_FOUND": "We cannot find this idea in your organisation. Please reload the page.",
+        "WRONG_PHASE": "The idea has already moved on. Reload the page to see where it stands.",
+        "INVALID_CATEGORY": "Choose one of your organisation’s categories.",
+        "CHAT_CLOSED": "The conversation is closed: the idea has been converted or declined.",
+        "RATE_LIMITED": "You have requested several links in a row. Please wait a few minutes before asking for another.",
+        "NOT_SUSPICIOUS": "That signature already counts as verified.",
+        "FORBIDDEN": "Your session cannot do this. Please sign in again with two-step verification.",
+        "failed": "We could not complete the action. Please try again in a few seconds.",
+        "NOT_A_SIGNER": "Your account does not hold a signing role in this organisation.",
+        "HOLDS_BOTH_ROLES": "The same person cannot hold both signing roles. Please review the organisation’s roles.",
+        "TWO_FACTOR_REQUIRED": "To sign you need two-step verification turned on and completed in this session.",
+        "TARGET_CLOSED": "This signature is no longer open: the idea has moved on or its deadline has passed.",
+        "ALREADY_SIGNED": "Your signature is already recorded (or your role has already signed).",
+        "SAME_PERSON": "The two signatures must come from different people with different email addresses.",
+        "PROVIDER_INVOICE_MISSING": "The supplier’s invoice is needed to sign this payout.",
+        "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a Paycomet destination account yet."
+      },
+      "doubleCheck": {
+        "label": "Dual sign-off for the idea",
+        "progress": "Dual sign-off: {signed} of 2",
+        "roles": {
+          "DIRECTOR": "Head teacher / Director",
+          "COSIGNER": "Co-signer (parents’ association, treasury or board)"
+        },
+        "signedBy": "Signed by {name} on {date}",
+        "pending": "Waiting for signature",
+        "request": "Request my signing link",
+        "requesting": "Sending the link…",
+        "sent": "We have emailed you a single-use link and a 6-digit code. They are valid until {date}.",
+        "resend": "It has not arrived: send another link",
+        "notYours": "Your signature is already recorded or it is the other signer’s turn. They will get the link by email.",
+        "revalidated": "{count, plural, one {Includes # signature the organisation accepted by hand (it was suspicious).} other {Includes # signatures the organisation accepted by hand (they were suspicious).}}",
+        "readOnly": "Only the organisation’s two signers can sign."
+      },
+      "audit": {
+        "summary": "Signature audit ({total})",
+        "verified": "{count, plural, one {# verified} other {# verified}}",
+        "suspicious": "{count, plural, one {# suspicious} other {# suspicious}}",
+        "explainer": "Suspicious signatures do not count towards the quorum. If you know they are genuine (for example, many families signing from the school wi-fi), you can accept them.",
+        "empty": "No signatures yet.",
+        "statusVerified": "🟢 Verified",
+        "statusSuspicious": "⚠️ Suspicious",
+        "statusRevalidated": "🟢 Accepted by the organisation",
+        "revalidate": "Accept",
+        "revalidated": "Signature accepted: it now counts towards the quorum.",
+        "revalidatedQuorum": "Signature accepted: the idea has reached the quorum and is waiting for the dual sign-off.",
+        "truncated": "{shown, plural, one {Showing # signature} other {Showing # signatures}}: suspicious ones first, then the most recent."
+      },
+      "chat": {
+        "title": "Messages with {alias}",
+        "empty": "No messages yet.",
+        "fromKorum": "KORUM",
+        "label": "Write to {alias}",
+        "hint": "You will sign with your role. The family will get an email notice (without the text) and read it in their account.",
+        "send": "Send",
+        "sending": "Sending…",
+        "sent": "Message sent.",
+        "closed": "The conversation is closed.",
+        "readOnly": "Only the organisation’s signers can write in this conversation."
+      },
+      "metaShort": "{category} · proposed on {date}."
+    },
+    "sign": {
+      "title": "Dual sign-off",
+      "needsLogin": "To sign, sign in with your organisation account. We keep the link in this tab: you will come back here afterwards.",
+      "needsSecondFactor": "To sign you need to complete two-step verification in this session.",
+      "loginCta": "Sign in to continue",
+      "secondFactorCta": "Complete two-step verification",
+      "loading": "Checking the link…",
+      "missing": {
+        "title": "This link no longer works",
+        "body": "It may have been used already, expired, belong to someone else or run out of attempts. Request a new one from Approvals.",
+        "cta": "Go to Approvals"
+      },
+      "done": {
+        "completeTitle": "Dual sign-off complete! 2 of 2",
+        "partialTitle": "Your signature is recorded: 1 of 2",
+        "completeIdea": "The idea is now an initiative being budgeted. The next step is to prepare its budget.",
+        "completePayout": "Both payout signatures are recorded.",
+        "partialNotified": "We have sent the link to the other signer to complete the dual sign-off.",
+        "partialWaiting": "The other person still needs to sign. Once they have two-step verification turned on, they can request their link from Approvals.",
+        "cta": "Back to Approvals"
+      },
+      "what": "What you are signing",
+      "ideaMeta": "{alias} · {category} · {votes} verified signatures",
+      "ideaRevalidated": "{count, plural, one {Includes # signature the organisation accepted by hand (it was suspicious).} other {Includes # signatures the organisation accepted by hand (they were suspicious).}}",
+      "ideaEffect": "Once both signatures are in, the idea moves to budgeting as an initiative of the organisation.",
+      "payoutMeta": "Wallet {wallet} · {amount} · to: {destination}",
+      "destinations": {
+        "ORGANIZATION": "the organisation’s account",
+        "PROVIDER": "the supplier chosen by the organisation"
+      },
+      "expires": "The link is valid until {date}.",
+      "otpLabel": "6-digit code from the email",
+      "otpHint": "It is in the same email as the link.",
+      "submit": "Sign",
+      "signing": "Signing…",
+      "errors": {
+        "otpFormat": "Enter the 6 digits of the code.",
+        "otp": "{count, plural, one {The code is not correct. You have # attempt left.} other {The code is not correct. You have # attempts left.}}",
+        "locked": "This link has run out of attempts. Request a new one from Approvals.",
+        "failed": "We could not complete the signature. Please try again in a few seconds.",
+        "INVALID_LINK": "This link no longer works. Request a new one from Approvals.",
+        "TARGET_CHANGED": "What was to be signed has changed since the link was sent. Review it in Approvals and request a new link.",
+        "LOGIN_REQUIRED": "Your session has ended. Sign in again to sign.",
+        "TWO_FACTOR_REQUIRED": "You need to complete two-step verification in this session."
+      },
+      "blocked": {
+        "NOT_A_SIGNER": "Your account does not hold a signing role in this organisation.",
+        "HOLDS_BOTH_ROLES": "The same person cannot hold both signing roles. Please review the organisation’s roles.",
+        "TWO_FACTOR_REQUIRED": "To sign you need two-step verification turned on and completed in this session.",
+        "TARGET_CLOSED": "This signature is no longer open: the idea has moved on or its deadline has passed.",
+        "ALREADY_SIGNED": "Your signature is already recorded (or your role has already signed).",
+        "SAME_PERSON": "The two signatures must come from different people with different email addresses.",
+        "PROVIDER_INVOICE_MISSING": "The supplier’s invoice is needed to sign this payout.",
+        "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a Paycomet destination account yet.",
+        "RATE_LIMITED": "You have requested several links in a row. Please wait a few minutes before asking for another."
+      },
+      "retry": "Check the link again"
     }
   },
   "gate": {

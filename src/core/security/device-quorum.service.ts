@@ -1,3 +1,4 @@
+import { enterDoubleCheck, meetsQuorum } from '@/core/ideas/idea-quorum';
 import { inTransaction, type Db } from '@/lib/db';
 import { dataHmac } from './data-hmac';
 import { createDeviceCookieValue, hasKnownSubnet, hashDeviceCookieId, hashFingerprint, hashIpSubnet, readDeviceCookieId } from './device-signals';
@@ -107,7 +108,7 @@ export async function signIdea(db: Db, secret: string, input: SignIdeaInput, now
     const canonicalEmail = canonicalEmailOf(user);
 
     // Bloquea la idea: las firmas de una misma idea se cuentan de una en una, sin perder votos ni firmar dos veces.
-    const idea = await tx.idea.update({ where: { id: input.ideaId }, data: { votes: { increment: 0 } }, include: { organization: { select: { minVotes: true } } } });
+    const idea = await tx.idea.update({ where: { id: input.ideaId }, data: { votes: { increment: 0 } }, include: { organization: { select: { minVotes: true, maxIdeaDays: true } } } });
     if (idea.phase !== 'PUBLIC_VOTING' || idea.expiresAt <= now) throw new IdeaSignatureRejectedError('IDEA_CLOSED');
     // Quien propone la idea ya cuenta como su primer voto.
     const formerSelf = ideaSignerMarker(secret, canonicalEmail);
@@ -128,7 +129,9 @@ export async function signIdea(db: Db, secret: string, input: SignIdeaInput, now
     else if (consent === false) await clearFingerprintsOf(tx, input.userId);
 
     const ipSubnetHash = hashIpSubnet(secret, input.ip);
-    const ipBurstSignaturesLast10Min = await tx.ideaSignatureAudit.count({ where: { ideaId: idea.id, ipSubnetHash, createdAt: { gte: new Date(now.getTime() - BURST_WINDOW_MS) } } });
+    // La ráfaga cuenta dispositivos distintos de la misma red, no firmas (heredado del Sprint 3.6): dos cuentas de un mismo móvil ya las vigila la regla padre/madre.
+    const burstDevices = await tx.ideaSignatureAudit.findMany({ where: { ideaId: idea.id, ipSubnetHash, createdAt: { gte: new Date(now.getTime() - BURST_WINDOW_MS) } }, distinct: ['deviceId'], select: { deviceId: true } });
+    const ipBurstSignaturesLast10Min = burstDevices.length;
 
     // Con consentimiento, borrar la cookie no reinicia la cuenta: cuentan juntos los dispositivos con la misma huella y la misma red, reciente.
     // Solo la huella no basta (dos móviles iguales de dos familias pueden darla idéntica), y sin IP válida no se sabe cuál es la red.
@@ -150,11 +153,10 @@ export async function signIdea(db: Db, secret: string, input: SignIdeaInput, now
     await tx.ideaSignatureAudit.create({ data: { ideaId: idea.id, userId: input.userId, canonicalEmail, deviceId: device.id, ipSubnetHash, accountOrder: audit.deviceAccountOrder, status: audit.status, reason: audit.reasonKey, createdAt: now } });
 
     const verified = audit.status === 'VERIFIED';
-    const quorumReached = verified && idea.verifiedVotes + 1 >= idea.organization.minVotes;
-    await tx.idea.update({
-      where: { id: idea.id },
-      data: { votes: { increment: 1 }, verifiedVotes: { increment: verified ? 1 : 0 }, suspiciousVotes: { increment: verified ? 0 : 1 }, ...(quorumReached ? { phase: 'DOUBLE_CHECK' as const } : {}) }
-    });
+    const quorumReached = verified && meetsQuorum(idea.verifiedVotes + 1, idea.organization.minVotes);
+    await tx.idea.update({ where: { id: idea.id }, data: { votes: { increment: 1 }, verifiedVotes: { increment: verified ? 1 : 0 }, suspiciousVotes: { increment: verified ? 0 : 1 } } });
+    // Con quórum, la idea espera la doble firma con su propio plazo y quienes firman por la entidad reciben el aviso, en esta misma transacción.
+    if (quorumReached) await enterDoubleCheck(tx, idea, idea.organization.maxIdeaDays, now);
     return { status: 'SIGNED', audit, quorumReached, newDeviceCookie };
   });
 }

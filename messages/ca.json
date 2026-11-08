@@ -499,6 +499,39 @@
         "code": "Codi de la consulta",
         "cta": "Veure les meves consultes"
       }
+    },
+    "idea": {
+      "quorumReached": {
+        "subject": "Quòrum assolit: «{title}» espera la vostra doble signatura",
+        "preheader": "Una idea de la bústia ja té les signatures necessàries.",
+        "title": "Una idea ha assolit el quòrum!",
+        "body": "La proposta «{title}» ({alias}) ja té les signatures verificades que demana la vostra entitat.",
+        "next": "Per convertir-la en iniciativa calen dues signatures: la de la direcció i la de la cosignatura. Entreu a Aprovacions i demaneu el vostre enllaç de signatura.",
+        "cta": "Anar a Aprovacions"
+      },
+      "centerReplied": {
+        "reply": {
+          "subject": "{organization} ha respost a la teva proposta",
+          "preheader": "Tens un missatge nou sobre la teva idea.",
+          "title": "Tens un missatge nou",
+          "body": "{organization} ha respost a la teva proposta {alias}. Per privacitat no copiem el missatge aquí: llegeix-lo al teu compte."
+        },
+        "rejected": {
+          "subject": "Novetats sobre la teva proposta a {organization}",
+          "preheader": "L’entitat t’explica la seva decisió.",
+          "title": "La teva proposta no ha tirat endavant",
+          "body": "{organization} ha revisat la teva proposta {alias} i no l’ha pogut aprovar. T’explica el motiu al xat del teu compte. Gràcies per proposar!"
+        },
+        "approved": {
+          "subject": "La teva proposta ja recull signatures a {organization}",
+          "preheader": "L’entitat ha publicat la teva idea a la bústia.",
+          "title": "La teva idea ja és a la bústia!",
+          "body": "{organization} ha revisat la teva proposta {alias} i ja és publicada perquè les famílies la donin suport amb la seva signatura. Comparteix-la perquè arribi al mínim.",
+          "edited": "L’entitat ha corregit el text en publicar-la. Pots veure-ho al teu compte i preguntar-li pel xat si alguna cosa no encaixa."
+        },
+        "cta": "Llegir-ho al meu compte",
+        "footnote": "Reps aquest avís perquè vas proposar una idea a la bústia de l’entitat."
+      }
     }
   },
   "nav": {
@@ -1411,6 +1444,7 @@
     "nav": {
       "label": "Seccions del panell",
       "dashboard": "Quadre de comandament",
+      "approvals": "Aprovacions",
       "achievements": "Fites"
     },
     "header": {
@@ -1613,6 +1647,174 @@
         "FORBIDDEN": "No teniu permís per descarregar aquest fitxer.",
         "GENERIC": "No s'ha pogut descarregar. Torneu-ho a provar d'aquí a uns segons."
       }
+    },
+    "approvals": {
+      "metaTitle": "Aprovacions",
+      "title": "Aprovacions i doble signatura",
+      "intro": "Reviseu les propostes de les famílies, parleu-hi pel seu codi anònim i aproveu amb doble signatura les idees que assoleixen el quòrum.",
+      "antifraud": "Compten fins a 2 comptes familiars per dispositiu (pare i mare). El 3r compte d’un mateix dispositiu o una ràfega de signatures des de la mateixa xarxa queden com a sospitosos i no sumen fins que els reviseu.",
+      "openTitle": "{count, plural, =0 {Res pendent} one {# idea en marxa} other {# idees en marxa}}",
+      "closedTitle": "{count, plural, one {Darrera idea tancada} other {Darreres # idees tancades}}",
+      "empty": {
+        "title": "No hi ha propostes pendents",
+        "description": "Quan una família proposi una idea a la bústia, apareixerà aquí perquè la reviseu abans d’obrir les signatures.",
+        "cta": "Veure la bústia d’idees"
+      },
+      "phases": {
+        "PHASE0_MOD": "🛡️ Revisió inicial",
+        "PUBLIC_VOTING": "🗳️ Recollint signatures",
+        "DOUBLE_CHECK": "✅ Quòrum assolit · doble signatura",
+        "CONVERTED": "🚀 Convertida en iniciativa",
+        "REJECTED": "❌ Desestimada"
+      },
+      "meta": "{category} · {votes} de {needed} signatures verificades · proposada el {date}.",
+      "daysLeft": "{count, plural, =0 {Les signatures tanquen avui.} one {Queda # dia de signatures.} other {Queden # dies de signatures.}}",
+      "signDaysLeft": "{count, plural, =0 {La doble signatura venç avui.} one {Queda # dia per a la doble signatura.} other {Queden # dies per a la doble signatura.}}",
+      "progressLabel": "Avenç cap al quòrum",
+      "edit": {
+        "legend": "Revisa el text abans de publicar-lo",
+        "title": "Títol",
+        "category": "Categoria",
+        "description": "Descripció",
+        "hint": "Títol de 8 a 90 caràcters i descripció de 20 a 600. Pots corregir errates o aclarir la proposta: la família rebrà un avís. El termini de signatures comença el dia que l’aproves."
+      },
+      "converted": "Doble signatura completa: ja és una iniciativa en pressupost (guardiola {wallet}).",
+      "convertedLink": "Veure-ho al quadre de comandament",
+      "actions": {
+        "approve": "Aprovar i obrir a signatures",
+        "reject": "Desestimar"
+      },
+      "reject": {
+        "label": "Motiu per a {alias} (el llegirà al seu xat)",
+        "hint": "Almenys 10 caràcters. Explica-ho amb amabilitat i sense dades personals. La família rebrà un avís per llegir-lo.",
+        "confirm": "Desestimar la idea"
+      },
+      "notices": {
+        "approved": "Idea publicada: ja es poden recollir signatures a la bústia.",
+        "approvedQuorum": "Idea publicada i amb quòrum: ja espera la doble signatura.",
+        "rejected": "Idea desestimada. El motiu és al seu xat i la família rebrà un avís."
+      },
+      "errors": {
+        "INVALID_INPUT": "Revisa els camps: el títol necessita entre 8 i 90 caràcters, la descripció entre 20 i 600 i el motiu almenys 10.",
+        "NOT_FOUND": "No trobem aquesta idea a la vostra entitat. Torna a carregar la pàgina.",
+        "WRONG_PHASE": "La idea ja ha canviat de fase. Torna a carregar la pàgina per veure com està.",
+        "INVALID_CATEGORY": "Tria una de les categories de la vostra entitat.",
+        "CHAT_CLOSED": "La conversa està tancada: la idea ja s’ha convertit o s’ha desestimat.",
+        "RATE_LIMITED": "Has demanat diversos enllaços seguits. Espera uns minuts abans de demanar-ne un altre.",
+        "NOT_SUSPICIOUS": "Aquesta signatura ja compta com a verificada.",
+        "FORBIDDEN": "La teva sessió no pot fer això. Torna a entrar amb la verificació en dos passos.",
+        "failed": "No hem pogut completar l’acció. Torna-ho a provar d’aquí a uns segons.",
+        "NOT_A_SIGNER": "El teu compte no té cap càrrec de signatura en aquesta entitat.",
+        "HOLDS_BOTH_ROLES": "Una mateixa persona no pot ocupar els dos càrrecs de signatura. Reviseu els càrrecs de l’entitat.",
+        "TWO_FACTOR_REQUIRED": "Per signar necessites la verificació en dos passos activada i superada en aquesta sessió.",
+        "TARGET_CLOSED": "Aquesta signatura ja no està oberta: la idea ha canviat de fase o el termini ha vençut.",
+        "ALREADY_SIGNED": "La teva signatura ja hi consta (o el teu càrrec ja ha signat).",
+        "SAME_PERSON": "Les dues signatures han de ser de persones diferents, amb correus diferents.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveïdor per signar aquesta liquidació.",
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a Paycomet."
+      },
+      "doubleCheck": {
+        "label": "Doble signatura de la idea",
+        "progress": "Doble signatura: {signed} de 2",
+        "roles": {
+          "DIRECTOR": "Direcció",
+          "COSIGNER": "Cosignatura (AMPA/AFA, tresoreria o patronat)"
+        },
+        "signedBy": "Signat per {name} el {date}",
+        "pending": "Pendent de signatura",
+        "request": "Demanar el meu enllaç de signatura",
+        "requesting": "Enviant l’enllaç…",
+        "sent": "T’hem enviat al correu un enllaç d’un sol ús i un codi de 6 xifres. Valen fins al {date}.",
+        "resend": "No m’ha arribat: enviar un altre enllaç",
+        "notYours": "La teva signatura ja hi consta o li toca a l’altra persona signant. Rebrà l’enllaç per correu.",
+        "revalidated": "{count, plural, one {Inclou # signatura que l’entitat va validar a mà (era sospitosa).} other {Inclou # signatures que l’entitat va validar a mà (eren sospitoses).}}",
+        "readOnly": "Només les dues persones signants de l’entitat poden signar."
+      },
+      "audit": {
+        "summary": "Auditoria de signatures ({total})",
+        "verified": "{count, plural, one {# verificada} other {# verificades}}",
+        "suspicious": "{count, plural, one {# sospitosa} other {# sospitoses}}",
+        "explainer": "Les sospitoses no compten per al quòrum. Si sabeu que són legítimes (per exemple, moltes famílies signant des del wifi del centre), podeu donar-les per bones.",
+        "empty": "Encara no hi ha signatures.",
+        "statusVerified": "🟢 Verificada",
+        "statusSuspicious": "⚠️ Sospitosa",
+        "statusRevalidated": "🟢 Validada per l’entitat",
+        "revalidate": "Donar per bona",
+        "revalidated": "Signatura validada: ja compta per al quòrum.",
+        "revalidatedQuorum": "Signatura validada: la idea ha assolit el quòrum i espera la doble signatura.",
+        "truncated": "{shown, plural, one {Es mostra # signatura} other {Es mostren # signatures}}: primer les sospitoses i després les més recents."
+      },
+      "chat": {
+        "title": "Missatges amb {alias}",
+        "empty": "Encara no hi ha missatges.",
+        "fromKorum": "KORUM",
+        "label": "Escriure a {alias}",
+        "hint": "Signareu amb el vostre càrrec. La família rebrà un avís per correu (sense el text) i el llegirà al seu compte.",
+        "send": "Enviar",
+        "sending": "Enviant…",
+        "sent": "Missatge enviat.",
+        "closed": "La conversa està tancada.",
+        "readOnly": "Només les persones signants de l’entitat poden escriure en aquesta conversa."
+      },
+      "metaShort": "{category} · proposada el {date}."
+    },
+    "sign": {
+      "title": "Doble signatura",
+      "needsLogin": "Per signar, entra amb el teu compte de l’entitat. Desem l’enllaç en aquesta pestanya: en tornar, continuaràs aquí.",
+      "needsSecondFactor": "Per signar has de superar la verificació en dos passos en aquesta sessió.",
+      "loginCta": "Entrar per signar",
+      "secondFactorCta": "Verificar en dos passos",
+      "loading": "Comprovant l’enllaç…",
+      "missing": {
+        "title": "Aquest enllaç ja no serveix",
+        "body": "Potser ja s’ha fet servir, ha caducat, és d’una altra persona o s’han esgotat els intents. Demana’n un de nou des d’Aprovacions.",
+        "cta": "Anar a Aprovacions"
+      },
+      "done": {
+        "completeTitle": "Doble signatura completa! 2 de 2",
+        "partialTitle": "La teva signatura queda registrada: 1 de 2",
+        "completeIdea": "La idea ja és una iniciativa en pressupost. El pas següent és preparar-ne el pressupost.",
+        "completePayout": "Les dues signatures de la liquidació queden registrades.",
+        "partialNotified": "Hem enviat l’enllaç a l’altra persona signant per completar la doble signatura.",
+        "partialWaiting": "Falta la signatura de l’altra persona. Quan tingui activada la verificació en dos passos, podrà demanar el seu enllaç des d’Aprovacions.",
+        "cta": "Tornar a Aprovacions"
+      },
+      "what": "El que signaràs",
+      "ideaMeta": "{alias} · {category} · {votes} signatures verificades",
+      "ideaRevalidated": "{count, plural, one {Inclou # signatura que l’entitat va validar a mà (era sospitosa).} other {Inclou # signatures que l’entitat va validar a mà (eren sospitoses).}}",
+      "ideaEffect": "En completar les dues signatures, la idea passa a pressupost com a iniciativa de l’entitat.",
+      "payoutMeta": "Guardiola {wallet} · {amount} · destinació: {destination}",
+      "destinations": {
+        "ORGANIZATION": "compte de l’entitat",
+        "PROVIDER": "proveïdor triat per l’entitat"
+      },
+      "expires": "L’enllaç val fins al {date}.",
+      "otpLabel": "Codi de 6 xifres del correu",
+      "otpHint": "És al mateix correu que l’enllaç.",
+      "submit": "Signar",
+      "signing": "Signant…",
+      "errors": {
+        "otpFormat": "Escriu les 6 xifres del codi.",
+        "otp": "{count, plural, one {El codi no és correcte. Et queda # intent.} other {El codi no és correcte. Et queden # intents.}}",
+        "locked": "S’han esgotat els intents d’aquest enllaç. Demana’n un de nou des d’Aprovacions.",
+        "failed": "No hem pogut completar la signatura. Torna-ho a provar d’aquí a uns segons.",
+        "INVALID_LINK": "Aquest enllaç ja no serveix. Demana’n un de nou des d’Aprovacions.",
+        "TARGET_CHANGED": "El que s’havia de signar ha canviat des que es va enviar l’enllaç. Revisa-ho a Aprovacions i demana un enllaç nou.",
+        "LOGIN_REQUIRED": "La teva sessió ha acabat. Torna a entrar per signar.",
+        "TWO_FACTOR_REQUIRED": "Has de superar la verificació en dos passos en aquesta sessió."
+      },
+      "blocked": {
+        "NOT_A_SIGNER": "El teu compte no té cap càrrec de signatura en aquesta entitat.",
+        "HOLDS_BOTH_ROLES": "Una mateixa persona no pot ocupar els dos càrrecs de signatura. Reviseu els càrrecs de l’entitat.",
+        "TWO_FACTOR_REQUIRED": "Per signar necessites la verificació en dos passos activada i superada en aquesta sessió.",
+        "TARGET_CLOSED": "Aquesta signatura ja no està oberta: la idea ha canviat de fase o el termini ha vençut.",
+        "ALREADY_SIGNED": "La teva signatura ja hi consta (o el teu càrrec ja ha signat).",
+        "SAME_PERSON": "Les dues signatures han de ser de persones diferents, amb correus diferents.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveïdor per signar aquesta liquidació.",
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a Paycomet.",
+        "RATE_LIMITED": "Has demanat diversos enllaços seguits. Espera uns minuts abans de demanar-ne un altre."
+      },
+      "retry": "Tornar a comprovar l’enllaç"
     }
   },
   "gate": {

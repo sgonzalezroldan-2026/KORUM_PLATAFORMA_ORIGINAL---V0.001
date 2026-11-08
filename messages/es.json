@@ -499,6 +499,39 @@
         "code": "Código de la consulta",
         "cta": "Ver mis consultas"
       }
+    },
+    "idea": {
+      "quorumReached": {
+        "subject": "Quórum logrado: «{title}» espera vuestra doble firma",
+        "preheader": "Una idea del buzón ya tiene las firmas necesarias.",
+        "title": "¡Una idea ha logrado el quórum!",
+        "body": "La propuesta «{title}» ({alias}) ya tiene las firmas verificadas que pide vuestra entidad.",
+        "next": "Para convertirla en iniciativa hacen falta dos firmas: la de la dirección y la de la cofirma. Entrad en Aprobaciones y pedid vuestro enlace de firma.",
+        "cta": "Ir a Aprobaciones"
+      },
+      "centerReplied": {
+        "reply": {
+          "subject": "{organization} ha respondido a tu propuesta",
+          "preheader": "Tienes un mensaje nuevo sobre tu idea.",
+          "title": "Tienes un mensaje nuevo",
+          "body": "{organization} ha respondido a tu propuesta {alias}. Por privacidad no copiamos el mensaje aquí: léelo en tu cuenta."
+        },
+        "rejected": {
+          "subject": "Novedades sobre tu propuesta en {organization}",
+          "preheader": "La entidad te explica su decisión.",
+          "title": "Tu propuesta no ha salido adelante",
+          "body": "{organization} ha revisado tu propuesta {alias} y no ha podido aprobarla. Te explica el motivo en el chat de tu cuenta. ¡Gracias por proponer!"
+        },
+        "approved": {
+          "subject": "Tu propuesta ya recoge firmas en {organization}",
+          "preheader": "La entidad ha publicado tu idea en el buzón.",
+          "title": "¡Tu idea ya está en el buzón!",
+          "body": "{organization} ha revisado tu propuesta {alias} y ya está publicada para que las familias la apoyen con su firma. Compártela para que llegue al mínimo.",
+          "edited": "La entidad ha corregido el texto al publicarla. Puedes verlo en tu cuenta y preguntarle por el chat si algo no encaja."
+        },
+        "cta": "Leer en mi cuenta",
+        "footnote": "Recibes este aviso porque propusiste una idea en el buzón de la entidad."
+      }
     }
   },
   "nav": {
@@ -1411,6 +1444,7 @@
     "nav": {
       "label": "Secciones del panel",
       "dashboard": "Cuadro de mandos",
+      "approvals": "Aprobaciones",
       "achievements": "Logros"
     },
     "header": {
@@ -1613,6 +1647,174 @@
         "FORBIDDEN": "No tenéis permiso para descargar este fichero.",
         "GENERIC": "No se ha podido descargar. Probad de nuevo en unos segundos."
       }
+    },
+    "approvals": {
+      "metaTitle": "Aprobaciones",
+      "title": "Aprobaciones y doble firma",
+      "intro": "Revisa las propuestas de las familias, conversa con ellas por su código anónimo y aprueba con doble firma las ideas que logran el quórum.",
+      "antifraud": "Cuentan hasta 2 cuentas familiares por dispositivo (padre y madre). La 3ª cuenta de un mismo dispositivo o una ráfaga de firmas desde la misma red quedan como sospechosas y no suman hasta que las reviséis.",
+      "openTitle": "{count, plural, =0 {Nada pendiente} one {# idea en marcha} other {# ideas en marcha}}",
+      "closedTitle": "{count, plural, one {Última idea cerrada} other {Últimas # ideas cerradas}}",
+      "empty": {
+        "title": "No hay propuestas pendientes",
+        "description": "Cuando una familia proponga una idea en el buzón, aparecerá aquí para que la reviséis antes de abrir las firmas.",
+        "cta": "Ver el buzón de ideas"
+      },
+      "phases": {
+        "PHASE0_MOD": "🛡️ Revisión inicial",
+        "PUBLIC_VOTING": "🗳️ Recogiendo firmas",
+        "DOUBLE_CHECK": "✅ Quórum logrado · doble firma",
+        "CONVERTED": "🚀 Convertida en iniciativa",
+        "REJECTED": "❌ Desestimada"
+      },
+      "meta": "{category} · {votes} de {needed} firmas verificadas · propuesta el {date}.",
+      "daysLeft": "{count, plural, =0 {Las firmas cierran hoy.} one {Queda # día de firmas.} other {Quedan # días de firmas.}}",
+      "signDaysLeft": "{count, plural, =0 {La doble firma vence hoy.} one {Queda # día para la doble firma.} other {Quedan # días para la doble firma.}}",
+      "progressLabel": "Avance hacia el quórum",
+      "edit": {
+        "legend": "Revisa el texto antes de publicarlo",
+        "title": "Título",
+        "category": "Categoría",
+        "description": "Descripción",
+        "hint": "Título de 8 a 90 caracteres y descripción de 20 a 600. Puedes corregir erratas o aclarar la propuesta: la familia recibirá un aviso. El plazo de firmas empieza el día que la apruebas."
+      },
+      "converted": "Doble firma completa: ya es una iniciativa en presupuestación (hucha {wallet}).",
+      "convertedLink": "Ver en el cuadro de mandos",
+      "actions": {
+        "approve": "Aprobar y abrir a firmas",
+        "reject": "Desestimar"
+      },
+      "reject": {
+        "label": "Motivo para {alias} (lo leerá en su chat)",
+        "hint": "Al menos 10 caracteres. Explícalo con amabilidad y sin datos personales. La familia recibirá un aviso para leerlo.",
+        "confirm": "Desestimar la idea"
+      },
+      "notices": {
+        "approved": "Idea publicada: ya se pueden recoger firmas en el buzón.",
+        "approvedQuorum": "Idea publicada y con quórum: ya espera la doble firma.",
+        "rejected": "Idea desestimada. El motivo está en su chat y la familia recibirá un aviso."
+      },
+      "errors": {
+        "INVALID_INPUT": "Revisa los campos: el título necesita entre 8 y 90 caracteres, la descripción entre 20 y 600 y el motivo al menos 10.",
+        "NOT_FOUND": "No encontramos esta idea en vuestra entidad. Recarga la página.",
+        "WRONG_PHASE": "La idea ya ha cambiado de fase. Recarga la página para ver cómo está.",
+        "INVALID_CATEGORY": "Elige una de las categorías de vuestra entidad.",
+        "CHAT_CLOSED": "La conversación está cerrada: la idea ya se convirtió o se desestimó.",
+        "RATE_LIMITED": "Has pedido varios enlaces seguidos. Espera unos minutos antes de pedir otro.",
+        "NOT_SUSPICIOUS": "Esa firma ya cuenta como verificada.",
+        "FORBIDDEN": "Tu sesión no puede hacer esto. Vuelve a entrar con la verificación en dos pasos.",
+        "failed": "No hemos podido completar la acción. Inténtalo de nuevo en unos segundos.",
+        "NOT_A_SIGNER": "Tu cuenta no tiene un cargo de firma en esta entidad.",
+        "HOLDS_BOTH_ROLES": "Una misma persona no puede ocupar los dos cargos de firma. Revisad los cargos de la entidad.",
+        "TWO_FACTOR_REQUIRED": "Para firmar necesitas la verificación en dos pasos activada y superada en esta sesión.",
+        "TARGET_CLOSED": "Esta firma ya no está abierta: la idea ha cambiado de fase o ha vencido su plazo.",
+        "ALREADY_SIGNED": "Tu firma ya consta (o tu cargo ya ha firmado).",
+        "SAME_PERSON": "Las dos firmas tienen que ser de personas distintas, con correos distintos.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveedor para firmar esta liquidación.",
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en Paycomet."
+      },
+      "doubleCheck": {
+        "label": "Doble firma de la idea",
+        "progress": "Doble firma: {signed} de 2",
+        "roles": {
+          "DIRECTOR": "Dirección",
+          "COSIGNER": "Cofirma (AMPA/AFA, tesorería o patronato)"
+        },
+        "signedBy": "Firmado por {name} el {date}",
+        "pending": "Pendiente de firma",
+        "request": "Pedir mi enlace de firma",
+        "requesting": "Enviando el enlace…",
+        "sent": "Te hemos enviado a tu email un enlace de un solo uso y un código de 6 dígitos. Valen hasta el {date}.",
+        "resend": "No me ha llegado: enviar otro enlace",
+        "notYours": "Tu firma ya consta o le toca a la otra persona firmante. Recibirá el enlace por email.",
+        "revalidated": "{count, plural, one {Incluye # firma que la entidad validó a mano (era sospechosa).} other {Incluye # firmas que la entidad validó a mano (eran sospechosas).}}",
+        "readOnly": "Solo las dos personas firmantes de la entidad pueden firmar."
+      },
+      "audit": {
+        "summary": "Auditoría de firmas ({total})",
+        "verified": "{count, plural, one {# verificada} other {# verificadas}}",
+        "suspicious": "{count, plural, one {# sospechosa} other {# sospechosas}}",
+        "explainer": "Las sospechosas no cuentan para el quórum. Si sabéis que son legítimas (por ejemplo, muchas familias firmando desde el wifi del centro), podéis darlas por buenas.",
+        "empty": "Aún no hay firmas.",
+        "statusVerified": "🟢 Verificada",
+        "statusSuspicious": "⚠️ Sospechosa",
+        "statusRevalidated": "🟢 Validada por la entidad",
+        "revalidate": "Dar por buena",
+        "revalidated": "Firma validada: ya cuenta para el quórum.",
+        "revalidatedQuorum": "Firma validada: la idea ha alcanzado el quórum y espera la doble firma.",
+        "truncated": "{shown, plural, one {Se muestra # firma} other {Se muestran # firmas}}: primero las sospechosas, después las más recientes."
+      },
+      "chat": {
+        "title": "Mensajes con {alias}",
+        "empty": "Todavía no hay mensajes.",
+        "fromKorum": "KORUM",
+        "label": "Escribir a {alias}",
+        "hint": "Firmaréis con vuestro cargo. La familia recibirá un aviso por email (sin el texto) y lo leerá en su cuenta.",
+        "send": "Enviar",
+        "sending": "Enviando…",
+        "sent": "Mensaje enviado.",
+        "closed": "La conversación está cerrada.",
+        "readOnly": "Solo las personas firmantes de la entidad pueden escribir en esta conversación."
+      },
+      "metaShort": "{category} · propuesta el {date}."
+    },
+    "sign": {
+      "title": "Doble firma",
+      "needsLogin": "Para firmar, entra con tu cuenta de la entidad. Guardamos el enlace en esta pestaña: al volver, seguirás aquí.",
+      "needsSecondFactor": "Para firmar necesitas superar la verificación en dos pasos en esta sesión.",
+      "loginCta": "Entrar para firmar",
+      "secondFactorCta": "Verificar en dos pasos",
+      "loading": "Comprobando el enlace…",
+      "missing": {
+        "title": "Este enlace ya no sirve",
+        "body": "Puede que ya se haya usado, que haya caducado, que sea de otra persona o que se hayan agotado los intentos. Pide uno nuevo desde Aprobaciones.",
+        "cta": "Ir a Aprobaciones"
+      },
+      "done": {
+        "completeTitle": "¡Doble firma completa! 2 de 2",
+        "partialTitle": "Tu firma está registrada: 1 de 2",
+        "completeIdea": "La idea ya es una iniciativa en presupuestación. El siguiente paso es preparar su presupuesto.",
+        "completePayout": "Las dos firmas de la liquidación están registradas.",
+        "partialNotified": "Hemos enviado el enlace a la otra persona firmante para completar la doble firma.",
+        "partialWaiting": "Falta la firma de la otra persona. Cuando tenga activada la verificación en dos pasos, podrá pedir su enlace desde Aprobaciones.",
+        "cta": "Volver a Aprobaciones"
+      },
+      "what": "Lo que vas a firmar",
+      "ideaMeta": "{alias} · {category} · {votes} firmas verificadas",
+      "ideaRevalidated": "{count, plural, one {Incluye # firma que la entidad validó a mano (era sospechosa).} other {Incluye # firmas que la entidad validó a mano (eran sospechosas).}}",
+      "ideaEffect": "Al completar las dos firmas, la idea pasa a presupuestación como iniciativa de la entidad.",
+      "payoutMeta": "Hucha {wallet} · {amount} · destino: {destination}",
+      "destinations": {
+        "ORGANIZATION": "cuenta de la entidad",
+        "PROVIDER": "proveedor elegido por la entidad"
+      },
+      "expires": "El enlace vale hasta el {date}.",
+      "otpLabel": "Código de 6 dígitos del email",
+      "otpHint": "Está en el mismo email que el enlace.",
+      "submit": "Firmar",
+      "signing": "Firmando…",
+      "errors": {
+        "otpFormat": "Escribe los 6 dígitos del código.",
+        "otp": "{count, plural, one {El código no es correcto. Te queda # intento.} other {El código no es correcto. Te quedan # intentos.}}",
+        "locked": "Se han agotado los intentos de este enlace. Pide uno nuevo desde Aprobaciones.",
+        "failed": "No hemos podido completar la firma. Inténtalo de nuevo en unos segundos.",
+        "INVALID_LINK": "Este enlace ya no sirve. Pide uno nuevo desde Aprobaciones.",
+        "TARGET_CHANGED": "Lo que se iba a firmar ha cambiado desde que se envió el enlace. Revísalo en Aprobaciones y pide un enlace nuevo.",
+        "LOGIN_REQUIRED": "Tu sesión ha terminado. Vuelve a entrar para firmar.",
+        "TWO_FACTOR_REQUIRED": "Necesitas superar la verificación en dos pasos en esta sesión."
+      },
+      "blocked": {
+        "NOT_A_SIGNER": "Tu cuenta no tiene un cargo de firma en esta entidad.",
+        "HOLDS_BOTH_ROLES": "Una misma persona no puede ocupar los dos cargos de firma. Revisad los cargos de la entidad.",
+        "TWO_FACTOR_REQUIRED": "Para firmar necesitas la verificación en dos pasos activada y superada en esta sesión.",
+        "TARGET_CLOSED": "Esta firma ya no está abierta: la idea ha cambiado de fase o ha vencido su plazo.",
+        "ALREADY_SIGNED": "Tu firma ya consta (o tu cargo ya ha firmado).",
+        "SAME_PERSON": "Las dos firmas tienen que ser de personas distintas, con correos distintos.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveedor para firmar esta liquidación.",
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en Paycomet.",
+        "RATE_LIMITED": "Has pedido varios enlaces seguidos. Espera unos minutos antes de pedir otro."
+      },
+      "retry": "Volver a comprobar el enlace"
     }
   },
   "gate": {

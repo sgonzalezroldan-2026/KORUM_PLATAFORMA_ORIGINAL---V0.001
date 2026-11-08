@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { hashGatePin } from '@/core/ticketing/gate-pin';
 import { totpCode } from '../support/totp';
-import { codeIn, emailTo, uniqueEmail, withE2eDb } from './auth-support';
+import { codeTo, emailTo, uniqueEmail, withE2eDb } from './auth-support';
 import { E2E_SERVER_ENV } from './e2e-env';
 import { expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
@@ -72,7 +72,7 @@ test.describe('Familias: código por email y acceso denegado al panel y a la con
     await page.getByRole('button', { name: 'Prefiero un código de 6 dígitos' }).click();
     // La primera petición a /api/auth compila la ruta en el servidor de desarrollo: se da más margen.
     await expect(page.getByRole('heading', { name: 'Escribe el código' })).toBeFocused({ timeout: 30_000 });
-    const code = codeIn(await emailTo(email, since));
+    const code = await codeTo(email, since);
     expect(code).toMatch(/^\d{6}$/);
     await page.getByLabel('Código de 6 dígitos').fill(code);
     await page.getByRole('button', { name: 'Entrar', exact: true }).click();
@@ -141,7 +141,7 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
     expect(invitation).toContain('/invitacion#t=');
 
     // Verificación del email y activación del TOTP.
-    await page.getByLabel('Código de 6 dígitos').fill(codeIn(await emailTo(director, since)));
+    await page.getByLabel('Código de 6 dígitos').fill(await codeTo(director, since));
     await page.getByRole('button', { name: 'Verificar y continuar' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Activa la verificación en dos pasos' })).toBeVisible({ timeout: 30_000 });
     await page.getByLabel('Tu contraseña').fill(password);

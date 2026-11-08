@@ -79,6 +79,8 @@ describe('QA-C05 · catálogos de traducción', () => {
       'hucha.pledge.monthly', 'hucha.pledge.status.ACTIVE', 'hucha.pledge.status.PAUSED', 'hucha.pledge.progressValue', 'hucha.pledge.pause', 'hucha.pledge.historyLine',
       // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
       'account.proposals.fromKorum', 'account.support.toKorum',
+      // Aprobaciones (Sprint 4.2a): «Desestimar», «Verificada», «Enviar», «Convertida en iniciativa», «Desestimada» y «KORUM» se escriben igual en catalán.
+      'panel.approvals.actions.reject', 'panel.approvals.audit.statusVerified', 'panel.approvals.chat.fromKorum', 'panel.approvals.chat.send', 'panel.approvals.phases.CONVERTED', 'panel.approvals.phases.REJECTED', 'panel.approvals.reject.confirm',
       // Panel de la entidad (Sprint 4.1): «Filtrar», «Taquilla o rifa», «fase actual», «Fases de…», «Medalla…», «Plata» y «{raised} de {goal}» se escriben igual en catalán.
       'panel.dashboard.card.formatTicketing', 'panel.dashboard.card.raised', 'panel.dashboard.filter.toggle', 'panel.dashboard.stepState.current', 'panel.dashboard.timeline.stepsLabel',
       'panel.medals.kit.title', 'panel.medals.level', 'panel.medals.names.silver']);
@@ -92,7 +94,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Mi cuenta (Sprint 3.7): patrones sin texto traducible.
       'account.contributions.line', 'account.documents.line', 'account.passes.where',
       // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
-      'account.proposals.fromKorum', 'account.support.toKorum']);
+      'account.proposals.fromKorum', 'account.support.toKorum',
+      // Aprobaciones (Sprint 4.2a): «KORUM» es un nombre propio.
+      'panel.approvals.chat.fromKorum']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

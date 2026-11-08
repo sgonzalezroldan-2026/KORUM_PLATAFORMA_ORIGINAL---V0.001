@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { codeIn, emailTo, uniqueEmail, withE2eDb } from './auth-support';
+import { codeTo, uniqueEmail, withE2eDb } from './auth-support';
 import { expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
 /**
@@ -30,7 +30,7 @@ async function signIn(page: Page, email: string, next: string) {
   const since = Date.now();
   await page.getByRole('button', { name: 'Prefiero un código de 6 dígitos' }).click();
   await expect(page.getByRole('heading', { name: 'Escribe el código' })).toBeFocused({ timeout: 30_000 });
-  await page.getByLabel('Código de 6 dígitos').fill(codeIn(await emailTo(email, since)));
+  await page.getByLabel('Código de 6 dígitos').fill(await codeTo(email, since));
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await server(page).toHaveURL(new RegExp(`${next.replace(/\//g, '\\/')}$`));
 }
@@ -156,7 +156,7 @@ test.describe('QA-F06 · escribir al soporte', () => {
     await expect(dialog).toBeVisible();
     const since = Date.now();
     await dialog.getByRole('button', { name: 'Enviar código' }).click();
-    await dialog.getByLabel('Código de 6 dígitos').fill(codeIn(await emailTo(email, since)));
+    await dialog.getByLabel('Código de 6 dígitos').fill(await codeTo(email, since));
     await dialog.getByRole('button', { name: 'Confirmar' }).click();
     await firstAction(page.getByTestId('support-sent')).toContainText('solicitud de rectificación');
 

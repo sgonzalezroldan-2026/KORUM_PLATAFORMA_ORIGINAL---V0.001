@@ -11,8 +11,11 @@ import { E2E_SCHEMA, e2eDatabaseUrl } from './e2e-database';
 
 const PREVIEW_DIR = path.join(process.cwd(), '.email-preview');
 
-/** Texto del último email enviado a `address` después de `since` (ms). Espera hasta 20 s a que la bandeja lo envíe. */
-export async function emailTo(address: string, since: number): Promise<string> {
+/**
+ * Texto del último email enviado a `address` después de `since` (ms) que cumple `accept` (por defecto, cualquiera). Espera hasta 20 s a que la
+ * bandeja lo envíe.
+ */
+export async function emailTo(address: string, since: number, accept: (text: string) => boolean = () => true): Promise<string> {
   let found: string | null = null;
   await expect
     .poll(
@@ -24,7 +27,7 @@ export async function emailTo(address: string, since: number): Promise<string> {
           const info = await stat(full);
           if (info.mtimeMs < since - 1000) continue;
           const text = await readFile(full, 'utf8');
-          if (text.startsWith(`Para: ${address}\n`)) candidates.push({ text, time: info.mtimeMs });
+          if (text.startsWith(`Para: ${address}\n`) && accept(text)) candidates.push({ text, time: info.mtimeMs });
         }
         found = candidates.sort((a, b) => b.time - a.time)[0]?.text ?? null;
         return found !== null;
@@ -36,6 +39,12 @@ export async function emailTo(address: string, since: number): Promise<string> {
 }
 
 export const codeIn = (text: string) => /\b(\d{6})\b/.exec(text.split('\n\n').slice(1).join('\n'))?.[1] ?? '';
+
+/**
+ * Código de 6 dígitos del último email **con código** enviado a `address` después de `since`. Un email anterior sin código (un acuse que salió
+ * justo antes, dentro del margen de 1 s de `emailTo`) no se confunde con él (fallo intermitente de la E2E del 3.9 visto en el 4.2a).
+ */
+export const codeTo = async (address: string, since: number) => codeIn(await emailTo(address, since, (text) => codeIn(text) !== ''));
 
 /**
  * La base local sin Docker (PGlite) es un solo proceso: si esta conexión y la del servidor hablan a la vez, a veces mezcla sus mensajes

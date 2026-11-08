@@ -60,7 +60,9 @@ const SAMPLES: Record<string, unknown> = {
   'support.received': { ticketCode: 'TCK-7K3M9Q', rectification: true, answeredBy: 'SUPERADMIN' },
   'pledge.charged': { initiativeId: 1, amountCents: 1_000, feeCents: 25, totalCents: 1_025, reference: 'KH0123456789ABCDEF', cycle: 2, totalMonths: 9, fiscalCertificate: true },
   'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },
-  'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' }
+  'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' },
+  'idea.quorumReached': { ideaId: 503, alias: '#FAM-4821', ideaTitle: 'Toldos para el patio' },
+  'idea.centerReplied': { ideaId: 503, alias: '#FAM-4821', kind: 'REPLY' }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>
@@ -110,6 +112,15 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
     const without = await render('contribution.receipt', 'es', { payload: { ...(SAMPLES['contribution.receipt'] as object), fiscalCertificate: false } });
     expect(without.text).toContain('justificante nominativo');
     expect(without.text).not.toContain('certificado fiscal');
+  });
+
+  it('idea.centerReplied nunca copia el mensaje; al publicar la idea avisa si la entidad corrigió el texto (Sprint 4.2a)', async () => {
+    const approved = await render('idea.centerReplied', 'es', { payload: { ideaId: 503, alias: '#FAM-4821', kind: 'APPROVED', edited: true } });
+    expect(approved.subject).toBe('Tu propuesta ya recoge firmas en AMPA Colegio Sol');
+    expect(approved.text).toContain('La entidad ha corregido el texto al publicarla.');
+    expect((await render('idea.centerReplied', 'en', { payload: { ideaId: 503, alias: '#FAM-4821', kind: 'APPROVED', edited: false } })).text).not.toContain('edited the text');
+    const rejected = await render('idea.centerReplied', 'ca', { payload: { ideaId: 503, alias: '#FAM-4821', kind: 'REJECTED' } });
+    expect(rejected.text).toContain('/ca/mi-cuenta/propuestas');
   });
 
   it('la aportación voluntaria a KORUM solo aparece en el recibo si se marcó', async () => {

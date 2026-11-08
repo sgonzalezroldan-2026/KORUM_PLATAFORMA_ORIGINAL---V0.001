@@ -15,6 +15,7 @@ import {
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
 import { accountPasskeyAdded, supportReceived } from './definitions-account';
+import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 
 /**
@@ -72,7 +73,9 @@ const ENTRIES = [
   register('support.received', supportReceived),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
-  register('pledge.failed', pledgeFailed)
+  register('pledge.failed', pledgeFailed),
+  register('idea.quorumReached', ideaQuorumReached),
+  register('idea.centerReplied', ideaCenterReplied)
 ];
 
 export const TEMPLATE_CATALOG: ReadonlyMap<string, RegisteredTemplate> = new Map(ENTRIES);

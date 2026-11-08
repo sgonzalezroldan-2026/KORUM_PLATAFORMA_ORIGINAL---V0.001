@@ -433,7 +433,9 @@ describe('QA-SEC03 · doble firma', () => {
     const { target, payout } = await payoutTarget(organization.id);
 
     const receipt = await requestSignatureReceipt(db, SECRET, directorActor, organization.id, target, NOW);
-    expect(Object.keys(receipt).sort()).toEqual(['expiresAt', 'signerRole', 'signerUserId']);
+    // Solo quién, con qué cargo, hasta cuándo y qué aviso de la bandeja de salida enviar al momento (heredado del 2.6): nunca el enlace ni el código.
+    expect(Object.keys(receipt).sort()).toEqual(['expiresAt', 'notificationId', 'signerRole', 'signerUserId']);
+    expect(typeof receipt.notificationId).toBe('number');
     const first = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'doubleCheck.pending', userId: director.id }, orderBy: { id: 'desc' } });
     expect(first).toMatchObject({ status: 'PENDING', toAddress: director.email, locale: 'ca', organizationId: organization.id });
     expect(first.payloadJson).toMatchObject({ targetType: 'ESCROW_PAYOUT', token: expect.stringMatching(/^[A-Za-z0-9_-]{43}$/), otp: expect.stringMatching(/^\d{6}$/), expiresAt: receipt.expiresAt.toISOString() });

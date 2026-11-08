@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { proposeIdeaSchema } from '@/core/ideas/idea-rules';
 import { IdeaProposalRejectedError, proposeIdea, type IdeaProposalRejection } from '@/core/ideas/idea-proposal.service';
-import { raiseAlert } from '@/core/jobs/ops-alerts';
+import { raiseAlert, resolveAlert } from '@/core/jobs/ops-alerts';
 import { recordConsent } from '@/core/privacy/consents';
 import { hashIpSubnet } from '@/core/security/device-signals';
 import { IdeaSignatureRejectedError, signIdea, type IdeaSignatureRejection, type SignatureReasonKey } from '@/core/security/device-quorum.service';
@@ -55,6 +55,12 @@ export async function raiseTrustedIpAlert(db: KorumPrismaClient, route: string, 
   await raiseAlert(db, { type: 'TRUSTED_IP_MISSING', severity: 'WARNING', dedupeKey: `trusted-ip-missing:${route}`, targetType: 'Route', targetId: route, detail: { route } }, now);
 }
 
+/** Con una IP válida, el proxy vuelve a pasarla: la alerta abierta se cierra sola (heredado del Sprint 3.6). No hace nada si no había ninguna. */
+async function trackTrustedIp(db: KorumPrismaClient, route: string, ip: string | null, now: Date): Promise<void> {
+  if (ip === null) await raiseTrustedIpAlert(db, route, now);
+  else await resolveAlert(db, `trusted-ip-missing:${route}`, now);
+}
+
 export async function signIdeaForRequest(deps: IdeaServiceDeps, payload: unknown, context: IdeaRequestContext, now: Date = new Date()): Promise<SignOutcome> {
   if (!context.userId) return { status: 'LOGIN_REQUIRED' };
   const parsed = signPayload.safeParse(payload);
@@ -66,7 +72,7 @@ export async function signIdeaForRequest(deps: IdeaServiceDeps, payload: unknown
   if (!(await reserveAttempt(db, `${IDEA_SIGN_RULE.prefix}${context.userId}`, IDEA_SIGN_RULE, now))) return { status: 'REJECTED', reason: 'RATE_LIMITED' };
   const idea = await db.idea.findFirst({ where: { id: input.ideaId, organization: { slug: input.orgSlug, archivedAt: null } }, select: { id: true } });
   if (!idea) return { status: 'REJECTED', reason: 'NOT_FOUND' };
-  if (context.ip === null) await raiseTrustedIpAlert(db, 'idea.sign', now);
+  await trackTrustedIp(db, 'idea.sign', context.ip, now);
 
   try {
     if (input.fingerprintConsent === true) {
@@ -95,8 +101,8 @@ export async function proposeIdeaForRequest(deps: IdeaServiceDeps, payload: unkn
   // El límite es por red **y por entidad** (el wifi de un colegio no bloquea a otro). Sin IP válida no hay red que limitar: ya salta la alerta, y
   // un grupo común para toda la plataforma dejaría sin buzón a todas las familias por culpa de un fallo del proxy.
   let reserved: string | null = null;
-  if (context.ip === null) await raiseTrustedIpAlert(deps.db, 'idea.propose', now);
-  else {
+  await trackTrustedIp(deps.db, 'idea.propose', context.ip, now);
+  if (context.ip !== null) {
     reserved = `${IDEA_PROPOSAL_RULE.prefix}${parsed.data.orgSlug}:${hashIpSubnet(deps.hmacSecret, context.ip)}`;
     if (!(await reserveAttempt(deps.db, reserved, IDEA_PROPOSAL_RULE, now))) return { status: 'REJECTED', reason: 'RATE_LIMITED' };
   }
