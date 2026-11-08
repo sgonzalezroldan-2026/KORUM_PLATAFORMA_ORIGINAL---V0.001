@@ -21,6 +21,10 @@ export const RETENTION = {
   deviceDays: 396,
   /** HMAC de IP y huella del navegador: 12 meses. */
   networkHashDays: 365,
+  /** Chat de una idea (mensajes de la familia): vida de la idea + 1 año, como su auditoría de firmas. */
+  ideaChatDaysAfterIdea: 365,
+  /** Consultas de soporte: 2 años desde que se cerraron (o desde que se abrieron, si nunca se resuelven); después pierden el email y el texto (queda el hecho de la consulta). */
+  supportTicketDaysAfterResolved: 2 * 365,
   /** Contenido de las notificaciones enviadas: 12 meses (se conserva el hecho del envío). */
   notificationDays: 365,
   /** Consentimientos: mientras estén vigentes + 3 años. */

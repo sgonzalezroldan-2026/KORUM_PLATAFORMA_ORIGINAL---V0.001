@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
-import { useId, useMemo, useRef, useState, useTransition, type FormEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, useTransition, type FormEvent } from 'react';
 import type { startPledgeAction } from '@/app/[locale]/(account)/mi-hucha/actions';
 import { FieldError } from '@/components/checkout/checkout-fields';
 import { parseTypedCents } from '@/components/checkout/checkout-draft';
@@ -45,6 +45,8 @@ export function PledgeForm({ offer, provinces, start }: { offer: PledgeOffer; pr
   const [error, setError] = useState<FormError | null>(null);
   const [pending, startTransition] = useTransition();
   const errorRef = useRef<HTMLParagraphElement>(null);
+  // Cada error general pide el foco subiendo este contador: se atiende al pintarse el aviso (ver `showError`).
+  const [errorFocusRequests, setErrorFocusRequests] = useState(0);
   const ids = { amount: useId(), amountHint: useId(), amountError: useId(), months: useId(), campaign: useId(), campaignHint: useId(), summary: useId() };
   const amountRef = useRef<HTMLInputElement>(null);
 
@@ -56,8 +58,14 @@ export function PledgeForm({ offer, provinces, start }: { offer: PledgeOffer; pr
   function showError(next: FormError) {
     setError(next);
     // El error general se anuncia y recibe el foco; los de campo ya van junto a su campo (`role="alert"`).
-    requestAnimationFrame(() => errorRef.current?.focus());
+    setErrorFocusRequests((count) => count + 1);
   }
+
+  // El foco se da cuando React ya ha pintado el aviso. Con `requestAnimationFrame` al llegar la respuesta del servidor, en la compilación de
+  // producción el cuadro se dispara antes de pintarlo y el foco se pierde.
+  useEffect(() => {
+    if (errorFocusRequests > 0) errorRef.current?.focus();
+  }, [errorFocusRequests]);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -168,7 +168,8 @@
         "monthlyPledges": "Aportaciones mensuales",
         "notifications": "Emails que te hemos enviado",
         "supportTickets": "Consultas de soporte",
-        "passkeys": "Llaves de acceso"
+        "passkeys": "Llaves de acceso",
+        "ideaProposals": "Propuestas de ideas y chat con el centro"
       },
       "fields": {
         "name": "Nombre",
@@ -221,7 +222,9 @@
         "synced": "Sincronizada entre dispositivos",
         "pledgeFee": "Gestión por mes",
         "pledgeCampaign": "Campaña preferida",
-        "nextCharge": "Próximo cobro"
+        "nextCharge": "Próximo cobro",
+        "alias": "Código",
+        "sender": "Remitente"
       },
       "types": {
         "DONATION": "Donación",
@@ -483,6 +486,18 @@
         "body": "Hemos intentado cobrar tu aportación mensual de {amount} para {organization} y no ha sido posible. No se te ha cobrado nada.",
         "paused": "Hemos puesto tu aportación en pausa para no volver a intentarlo con una tarjeta que no funciona. Si quieres seguir, puedes reanudarla en Mi Hucha.",
         "cardGone": "La tarjeta guardada ya no se puede usar. Si quieres seguir aportando cada mes, cancela esta aportación y programa una nueva en Mi Hucha."
+      }
+    },
+    "support": {
+      "received": {
+        "subject": "Hemos recibido tu consulta {code}",
+        "preheader": "Te contestaremos lo antes posible.",
+        "title": "Consulta recibida",
+        "bodyOrganization": "Hemos recibido tu consulta y se la hemos pasado al centro, que te contestará. Guarda este código por si necesitas citarla.",
+        "bodyPlatform": "Hemos recibido tu consulta y el equipo de KORUM te contestará. Guarda este código por si necesitas citarla.",
+        "rectification": "Además hemos abierto tu solicitud de rectificación de datos personales: la atenderemos en un plazo máximo de un mes.",
+        "code": "Código de la consulta",
+        "cta": "Ver mis consultas"
       }
     }
   },
@@ -1502,7 +1517,8 @@
       "initiatives": "Iniciativas y taquilla",
       "sponsors": "Comercios amigos",
       "ideas": "Buzón de ideas",
-      "achievements": "Logros conseguidos"
+      "achievements": "Logros conseguidos",
+      "help": "FAQ y soporte"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1658,7 +1674,9 @@
       "ideasTitle": "{name} · Buzón de ideas",
       "ideasDescription": "Propuestas de las familias para mejorar {name}. Cada idea se firma con el email verificado y solo se enseña un código anónimo.",
       "achievementsTitle": "{name} · Logros conseguidos",
-      "achievementsDescription": "Lo que la comunidad de {name} ya ha conseguido juntos, con el antes y el después de cada mejora."
+      "achievementsDescription": "Lo que la comunidad de {name} ya ha conseguido juntos, con el antes y el después de cada mejora.",
+      "helpTitle": "{name} · FAQ y soporte",
+      "helpDescription": "Respuestas a las dudas más habituales de las familias de {name} y un formulario para escribir al centro o a KORUM."
     },
     "og": {
       "progress": "{pct} % conseguido",
@@ -2110,8 +2128,11 @@
           "ALIAS_EXHAUSTED": "No hemos podido crear tu código. Inténtalo de nuevo en unos segundos.",
           "ACCOUNT_NOT_ALLOWED": "Para proponer una idea tu email tiene que estar verificado. Entra de nuevo con el enlace o el código.",
           "RATE_LIMITED": "Se han enviado muchas ideas desde esta red. Espera un rato e inténtalo de nuevo."
-        }
-      }
+        },
+        "doneChat": "Si quieres añadir algo, puedes hablar con el centro de forma anónima desde Mi cuenta.",
+        "doneChatLink": "Abrir mis propuestas y mensajes"
+      },
+      "myProposals": "Mis propuestas y mensajes con el centro"
     },
     "achievements": {
       "badge": "Orgullo KORUM",
@@ -2136,6 +2157,89 @@
         "description": "Cuando una iniciativa llegue a su meta y el centro termine la mejora, la verás aquí con su antes y su después.",
         "action": "Ver iniciativas abiertas"
       }
+    },
+    "help": {
+      "breadcrumb": "FAQ y soporte",
+      "badge": "Ayuda",
+      "title": "Preguntas frecuentes y soporte",
+      "intro": "Aquí tienes las dudas más habituales. Si no encuentras la tuya, escríbenos: te contestará el centro o el equipo de KORUM según el tema.",
+      "faqTitle": "Preguntas frecuentes",
+      "items": {
+        "guarantee": {
+          "q": "¿Qué incluye la aportación voluntaria a KORUM?",
+          "a": "Es opcional y no cambia nada de tu donación. Con ella se sostiene el servicio que garantiza a todas las familias que el 100 % de la donación llega al centro sin descuentos bancarios, la devolución automática si no se alcanza la meta y la emisión automática de tu certificado o justificante."
+        },
+        "family": {
+          "q": "¿Pueden firmar el padre y la madre desde el mismo dispositivo?",
+          "a": "Sí. Hasta dos cuentas familiares pueden firmar desde el mismo móvil u ordenador y cuentan como firmas verificadas. Si se detectan patrones sospechosos (por ejemplo, muchas cuentas distintas desde un mismo dispositivo), esas firmas quedan marcadas y no suman al recuento hasta que se revisen."
+        },
+        "refund": {
+          "q": "¿Qué pasa si la iniciativa no llega a su meta?",
+          "a": "Se te devuelve el 100 % de lo que pagaste, incluida la aportación voluntaria, a la tarjeta o al medio de pago original. No tienes que pedirlo: la devolución es automática."
+        },
+        "payments": {
+          "q": "¿Quién guarda el dinero?",
+          "a": "Los cobros, las retenciones y las devoluciones los ejecuta PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM es una plataforma tecnológica: no es una entidad financiera ni custodia fondos. El dinero queda retenido en PAYCOMET hasta lograr la meta."
+        },
+        "fiscal": {
+          "q": "¿Recibo un certificado fiscal por mi donación?",
+          "a": "Depende de la entidad. Si está acogida a la Ley 49/2002 y lo ha acreditado, recibes un certificado de donación (necesitamos tu NIF, que es opcional). Si no, recibes un justificante nominativo de aportación, sin efectos fiscales. Las entradas y las rifas nunca dan certificado."
+        },
+        "ideas": {
+          "q": "¿Mi propuesta en el buzón de ideas es anónima?",
+          "a": "Sí. El centro y las demás familias solo ven un código como #FAM-1234, nunca tu nombre ni tu email. Puedes hablar con el centro desde «Mi cuenta», en «Mis propuestas y firmas»; te pedimos que no escribas nombres en los mensajes."
+        },
+        "hucha": {
+          "q": "¿Qué es Mi Hucha y se guarda dinero en ella?",
+          "a": "Mi Hucha es una aportación mensual programada: eliges un importe y una entidad, y cada mes se cobra con tu tarjeta y se aplica a una iniciativa abierta. No guarda saldo. La puedes pausar o cancelar en un clic desde «Mi Hucha»."
+        },
+        "data": {
+          "q": "¿Cómo ejerzo mis derechos sobre mis datos?",
+          "a": "Desde «Mi cuenta» puedes descargar tus datos, retirar consentimientos y suprimir tu cuenta. Para corregir tu nombre o tu email, usa el formulario de esta página con el tema «Corregir mis datos personales»: te responderemos en menos de un mes."
+        },
+        "independence": {
+          "q": "¿KORUM elige a los proveedores de las obras?",
+          "a": "No. Cada entidad elige libremente a su proveedor y KORUM no intermedia ni cobra comisiones a los proveedores de obras o equipamiento."
+        }
+      },
+      "support": {
+        "title": "Escríbenos",
+        "intro": "Una consulta sobre una iniciativa o un evento la contesta el centro; el resto, el equipo de KORUM. Te enviaremos un código para seguirla en Mi cuenta.",
+        "loginTitle": "Inicia sesión para escribirnos",
+        "loginText": "Así sabemos que el mensaje es tuyo y puedes ver la respuesta en Mi cuenta. Entras con un enlace o un código por email, sin contraseña.",
+        "loginAction": "Iniciar sesión",
+        "topicLabel": "Sobre qué quieres preguntar",
+        "topics": {
+          "INITIATIVE": "Una iniciativa o un evento",
+          "PAYMENT": "Un pago, una devolución o Mi Hucha",
+          "ACCOUNT": "Mi cuenta o el acceso",
+          "RECTIFICATION": "Corregir mis datos personales",
+          "OTHER": "Otra consulta o una sugerencia"
+        },
+        "rectificationHint": "Cuéntanos qué dato hay que corregir y cuál es el correcto. Para proteger tu cuenta te pediremos un código por email, y abriremos una solicitud de rectificación con plazo de un mes.",
+        "subjectLabel": "Asunto",
+        "messageLabel": "Tu mensaje",
+        "counter": "{count} de {max} caracteres",
+        "send": "Enviar consulta",
+        "sending": "Enviando…",
+        "sentTitle": "Consulta enviada",
+        "sentText": "Tu código es {code}. Te hemos enviado un email de confirmación; puedes ver el estado y la respuesta en Mi cuenta.",
+        "sentRectification": "Hemos abierto tu solicitud de rectificación: te responderemos en menos de un mes.",
+        "sentAction": "Ver mis consultas",
+        "another": "Escribir otra consulta",
+        "errors": {
+          "invalid": "Revisa el asunto (mínimo {subjectMin} caracteres) y el mensaje (entre {messageMin} y {messageMax}).",
+          "rateLimited": "Has enviado varias consultas seguidas. Espera un rato y vuelve a intentarlo.",
+          "account": "Tu cuenta no puede enviar consultas: confirma tu email e inténtalo de nuevo.",
+          "failed": "No hemos podido enviar tu consulta. Inténtalo de nuevo en unos minutos.",
+          "login": "Tu sesión ha caducado. Tu texto sigue aquí: entra de nuevo y vuelve a enviarlo."
+        },
+        "routing": {
+          "ORGANIZATION": "Te contestará el centro.",
+          "SUPERADMIN": "Te contestará el equipo de KORUM."
+        },
+        "limits": "Asunto: mínimo {subjectMin} caracteres. Mensaje: mínimo {messageMin} caracteres."
+      }
     }
   },
   "account": {
@@ -2149,7 +2253,9 @@
       "documents": "Certificados",
       "privacy": "Privacidad",
       "security": "Llaves de acceso",
-      "language": "Idioma"
+      "language": "Idioma",
+      "ideas": "Propuestas y firmas",
+      "support": "Mis consultas"
     },
     "contributions": {
       "title": "Mis aportaciones",
@@ -2325,6 +2431,80 @@
       "confirm": "Confirmar",
       "resend": "Enviar otro código",
       "cancel": "Cancelar"
+    },
+    "ideas": {
+      "summary": "{proposals, plural, =0 {Ninguna propuesta} one {# propuesta} other {# propuestas}} y {signed, plural, =0 {ninguna firma} one {# firma} other {# firmas}} en tus comunidades.",
+      "none": "Todavía no has propuesto ni firmado ninguna idea.",
+      "open": "Ver mis propuestas y firmas"
+    },
+    "support": {
+      "title": "Mis consultas",
+      "empty": "Todavía no has enviado ninguna consulta.",
+      "status": {
+        "OPEN": "Recibida",
+        "IN_PROGRESS": "En curso",
+        "RESOLVED": "Resuelta"
+      },
+      "topics": {
+        "INITIATIVE": "Iniciativa o evento",
+        "PAYMENT": "Pago o Mi Hucha",
+        "ACCOUNT": "Cuenta o acceso",
+        "RECTIFICATION": "Corregir mis datos",
+        "OTHER": "Otra consulta"
+      },
+      "line": "{topic} · para {to} · {date}",
+      "toKorum": "KORUM",
+      "reply": "Respuesta:",
+      "help": "Escribir una consulta nueva",
+      "helpNone": "Para escribir una consulta, entra en «FAQ y soporte» del portal de tu comunidad.",
+      "viewMessage": "Ver lo que escribí"
+    },
+    "proposals": {
+      "metaTitle": "Mis propuestas y firmas",
+      "back": "Volver a Mi cuenta",
+      "title": "Mis propuestas y firmas",
+      "intro": "Tus propuestas del buzón de ideas, con el chat anónimo con el centro, y las ideas que has firmado. El centro solo ve tu código #FAM-XXXX.",
+      "proposalsTitle": "Mis propuestas y mensajes con el centro",
+      "empty": {
+        "title": "Todavía no has propuesto ninguna idea",
+        "description": "Entra en el buzón de ideas de tu comunidad y propón una mejora. Tu nombre no se verá: solo un código.",
+        "action": "Buscar mi comunidad"
+      },
+      "phases": {
+        "PHASE0_MOD": "En revisión previa",
+        "PUBLIC_VOTING": "Abierta a firmas",
+        "DOUBLE_CHECK": "Con quórum, pendiente de la doble firma",
+        "CONVERTED": "Convertida en iniciativa",
+        "REJECTED": "No se ha podido aprobar"
+      },
+      "summary": "{entity} · {category} · {votes} de {needed} firmas verificadas.",
+      "daysLeft": "{count, plural, =0 {Hoy termina el plazo.} one {Queda # día.} other {Quedan # días.}}",
+      "fromYou": "Tú ({alias})",
+      "fromKorum": "KORUM",
+      "writeLabel": "Escribir un mensaje al centro",
+      "privacyHint": "Máximo {max} caracteres. El centro solo ve tu código: no escribas tu nombre ni el de tus hijos.",
+      "send": "Enviar mensaje",
+      "sending": "Enviando…",
+      "sent": "Mensaje enviado. El centro lo verá en su bandeja.",
+      "loginLink": "Iniciar sesión",
+      "blocked": {
+        "CLOSED": "Esta propuesta ya está cerrada: puedes leer la conversación, pero no escribir más.",
+        "WAIT_FOR_CENTER": "Tus mensajes ya están con el centro. Cuando responda podrás seguir escribiendo.",
+        "LIMIT_REACHED": "Has llegado al máximo de mensajes de esta propuesta."
+      },
+      "errors": {
+        "invalid": "Escribe un mensaje de entre 2 y 600 caracteres.",
+        "rateLimited": "Has enviado muchos mensajes seguidos. Espera un rato y vuelve a intentarlo.",
+        "login": "Tu sesión ha caducado.",
+        "failed": "No hemos podido enviar el mensaje. Inténtalo de nuevo en unos minutos."
+      },
+      "signatures": {
+        "title": "Mis firmas",
+        "empty": "Todavía no has firmado ninguna idea.",
+        "line": "{entity} · {phase} · {votes} de {needed} firmas · firmada el {date}",
+        "open": "Ir al buzón de {entity}"
+      },
+      "refreshHint": "Las respuestas del centro aparecen al volver a abrir o recargar esta página."
     }
   },
   "hucha": {

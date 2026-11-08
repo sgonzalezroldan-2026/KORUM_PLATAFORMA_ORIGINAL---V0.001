@@ -34,3 +34,6 @@ Thumbs.db
 
 # Vista previa local de emails (Sprint 2.6)
 .email-preview/
+
+# Registros del navegador de pruebas (MCP de Playwright): pueden llevar enlaces y códigos de acceso de desarrollo
+.playwright-mcp/

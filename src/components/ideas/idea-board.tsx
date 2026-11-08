@@ -103,6 +103,12 @@ export function IdeaBoard({ orgSlug, locale, entityName, contentLang, ideas, nee
             {t('title', { name: entityName })}
           </h1>
           <p className="text-ink-soft">{t('intro', { min: needed, days: maxDays })}</p>
+          {signedIn ? (
+            <Link href="/mi-cuenta/propuestas" prefetch={false} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline">
+              <span aria-hidden="true">{'💬 '}</span>
+              {t('myProposals')}
+            </Link>
+          ) : null}
         </div>
         {signedIn ? (
           <button type="button" onClick={() => setProposeOpen(true)} className={proposeClass}>

@@ -121,6 +121,8 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   // marcar las dos chocaría con la unicidad por idea.
   const byEmail = user.emailVerified ? [{ canonicalEmail: user.canonicalEmail, userId: null }] : [];
   await tx.ideaSignatureAudit.updateMany({ where: { OR: [{ userId: user.id }, ...byEmail] }, data: { canonicalEmail: signerMarker } });
+  // Lo que la familia escribió en el chat de sus propuestas es texto libre y puede delatarla: se borra. Las respuestas del centro se quedan, sin nadie detrás.
+  if (user.emailVerified) await tx.ideaMessage.deleteMany({ where: { senderRole: 'FAMILY', idea: { authorCanonicalEmail: user.canonicalEmail } } });
   if (user.emailVerified) await tx.idea.updateMany({ where: { authorCanonicalEmail: user.canonicalEmail }, data: { authorCanonicalEmail: signerMarker } });
   const votes = user.emailVerified ? await tx.resizeVote.findMany({ where: { canonicalEmail: user.canonicalEmail }, select: { id: true } }) : [];
   for (const vote of votes) await tx.resizeVote.update({ where: { id: vote.id }, data: { canonicalEmail: anonymizedMarker('voto', vote.id) } });
@@ -128,7 +130,8 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   const messages = { OR: [{ userId: user.id }, ...(user.emailVerified ? [{ toAddress: user.email }] : [])] };
   await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
-  if (user.emailVerified) await tx.supportTicket.updateMany({ where: { senderEmail: user.email }, data: { senderEmail: null } });
+  // Las consultas de soporte (sobre todo las de «Corregir mis datos») llevan datos personales en texto libre: se vacían con el email, no solo el email.
+  if (user.emailVerified) await tx.supportTicket.updateMany({ where: { senderEmail: user.email }, data: { senderEmail: null, subject: '', message: '', replyMessage: null } });
   await tx.consentRecord.updateMany({ where: { userId: user.id }, data: { subjectEmailHmac: null } });
   await tx.walletSubscription.updateMany({ where: { userId: user.id, status: { in: ['PENDING', 'ACTIVE', 'PAUSED'] } }, data: { status: 'CANCELLED', statusReason: 'ACCOUNT_ERASED', statusChangedAt: now } });
   await clearFingerprintsOf(tx, user.id);

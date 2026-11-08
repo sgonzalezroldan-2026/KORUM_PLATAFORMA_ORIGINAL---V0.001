@@ -69,3 +69,11 @@ export const ACCOUNT_EXPORT_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy
 
 /** Intentos de suprimir la cuenta por persona: cada uno abre una solicitud y, si está bloqueado, deja rastro en la auditoría. */
 export const ACCOUNT_ERASURE_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:erase:user:', limit: 5, windowMs: 24 * 3_600_000 };
+
+/** Mensajes al centro por el chat anónimo de una idea, por persona (Sprint 3.9): el tope por idea lo aplica el servicio; este frena un guion. */
+export const IDEA_CHAT_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:chat:user:', limit: 20, windowMs: 60 * 60_000 };
+
+/** Consultas de soporte por persona (Sprint 3.9): cada una crea una fila que alguien tiene que leer y un email de acuse. */
+export const SUPPORT_TICKET_RULE: RateLimitRule & PurgeRule = { prefix: 'support:user:', limit: 5, windowMs: 60 * 60_000 };
+/** Y un tope diario, para que no se pueda repartir un guion en una consulta cada 12 minutos. */
+export const SUPPORT_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 'support:day:user:', limit: 12, windowMs: 24 * 3_600_000 };

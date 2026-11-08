@@ -168,7 +168,8 @@
         "monthlyPledges": "Aportacions mensuals",
         "notifications": "Correus que t'hem enviat",
         "supportTickets": "Consultes de suport",
-        "passkeys": "Claus d'accés"
+        "passkeys": "Claus d'accés",
+        "ideaProposals": "Propostes d’idees i xat amb el centre"
       },
       "fields": {
         "name": "Nom",
@@ -221,7 +222,9 @@
         "synced": "Sincronitzada entre dispositius",
         "pledgeFee": "Gestió per mes",
         "pledgeCampaign": "Campanya preferida",
-        "nextCharge": "Proper cobrament"
+        "nextCharge": "Proper cobrament",
+        "alias": "Codi",
+        "sender": "Remitent"
       },
       "types": {
         "DONATION": "Donació",
@@ -483,6 +486,18 @@
         "body": "Hem intentat cobrar la teva aportació mensual de {amount} per a {organization} i no ha estat possible. No se t’ha cobrat res.",
         "paused": "Hem posat la teva aportació en pausa per no tornar-ho a provar amb una targeta que no funciona. Si vols continuar, la pots reprendre a la Guardiola.",
         "cardGone": "La targeta desada ja no es pot fer servir. Si vols continuar aportant cada mes, cancel·la aquesta aportació i programa’n una de nova a la Guardiola."
+      }
+    },
+    "support": {
+      "received": {
+        "subject": "Hem rebut la teva consulta {code}",
+        "preheader": "Et contestarem com més aviat millor.",
+        "title": "Consulta rebuda",
+        "bodyOrganization": "Hem rebut la teva consulta i l’hem passada al centre, que et contestarà. Guarda aquest codi per si l’has de citar.",
+        "bodyPlatform": "Hem rebut la teva consulta i l’equip de KORUM et contestarà. Guarda aquest codi per si l’has de citar.",
+        "rectification": "A més, hem obert la teva sol·licitud de rectificació de dades personals: l’atendrem en un termini màxim d’un mes.",
+        "code": "Codi de la consulta",
+        "cta": "Veure les meves consultes"
       }
     }
   },
@@ -1502,7 +1517,8 @@
       "initiatives": "Iniciatives i taquilla",
       "sponsors": "Comerços amics",
       "ideas": "Bústia d’idees",
-      "achievements": "Èxits aconseguits"
+      "achievements": "Èxits aconseguits",
+      "help": "FAQ i suport"
     },
     "filter": {
       "toggle": "Filtrar",
@@ -1658,7 +1674,9 @@
       "ideasTitle": "{name} · Bústia d’idees",
       "ideasDescription": "Propostes de les famílies per millorar {name}. Cada idea se signa amb l’email verificat i només es mostra un codi anònim.",
       "achievementsTitle": "{name} · Èxits aconseguits",
-      "achievementsDescription": "Tot el que la comunitat de {name} ja ha aconseguit junta, amb l’abans i el després de cada millora."
+      "achievementsDescription": "Tot el que la comunitat de {name} ja ha aconseguit junta, amb l’abans i el després de cada millora.",
+      "helpTitle": "{name} · FAQ i suport",
+      "helpDescription": "Respostes als dubtes més habituals de les famílies de {name} i un formulari per escriure al centre o a KORUM."
     },
     "og": {
       "progress": "{pct} % aconseguit",
@@ -2110,8 +2128,11 @@
           "ALIAS_EXHAUSTED": "No hem pogut crear el teu codi. Torna-ho a provar d’aquí a uns segons.",
           "ACCOUNT_NOT_ALLOWED": "Per proposar una idea el teu email ha d’estar verificat. Entra de nou amb l’enllaç o el codi.",
           "RATE_LIMITED": "S’han enviat moltes idees des d’aquesta xarxa. Espera una estona i torna-ho a provar."
-        }
-      }
+        },
+        "doneChat": "Si vols afegir-hi res, pots parlar amb el centre de forma anònima des d’El meu compte.",
+        "doneChatLink": "Obrir les meves propostes i missatges"
+      },
+      "myProposals": "Les meves propostes i missatges amb el centre"
     },
     "achievements": {
       "badge": "Orgull KORUM",
@@ -2136,6 +2157,89 @@
         "description": "Quan una iniciativa arribi a la seva meta i el centre acabi la millora, la veuràs aquí amb el seu abans i el seu després.",
         "action": "Veure iniciatives obertes"
       }
+    },
+    "help": {
+      "breadcrumb": "FAQ i suport",
+      "badge": "Ajuda",
+      "title": "Preguntes freqüents i suport",
+      "intro": "Aquí tens els dubtes més habituals. Si no trobes el teu, escriu-nos: et contestarà el centre o l’equip de KORUM segons el tema.",
+      "faqTitle": "Preguntes freqüents",
+      "items": {
+        "guarantee": {
+          "q": "Què inclou l’aportació voluntària a KORUM?",
+          "a": "És opcional i no canvia res de la teva donació. Amb ella se sosté el servei que garanteix a totes les famílies que el 100 % de la donació arriba al centre sense descomptes bancaris, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del teu certificat o justificant."
+        },
+        "family": {
+          "q": "Poden signar el pare i la mare des del mateix dispositiu?",
+          "a": "Sí. Fins a dos comptes familiars poden signar des del mateix mòbil o ordinador i compten com a signatures verificades. Si es detecten patrons sospitosos (per exemple, molts comptes diferents des d’un mateix dispositiu), aquestes signatures queden marcades i no sumen al recompte fins que es revisin."
+        },
+        "refund": {
+          "q": "Què passa si la iniciativa no arriba a la meta?",
+          "a": "Se’t torna el 100 % del que vas pagar, inclosa l’aportació voluntària, a la targeta o al mitjà de pagament original. No cal que ho demanis: la devolució és automàtica."
+        },
+        "payments": {
+          "q": "Qui guarda els diners?",
+          "a": "Els cobraments, les retencions i les devolucions els executa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és una plataforma tecnològica: no és una entitat financera ni custodia fons. Els diners queden retinguts a PAYCOMET fins a assolir la meta."
+        },
+        "fiscal": {
+          "q": "Rebo un certificat fiscal per la meva donació?",
+          "a": "Depèn de l’entitat. Si està acollida a la Llei 49/2002 i ho ha acreditat, reps un certificat de donació (necessitem el teu NIF, que és opcional). Si no, reps un justificant nominatiu d’aportació, sense efectes fiscals. Les entrades i les rifes mai donen certificat."
+        },
+        "ideas": {
+          "q": "La meva proposta a la bústia d’idees és anònima?",
+          "a": "Sí. El centre i les altres famílies només veuen un codi com #FAM-1234, mai el teu nom ni el teu correu. Pots parlar amb el centre des de «El meu compte», a «Les meves propostes i signatures»; et demanem que no escriguis noms als missatges."
+        },
+        "hucha": {
+          "q": "Què és la Guardiola i s’hi guarden diners?",
+          "a": "La Guardiola és una aportació mensual programada: tries un import i una entitat, i cada mes es cobra amb la teva targeta i s’aplica a una iniciativa oberta. No guarda saldo. La pots pausar o cancel·lar amb un clic des de «La meva Guardiola»."
+        },
+        "data": {
+          "q": "Com exerceixo els meus drets sobre les meves dades?",
+          "a": "Des de «El meu compte» pots descarregar les teves dades, retirar consentiments i suprimir el teu compte. Per corregir el teu nom o el teu correu, fes servir el formulari d’aquesta pàgina amb el tema «Corregir les meves dades personals»: et respondrem en menys d’un mes."
+        },
+        "independence": {
+          "q": "KORUM tria els proveïdors de les obres?",
+          "a": "No. Cada entitat tria lliurement el seu proveïdor i KORUM no intermedia ni cobra comissions als proveïdors d’obres o equipament."
+        }
+      },
+      "support": {
+        "title": "Escriu-nos",
+        "intro": "Una consulta sobre una iniciativa o un esdeveniment la contesta el centre; la resta, l’equip de KORUM. T’enviarem un codi per seguir-la al teu compte.",
+        "loginTitle": "Inicia la sessió per escriure’ns",
+        "loginText": "Així sabem que el missatge és teu i pots veure la resposta al teu compte. Entres amb un enllaç o un codi per correu, sense contrasenya.",
+        "loginAction": "Inicia la sessió",
+        "topicLabel": "Sobre què vols preguntar",
+        "topics": {
+          "INITIATIVE": "Una iniciativa o un esdeveniment",
+          "PAYMENT": "Un pagament, una devolució o la Guardiola",
+          "ACCOUNT": "El meu compte o l’accés",
+          "RECTIFICATION": "Corregir les meves dades personals",
+          "OTHER": "Una altra consulta o un suggeriment"
+        },
+        "rectificationHint": "Explica’ns quina dada s’ha de corregir i quina és la correcta. Per protegir el teu compte et demanarem un codi per correu, i obrirem una sol·licitud de rectificació amb termini d’un mes.",
+        "subjectLabel": "Assumpte",
+        "messageLabel": "El teu missatge",
+        "counter": "{count} de {max} caràcters",
+        "send": "Envia la consulta",
+        "sending": "Enviant…",
+        "sentTitle": "S’ha enviat la consulta",
+        "sentText": "El teu codi és {code}. T’hem enviat un correu de confirmació; pots veure l’estat i la resposta al teu compte.",
+        "sentRectification": "Hem obert la teva sol·licitud de rectificació: et respondrem en menys d’un mes.",
+        "sentAction": "Veure les meves consultes",
+        "another": "Escriure una altra consulta",
+        "errors": {
+          "invalid": "Revisa l’assumpte (mínim {subjectMin} caràcters) i el missatge (entre {messageMin} i {messageMax}).",
+          "rateLimited": "Has enviat diverses consultes seguides. Espera una estona i torna-ho a provar.",
+          "account": "El teu compte no pot enviar consultes: confirma el teu correu i torna-ho a provar.",
+          "failed": "No hem pogut enviar la teva consulta. Torna-ho a provar d’aquí a uns minuts.",
+          "login": "La teva sessió ha caducat. El teu text continua aquí: entra de nou i torna a enviar-lo."
+        },
+        "routing": {
+          "ORGANIZATION": "Et contestarà el centre.",
+          "SUPERADMIN": "Et contestarà l’equip de KORUM."
+        },
+        "limits": "Assumpte: mínim {subjectMin} caràcters. Missatge: mínim {messageMin} caràcters."
+      }
     }
   },
   "account": {
@@ -2149,7 +2253,9 @@
       "documents": "Certificats",
       "privacy": "Privadesa",
       "security": "Claus d'accés",
-      "language": "Idioma"
+      "language": "Idioma",
+      "ideas": "Propostes i signatures",
+      "support": "Les meves consultes"
     },
     "contributions": {
       "title": "Les meves aportacions",
@@ -2325,6 +2431,80 @@
       "confirm": "Confirmar",
       "resend": "Enviar un altre codi",
       "cancel": "Cancel·lar"
+    },
+    "ideas": {
+      "summary": "{proposals, plural, =0 {Cap proposta} one {# proposta} other {# propostes}} i {signed, plural, =0 {cap signatura} one {# signatura} other {# signatures}} a les teves comunitats.",
+      "none": "Encara no has proposat ni signat cap idea.",
+      "open": "Veure les meves propostes i signatures"
+    },
+    "support": {
+      "title": "Les meves consultes",
+      "empty": "Encara no has enviat cap consulta.",
+      "status": {
+        "OPEN": "Rebuda",
+        "IN_PROGRESS": "En curs",
+        "RESOLVED": "Resolta"
+      },
+      "topics": {
+        "INITIATIVE": "Iniciativa o esdeveniment",
+        "PAYMENT": "Pagament o Guardiola",
+        "ACCOUNT": "Compte o accés",
+        "RECTIFICATION": "Corregir les meves dades",
+        "OTHER": "Una altra consulta"
+      },
+      "line": "{topic} · per a {to} · {date}",
+      "toKorum": "KORUM",
+      "reply": "Resposta:",
+      "help": "Escriure una consulta nova",
+      "helpNone": "Per escriure una consulta, entra a «FAQ i suport» del portal de la teva comunitat.",
+      "viewMessage": "Veure el que vaig escriure"
+    },
+    "proposals": {
+      "metaTitle": "Les meves propostes i signatures",
+      "back": "Tornar al meu compte",
+      "title": "Les meves propostes i signatures",
+      "intro": "Les teves propostes de la bústia d’idees, amb el xat anònim amb el centre, i les idees que has signat. El centre només veu el teu codi #FAM-XXXX.",
+      "proposalsTitle": "Les meves propostes i missatges amb el centre",
+      "empty": {
+        "title": "Encara no has proposat cap idea",
+        "description": "Entra a la bústia d’idees de la teva comunitat i proposa una millora. El teu nom no es veurà: només un codi.",
+        "action": "Cercar la meva comunitat"
+      },
+      "phases": {
+        "PHASE0_MOD": "En revisió prèvia",
+        "PUBLIC_VOTING": "Oberta a signatures",
+        "DOUBLE_CHECK": "Amb quòrum, pendent de la doble signatura",
+        "CONVERTED": "Transformada en iniciativa",
+        "REJECTED": "No s’ha pogut aprovar"
+      },
+      "summary": "{entity} · {category} · {votes} de {needed} signatures verificades.",
+      "daysLeft": "{count, plural, =0 {Avui acaba el termini.} one {Queda # dia.} other {Queden # dies.}}",
+      "fromYou": "Tu ({alias})",
+      "fromKorum": "KORUM",
+      "writeLabel": "Escriure un missatge al centre",
+      "privacyHint": "Màxim {max} caràcters. El centre només veu el teu codi: no escriguis el teu nom ni el dels teus fills.",
+      "send": "Envia el missatge",
+      "sending": "Enviant…",
+      "sent": "Missatge enviat. El centre el veurà a la seva safata.",
+      "loginLink": "Inicia la sessió",
+      "blocked": {
+        "CLOSED": "Aquesta proposta ja està tancada: pots llegir la conversa, però no escriure més.",
+        "WAIT_FOR_CENTER": "Els teus missatges ja són al centre. Quan respongui podràs continuar escrivint.",
+        "LIMIT_REACHED": "Has arribat al màxim de missatges d’aquesta proposta."
+      },
+      "errors": {
+        "invalid": "Escriu un missatge d’entre 2 i 600 caràcters.",
+        "rateLimited": "Has enviat molts missatges seguits. Espera una estona i torna-ho a provar.",
+        "login": "La teva sessió ha caducat.",
+        "failed": "No hem pogut enviar el missatge. Torna-ho a provar d’aquí a uns minuts."
+      },
+      "signatures": {
+        "title": "Les meves signatures",
+        "empty": "Encara no has signat cap idea.",
+        "line": "{entity} · {phase} · {votes} de {needed} signatures · signada el {date}",
+        "open": "Anar a la bústia de {entity}"
+      },
+      "refreshHint": "Les respostes del centre apareixen en tornar a obrir o recarregar aquesta pàgina."
     }
   },
   "hucha": {

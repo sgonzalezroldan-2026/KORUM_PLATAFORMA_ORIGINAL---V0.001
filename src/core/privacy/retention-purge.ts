@@ -47,6 +47,34 @@ export async function anonymizeOldIdeaSignatures(db: Db, now: Date, limit: numbe
   return rows.length + ideas.length;
 }
 
+/** Mensajes de la familia en el chat de ideas cerradas hace más de un año: texto libre que ya no hace falta. Las respuestas del centro se conservan. */
+export async function purgeOldIdeaChats(db: Db, now: Date, limit: number): Promise<number> {
+  const rows = await db.ideaMessage.findMany({ where: { senderRole: 'FAMILY', idea: { expiresAt: { lt: daysBefore(now, RETENTION.ideaChatDaysAfterIdea) } } }, take: limit, select: { id: true } });
+  if (rows.length === 0) return 0;
+  const { count } = await db.ideaMessage.deleteMany({ where: { id: { in: rows.map((row) => row.id) } } });
+  return count;
+}
+
+/**
+ * Consultas de soporte resueltas hace más de dos años, o abiertas hace más de dos años sin resolverse nunca: dejan de tener email y texto. Queda la
+ * fila (código, tema y fechas) para las estadísticas.
+ */
+export async function purgeResolvedSupportTickets(db: Db, now: Date, limit: number): Promise<number> {
+  const rows = await db.supportTicket.findMany({
+    where: {
+      AND: [
+        { OR: [{ status: 'RESOLVED', updatedAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }, { status: { not: 'RESOLVED' }, createdAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }] },
+        { OR: [{ senderEmail: { not: null } }, { NOT: { message: '' } }, { replyMessage: { not: null } }] }
+      ]
+    },
+    take: limit,
+    select: { id: true }
+  });
+  if (rows.length === 0) return 0;
+  const { count } = await db.supportTicket.updateMany({ where: { id: { in: rows.map((row) => row.id) } }, data: { senderEmail: null, message: '', subject: '', replyMessage: null } });
+  return count;
+}
+
 /** Dispositivos sin uso en 13 meses (lo que dura su cookie): se borran con sus cuentas, porque la cookie ya no existe en ningún navegador. */
 export async function purgeStaleDevices(db: Db, now: Date, limit: number): Promise<number> {
   const stale = await db.device.findMany({ where: { lastSeenAt: { lt: daysBefore(now, RETENTION.deviceDays) } }, take: limit, select: { id: true } });

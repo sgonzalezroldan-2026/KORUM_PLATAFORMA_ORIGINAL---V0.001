@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { proposeIdeaAction } from '@/app/[locale]/(public)/[orgSlug]/ideas/actions';
+import { Link } from '@/i18n/navigation';
 import { IDEA_DESCRIPTION_MAX, IDEA_DESCRIPTION_MIN, IDEA_TITLE_MAX, IDEA_TITLE_MIN } from '@/core/ideas/idea-rules';
 
 export interface ProposeIdeaDialogProps {
@@ -130,6 +131,12 @@ export function ProposeIdeaDialog({ open, onClose, onProposed, orgSlug, locale, 
             <div className="space-y-4">
               <p className="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 font-bold text-emerald-950">{t('doneBody', { alias })}</p>
               <p className="text-sm text-ink-soft">{t('doneNext')}</p>
+              <p className="text-sm text-ink-soft">
+                {t('doneChat')}{' '}
+                <Link href="/mi-cuenta/propuestas" prefetch={false} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline">
+                  {t('doneChatLink')}
+                </Link>
+              </p>
               <button ref={doneButton} type="button" onClick={() => dialog.current?.close()} className="tactile-btn w-full rounded-2xl!">
                 {t('doneClose')}
               </button>

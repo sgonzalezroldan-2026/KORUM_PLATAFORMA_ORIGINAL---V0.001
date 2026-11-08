@@ -158,10 +158,11 @@ describe('comparador Antes / Después', () => {
 });
 
 describe('navegación del portal', () => {
-  it('cuatro apartados; el actual no es un enlace y se marca con aria-current', () => {
+  it('cinco apartados; el actual no es un enlace y se marca con aria-current', () => {
     renderWithIntl(<PortalNav orgSlug="cervantes" current="ideas" />);
     const nav = screen.getByRole('navigation', { name: 'Secciones de la comunidad' });
-    expect(within(nav).getAllByRole('listitem')).toHaveLength(4);
+    expect(within(nav).getAllByRole('listitem')).toHaveLength(5);
+    expect(within(nav).getByRole('link', { name: /FAQ y soporte/ })).toHaveAttribute('href', '/cervantes/ayuda');
     expect(within(nav).getByRole('link', { name: /Iniciativas y taquilla/ })).toHaveAttribute('href', '/cervantes');
     expect(within(nav).getByRole('link', { name: /Logros conseguidos/ })).toHaveAttribute('href', '/cervantes/logros');
     expect(within(nav).getByRole('link', { name: /Comercios amigos/ })).toHaveAttribute('href', '/cervantes/comercios');

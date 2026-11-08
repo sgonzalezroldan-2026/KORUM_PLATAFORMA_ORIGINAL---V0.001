@@ -6,6 +6,7 @@ import { AccountContributions, AccountPasses } from '@/components/account/accoun
 import { AccountLocaleForm } from '@/components/account/account-locale-form';
 import { PasskeysPanel } from '@/components/account/passkeys-panel';
 import { PrivacyPanel } from '@/components/account/privacy-panel';
+import { SupportTickets } from '@/components/account/support-tickets';
 import { SignOutButton } from '@/components/auth/sign-out-button';
 import { getEnv } from '@/config/env';
 import { signPassView } from '@/core/ticketing/qr-signature';
@@ -14,8 +15,10 @@ import { routing, type Locale } from '@/i18n/routing';
 import { requireSession } from '@/lib/auth/guards';
 import { getPrisma } from '@/lib/prisma';
 import { localizedPath } from '@/lib/seo/marketing-routes';
-import { passPath } from '@/lib/seo/portal-routes';
+import { helpPath, passPath } from '@/lib/seo/portal-routes';
 import { AccountNotFoundError, loadAccountOverview } from '@/repositories/account.repository';
+import { countMyIdeas } from '@/services/ideas/my-ideas-data';
+import { listSupportTicketsOf } from '@/services/support/support-requests.service';
 
 // Depende de la sesión: nunca se guarda en caché ni se comparte entre personas.
 export const dynamic = 'force-dynamic';
@@ -29,7 +32,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: t('metaTitle'), robots: { index: false, follow: false }, referrer: 'no-referrer' };
 }
 
-const SECTIONS = ['contributions', 'passes', 'documents', 'privacy', 'security', 'language'] as const;
+const SECTIONS = ['contributions', 'passes', 'documents', 'ideas', 'support', 'privacy', 'security', 'language'] as const;
 
 /**
  * *Mi cuenta* (Sprint 3.7): lo que la persona ha aportado y comprado en todas sus comunidades, sus entradas, sus documentos de donación, sus
@@ -49,7 +52,13 @@ export default async function AccountPage({ params }: Params) {
     if (error instanceof AccountNotFoundError) notFound();
     throw error;
   }
-  const qrSecret = getEnv().QR_HMAC_SECRET;
+  const env = getEnv();
+  const db = getPrisma();
+  const [ideaCounts, owner] = await Promise.all([countMyIdeas(db, session.userId), db.user.findUniqueOrThrow({ where: { id: session.userId }, select: { email: true, emailVerified: true, gdprAnonymizedAt: true } })]);
+  const tickets = await listSupportTicketsOf(db, owner);
+  // «FAQ y soporte» es de una entidad: la de su última consulta, la de su última aportación o la de su última propuesta o firma.
+  const helpSlug = tickets[0]?.organization?.slug ?? overview.contributions[0]?.organization.slug ?? ideaCounts.organizationSlug;
+  const qrSecret = env.QR_HMAC_SECRET;
   const passes = overview.passes.map((pass) => ({ ...pass, href: `${passPath(pass.initiative.organization.slug, pass.uuid)}?sig=${signPassView(qrSecret, pass.uuid)}` }));
 
   return (
@@ -87,6 +96,20 @@ export default async function AccountPage({ params }: Params) {
           </Link>
         ) : null}
       </section>
+
+      <section id="ideas" aria-labelledby="ideas-title" className="flex scroll-mt-4 flex-col gap-3 rounded-3xl border-2 border-sky-200 bg-sky-50/60 p-5">
+        <h2 id="ideas-title" className="font-corp text-2xl font-extrabold text-varsity-navy">
+          {t('sections.ideas')}
+        </h2>
+        <p className="text-ink-soft" data-testid="ideas-summary">
+          {ideaCounts.proposals + ideaCounts.signed > 0 ? t('ideas.summary', { proposals: ideaCounts.proposals, signed: ideaCounts.signed }) : t('ideas.none')}
+        </p>
+        <Link href="/mi-cuenta/propuestas" className="tactile-btn self-start">
+          {t('ideas.open')}
+        </Link>
+      </section>
+
+      <SupportTickets tickets={tickets} helpHref={helpSlug ? localizedPath(locale, helpPath(helpSlug)) : null} />
 
       <PrivacyPanel
         email={overview.profile.email}

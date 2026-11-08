@@ -39,3 +39,6 @@ export function ogInitiativeUrl(locale: Locale, initiativeId: number, version: n
 export const ideasPath = (orgSlug: string): string => `/${orgSlug}/ideas`;
 /** Logros conseguidos con su comparador Antes / Después (Sprint 3.6). */
 export const achievementsPath = (orgSlug: string): string => `/${orgSlug}/logros`;
+
+/** Preguntas frecuentes y soporte de la entidad (Sprint 3.9, `fview-faq`): las contesta la propia entidad o KORUM según el tema. */
+export const helpPath = (orgSlug: string): string => `/${orgSlug}/ayuda`;

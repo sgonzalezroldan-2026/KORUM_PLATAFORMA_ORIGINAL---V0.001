@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useId, useRef, useState, useTransition } from 'react';
+import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import type { managePledgeAction } from '@/app/[locale]/(account)/mi-hucha/actions';
 import { useMoney } from '@/components/portal/use-money';
 import { CurrencyText } from '@/components/ui/currency-text';
@@ -77,10 +77,14 @@ export function PledgeCard({ pledge, manage }: { pledge: PledgeCardData; manage:
       setConfirming(false);
       setMessage({ tone: ok ? 'ok' : 'error', text: ok ? t(`done.${done}`) : t(`errors.${result.status}`) });
       if (ok) router.refresh();
-      // El resultado recibe el foco: el botón pulsado puede haber desaparecido (pausar → reanudar).
-      requestAnimationFrame(() => messageRef.current?.focus());
     });
   }
+
+  // El resultado recibe el foco: el botón pulsado puede haber desaparecido (pausar → reanudar). Se hace al pintarse el aviso (no con un
+  // `requestAnimationFrame` al pulsar, que en la compilación de producción puede dispararse antes de que React lo pinte y perder el foco).
+  useEffect(() => {
+    if (message) messageRef.current?.focus();
+  }, [message]);
 
   const cardText = pledge.card ? [pledge.card.brand ?? t('cardGeneric'), pledge.card.last4 ? `•••• ${pledge.card.last4}` : null].filter(Boolean).join(' ') : null;
 

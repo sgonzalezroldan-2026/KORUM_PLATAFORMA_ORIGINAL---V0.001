@@ -62,6 +62,8 @@
   - `DISABLED`: no aparece.
 - **Mi cuenta:** mis aportaciones, mis entradas QR, datos fiscales (NIF/NIE validado en vivo) y descarga del certificado (Ley 49/2002 verificada) o del justificante nominativo, **solo con donaciones completadas y no reembolsadas** (nunca recargas ni entradas); consentimientos; exportar mis datos; suprimir mi cuenta.
 - **Chat anónimo** con la entidad (`#FAM-XXXX`), **FAQ** y **buzón de soporte** con enrutamiento a la entidad o a KORUM.
+  - *Mis propuestas y mensajes con el centro* y *Mis firmas* viven en *Mi cuenta* (`/mi-cuenta/propuestas`): el centro solo ve el código; la familia puede escribir hasta 3 mensajes seguidos sin respuesta.
+  - *FAQ y soporte* (`/[orgSlug]/ayuda`): preguntas frecuentes y formulario. Escribir exige una cuenta con el email verificado; cada consulta lleva su código `TCK-XXXXXX`, se contesta a la entidad (iniciativas y eventos) o a KORUM (pagos, cuenta, datos, sugerencias) y se sigue en *Mi cuenta*. «Corregir mis datos personales» abre una solicitud de rectificación con plazo de un mes.
 
 ---
 

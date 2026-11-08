@@ -3,14 +3,14 @@ import { LOCALES } from '@/i18n/routing';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl, languageAlternates, MARKETING_CONTENT_UPDATED, PILLAR_PAGES } from '@/lib/seo/marketing-routes';
-import { achievementsPath, initiativePath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
+import { achievementsPath, helpPath, initiativePath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
 import { listIndexableInitiatives, listIndexableOrganizations } from '@/repositories/public.repository';
 
 /**
  * Solo páginas indexables, cada una con sus alternativas de idioma (skill korum-seo-discoverability §4): la portada, las páginas pilar, el alta
  * de entidades (`/login` no se indexa) y, desde el Sprint 3.3, las portadas de las entidades con `publicIndexing` y KYB verificado y sus
  * iniciativas públicas (`FUNDRAISING`, `GOAL_REACHED` y `CLOSED`). Una entidad que desactiva `publicIndexing` sale de la lista (QA-SEO03).
- * Ideas (propuestas de familias), checkout, Mi cuenta y entradas no entran nunca; los logros sí (Sprint 3.6).
+ * Ideas (propuestas de familias), checkout, Mi cuenta y entradas no entran nunca; los logros sí (Sprint 3.6) y la FAQ y soporte también (Sprint 3.9).
  */
 const STATIC_ENTRIES = [
   { path: '/', priority: 1, changeFrequency: 'weekly' as const },
@@ -38,6 +38,7 @@ async function loadDynamicEntries(): Promise<MetadataRoute.Sitemap> {
     ...organizations.flatMap((organization) => entry(portalPath(organization.slug), organization.updatedAt, 0.7, 'daily')),
     ...organizations.flatMap((organization) => entry(sponsorsPath(organization.slug), organization.updatedAt, 0.5, 'weekly')),
     ...organizations.flatMap((organization) => entry(achievementsPath(organization.slug), organization.updatedAt, 0.5, 'weekly')),
+    ...organizations.flatMap((organization) => entry(helpPath(organization.slug), organization.updatedAt, 0.4, 'monthly')),
     ...initiatives.flatMap((initiative) => entry(initiativePath(initiative.organization.slug, initiative.id), initiative.updatedAt, 0.6, 'weekly'))
   ];
 }

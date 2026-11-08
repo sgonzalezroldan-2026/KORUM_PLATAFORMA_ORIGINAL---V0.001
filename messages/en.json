@@ -168,7 +168,8 @@
         "monthlyPledges": "Monthly contributions",
         "notifications": "Emails we have sent you",
         "supportTickets": "Support requests",
-        "passkeys": "Passkeys"
+        "passkeys": "Passkeys",
+        "ideaProposals": "Idea proposals and chat with the school"
       },
       "fields": {
         "name": "Name",
@@ -221,7 +222,9 @@
         "synced": "Synced across devices",
         "pledgeFee": "Handling per month",
         "pledgeCampaign": "Preferred campaign",
-        "nextCharge": "Next charge"
+        "nextCharge": "Next charge",
+        "alias": "Code",
+        "sender": "Sender"
       },
       "types": {
         "DONATION": "Donation",
@@ -483,6 +486,18 @@
         "body": "We tried to charge your monthly pledge of {amount} for {organization} and it was not possible. You have not been charged anything.",
         "paused": "We have paused your pledge so we don’t keep trying with a card that doesn’t work. If you want to continue, you can resume it in your Piggy Bank.",
         "cardGone": "The saved card can no longer be used. If you want to keep giving every month, cancel this pledge and set up a new one in your Piggy Bank."
+      }
+    },
+    "support": {
+      "received": {
+        "subject": "We have received your question {code}",
+        "preheader": "We will answer as soon as we can.",
+        "title": "Question received",
+        "bodyOrganization": "We have received your question and passed it to the school, which will answer. Keep this code in case you need to refer to it.",
+        "bodyPlatform": "We have received your question and the KORUM team will answer. Keep this code in case you need to refer to it.",
+        "rectification": "We have also opened your personal data rectification request: we will deal with it within one month at most.",
+        "code": "Question code",
+        "cta": "See my questions"
       }
     }
   },
@@ -1502,7 +1517,8 @@
       "initiatives": "Initiatives and tickets",
       "sponsors": "Friendly businesses",
       "ideas": "Idea box",
-      "achievements": "Achievements"
+      "achievements": "Achievements",
+      "help": "FAQ and support"
     },
     "filter": {
       "toggle": "Filter",
@@ -1658,7 +1674,9 @@
       "ideasTitle": "{name} · Idea box",
       "ideasDescription": "Ideas from families to improve {name}. Each idea is signed with a verified email and only an anonymous code is shown.",
       "achievementsTitle": "{name} · Achievements",
-      "achievementsDescription": "What the {name} community has already achieved together, with the before and after of each improvement."
+      "achievementsDescription": "What the {name} community has already achieved together, with the before and after of each improvement.",
+      "helpTitle": "{name} · FAQ and support",
+      "helpDescription": "Answers to the most common questions from {name} families, and a form to write to the school or to KORUM."
     },
     "og": {
       "progress": "{pct}% reached",
@@ -2110,8 +2128,11 @@
           "ALIAS_EXHAUSTED": "We could not create your code. Please try again in a few seconds.",
           "ACCOUNT_NOT_ALLOWED": "To suggest an idea your email must be verified. Sign in again with the link or code.",
           "RATE_LIMITED": "Many ideas have been sent from this network. Wait a while and try again."
-        }
-      }
+        },
+        "doneChat": "If you want to add anything, you can talk to the school anonymously from My account.",
+        "doneChatLink": "Open my proposals and messages"
+      },
+      "myProposals": "My proposals and messages with the school"
     },
     "achievements": {
       "badge": "KORUM pride",
@@ -2136,6 +2157,89 @@
         "description": "When an initiative reaches its goal and the school finishes the improvement, you will see it here with its before and after.",
         "action": "See open initiatives"
       }
+    },
+    "help": {
+      "breadcrumb": "FAQ and support",
+      "badge": "Help",
+      "title": "Frequently asked questions and support",
+      "intro": "Here are the most common questions. If yours is not here, write to us: the school or the KORUM team will answer, depending on the topic.",
+      "faqTitle": "Frequently asked questions",
+      "items": {
+        "guarantee": {
+          "q": "What does the voluntary contribution to KORUM include?",
+          "a": "It is optional and changes nothing about your donation. It keeps the service running that guarantees every family that 100% of the donation reaches the school without bank deductions, the automatic refund if the goal is not reached, and the automatic issue of your certificate or receipt."
+        },
+        "family": {
+          "q": "Can both parents sign from the same device?",
+          "a": "Yes. Up to two family accounts can sign from the same phone or computer and count as verified signatures. If suspicious patterns are detected (for example, many different accounts from one device), those signatures are flagged and do not add to the count until they are reviewed."
+        },
+        "refund": {
+          "q": "What happens if the initiative does not reach its goal?",
+          "a": "You get 100% of what you paid back, including the voluntary contribution, on your card or original payment method. You do not need to ask: the refund is automatic."
+        },
+        "payments": {
+          "q": "Who holds the money?",
+          "a": "Payments, holds and refunds are carried out by PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is a technology platform: it is not a financial institution and does not hold funds. The money stays held at PAYCOMET until the goal is reached."
+        },
+        "fiscal": {
+          "q": "Do I get a tax certificate for my donation?",
+          "a": "It depends on the organisation. If it falls under Law 49/2002 and has proven it, you receive a donation certificate (we need your tax ID, which is optional). If not, you receive a named contribution receipt with no tax effect. Tickets and raffles never give a certificate."
+        },
+        "ideas": {
+          "q": "Is my proposal in the ideas box anonymous?",
+          "a": "Yes. The school and other families only see a code like #FAM-1234, never your name or email. You can talk to the school from “My account”, under “My proposals and signatures”; please do not write names in the messages."
+        },
+        "hucha": {
+          "q": "What is My Piggy Bank, and is money kept in it?",
+          "a": "My Piggy Bank is a scheduled monthly contribution: you choose an amount and an organisation, and each month your card is charged and the money goes to an open initiative. No balance is kept. You can pause or cancel it in one click from “My Piggy Bank”."
+        },
+        "data": {
+          "q": "How do I exercise my rights over my data?",
+          "a": "From “My account” you can download your data, withdraw consents and delete your account. To correct your name or email, use the form on this page with the topic “Correct my personal data”: we will answer within a month."
+        },
+        "independence": {
+          "q": "Does KORUM choose the contractors for the works?",
+          "a": "No. Each organisation freely chooses its own supplier, and KORUM does not intermediate or charge commissions to contractors or equipment suppliers."
+        }
+      },
+      "support": {
+        "title": "Write to us",
+        "intro": "A question about an initiative or an event is answered by the school; anything else, by the KORUM team. We will send you a code to follow it in My account.",
+        "loginTitle": "Sign in to write to us",
+        "loginText": "This way we know the message is yours and you can see the answer in My account. You sign in with a link or a code by email, no password.",
+        "loginAction": "Sign in",
+        "topicLabel": "What is your question about",
+        "topics": {
+          "INITIATIVE": "An initiative or an event",
+          "PAYMENT": "A payment, a refund or My Piggy Bank",
+          "ACCOUNT": "My account or signing in",
+          "RECTIFICATION": "Correct my personal data",
+          "OTHER": "Another question or a suggestion"
+        },
+        "rectificationHint": "Tell us which piece of data needs correcting and what the right value is. To protect your account we will ask for a code by email, and we will open a rectification request with a one-month deadline.",
+        "subjectLabel": "Subject",
+        "messageLabel": "Your message",
+        "counter": "{count} of {max} characters",
+        "send": "Send question",
+        "sending": "Sending…",
+        "sentTitle": "Question sent",
+        "sentText": "Your code is {code}. We have sent you a confirmation email; you can see the status and the answer in My account.",
+        "sentRectification": "We have opened your rectification request: we will answer within a month.",
+        "sentAction": "See my questions",
+        "another": "Write another question",
+        "errors": {
+          "invalid": "Check the subject (at least {subjectMin} characters) and the message (between {messageMin} and {messageMax}).",
+          "rateLimited": "You have sent several questions in a row. Wait a while and try again.",
+          "account": "Your account cannot send questions: confirm your email and try again.",
+          "failed": "We could not send your question. Try again in a few minutes.",
+          "login": "Your session has expired. Your text is still here: sign in again and send it again."
+        },
+        "routing": {
+          "ORGANIZATION": "The school will answer you.",
+          "SUPERADMIN": "The KORUM team will answer you."
+        },
+        "limits": "Subject: at least {subjectMin} characters. Message: at least {messageMin} characters."
+      }
     }
   },
   "account": {
@@ -2149,7 +2253,9 @@
       "documents": "Certificates",
       "privacy": "Privacy",
       "security": "Passkeys",
-      "language": "Language"
+      "language": "Language",
+      "ideas": "Proposals and signatures",
+      "support": "My questions"
     },
     "contributions": {
       "title": "My contributions",
@@ -2325,6 +2431,80 @@
       "confirm": "Confirm",
       "resend": "Send another code",
       "cancel": "Cancel"
+    },
+    "ideas": {
+      "summary": "{proposals, plural, =0 {No proposals} one {# proposal} other {# proposals}} and {signed, plural, =0 {no signatures} one {# signature} other {# signatures}} in your communities.",
+      "none": "You have not proposed or signed any idea yet.",
+      "open": "See my proposals and signatures"
+    },
+    "support": {
+      "title": "My questions",
+      "empty": "You have not sent any question yet.",
+      "status": {
+        "OPEN": "Received",
+        "IN_PROGRESS": "In progress",
+        "RESOLVED": "Resolved"
+      },
+      "topics": {
+        "INITIATIVE": "Initiative or event",
+        "PAYMENT": "Payment or My Piggy Bank",
+        "ACCOUNT": "Account or sign-in",
+        "RECTIFICATION": "Correct my data",
+        "OTHER": "Another question"
+      },
+      "line": "{topic} · to {to} · {date}",
+      "toKorum": "KORUM",
+      "reply": "Answer:",
+      "help": "Write a new question",
+      "helpNone": "To write a question, open “FAQ and support” in your community portal.",
+      "viewMessage": "See what I wrote"
+    },
+    "proposals": {
+      "metaTitle": "My proposals and signatures",
+      "back": "Back to My account",
+      "title": "My proposals and signatures",
+      "intro": "Your proposals from the ideas box, with the anonymous chat with the school, and the ideas you have signed. The school only sees your #FAM-XXXX code.",
+      "proposalsTitle": "My proposals and messages with the school",
+      "empty": {
+        "title": "You have not proposed any idea yet",
+        "description": "Open your community’s ideas box and propose an improvement. Your name will not be shown: only a code.",
+        "action": "Find my community"
+      },
+      "phases": {
+        "PHASE0_MOD": "Under initial review",
+        "PUBLIC_VOTING": "Open for signatures",
+        "DOUBLE_CHECK": "Quorum reached, awaiting the double signature",
+        "CONVERTED": "Turned into an initiative",
+        "REJECTED": "Could not be approved"
+      },
+      "summary": "{entity} · {category} · {votes} of {needed} verified signatures.",
+      "daysLeft": "{count, plural, =0 {The deadline ends today.} one {# day left.} other {# days left.}}",
+      "fromYou": "You ({alias})",
+      "fromKorum": "KORUM",
+      "writeLabel": "Write a message to the school",
+      "privacyHint": "Up to {max} characters. The school only sees your code: do not write your name or your children’s.",
+      "send": "Send message",
+      "sending": "Sending…",
+      "sent": "Message sent. The school will see it in its inbox.",
+      "loginLink": "Sign in",
+      "blocked": {
+        "CLOSED": "This proposal is closed: you can read the conversation but not write more.",
+        "WAIT_FOR_CENTER": "Your messages are already with the school. Once it answers you can keep writing.",
+        "LIMIT_REACHED": "You have reached the maximum number of messages for this proposal."
+      },
+      "errors": {
+        "invalid": "Write a message between 2 and 600 characters.",
+        "rateLimited": "You have sent many messages in a row. Wait a while and try again.",
+        "login": "Your session has expired.",
+        "failed": "We could not send the message. Try again in a few minutes."
+      },
+      "signatures": {
+        "title": "My signatures",
+        "empty": "You have not signed any idea yet.",
+        "line": "{entity} · {phase} · {votes} of {needed} signatures · signed on {date}",
+        "open": "Go to the {entity} ideas box"
+      },
+      "refreshHint": "The school’s answers appear when you reopen or reload this page."
     }
   },
   "hucha": {

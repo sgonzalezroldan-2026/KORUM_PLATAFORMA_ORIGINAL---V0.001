@@ -21,3 +21,22 @@ export const accountPasskeyAdded: TemplateDefinition<z.infer<typeof emptyPayload
     footer: 'account'
   })
 };
+
+/**
+ * Acuse de una consulta de soporte (Sprint 3.9): el código para citarla y, si pide corregir datos personales, el plazo de un mes (RGPD art. 12.3).
+ * No repite el texto de la consulta: un email puede reenviarse o leerse en una pantalla ajena.
+ */
+const supportReceivedPayload = z.object({ ticketCode: z.string().regex(/^TCK-[A-HJKMNP-Z2-9]{6}$/), rectification: z.boolean(), answeredBy: z.enum(['ORGANIZATION', 'SUPERADMIN']) });
+
+export const supportReceived: TemplateDefinition<z.infer<typeof supportReceivedPayload>> = {
+  schema: supportReceivedPayload,
+  build: (payload, { t, url }): EmailContent => ({
+    subject: t('support.received.subject', { code: payload.ticketCode }),
+    preheader: t('support.received.preheader'),
+    title: t('support.received.title'),
+    paragraphs: [t(payload.answeredBy === 'ORGANIZATION' ? 'support.received.bodyOrganization' : 'support.received.bodyPlatform'), ...(payload.rectification ? [t('support.received.rectification')] : [])],
+    facts: [{ label: t('support.received.code'), value: payload.ticketCode }],
+    button: { label: t('support.received.cta'), url: url('/mi-cuenta#support') },
+    footer: 'account'
+  })
+};

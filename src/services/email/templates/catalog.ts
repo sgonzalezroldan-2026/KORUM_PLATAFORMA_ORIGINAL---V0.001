@@ -14,7 +14,7 @@ import {
   taxCertificateReady
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
-import { accountPasskeyAdded } from './definitions-account';
+import { accountPasskeyAdded, supportReceived } from './definitions-account';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 
 /**
@@ -69,6 +69,7 @@ const ENTRIES = [
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),
   register('account.passkeyAdded', accountPasskeyAdded),
+  register('support.received', supportReceived),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed)

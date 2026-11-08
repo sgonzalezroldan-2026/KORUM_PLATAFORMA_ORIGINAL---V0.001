@@ -44,6 +44,8 @@ export interface PersonalDataExport {
   privacyRequests: Array<{ type: string; status: string; createdAt: string; dueAt: string; completedAt: string | null }>;
   memberships: Array<{ organization: string; role: string; roleLabel: string | null; since: string }>;
   ideaSignatures: Array<{ idea: string; status: string; reasonKey: string; accountOrder: number; createdAt: string }>;
+  /** Ideas propuestas (Sprint 3.9) con lo que la familia escribió en su chat anónimo y las respuestas del centro. */
+  ideaProposals: Array<{ alias: string; title: string; category: string; description: string; phase: string; createdAt: string; messages: Array<{ from: string; body: string; createdAt: string }> }>;
   devices: Array<{ firstSeenAt: string; lastSeenAt: string; accountOrder: number; fingerprintStored: boolean }>;
   savedCards: Array<{ brand: string | null; last4: string | null; expires: string | null; createdAt: string; revokedAt: string | null }>;
   /** Llaves de acceso (Sprint 3.7): nombre y fechas; nunca la clave pública ni el identificador de la credencial. */
@@ -83,7 +85,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
   // Lo que se compró como invitada con este email solo es de esta cuenta si el email está verificado.
   const verified = user.emailVerified;
   const ownContributions: Prisma.ContributionWhereInput = verified ? { OR: [{ userId }, { canonicalEmail: user.canonicalEmail }] } : { userId };
-  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys] = await Promise.all([
+  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys, proposals] = await Promise.all([
     db.contribution.findMany({ where: ownContributions, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.ticketPass.findMany({ where: { OR: [{ contribution: ownContributions }, ...(verified ? [{ holderEmail: user.email }] : [])] }, orderBy: { id: 'asc' }, include: { initiative: { select: { title: true } } } }),
     db.consentRecord.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] }),
@@ -95,7 +97,8 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     db.walletSubscription.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
     verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([]),
-    db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } })
+    db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } }),
+    verified ? db.idea.findMany({ where: { authorCanonicalEmail: user.canonicalEmail }, orderBy: { id: 'asc' }, include: { messages: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } } }) : Promise.resolve([])
   ]);
 
   let unreadableTaxIds = 0;
@@ -148,6 +151,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     privacyRequests: requests.map((row) => ({ type: row.type, status: row.status, createdAt: row.createdAt.toISOString(), dueAt: row.dueAt.toISOString(), completedAt: iso(row.completedAt) })),
     memberships: memberships.map((row) => ({ organization: row.organization.name, role: row.role, roleLabel: row.roleLabel, since: row.createdAt.toISOString() })),
     ideaSignatures: signatures.map((row) => ({ idea: row.idea.title, status: row.status, reasonKey: row.reason, accountOrder: row.accountOrder, createdAt: row.createdAt.toISOString() })),
+    ideaProposals: proposals.map((row) => ({ alias: row.alias, title: row.title, category: row.category, description: row.description, phase: row.phase, createdAt: row.createdAt.toISOString(), messages: row.messages.map((message) => ({ from: message.senderLabel, body: message.body, createdAt: message.createdAt.toISOString() })) })),
     devices: devices.map((row) => ({ firstSeenAt: row.device.firstSeenAt.toISOString(), lastSeenAt: row.device.lastSeenAt.toISOString(), accountOrder: row.accountOrder, fingerprintStored: row.device.fingerprintHmac !== null })),
     savedCards: cards.map((card) => ({
       brand: card.brand,

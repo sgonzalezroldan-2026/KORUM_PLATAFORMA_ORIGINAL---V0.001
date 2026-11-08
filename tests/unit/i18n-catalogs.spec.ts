@@ -76,7 +76,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       'account.sections.language', 'privacy.export.requestStatuses.COMPLETED',
       // Mi Hucha (Sprint 3.8): «Activa», «En pausa», «Pausar», «Mes», «… al mes», «Aportar cada mes a…» y los patrones sin texto se escriben igual en catalán.
       'privacy.export.pledgeStatuses.ACTIVE', 'privacy.export.pledgeStatuses.PAUSED', 'email.pledge.month', 'email.pledge.monthValue', 'hucha.start.titleFor', 'hucha.form.perMonth',
-      'hucha.pledge.monthly', 'hucha.pledge.status.ACTIVE', 'hucha.pledge.status.PAUSED', 'hucha.pledge.progressValue', 'hucha.pledge.pause', 'hucha.pledge.historyLine']);
+      'hucha.pledge.monthly', 'hucha.pledge.status.ACTIVE', 'hucha.pledge.status.PAUSED', 'hucha.pledge.progressValue', 'hucha.pledge.pause', 'hucha.pledge.historyLine',
+      // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
+      'account.proposals.fromKorum', 'account.support.toKorum']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
       'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp',
@@ -85,7 +87,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Patrocinio de comercios (Sprint 3.5): el cupón de ejemplo es un código.
       'portal.checkout.sponsor.fields.promoCodePlaceholder',
       // Mi cuenta (Sprint 3.7): patrones sin texto traducible.
-      'account.contributions.line', 'account.documents.line', 'account.passes.where']);
+      'account.contributions.line', 'account.documents.line', 'account.passes.where',
+      // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
+      'account.proposals.fromKorum', 'account.support.toKorum']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

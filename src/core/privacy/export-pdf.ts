@@ -92,6 +92,13 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
   section('privacyRequests', data.privacyRequests.map((row) => [['date', date(row.createdAt)], ['type', translated('requestTypes', row.type)], ['status', translated('requestStatuses', row.status)], ['dueAt', date(row.dueAt)], ['completedAt', date(row.completedAt)]]));
   section('memberships', data.memberships.map((row) => [['organization', row.organization], ['role', row.roleLabel ?? row.role], ['date', date(row.since)]]));
   section('ideaSignatures', data.ideaSignatures.map((row) => [['date', date(row.createdAt)], ['idea', row.idea], ['status', row.status], ['accountOrder', String(row.accountOrder)]]));
+  section(
+    'ideaProposals',
+    data.ideaProposals.flatMap((row) => [
+      [['date', date(row.createdAt)], ['alias', row.alias], ['idea', row.title], ['message', row.description], ['status', row.phase]] as Array<[string, string]>,
+      ...row.messages.map((message): Array<[string, string]> => [['date', date(message.createdAt)], ['sender', message.from], ['message', message.body]])
+    ])
+  );
   section('devices', data.devices.map((row) => [['firstSeen', date(row.firstSeenAt)], ['lastSeen', date(row.lastSeenAt)], ['accountOrder', String(row.accountOrder)], ['fingerprint', yesNo(row.fingerprintStored)]]));
   section('savedCards', data.savedCards.map((row) => [['card', `${row.brand ?? ''} ${row.last4 ? `•••• ${row.last4}` : ''}`.trim()], ['expires', row.expires ?? ''], ['date', date(row.createdAt)], ['revoked', date(row.revokedAt)]]));
   section('passkeys', data.passkeys.map((row) => [['name', row.name ?? ''], ['date', date(row.createdAt)], ['synced', yesNo(row.synced)]]));
