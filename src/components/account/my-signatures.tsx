@@ -24,7 +24,7 @@ export async function MySignatures({ signed }: { signed: Array<MyIdeaView & { si
         <ul className="flex flex-col gap-2" data-testid="signatures-list">
           {signed.map((idea) => (
             <li key={idea.id} className="flex flex-col gap-1 rounded-2xl border-2 border-stone-200 bg-white p-4">
-              <p className="break-words font-extrabold text-varsity-navy">
+              <p className="wrap-break-word font-extrabold text-varsity-navy">
                 {idea.alias}
                 <span className="font-semibold text-ink-soft">{` · ${idea.title}`}</span>
               </p>

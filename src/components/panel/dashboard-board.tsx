@@ -186,7 +186,7 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                       </span>
                       <span>{t('card.hucha', { id: item.walletEscrowId })}</span>
                     </p>
-                    <h3 className="break-words font-joy text-lg font-bold text-varsity-navy">{item.title}</h3>
+                    <h3 className="wrap-break-word font-joy text-lg font-bold text-varsity-navy">{item.title}</h3>
                   </div>
                   <StatusBadge status={item.status} />
                 </div>

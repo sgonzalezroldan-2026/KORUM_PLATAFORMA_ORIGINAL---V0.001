@@ -95,7 +95,7 @@ export function IdeaModerationCard({
   return (
     <article aria-labelledby={ids.heading} className="flex flex-col gap-3 rounded-2xl border-2 border-stone-200 bg-white p-4" data-testid="moderation-idea" data-phase={idea.phase}>
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <h3 id={ids.heading} className="min-w-0 break-words font-corp text-lg font-extrabold text-varsity-navy">
+        <h3 id={ids.heading} className="min-w-0 wrap-break-word font-corp text-lg font-extrabold text-varsity-navy">
           <code className="rounded border border-stone-300 bg-stone-50 px-1.5">{idea.alias}</code>
           {` · ${idea.title}`}
         </h3>
@@ -165,7 +165,7 @@ export function IdeaModerationCard({
           <p className="text-sm text-ink-soft">{t('edit.hint')}</p>
         </fieldset>
       ) : (
-        <p className="whitespace-pre-line break-words">{idea.description}</p>
+        <p className="whitespace-pre-line wrap-break-word">{idea.description}</p>
       )}
 
       {idea.doubleCheck ? <DoubleCheckBox orgSlug={orgSlug} ideaId={idea.id} doubleCheck={idea.doubleCheck} isSigner={canModerate} /> : null}

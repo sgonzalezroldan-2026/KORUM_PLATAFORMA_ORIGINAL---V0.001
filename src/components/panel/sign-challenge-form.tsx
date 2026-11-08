@@ -207,7 +207,7 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
         </h2>
         {preview.targetType === 'IDEA_APPROVAL' ? (
           <>
-            <p className="break-words font-corp text-lg font-extrabold text-varsity-navy">{preview.idea.title}</p>
+            <p className="wrap-break-word font-corp text-lg font-extrabold text-varsity-navy">{preview.idea.title}</p>
             <p className="text-sm text-ink-soft">
               {t('ideaMeta', {
                 alias: preview.idea.alias,
@@ -218,12 +218,12 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
             {preview.idea.revalidatedVotes > 0 ? (
               <p className="text-sm font-semibold text-amber-950">{`⚠️ ${t('ideaRevalidated', { count: preview.idea.revalidatedVotes })}`}</p>
             ) : null}
-            <p className="whitespace-pre-line break-words">{preview.idea.description}</p>
+            <p className="whitespace-pre-line wrap-break-word">{preview.idea.description}</p>
             <p className="text-sm font-semibold text-varsity-navy">{t('ideaEffect')}</p>
           </>
         ) : (
           <>
-            <p className="break-words font-corp text-lg font-extrabold text-varsity-navy">{preview.payout.initiativeTitle}</p>
+            <p className="wrap-break-word font-corp text-lg font-extrabold text-varsity-navy">{preview.payout.initiativeTitle}</p>
             <p className="font-corp tabular-nums">
               {t('payoutMeta', {
                 wallet: preview.payout.walletEscrowId,

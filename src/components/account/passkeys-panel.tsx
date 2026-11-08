@@ -95,7 +95,7 @@ export function PasskeysPanel({ email, twoFactorEnabled, passkeys }: { email: st
           {passkeys.map((key) => (
             <li key={key.id} className="mobile-stack grid gap-2 rounded-xl bg-white p-3 md:grid-cols-[1fr_auto] md:items-center">
               <div className="min-w-0">
-                <p className="break-words font-bold text-varsity-navy">{key.name || t('unnamed')}</p>
+                <p className="wrap-break-word font-bold text-varsity-navy">{key.name || t('unnamed')}</p>
                 <p className="text-sm text-ink-soft">
                   {key.createdAt ? t('added', { date: format.dateTime(new Date(key.createdAt), { dateStyle: 'medium', timeZone: 'Europe/Madrid' }) }) : null}
                   {key.synced ? ` · ${t('synced')}` : ''}

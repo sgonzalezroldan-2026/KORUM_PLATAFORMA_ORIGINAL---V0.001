@@ -83,7 +83,7 @@ export function IdeaCenterChat({ orgSlug, idea, canWrite }: { orgSlug: string; i
                   {message.role === 'SYSTEM' ? t('fromKorum') : message.label}
                   <span className="font-semibold text-ink-soft">{` · ${format.dateTime(new Date(message.createdAt), { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Madrid' })}`}</span>
                 </span>
-                <span className="whitespace-pre-line break-words">{message.body}</span>
+                <span className="whitespace-pre-line wrap-break-word">{message.body}</span>
               </li>
             ))}
           </ol>

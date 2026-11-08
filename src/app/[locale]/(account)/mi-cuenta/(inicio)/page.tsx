@@ -68,7 +68,7 @@ export default async function AccountPage({ params }: Params) {
           <h1 className="font-corp text-3xl font-extrabold text-varsity-navy">{t('title')}</h1>
           <SignOutButton className="inline-flex min-h-11 items-center rounded-xl border-2 border-varsity-navy px-4 font-semibold text-varsity-navy hover:bg-varsity-navy/10" />
         </div>
-        <p className="break-words text-ink-soft">{t('signedInAs', { email: overview.profile.email })}</p>
+        <p className="wrap-break-word text-ink-soft">{t('signedInAs', { email: overview.profile.email })}</p>
         <nav aria-label={t('sectionsLabel')}>
           <ul className="flex flex-wrap gap-2">
             {SECTIONS.map((section) => (

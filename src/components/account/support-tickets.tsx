@@ -34,7 +34,7 @@ export async function SupportTickets({ tickets, helpHref }: { tickets: AccountTi
           {tickets.map((ticket) => (
             <li key={ticket.ticketCode} className="flex flex-col gap-1 rounded-2xl border-2 border-stone-200 bg-white p-4">
               <p className="flex flex-wrap items-center justify-between gap-2 font-extrabold text-varsity-navy">
-                <span className="min-w-0 break-words">{`${ticket.ticketCode} · ${ticket.subject}`}</span>
+                <span className="min-w-0 wrap-break-word">{`${ticket.ticketCode} · ${ticket.subject}`}</span>
                 <span className="rounded-full border-2 border-stone-300 px-3 py-0.5 text-sm font-bold">{t(`status.${ticket.status}`)}</span>
               </p>
               <p className="text-sm text-ink-soft">
@@ -43,11 +43,11 @@ export async function SupportTickets({ tickets, helpHref }: { tickets: AccountTi
               {ticket.message ? (
                 <details className="mt-1">
                   <summary className="min-h-11 cursor-pointer py-2 font-bold text-varsity-navy">{t('viewMessage')}</summary>
-                  <p className="whitespace-pre-line break-words rounded-xl border border-stone-200 bg-stone-50 p-3">{ticket.message}</p>
+                  <p className="whitespace-pre-line wrap-break-word rounded-xl border border-stone-200 bg-stone-50 p-3">{ticket.message}</p>
                 </details>
               ) : null}
               {ticket.replyMessage ? (
-                <p className="mt-1 whitespace-pre-line break-words rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-950">
+                <p className="mt-1 whitespace-pre-line wrap-break-word rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-950">
                   <span className="font-extrabold">{`${t('reply')} `}</span>
                   {ticket.replyMessage}
                 </p>

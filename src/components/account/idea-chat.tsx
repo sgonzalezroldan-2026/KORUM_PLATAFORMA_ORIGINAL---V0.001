@@ -85,13 +85,13 @@ export function IdeaChat({ proposal }: { proposal: MyProposalView }) {
   return (
     <article aria-labelledby={ids.title} className="flex flex-col gap-3 rounded-2xl border-2 border-sky-200 bg-sky-50/60 p-4" data-testid="my-proposal">
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <h3 id={ids.title} className="min-w-0 break-words font-corp text-lg font-extrabold text-varsity-navy">
+        <h3 id={ids.title} className="min-w-0 wrap-break-word font-corp text-lg font-extrabold text-varsity-navy">
           <span data-testid="proposal-alias">{proposal.alias}</span>
           <span className="font-semibold text-ink-soft">{` · ${proposal.title}`}</span>
         </h3>
         <span className="rounded-full border-2 border-sky-300 bg-white px-3 py-1 text-sm font-bold text-sky-950">{t(`phases.${proposal.phase}`)}</span>
       </header>
-      <p className="break-words text-sm text-ink-soft">
+      <p className="wrap-break-word text-sm text-ink-soft">
         {t('summary', { entity: proposal.organizationName, category: proposal.category, votes: proposal.verifiedVotes, needed: proposal.needed })}
         {proposal.phase === 'PUBLIC_VOTING' ? ` ${t('daysLeft', { count: proposal.daysRemaining })}` : ''}
       </p>
@@ -105,7 +105,7 @@ export function IdeaChat({ proposal }: { proposal: MyProposalView }) {
                 {message.role === 'FAMILY' ? t('fromYou', { alias: message.label }) : message.role === 'SYSTEM' ? t('fromKorum') : message.label}
                 <span className="font-semibold text-ink-soft">{` · ${format.dateTime(new Date(message.createdAt), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' })}`}</span>
               </span>
-              <span className="whitespace-pre-line break-words">{message.body}</span>
+              <span className="whitespace-pre-line wrap-break-word">{message.body}</span>
             </li>
           ))}
         </ol>
