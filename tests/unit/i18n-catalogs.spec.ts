@@ -78,7 +78,10 @@ describe('QA-C05 · catálogos de traducción', () => {
       'privacy.export.pledgeStatuses.ACTIVE', 'privacy.export.pledgeStatuses.PAUSED', 'email.pledge.month', 'email.pledge.monthValue', 'hucha.start.titleFor', 'hucha.form.perMonth',
       'hucha.pledge.monthly', 'hucha.pledge.status.ACTIVE', 'hucha.pledge.status.PAUSED', 'hucha.pledge.progressValue', 'hucha.pledge.pause', 'hucha.pledge.historyLine',
       // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
-      'account.proposals.fromKorum', 'account.support.toKorum']);
+      'account.proposals.fromKorum', 'account.support.toKorum',
+      // Panel de la entidad (Sprint 4.1): «Filtrar», «Taquilla o rifa», «fase actual», «Fases de…», «Medalla…», «Plata» y «{raised} de {goal}» se escriben igual en catalán.
+      'panel.dashboard.card.formatTicketing', 'panel.dashboard.card.raised', 'panel.dashboard.filter.toggle', 'panel.dashboard.stepState.current', 'panel.dashboard.timeline.stepsLabel',
+      'panel.medals.kit.title', 'panel.medals.level', 'panel.medals.names.silver']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
       'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp',

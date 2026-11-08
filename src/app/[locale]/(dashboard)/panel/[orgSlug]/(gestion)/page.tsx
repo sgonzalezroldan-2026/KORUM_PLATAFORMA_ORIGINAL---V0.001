@@ -1,86 +1,72 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { formatCents } from '@/core/finance/money';
-import { ResendInvitationButton } from '@/components/panel/resend-invitation-button';
-import { Link } from '@/i18n/navigation';
+import { DashboardBoard } from '@/components/panel/dashboard-board';
+import { MedalKit } from '@/components/panel/medal-kit';
+import { Model182Card } from '@/components/panel/model182-card';
+import { medalLevels } from '@/core/medals/medal-kit';
+import type { DashboardInitiative } from '@/core/panel/dashboard';
+import { normalizeContactPhone } from '@/core/tax/contact-phone';
+import { model182Years } from '@/core/tax/model182-years';
 import type { Locale } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
+import { loadPanelOverview } from '@/lib/panel/overview';
 import { getPrisma } from '@/lib/prisma';
-import { listSigners } from '@/repositories/organization.repository';
+import { getDashboardData } from '@/repositories/panel.repository';
 
 /**
- * Portada del panel tras el alta: la hucha de la entidad, el importe exento que le queda este curso, en qué punto está cada una de las dos
- * firmas (sin las dos, nada se aprueba ni se paga) y qué falta para poder publicar campañas con cobro (los documentos KYB).
+ * Cuadro de mandos de la entidad (Sprint 4.1, `sch-sub-dashboard`): el kit de medallas, los indicadores con sus filtros ocultos, la línea de
+ * 6 estados de cada iniciativa con su hucha y, si la Ley 49/2002 está verificada, la descarga del Modelo 182. La guardia del `layout` ya
+ * exige firmante con segundo factor; cada lectura vuelve a comprobarlo para esta entidad. Dinámica: depende de la sesión.
  */
+export const dynamic = 'force-dynamic';
+
 export default async function PanelHomePage({ params }: { params: Promise<{ locale: Locale; orgSlug: string }> }) {
   const { locale, orgSlug } = await params;
   setRequestLocale(locale);
   const { actor, organization } = await requirePanelAccess(locale, orgSlug);
-  const signers = await listSigners(getPrisma(), actor, organization.id);
-  const t = await getTranslations({ locale, namespace: 'panel' });
-  const isDirector = actor.memberships.some((membership) => membership.organizationId === organization.id && membership.role === 'DIRECTOR');
-  const ready = signers.filter((signer) => signer.status === 'ACTIVE').length;
+  const now = new Date();
+  const [overview, data, t] = await Promise.all([loadPanelOverview(actor, organization.id), getDashboardData(getPrisma(), actor, organization.id, now), getTranslations({ locale, namespace: 'panel' })]);
+  const { organization: org, signers, tiers } = overview;
+
+  const initiatives: DashboardInitiative[] = data.initiatives.map((item) => ({
+    id: item.id,
+    walletEscrowId: item.walletEscrowId,
+    title: item.title,
+    category: item.category,
+    academicYear: item.academicYear,
+    format: item.format,
+    status: item.status,
+    stepIndex: item.stepIndex,
+    raisedCents: item.raisedCents,
+    goalCents: item.goalCents,
+    closesAt: item.closesAt.toISOString(),
+    totalContributions: item.totalContributions
+  }));
+  const levels = medalLevels(tiers, org.medalRank, org.completedThisYear);
+  const { years, defaultYear } = model182Years(now);
+  const memberships = actor.memberships.filter((membership) => membership.organizationId === org.id);
+  // El Modelo 182 es de las personas que firman por la entidad: el Super-Admin entra al panel, pero no extrae los NIF de las familias.
+  const isSigner = memberships.length > 0;
+  // `Organization.contactPhone` es el móvil de quien dirige: solo se precarga a esa persona.
+  const isDirector = memberships.some((membership) => membership.role === 'DIRECTOR');
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
       <header className="flex flex-col gap-2">
         <h1 className="font-joy text-3xl font-bold text-varsity-navy">{t('welcome', { name: organization.name })}</h1>
-        <p className="text-ink-soft">{t('intro')}</p>
+        <p className="max-w-3xl text-ink-soft">{t('intro')}</p>
       </header>
 
-      <div className="mobile-stack grid gap-5 md:grid-cols-2">
-        <section aria-labelledby="panel-wallet" className="korum-trust-vault flex flex-col gap-2 p-5">
-          <h2 id="panel-wallet" className="font-corp text-lg font-extrabold text-varsity-navy">
-            {t('wallet.title')}
-          </h2>
-          <p className="font-corp text-2xl font-extrabold tabular-nums text-varsity-navy">{organization.walletId}</p>
-          <p className="text-sm text-ink-soft">{t('wallet.explain')}</p>
-          <p className="mt-2">
-            {t.rich('wallet.exempt', {
-              remaining: formatCents(organization.exemptRemainingCents, locale),
-              total: formatCents(organization.exemptLimitCents, locale),
-              strong: (chunks) => <strong className="font-corp font-extrabold tabular-nums text-varsity-emerald">{chunks}</strong>
-            })}
-          </p>
-        </section>
+      <MedalKit orgSlug={org.slug} entityName={org.name} vertical={org.vertical} period={org.quotaPeriod ?? ''} levels={levels} />
 
-        <section aria-labelledby="panel-signers" className="korum-trust-vault flex flex-col gap-3 p-5">
-          <h2 id="panel-signers" className="font-corp text-lg font-extrabold text-varsity-navy">
-            {t('signers.title', { ready, total: 2 })}
-          </h2>
-          <ul className="flex flex-col gap-3">
-            {signers.map((signer) => (
-              <li key={`${signer.role}-${signer.userId}`} className="rounded-xl border-2 border-varsity-navy/15 bg-white p-3">
-                <p className="font-bold text-varsity-navy">
-                  {signer.roleLabel ?? t(`signers.role.${signer.role}`)}{' · '}{signer.name}
-                </p>
-                <p className={`text-sm font-semibold ${signer.status === 'ACTIVE' ? 'text-varsity-emerald' : 'text-amber-800'}`}>
-                  <span aria-hidden="true">{signer.status === 'ACTIVE' ? '✅ ' : '⏳ '}</span>
-                  {t(`signers.status.${signer.status}`)}
-                </p>
-              </li>
-            ))}
-          </ul>
-          {isDirector && signers.some((signer) => signer.role === 'COSIGNER' && signer.status === 'INVITED') ? <ResendInvitationButton orgSlug={organization.slug} /> : null}
-        </section>
-      </div>
+      <DashboardBoard
+        orgSlug={org.slug}
+        initiatives={initiatives}
+        activeSponsors={data.activeSponsors}
+        readySigners={signers.filter((signer) => signer.status === 'ACTIVE').length}
+        kybStatus={org.kybStatus}
+      />
 
-      <section aria-labelledby="panel-achievements" className="korum-notebook-sheet flex flex-col gap-2">
-        <h2 id="panel-achievements" className="font-corp text-lg font-extrabold text-varsity-navy">
-          {t('achievements.cardTitle')}
-        </h2>
-        <p className="text-sm text-ink-soft">{t('achievements.cardText')}</p>
-        <Link href={`/panel/${organization.slug}/logros`} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline underline-offset-4">
-          {t('achievements.cardLink')}
-        </Link>
-      </section>
-
-      <section aria-labelledby="panel-kyb" className="korum-notebook-sheet flex flex-col gap-2">
-        <h2 id="panel-kyb" className="font-corp text-lg font-extrabold text-varsity-navy">
-          {t('kyb.title')}
-        </h2>
-        <p>{t(`kyb.status.${organization.kybStatus}`)}</p>
-        <p className="text-sm text-ink-soft">{t('kyb.documents')}</p>
-      </section>
+      {isSigner ? <Model182Card orgSlug={org.slug} verified={org.ley49 && org.ley49VerifiedAt !== null} years={years} defaultYear={defaultYear} defaultPhone={isDirector ? normalizeContactPhone(org.contactPhone ?? '') : ''} /> : null}
     </div>
   );
 }

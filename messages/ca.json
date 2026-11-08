@@ -1328,8 +1328,7 @@
     "intro": "Des d'aquí gestionareu les idees, les campanyes i els pagaments, sempre amb les dues signatures.",
     "wallet": {
       "title": "Guardiola de l'entitat",
-      "explain": "És l'identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta.",
-      "exempt": "Sense comissió de plataforma aquest curs: <strong>{remaining}</strong> disponibles de {total}."
+      "explain": "És l'identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta."
     },
     "signers": {
       "title": "Doble signatura ({ready} de {total} a punt)",
@@ -1408,6 +1407,212 @@
         "generic": "No ho hem pogut guardar. Torna-ho a provar d’aquí a uns segons."
       },
       "required": "obligatori"
+    },
+    "nav": {
+      "label": "Seccions del panell",
+      "dashboard": "Quadre de comandament",
+      "achievements": "Fites"
+    },
+    "header": {
+      "label": "Gestió de l'entitat",
+      "kyb": {
+        "PENDING": "Documents pendents",
+        "SUBMITTED": "Documents en revisió",
+        "VERIFIED": "Titular verificat",
+        "REJECTED": "Cal corregir documents"
+      },
+      "quotas": {
+        "title": "Quotes del curs {period}",
+        "exempt": "Sense comissió de plataforma: <strong>{remaining}</strong> de {total} disponibles.",
+        "medalUsed": "Beca de medalla: aplicada a «{title}».",
+        "medalAvailable": "Beca de medalla: <strong>+{amount}</strong> exempts de comissió.",
+        "medalNone": "Beca de medalla: sense beca disponible aquest curs.",
+        "maintenance": "Manteniment de la plataforma: {paid} de {cap} aquest curs.",
+        "maintenanceOff": "Manteniment de la plataforma: {amount}"
+      }
+    },
+    "dashboard": {
+      "summaryTitle": "Resum de l'entitat",
+      "filter": {
+        "toggle": "Filtrar",
+        "count": "{count, plural, one {# filtre actiu} other {# filtres actius}}",
+        "year": "Curs",
+        "allYears": "Tots els cursos",
+        "course": "Curs {year}",
+        "category": "Categoria",
+        "allCategories": "Totes les categories",
+        "status": "Estat",
+        "allStatuses": "Tots els estats",
+        "statusOption": {
+          "BUDGETING": "Pressupostació",
+          "FUNDRAISING": "Recaptant o taquilla oberta",
+          "GOAL_REACHED": "Fita assolida (pendent de tancament)",
+          "CLOSED": "Tancades i publicades a Fites",
+          "EXPIRED": "Vençudes sense meta",
+          "RESIZE_VOTING": "En votació de redimensionament",
+          "REFUNDING": "Retornant",
+          "REFUNDED": "Reemborsades",
+          "CANCELLED": "Cancel·lades"
+        },
+        "reset": "Restableix"
+      },
+      "resultCount": "{count, plural, =0 {Cap iniciativa coincideix amb els filtres} one {# iniciativa} other {# iniciatives}}",
+      "kpi": {
+        "total": "Total d'iniciatives",
+        "active": "Actives i taquilles",
+        "achieved": "Fites assolides",
+        "raised": "Recaptat",
+        "sponsors": "Comerços actius"
+      },
+      "timeline": {
+        "title": "Línia d'estats i guardioles",
+        "intro": "En quina fase és cada iniciativa de l'entitat.",
+        "listLabel": "Iniciatives de l'entitat",
+        "stepsLabel": "Fases de «{title}»",
+        "now": "Ara: {step}. {hint}"
+      },
+      "card": {
+        "formatBudget": "Pressupost",
+        "formatTicketing": "Taquilla o rifa",
+        "hucha": "Guardiola {id}",
+        "raised": "{raised} de {goal}",
+        "progress": "Avenç de «{title}»: {percent} %",
+        "contributions": "{count, plural, =0 {Encara sense aportacions} one {💛 1 aportació} other {💛 # aportacions}}",
+        "closes": "Tanca el {date}",
+        "viewPublic": "Veure la fitxa pública de «{title}»"
+      },
+      "steps": {
+        "moderation": "1. Moderació",
+        "signatures": "2. Signatures",
+        "doubleCheck": "3. Doble signatura",
+        "budget": "4. Pressupost",
+        "fundraising": "5. Recaptant",
+        "achievement": "6. Fita"
+      },
+      "stepTip": {
+        "moderation": "Revisió inicial per part de l'entitat.",
+        "signatures": "Recollida de signatures de la comunitat, amb auditoria antifrau.",
+        "doubleCheck": "Validació conjunta de les dues persones signants.",
+        "budget": "Pressupost del proveïdor i meta de la campanya.",
+        "fundraising": "Campanya oberta: els diners queden retinguts a PAYCOMET fins a assolir la meta.",
+        "achievement": "Meta assolida: liquidació i fotos d'Abans i Després."
+      },
+      "stepState": {
+        "done": "feta",
+        "current": "fase actual",
+        "pending": "pendent"
+      },
+      "noMatch": {
+        "title": "Cap iniciativa coincideix",
+        "description": "Canvieu o restabliu els filtres per veure la resta."
+      },
+      "empty": {
+        "title": "La vostra primera campanya comença aquí",
+        "description": "Quan les dues signatures i els documents del titular estiguin a punt, creareu la primera campanya a l'Estudi. Mentrestant, això és el que falta.",
+        "stepsLabel": "Passos fins a la primera campanya",
+        "steps": {
+          "signers": {
+            "title": "Les dues signatures",
+            "done": "Les dues persones signants estan a punt.",
+            "todo": "Falta que l'altra persona signant activi el compte i la verificació en dos passos."
+          },
+          "documents": {
+            "title": "Documents del titular",
+            "done": "Verificats: podeu publicar campanyes amb cobrament.",
+            "todo": "Falten els documents del titular (CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte) per publicar la primera campanya amb cobrament."
+          },
+          "studio": {
+            "title": "Crear la campanya",
+            "done": "La campanya està creada.",
+            "todo": "L'Estudi d'edició arribarà molt aviat: des d'allà dissenyareu la campanya, amb el pressupost quadrat al cèntim."
+          }
+        }
+      }
+    },
+    "medals": {
+      "title": "Medalles KORUM",
+      "intro": "Cada curs, les campanyes assolides pugen la medalla de l'entitat i amb ella la beca d'import exempt de comissió. Amb la medalla assolida, el kit dona l'informe, el segell i un text per a les vostres xarxes.",
+      "level": "Medalla {name}",
+      "grantLine": "+{amount} exempts de comissió",
+      "state": {
+        "EARNED": "Assolida: ja teniu el kit.",
+        "NEXT": "Següent medalla: {missing, plural, =0 {gairebé la teniu} one {us falta # campanya assolida} other {us falten # campanyes assolides}} aquest curs.",
+        "LOCKED": "S'assoleix amb {required, plural, one {# campanya assolida} other {# campanyes assolides}} al curs."
+      },
+      "kit": {
+        "open": "Segell i text per a xarxes",
+        "title": "Kit oficial · Medalla {name}",
+        "badge": "Segell Comunitat Impulsora KORUM · Nivell {name} ({period})",
+        "report": "Descarrega l'informe (PDF)",
+        "seal": "Descarrega el segell per al web (SVG)",
+        "postLabel": "Text per a les xarxes de l'entitat (el podeu editar)",
+        "copy": "Copia el text",
+        "copied": "Text copiat",
+        "copiedDescription": "Ja el podeu enganxar a les xarxes de l'entitat.",
+        "copyManual": "No s'ha pogut copiar: seleccioneu el text i copieu-lo a mà.",
+        "share": "Comparteix per WhatsApp",
+        "close": "Tanca",
+        "newTab": " (s'obre en una pestanya nova)"
+      },
+      "post": {
+        "SCHOOL": "🌟 Orgull de comunitat a {entity}! Hem assolit el Segell Comunitat Impulsora KORUM, nivell {tier} {icon}, gràcies a la participació de les nostres famílies i dels comerços veïns. Continuem sumant millores! 💛 {hashtags}",
+        "SPORTS_CLUB": "🌟 Orgull de club a {entity}! Hem assolit el Segell Comunitat Impulsora KORUM, nivell {tier} {icon}, gràcies a la participació de socis, famílies i comerços veïns. Continuem sumant millores per al club! 💛 {hashtags}",
+        "CULTURAL": "🌟 Orgull de comunitat a {entity}! Hem assolit el Segell Comunitat Impulsora KORUM, nivell {tier} {icon}, gràcies a la participació de qui ens acompanyeu i dels comerços veïns. Continuem sumant millores! 💛 {hashtags}"
+      },
+      "report": {
+        "title": "Informe d'impacte · Medalla {tier}",
+        "intro": "{entity} ha assolit la medalla {tier} de KORUM al curs {period}. Aquest informe resumeix el que la comunitat ha fet possible, amb les xifres reals de la plataforma.",
+        "sections": {
+          "impact": "Impacte del curs",
+          "achievements": "Campanyes assolides",
+          "transparency": "Transparència"
+        },
+        "impact": {
+          "campaigns": "Campanyes assolides aquest curs: {count}",
+          "raised": "Recaptat en aquestes campanyes: {amount}",
+          "sponsors": "Comerços amics actius: {count}"
+        },
+        "achievementsEmpty": "Encara no hi ha campanyes assolides en aquest curs.",
+        "transparency": {
+          "retained": "Els diners de cada campanya queden retinguts a PAYCOMET, entitat de pagament autoritzada pel Banc d'Espanya, fins a assolir la meta. KORUM és una plataforma tecnològica: no és una entitat financera ni custodia fons.",
+          "refund": "Si una campanya no assoleix la meta, es retorna el 100 % del cobrat a cada persona, al mitjà de pagament original.",
+          "independence": "KORUM mai no intermedia ni cobra comissions a proveïdors d'obres o equipament: l'entitat tria lliurement."
+        },
+        "generatedAt": "Informe generat el {date}."
+      },
+      "seal": {
+        "headline": "Comunitat Impulsora",
+        "accessibleName": "Segell KORUM Comunitat Impulsora, nivell {tier}, de {entity}, curs {period}"
+      },
+      "names": {
+        "bronze": "Bronze",
+        "silver": "Plata",
+        "gold": "Or"
+      }
+    },
+    "model182": {
+      "title": "Model 182 (donatius)",
+      "intro": "Fitxer per presentar a l'Agència Tributària amb els donatius completats i sense devolució de l'exercici. Les entrades, les rifes i les recàrregues mai no hi entren.",
+      "year": "Exercici",
+      "phone": "Telèfon de contacte",
+      "phoneHint": "Nou xifres: és el que figurarà com a contacte al fitxer. El nom de contacte és el del vostre compte.",
+      "download": "Descarrega el fitxer",
+      "downloading": "Preparant el fitxer…",
+      "notVerified": "La vostra entitat no té acreditada la Llei 49/2002, de manera que les famílies reben un justificant nominatiu d'aportació, sense efectes fiscals, i no hi ha cap Model 182 per presentar. Si l'acrediteu, aquesta descàrrega s'activa.",
+      "result": {
+        "done": "Fitxer de l'exercici {year} descarregat: {donors, plural, one {# persona declarada} other {# persones declarades}} per un total de {total}.",
+        "excluded": "{count, plural, one {Queda fora # aportació} other {Queden fora # aportacions}} ({amount}) per no tenir un NIF, un nom o una província vàlids: aquestes persones no es poden declarar.",
+        "unresolved": "{count, plural, one {Inclou # donatiu} other {Inclou # donatius}} ({amount}) de campanyes que encara no s'han resolt. Si alguna acaba retornant-se, consulteu amb la vostra assessoria abans de presentar el fitxer.",
+        "returned": "{count, plural, one {Queda fora # donatiu} other {Queden fora # donatius}} ({amount}) de campanyes que s'estan retornant o es van cancel·lar: aquells diners no són un donatiu i no es declaren."
+      },
+      "errors": {
+        "PHONE_INVALID": "Escriviu un telèfon de 9 xifres.",
+        "LEY49_NOT_VERIFIED": "La Llei 49/2002 de l'entitat encara no està verificada.",
+        "DECLARANT_INCOMPLETE": "Falta el CIF de l'entitat.",
+        "FORMAT": "No s'ha pogut generar el fitxer amb aquestes dades. Reviseu el telèfon i torneu-ho a provar.",
+        "FORBIDDEN": "No teniu permís per descarregar aquest fitxer.",
+        "GENERIC": "No s'ha pogut descarregar. Torneu-ho a provar d'aquí a uns segons."
+      }
     }
   },
   "gate": {

@@ -1328,8 +1328,7 @@
     "intro": "Desde aquí gestionaréis las ideas, las campañas y los pagos, siempre con las dos firmas.",
     "wallet": {
       "title": "Hucha de la entidad",
-      "explain": "Es el identificador de vuestra hucha en KORUM. El dinero de cada campaña queda retenido en PAYCOMET hasta lograr la meta.",
-      "exempt": "Sin comisión de plataforma este curso: <strong>{remaining}</strong> disponibles de {total}."
+      "explain": "Es el identificador de vuestra hucha en KORUM. El dinero de cada campaña queda retenido en PAYCOMET hasta lograr la meta."
     },
     "signers": {
       "title": "Doble firma ({ready} de {total} listas)",
@@ -1408,6 +1407,212 @@
         "generic": "No hemos podido guardarlo. Inténtalo de nuevo en unos segundos."
       },
       "required": "obligatorio"
+    },
+    "nav": {
+      "label": "Secciones del panel",
+      "dashboard": "Cuadro de mandos",
+      "achievements": "Logros"
+    },
+    "header": {
+      "label": "Gestión de la entidad",
+      "kyb": {
+        "PENDING": "Documentos pendientes",
+        "SUBMITTED": "Documentos en revisión",
+        "VERIFIED": "Titular verificado",
+        "REJECTED": "Hay que corregir documentos"
+      },
+      "quotas": {
+        "title": "Cupos del curso {period}",
+        "exempt": "Sin comisión de plataforma: <strong>{remaining}</strong> de {total} disponibles.",
+        "medalUsed": "Beca de medalla: aplicada en «{title}».",
+        "medalAvailable": "Beca de medalla: <strong>+{amount}</strong> exentos de comisión.",
+        "medalNone": "Beca de medalla: sin beca disponible este curso.",
+        "maintenance": "Mantenimiento de la plataforma: {paid} de {cap} este curso.",
+        "maintenanceOff": "Mantenimiento de la plataforma: {amount}"
+      }
+    },
+    "dashboard": {
+      "summaryTitle": "Resumen de la entidad",
+      "filter": {
+        "toggle": "Filtrar",
+        "count": "{count, plural, one {# filtro activo} other {# filtros activos}}",
+        "year": "Curso",
+        "allYears": "Todos los cursos",
+        "course": "Curso {year}",
+        "category": "Categoría",
+        "allCategories": "Todas las categorías",
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "statusOption": {
+          "BUDGETING": "Presupuestación",
+          "FUNDRAISING": "Recaudando o taquilla abierta",
+          "GOAL_REACHED": "Logro conseguido (pendiente de cierre)",
+          "CLOSED": "Cerradas y publicadas en Logros",
+          "EXPIRED": "Vencidas sin meta",
+          "RESIZE_VOTING": "En votación de redimensionamiento",
+          "REFUNDING": "Devolviendo",
+          "REFUNDED": "Reembolsadas",
+          "CANCELLED": "Canceladas"
+        },
+        "reset": "Restablecer"
+      },
+      "resultCount": "{count, plural, =0 {Ninguna iniciativa coincide con los filtros} one {# iniciativa} other {# iniciativas}}",
+      "kpi": {
+        "total": "Total de iniciativas",
+        "active": "Activas y taquillas",
+        "achieved": "Logros conseguidos",
+        "raised": "Recaudado",
+        "sponsors": "Comercios activos"
+      },
+      "timeline": {
+        "title": "Línea de estados y huchas",
+        "intro": "En qué fase está cada iniciativa de la entidad.",
+        "listLabel": "Iniciativas de la entidad",
+        "stepsLabel": "Fases de «{title}»",
+        "now": "Ahora: {step}. {hint}"
+      },
+      "card": {
+        "formatBudget": "Presupuesto",
+        "formatTicketing": "Taquilla o rifa",
+        "hucha": "Hucha {id}",
+        "raised": "{raised} de {goal}",
+        "progress": "Avance de «{title}»: {percent} %",
+        "contributions": "{count, plural, =0 {Sin aportaciones todavía} one {💛 1 aportación} other {💛 # aportaciones}}",
+        "closes": "Cierra el {date}",
+        "viewPublic": "Ver la ficha pública de «{title}»"
+      },
+      "steps": {
+        "moderation": "1. Moderación",
+        "signatures": "2. Firmas",
+        "doubleCheck": "3. Doble firma",
+        "budget": "4. Presupuesto",
+        "fundraising": "5. Recaudando",
+        "achievement": "6. Logro"
+      },
+      "stepTip": {
+        "moderation": "Revisión inicial por parte de la entidad.",
+        "signatures": "Recogida de firmas de la comunidad, con auditoría antifraude.",
+        "doubleCheck": "Validación conjunta de las dos personas firmantes.",
+        "budget": "Presupuesto del proveedor y meta de la campaña.",
+        "fundraising": "Campaña abierta: el dinero queda retenido en PAYCOMET hasta lograr la meta.",
+        "achievement": "Meta conseguida: liquidación y fotos de Antes y Después."
+      },
+      "stepState": {
+        "done": "hecha",
+        "current": "fase actual",
+        "pending": "pendiente"
+      },
+      "noMatch": {
+        "title": "Ninguna iniciativa coincide",
+        "description": "Cambiad o restableced los filtros para ver el resto."
+      },
+      "empty": {
+        "title": "Vuestra primera campaña empieza aquí",
+        "description": "Cuando las dos firmas y los documentos del titular estén listos, crearéis la primera campaña en el Estudio. Mientras tanto, esto es lo que falta.",
+        "stepsLabel": "Pasos hasta la primera campaña",
+        "steps": {
+          "signers": {
+            "title": "Las dos firmas",
+            "done": "Las dos personas firmantes están listas.",
+            "todo": "Falta que la otra persona firmante active su cuenta y la verificación en dos pasos."
+          },
+          "documents": {
+            "title": "Documentos del titular",
+            "done": "Verificados: podéis publicar campañas con cobro.",
+            "todo": "Faltan los documentos del titular (CIF, estatutos o acta, DNI de quien representa a la entidad y certificado de titularidad de la cuenta) para publicar la primera campaña con cobro."
+          },
+          "studio": {
+            "title": "Crear la campaña",
+            "done": "La campaña está creada.",
+            "todo": "El Estudio de edición llegará muy pronto: desde él diseñaréis la campaña, con su presupuesto cuadrado al céntimo."
+          }
+        }
+      }
+    },
+    "medals": {
+      "title": "Medallas KORUM",
+      "intro": "Cada curso, las campañas conseguidas suben la medalla de la entidad y con ella la beca de importe exento de comisión. Con la medalla conseguida, el kit da el informe, el sello y un texto para vuestras redes.",
+      "level": "Medalla {name}",
+      "grantLine": "+{amount} exentos de comisión",
+      "state": {
+        "EARNED": "Conseguida: ya tenéis su kit.",
+        "NEXT": "Siguiente medalla: {missing, plural, =0 {ya casi la tenéis} one {os falta # campaña conseguida} other {os faltan # campañas conseguidas}} este curso.",
+        "LOCKED": "Se consigue con {required, plural, one {# campaña conseguida} other {# campañas conseguidas}} en el curso."
+      },
+      "kit": {
+        "open": "Sello y texto para redes",
+        "title": "Kit oficial · Medalla {name}",
+        "badge": "Sello Comunidad Impulsora KORUM · Nivel {name} ({period})",
+        "report": "Descargar el informe (PDF)",
+        "seal": "Descargar el sello para la web (SVG)",
+        "postLabel": "Texto para las redes de la entidad (podéis editarlo)",
+        "copy": "Copiar el texto",
+        "copied": "Texto copiado",
+        "copiedDescription": "Ya podéis pegarlo en las redes de la entidad.",
+        "copyManual": "No se ha podido copiar: seleccionad el texto y copiadlo a mano.",
+        "share": "Compartir por WhatsApp",
+        "close": "Cerrar",
+        "newTab": " (se abre en una pestaña nueva)"
+      },
+      "post": {
+        "SCHOOL": "🌟 ¡Orgullo de comunidad en {entity}! Hemos alcanzado el Sello Comunidad Impulsora KORUM, nivel {tier} {icon}, gracias a la participación de nuestras familias y comercios vecinos. ¡Seguimos sumando mejoras! 💛 {hashtags}",
+        "SPORTS_CLUB": "🌟 ¡Orgullo de club en {entity}! Hemos alcanzado el Sello Comunidad Impulsora KORUM, nivel {tier} {icon}, gracias a la participación de socios, familias y comercios vecinos. ¡Seguimos sumando mejoras para el club! 💛 {hashtags}",
+        "CULTURAL": "🌟 ¡Orgullo de comunidad en {entity}! Hemos alcanzado el Sello Comunidad Impulsora KORUM, nivel {tier} {icon}, gracias a la participación de quienes nos acompañáis y de los comercios vecinos. ¡Seguimos sumando mejoras! 💛 {hashtags}"
+      },
+      "report": {
+        "title": "Informe de impacto · Medalla {tier}",
+        "intro": "{entity} ha conseguido la medalla {tier} de KORUM en el curso {period}. Este informe resume lo que la comunidad ha hecho posible, con las cifras reales de la plataforma.",
+        "sections": {
+          "impact": "Impacto del curso",
+          "achievements": "Campañas conseguidas",
+          "transparency": "Transparencia"
+        },
+        "impact": {
+          "campaigns": "Campañas conseguidas este curso: {count}",
+          "raised": "Recaudado en esas campañas: {amount}",
+          "sponsors": "Comercios amigos activos: {count}"
+        },
+        "achievementsEmpty": "Todavía no hay campañas conseguidas en este curso.",
+        "transparency": {
+          "retained": "El dinero de cada campaña queda retenido en PAYCOMET, entidad de pago autorizada por el Banco de España, hasta lograr la meta. KORUM es una plataforma tecnológica: no es una entidad financiera ni custodia fondos.",
+          "refund": "Si una campaña no alcanza su meta, se devuelve el 100 % de lo cobrado a cada persona, al medio de pago original.",
+          "independence": "KORUM nunca intermedia ni cobra comisiones a proveedores de obras o equipamiento: la entidad elige libremente."
+        },
+        "generatedAt": "Informe generado el {date}."
+      },
+      "seal": {
+        "headline": "Comunidad Impulsora",
+        "accessibleName": "Sello KORUM Comunidad Impulsora, nivel {tier}, de {entity}, curso {period}"
+      },
+      "names": {
+        "bronze": "Bronce",
+        "silver": "Plata",
+        "gold": "Oro"
+      }
+    },
+    "model182": {
+      "title": "Modelo 182 (donativos)",
+      "intro": "Fichero para presentar en la Agencia Tributaria con los donativos completados y sin devolución del ejercicio. Las entradas, las rifas y las recargas nunca entran.",
+      "year": "Ejercicio",
+      "phone": "Teléfono de contacto",
+      "phoneHint": "Nueve cifras: es el que figurará como contacto en el fichero. El nombre de contacto es el de vuestra cuenta.",
+      "download": "Descargar el fichero",
+      "downloading": "Preparando el fichero…",
+      "notVerified": "Vuestra entidad no tiene acreditada la Ley 49/2002, así que las familias reciben un justificante nominativo de aportación, sin efectos fiscales, y no hay Modelo 182 que presentar. Si la acreditáis, esta descarga se activa.",
+      "result": {
+        "done": "Fichero del ejercicio {year} descargado: {donors, plural, one {# persona declarada} other {# personas declaradas}} por un total de {total}.",
+        "excluded": "{count, plural, one {Queda fuera # aportación} other {Quedan fuera # aportaciones}} ({amount}) por no tener un NIF, un nombre o una provincia válidos: esas personas no se pueden declarar.",
+        "unresolved": "{count, plural, one {Incluye # donativo} other {Incluye # donativos}} ({amount}) de campañas que aún no se han resuelto. Si alguna acaba devolviéndose, consultad con vuestra asesoría antes de presentar el fichero.",
+        "returned": "{count, plural, one {Queda fuera # donativo} other {Quedan fuera # donativos}} ({amount}) de campañas que se están devolviendo o se cancelaron: ese dinero no es un donativo y no se declara."
+      },
+      "errors": {
+        "PHONE_INVALID": "Escribid un teléfono de 9 cifras.",
+        "LEY49_NOT_VERIFIED": "La Ley 49/2002 de la entidad aún no está verificada.",
+        "DECLARANT_INCOMPLETE": "Falta el CIF de la entidad.",
+        "FORMAT": "No se ha podido generar el fichero con estos datos. Revisad el teléfono y probad de nuevo.",
+        "FORBIDDEN": "No tenéis permiso para descargar este fichero.",
+        "GENERIC": "No se ha podido descargar. Probad de nuevo en unos segundos."
+      }
     }
   },
   "gate": {

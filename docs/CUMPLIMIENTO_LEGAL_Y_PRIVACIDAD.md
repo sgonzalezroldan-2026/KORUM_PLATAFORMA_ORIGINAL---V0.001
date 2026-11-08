@@ -205,6 +205,19 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 
 - [ ] **Gestión de Mi Hucha:** se cobra encima de cada mes (0,25 € por defecto) como ingreso de KORUM y no entra en el certificado fiscal. ¿IVA de esa gestión y cómo se documenta para la familia (hoy solo figura en el email mensual)?
 
+**Asesoría fiscal (Sprint 4.1 · Modelo 182 del panel):**
+
+- [ ] **Persona de contacto del fichero:** es quien descarga (su nombre de cuenta, tal cual, no «apellidos y nombre» como pide el diseño de la AEAT) y el teléfono lo escribe esa persona (se precarga el de la ficha, que hoy es el móvil de quien dirige). ¿Puede presentarlo la persona cofirmante? ¿Hay que avisar a quien firma de que su nombre y teléfono van a la AEAT?
+- [ ] **Campañas sin resolver:** las donaciones de campañas `FUNDRAISING`, `EXPIRED` o `RESIZE_VOTING` entran en el fichero y se señalan; las de campañas que se devuelven (`REFUNDING`) o se cancelaron (`CANCELLED`) **no** entran (un dinero que se devuelve no es un donativo irrevocable, Ley 49/2002 art. 24). Confirmar el criterio y si se debe esperar a que se resuelva la campaña antes de presentar.
+- [ ] **Declaración complementaria o sustitutiva:** el número de justificante es fijo (`182{año}000001`) y las posiciones 121-122 van en blanco; no hay ruta para sustituir un fichero ya presentado.
+- [ ] **Texto sin Ley 49/2002 verificada** (`panel.model182.notVerified`): «justificante nominativo de aportación, sin efectos fiscales».
+- [ ] **El Super-Admin no descarga el Modelo 182** de ninguna entidad (minimización de los NIF de las familias); solo lo hacen las personas firmantes de la propia entidad.
+
+**Abogado (Sprint 4.1 · kit de medallas):**
+
+- [ ] Un sello público «Comunidad Impulsora KORUM» y un informe en PDF pensados para difundirse entre las familias: el informe dice «PAYCOMET, entidad de pago autorizada por el Banco de España» (usar la redacción que apruebe Paycomet en el contrato) y «se devuelve el 100 % de lo cobrado» (existe también la vía del redimensionamiento por votación).
+- [ ] La cifra «Recaudado» del informe sale de `raisedCents`, que incluye el bonus *Matching 2x* de comercios y, cuando exista, el Auto-Impulso: enlaza con el punto abierto de la publicación del Auto-Impulso frente a «lo han conseguido las familias».
+
 **Paycomet:** las 8 preguntas del §2, por escrito. Del Sprint 3.8, además: (a) cómo pedir en `/v1/form` que el primer pago guarde la tarjeta para cobros recurrentes (se ha supuesto `trxType: 'R'`) y si su notificación trae `IdUser` y `TokenUser` (fuera de la firma); (b) los campos de un cobro iniciado por el comercio sin la persona (se ha supuesto `secure: 0`, `trxType: 'R'`, `scaException: 'MIT'`) y qué IP enviar (se usa la del servidor); (c) si un cobro recurrente puede volver con petición de autenticación (hoy se trata como rechazo y se pausa); (d) **cómo autenticar `IdUser` y `TokenUser` de la notificación**, que no entran en la firma: antes de cobros reales hay que comprobarlos contra la operación del pedido (consulta a Paycomet) o confirmar que van firmados (auditoría del 3.8); (e) qué datos de recurrencia pide la autenticación 3DS del primer pago (frecuencia y fecha de fin) para que los bancos no exijan autenticarse cada mes; (f) si Paycomet guarda la tarjeta aunque KORUM no la registre y cómo pedir que la borre.
 
 ---

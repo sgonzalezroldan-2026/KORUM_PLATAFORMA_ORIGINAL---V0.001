@@ -12,13 +12,15 @@ export { sealDonorTaxId } from './tax-id-vault';
  * Exportación del Modelo 182 de una entidad (Regla 02 §9, QA-REG02). Solo con la Ley 49/2002 **verificada**, y solo donaciones completadas y
  * sin reembolso: las entradas nunca, y la aportación voluntaria a KORUM tampoco, porque no es un donativo a la entidad. Sin NIF o sin
  * provincia una persona no se puede declarar: queda fuera y el resultado lo dice, para que la entidad sepa cuánto no ha entrado. Las donaciones
- * de campañas aún sin resolver entran, porque se han cobrado, pero se señalan: si la campaña falla habrá que presentar una sustitutiva.
+ * de campañas aún sin resolver entran, porque se han cobrado, pero se señalan; las de campañas que ya se devuelven o se cancelaron no entran.
  */
 
-const UNRESOLVED_STATUSES = new Set(['FUNDRAISING', 'EXPIRED', 'RESIZE_VOTING', 'REFUNDING', 'CANCELLED']);
+const UNRESOLVED_STATUSES = new Set(['FUNDRAISING', 'EXPIRED', 'RESIZE_VOTING']);
+/** Campañas que ya se devuelven o se cancelaron: ese dinero no es un donativo irrevocable (Ley 49/2002, art. 24), así que no se declara. */
+const RETURNED_STATUSES = new Set(['REFUNDING', 'CANCELLED']);
 
 export class Model182NotAllowedError extends Error {
-  constructor(reason: 'LEY49_NOT_VERIFIED' | 'DECLARANT_INCOMPLETE') {
+  constructor(readonly reason: 'LEY49_NOT_VERIFIED' | 'DECLARANT_INCOMPLETE') {
     super(`No se puede exportar el Modelo 182: ${reason}.`);
     this.name = 'Model182NotAllowedError';
   }
@@ -27,6 +29,8 @@ export class Model182NotAllowedError extends Error {
 export interface Model182Export extends Model182File {
   excluded: { contributions: number; amountCents: number };
   unresolved: { contributions: number; amountCents: number };
+  /** Donaciones de campañas que se están devolviendo o se cancelaron: no entran en el fichero. */
+  returned: { contributions: number; amountCents: number };
 }
 
 export interface Model182Request {
@@ -40,7 +44,7 @@ export interface Model182Request {
 
 export async function exportModel182(db: KorumPrismaClient, keyring: Keyring, actor: SessionActor, request: Model182Request): Promise<Model182Export> {
   const { organizationId, fiscalYear } = request;
-  await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'tax.model182_export', targetType: 'Organization', targetId: organizationId });
+  await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'tax.model182_export', targetType: 'Organization', targetId: organizationId, allowSuperadmin: false });
   const organization = await db.organization.findUnique({ where: { id: organizationId }, select: { ley49: true, ley49VerifiedAt: true, cif: true, legalName: true } });
   if (!organization) throw new ResourceNotFoundError('Organization');
   if (!organization.ley49 || !organization.ley49VerifiedAt) {
@@ -58,8 +62,16 @@ export async function exportModel182(db: KorumPrismaClient, keyring: Keyring, ac
   const donors = new Map<string, { sealed: string; keyVersion: number | null; fullName: string; provinceCode: string; byYear: Map<number, number> }>();
   const excluded = { contributions: 0, amountCents: 0 };
   const unresolved = { contributions: 0, amountCents: 0 };
+  const returned = { contributions: 0, amountCents: 0 };
   for (const row of rows) {
     const current = row.fiscalYear === fiscalYear;
+    if (RETURNED_STATUSES.has(row.initiative.status)) {
+      if (current) {
+        returned.contributions += 1;
+        returned.amountCents += row.amountCents;
+      }
+      continue;
+    }
     const declarable = row.donorTaxIdEnc && row.donorTaxIdHmac && row.donorFullName && row.donorProvinceCode && PROVINCE_CODES.has(row.donorProvinceCode);
     if (!declarable) {
       if (current) {
@@ -103,7 +115,7 @@ export async function exportModel182(db: KorumPrismaClient, keyring: Keyring, ac
   );
   // Solo cifras: ningún NIF ni nombre en la auditoría.
   await db.auditLog.create({
-    data: { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, organizationId, action: 'tax.model182_exported', targetType: 'Organization', targetId: organizationId, metadataJson: { fiscalYear, donorCount: file.donorCount, totalCents: file.totalCents, excluded, unresolved } }
+    data: { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, organizationId, action: 'tax.model182_exported', targetType: 'Organization', targetId: organizationId, metadataJson: { fiscalYear, donorCount: file.donorCount, totalCents: file.totalCents, excluded, unresolved, returned } }
   });
-  return { ...file, excluded, unresolved };
+  return { ...file, excluded, unresolved, returned };
 }

@@ -4,8 +4,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { ConsoleHeader } from '@/components/panel/console-header';
+import { PanelManagementHeader } from '@/components/panel/panel-management-header';
 import { routing } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
+import { loadPanelOverview } from '@/lib/panel/overview';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -18,12 +20,14 @@ export default async function PanelLayout({ children, params }: { children: Reac
   const { locale, orgSlug } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const { organization } = await requirePanelAccess(locale, orgSlug);
-  const t = await getTranslations({ locale, namespace: 'panel' });
+  const { actor, organization } = await requirePanelAccess(locale, orgSlug);
+  const [t, overview] = await Promise.all([getTranslations({ locale, namespace: 'panel' }), loadPanelOverview(actor, organization.id)]);
+  const isDirector = actor.memberships.some((membership) => membership.organizationId === organization.id && membership.role === 'DIRECTOR');
 
   return (
     <div className="flex min-h-dvh flex-col">
       <ConsoleHeader title={organization.name} subtitle={t('headerSubtitle')} />
+      <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} />
       <main id="contenido" className="korum-paper-dots flex-1">
         {children}
       </main>

@@ -1328,8 +1328,7 @@
     "intro": "From here you'll manage ideas, campaigns and payments, always with both signatures.",
     "wallet": {
       "title": "Organisation piggy bank",
-      "explain": "This is the identifier of your piggy bank on KORUM. Each campaign's money is held by PAYCOMET until the goal is reached.",
-      "exempt": "No platform commission this school year: <strong>{remaining}</strong> available out of {total}."
+      "explain": "This is the identifier of your piggy bank on KORUM. Each campaign's money is held by PAYCOMET until the goal is reached."
     },
     "signers": {
       "title": "Dual signature ({ready} of {total} ready)",
@@ -1408,6 +1407,212 @@
         "generic": "We could not save it. Please try again in a few seconds."
       },
       "required": "required"
+    },
+    "nav": {
+      "label": "Panel sections",
+      "dashboard": "Dashboard",
+      "achievements": "Achievements"
+    },
+    "header": {
+      "label": "Organisation management",
+      "kyb": {
+        "PENDING": "Documents pending",
+        "SUBMITTED": "Documents under review",
+        "VERIFIED": "Holder verified",
+        "REJECTED": "Documents need correcting"
+      },
+      "quotas": {
+        "title": "Allowances for {period}",
+        "exempt": "No platform commission: <strong>{remaining}</strong> of {total} available.",
+        "medalUsed": "Medal grant: used on “{title}”.",
+        "medalAvailable": "Medal grant: <strong>+{amount}</strong> exempt from commission.",
+        "medalNone": "Medal grant: none available this year.",
+        "maintenance": "Platform maintenance: {paid} of {cap} this year.",
+        "maintenanceOff": "Platform maintenance: {amount}"
+      }
+    },
+    "dashboard": {
+      "summaryTitle": "Organisation overview",
+      "filter": {
+        "toggle": "Filter",
+        "count": "{count, plural, one {# filter on} other {# filters on}}",
+        "year": "Year",
+        "allYears": "All years",
+        "course": "{year}",
+        "category": "Category",
+        "allCategories": "All categories",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "statusOption": {
+          "BUDGETING": "Budgeting",
+          "FUNDRAISING": "Fundraising or tickets on sale",
+          "GOAL_REACHED": "Goal reached (awaiting close-out)",
+          "CLOSED": "Closed and published in Achievements",
+          "EXPIRED": "Expired without reaching the goal",
+          "RESIZE_VOTING": "Resize vote open",
+          "REFUNDING": "Refunding",
+          "REFUNDED": "Refunded",
+          "CANCELLED": "Cancelled"
+        },
+        "reset": "Reset"
+      },
+      "resultCount": "{count, plural, =0 {No initiatives match the filters} one {# initiative} other {# initiatives}}",
+      "kpi": {
+        "total": "Total initiatives",
+        "active": "Active and ticket sales",
+        "achieved": "Goals reached",
+        "raised": "Raised",
+        "sponsors": "Active local businesses"
+      },
+      "timeline": {
+        "title": "Status line and piggy banks",
+        "intro": "Which stage each of the organisation’s initiatives is at.",
+        "listLabel": "Organisation initiatives",
+        "stepsLabel": "Stages of “{title}”",
+        "now": "Now: {step}. {hint}"
+      },
+      "card": {
+        "formatBudget": "Budget",
+        "formatTicketing": "Tickets or raffle",
+        "hucha": "Piggy bank {id}",
+        "raised": "{raised} of {goal}",
+        "progress": "Progress of “{title}”: {percent}%",
+        "contributions": "{count, plural, =0 {No contributions yet} one {💛 1 contribution} other {💛 # contributions}}",
+        "closes": "Closes on {date}",
+        "viewPublic": "View the public page of “{title}”"
+      },
+      "steps": {
+        "moderation": "1. Moderation",
+        "signatures": "2. Signatures",
+        "doubleCheck": "3. Dual signature",
+        "budget": "4. Budget",
+        "fundraising": "5. Fundraising",
+        "achievement": "6. Achievement"
+      },
+      "stepTip": {
+        "moderation": "First review by the organisation.",
+        "signatures": "Signatures collected from the community, with anti-fraud auditing.",
+        "doubleCheck": "Joint validation by the two signatories.",
+        "budget": "Supplier quote and campaign goal.",
+        "fundraising": "Campaign open: the money is held by PAYCOMET until the goal is reached.",
+        "achievement": "Goal reached: settlement and Before and After photos."
+      },
+      "stepState": {
+        "done": "done",
+        "current": "current stage",
+        "pending": "pending"
+      },
+      "noMatch": {
+        "title": "No initiatives match",
+        "description": "Change or reset the filters to see the rest."
+      },
+      "empty": {
+        "title": "Your first campaign starts here",
+        "description": "Once both signatures and the holder’s documents are ready, you’ll create your first campaign in the Studio. In the meantime, here’s what is missing.",
+        "stepsLabel": "Steps to your first campaign",
+        "steps": {
+          "signers": {
+            "title": "Both signatures",
+            "done": "Both signatories are ready.",
+            "todo": "The other signatory still needs to activate their account and two-step verification."
+          },
+          "documents": {
+            "title": "Holder’s documents",
+            "done": "Verified: you can publish campaigns with payments.",
+            "todo": "The holder’s documents are still missing (tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate) before you can publish the first campaign with payments."
+          },
+          "studio": {
+            "title": "Create the campaign",
+            "done": "The campaign is created.",
+            "todo": "The editing Studio is coming very soon: you’ll design the campaign there, with its budget balanced to the cent."
+          }
+        }
+      }
+    },
+    "medals": {
+      "title": "KORUM medals",
+      "intro": "Each year, the campaigns you reach raise the organisation’s medal and, with it, its commission-exempt grant. Once a medal is earned, its kit gives you the report, the seal and a text for your social media.",
+      "level": "{name} medal",
+      "grantLine": "+{amount} exempt from commission",
+      "state": {
+        "EARNED": "Earned: its kit is ready.",
+        "NEXT": "Next medal: {missing, plural, =0 {almost there} one {# more reached campaign to go} other {# more reached campaigns to go}} this year.",
+        "LOCKED": "Earned with {required, plural, one {# reached campaign} other {# reached campaigns}} in the year."
+      },
+      "kit": {
+        "open": "Seal and social text",
+        "title": "{name} medal · official kit",
+        "badge": "KORUM Driving Community seal · {name} level ({period})",
+        "report": "Download the report (PDF)",
+        "seal": "Download the website seal (SVG)",
+        "postLabel": "Text for the organisation’s social media (you can edit it)",
+        "copy": "Copy the text",
+        "copied": "Text copied",
+        "copiedDescription": "You can now paste it into the organisation’s social media.",
+        "copyManual": "It couldn’t be copied: select the text and copy it by hand.",
+        "share": "Share on WhatsApp",
+        "close": "Close",
+        "newTab": " (opens in a new tab)"
+      },
+      "post": {
+        "SCHOOL": "🌟 Community pride at {entity}! We’ve earned the KORUM Driving Community seal, {tier} level {icon}, thanks to our families and neighbourhood businesses. We keep adding improvements! 💛 {hashtags}",
+        "SPORTS_CLUB": "🌟 Club pride at {entity}! We’ve earned the KORUM Driving Community seal, {tier} level {icon}, thanks to our members, families and neighbourhood businesses. We keep adding improvements for the club! 💛 {hashtags}",
+        "CULTURAL": "🌟 Community pride at {entity}! We’ve earned the KORUM Driving Community seal, {tier} level {icon}, thanks to everyone who supports us and our neighbourhood businesses. We keep adding improvements! 💛 {hashtags}"
+      },
+      "report": {
+        "title": "Impact report · {tier} medal",
+        "intro": "{entity} earned the KORUM {tier} medal in {period}. This report summarises what the community has made possible, using the platform’s real figures.",
+        "sections": {
+          "impact": "Impact this year",
+          "achievements": "Campaigns reached",
+          "transparency": "Transparency"
+        },
+        "impact": {
+          "campaigns": "Campaigns reached this year: {count}",
+          "raised": "Raised in those campaigns: {amount}",
+          "sponsors": "Active local businesses: {count}"
+        },
+        "achievementsEmpty": "There are no reached campaigns yet this year.",
+        "transparency": {
+          "retained": "The money from each campaign is held by PAYCOMET, a payment institution authorised by the Bank of Spain, until the goal is reached. KORUM is a technology platform: it is not a financial institution and does not hold funds.",
+          "refund": "If a campaign does not reach its goal, 100% of what was charged is returned to each person, to the original payment method.",
+          "independence": "KORUM never intermediates or charges commissions to works or equipment suppliers: the organisation chooses freely."
+        },
+        "generatedAt": "Report generated on {date}."
+      },
+      "seal": {
+        "headline": "Driving Community",
+        "accessibleName": "KORUM Driving Community seal, {tier} level, {entity}, {period}"
+      },
+      "names": {
+        "bronze": "Bronze",
+        "silver": "Silver",
+        "gold": "Gold"
+      }
+    },
+    "model182": {
+      "title": "Form 182 (donations)",
+      "intro": "File to submit to the Tax Agency with the year’s completed, non-refunded donations. Tickets, raffles and top-ups never count.",
+      "year": "Tax year",
+      "phone": "Contact phone",
+      "phoneHint": "Nine digits: it will appear as the contact in the file. The contact name is the one on your account.",
+      "download": "Download the file",
+      "downloading": "Preparing the file…",
+      "notVerified": "Your organisation has not proven its Law 49/2002 status, so families receive a named proof of contribution with no tax effect, and there is no Form 182 to submit. If you prove it, this download is switched on.",
+      "result": {
+        "done": "File for {year} downloaded: {donors, plural, one {# person declared} other {# people declared}} for a total of {total}.",
+        "excluded": "{count, plural, one {# contribution is left out} other {# contributions are left out}} ({amount}) for lacking a valid tax ID, name or province: those people cannot be declared.",
+        "unresolved": "{count, plural, one {Includes # donation} other {Includes # donations}} ({amount}) from campaigns not yet resolved. If one ends up being refunded, check with your tax adviser before submitting the file.",
+        "returned": "{count, plural, one {# donation is left out} other {# donations are left out}} ({amount}) from campaigns being refunded or cancelled: that money is not a donation and is not declared."
+      },
+      "errors": {
+        "PHONE_INVALID": "Enter a 9-digit phone number.",
+        "LEY49_NOT_VERIFIED": "The organisation’s Law 49/2002 status is not verified yet.",
+        "DECLARANT_INCOMPLETE": "The organisation’s tax ID is missing.",
+        "FORMAT": "The file could not be generated with this data. Check the phone number and try again.",
+        "FORBIDDEN": "You do not have permission to download this file.",
+        "GENERIC": "It could not be downloaded. Try again in a few seconds."
+      }
     }
   },
   "gate": {
