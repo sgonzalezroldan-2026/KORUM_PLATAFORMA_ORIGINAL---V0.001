@@ -90,7 +90,7 @@ export function EntitySettingsForm({ orgSlug, initial, canEdit }: { orgSlug: str
           onChange={(event) => setTrio(key, index, event.target.value)}
           aria-invalid={invalid(key)}
           aria-describedby={describedById}
-          className="min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-3 text-center font-corp text-lg font-extrabold tabular-nums aria-[invalid=true]:border-red-700 read-only:bg-stone-100"
+          className="min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-3 text-center font-corp text-lg font-extrabold tabular-nums aria-invalid:border-red-700 read-only:bg-stone-100"
         />
       </div>
     ));

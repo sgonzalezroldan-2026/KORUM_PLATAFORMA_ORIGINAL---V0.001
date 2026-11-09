@@ -81,7 +81,7 @@ export function KybIdentityForm({ orgSlug, legalName, cif, onSaved }: { orgSlug:
         spellCheck={false}
         maxLength={20}
         required
-        className="min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-4 font-corp text-base uppercase tabular-nums text-ink aria-[invalid=true]:border-red-700"
+        className="min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-4 font-corp text-base uppercase tabular-nums text-ink aria-invalid:border-red-700"
         value={values.cif}
         onChange={(event) => setValues((current) => ({ ...current, cif: event.target.value }))}
       />

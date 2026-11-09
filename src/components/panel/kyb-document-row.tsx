@@ -131,7 +131,7 @@ export function KybDocumentRow(props: { orgSlug: string; kind: KybDocumentKind; 
             accept="application/pdf,image/jpeg,image/png,image/webp"
             aria-describedby={error ? `${ids.help} ${ids.error}` : ids.help}
             aria-invalid={error ? true : undefined}
-            className="min-h-11 w-full min-w-0 rounded-xl border-2 border-varsity-navy bg-white px-3 py-2 font-semibold aria-[invalid=true]:border-red-700"
+            className="min-h-11 w-full min-w-0 rounded-xl border-2 border-varsity-navy bg-white px-3 py-2 font-semibold aria-invalid:border-red-700"
           />
           <p id={ids.help} className="text-sm text-ink-soft">
             {t('help', { max })}

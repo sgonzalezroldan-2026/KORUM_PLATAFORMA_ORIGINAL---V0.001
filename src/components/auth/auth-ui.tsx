@@ -7,7 +7,7 @@ import { useEffect, useId, useRef, type InputHTMLAttributes, type ReactNode, typ
  * aviso de formulario anunciado (`role="alert"`) dentro del propio formulario (skill de interfaz §4: los errores van junto al campo).
  */
 
-export const fieldClass = 'min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-4 text-base text-ink aria-[invalid=true]:border-red-700';
+export const fieldClass = 'min-h-12 w-full rounded-xl border-2 border-varsity-navy bg-white px-4 text-base text-ink aria-invalid:border-red-700';
 export const primaryButton = 'tactile-btn w-full justify-center disabled:cursor-not-allowed disabled:opacity-60';
 export const secondaryButton =
   'inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-varsity-navy px-4 font-semibold text-varsity-navy hover:bg-varsity-navy/10 disabled:cursor-not-allowed disabled:opacity-60';

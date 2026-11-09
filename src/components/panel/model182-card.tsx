@@ -123,7 +123,7 @@ export function Model182Card({ orgSlug, verified, years, defaultYear, defaultPho
             onChange={(event) => setPhone(event.target.value)}
             aria-invalid={error === 'PHONE_INVALID'}
             aria-describedby={error === 'PHONE_INVALID' ? `${ids.hint} ${ids.error}` : ids.hint}
-            className="min-h-11 rounded-xl border-2 border-varsity-navy bg-white px-3 text-base text-ink aria-[invalid=true]:border-red-700"
+            className="min-h-11 rounded-xl border-2 border-varsity-navy bg-white px-3 text-base text-ink aria-invalid:border-red-700"
           />
         </div>
         <button type="button" className="tactile-btn" disabled={busy} onClick={() => void download()}>
