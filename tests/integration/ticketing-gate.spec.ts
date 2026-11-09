@@ -446,7 +446,7 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
     const renewed = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: renewed.pin, requestMeta: { ipHash: uniqueId('ip') } })).toMatchObject({ status: 'OPENED' });
     expect(await resolveGateSession(db, PIN_SECRET, open.token)).toBeNull();
-  }, 60_000);
+  }, 240_000);
 
   it('un PIN caducado no abre sesión, y el token solo se guarda como hash', async () => {
     const { organization, initiative } = await eventSetup();

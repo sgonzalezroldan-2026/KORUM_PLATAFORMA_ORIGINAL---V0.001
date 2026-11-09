@@ -1,4 +1,5 @@
 import { raiseAlert, resolveAlert, resolveAlertsNotIn } from '@/core/jobs/ops-alerts';
+import { KYB_RETENTION_YEARS } from '@/core/panel/entity-settings-rules';
 import type { Keyring } from '@/core/security/crypto';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import type { Prisma } from '@/generated/prisma/client';
@@ -118,9 +119,19 @@ export async function retryCardDeletions(db: Db, deps: { paymentProvider: () => 
   return { deleted: outcome.deleted, failed: outcome.pending };
 }
 
-/** Ficheros con el plazo de conservación vencido (`retainUntil`): se borran del almacén y se marcan. Si el almacén falla, se reintenta. */
+/**
+ * Ficheros con el plazo de conservación vencido (`retainUntil`): se borran del almacén y se marcan. Si el almacén falla, se reintenta. Un documento
+ * KYB **vigente** nunca se purga mientras la entidad está activa ni en los 6 años siguientes a archivarla: su plazo es «mientras dure la relación
+ * + 6 años» (CUMPLIMIENTO §6); el de uno sustituido empieza a contar al sustituirse (Sprint 4.2c).
+ */
 export async function purgeExpiredFiles(db: Db, storage: () => StorageProvider, now: Date, limit: number): Promise<{ deleted: number; failed: number }> {
-  const files = await db.fileAsset.findMany({ where: { retainUntil: { lt: now }, deletedAt: null }, take: limit, select: { id: true, bucket: true, objectKey: true } });
+  const relationEnd = new Date(now.getTime());
+  relationEnd.setUTCFullYear(relationEnd.getUTCFullYear() - KYB_RETENTION_YEARS);
+  const files = await db.fileAsset.findMany({
+    where: { retainUntil: { lt: now }, deletedAt: null, NOT: { kybDocument: { is: { replacedAt: null, organization: { OR: [{ archivedAt: null }, { archivedAt: { gt: relationEnd } }] } } } } },
+    take: limit,
+    select: { id: true, bucket: true, objectKey: true }
+  });
   const result = { deleted: 0, failed: 0 };
   if (files.length === 0) return result;
   // Solo se pide el almacén si hay algo que borrar: sin ficheros vencidos, la purga no exige tenerlo configurado.

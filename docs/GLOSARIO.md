@@ -39,7 +39,7 @@
 | **Libro mayor** | Registro contable de doble partida: **asientos** (`LedgerJournal`) formados por **apuntes** (`EscrowLedgerEntry`) en los que cargos y abonos suman igual. |
 | **Paycomet** | Entidad de pago que cobra, retiene, reparte y devuelve el dinero. KORUM no custodia fondos. |
 | ***Split transfer*** | Reparto de Paycomet desde el saldo cobrado a la cuenta destino de una entidad. Solo dentro de los **90 días** siguientes al cobro. |
-| **KYB** | Verificación de la entidad titular (documentos, IBAN, representante) antes de cobrar. |
+| **KYB** | Verificación de la entidad titular antes de cobrar: CIF, estatutos o escrituras, DNI de quien la representa y certificado de titularidad de su cuenta (más la acreditación de la Ley 49/2002 si la declara). Se suben en *Ajustes* del panel y se envían a revisión. |
 | **TCO / pizarra TCO** | Desglose interno del coste total de una campaña en el Estudio (5 líneas en `BUDGET`). |
 | **Desglose de 4 líneas** | Versión pública del presupuesto, que suma exactamente la meta. |
 | **Importe exento** | Cupo anual sin comisión (`exemptLimitCents`, 1.000 € por defecto). |

@@ -1474,7 +1474,8 @@
       "dashboard": "Dashboard",
       "approvals": "Approvals",
       "achievements": "Achievements",
-      "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}"
+      "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}",
+      "settings": "Settings"
     },
     "header": {
       "label": "Organisation management",
@@ -1492,7 +1493,9 @@
         "medalNone": "Medal grant: none available this year.",
         "maintenance": "Platform maintenance: {paid} of {cap} this year.",
         "maintenanceOff": "Platform maintenance: {amount}"
-      }
+      },
+      "kybLink": "See the documents",
+      "kybLinkFix": "Fix the documents"
     },
     "dashboard": {
       "summaryTitle": "Organisation overview",
@@ -1582,7 +1585,9 @@
           "documents": {
             "title": "Holder’s documents",
             "done": "Verified: you can publish campaigns with payments.",
-            "todo": "The holder’s documents are still missing (tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate) before you can publish the first campaign with payments."
+            "todo": "The holder’s documents are still missing (tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate) before you can publish the first campaign with payments.",
+            "cta": "Go to the documents",
+            "review": "Sent: they are under review and we'll let you know by email."
           },
           "studio": {
             "title": "Create the campaign",
@@ -1929,6 +1934,174 @@
       "metaUnpaid": "{level} tier · {sector}",
       "returnedAmount": "Sponsorship refunded to the business",
       "jump": "{count, plural, one {Go to friendly businesses · # to review} other {Go to friendly businesses · # to review}}"
+    },
+    "settings": {
+      "metaTitle": "Entity settings",
+      "title": "Entity settings",
+      "intro": "The holder's documents, the amounts families and businesses see, the entity's phone number and how your portal is shown.",
+      "readOnly": "Read only: these settings are changed by the people who sign for the entity.",
+      "kyb": {
+        "title": "Holder's documents",
+        "intro": "They are used to check who receives the money before the first campaign can take payments. They are stored privately: only the two signatories and the verification team can see them.",
+        "status": {
+          "PENDING": "You haven't sent them yet. You can prepare campaigns in the meantime, but not take payments.",
+          "SUBMITTED": "Sent on {date}. They are under review and we'll let you know by email.",
+          "VERIFIED": "Verified: you can publish campaigns that take payments.",
+          "REJECTED": "KORUM has sent them back: fix what is indicated and send them again."
+        },
+        "reviewNote": "What needs fixing",
+        "locked": {
+          "SUBMITTED": "They can't be changed while under review. If you uploaded the wrong document, contact support.",
+          "VERIFIED": "They are verified and can't be changed here: if anything about the holder changes (account, representative…), contact support."
+        },
+        "identity": {
+          "legend": "Holder of the funds",
+          "legalForm": "Legal form: {form}",
+          "ley49Declared": "Law 49/2002 regime: declared",
+          "ley49Verified": "Law 49/2002 regime: accredited",
+          "ley49No": "Law 49/2002 regime: not declared",
+          "legalName": "Holder's registered name",
+          "legalNameHint": "As it appears on its documents. No links or email addresses.",
+          "cif": "Holder's CIF",
+          "cifHint": "That of the entity taking payments: one letter, seven digits and a check character (e.g. G08451296).",
+          "cifMissing": "No CIF",
+          "save": "Save the holder's details",
+          "saving": "Saving…",
+          "saved": "Holder's details saved.",
+          "errors": {
+            "legalName": "Enter the full registered name (3 to 120 characters, no links).",
+            "cif": "That CIF is not valid: check the first letter and the check character.",
+            "CIF_IN_USE": "That CIF already belongs to another KORUM entity. If this is a mistake, contact support.",
+            "LOCKED": "The holder's details can no longer be changed here.",
+            "FORBIDDEN": "You don't have permission to change these details.",
+            "generic": "They couldn't be saved. Please try again in a few seconds."
+          },
+          "required": "Both details are required to send the documents."
+        },
+        "documents": {
+          "legend": "Documents",
+          "kinds": {
+            "TAX_ID_CARD": {
+              "title": "Tax identification card (CIF)",
+              "hint": "The card or tax office document showing the CIF of the entity that holds the funds."
+            },
+            "STATUTES": {
+              "title": "Statutes, founding minutes or deeds",
+              "hint": "The association's or foundation's registered statutes, or the deeds if the holder is a company."
+            },
+            "REPRESENTATIVE_ID": {
+              "title": "Legal representative's ID (DNI or NIE)",
+              "hint": "Both sides. Of the person registered as representative (chair, owner or head)."
+            },
+            "ACCOUNT_OWNERSHIP": {
+              "title": "Certificate of ownership of the entity's account",
+              "hint": "Issued by your financial institution, stating that the account belongs to the holder. You don't type any account number here."
+            },
+            "LEY49_ACCREDITATION": {
+              "title": "Law 49/2002 accreditation",
+              "hint": "Declaration of public benefit or Tax Agency certificate of the special tax regime. Once accredited, it allows tax certificates for donations to be issued."
+            }
+          },
+          "delivered": "Delivered on {date} · {format}, {size}",
+          "missing": "Missing",
+          "open": "Open",
+          "openLabel": "Open “{name}” (new tab)",
+          "fileLabel": "File for “{name}”",
+          "upload": "Upload",
+          "replace": "Replace",
+          "uploading": "Uploading…",
+          "uploaded": "“{name}”: document received.",
+          "help": "PDF, JPG, PNG or WebP up to {max} MB. A phone photo is fine if it is legible; compress a very heavy scanned PDF first.",
+          "replaced": "{count, plural, one {# replaced document is} other {# replaced documents are}} kept for as long as the law requires.",
+          "errors": {
+            "noFile": "Choose the file first.",
+            "TOO_LARGE": "The file is over {max} MB. Try a lighter PDF or photo.",
+            "FILE_TOO_LARGE": "The file is over {max} MB. Try a lighter PDF or photo.",
+            "FILE_TYPE_NOT_ALLOWED": "Only PDF, JPG, PNG or WebP are accepted.",
+            "FILE_UNRECOGNIZED_TYPE": "That file can't be read: it must be a PDF, JPG, PNG or WebP.",
+            "FILE_MIME_MISMATCH": "The file isn't what its name says. Save it again as a PDF or image.",
+            "FILE_EXTENSION_MISMATCH": "The file isn't what its name says. Save it again as a PDF or image.",
+            "LOCKED": "The documents can no longer be changed here.",
+            "NOT_REQUIRED": "Your entity hasn't declared Law 49/2002: this document isn't needed.",
+            "FORBIDDEN": "You don't have permission to upload this entity's documents.",
+            "generic": "It couldn't be uploaded. Please try again in a few seconds.",
+            "RATE_LIMITED": "Too many uploads in a row for this entity. Wait a while and try again."
+          }
+        },
+        "submit": {
+          "ready": "Everything's here: you can now send them for review.",
+          "missingTitle": "Still missing before you can send them:",
+          "missingCif": "the holder's CIF",
+          "button": "Send the documents for review",
+          "sending": "Sending…",
+          "sent": "Documents sent. We'll let you know by email once they have been reviewed.",
+          "errors": {
+            "INCOMPLETE": "A document or the holder's CIF is still missing.",
+            "LOCKED": "They had already been sent: reload the page.",
+            "FORBIDDEN": "You don't have permission to send these documents.",
+            "generic": "They couldn't be sent. Please try again in a few seconds."
+          }
+        }
+      },
+      "general": {
+        "title": "Amounts, ideas and portal",
+        "intro": "Whatever you change here applies from now on: contributions and businesses that have already paid keep their amount.",
+        "donations": {
+          "legend": "Donation buttons",
+          "hint": "The three amounts families see when contributing, from lowest to highest, in whole euros (from €{min} to €{max}). They can always type another.",
+          "amount": "Button {n} (€)",
+          "defaultLegend": "Preselected amount",
+          "defaultOption": "Button {n}: €{amount}"
+        },
+        "ideas": {
+          "legend": "Ideas box",
+          "minVotes": "Minimum signatures for an idea to reach the double signature",
+          "minVotesHint": "Between {min} and {max}. If you lower it, ideas that already reach it move to the double signature when you save.",
+          "maxIdeaDays": "Days to collect signatures",
+          "maxIdeaDaysHint": "Between {min} and {max}. Applies to ideas you approve from now on."
+        },
+        "sponsors": {
+          "legend": "Business sponsorship levels",
+          "hint": "Full amount the business adds to the campaign, in whole euros, from lowest to highest (from €{min} to €{max}). The advertising management fee goes on top.",
+          "tier": {
+            "bronze": "Bronze (€)",
+            "silver": "Silver (€)",
+            "gold": "Gold (€)"
+          }
+        },
+        "contact": {
+          "legend": "Contact",
+          "phone": "Entity's phone number",
+          "phoneHint": "The entity's own (office, headquarters…), not a person's mobile. Both signatories can see it and it is suggested as the contact in Modelo 182 (Form 182). Optional."
+        },
+        "portal": {
+          "legend": "Public portal",
+          "contentLocale": "Language you write your campaigns in",
+          "contentLocaleHint": "KORUM's screens are translated automatically; your texts are shown in this language.",
+          "locales": {
+            "es": "Spanish",
+            "ca": "Catalan",
+            "en": "English"
+          },
+          "publicIndexing": "Show the portal in search engines (Google, Bing…) and AI assistants",
+          "publicIndexingHint": "It only appears once the holder's documents are verified. Unticked, the portal stays open to anyone with the link."
+        },
+        "save": "Save settings",
+        "saving": "Saving…",
+        "saved": "Settings saved.",
+        "savedQuorum": "Settings saved: {count, plural, one {# idea moves} other {# ideas move}} to the double signature on reaching the new minimum of signatures.",
+        "errors": {
+          "donationPresetsEuros": "Three amounts from €{min} to €{max}, in whole euros, lowest to highest, no repeats.",
+          "defaultDonationIdx": "Choose which button is preselected.",
+          "minVotes": "A whole number between {min} and {max}.",
+          "maxIdeaDays": "A whole number of days between {min} and {max}.",
+          "sponsorTiersEuros": "Three amounts from €{min} to €{max}, in whole euros, lowest to highest, no repeats.",
+          "phone": "Enter a phone number of 9 to 15 digits (it may start with +).",
+          "form": "Check the highlighted fields.",
+          "FORBIDDEN": "You don't have permission to change these settings.",
+          "generic": "They couldn't be saved. Please try again in a few seconds."
+        }
+      }
     }
   },
   "gate": {

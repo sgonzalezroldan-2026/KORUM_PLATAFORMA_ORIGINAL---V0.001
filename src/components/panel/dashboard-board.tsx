@@ -57,6 +57,8 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
 
   if (initiatives.length === 0) {
     const steps = firstCampaignSteps({ readySigners, kybStatus });
+    // Enviados y aún sin verificar: no «faltan», están en revisión (revisión de experiencia del 4.2c).
+    const inReview = (key: string) => key === 'documents' && kybStatus === 'SUBMITTED';
     return (
       <section aria-label={t('empty.title')} className="flex flex-col gap-4">
         <EmptyState icon="🌱" title={t('empty.title')} description={t('empty.description')} playful className="korum-notebook-sheet" />
@@ -64,10 +66,15 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
           {steps.map((step) => (
             <li key={step.key} className="korum-trust-vault flex flex-col gap-1 p-4">
               <p className="font-corp text-sm font-extrabold text-varsity-navy">
-                <span aria-hidden="true">{step.done ? '✅ ' : '⏳ '}</span>
+                <span aria-hidden="true">{step.done ? '✅ ' : inReview(step.key) ? '🔎 ' : '⏳ '}</span>
                 {t(`empty.steps.${step.key}.title`)}
               </p>
-              <p className="text-sm text-ink-soft">{t(`empty.steps.${step.key}.${step.done ? 'done' : 'todo'}`)}</p>
+              <p className="text-sm text-ink-soft">{inReview(step.key) ? t('empty.steps.documents.review') : t(`empty.steps.${step.key}.${step.done ? 'done' : 'todo'}`)}</p>
+              {step.key === 'documents' && !step.done && !inReview(step.key) ? (
+                <Link href={`/panel/${orgSlug}/ajustes#documentos`} className="inline-flex min-h-11 w-fit items-center text-sm font-bold text-varsity-navy underline underline-offset-4">
+                  {t('empty.steps.documents.cta')}
+                </Link>
+              ) : null}
             </li>
           ))}
         </ol>

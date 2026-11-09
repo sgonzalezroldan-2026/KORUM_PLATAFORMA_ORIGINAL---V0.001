@@ -77,3 +77,9 @@ export const IDEA_CHAT_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:chat:us
 export const SUPPORT_TICKET_RULE: RateLimitRule & PurgeRule = { prefix: 'support:user:', limit: 5, windowMs: 60 * 60_000 };
 /** Y un tope diario, para que no se pueda repartir un guion en una consulta cada 12 minutos. */
 export const SUPPORT_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 'support:day:user:', limit: 12, windowMs: 24 * 3_600_000 };
+
+/**
+ * Subidas de documentos del titular por entidad (Sprint 4.2c): cada sustitución se conserva 6 años, así que una cuenta firmante robada o un guion no
+ * puede llenar el almacén. Treinta a la hora cubren de sobra subir y corregir los cinco documentos varias veces.
+ */
+export const KYB_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'kyb:upload:org:', limit: 30, windowMs: 60 * 60_000 };

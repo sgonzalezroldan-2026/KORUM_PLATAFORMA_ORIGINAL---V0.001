@@ -85,7 +85,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       'panel.approvals.actions.reject', 'panel.approvals.audit.statusVerified', 'panel.approvals.chat.fromKorum', 'panel.approvals.chat.send', 'panel.approvals.phases.CONVERTED', 'panel.approvals.phases.REJECTED', 'panel.approvals.reject.confirm',
       // Panel de la entidad (Sprint 4.1): «Filtrar», «Taquilla o rifa», «fase actual», «Fases de…», «Medalla…», «Plata» y «{raised} de {goal}» se escriben igual en catalán.
       'panel.dashboard.card.formatTicketing', 'panel.dashboard.card.raised', 'panel.dashboard.filter.toggle', 'panel.dashboard.stepState.current', 'panel.dashboard.timeline.stepsLabel',
-      'panel.medals.kit.title', 'panel.medals.level', 'panel.medals.names.silver']);
+      'panel.medals.kit.title', 'panel.medals.level', 'panel.medals.names.silver',
+      // Ajustes de la entidad (Sprint 4.2c): «Plata (€)», «Falta», «CIF del titular», «Forma jurídica: …» y «el CIF del titular» se escriben igual en catalán.
+      'panel.settings.general.sponsors.tier.silver', 'panel.settings.kyb.documents.missing', 'panel.settings.kyb.identity.cif', 'panel.settings.kyb.identity.legalForm', 'panel.settings.kyb.submit.missingCif']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
       'portal.card.matching', 'portal.detail.ticketsOf', 'portal.meta.initiativeTitle', 'portal.share.email', 'portal.share.emailSubject', 'portal.share.whatsapp',

@@ -1474,7 +1474,8 @@
       "dashboard": "Cuadro de mandos",
       "approvals": "Aprobaciones",
       "achievements": "Logros",
-      "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}"
+      "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}",
+      "settings": "Ajustes"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1492,7 +1493,9 @@
         "medalNone": "Beca de medalla: sin beca disponible este curso.",
         "maintenance": "Mantenimiento de la plataforma: {paid} de {cap} este curso.",
         "maintenanceOff": "Mantenimiento de la plataforma: {amount}"
-      }
+      },
+      "kybLink": "Ver los documentos",
+      "kybLinkFix": "Corregir los documentos"
     },
     "dashboard": {
       "summaryTitle": "Resumen de la entidad",
@@ -1582,7 +1585,9 @@
           "documents": {
             "title": "Documentos del titular",
             "done": "Verificados: podéis publicar campañas con cobro.",
-            "todo": "Faltan los documentos del titular (CIF, estatutos o acta, DNI de quien representa a la entidad y certificado de titularidad de la cuenta) para publicar la primera campaña con cobro."
+            "todo": "Faltan los documentos del titular (CIF, estatutos o acta, DNI de quien representa a la entidad y certificado de titularidad de la cuenta) para publicar la primera campaña con cobro.",
+            "cta": "Ir a los documentos",
+            "review": "Enviados: están en revisión y os avisaremos por email."
           },
           "studio": {
             "title": "Crear la campaña",
@@ -1929,6 +1934,174 @@
       "metaUnpaid": "Categoría {level} · {sector}",
       "returnedAmount": "Patrocinio devuelto al comercio",
       "jump": "{count, plural, one {Ir a comercios amigos · # por revisar} other {Ir a comercios amigos · # por revisar}}"
+    },
+    "settings": {
+      "metaTitle": "Ajustes de la entidad",
+      "title": "Ajustes de la entidad",
+      "intro": "Los documentos del titular, los importes que ven las familias y los comercios, el teléfono de la entidad y cómo se muestra vuestro portal.",
+      "readOnly": "Solo lectura: estos ajustes los cambian las personas que firman por la entidad.",
+      "kyb": {
+        "title": "Documentos del titular",
+        "intro": "Sirven para comprobar quién recibe el dinero antes de cobrar la primera campaña. Se guardan en privado: solo los veis las dos personas firmantes y el equipo de verificación.",
+        "status": {
+          "PENDING": "Aún no los habéis enviado. Podéis preparar campañas mientras tanto, pero no cobrar.",
+          "SUBMITTED": "Enviados el {date}. Están en revisión y os avisaremos por email.",
+          "VERIFIED": "Verificados: podéis publicar campañas con cobro.",
+          "REJECTED": "KORUM os los ha devuelto: corregid lo que se indica y volved a enviarlos."
+        },
+        "reviewNote": "Lo que hay que corregir",
+        "locked": {
+          "SUBMITTED": "Mientras se revisan no se pueden cambiar. Si os habéis equivocado de documento, escribid a soporte.",
+          "VERIFIED": "Están verificados y no se cambian desde aquí: si cambia algo del titular (cuenta, representante…), escribid a soporte."
+        },
+        "identity": {
+          "legend": "Titular de los fondos",
+          "legalForm": "Forma jurídica: {form}",
+          "ley49Declared": "Régimen de la Ley 49/2002: declarado",
+          "ley49Verified": "Régimen de la Ley 49/2002: acreditado",
+          "ley49No": "Régimen de la Ley 49/2002: no declarado",
+          "legalName": "Razón social del titular",
+          "legalNameHint": "Tal como figura en sus documentos. Sin enlaces ni direcciones de email.",
+          "cif": "CIF del titular",
+          "cifHint": "El de la entidad que cobra: una letra, siete cifras y un carácter de control (p. ej. G08451296).",
+          "cifMissing": "Sin CIF",
+          "save": "Guardar los datos del titular",
+          "saving": "Guardando…",
+          "saved": "Datos del titular guardados.",
+          "errors": {
+            "legalName": "Escribid la razón social completa (de 3 a 120 caracteres, sin enlaces).",
+            "cif": "Ese CIF no es válido: revisad la letra inicial y el carácter de control.",
+            "CIF_IN_USE": "Ese CIF ya figura en otra entidad de KORUM. Si es un error, escribid a soporte.",
+            "LOCKED": "Los datos del titular ya no se pueden cambiar desde aquí.",
+            "FORBIDDEN": "No tenéis permiso para cambiar estos datos.",
+            "generic": "No se han podido guardar. Probad de nuevo en unos segundos."
+          },
+          "required": "Los dos datos son obligatorios para enviar los documentos."
+        },
+        "documents": {
+          "legend": "Documentos",
+          "kinds": {
+            "TAX_ID_CARD": {
+              "title": "Tarjeta de identificación fiscal (CIF)",
+              "hint": "La tarjeta o el documento de Hacienda con el CIF de la entidad titular."
+            },
+            "STATUTES": {
+              "title": "Estatutos, acta fundacional o escrituras",
+              "hint": "Los estatutos registrados de la asociación o fundación, o las escrituras si el titular es una sociedad."
+            },
+            "REPRESENTATIVE_ID": {
+              "title": "DNI o NIE de quien representa a la entidad",
+              "hint": "Por las dos caras. De la persona que figura como representante (presidencia, titularidad o dirección)."
+            },
+            "ACCOUNT_OWNERSHIP": {
+              "title": "Certificado de titularidad de la cuenta de la entidad",
+              "hint": "Lo emite vuestra entidad financiera y dice que la cuenta es del titular. Aquí no se escribe ningún número de cuenta."
+            },
+            "LEY49_ACCREDITATION": {
+              "title": "Acreditación de la Ley 49/2002",
+              "hint": "Declaración de utilidad pública o certificado de la Agencia Tributaria del régimen fiscal especial. Una vez acreditada, permite emitir certificados fiscales de donación."
+            }
+          },
+          "delivered": "Entregado el {date} · {format}, {size}",
+          "missing": "Falta",
+          "open": "Abrir",
+          "openLabel": "Abrir «{name}» (pestaña nueva)",
+          "fileLabel": "Fichero para «{name}»",
+          "upload": "Subir",
+          "replace": "Sustituir",
+          "uploading": "Subiendo…",
+          "uploaded": "«{name}»: documento recibido.",
+          "help": "PDF, JPG, PNG o WebP de hasta {max} MB. Una foto del móvil sirve si se lee bien; un PDF escaneado muy pesado, comprimidlo antes.",
+          "replaced": "{count, plural, one {# documento sustituido se conserva} other {# documentos sustituidos se conservan}} el tiempo que exige la ley.",
+          "errors": {
+            "noFile": "Elegid primero el fichero.",
+            "TOO_LARGE": "El fichero pasa de {max} MB. Probad con un PDF o una foto más ligera.",
+            "FILE_TOO_LARGE": "El fichero pasa de {max} MB. Probad con un PDF o una foto más ligera.",
+            "FILE_TYPE_NOT_ALLOWED": "Solo se admiten PDF, JPG, PNG o WebP.",
+            "FILE_UNRECOGNIZED_TYPE": "Ese fichero no se puede leer: tiene que ser un PDF, JPG, PNG o WebP.",
+            "FILE_MIME_MISMATCH": "El fichero no es lo que dice su nombre. Volved a guardarlo como PDF o imagen.",
+            "FILE_EXTENSION_MISMATCH": "El fichero no es lo que dice su nombre. Volved a guardarlo como PDF o imagen.",
+            "LOCKED": "Los documentos ya no se pueden cambiar desde aquí.",
+            "NOT_REQUIRED": "Vuestra entidad no ha declarado la Ley 49/2002: este documento no hace falta.",
+            "FORBIDDEN": "No tenéis permiso para subir documentos de esta entidad.",
+            "generic": "No se ha podido subir. Probad de nuevo en unos segundos.",
+            "RATE_LIMITED": "Demasiadas subidas seguidas en esta entidad. Esperad un rato y volved a probar."
+          }
+        },
+        "submit": {
+          "ready": "Está todo: ya podéis enviarlos a revisión.",
+          "missingTitle": "Para enviarlos falta:",
+          "missingCif": "el CIF del titular",
+          "button": "Enviar los documentos a revisión",
+          "sending": "Enviando…",
+          "sent": "Documentos enviados. Os avisaremos por email cuando estén revisados.",
+          "errors": {
+            "INCOMPLETE": "Aún falta algún documento o el CIF del titular.",
+            "LOCKED": "Ya estaban enviados: recargad la página.",
+            "FORBIDDEN": "No tenéis permiso para enviar estos documentos.",
+            "generic": "No se han podido enviar. Probad de nuevo en unos segundos."
+          }
+        }
+      },
+      "general": {
+        "title": "Importes, ideas y portal",
+        "intro": "Lo que cambiéis aquí vale desde ahora: las aportaciones y los comercios que ya han pagado conservan su importe.",
+        "donations": {
+          "legend": "Botones de donación",
+          "hint": "Los tres importes que ven las familias al aportar, de menor a mayor, en euros enteros (de {min} a {max} €). Siempre pueden escribir otro.",
+          "amount": "Botón {n} (€)",
+          "defaultLegend": "Importe preseleccionado",
+          "defaultOption": "Botón {n}: {amount} €"
+        },
+        "ideas": {
+          "legend": "Buzón de ideas",
+          "minVotes": "Firmas mínimas para que una idea llegue a la doble firma",
+          "minVotesHint": "Entre {min} y {max}. Si lo bajáis, las ideas que ya lo alcanzan pasan a la doble firma al guardar.",
+          "maxIdeaDays": "Días para recoger firmas",
+          "maxIdeaDaysHint": "Entre {min} y {max}. Vale para las ideas que aprobéis desde ahora."
+        },
+        "sponsors": {
+          "legend": "Niveles de patrocinio de los comercios",
+          "hint": "Importe íntegro que el comercio suma a la campaña, en euros enteros, de menor a mayor (de {min} a {max} €). La comisión de gestión publicitaria va aparte, encima.",
+          "tier": {
+            "bronze": "Bronce (€)",
+            "silver": "Plata (€)",
+            "gold": "Oro (€)"
+          }
+        },
+        "contact": {
+          "legend": "Contacto",
+          "phone": "Teléfono de la entidad",
+          "phoneHint": "El de la entidad (secretaría, sede…), no el móvil de una persona. Lo veis las dos personas firmantes y se propone como contacto en el Modelo 182. Opcional."
+        },
+        "portal": {
+          "legend": "Portal público",
+          "contentLocale": "Idioma en que escribís vuestras campañas",
+          "contentLocaleHint": "Las pantallas de KORUM se traducen solas; vuestros textos se muestran en este idioma.",
+          "locales": {
+            "es": "Castellano",
+            "ca": "Catalán",
+            "en": "Inglés"
+          },
+          "publicIndexing": "Mostrar el portal en buscadores (Google, Bing…) y asistentes de IA",
+          "publicIndexingHint": "Solo aparece cuando los documentos del titular estén verificados. Sin marcar, el portal sigue abierto a quien tenga el enlace."
+        },
+        "save": "Guardar los ajustes",
+        "saving": "Guardando…",
+        "saved": "Ajustes guardados.",
+        "savedQuorum": "Ajustes guardados: {count, plural, one {# idea pasa} other {# ideas pasan}} a la doble firma al alcanzar el nuevo mínimo de firmas.",
+        "errors": {
+          "donationPresetsEuros": "Tres importes de {min} a {max} €, en euros enteros y de menor a mayor, sin repetir.",
+          "defaultDonationIdx": "Elegid qué botón aparece preseleccionado.",
+          "minVotes": "Un número entero entre {min} y {max}.",
+          "maxIdeaDays": "Un número entero de días entre {min} y {max}.",
+          "sponsorTiersEuros": "Tres importes de {min} a {max} €, en euros enteros y de menor a mayor, sin repetir.",
+          "phone": "Escribid un teléfono de 9 a 15 cifras (puede empezar por +).",
+          "form": "Revisad los campos marcados.",
+          "FORBIDDEN": "No tenéis permiso para cambiar estos ajustes.",
+          "generic": "No se han podido guardar. Probad de nuevo en unos segundos."
+        }
+      }
     }
   },
   "gate": {

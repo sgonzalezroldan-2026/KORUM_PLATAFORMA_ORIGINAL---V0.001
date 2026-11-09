@@ -66,7 +66,8 @@ export const FILE_RULES: Record<FilePurpose, FileRule> = {
   INITIATIVE_BEFORE: { ...PUBLIC_RULE, maxBytes: 8 * MB },
   INITIATIVE_AFTER: { ...PUBLIC_RULE, maxBytes: 8 * MB },
   SPONSOR_LOGO: { ...PUBLIC_RULE, maxBytes: 2 * MB },
-  KYB_DOCUMENT: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 10 * MB, retentionRequired: true, readRoles: SIGNERS },
+  // 4 MB: el cuerpo de una petición a una función de Vercel no puede pasar de 4,5 MB (auditoría del 4.2c); un PDF escaneado se comprime antes.
+  KYB_DOCUMENT: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 4 * MB, retentionRequired: true, readRoles: SIGNERS },
   PROVIDER_INVOICE: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 10 * MB, retentionRequired: true, readRoles: SIGNERS },
   KORUM_INVOICE_PDF: { visibility: 'PRIVATE', types: ['application/pdf'], maxBytes: 5 * MB, retentionRequired: true, readRoles: SIGNERS },
   // El donante abrirá su propio certificado por una ruta propia (Sprint 3.7), con su sesión; aquí solo quienes firman en la entidad.

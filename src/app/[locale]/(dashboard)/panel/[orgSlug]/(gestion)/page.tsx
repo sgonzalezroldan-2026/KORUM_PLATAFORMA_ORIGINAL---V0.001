@@ -46,8 +46,10 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
   const memberships = actor.memberships.filter((membership) => membership.organizationId === org.id);
   // El Modelo 182 es de las personas que firman por la entidad: el Super-Admin entra al panel, pero no extrae los NIF de las familias.
   const isSigner = memberships.length > 0;
-  // `Organization.contactPhone` es el móvil de quien dirige: solo se precarga a esa persona.
+  // El teléfono de la entidad (Ajustes) se precarga a las dos personas firmantes; si aún no lo hay, a quien dirige su propio móvil del alta
+  // (`contactPhone` es de esa persona: nunca se le enseña a la cofirma).
   const isDirector = memberships.some((membership) => membership.role === 'DIRECTOR');
+  const defaultPhone = normalizeContactPhone(org.phone ?? (isDirector ? (org.contactPhone ?? '') : ''));
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
@@ -66,7 +68,7 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
         kybStatus={org.kybStatus}
       />
 
-      {isSigner ? <Model182Card orgSlug={org.slug} verified={org.ley49 && org.ley49VerifiedAt !== null} years={years} defaultYear={defaultYear} defaultPhone={isDirector ? normalizeContactPhone(org.contactPhone ?? '') : ''} /> : null}
+      {isSigner ? <Model182Card orgSlug={org.slug} verified={org.ley49 && org.ley49VerifiedAt !== null} years={years} defaultYear={defaultYear} defaultPhone={defaultPhone} /> : null}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { formatCents } from '@/core/finance/money';
 import { medalGrantStatus } from '@/core/medals/medal-kit';
+import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 import type { SignerStatus } from '@/repositories/organization.repository';
 import { PanelNav } from './panel-nav';
@@ -75,6 +76,11 @@ export async function PanelManagementHeader({
               <span aria-hidden="true">{`${KYB_ICON[kyb]} `}</span>
               {t(`header.kyb.${kyb}`)}
             </p>
+            {kyb === 'VERIFIED' ? null : (
+              <Link href={`/panel/${organization.slug}/ajustes#documentos`} className="inline-flex min-h-11 w-fit items-center text-sm font-bold text-varsity-navy underline underline-offset-4">
+                {t(kyb === 'REJECTED' ? 'header.kybLinkFix' : 'header.kybLink')}
+              </Link>
+            )}
             <p className="text-sm text-ink-soft">{t('wallet.explain')}</p>
           </div>
 

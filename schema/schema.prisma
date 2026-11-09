@@ -69,6 +69,15 @@ enum KybStatus {
   REJECTED
 }
 
+/// Documentos del titular para su verificación (KYB, Sprint 4.2c). Los cuatro primeros siempre; el último solo si declara la Ley 49/2002.
+enum KybDocumentKind {
+  TAX_ID_CARD // Tarjeta de identificación fiscal (CIF)
+  STATUTES // Estatutos, acta fundacional o escrituras
+  REPRESENTATIVE_ID // DNI o NIE de quien representa a la entidad
+  ACCOUNT_OWNERSHIP // Certificado de titularidad de la cuenta de la entidad
+  LEY49_ACCREDITATION // Acreditación del régimen de la Ley 49/2002
+}
+
 enum HealthStatus {
   OK
   CALL
@@ -723,16 +732,23 @@ model Organization {
   /// Municipio y código postal que declara la entidad en el alta: el buscador de la portada los usa (ARQUITECTURA_LANDING §1.1).
   city                     String?
   postalCode               String?
+  /// Email y móvil de quien dirige, tal como los dio en el alta (son de esa persona: solo se le enseñan a ella).
   contactEmail             String?
   contactPhone             String?
+  /// Teléfono de la entidad (Sprint 4.2c), distinto del móvil de quien dirige: lo editan las dos personas firmantes y precarga el Modelo 182.
+  phone                    String?
   cif                      String?              @unique
   iban                     String?
   walletId                 String               @unique
   /// Identificador de la cuenta destino en Paycomet (Split Id) tras el KYB.
   paycometSplitId          String?              @unique
   kybStatus                KybStatus            @default(PENDING)
+  /// Cuándo envió la entidad sus documentos a revisión (`SUBMITTED`).
+  kybSubmittedAt           DateTime?
   kybReviewedAt            DateTime?
   kybReviewedById          String?
+  /// Qué falta o hay que corregir, escrito por KORUM al devolver los documentos (`REJECTED`). Sin datos personales.
+  kybReviewNote            String?
   health                   HealthStatus         @default(OK)
   completedThisYear        Int                  @default(0)
   completedHistorical      Int                  @default(0)
@@ -799,6 +815,23 @@ model Organization {
   supportTickets        SupportTicket[]
   escrowLedgerEntries   EscrowLedgerEntry[]
   opsAlerts             OpsAlert[]
+  kybDocuments          KybDocument[]
+}
+
+/// Un documento del titular (Sprint 4.2c). El vigente de cada tipo es el que no tiene `replacedAt` (índice único parcial en la migración):
+/// sustituirlo no lo borra, porque se conserva su plazo legal (CUMPLIMIENTO §6: mientras dure la relación + 6 años).
+model KybDocument {
+  id             Int             @id @default(autoincrement())
+  organizationId String
+  kind           KybDocumentKind
+  fileId         String          @unique
+  uploadedById   String?
+  createdAt      DateTime        @default(now())
+  replacedAt     DateTime?
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  file           FileAsset       @relation(fields: [fileId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, kind])
 }
 
 model OrganizationMember {
@@ -1590,6 +1623,7 @@ model FileAsset {
   sponsorLogos      Sponsor[]      @relation("SponsorLogo")
   payoutInvoices    EscrowPayout[] @relation("PayoutProviderInvoice")
   korumInvoicePdfs  Invoice[]      @relation("InvoicePdf")
+  kybDocument       KybDocument?
 
   @@index([organizationId, purpose])
 }

@@ -226,6 +226,12 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 - [ ] **Conservación del contacto de un comercio cobrado** (persona, teléfono y email): hoy no tiene plazo propio en §6. Propuesta: mientras el distintivo esté vigente + 1 año; los datos fiscales (CIF y facturas), 6 años con la factura. La bandeja ya no enseña el contacto de los comercios no admitidos o devueltos.
 - [ ] **Contacto del comercio a la vista de la entidad:** quien firma ve nombre, persona de contacto, teléfono y email del comercio (no su CIF) para decidir; el aviso del checkout del comercio debe decir que la entidad recibirá esos datos.
 
+**Abogado (Sprint 4.2c · documentos del titular):**
+
+- [ ] **Qué documentos se piden y quién los verifica:** CIF, estatutos o escrituras, DNI o NIE de quien representa a la entidad, certificado de titularidad de la cuenta de la entidad y, si declara la Ley 49/2002, su acreditación. ¿Bastan para la diligencia debida de Paycomet (pregunta 4 del §2) o los pide Paycomet directamente? Si los verifica KORUM, ¿con qué base y qué contrato de encargo?
+- [ ] **DNI de la persona representante a la vista de las dos firmas:** se guarda en privado y solo lo abren las dos personas firmantes de la entidad y el Super-Admin (con registro). ¿Es correcto que la cofirma vea el DNI de quien preside, o debería verlo solo KORUM? ¿Qué cláusula informativa necesita esa persona y qué pasa si ejerce la supresión mientras la entidad sigue activa (hoy se conserva como documento de la relación)?
+- [ ] **Plazo de conservación del KYB** (§6, «mientras dure la relación + 6 años»): el vigente no se purga mientras la entidad está activa; el sustituido, 6 años desde que se sustituye. Confirmar plazo y punto de partida.
+
 **Asesoría fiscal (Sprint 4.2b · factura rectificativa):**
 
 - [ ] **Rectificativa al no admitir a un comercio:** se emite tipo `R1` (art. 80 LIVA, error fundado en derecho), **por diferencias** (importes en negativo), en la **serie propia `REC-AAAA-NNNN`**, apuntando a la factura del fee y encadenada en Veri\*factu; el concepto dice «Anulación del servicio de gestión publicitaria: el centro no ha admitido el patrocinio · Rectifica FAC-…». ¿Es el tipo correcto (frente a `R4` o a una rectificativa por sustitución) y basta con eso para devolver el IVA repercutido?

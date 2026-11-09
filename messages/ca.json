@@ -1474,7 +1474,8 @@
       "dashboard": "Quadre de comandament",
       "approvals": "Aprovacions",
       "achievements": "Fites",
-      "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}"
+      "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}",
+      "settings": "Configuració"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1492,7 +1493,9 @@
         "medalNone": "Beca de medalla: sense beca disponible aquest curs.",
         "maintenance": "Manteniment de la plataforma: {paid} de {cap} aquest curs.",
         "maintenanceOff": "Manteniment de la plataforma: {amount}"
-      }
+      },
+      "kybLink": "Veure els documents",
+      "kybLinkFix": "Corregir els documents"
     },
     "dashboard": {
       "summaryTitle": "Resum de l'entitat",
@@ -1582,7 +1585,9 @@
           "documents": {
             "title": "Documents del titular",
             "done": "Verificats: podeu publicar campanyes amb cobrament.",
-            "todo": "Falten els documents del titular (CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte) per publicar la primera campanya amb cobrament."
+            "todo": "Falten els documents del titular (CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte) per publicar la primera campanya amb cobrament.",
+            "cta": "Anar als documents",
+            "review": "Enviats: estan en revisió i us avisarem per correu."
           },
           "studio": {
             "title": "Crear la campanya",
@@ -1929,6 +1934,174 @@
       "metaUnpaid": "Categoria {level} · {sector}",
       "returnedAmount": "Patrocini retornat al comerç",
       "jump": "{count, plural, one {Anar als comerços amics · # per revisar} other {Anar als comerços amics · # per revisar}}"
+    },
+    "settings": {
+      "metaTitle": "Configuració de l'entitat",
+      "title": "Configuració de l'entitat",
+      "intro": "Els documents del titular, els imports que veuen les famílies i els comerços, el telèfon de l'entitat i com es mostra el vostre portal.",
+      "readOnly": "Només lectura: aquesta configuració la canvien les persones que signen per l'entitat.",
+      "kyb": {
+        "title": "Documents del titular",
+        "intro": "Serveixen per comprovar qui rep els diners abans de cobrar la primera campanya. Es guarden en privat: només els veieu les dues persones signants i l'equip de verificació.",
+        "status": {
+          "PENDING": "Encara no els heu enviat. Mentrestant podeu preparar campanyes, però no cobrar.",
+          "SUBMITTED": "Enviats el {date}. Estan en revisió i us avisarem per correu.",
+          "VERIFIED": "Verificats: podeu publicar campanyes amb cobrament.",
+          "REJECTED": "KORUM us els ha retornat: corregiu el que s’indica i torneu-los a enviar."
+        },
+        "reviewNote": "El que cal corregir",
+        "locked": {
+          "SUBMITTED": "Mentre es revisen no es poden canviar. Si us heu equivocat de document, escriviu a suport.",
+          "VERIFIED": "Estan verificats i no es canvien des d’aquí: si canvia alguna cosa del titular (compte, representant…), escriviu a suport."
+        },
+        "identity": {
+          "legend": "Titular dels fons",
+          "legalForm": "Forma jurídica: {form}",
+          "ley49Declared": "Règim de la Llei 49/2002: declarat",
+          "ley49Verified": "Règim de la Llei 49/2002: acreditat",
+          "ley49No": "Règim de la Llei 49/2002: no declarat",
+          "legalName": "Raó social del titular",
+          "legalNameHint": "Tal com figura als seus documents. Sense enllaços ni adreces de correu.",
+          "cif": "CIF del titular",
+          "cifHint": "El de l'entitat que cobra: una lletra, set xifres i un caràcter de control (p. ex. G08451296).",
+          "cifMissing": "Sense CIF",
+          "save": "Desar les dades del titular",
+          "saving": "Desant…",
+          "saved": "Dades del titular desades.",
+          "errors": {
+            "legalName": "Escriviu la raó social completa (de 3 a 120 caràcters, sense enllaços).",
+            "cif": "Aquest CIF no és vàlid: reviseu la lletra inicial i el caràcter de control.",
+            "CIF_IN_USE": "Aquest CIF ja figura en una altra entitat de KORUM. Si és un error, escriviu a suport.",
+            "LOCKED": "Les dades del titular ja no es poden canviar des d’aquí.",
+            "FORBIDDEN": "No teniu permís per canviar aquestes dades.",
+            "generic": "No s'han pogut desar. Torneu-ho a provar d'aquí a uns segons."
+          },
+          "required": "Les dues dades són obligatòries per enviar els documents."
+        },
+        "documents": {
+          "legend": "Documents",
+          "kinds": {
+            "TAX_ID_CARD": {
+              "title": "Targeta d'identificació fiscal (CIF)",
+              "hint": "La targeta o el document d'Hisenda amb el CIF de l'entitat titular."
+            },
+            "STATUTES": {
+              "title": "Estatuts, acta fundacional o escriptures",
+              "hint": "Els estatuts registrats de l'associació o fundació, o les escriptures si el titular és una societat."
+            },
+            "REPRESENTATIVE_ID": {
+              "title": "DNI o NIE de qui representa l'entitat",
+              "hint": "Per les dues cares. De la persona que figura com a representant (presidència, titularitat o direcció)."
+            },
+            "ACCOUNT_OWNERSHIP": {
+              "title": "Certificat de titularitat del compte de l'entitat",
+              "hint": "El fa la vostra entitat financera i diu que el compte és del titular. Aquí no cal escriure cap número de compte."
+            },
+            "LEY49_ACCREDITATION": {
+              "title": "Acreditació de la Llei 49/2002",
+              "hint": "Declaració d'utilitat pública o certificat de l'Agència Tributària del règim fiscal especial. Un cop acreditada, permet emetre certificats fiscals de donació."
+            }
+          },
+          "delivered": "Lliurat el {date} · {format}, {size}",
+          "missing": "Falta",
+          "open": "Obrir",
+          "openLabel": "Obrir «{name}» (pestanya nova)",
+          "fileLabel": "Fitxer per a «{name}»",
+          "upload": "Pujar",
+          "replace": "Substituir",
+          "uploading": "Pujant…",
+          "uploaded": "«{name}»: document rebut.",
+          "help": "PDF, JPG, PNG o WebP de fins a {max} MB. Una foto del mòbil serveix si es llegeix bé; un PDF escanejat molt pesat, comprimiu-lo abans.",
+          "replaced": "{count, plural, one {# document substituït es conserva} other {# documents substituïts es conserven}} el temps que exigeix la llei.",
+          "errors": {
+            "noFile": "Primer trieu el fitxer.",
+            "TOO_LARGE": "El fitxer passa de {max} MB. Proveu amb un PDF o una foto més lleugera.",
+            "FILE_TOO_LARGE": "El fitxer passa de {max} MB. Proveu amb un PDF o una foto més lleugera.",
+            "FILE_TYPE_NOT_ALLOWED": "Només s’admeten PDF, JPG, PNG o WebP.",
+            "FILE_UNRECOGNIZED_TYPE": "Aquest fitxer no es pot llegir: ha de ser un PDF, JPG, PNG o WebP.",
+            "FILE_MIME_MISMATCH": "El fitxer no és el que diu el seu nom. Torneu-lo a desar com a PDF o imatge.",
+            "FILE_EXTENSION_MISMATCH": "El fitxer no és el que diu el seu nom. Torneu-lo a desar com a PDF o imatge.",
+            "LOCKED": "Els documents ja no es poden canviar des d’aquí.",
+            "NOT_REQUIRED": "La vostra entitat no ha declarat la Llei 49/2002: aquest document no cal.",
+            "FORBIDDEN": "No teniu permís per pujar documents d'aquesta entitat.",
+            "generic": "No s'ha pogut pujar. Torneu-ho a provar d'aquí a uns segons.",
+            "RATE_LIMITED": "Massa pujades seguides en aquesta entitat. Espereu una estona i torneu-ho a provar."
+          }
+        },
+        "submit": {
+          "ready": "Hi ha tot: ja els podeu enviar a revisió.",
+          "missingTitle": "Per enviar-los falta:",
+          "missingCif": "el CIF del titular",
+          "button": "Enviar els documents a revisió",
+          "sending": "Enviant…",
+          "sent": "Documents enviats. Us avisarem per correu quan estiguin revisats.",
+          "errors": {
+            "INCOMPLETE": "Encara falta algun document o el CIF del titular.",
+            "LOCKED": "Ja estaven enviats: recarregueu la pàgina.",
+            "FORBIDDEN": "No teniu permís per enviar aquests documents.",
+            "generic": "No s'han pogut enviar. Torneu-ho a provar d'aquí a uns segons."
+          }
+        }
+      },
+      "general": {
+        "title": "Imports, idees i portal",
+        "intro": "El que canvieu aquí val des d’ara: les aportacions i els comerços que ja han pagat conserven el seu import.",
+        "donations": {
+          "legend": "Botons de donació",
+          "hint": "Els tres imports que veuen les famílies en aportar, de menor a major, en euros sencers (de {min} a {max} €). Sempre en poden escriure un altre.",
+          "amount": "Botó {n} (€)",
+          "defaultLegend": "Import preseleccionat",
+          "defaultOption": "Botó {n}: {amount} €"
+        },
+        "ideas": {
+          "legend": "Bústia d'idees",
+          "minVotes": "Signatures mínimes perquè una idea arribi a la doble signatura",
+          "minVotesHint": "Entre {min} i {max}. Si el baixeu, les idees que ja l’assoleixen passen a la doble signatura en desar.",
+          "maxIdeaDays": "Dies per recollir signatures",
+          "maxIdeaDaysHint": "Entre {min} i {max}. Val per a les idees que aproveu d'ara endavant."
+        },
+        "sponsors": {
+          "legend": "Nivells de patrocini dels comerços",
+          "hint": "Import íntegre que el comerç suma a la campanya, en euros sencers, de menor a major (de {min} a {max} €). La comissió de gestió va a part, a sobre.",
+          "tier": {
+            "bronze": "Bronze (€)",
+            "silver": "Plata (€)",
+            "gold": "Or (€)"
+          }
+        },
+        "contact": {
+          "legend": "Contacte",
+          "phone": "Telèfon de l'entitat",
+          "phoneHint": "El de l'entitat (secretaria, seu…), no el mòbil d'una persona. El veieu les dues persones signants i es proposa com a contacte al Model 182. Opcional."
+        },
+        "portal": {
+          "legend": "Portal públic",
+          "contentLocale": "Idioma en què escriviu les campanyes",
+          "contentLocaleHint": "Les pantalles de KORUM es tradueixen soles; els vostres textos es mostren en aquest idioma.",
+          "locales": {
+            "es": "Castellà",
+            "ca": "Català",
+            "en": "Anglès"
+          },
+          "publicIndexing": "Mostrar el portal als cercadors (Google, Bing…) i als assistents d'IA",
+          "publicIndexingHint": "Només hi apareix quan els documents del titular estiguin verificats. Sense marcar, el portal continua obert a qui tingui l’enllaç."
+        },
+        "save": "Desar la configuració",
+        "saving": "Desant…",
+        "saved": "Configuració desada.",
+        "savedQuorum": "Configuració desada: {count, plural, one {# idea passa} other {# idees passen}} a la doble signatura en arribar al nou mínim de signatures.",
+        "errors": {
+          "donationPresetsEuros": "Tres imports de {min} a {max} €, en euros sencers i de menor a major, sense repetir.",
+          "defaultDonationIdx": "Trieu quin botó apareix preseleccionat.",
+          "minVotes": "Un nombre enter entre {min} i {max}.",
+          "maxIdeaDays": "Un nombre enter de dies entre {min} i {max}.",
+          "sponsorTiersEuros": "Tres imports de {min} a {max} €, en euros sencers i de menor a major, sense repetir.",
+          "phone": "Escriviu un telèfon de 9 a 15 xifres (pot començar per +).",
+          "form": "Reviseu els camps marcats.",
+          "FORBIDDEN": "No teniu permís per canviar aquesta configuració.",
+          "generic": "No s'ha pogut desar. Torneu-ho a provar d'aquí a uns segons."
+        }
+      }
     }
   },
   "gate": {

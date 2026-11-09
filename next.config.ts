@@ -22,7 +22,12 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp']
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      // Abrir un documento del titular redirige a una URL firmada del almacén: no debe viajar en el `Referer` de nada (Sprint 4.2c). Va después de la
+      // regla general porque, con la misma cabecera, gana la última.
+      { source: '/api/panel/documentos/:id', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] }
+    ];
   }
 };
 

@@ -18,6 +18,7 @@ const OVERVIEW_VIEW = {
   vertical: true,
   walletId: true,
   contactPhone: true,
+  phone: true,
   kybStatus: true,
   ley49: true,
   ley49VerifiedAt: true,

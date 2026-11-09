@@ -7,13 +7,16 @@ import { SupabaseStorage } from './supabase-storage';
 const shared = globalThis as typeof globalThis & { __korumMemoryStorage?: MemoryStorage };
 
 /**
- * Supabase Storage si hay credenciales. Sin ellas, y solo fuera de producción, un almacén en memoria para desarrollar: en producción
- * subir un fichero sin almacén falla de forma explícita en lugar de perderlo en silencio.
+ * Supabase Storage si hay credenciales. Sin ellas, un almacén en memoria para desarrollar, y en producción solo en el entorno de demostración con
+ * cobros simulados (`NEXT_PUBLIC_DEMO_MODE=true` y `PAYCOMET_MODE=mock`, el mismo que admite el simulador de pagos; Sprint 4.2c): ahí no hay
+ * datos reales que perder y las pruebas de extremo a extremo sobre la compilación de producción pueden subir ficheros. En cualquier otra
+ * producción, subir un fichero sin almacén falla de forma explícita en lugar de perderlo en silencio.
  */
 export function getStorageProvider(): StorageProvider {
   const env = getEnv();
   if (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) return new SupabaseStorage(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-  if (env.NODE_ENV === 'production') throw new Error('Falta configurar SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY: sin almacén de ficheros no se puede subir nada.');
+  const demo = env.NEXT_PUBLIC_DEMO_MODE === 'true' && env.PAYCOMET_MODE === 'mock';
+  if (env.NODE_ENV === 'production' && !demo) throw new Error('Falta configurar SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY: sin almacén de ficheros no se puede subir nada.');
   shared.__korumMemoryStorage ??= new MemoryStorage();
   return shared.__korumMemoryStorage;
 }
