@@ -16,8 +16,8 @@ export const checkoutResultPath = (orgSlug: string, initiativeId: number): strin
 export const paymentSimulatorPath = (orgSlug: string, initiativeId: number): string => `${checkoutPath(orgSlug, initiativeId)}/simulador`;
 /** Comercios amigos de la entidad (Sprint 3.5). */
 export const sponsorsPath = (orgSlug: string): string => `/${orgSlug}/comercios`;
-/** Justificante o factura de un patrocinio (`?pedido=&sig=`): solo lo recibe quien pagó. */
-export const SPONSOR_DOCUMENTS = ['justificante', 'factura'] as const;
+/** Documentos del comercio con el mismo enlace firmado de su pedido: justificante, factura del fee, su rectificativa (si se le devolvió) y el cartel del escaparate. */
+export const SPONSOR_DOCUMENTS = ['justificante', 'factura', 'rectificativa', 'cartel'] as const;
 export type SponsorDocumentKind = (typeof SPONSOR_DOCUMENTS)[number];
 export const sponsorDocumentPath = (orgSlug: string, kind: SponsorDocumentKind): string => `/${orgSlug}/comercios/documentos/${kind}`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */

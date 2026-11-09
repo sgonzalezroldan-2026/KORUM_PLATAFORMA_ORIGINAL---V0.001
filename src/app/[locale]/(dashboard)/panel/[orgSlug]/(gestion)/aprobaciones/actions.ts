@@ -4,14 +4,21 @@ import { after } from 'next/server';
 import { z } from 'zod';
 import { getEnv } from '@/config/env';
 import { approveIdeaForVoting, IdeaModerationError, rejectIdea, replyToIdea, revalidateSignature, type ModerationRejection } from '@/core/ideas/idea-moderation.service';
+import { buildJobDeps } from '@/core/jobs/job-deps';
 import { DoubleCheckNotAllowedError, requestSignature, type DoubleCheckBlock } from '@/core/security/double-check.service';
+import { SponsorModerationError, type SponsorModerationRejection } from '@/core/sponsors/sponsor-moderation-rules';
 import { getSessionActor } from '@/lib/auth/session';
+import { revalidatePortal } from '@/lib/portal/revalidate-portal';
 import { getPrisma } from '@/lib/prisma';
 import { reportError } from '@/lib/error-reporting';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
+import { loadInvoicingContext } from '@/services/invoicing/invoicing-context';
+import { executePendingRefund } from '@/services/payments/payment-reversals';
+import { approveSponsor, rejectSponsor } from '@/services/sponsors/sponsor-moderation.service';
+import { getStorageProvider } from '@/services/storage/provider-factory';
 
 /**
  * Acciones de la bandeja de aprobaciones (Sprint 4.2a). La entidad sale de su `orgSlug` y quien actúa, de la sesión con el segundo factor
@@ -21,7 +28,7 @@ import { dispatchOutbox } from '@/services/email/outbox-processor';
 
 export type ApprovalActionResult =
   | { status: 'OK'; phase?: 'PUBLIC_VOTING' | 'DOUBLE_CHECK'; expiresAt?: string }
-  | { status: 'ERROR'; reason: ModerationRejection | DoubleCheckBlock | 'FORBIDDEN' };
+  | { status: 'ERROR'; reason: ModerationRejection | DoubleCheckBlock | SponsorModerationRejection | 'FORBIDDEN' };
 
 async function panelContext(orgSlug: string): Promise<{ actor: SessionActor; organizationId: string } | null> {
   const organizationId = await findOrganizationIdBySlug(getPrisma(), orgSlug.slice(0, 64));
@@ -70,6 +77,7 @@ async function run(orgSlug: string, payload: unknown, operation: (context: { act
   } catch (error) {
     if (error instanceof IdeaModerationError) return { status: 'ERROR', reason: error.reason };
     if (error instanceof DoubleCheckNotAllowedError) return { status: 'ERROR', reason: error.reason };
+    if (error instanceof SponsorModerationError) return { status: 'ERROR', reason: error.reason };
     if (error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'NOT_FOUND' };
     if (error instanceof TenantAccessError) return { status: 'ERROR', reason: 'FORBIDDEN' };
     throw error;
@@ -111,5 +119,59 @@ export async function requestIdeaSignatureAction(orgSlug: string, payload: unkno
     const receipt = await requestSignature(db, getEnv().DATA_HMAC_SECRET, actor, organizationId, { targetType: 'IDEA_APPROVAL', ideaId: parsed.data.ideaId });
     dispatchSoon([receipt.notificationId]);
     return { status: 'OK', expiresAt: receipt.expiresAt.toISOString() };
+  });
+}
+
+/** Email del comercio (bienvenida o no admisión) al momento, por su clave de idempotencia. */
+async function pendingSponsorEmails(organizationId: string, sponsorId: number): Promise<number[]> {
+  const rows = await getPrisma().outboxMessage.findMany({
+    where: { organizationId, status: 'PENDING', idempotencyKey: { in: [`sponsor.welcome:${sponsorId}`, `sponsor.rejected:${sponsorId}`] } },
+    select: { id: true },
+    take: 2
+  });
+  return rows.map((row) => row.id);
+}
+
+const sponsorIdOf = (payload: unknown): number | null => {
+  const value = (payload as { sponsorId?: unknown } | null)?.sponsorId;
+  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0 ? value : null;
+};
+
+/** Aprueba un comercio cobrado: sale en el directorio y, si eligió la bolsa Matching 2x, la bolsa se activa. Le llega su bienvenida con los documentos. */
+export async function approveSponsorAction(orgSlug: string, payload: unknown): Promise<ApprovalActionResult> {
+  return run(orgSlug, payload, async ({ actor, organizationId }, db) => {
+    await approveSponsor(db, actor, organizationId, payload, { hmacSecret: getEnv().DATA_HMAC_SECRET });
+    revalidatePortal(orgSlug.slice(0, 64));
+    const sponsorId = sponsorIdOf(payload);
+    if (sponsorId !== null) dispatchSoon(await pendingSponsorEmails(organizationId, sponsorId));
+    return { status: 'OK' };
+  });
+}
+
+/**
+ * Rechaza un comercio cobrado: devolución del 100 % aprobada y factura rectificada en una transacción. La devolución se pide a Paycomet justo
+ * después, desde `after()`; si no se puede (resultado desconocido, Paycomet caído), la recoge la tarea `MASS_REFUND` como cualquier `REFUND_PENDING`.
+ */
+export async function rejectSponsorAction(orgSlug: string, payload: unknown): Promise<ApprovalActionResult> {
+  return run(orgSlug, payload, async ({ actor, organizationId }, db) => {
+    const { contributionId, retiredLogo } = await rejectSponsor(db, actor, organizationId, payload, { hmacSecret: getEnv().DATA_HMAC_SECRET, invoicing: await loadInvoicingContext(db) });
+    revalidatePortal(orgSlug.slice(0, 64));
+    const sponsorId = sponsorIdOf(payload);
+    if (sponsorId !== null) dispatchSoon(await pendingSponsorEmails(organizationId, sponsorId));
+    after(async () => {
+      if (retiredLogo) await getStorageProvider().remove(retiredLogo.bucket, retiredLogo.objectKey).catch((error: unknown) => reportError(error, { stage: 'sponsor-logo-remove' }));
+      try {
+        const deps = buildJobDeps(db);
+        const result = await executePendingRefund(db, await deps.paymentProvider(), contributionId, await deps.refundOriginalIp());
+        // «Devolución realizada» también sale al momento, no con la tarea de la bandeja.
+        if (result.refunded) {
+          const pending = await db.outboxMessage.findMany({ where: { idempotencyKey: `refund.issued:${contributionId}`, status: 'PENDING' }, select: { id: true } });
+          if (pending.length > 0) await dispatchOutbox(db, buildOutboxDeps(db), { ids: pending.map((row) => row.id), limit: pending.length });
+        }
+      } catch (error) {
+        reportError(error, { stage: 'sponsor-refund-after-reject', contributionId });
+      }
+    });
+    return { status: 'OK' };
   });
 }

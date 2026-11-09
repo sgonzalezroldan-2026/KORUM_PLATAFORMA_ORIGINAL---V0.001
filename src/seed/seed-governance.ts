@@ -130,7 +130,7 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
 
 /**
  * Facturas de KORUM tal como vienen en la semilla. Son documentos: el IVA de los patrocinios sí se asienta en el libro (ver
- * `seed-funding`), pero el de la comisión por tramos (p. ej. FAC-2025-0014, 40,32 €) no, hasta que la asesoría fiscal lo decida.
+ * `seed-funding`), pero el de la comisión por tramos (p. ej. DEMO-2025-0014, 40,32 €) no, hasta que la asesoría fiscal lo decida.
  */
 export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, payoutIds: Map<number, number>, keyring: Keyring): Promise<void> {
   const payouts = await db.escrowPayout.findMany({ where: { id: { in: [...payoutIds.values()] } }, select: { id: true, organizationId: true, korumFeeSettledCents: true } });
@@ -143,7 +143,8 @@ export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, p
       where: { invoiceNumber: invoice.invoiceNumber },
       create: {
         invoiceNumber: invoice.invoiceNumber,
-        series: 'FAC',
+        // Serie propia de demostración: nunca coincide con la numeración real (`FAC-AAAA-NNNN`), ni en una base donde ya se hayan emitido facturas.
+        series: 'DEMO',
         organizationId: invoice.organizationId,
         sponsorId: sponsor?.id ?? null,
         payoutId: sponsor ? null : (payout?.id ?? null),

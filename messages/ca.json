@@ -422,6 +422,34 @@
         "amount": "Import",
         "date": "Data de caducitat",
         "cta": "Renovar el meu patrocini"
+      },
+      "level": {
+        "ORO": "Or",
+        "PLATA": "Plata",
+        "BRONCE": "Bronze"
+      },
+      "welcome": {
+        "subject": "Ja ets Comerç amic de {organization}!",
+        "preheader": "El teu distintiu ja es veu a la seva pàgina.",
+        "title": "Ja formes part dels comerços amics!",
+        "body": "{organization} ha aprovat el teu patrocini. El teu distintiu de categoria {level} ja apareix a la seva pàgina de comerços amics i és vàlid fins al {date}.",
+        "matching": "La teva bossa Matching 2x ja està activa: cada donació d’una família es duplica amb ella fins a esgotar-la.",
+        "documents": "Des del botó tens el teu justificant i, des d’allà, la factura de la gestió i el cartell per al teu aparador. Guarda aquest correu: l’enllaç és personal. Si vols compartir el cartell, comparteix només la seva pàgina: no obre els teus documents.",
+        "levelLabel": "Categoria",
+        "until": "Vàlid fins al",
+        "cta": "Veure els meus documents i el meu cartell"
+      },
+      "rejected": {
+        "subject": "{organization} no ha admès el teu patrocini",
+        "preheader": "Et retornem el 100 % del que vas pagar.",
+        "title": "El teu patrocini no ha estat admès",
+        "body": "{organization} ha revisat el teu patrocini i no l’ha admès. Et retornem el 100 % del que vas pagar ({amount}: patrocini, gestió i IVA) al mateix mitjà de pagament.",
+        "reason": "La seva explicació: «{reason}»",
+        "rectified": "Hem anul·lat la factura de la gestió amb una factura rectificativa.",
+        "amount": "Import que et retornem",
+        "cta": "Veure el meu justificant",
+        "ctaRectified": "Veure la factura rectificativa",
+        "footnote": "La devolució la fa Paycomet i pot trigar uns dies a aparèixer al teu mitjà de pagament. T’avisarem quan surti."
       }
     },
     "tax": {
@@ -1379,7 +1407,7 @@
         "SENT": "Invitació enviada de nou.",
         "NOT_NEEDED": "No cal: ja ha activat el compte, o s'ha enviat fa molt poc.",
         "FORBIDDEN": "Només la primera signatura pot tornar a enviar la invitació.",
-        "ERROR": "No s'ha pogut enviar. Torna-ho a provar d'aquí a uns segons."
+        "ERROR": "No s'ha pogut enviar. Torneu-ho a provar d'aquí a uns segons."
       }
     },
     "kyb": {
@@ -1394,7 +1422,7 @@
     },
     "achievements": {
       "cardTitle": "Èxits i fotos Abans / Després",
-      "cardText": "Puja les fotos de cada millora acabada i escriu l’agraïment que veuran les famílies.",
+      "cardText": "Pugeu les fotos de cada millora acabada i escriviu l’agraïment que veuran les famílies.",
       "cardLink": "Anar a èxits",
       "title": "Èxits de l’entitat",
       "intro": "Les fotos d’Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal. Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
@@ -1425,19 +1453,19 @@
       "saving": "Guardant…",
       "thanksSaved": "Agraïment guardat.",
       "errors": {
-        "noFile": "Tria primer una foto.",
+        "noFile": "Trieu primer una foto.",
         "TOO_LARGE": "La foto pesa massa. Redueix-ne la mida (màxim {max} MB) i torna-ho a provar.",
         "CONFIRMATION_REQUIRED": "Marca la casella: no poden aparèixer menors identificables.",
-        "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Prova amb una altra foto.",
+        "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Proveu amb una altra foto.",
         "INITIATIVE_NOT_EDITABLE": "Aquesta iniciativa ja no admet fotos.",
         "FORBIDDEN": "No tens permís per a això. Entra amb un compte de signant amb la verificació en dos passos.",
         "NOT_FOUND": "No hem trobat aquesta iniciativa.",
         "FILE_TYPE_NOT_ALLOWED": "Només s’admeten fotos JPG, PNG o WebP.",
         "FILE_UNRECOGNIZED_TYPE": "Només s’admeten fotos JPG, PNG o WebP.",
-        "FILE_MIME_MISMATCH": "L’arxiu no és la foto que sembla. Prova amb una altra.",
-        "FILE_EXTENSION_MISMATCH": "El nom de l’arxiu no correspon al seu tipus. Prova amb una altra foto.",
+        "FILE_MIME_MISMATCH": "L’arxiu no és la foto que sembla. Proveu amb una altra.",
+        "FILE_EXTENSION_MISMATCH": "El nom de l’arxiu no correspon al seu tipus. Proveu amb una altra foto.",
         "FILE_TOO_LARGE": "La foto pesa massa. Redueix-ne la mida i torna-ho a provar.",
-        "generic": "No ho hem pogut guardar. Torna-ho a provar d’aquí a uns segons."
+        "generic": "No ho hem pogut guardar. Torneu-ho a provar d’aquí a uns segons."
       },
       "required": "obligatori"
     },
@@ -1445,7 +1473,8 @@
       "label": "Seccions del panell",
       "dashboard": "Quadre de comandament",
       "approvals": "Aprovacions",
-      "achievements": "Fites"
+      "achievements": "Fites",
+      "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1651,9 +1680,9 @@
     "approvals": {
       "metaTitle": "Aprovacions",
       "title": "Aprovacions i doble signatura",
-      "intro": "Reviseu les propostes de les famílies, parleu-hi pel seu codi anònim i aproveu amb doble signatura les idees que assoleixen el quòrum.",
+      "intro": "Reviseu les propostes de les famílies i dels comerços amics, parleu amb les famílies pel seu codi anònim i aproveu amb doble signatura les idees que assoleixen el quòrum.",
       "antifraud": "Compten fins a 2 comptes familiars per dispositiu (pare i mare). El 3r compte d’un mateix dispositiu o una ràfega de signatures des de la mateixa xarxa queden com a sospitosos i no sumen fins que els reviseu.",
-      "openTitle": "{count, plural, =0 {Res pendent} one {# idea en marxa} other {# idees en marxa}}",
+      "openTitle": "{count, plural, =0 {Idees: res pendent} one {# idea en marxa} other {# idees en marxa}}",
       "closedTitle": "{count, plural, one {Darrera idea tancada} other {Darreres # idees tancades}}",
       "empty": {
         "title": "No hi ha propostes pendents",
@@ -1672,7 +1701,7 @@
       "signDaysLeft": "{count, plural, =0 {La doble signatura venç avui.} one {Queda # dia per a la doble signatura.} other {Queden # dies per a la doble signatura.}}",
       "progressLabel": "Avenç cap al quòrum",
       "edit": {
-        "legend": "Revisa el text abans de publicar-lo",
+        "legend": "Reviseu el text abans de publicar-lo",
         "title": "Títol",
         "category": "Categoria",
         "description": "Descripció",
@@ -1686,7 +1715,7 @@
       },
       "reject": {
         "label": "Motiu per a {alias} (el llegirà al seu xat)",
-        "hint": "Almenys 10 caràcters. Explica-ho amb amabilitat i sense dades personals. La família rebrà un avís per llegir-lo.",
+        "hint": "Almenys 10 caràcters. Expliqueu-ho amb amabilitat i sense dades personals. La família rebrà un avís per llegir-lo.",
         "confirm": "Desestimar la idea"
       },
       "notices": {
@@ -1695,15 +1724,15 @@
         "rejected": "Idea desestimada. El motiu és al seu xat i la família rebrà un avís."
       },
       "errors": {
-        "INVALID_INPUT": "Revisa els camps: el títol necessita entre 8 i 90 caràcters, la descripció entre 20 i 600 i el motiu almenys 10.",
-        "NOT_FOUND": "No trobem aquesta idea a la vostra entitat. Torna a carregar la pàgina.",
-        "WRONG_PHASE": "La idea ja ha canviat de fase. Torna a carregar la pàgina per veure com està.",
-        "INVALID_CATEGORY": "Tria una de les categories de la vostra entitat.",
+        "INVALID_INPUT": "Reviseu els camps: el títol necessita entre 8 i 90 caràcters, la descripció entre 20 i 600 i el motiu almenys 10.",
+        "NOT_FOUND": "No trobem això a la vostra entitat. Torneu a carregar la pàgina.",
+        "WRONG_PHASE": "La idea ja ha canviat de fase. Torneu a carregar la pàgina per veure com està.",
+        "INVALID_CATEGORY": "Trieu una de les categories de la vostra entitat.",
         "CHAT_CLOSED": "La conversa està tancada: la idea ja s’ha convertit o s’ha desestimat.",
         "RATE_LIMITED": "Has demanat diversos enllaços seguits. Espera uns minuts abans de demanar-ne un altre.",
         "NOT_SUSPICIOUS": "Aquesta signatura ja compta com a verificada.",
         "FORBIDDEN": "La teva sessió no pot fer això. Torna a entrar amb la verificació en dos passos.",
-        "failed": "No hem pogut completar l’acció. Torna-ho a provar d’aquí a uns segons.",
+        "failed": "No hem pogut completar l’acció. Torneu-ho a provar d’aquí a uns segons.",
         "NOT_A_SIGNER": "El teu compte no té cap càrrec de signatura en aquesta entitat.",
         "HOLDS_BOTH_ROLES": "Una mateixa persona no pot ocupar els dos càrrecs de signatura. Reviseu els càrrecs de l’entitat.",
         "TWO_FACTOR_REQUIRED": "Per signar necessites la verificació en dos passos activada i superada en aquesta sessió.",
@@ -1711,14 +1740,18 @@
         "ALREADY_SIGNED": "La teva signatura ja hi consta (o el teu càrrec ja ha signat).",
         "SAME_PERSON": "Les dues signatures han de ser de persones diferents, amb correus diferents.",
         "PROVIDER_INVOICE_MISSING": "Falta la factura del proveïdor per signar aquesta liquidació.",
-        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a Paycomet."
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a Paycomet.",
+        "WRONG_STATUS": "Aquest comerç ja no està pendent: una altra persona signant ho ha decidit o el seu pagament no es va completar. Torneu a carregar la pàgina.",
+        "MATCHING_TAKEN": "La bossa Matching 2x d’aquesta campanya ja la té un altre comerç aprovat i no n’hi pot haver dues. Podeu no admetre aquest comerç: li retornarem tot el que va pagar.",
+        "ALREADY_SETTLED": "La iniciativa ja està liquidada: aquest comerç no es pot retornar des d’aquí. Escriviu a suport.",
+        "INVOICING_UNAVAILABLE": "Ara mateix no podem anul·lar la factura de la gestió perquè falten les dades de l’emissor a KORUM. Proveu-ho més tard o escriviu a suport."
       },
       "doubleCheck": {
         "label": "Doble signatura de la idea",
         "progress": "Doble signatura: {signed} de 2",
         "roles": {
-          "DIRECTOR": "Direcció",
-          "COSIGNER": "Cosignatura (AMPA/AFA, tresoreria o patronat)"
+          "DIRECTOR": "Primera signatura",
+          "COSIGNER": "Segona signatura"
         },
         "signedBy": "Signat per {name} el {date}",
         "pending": "Pendent de signatura",
@@ -1777,7 +1810,8 @@
         "completePayout": "Les dues signatures de la liquidació queden registrades.",
         "partialNotified": "Hem enviat l’enllaç a l’altra persona signant per completar la doble signatura.",
         "partialWaiting": "Falta la signatura de l’altra persona. Quan tingui activada la verificació en dos passos, podrà demanar el seu enllaç des d’Aprovacions.",
-        "cta": "Tornar a Aprovacions"
+        "cta": "Tornar a Aprovacions",
+        "celebrate": "Una idea de les famílies comença a fer-se realitat!"
       },
       "what": "El que signaràs",
       "ideaMeta": "{alias} · {category} · {votes} signatures verificades",
@@ -1815,6 +1849,86 @@
         "RATE_LIMITED": "Has demanat diversos enllaços seguits. Espera uns minuts abans de demanar-ne un altre."
       },
       "retry": "Tornar a comprovar l’enllaç"
+    },
+    "sponsors": {
+      "title": "{count, plural, =0 {Comerços amics} one {Comerços amics · # per revisar} other {Comerços amics · # per revisar}}",
+      "intro": "Els comerços del barri que patrocinen les vostres campanyes. El seu pagament ja és a la guardiola de la iniciativa (o a la seva bossa Matching 2x), però no surten a la vostra pàgina fins que els aproveu. Si no els admeteu, els retornem el 100 % del que van pagar.",
+      "empty": {
+        "title": "Encara no hi ha comerços amics",
+        "description": "Quan un comerç patrocini una de les vostres campanyes des de la seva fitxa, apareixerà aquí perquè el reviseu.",
+        "cta": "Veure la vostra pàgina de comerços"
+      },
+      "closedTitle": "{count, plural, one {# comerç no admès o retornat} other {# comerços no admesos o retornats}}",
+      "status": {
+        "PENDING": "Per revisar",
+        "UNPAID": "Pagament sense completar",
+        "APPROVED": "Aprovat · visible",
+        "REJECTED": "No admès · retornat",
+        "REFUNDED": "Retornat",
+        "CREDIT_POOL": "A la bossa de crèdit"
+      },
+      "level": {
+        "ORO": "Or",
+        "PLATA": "Plata",
+        "BRONCE": "Bronze"
+      },
+      "meta": "Categoria {level} · {sector} · pagat el {date}",
+      "sectorFallback": "Comerç local",
+      "toEscrow": "Patrocini íntegre a la guardiola",
+      "toPool": "Patrocini íntegre a la bossa Matching 2x",
+      "forInitiative": "per a «{title}» ({wallet})",
+      "feeLabel": "Gestió publicitària de KORUM (a part)",
+      "feeValue": "{fee} + IVA {vat}: la paga el comerç i no surt de la vostra guardiola",
+      "contact": "Contacte",
+      "promo": "Avantatge per a les famílies",
+      "promoWithCode": "{promo} · codi {code}",
+      "promoNone": "Sense avantatge indicat",
+      "visibleUntil": "Visible a la vostra pàgina fins al {date}.",
+      "renewalNotice": "L’avisarem 30 dies abans que caduqui perquè pugui renovar.",
+      "renewalNone": "No ha demanat avís de renovació.",
+      "approve": "Aprovar el comerç",
+      "reject": {
+        "open": "No admetre",
+        "label": "Motiu (el llegirà el comerç al seu correu)",
+        "help": "Entre {min} i {max} caràcters, amb amabilitat i sense dades personals. Li retornarem {amount} (patrocini, gestió i IVA) al seu mitjà de pagament i anul·larem la factura de la gestió.",
+        "confirm": "No admetre i retornar {amount}",
+        "sending": "Retornant…",
+        "cancel": "Cancel·lar",
+        "tooShort": "Escriviu el motiu: almenys {min} caràcters."
+      },
+      "readOnly": "Només les dues persones signants de l’entitat poden aprovar o no admetre comerços.",
+      "notices": {
+        "approved": "{name} ja és comerç amic: surt a la vostra pàgina durant 12 mesos i li hem enviat la benvinguda.",
+        "approvedMatching": "{name} ja és comerç amic i la seva bossa Matching 2x està activa: cada donació es duplica fins a esgotar-la.",
+        "rejected": "{name} no ha estat admès. Li retornem {amount} i li hem enviat el motiu per correu."
+      },
+      "logo": {
+        "summary": "Pujar el seu logotip",
+        "summaryReplace": "Canviar el seu logotip",
+        "label": "Logotip de {name}",
+        "replaceLabel": "Nou logotip de {name}",
+        "help": "JPG, PNG o WebP de fins a {max} MB. El publiquem sense les dades ocultes de la foto (com la ubicació).",
+        "upload": "Pujar el logotip",
+        "uploading": "Pujant…",
+        "saved": "Logotip publicat: ja es veu a la vostra pàgina de comerços.",
+        "errors": {
+          "noFile": "Trieu primer una imatge.",
+          "TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Proveu amb una altra.",
+          "SPONSOR_NOT_ACTIVE": "Aquest comerç ja no està actiu: no se’n pot canviar el logotip.",
+          "FORBIDDEN": "La teva sessió no pot fer això. Torna a entrar amb la verificació en dos passos.",
+          "NOT_FOUND": "No trobem aquest comerç a la vostra entitat.",
+          "FILE_TYPE_NOT_ALLOWED": "Només s’admeten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconeixem aquest arxiu com a imatge.",
+          "FILE_MIME_MISMATCH": "L’arxiu no és la imatge que sembla. Proveu amb una altra.",
+          "FILE_EXTENSION_MISMATCH": "El nom de l’arxiu no correspon al seu tipus. Proveu amb una altra imatge.",
+          "FILE_TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "generic": "No l’hem pogut pujar. Torneu-ho a provar d’aquí a uns segons."
+        }
+      },
+      "metaUnpaid": "Categoria {level} · {sector}",
+      "returnedAmount": "Patrocini retornat al comerç",
+      "jump": "{count, plural, one {Anar als comerços amics · # per revisar} other {Anar als comerços amics · # per revisar}}"
     }
   },
   "gate": {
@@ -1865,7 +1979,8 @@
       "ENCRYPTION_KEY_MISSING": "Falta una clau de xifratge",
       "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d'un compte inactiu",
       "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar",
-      "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup"
+      "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup",
+      "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar"
     }
   },
   "forbidden": {
@@ -2446,6 +2561,22 @@
         "verify": "Verificar a l'Agència Tributària",
         "none": "Aquest patrocini no genera factura de KORUM.",
         "issuerFallback": "KORUM (plataforma tecnològica)"
+      },
+      "otherDocuments": "Els teus altres documents",
+      "rectificativa": {
+        "title": "Factura rectificativa",
+        "rectifies": "Rectifica la factura",
+        "explain": "L’entitat no ha admès el teu patrocini: aquesta factura anul·la la de la gestió publicitària. Et retornem el 100 % del que vas pagar al mateix mitjà de pagament.",
+        "none": "Aquest patrocini no té factura rectificativa."
+      },
+      "cartel": {
+        "title": "Cartell per al teu aparador",
+        "label": "Cartell de comerç amic",
+        "unavailable": "El cartell està disponible mentre el teu comerç estigui aprovat i vigent.",
+        "friendOf": "Comerç amic de {entity}",
+        "promoWithCode": "{promo} · codi {code}",
+        "scan": "Escaneja el codi per conèixer les campanyes de {entity} i els seus comerços amics.",
+        "validUntil": "Distintiu vàlid fins al {date}."
       }
     },
     "ideas": {

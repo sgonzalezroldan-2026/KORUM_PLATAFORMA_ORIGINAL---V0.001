@@ -245,13 +245,13 @@ describe('cabecera de gestión', () => {
     renderWithIntl(header);
     expect(screen.getByText('WLT-ESC-AAAAAA')).toBeInTheDocument();
     expect(screen.getByText('Titular verificado')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Cupos del curso 2026-2027' })).toBeInTheDocument();
+    expect(screen.getByText('Cupos del curso 2026-2027')).toBeInTheDocument();
     expect(screen.getByText(/Sin comisión de plataforma/)).toHaveTextContent('400,00 € de 1.000,00 € disponibles');
     expect(screen.getByText(/Beca de medalla/)).toHaveTextContent('+1.000,00 € exentos de comisión');
     // Mantenimiento desactivado: solo el importe en cero, nunca «(Desactivado)».
     expect(screen.getByText(/Mantenimiento de la plataforma/)).toHaveTextContent('Mantenimiento de la plataforma: 0,00 €');
     expect(screen.queryByText(/Desactivado/)).toBeNull();
-    expect(screen.getByRole('heading', { name: 'Doble firma (1 de 2 listas)' })).toBeInTheDocument();
+    expect(screen.getByText('Doble firma (1 de 2 listas)')).toBeInTheDocument();
     expect(screen.getByText('Dirección del centro · Carla Puig')).toBeInTheDocument();
     expect(screen.getByText('Presidencia del AFA · Marta Soler')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reenviar la invitación' })).toBeInTheDocument();

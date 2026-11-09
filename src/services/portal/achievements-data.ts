@@ -10,6 +10,10 @@ import { loadPortalOrganization } from './portal-data';
 /** Dirección pública de una imagen de la entidad (ver `src/app/api/files/public/[id]/route.ts`). Nunca una URL firmada ni la clave del objeto. */
 export const publicFileSrc = (fileId: string): string => `/api/files/public/${fileId}`;
 
+/** Logotipo de un comercio, solo si sigue publicado: un fichero retirado o privado nunca se enlaza. */
+export const publicLogoSrc = (file: { id: string; visibility: string; deletedAt: Date | null } | null): string | null =>
+  file && file.visibility === 'PUBLIC' && file.deletedAt === null ? publicFileSrc(file.id) : null;
+
 /**
  * Logros de la entidad listos para pintar (Sprint 3.6): iniciativas conseguidas o cerradas, con sus textos en el idioma de la página si la entidad
  * los tradujo, el total que sumó la comunidad y las fotos solo si son públicas. Sin personas, sin cursos y sin comparaciones.

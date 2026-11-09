@@ -47,7 +47,7 @@ const freshIp = () => {
   return `172.${20 + (Math.floor(ipSequence / 250) % 10)}.${ipSequence % 250}.9`;
 };
 const deps = (provider: PaymentProvider = mock) => ({ db, provider, keyring: TEST_KEYRING, hmacSecret: TEST_HMAC_SECRET });
-const invoicing = { issuerTaxId: ISSUER, keyring: TEST_KEYRING };
+const invoicing = { issuerTaxId: ISSUER, issuerName: 'KORUM Pruebas, S.L.', keyring: TEST_KEYRING };
 
 async function setup(initiative: Parameters<typeof createInitiative>[2] = {}, organization: Parameters<typeof createOrganization>[1] = {}) {
   const org = await createOrganization(db, { paycometSplitId: uniqueId('split'), kybStatus: 'VERIFIED', vertical: 'SCHOOL', ...organization });
@@ -332,7 +332,7 @@ describe('QA-F05 · directorio y documentos', () => {
     expect(sortSponsorsByLevel(list).map((sponsor) => sponsor.name)).toEqual(['Oro', 'Plata', 'Bronce']);
     expect(list.map((sponsor) => sponsor.name)).toEqual(['Oro', 'Plata', 'Bronce']);
     for (const sponsor of list) {
-      expect(Object.keys(sponsor).sort()).toEqual(['categoryLevel', 'code', 'id', 'name', 'promo', 'sector', 'tierRank']);
+      expect(Object.keys(sponsor).sort()).toEqual(['categoryLevel', 'code', 'id', 'logoFile', 'name', 'promo', 'sector', 'tierRank']);
     }
     expect(await listFriendlySponsors(db, 'no-existe', new Date())).toEqual([]);
   });

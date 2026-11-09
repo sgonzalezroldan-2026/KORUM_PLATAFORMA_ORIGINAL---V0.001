@@ -3,6 +3,7 @@
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from 'react';
 import { completeSignatureAction, previewSignatureAction, type PreviewResult, type SignResult } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/firmar/actions';
+import { Confetti } from '@/components/checkout/checkout-celebration';
 import { CodeField, FormAlert, primaryButton } from '@/components/auth/auth-ui';
 import { useHydrated } from '@/components/ui/use-hydrated';
 import { formatCents } from '@/core/finance/money';
@@ -147,9 +148,17 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
   if (done) {
     return (
       <section className="korum-trust-vault flex flex-col gap-3 rounded-2xl border-2 border-varsity-emerald bg-emerald-50 p-5" data-testid="sign-done">
+        {/* Una idea de las familias se convierte en iniciativa: momento de celebración (revisión de experiencia del 4.2a). El confeti solo se pinta con movimiento permitido. */}
+        {done.complete && done.initiativeId !== null ? <Confetti /> : null}
         <h1 ref={resultRef} tabIndex={-1} className="font-corp text-2xl font-extrabold text-emerald-950">
           {done.complete ? t('done.completeTitle') : t('done.partialTitle')}
         </h1>
+        {done.complete && done.initiativeId !== null ? (
+          <p className="die-cut-sticker self-start font-joy text-lg font-bold text-varsity-navy">
+            <span aria-hidden="true">{'🎉 '}</span>
+            {t('done.celebrate')}
+          </p>
+        ) : null}
         <p>
           {done.complete
             ? done.initiativeId !== null

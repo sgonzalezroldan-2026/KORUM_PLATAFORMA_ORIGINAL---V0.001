@@ -12,7 +12,7 @@ import { retryDelayMs } from '@/services/email/outbox-processor';
 import { isUndeliverableAddress, scrubSecrets, SECRET_MESSAGE_DEFAULT_TTL_MS, secretsExpired } from '@/services/email/outbox-secrets';
 import { PreviewEmailProvider } from '@/services/email/preview-email-provider';
 import { getEmailProvider } from '@/services/email/provider-factory';
-import { InvalidPayloadError, TEMPLATE_CATALOG } from '@/services/email/templates/catalog';
+import { InvalidPayloadError, secretFieldsOf, TEMPLATE_CATALOG } from '@/services/email/templates/catalog';
 import { renderEmail, UnknownTemplateError, type RenderEmailInput } from '@/services/email/render-email';
 import { buildPublicUrl } from '@/services/email/templates/translator';
 import { invalidateSettingsCache } from '@/services/settings/settings.service';
@@ -62,7 +62,9 @@ const SAMPLES: Record<string, unknown> = {
   'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },
   'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' },
   'idea.quorumReached': { ideaId: 503, alias: '#FAM-4821', ideaTitle: 'Toldos para el patio' },
-  'idea.centerReplied': { ideaId: 503, alias: '#FAM-4821', kind: 'REPLY' }
+  'idea.centerReplied': { ideaId: 503, alias: '#FAM-4821', kind: 'REPLY' },
+  'sponsor.welcome': { sponsorId: 3, level: 'ORO', matching: true, expiresAt: IN_3_DAYS, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
+  'sponsor.rejected': { sponsorId: 3, reason: 'Ya tenemos una panadería patrocinando esta campaña.', refundCents: 29_538, rectified: true, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>
@@ -121,6 +123,28 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
     expect((await render('idea.centerReplied', 'en', { payload: { ideaId: 503, alias: '#FAM-4821', kind: 'APPROVED', edited: false } })).text).not.toContain('edited the text');
     const rejected = await render('idea.centerReplied', 'ca', { payload: { ideaId: 503, alias: '#FAM-4821', kind: 'REJECTED' } });
     expect(rejected.text).toContain('/ca/mi-cuenta/propuestas');
+  });
+
+  it('sponsor.welcome lleva un solo botón al cartel con el enlace firmado del pedido; la firma es un secreto que se borra al enviar (Sprint 4.2b)', async () => {
+    const email = await render('sponsor.welcome', 'es');
+    expect(email.subject).toBe('¡Ya eres Comercio amigo de AMPA Colegio Sol!');
+    expect(email.text).toContain('Tu bolsa Matching 2x ya está activa');
+    expect(email.text).toContain(`https://korum.test/colegio-sol/comercios/documentos/justificante?pedido=KS0123456789ABCDEF&sig=${'a'.repeat(64)}`);
+    expect(secretFieldsOf('sponsor.welcome')).toEqual(['sig']);
+    const withoutPool = await render('sponsor.welcome', 'ca', { payload: { ...(SAMPLES['sponsor.welcome'] as object), matching: false, level: 'BRONCE' } });
+    expect(withoutPool.text).not.toContain('Matching');
+    expect(withoutPool.text).toContain('Bronze');
+  });
+
+  it('sponsor.rejected copia el motivo del centro, dice cuánto se devuelve y enlaza la rectificativa solo si existe (Sprint 4.2b)', async () => {
+    const email = await render('sponsor.rejected', 'es');
+    expect(email.text).toContain('«Ya tenemos una panadería patrocinando esta campaña.»');
+    expect(email.text).toContain('295,38');
+    expect(email.text).toContain('/colegio-sol/comercios/documentos/rectificativa?pedido=');
+    const noInvoice = await render('sponsor.rejected', 'en', { payload: { ...(SAMPLES['sponsor.rejected'] as object), rectified: false } });
+    expect(noInvoice.text).toContain('/en/colegio-sol/comercios/documentos/justificante?pedido=');
+    expect(noInvoice.text).not.toContain('corrective invoice');
+    expect(secretFieldsOf('sponsor.rejected')).toEqual(['sig']);
   });
 
   it('la aportación voluntaria a KORUM solo aparece en el recibo si se marcó', async () => {

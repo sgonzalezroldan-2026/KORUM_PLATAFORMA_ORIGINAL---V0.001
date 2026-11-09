@@ -1,4 +1,4 @@
-import type { Db } from '@/lib/db';
+import { inTransaction, type Db } from '@/lib/db';
 import { anonymizedMarker } from './erasure.service';
 import { daysBefore, fiscalCutoff, lastExpiredFiscalYear, RETENTION } from './retention-policy';
 
@@ -160,4 +160,33 @@ export async function purgeExpiredSessions(db: Db, now: Date, limit: number): Pr
     verifications.length ? db.verification.deleteMany({ where: { id: { in: verifications.map((row) => row.id) } } }) : { count: 0 }
   ]);
   return a.count + b.count;
+}
+
+/**
+ * Comercios que empezaron a patrocinar y nunca pagaron (`PENDING` sin `paidAt`) hace más de 30 días: se borran con su cobro fallido o abandonado.
+ * Guardaban contacto y CIF cifrado sin ningún servicio detrás (minimización). Solo si ese cobro no movió dinero: ni asientos, ni repartos, ni
+ * movimientos de Mi Hucha. Cada comercio se borra en su transacción, comprobando otra vez que sigue sin cobro (un pago que llegara entre la lectura y
+ * el borrado lo deja intacto). Un comercio sin cobro no puede tener logotipo (solo se sube a los cobrados).
+ */
+export async function purgeUnpaidSponsors(db: Db, now: Date, limit: number): Promise<number> {
+  const untouched = { status: { in: ['PENDING' as const, 'FAILED' as const] }, ledgerJournals: { none: {} }, payoutSplits: { none: {} }, walletTransactions: { none: {} } };
+  const rows = await db.sponsor.findMany({
+    where: { status: 'PENDING', paidAt: null, createdAt: { lt: daysBefore(now, RETENTION.unpaidSponsorDays) }, escrowLedgerEntries: { none: {} }, invoices: { none: {} }, OR: [{ contribution: null }, { contribution: untouched }] },
+    take: limit,
+    select: { id: true }
+  });
+  let deleted = 0;
+  for (const { id } of rows) {
+    deleted += await inTransaction(db, async (tx) => {
+      const sponsor = await tx.sponsor.findUnique({ where: { id }, select: { status: true, paidAt: true, contribution: { select: { id: true, status: true } } } });
+      if (!sponsor || sponsor.status !== 'PENDING' || sponsor.paidAt !== null) return 0;
+      if (sponsor.contribution) {
+        const { count } = await tx.contribution.deleteMany({ where: { id: sponsor.contribution.id, ...untouched } });
+        if (count === 0) return 0;
+      }
+      const { count } = await tx.sponsor.deleteMany({ where: { id, status: 'PENDING', paidAt: null } });
+      return count;
+    });
+  }
+  return deleted;
 }

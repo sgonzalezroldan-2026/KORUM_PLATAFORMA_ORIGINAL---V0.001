@@ -19,6 +19,8 @@ export type ModerationPhase = 'PHASE0_MOD' | 'PUBLIC_VOTING' | 'DOUBLE_CHECK' | 
 
 export interface DoubleCheckSlot {
   role: SignerRole;
+  /** Cargo de quien ocupa hoy ese puesto (`Presidencia del AMPA`…), para no enseñar una etiqueta genérica. `null` si no lo escribió. */
+  holderLabel: string | null;
   /** Cargo y nombre de quien firmó, si su firma sigue valiendo. */
   signedBy: { name: string; roleLabel: string | null; signedAt: string } | null;
 }
@@ -74,7 +76,8 @@ export async function loadApprovalsData(db: KorumPrismaClient, secret: string, a
       const slots = (['DIRECTOR', 'COSIGNER'] as const).map((role): DoubleCheckSlot => {
         const signature = valid.find((entry) => entry.signerRole === role);
         const signer = signature ? signers.find((entry) => entry.userId === signature.signerUserId && entry.role === role) : undefined;
-        return { role, signedBy: signature ? { name: signer?.name ?? '', roleLabel: signer?.roleLabel ?? null, signedAt: signature.signedAt.toISOString() } : null };
+        const holder = signers.find((entry) => entry.role === role && entry.status !== 'INVITED') ?? signers.find((entry) => entry.role === role);
+        return { role, holderLabel: holder?.roleLabel?.trim() || null, signedBy: signature ? { name: signer?.name ?? '', roleLabel: signer?.roleLabel ?? null, signedAt: signature.signedAt.toISOString() } : null };
       });
       const iSigned = actor.kind === 'user' && valid.some((signature) => signature.signerUserId === actor.userId);
       const challenge = challenges.find((entry) => entry.ideaId === idea.id);

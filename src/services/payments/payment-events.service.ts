@@ -9,7 +9,8 @@ import { releaseTicketHoldInTx } from '@/core/ticketing/ticket-reservation.servi
 import type { Db } from '@/lib/db';
 import { queueContributionReceipt } from '@/services/email/outbox-writers';
 import { pledgeChargedBackInTx, pledgeChargeFailedInTx, settlePledgePaymentInTx } from '@/services/pledges/pledge-events';
-import { applyChargebackInTx, applyConfirmedRefundInTx, approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
+import { applyChargebackInTx, applyConfirmedRefundInTx } from './payment-provider-reversals';
+import { approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
 import type { PaymentNotification } from './payment-provider';
 import { completeSponsorshipInTx, type InvoicingContext } from './sponsorship-events';
 
@@ -28,8 +29,10 @@ async function releaseMatching(
   const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: contribution.initiativeId }, select: { matchingPoolRemainingCents: true } });
   const bonusCents = Math.min(contribution.amountCents, initiative.matchingPoolRemainingCents);
   if (bonusCents === 0) return 0;
+  // Solo libera la bolsa de un comercio aprobado: si se le devolvió el patrocinio, la bolsa ya no existe y la donación cuenta sola (auditoría del 3.5).
+  // Fallar aquí haría que Paycomet reintentara cada donación posterior para siempre.
   const pool = await tx.sponsor.findFirst({ where: { initiativeId: contribution.initiativeId, isMatchingPool: true, status: 'APPROVED' }, select: { id: true } });
-  if (!pool) throw new PaymentReconciliationError(`La iniciativa ${contribution.initiativeId} tiene bolsa Matching sin patrocinador.`);
+  if (!pool) return 0;
 
   const release = await tx.contribution.create({
     data: {
@@ -195,7 +198,7 @@ export async function applyPaymentNotification(tx: Db, notification: PaymentNoti
       return;
     }
     case 'REFUND_COMPLETED':
-      await applyConfirmedRefundInTx(tx, notification, occurredAt);
+      await applyConfirmedRefundInTx(tx, notification, occurredAt, options.invoicing);
       return;
     case 'CHARGEBACK': {
       await applyChargebackInTx(tx, notification, occurredAt);

@@ -153,7 +153,7 @@ describe('IdeaModerationCard', () => {
 });
 
 describe('DoubleCheckBox', () => {
-  const box = { signed: 1, mySlotOpen: true, myChallengeExpiresAt: null, revalidatedVotes: 2, slots: [{ role: 'DIRECTOR' as const, signedBy: { name: 'Carla Puig', roleLabel: 'Dirección del centro', signedAt: '2026-11-08T10:00:00.000Z' } }, { role: 'COSIGNER' as const, signedBy: null }] };
+  const box = { signed: 1, mySlotOpen: true, myChallengeExpiresAt: null, revalidatedVotes: 2, slots: [{ role: 'DIRECTOR' as const, holderLabel: 'Dirección del centro', signedBy: { name: 'Carla Puig', roleLabel: 'Dirección del centro', signedAt: '2026-11-08T10:00:00.000Z' } }, { role: 'COSIGNER' as const, holderLabel: null, signedBy: null }] };
 
   it('dice 1 de 2 con texto, quién firmó, y pide el enlace sin mostrar código ni enlace', async () => {
     approvals.requestIdeaSignatureAction.mockResolvedValue({ status: 'OK', expiresAt: '2026-11-11T10:00:00.000Z' });

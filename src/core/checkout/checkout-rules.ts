@@ -103,6 +103,13 @@ export const verifyCheckoutResult = (secret: string, order: string, signature: s
 export const verifyPaymentSimulator = (secret: string, order: string, signature: string) => verify(signPaymentSimulator, secret, order, signature);
 
 /**
+ * Firma del cartel del escaparate de un comercio (Sprint 4.2b): dominio propio, que **solo** abre el cartel. El cartel es lo que se comparte (WhatsApp,
+ * la imprenta): con la firma del pedido abriría también el justificante y la factura, que llevan el CIF o NIF del comercio (auditoría del 4.2b).
+ */
+export const signSponsorPoster = (secret: string, order: string): string => dataHmac(secret, 'sponsor-poster:v1', order);
+export const verifySponsorPoster = (secret: string, order: string, signature: string) => verify(signSponsorPoster, secret, order, signature);
+
+/**
  * La página de pago de Paycomet a la que se envía a la familia. Solo `https` y solo dominios de Paycomet (QA del Sprint 2.1): una respuesta
  * manipulada no puede llevar a nadie a una página falsa que le pida la tarjeta. **A confirmar en el sandbox:** que Bizum no redirige a otro dominio.
  */

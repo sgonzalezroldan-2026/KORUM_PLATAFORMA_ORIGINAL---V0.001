@@ -12,6 +12,7 @@ import { breadcrumbJsonLd } from '@/lib/seo/json-ld';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
 import { checkoutPath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
+import { publicLogoSrc } from '@/services/portal/achievements-data';
 import { loadPortalOrganization, loadSponsorDirectory } from '@/services/portal/portal-data';
 
 interface PageProps {
@@ -92,7 +93,7 @@ export default async function SponsorsPage({ params }: PageProps) {
         <ul className="mobile-stack grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label={t('listLabel')}>
           {sponsors.map((sponsor) => (
             <li key={sponsor.id} className="flex">
-              <SponsorCard sponsor={{ id: sponsor.id, name: sponsor.name, sector: sponsor.sector, level: sponsor.categoryLevel as SponsorLevel, promo: sponsor.promo, code: sponsor.code }} entityName={organization.name} pageUrl={pageUrl} contentLang={organization.contentLocale === locale ? undefined : organization.contentLocale} />
+              <SponsorCard sponsor={{ id: sponsor.id, name: sponsor.name, sector: sponsor.sector, level: sponsor.categoryLevel as SponsorLevel, promo: sponsor.promo, code: sponsor.code, logoSrc: publicLogoSrc(sponsor.logoFile) }} entityName={organization.name} pageUrl={pageUrl} contentLang={organization.contentLocale === locale ? undefined : organization.contentLocale} />
             </li>
           ))}
         </ul>

@@ -123,6 +123,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Registro de auditoría | 6 años | Borrado |
 | Notificaciones enviadas | 12 meses | Borrado del contenido, se conserva el hecho del envío |
 | Consentimientos | Mientras estén vigentes + 3 años | Borrado |
+| Comercio que empezó a patrocinar y nunca pagó (contacto, CIF cifrado, ventaja) | 30 días desde que empezó el pago | Borrado, con su cobro fallido o abandonado (Sprint 4.2b) |
 | Tarjeta guardada de Mi Hucha (token de Paycomet, cifrado) | Mientras la aportación mensual esté activa o en pausa (pausa máxima: 6 meses) | Se revoca al momento y se pide a Paycomet que la borre al cancelar, terminar, pasar 6 meses en pausa, haber un contracargo o suprimir la cuenta; la purga semanal reintenta el borrado |
 | Errores en Sentry | 90 días | Automático |
 
@@ -217,6 +218,20 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 
 - [ ] Un sello público «Comunidad Impulsora KORUM» y un informe en PDF pensados para difundirse entre las familias: el informe dice «PAYCOMET, entidad de pago autorizada por el Banco de España» (usar la redacción que apruebe Paycomet en el contrato) y «se devuelve el 100 % de lo cobrado» (existe también la vía del redimensionamiento por votación).
 - [ ] La cifra «Recaudado» del informe sale de `raisedCents`, que incluye el bonus *Matching 2x* de comercios y, cuando exista, el Auto-Impulso: enlaza con el punto abierto de la publicación del Auto-Impulso frente a «lo han conseguido las familias».
+
+**Abogado (Sprint 4.2b · comercios amigos):**
+
+- [ ] **No admitir a un comercio:** el motivo lo escribe la entidad en texto libre (10–400 caracteres, «con amabilidad y sin datos personales») y se envía tal cual al email del comercio (`sponsor.rejected`); en la auditoría solo queda su longitud. ¿Hace falta revisarlo o limitarlo (p. ej. motivos predefinidos) para evitar textos ofensivos o discriminatorios atribuidos a la plataforma?
+- [ ] **Cartel del escaparate:** el comercio aprobado descarga un cartel «Comercio amigo de {entidad}» con su categoría, su ventaja y un QR al directorio de la entidad, válido mientras dure su distintivo. ¿Autorización de la entidad para el uso de su nombre en el escaparate y qué pasa si el comercio lo sigue exhibiendo tras caducar o tras ser devuelto (la página del cartel deja de enseñarlo)?
+- [ ] **Conservación del contacto de un comercio cobrado** (persona, teléfono y email): hoy no tiene plazo propio en §6. Propuesta: mientras el distintivo esté vigente + 1 año; los datos fiscales (CIF y facturas), 6 años con la factura. La bandeja ya no enseña el contacto de los comercios no admitidos o devueltos.
+- [ ] **Contacto del comercio a la vista de la entidad:** quien firma ve nombre, persona de contacto, teléfono y email del comercio (no su CIF) para decidir; el aviso del checkout del comercio debe decir que la entidad recibirá esos datos.
+
+**Asesoría fiscal (Sprint 4.2b · factura rectificativa):**
+
+- [ ] **Rectificativa al no admitir a un comercio:** se emite tipo `R1` (art. 80 LIVA, error fundado en derecho), **por diferencias** (importes en negativo), en la **serie propia `REC-AAAA-NNNN`**, apuntando a la factura del fee y encadenada en Veri\*factu; el concepto dice «Anulación del servicio de gestión publicitaria: el centro no ha admitido el patrocinio · Rectifica FAC-…». ¿Es el tipo correcto (frente a `R4` o a una rectificativa por sustitución) y basta con eso para devolver el IVA repercutido?
+- [ ] **Contracargo de un comercio ya facturado:** no se rectifica la factura del fee automáticamente (abre la alerta `INVOICE_RECTIFY_PENDING`). ¿Se anula el fee (rectificativa) o sigue siendo ingreso y la pérdida va íntegra a gastos (art. 80.Cuatro LIVA, impago)? Una devolución pedida desde el panel de Paycomet sí se rectifica como el rechazo.
+- [ ] **Proveedor Veri\*factu y rectificativas:** el registro de alta de una `R1` necesita `TipoRectificativa = I`, `FacturasRectificadas` (número y fecha de la original) y, según el proveedor, `ImporteRectificacion`; hoy el adaptador solo envía el registro común y la huella. **Bloquea el paso a cobros reales** con comercios.
+- [ ] **Devolución del fee y su IVA:** por decisión del promotor (Sprint 3.5) se devuelve el 100 % de lo pagado, incluida la gestión y su IVA. Confirmar el tratamiento en la declaración de IVA del periodo de la rectificativa.
 
 **Paycomet:** las 8 preguntas del §2, por escrito. Del Sprint 3.8, además: (a) cómo pedir en `/v1/form` que el primer pago guarde la tarjeta para cobros recurrentes (se ha supuesto `trxType: 'R'`) y si su notificación trae `IdUser` y `TokenUser` (fuera de la firma); (b) los campos de un cobro iniciado por el comercio sin la persona (se ha supuesto `secure: 0`, `trxType: 'R'`, `scaException: 'MIT'`) y qué IP enviar (se usa la del servidor); (c) si un cobro recurrente puede volver con petición de autenticación (hoy se trata como rechazo y se pausa); (d) **cómo autenticar `IdUser` y `TokenUser` de la notificación**, que no entran en la firma: antes de cobros reales hay que comprobarlos contra la operación del pedido (consulta a Paycomet) o confirmar que van firmados (auditoría del 3.8); (e) qué datos de recurrencia pide la autenticación 3DS del primer pago (frecuencia y fecha de fin) para que los bancos no exijan autenticarse cada mes; (f) si Paycomet guarda la tarjeta aunque KORUM no la registre y cómo pedir que la borre.
 

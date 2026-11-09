@@ -17,6 +17,7 @@ export const E2E_SERVER_ENV: Record<string, string> = {
   PAYCOMET_MODE: 'mock',
   // NIF emisor de las facturas del fee de los patrocinios (Sprint 3.5): sin él, el cobro de un comercio no se asienta.
   VERIFACTU_ISSUER_NIF: 'A58818501',
+  VERIFACTU_ISSUER_NAME: 'KORUM Pruebas E2E',
   NEXT_PUBLIC_DEMO_MODE: 'true',
   NEXT_PUBLIC_APP_URL: E2E_BASE_URL,
   NEXT_TELEMETRY_DISABLED: '1',

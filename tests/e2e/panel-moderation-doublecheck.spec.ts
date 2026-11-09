@@ -97,8 +97,8 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
     await voting.getByText(/Auditoría de firmas/).click();
     await expect(voting.getByText(/3ª cuenta firmando desde el mismo dispositivo/)).toBeVisible();
     await voting.getByRole('button', { name: 'Dar por buena' }).click();
-    await server(page.getByTestId('approvals-notice')).toHaveText('Firma validada: ya cuenta para el quórum.');
-    await expect(page.getByTestId('approvals-notice')).toBeFocused();
+    await server(page.getByTestId('approvals-notice').first()).toHaveText('Firma validada: ya cuenta para el quórum.');
+    await expect(page.getByTestId('approvals-notice').first()).toBeFocused();
     await server(voting.getByText('🟢 Validada por la entidad')).toBeVisible();
 
     // --- Chat con la familia y desestimar con motivo ---
@@ -108,8 +108,8 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
     await voting.getByRole('button', { name: '❌ Desestimar' }).click();
     await voting.getByLabel('Motivo para #FAM-2222 (lo leerá en su chat)').fill('Este curso no podemos asumir el mantenimiento. ¡Gracias!');
     await voting.getByRole('button', { name: 'Desestimar la idea' }).click();
-    await server(page.getByTestId('approvals-notice')).toHaveText('Idea desestimada. El motivo está en su chat y la familia recibirá un aviso.');
-    await expect(page.getByTestId('approvals-notice')).toBeFocused();
+    await server(page.getByTestId('approvals-notice').first()).toHaveText('Idea desestimada. El motivo está en su chat y la familia recibirá un aviso.');
+    await expect(page.getByTestId('approvals-notice').first()).toBeFocused();
     await expect(page.getByRole('heading', { level: 2, name: '2 ideas en marcha' })).toBeVisible();
 
     // --- 1ª firma (dirección): el enlace y el código llegan por email; el token se borra de la barra ---

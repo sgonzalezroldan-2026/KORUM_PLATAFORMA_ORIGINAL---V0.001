@@ -28,7 +28,9 @@ export const RETENTION = {
   /** Contenido de las notificaciones enviadas: 12 meses (se conserva el hecho del envío). */
   notificationDays: 365,
   /** Consentimientos: mientras estén vigentes + 3 años. */
-  consentDaysAfterSuperseded: 3 * 365
+  consentDaysAfterSuperseded: 3 * 365,
+  /** Comercio que empezó a patrocinar y nunca pagó (contacto y CIF cifrado sin ningún cobro detrás): 30 días (heredado del Sprint 3.5, punto 6). */
+  unpaidSponsorDays: 30
 } as const;
 
 export const daysBefore = (now: Date, days: number) => new Date(now.getTime() - days * DAY_MS);

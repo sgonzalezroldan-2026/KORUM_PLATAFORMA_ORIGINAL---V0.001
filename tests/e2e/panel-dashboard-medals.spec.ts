@@ -61,10 +61,10 @@ test.describe('Panel de la entidad: cuadro de mandos, medallas y Modelo 182', ()
     await expect(page.getByRole('heading', { level: 1, name: `Hola, ${entity.name}` })).toBeVisible();
     await expect(page.getByText(/^WLT-ESC-[A-Z2-9]{6}$/)).toBeVisible();
     await expect(page.getByText('Documentos pendientes')).toBeVisible();
-    await expect(page.getByRole('heading', { name: /^Cupos del curso/ })).toBeVisible();
+    await expect(page.getByText(/^Cupos del curso/)).toBeVisible();
     await expect(page.getByText(/Mantenimiento de la plataforma: 0,00\s€/)).toBeVisible();
     await expect(page.getByText(/Desactivado/)).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Doble firma (1 de 2 listas)' })).toBeVisible();
+    await expect(page.getByText('Doble firma (1 de 2 listas)', { exact: true })).toBeVisible();
     await expect(page.getByText('Presidencia del AMPA/AFA · Marta Soler')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Cuadro de mandos' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { name: 'Vuestra primera campaña empieza aquí' })).toBeVisible();
@@ -184,7 +184,7 @@ test.describe('Panel de la entidad: cuadro de mandos, medallas y Modelo 182', ()
     await server(page).toHaveURL(new RegExp(`/en/panel/${slug}/logros$`));
     await expect(page.getByRole('link', { name: 'Achievements' })).toHaveAttribute('aria-current', 'page');
     // La cabecera de gestión acompaña a todas las páginas del panel.
-    await expect(page.getByRole('heading', { name: 'Dual signature (1 of 2 ready)' })).toBeVisible();
+    await expect(page.getByText('Dual signature (1 of 2 ready)', { exact: true })).toBeVisible();
     await checkPage(page, errors);
   });
 });

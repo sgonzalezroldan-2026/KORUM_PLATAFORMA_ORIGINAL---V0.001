@@ -45,7 +45,7 @@ describe('planInitiativeFunding · los pagos cuadran con la semilla', () => {
     const plan = plans.find((candidate) => candidate.initiativeId === id)!;
     const raised = plan.payments.reduce((sum, payment) => sum + payment.amountCents, 0) + plan.matching.reduce((sum, release) => sum + release.amountCents, 0);
     expect(raised).toBe(initiative.raisedCents);
-    expect(plan.payments).toHaveLength(initiative.totalContributions);
+    expect(plan.payments.length + plan.poolPayins.length).toBe(initiative.totalContributions);
   });
 
   it('la planificación es idéntica en cada ejecución', () => {

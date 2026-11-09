@@ -414,6 +414,8 @@ enum OpsAlertType {
   EMAIL_DELIVERY_FAILED
   /// El proxy no pasó una IP válida al firmar una idea: todas las familias caerían en el grupo común `unknown-ip` y quedarían sospechosas sin aviso.
   TRUSTED_IP_MISSING
+  /// La factura del fee de un patrocinio devuelto o contracargado fuera del rechazo no se ha podido rectificar sola (Sprint 4.2b): la revisa el Super-Admin.
+  INVOICE_RECTIFY_PENDING
 }
 
 enum OpsAlertSeverity {
@@ -1504,7 +1506,13 @@ model Invoice {
   idempotencyKey           String?                @unique
   /// NIF con el que se calculó la huella: la cadena se comprueba siempre con el mismo, aunque cambie el ajuste de la consola.
   issuerTaxId              String?
+  /// Razón social del emisor al emitirla (`invoicing.issuerName`): una factura emitida no cambia aunque cambie el ajuste (Sprint 4.2b).
+  issuerName               String?
   series                   String                 @default("K")
+  /// Tipo Veri*factu: `F1` (factura completa) o `R1` (rectificativa por error fundado en derecho, p. ej. un patrocinio devuelto, Sprint 4.2b).
+  invoiceType              String                 @default("F1")
+  /// Factura que corrige esta rectificativa (por diferencias: importes en negativo). Una factura solo se rectifica una vez.
+  rectifiesInvoiceId       Int?                   @unique
   organizationId           String
   sponsorId                Int?
   payoutId                 Int?
@@ -1530,6 +1538,8 @@ model Invoice {
   sponsor                  Sponsor?               @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
   payout                   EscrowPayout?          @relation(fields: [payoutId], references: [id], onDelete: Restrict)
   pdfFile                  FileAsset?             @relation("InvoicePdf", fields: [pdfFileId], references: [id], onDelete: Restrict)
+  rectifiesInvoice         Invoice?               @relation("InvoiceRectification", fields: [rectifiesInvoiceId], references: [id], onDelete: Restrict)
+  rectifiedBy              Invoice?               @relation("InvoiceRectification")
 }
 
 model SupportTicket {

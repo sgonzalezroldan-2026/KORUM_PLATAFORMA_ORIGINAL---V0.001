@@ -1,11 +1,12 @@
 import { postJournal, reverseJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
-import { chargebackLines, PAYIN_KINDS, refundApprovalLines, refundExecutionLines, type ChargebackMode } from '@/core/finance/payment-journals';
+import { PAYIN_KINDS, refundApprovalLines, refundExecutionLines } from '@/core/finance/payment-journals';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
 import { queueRefundIssued } from '@/services/email/outbox-writers';
-import { PaymentProviderError, type PaymentNotification, type PaymentProvider } from './payment-provider';
+import { PaymentProviderError, type PaymentProvider } from './payment-provider';
+import { retireMatchingPool, splitReleasedPool, type PayinToUndo } from './sponsor-reversals';
 
 /**
  * Lo que deshace un cobro: reembolsos al medio de pago original y contracargos (Regla 02 §7). El reembolso devuelve siempre el 100 % de
@@ -47,10 +48,10 @@ export async function loadLockedContribution(tx: Db, where: { id: number } | { p
   return loadContribution(tx, where);
 }
 
-async function payinLinesOf(db: Db, contribution: Pick<ContributionRow, 'id' | 'paycometOrder'>): Promise<JournalLine[]> {
+export async function payinLinesOf(db: Db, contribution: Pick<ContributionRow, 'id' | 'paycometOrder'>): Promise<PayinToUndo> {
   const journal = await db.ledgerJournal.findFirst({ where: { contributionId: contribution.id, kind: { in: [...PAYIN_KINDS] } }, include: { entries: true } });
   if (!journal) throw new PaymentReconciliationError(`El cobro ${contribution.paycometOrder ?? contribution.id} no tiene asiento: no se puede deshacer.`);
-  return journal.entries.map((entry) => ({
+  const lines: JournalLine[] = journal.entries.map((entry) => ({
     account: entry.account,
     direction: entry.direction,
     amountCents: entry.amountCents,
@@ -59,24 +60,26 @@ async function payinLinesOf(db: Db, contribution: Pick<ContributionRow, 'id' | '
     userId: entry.userId,
     sponsorId: entry.sponsorId
   }));
+  return splitReleasedPool(db, lines);
 }
 
-/** Si la donación liberó bolsa Matching, ese bonus deja de existir: vuelve a la bolsa y se anula su asiento. */
+/**
+ * Si la donación liberó bolsa Matching, ese bonus deja de existir: vuelve a la bolsa y se anula su asiento. Si el comercio de la bolsa ya no está
+ * aprobado (se le devolvió o hubo contracargo), lo liberado ya salió de la hucha con su devolución: no vuelve a ninguna bolsa ni se resta dos veces.
+ */
 async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise<number> {
   if (contribution.matchedBonusCents === 0 || !contribution.paycometOrder) return 0;
   const release = await tx.contribution.findUnique({ where: { paycometOrder: `${contribution.paycometOrder}-match` } });
   if (!release || release.status !== 'COMPLETED') return 0;
-  const journal = await tx.ledgerJournal.findFirst({ where: { contributionId: release.id, kind: 'MATCHING_RELEASE' }, select: { id: true } });
+  const journal = await tx.ledgerJournal.findFirst({ where: { contributionId: release.id, kind: 'MATCHING_RELEASE' }, select: { id: true, entries: { where: { account: 'MATCHING_POOL' }, select: { sponsorId: true } } } });
   if (!journal) throw new PaymentReconciliationError(`La liberación de bolsa de ${contribution.paycometOrder} no tiene asiento.`);
+  const poolSponsorId = journal.entries[0]?.sponsorId;
+  const poolSponsor = poolSponsorId ? await tx.sponsor.findUnique({ where: { id: poolSponsorId }, select: { status: true } }) : null;
+  if (poolSponsor?.status !== 'APPROVED') return 0;
   await reverseJournal(tx, { journalId: journal.id, idempotencyKey: `payment:matching-undo:${release.id}`, description: `Anulación del bonus Matching 2x de ${contribution.paycometOrder}`, createdById: 'system' });
   await tx.contribution.update({ where: { id: release.id }, data: { status: 'REFUNDED', refundedCents: release.amountCents, refundedAt: new Date() } });
   await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { matchingPoolRemainingCents: { increment: release.amountCents } } });
   return release.amountCents;
-}
-
-/** Un patrocinio devuelto o contracargado ya no es un comercio amigo vigente, aunque la iniciativa ya estuviera liquidada. */
-async function markSponsorRefunded(tx: Db, contribution: Pick<ContributionRow, 'type' | 'sponsorId'>): Promise<void> {
-  if (contribution.type === 'SPONSORSHIP' && contribution.sponsorId) await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' } });
 }
 
 /**
@@ -85,14 +88,18 @@ async function markSponsorRefunded(tx: Db, contribution: Pick<ContributionRow, '
  * y se quedaría sin salida; se liquida lo que queda. Tampoco se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
  * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026).
  */
-async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date): Promise<void> {
+export async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date, poolReleasedCents = 0): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
   const releasedTickets = await revokePassInTx(tx, contribution.id, at);
-  // El patrocinio destinado a la bolsa Matching 2x nunca sumó a lo recaudado: deshacerlo no resta nada de la hucha. El comercio deja de estar vigente.
   let leavesRaised = contribution.amountCents + bonusCents;
   if (contribution.type === 'SPONSORSHIP' && contribution.sponsorId) {
-    const sponsor = await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' }, select: { isMatchingPool: true } });
-    if (sponsor.isMatchingPool) leavesRaised = bonusCents;
+    const sponsor = await tx.sponsor.findUniqueOrThrow({ where: { id: contribution.sponsorId }, select: { id: true, isMatchingPool: true, status: true } });
+    await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' } });
+    // De una bolsa Matching 2x solo había sumado a lo recaudado lo ya liberado. Se apaga: ninguna donación posterior la buscará.
+    if (sponsor.isMatchingPool) {
+      leavesRaised = poolReleasedCents;
+      await retireMatchingPool(tx, sponsor, contribution.initiativeId, at);
+    }
   }
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
@@ -119,6 +126,7 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
   if (!options.lateCharge && isSettled(contribution.initiative.payout?.status)) throw new RefundNotAllowedError(contributionId, 'la iniciativa ya está liquidada');
 
   await tx.contribution.update({ where: { id: contributionId }, data: { status: 'REFUND_PENDING' } });
+  const payin = await payinLinesOf(tx, contribution);
   await postJournal(tx, {
     idempotencyKey: `payment:refund-approval:${contributionId}`,
     kind: 'ESCROW_REFUND_DONOR',
@@ -128,9 +136,9 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
     contributionId,
     paycometReference: contribution.paycometOrder,
     createdById: 'system',
-    lines: refundApprovalLines(await payinLinesOf(tx, contribution), contribution.organizationId, contribution.totalChargedCents)
+    lines: refundApprovalLines(payin.lines, contribution.organizationId, contribution.totalChargedCents)
   });
-  await removeFromInitiative(tx, contribution, options.at ?? new Date());
+  await removeFromInitiative(tx, contribution, options.at ?? new Date(), payin.poolReleasedCents);
 }
 
 /** Registra que el dinero ya ha vuelto al medio de pago. Idempotente: lo pueden avisar la respuesta de la API y el webhook. */
@@ -220,83 +228,4 @@ export async function refundContribution(db: Db, provider: PaymentProvider, cont
     await approveRefundInTx(tx, contributionId, { at: now });
   });
   return executePendingRefund(db, provider, contributionId, originalIp, now);
-}
-
-function assertMatchesCharge(contribution: ContributionRow, notification: Pick<PaymentNotification, 'order' | 'amountCents' | 'currency'>, label: string): void {
-  if (notification.currency !== 'EUR') throw new PaymentReconciliationError(`${label} de ${notification.order} en ${notification.currency}: KORUM solo opera en euros.`);
-  if (notification.amountCents !== contribution.totalChargedCents) {
-    throw new PaymentReconciliationError(`${label} de ${notification.amountCents} sobre un cobro de ${contribution.totalChargedCents} (${notification.order}): los parciales se revisan a mano.`);
-  }
-}
-
-/**
- * Momento que decide si un evento ya se celebró: el más tardío entre la fecha del banco y el instante en que se procesa. Un aviso atrasado o reintentado
- * con fecha anterior al evento, procesado después, no debe reabrir una campaña que `CAMPAIGN_EXPIRY` acabaría venciendo y devolviendo.
- */
-const laterOf = (occurredAt: Date): Date => new Date(Math.max(occurredAt.getTime(), Date.now()));
-
-/** Un reembolso que Paycomet confirma: el pedido por KORUM, o uno hecho desde su panel. Si ya se liquidó, el dinero ya ha salido y lo asume KORUM. */
-export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNotification, occurredAt: Date): Promise<void> {
-  const contribution = await loadLockedContribution(tx, { paycometOrder: notification.order });
-  if (!contribution) throw new PaymentReconciliationError(`Reembolso de un pedido desconocido: ${notification.order}`);
-  assertMatchesCharge(contribution, notification, 'Reembolso');
-  if (contribution.status === 'COMPLETED' && isSettled(contribution.initiative.payout?.status)) {
-    await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'REFUNDED', refundedCents: contribution.totalChargedCents, refundedAt: occurredAt } });
-    // Ya liquidada, el aforo no se recalcula; pero el pase de quien ha recuperado su dinero deja de valer.
-    await revokePassInTx(tx, contribution.id, occurredAt);
-    await markSponsorRefunded(tx, contribution);
-    await postJournal(tx, {
-      idempotencyKey: `payment:refund-after-settlement:${contribution.id}`,
-      kind: 'ESCROW_REFUND_DONOR',
-      description: `Reembolso tras liquidar de ${notification.order}: lo asume KORUM`,
-      organizationId: contribution.organizationId,
-      initiativeId: contribution.initiativeId,
-      contributionId: contribution.id,
-      paycometReference: notification.order,
-      occurredAt,
-      createdById: 'webhook',
-      lines: chargebackLines('KORUM_LOSS', [], contribution.organizationId, contribution.totalChargedCents)
-    });
-    await queueRefundIssued(tx, contribution.id);
-    await tx.auditLog.create({
-      data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.refund_after_settlement', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { amountCents: contribution.totalChargedCents } }
-    });
-    return;
-  }
-  if (contribution.status === 'COMPLETED') await approveRefundInTx(tx, contribution.id, { at: laterOf(occurredAt) });
-  await settleRefundInTx(tx, contribution.id, occurredAt);
-}
-
-/** Contracargo: asiento, estado `CHARGEBACK` y progreso recalculado, según dónde esté el dinero. Repetirlo no hace nada. */
-export async function applyChargebackInTx(tx: Db, notification: PaymentNotification, occurredAt: Date): Promise<boolean> {
-  const { order } = notification;
-  const contribution = await loadLockedContribution(tx, { paycometOrder: order });
-  if (!contribution) throw new PaymentReconciliationError(`Contracargo de un cobro desconocido: ${order}`);
-  assertMatchesCharge(contribution, notification, 'Contracargo');
-  if (contribution.status !== 'COMPLETED' && contribution.status !== 'REFUND_PENDING' && contribution.status !== 'REFUNDED') return false;
-  await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'CHARGEBACK', refundSendingAt: null } });
-
-  const settled = isSettled(contribution.initiative.payout?.status);
-  const mode: ChargebackMode = contribution.status === 'REFUND_PENDING' ? 'REFUND_PENDING' : contribution.status === 'REFUNDED' || settled ? 'KORUM_LOSS' : 'IN_ESCROW';
-  await postJournal(tx, {
-    idempotencyKey: `payment:chargeback:${contribution.id}`,
-    kind: 'CHARGEBACK',
-    description: `Contracargo de ${order}`,
-    organizationId: contribution.organizationId,
-    initiativeId: contribution.initiativeId,
-    contributionId: contribution.id,
-    paycometReference: order,
-    occurredAt,
-    createdById: 'webhook',
-    lines: chargebackLines(mode, mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution) : [], contribution.organizationId, contribution.totalChargedCents)
-  });
-  if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution, laterOf(occurredAt));
-  else {
-    await revokePassInTx(tx, contribution.id, occurredAt);
-    await markSponsorRefunded(tx, contribution);
-  }
-  await tx.auditLog.create({
-    data: { actorType: 'WEBHOOK', organizationId: contribution.organizationId, action: 'payment.chargeback', targetType: 'Contribution', targetId: String(contribution.id), metadataJson: { mode, amountCents: notification.amountCents, initiativeId: contribution.initiativeId } }
-  });
-  return true;
 }

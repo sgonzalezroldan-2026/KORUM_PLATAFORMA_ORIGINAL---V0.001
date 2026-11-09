@@ -59,6 +59,8 @@ describe('QA-C05 · catálogos de traducción', () => {
     const SAME_IN_CATALAN = new Set([
       // Buzón de ideas y logros (Sprint 3.6): «Compartir», «Foto» y «Publicar foto» se escriben igual en catalán.
       'portal.ideas.card.share', 'portal.ideas.card.shareAria', 'panel.achievements.fileLabel', 'panel.achievements.upload',
+      // Comercios amigos (Sprint 4.2b): «Plata», «Factura rectificativa» y «Rectifica la factura» se escriben igual en catalán.
+      'email.sponsor.level.PLATA', 'panel.sponsors.level.PLATA', 'portal.sponsorDocs.rectificativa.title', 'portal.sponsorDocs.rectificativa.rectifies',
       'ui.toast.region', 'privacy.export.yes', 'privacy.export.no', 'privacy.export.fields.idea', 'privacy.export.fields.initiative', 'privacy.export.fields.taxId', 'privacy.export.statuses.COMPLETED', 'privacy.export.statuses.FAILED', 'calculator.objective.scoreboard', 'nav.menu',
       // Acceso, alta y paneles (Sprint 3.2): «Entrar», «Verificar», «Continuar», «Forma jurídica», «AMPA / AFA», «Hola», «Consola», «Crítica».
       'auth.login.enter', 'auth.secondFactor.verify', 'registration.continue', 'registration.fields.legalForm', 'registration.legalForm.PARENTS_ASSOCIATION', 'panel.welcome', 'admin.headerTitle', 'admin.severity.CRITICAL', 'demo.console',

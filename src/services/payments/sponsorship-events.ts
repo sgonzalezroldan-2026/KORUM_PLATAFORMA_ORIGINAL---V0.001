@@ -16,9 +16,14 @@ import { approveRefundInTx, isSettled, PaymentReconciliationError, type Contribu
  * del fee. El patrocinio sigue `PENDING` hasta que el centro lo aprueba (moderación, Sprint 4.2): esa decisión no es de este flujo.
  */
 
-/** Lo necesario para facturar dentro del cobro. Sin el NIF emisor el webhook falla y se reintenta: no se asienta un fee que no se pueda facturar. */
+/**
+ * Lo necesario para facturar dentro del cobro. Sin el NIF emisor o sin la razón social el webhook falla y se reintenta: no se asienta un fee que no
+ * se pueda facturar.
+ */
 export interface InvoicingContext {
   issuerTaxId: string;
+  /** Razón social del emisor (`invoicing.issuerName`): la llevan la factura y la rectificativa impresas. */
+  issuerName: string;
   keyring: Keyring;
 }
 
@@ -99,6 +104,7 @@ export async function completeSponsorshipInTx(
         idempotencyKey: `sponsor:fee:${sponsor.id}`,
         organizationId: contribution.organizationId,
         issuerTaxId: invoicing.issuerTaxId,
+        issuerName: invoicing.issuerName,
         recipientName: sponsor.name,
         recipientTaxId: sponsor.cifEnc ? openSponsorTaxId(invoicing.keyring, { organizationId: sponsor.organizationId, cifEnc: sponsor.cifEnc, cifKeyVersion: sponsor.cifKeyVersion }) : '',
         keyring: invoicing.keyring,

@@ -55,7 +55,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(await db.idea.count({ where: { id: { in: [501, 502, 503] } } })).toBe(3);
     for (const ideaId of [501, 502, 503]) expect(await db.ideaMessage.count({ where: { ideaId } }), `chat de la idea ${ideaId}`).toBe(1);
     expect(await db.ideaSignatureAudit.count({ where: { ideaId: 502 } })).toBe(3);
-    expect(await db.invoice.count({ where: { invoiceNumber: { in: ['FAC-2025-0014', 'FAC-2026-0019'] } } })).toBe(2);
+    expect(await db.invoice.count({ where: { invoiceNumber: { in: ['DEMO-2025-0014', 'DEMO-2026-0019'] } } })).toBe(2);
     expect(await db.supportTicket.count({ where: { ticketCode: 'TCK-901' } })).toBe(1);
     expect(await db.user.count({ where: { isSuperadmin: true, id: 'user-superadmin' } })).toBe(1);
   });

@@ -18,6 +18,8 @@ export interface SponsorCardData {
   level: SponsorLevel;
   promo: string;
   code: string;
+  /** Logotipo público del comercio (`/api/files/public/{id}`), si el centro lo ha subido. */
+  logoSrc?: string | null;
 }
 
 const BADGE: Record<SponsorLevel, { icon: string; className: string }> = {
@@ -50,6 +52,8 @@ export function SponsorCard({ sponsor, entityName, pageUrl, contentLang }: { spo
           <span aria-hidden="true">{`${badge.icon} `}</span>
           {t(`level.${sponsor.level}`)}
         </p>
+        {/* eslint-disable-next-line @next/next/no-img-element -- logotipo público servido por /api/files/public, de tamaño pequeño y fijo */}
+        {sponsor.logoSrc ? <img src={sponsor.logoSrc} alt="" width={96} height={64} loading="lazy" className="h-16 w-auto max-w-24 object-contain" /> : null}
         {/* Lo que escribe el comercio va en el idioma del contenido de la entidad (WCAG 3.1.2). */}
         <h2 lang={contentLang} className="font-joy text-lg font-bold text-varsity-navy wrap-anywhere">
           <span aria-hidden="true">{'🏪 '}</span>

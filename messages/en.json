@@ -422,6 +422,34 @@
         "amount": "Amount",
         "date": "Expiry date",
         "cta": "Renew my sponsorship"
+      },
+      "level": {
+        "ORO": "Gold",
+        "PLATA": "Silver",
+        "BRONCE": "Bronze"
+      },
+      "welcome": {
+        "subject": "You’re now a Friendly business of {organization}!",
+        "preheader": "Your badge is already on their page.",
+        "title": "Welcome to the friendly businesses!",
+        "body": "{organization} has approved your sponsorship. Your {level} badge now appears on its friendly businesses page and is valid until {date}.",
+        "matching": "Your Matching 2x pool is now active: every donation from a family is doubled with it until it runs out.",
+        "documents": "The button takes you to your sponsorship receipt and, from there, to the management invoice and the poster for your shop window. Keep this email: the link is personal. If you want to share the poster, share only its page: it doesn’t open your documents.",
+        "levelLabel": "Tier",
+        "until": "Valid until",
+        "cta": "See my documents and poster"
+      },
+      "rejected": {
+        "subject": "{organization} has not accepted your sponsorship",
+        "preheader": "We are refunding 100% of what you paid.",
+        "title": "Your sponsorship has not been accepted",
+        "body": "{organization} has reviewed your sponsorship and has not accepted it. We are refunding 100% of what you paid ({amount}: sponsorship, management and VAT) to the same payment method.",
+        "reason": "Their explanation: “{reason}”",
+        "rectified": "We have cancelled the management invoice with a corrective invoice.",
+        "amount": "Amount refunded",
+        "cta": "See my receipt",
+        "ctaRectified": "See the corrective invoice",
+        "footnote": "Paycomet processes the refund and it may take a few days to appear on your payment method. We’ll let you know when it goes through."
       }
     },
     "tax": {
@@ -1445,7 +1473,8 @@
       "label": "Panel sections",
       "dashboard": "Dashboard",
       "approvals": "Approvals",
-      "achievements": "Achievements"
+      "achievements": "Achievements",
+      "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}"
     },
     "header": {
       "label": "Organisation management",
@@ -1651,9 +1680,9 @@
     "approvals": {
       "metaTitle": "Approvals",
       "title": "Approvals and dual sign-off",
-      "intro": "Review families’ proposals, talk to them through their anonymous code and approve, with two signatures, the ideas that reach the quorum.",
+      "intro": "Review proposals from families and friendly local businesses, talk to families through their anonymous code and approve, with two signatures, the ideas that reach the quorum.",
       "antifraud": "Up to 2 family accounts per device count (both parents). A 3rd account on the same device or a burst of signatures from the same network is marked as suspicious and does not count until you review it.",
-      "openTitle": "{count, plural, =0 {Nothing pending} one {# idea in progress} other {# ideas in progress}}",
+      "openTitle": "{count, plural, =0 {Ideas: nothing pending} one {# idea in progress} other {# ideas in progress}}",
       "closedTitle": "{count, plural, one {Latest closed idea} other {Latest # closed ideas}}",
       "empty": {
         "title": "No proposals waiting",
@@ -1696,7 +1725,7 @@
       },
       "errors": {
         "INVALID_INPUT": "Please check the fields: the title needs 8 to 90 characters, the description 20 to 600 and the reason at least 10.",
-        "NOT_FOUND": "We cannot find this idea in your organisation. Please reload the page.",
+        "NOT_FOUND": "We can’t find this in your organisation. Please reload the page.",
         "WRONG_PHASE": "The idea has already moved on. Reload the page to see where it stands.",
         "INVALID_CATEGORY": "Choose one of your organisation’s categories.",
         "CHAT_CLOSED": "The conversation is closed: the idea has been converted or declined.",
@@ -1711,14 +1740,18 @@
         "ALREADY_SIGNED": "Your signature is already recorded (or your role has already signed).",
         "SAME_PERSON": "The two signatures must come from different people with different email addresses.",
         "PROVIDER_INVOICE_MISSING": "The supplier’s invoice is needed to sign this payout.",
-        "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a Paycomet destination account yet."
+        "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a Paycomet destination account yet.",
+        "WRONG_STATUS": "This business is no longer pending: the other signatory has decided, or its payment was never completed. Please reload the page.",
+        "MATCHING_TAKEN": "Another approved business already holds this campaign’s Matching 2x pool, and there can’t be two. You can decline this business: we’ll refund everything it paid.",
+        "ALREADY_SETTLED": "This initiative has already been paid out, so this business cannot be refunded from here. Please contact support.",
+        "INVOICING_UNAVAILABLE": "We can’t cancel the management invoice right now because the issuer details are missing in KORUM. Please try later or contact support."
       },
       "doubleCheck": {
         "label": "Dual sign-off for the idea",
         "progress": "Dual sign-off: {signed} of 2",
         "roles": {
-          "DIRECTOR": "Head teacher / Director",
-          "COSIGNER": "Co-signer (parents’ association, treasury or board)"
+          "DIRECTOR": "First signature",
+          "COSIGNER": "Second signature"
         },
         "signedBy": "Signed by {name} on {date}",
         "pending": "Waiting for signature",
@@ -1777,7 +1810,8 @@
         "completePayout": "Both payout signatures are recorded.",
         "partialNotified": "We have sent the link to the other signer to complete the dual sign-off.",
         "partialWaiting": "The other person still needs to sign. Once they have two-step verification turned on, they can request their link from Approvals.",
-        "cta": "Back to Approvals"
+        "cta": "Back to Approvals",
+        "celebrate": "An idea from the families is starting to come true!"
       },
       "what": "What you are signing",
       "ideaMeta": "{alias} · {category} · {votes} verified signatures",
@@ -1815,6 +1849,86 @@
         "RATE_LIMITED": "You have requested several links in a row. Please wait a few minutes before asking for another."
       },
       "retry": "Check the link again"
+    },
+    "sponsors": {
+      "title": "{count, plural, =0 {Friendly businesses} one {Friendly businesses · # to review} other {Friendly businesses · # to review}}",
+      "intro": "Local businesses sponsoring your campaigns. Their payment is already in the initiative’s fund (or its Matching 2x pool), but they don’t appear on your page until you approve them. If you don’t accept them, we refund 100% of what they paid.",
+      "empty": {
+        "title": "No friendly businesses yet",
+        "description": "When a business sponsors one of your campaigns from its page, it will appear here for you to review.",
+        "cta": "See your businesses page"
+      },
+      "closedTitle": "{count, plural, one {# business not accepted or refunded} other {# businesses not accepted or refunded}}",
+      "status": {
+        "PENDING": "To review",
+        "UNPAID": "Payment not completed",
+        "APPROVED": "Approved · visible",
+        "REJECTED": "Not accepted · refunded",
+        "REFUNDED": "Refunded",
+        "CREDIT_POOL": "In the credit pool"
+      },
+      "level": {
+        "ORO": "Gold",
+        "PLATA": "Silver",
+        "BRONCE": "Bronze"
+      },
+      "meta": "{level} tier · {sector} · paid on {date}",
+      "sectorFallback": "Local business",
+      "toEscrow": "Full sponsorship to the fund",
+      "toPool": "Full sponsorship to the Matching 2x pool",
+      "forInitiative": "for “{title}” ({wallet})",
+      "feeLabel": "KORUM advertising management (separate)",
+      "feeValue": "{fee} + VAT {vat}: paid by the business, never taken from your fund",
+      "contact": "Contact",
+      "promo": "Offer for families",
+      "promoWithCode": "{promo} · code {code}",
+      "promoNone": "No offer given",
+      "visibleUntil": "Visible on your page until {date}.",
+      "renewalNotice": "We’ll remind them 30 days before it expires so they can renew.",
+      "renewalNone": "They didn’t ask for a renewal reminder.",
+      "approve": "Approve business",
+      "reject": {
+        "open": "Don’t accept",
+        "label": "Reason (the business will read it in its email)",
+        "help": "Between {min} and {max} characters, kindly and without personal data. We’ll refund {amount} (sponsorship, management and VAT) to their original payment method and cancel the management invoice.",
+        "confirm": "Don’t accept and refund {amount}",
+        "sending": "Refunding…",
+        "cancel": "Cancel",
+        "tooShort": "Please write the reason: at least {min} characters."
+      },
+      "readOnly": "Only the organisation’s two signatories can approve or decline businesses.",
+      "notices": {
+        "approved": "{name} is now a friendly business: it appears on your page for 12 months and we’ve sent its welcome email.",
+        "approvedMatching": "{name} is now a friendly business and its Matching 2x pool is active: every donation is doubled until it runs out.",
+        "rejected": "{name} has not been accepted. We’re refunding {amount} and have emailed them the reason."
+      },
+      "logo": {
+        "summary": "Upload their logo",
+        "summaryReplace": "Change their logo",
+        "label": "{name} logo",
+        "replaceLabel": "New {name} logo",
+        "help": "JPG, PNG or WebP up to {max} MB. We publish it without the photo’s hidden data (such as location).",
+        "upload": "Upload logo",
+        "uploading": "Uploading…",
+        "saved": "Logo published: it now shows on your businesses page.",
+        "errors": {
+          "noFile": "Please choose an image first.",
+          "TOO_LARGE": "The image is larger than {max} MB.",
+          "UNREADABLE_IMAGE": "We couldn’t read the image. Please try another one.",
+          "SPONSOR_NOT_ACTIVE": "This business is no longer active, so its logo can’t be changed.",
+          "FORBIDDEN": "Your session can’t do this. Please sign in again with two-step verification.",
+          "NOT_FOUND": "We can’t find this business in your organisation.",
+          "FILE_TYPE_NOT_ALLOWED": "Only JPG, PNG or WebP are accepted.",
+          "FILE_UNRECOGNIZED_TYPE": "We don’t recognise this file as an image.",
+          "FILE_MIME_MISMATCH": "This file isn’t the image it appears to be. Please try another one.",
+          "FILE_EXTENSION_MISMATCH": "The file name doesn’t match its type. Please try another image.",
+          "FILE_TOO_LARGE": "The image is larger than {max} MB.",
+          "generic": "We couldn’t upload it. Please try again in a few seconds."
+        }
+      },
+      "metaUnpaid": "{level} tier · {sector}",
+      "returnedAmount": "Sponsorship refunded to the business",
+      "jump": "{count, plural, one {Go to friendly businesses · # to review} other {Go to friendly businesses · # to review}}"
     }
   },
   "gate": {
@@ -1865,7 +1979,8 @@
       "ENCRYPTION_KEY_MISSING": "An encryption key is missing",
       "PRIVACY_ERASURE_FAILED": "Erasing an inactive account failed",
       "EMAIL_DELIVERY_FAILED": "Some emails cannot be sent",
-      "TRUSTED_IP_MISSING": "Families’ IP addresses are not reaching the idea box: everyone would fall in the same group"
+      "TRUSTED_IP_MISSING": "Families’ IP addresses are not reaching the idea box: everyone would fall in the same group",
+      "INVOICE_RECTIFY_PENDING": "Fee invoice of a refunded or charged-back business, pending correction"
     }
   },
   "forbidden": {
@@ -2446,6 +2561,22 @@
         "verify": "Verify with the Tax Agency",
         "none": "This sponsorship does not generate a KORUM invoice.",
         "issuerFallback": "KORUM (technology platform)"
+      },
+      "otherDocuments": "Your other documents",
+      "rectificativa": {
+        "title": "Corrective invoice",
+        "rectifies": "Corrects invoice",
+        "explain": "The organisation did not accept your sponsorship: this invoice cancels the advertising management invoice. We are refunding 100% of what you paid to the same payment method.",
+        "none": "This sponsorship has no corrective invoice."
+      },
+      "cartel": {
+        "title": "Poster for your shop window",
+        "label": "Friendly business poster",
+        "unavailable": "The poster is available while your business is approved and current.",
+        "friendOf": "Friendly business of {entity}",
+        "promoWithCode": "{promo} · code {code}",
+        "scan": "Scan the code to see {entity}’s campaigns and its friendly businesses.",
+        "validUntil": "Badge valid until {date}."
       }
     },
     "ideas": {

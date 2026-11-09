@@ -13,7 +13,7 @@ import { ResourceNotFoundError } from './tenant-guard';
 export async function listFriendlySponsors(db: KorumPrismaClient, slug: string, now: Date) {
   return db.sponsor.findMany({
     where: { status: 'APPROVED', expiresAt: { gt: now }, organization: { slug, archivedAt: null } },
-    select: { id: true, name: true, sector: true, categoryLevel: true, tierRank: true, promo: true, code: true },
+    select: { id: true, name: true, sector: true, categoryLevel: true, tierRank: true, promo: true, code: true, logoFile: { select: { id: true, visibility: true, deletedAt: true } } },
     orderBy: [{ tierRank: 'desc' }, { id: 'asc' }]
   });
 }
@@ -89,7 +89,7 @@ export async function getSponsorshipDocuments(db: KorumPrismaClient, slug: strin
       status: true,
       createdAt: true,
       paymentMethod: true,
-      organization: { select: { name: true, legalName: true } },
+      organization: { select: { name: true, legalName: true, slug: true, contentLocale: true } },
       initiative: { select: { id: true, title: true } },
       sponsor: {
         select: {
@@ -100,7 +100,32 @@ export async function getSponsorshipDocuments(db: KorumPrismaClient, slug: strin
           categoryLevel: true,
           isMatchingPool: true,
           feeGeneratedCents: true,
-          invoices: { select: { invoiceNumber: true, issuedAt: true, issuerTaxId: true, baseAmountCents: true, taxRateBps: true, taxAmountCents: true, totalAmountCents: true, verifactuHash: true, verifactuQrUrl: true, verifactuStatus: true, concept: true }, orderBy: { id: 'asc' }, take: 1 }
+          status: true,
+          expiresAt: true,
+          promo: true,
+          code: true,
+          logoFile: { select: { id: true, visibility: true, deletedAt: true } },
+          // La factura del fee y, si se devolvió el patrocinio, su rectificativa (Sprint 4.2b).
+          invoices: {
+            select: {
+              invoiceNumber: true,
+              invoiceType: true,
+              issuedAt: true,
+              issuerTaxId: true,
+              issuerName: true,
+              baseAmountCents: true,
+              taxRateBps: true,
+              taxAmountCents: true,
+              totalAmountCents: true,
+              verifactuHash: true,
+              verifactuQrUrl: true,
+              verifactuStatus: true,
+              concept: true,
+              rectifiesInvoice: { select: { invoiceNumber: true } }
+            },
+            orderBy: { id: 'asc' },
+            take: 2
+          }
         }
       }
     }

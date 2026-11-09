@@ -80,7 +80,8 @@ async function verifyInitiative(db: KorumPrismaClient, seed: KorumSeedData, init
   check(contributions === stored.totalContributions, `${label}: ${contributions} aportaciones y totalContributions es ${stored.totalContributions}`);
 
   // 3. Tabla de aportaciones ↔ libro: lo abonado a la hucha y lo cobrado por la pasarela salen de las filas de `Contribution`.
-  const rows = await db.contribution.aggregate({ where: { initiativeId: id, status: 'COMPLETED' }, _sum: { amountCents: true } });
+  // El cobro de una bolsa Matching 2x no suma a lo recaudado hasta que una donación la libera (y esa liberación sí es una aportación `MATCHING_FUND`).
+  const rows = await db.contribution.aggregate({ where: { initiativeId: id, status: 'COMPLETED', NOT: { type: 'SPONSORSHIP', sponsor: { isMatchingPool: true } } }, _sum: { amountCents: true } });
   check((rows._sum.amountCents ?? 0) === initiative.raisedCents, `${label}: las aportaciones suman ${rows._sum.amountCents ?? 0} y la semilla dice ${initiative.raisedCents}`);
   const charged = await db.contribution.aggregate({ where: { initiativeId: id, status: 'COMPLETED', type: { in: [...PEOPLE_TYPES] } }, _sum: { totalChargedCents: true } });
   const pspIn = await db.escrowLedgerEntry.aggregate({

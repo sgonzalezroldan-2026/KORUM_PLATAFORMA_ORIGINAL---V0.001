@@ -53,7 +53,7 @@ export const SETTING_DEFINITIONS = {
   'email.smtp.port': def(z.number().int().min(1).max(65_535), { auditValue: true }),
   'invoicing.provider': def(text(60), { auditValue: true }),
   'invoicing.issuerNif': def(taxId, { envFallback: 'VERIFACTU_ISSUER_NIF', auditValue: true }),
-  'invoicing.issuerName': def(text(), { auditValue: true }),
+  'invoicing.issuerName': def(text(), { envFallback: 'VERIFACTU_ISSUER_NAME', auditValue: true }),
   'invoicing.series': def(z.string().regex(/^[A-Z0-9]{1,10}$/, 'Serie en mayúsculas y cifras'), { auditValue: true }),
   'hucha.mode': def(z.enum(['DISABLED', 'PLEDGE', 'REGULATED_WALLET']), { defaultValue: 'PLEDGE', auditValue: true }),
   'hucha.walletProvider': def(text(60), { auditValue: true }),

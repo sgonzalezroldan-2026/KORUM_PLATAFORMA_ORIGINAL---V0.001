@@ -17,6 +17,7 @@ import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } fro
 import { accountPasskeyAdded, supportReceived } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
+import { sponsorRejected, sponsorWelcome } from './definitions-sponsors';
 
 /**
  * Catálogo de plantillas (`templateKey` → definición). Las claves son las de EXPERIENCIA_DE_PRODUCTO §4. Una clave que no está aquí no
@@ -66,6 +67,8 @@ const ENTRIES = [
   register('split.windowExpiring', splitWindowExpiring),
   register('split.windowExpired', splitWindowExpired),
   register('sponsor.renewalNotice', sponsorRenewalNotice),
+  register('sponsor.welcome', sponsorWelcome),
+  register('sponsor.rejected', sponsorRejected),
   register('tax.certificateReady', taxCertificateReady),
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),

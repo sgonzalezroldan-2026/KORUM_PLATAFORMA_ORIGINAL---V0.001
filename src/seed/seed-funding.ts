@@ -78,7 +78,30 @@ function contributionRow(payment: PlannedPayment, scope: Scope, locale: 'es' | '
     paycometOrder: contributionOrder(payment.key),
     paycometAuthCode: `A${payment.key.replace(/\D/g, '').slice(-6).padStart(6, '0')}`,
     status: 'COMPLETED',
-    createdAt: payment.createdAt
+    createdAt: payment.createdAt,
+    // Un patrocinio lleva su comercio: sin él, un contracargo o una devolución de ese cobro no se podría deshacer (heredado del Sprint 3.5, punto 10).
+    sponsorId: payment.sponsorId
+  };
+}
+
+/** Cobro de la bolsa Matching 2x de un comercio: una aportación como la del checkout, con su comercio, aunque su dinero espere en la bolsa. */
+function poolPayinRow(payin: PlannedPoolPayin, scope: Scope, locale: 'es' | 'ca' | 'en', email: string): Prisma.ContributionCreateManyInput {
+  return {
+    organizationId: scope.organizationId,
+    initiativeId: scope.initiativeId,
+    guestEmail: email,
+    canonicalEmail: email,
+    locale,
+    fiscalYear: payin.paidAt.getUTCFullYear(),
+    type: 'SPONSORSHIP',
+    amountCents: payin.poolCents,
+    totalChargedCents: payin.poolCents + payin.serviceFeeCents + payin.taxCents,
+    paymentMethod: 'CARD',
+    paycometOrder: contributionOrder(payin.key),
+    paycometAuthCode: `A${payin.key.replace(/\D/g, '').slice(-6).padStart(6, '0')}`,
+    status: 'COMPLETED',
+    createdAt: payin.paidAt,
+    sponsorId: payin.sponsorId
   };
 }
 
@@ -110,9 +133,9 @@ function paymentJournals(payment: PlannedPayment, scope: Scope, contributionId: 
   ];
 }
 
-function poolPayinJournals(payin: PlannedPoolPayin, scope: Scope): JournalInput[] {
+function poolPayinJournals(payin: PlannedPoolPayin, scope: Scope, contributionId: number): JournalInput[] {
   const reference = contributionOrder(payin.key);
-  const common = { organizationId: scope.organizationId, initiativeId: scope.initiativeId, paycometReference: reference, occurredAt: payin.paidAt };
+  const common = { organizationId: scope.organizationId, initiativeId: scope.initiativeId, contributionId, paycometReference: reference, occurredAt: payin.paidAt };
   return [
     {
       ...common,
@@ -161,7 +184,12 @@ export async function seedFunding(
     const scope: Scope = { organizationId: plan.organizationId, initiativeId: plan.initiativeId };
     const taxDeductible = org.ley49;
 
-    const rows = [...plan.payments.map((payment) => contributionRow(payment, scope, org.contentLocale, taxDeductible)), ...plan.matching.map((release) => matchingRow(release, scope, org.contentLocale))];
+    const poolEmail = (sponsorId: number) => (seed.sponsors.find((sponsor) => sponsor.id === sponsorId)?.email ?? '').toLowerCase();
+    const rows = [
+      ...plan.payments.map((payment) => contributionRow(payment, scope, org.contentLocale, taxDeductible)),
+      ...plan.poolPayins.map((payin) => poolPayinRow(payin, scope, org.contentLocale, poolEmail(payin.sponsorId))),
+      ...plan.matching.map((release) => matchingRow(release, scope, org.contentLocale))
+    ];
     for (let offset = 0; offset < rows.length; offset += CHUNK_SIZE) {
       await db.contribution.createMany({ data: rows.slice(offset, offset + CHUNK_SIZE), skipDuplicates: true });
     }
@@ -193,7 +221,7 @@ export async function seedFunding(
     }
 
     const journals: JournalInput[] = [
-      ...plan.poolPayins.flatMap((payin) => poolPayinJournals(payin, scope)),
+      ...plan.poolPayins.flatMap((payin) => poolPayinJournals(payin, scope, contributionId(payin.key))),
       ...plan.payments.flatMap((payment) => paymentJournals(payment, scope, contributionId(payment.key))),
       ...plan.matching.map((release) => matchingReleaseJournal(release, scope, contributionId(release.key)))
     ];

@@ -422,6 +422,34 @@
         "amount": "Importe",
         "date": "Fecha de caducidad",
         "cta": "Renovar mi patrocinio"
+      },
+      "level": {
+        "ORO": "Oro",
+        "PLATA": "Plata",
+        "BRONCE": "Bronce"
+      },
+      "welcome": {
+        "subject": "¡Ya eres Comercio amigo de {organization}!",
+        "preheader": "Tu distintivo ya se ve en su página.",
+        "title": "¡Ya formas parte de los comercios amigos!",
+        "body": "{organization} ha aprobado tu patrocinio. Tu distintivo de categoría {level} ya aparece en su página de comercios amigos y vale hasta el {date}.",
+        "matching": "Tu bolsa Matching 2x ya está activa: cada donación de una familia se duplica con ella hasta agotarla.",
+        "documents": "Desde el botón tienes tu justificante y, desde él, la factura de la gestión y el cartel para tu escaparate. Guarda este email: el enlace es personal. Si quieres compartir el cartel, comparte solo su página: no abre tus documentos.",
+        "levelLabel": "Categoría",
+        "until": "Válido hasta",
+        "cta": "Ver mis documentos y mi cartel"
+      },
+      "rejected": {
+        "subject": "{organization} no ha admitido tu patrocinio",
+        "preheader": "Te devolvemos el 100 % de lo que pagaste.",
+        "title": "Tu patrocinio no ha sido admitido",
+        "body": "{organization} ha revisado tu patrocinio y no lo ha admitido. Te devolvemos el 100 % de lo que pagaste ({amount}: patrocinio, gestión e IVA) al mismo medio de pago.",
+        "reason": "Su explicación: «{reason}»",
+        "rectified": "Hemos anulado la factura de la gestión con una factura rectificativa.",
+        "amount": "Importe que te devolvemos",
+        "cta": "Ver mi justificante",
+        "ctaRectified": "Ver la factura rectificativa",
+        "footnote": "La devolución la hace Paycomet y puede tardar unos días en aparecer en tu medio de pago. Te avisaremos cuando salga."
       }
     },
     "tax": {
@@ -1379,7 +1407,7 @@
         "SENT": "Invitación enviada de nuevo.",
         "NOT_NEEDED": "No hace falta: ya ha activado su cuenta, o se ha enviado hace muy poco.",
         "FORBIDDEN": "Solo la primera firma puede reenviar la invitación.",
-        "ERROR": "No se ha podido enviar. Inténtalo de nuevo en unos segundos."
+        "ERROR": "No se ha podido enviar. Probad de nuevo en unos segundos."
       }
     },
     "kyb": {
@@ -1394,7 +1422,7 @@
     },
     "achievements": {
       "cardTitle": "Logros y fotos Antes / Después",
-      "cardText": "Sube las fotos de cada mejora terminada y escribe el agradecimiento que verán las familias.",
+      "cardText": "Subid las fotos de cada mejora terminada y escribid el agradecimiento que verán las familias.",
       "cardLink": "Ir a logros",
       "title": "Logros de la entidad",
       "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal. Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
@@ -1425,19 +1453,19 @@
       "saving": "Guardando…",
       "thanksSaved": "Agradecimiento guardado.",
       "errors": {
-        "noFile": "Elige primero una foto.",
+        "noFile": "Elegid primero una foto.",
         "TOO_LARGE": "La foto pesa demasiado. Reduce su tamaño (máximo {max} MB) e inténtalo de nuevo.",
         "CONFIRMATION_REQUIRED": "Marca la casilla: no pueden aparecer menores identificables.",
-        "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Prueba con otra foto.",
+        "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Probad con otra foto.",
         "INITIATIVE_NOT_EDITABLE": "Esta iniciativa ya no admite fotos.",
         "FORBIDDEN": "No tienes permiso para esto. Entra con una cuenta de firmante con la verificación en dos pasos.",
         "NOT_FOUND": "No hemos encontrado esa iniciativa.",
         "FILE_TYPE_NOT_ALLOWED": "Solo se admiten fotos JPG, PNG o WebP.",
         "FILE_UNRECOGNIZED_TYPE": "Solo se admiten fotos JPG, PNG o WebP.",
-        "FILE_MIME_MISMATCH": "El archivo no es la foto que parece. Prueba con otra.",
-        "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Prueba con otra foto.",
+        "FILE_MIME_MISMATCH": "El archivo no es la foto que parece. Probad con otra.",
+        "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Probad con otra foto.",
         "FILE_TOO_LARGE": "La foto pesa demasiado. Reduce su tamaño e inténtalo de nuevo.",
-        "generic": "No hemos podido guardarlo. Inténtalo de nuevo en unos segundos."
+        "generic": "No hemos podido guardarlo. Probad de nuevo en unos segundos."
       },
       "required": "obligatorio"
     },
@@ -1445,7 +1473,8 @@
       "label": "Secciones del panel",
       "dashboard": "Cuadro de mandos",
       "approvals": "Aprobaciones",
-      "achievements": "Logros"
+      "achievements": "Logros",
+      "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1651,9 +1680,9 @@
     "approvals": {
       "metaTitle": "Aprobaciones",
       "title": "Aprobaciones y doble firma",
-      "intro": "Revisa las propuestas de las familias, conversa con ellas por su código anónimo y aprueba con doble firma las ideas que logran el quórum.",
+      "intro": "Revisad las propuestas de las familias y de los comercios amigos, conversad con las familias por su código anónimo y aprobad con doble firma las ideas que logran el quórum.",
       "antifraud": "Cuentan hasta 2 cuentas familiares por dispositivo (padre y madre). La 3ª cuenta de un mismo dispositivo o una ráfaga de firmas desde la misma red quedan como sospechosas y no suman hasta que las reviséis.",
-      "openTitle": "{count, plural, =0 {Nada pendiente} one {# idea en marcha} other {# ideas en marcha}}",
+      "openTitle": "{count, plural, =0 {Ideas: nada pendiente} one {# idea en marcha} other {# ideas en marcha}}",
       "closedTitle": "{count, plural, one {Última idea cerrada} other {Últimas # ideas cerradas}}",
       "empty": {
         "title": "No hay propuestas pendientes",
@@ -1672,7 +1701,7 @@
       "signDaysLeft": "{count, plural, =0 {La doble firma vence hoy.} one {Queda # día para la doble firma.} other {Quedan # días para la doble firma.}}",
       "progressLabel": "Avance hacia el quórum",
       "edit": {
-        "legend": "Revisa el texto antes de publicarlo",
+        "legend": "Revisad el texto antes de publicarlo",
         "title": "Título",
         "category": "Categoría",
         "description": "Descripción",
@@ -1686,7 +1715,7 @@
       },
       "reject": {
         "label": "Motivo para {alias} (lo leerá en su chat)",
-        "hint": "Al menos 10 caracteres. Explícalo con amabilidad y sin datos personales. La familia recibirá un aviso para leerlo.",
+        "hint": "Al menos 10 caracteres. Explicadlo con amabilidad y sin datos personales. La familia recibirá un aviso para leerlo.",
         "confirm": "Desestimar la idea"
       },
       "notices": {
@@ -1695,15 +1724,15 @@
         "rejected": "Idea desestimada. El motivo está en su chat y la familia recibirá un aviso."
       },
       "errors": {
-        "INVALID_INPUT": "Revisa los campos: el título necesita entre 8 y 90 caracteres, la descripción entre 20 y 600 y el motivo al menos 10.",
-        "NOT_FOUND": "No encontramos esta idea en vuestra entidad. Recarga la página.",
-        "WRONG_PHASE": "La idea ya ha cambiado de fase. Recarga la página para ver cómo está.",
-        "INVALID_CATEGORY": "Elige una de las categorías de vuestra entidad.",
+        "INVALID_INPUT": "Revisad los campos: el título necesita entre 8 y 90 caracteres, la descripción entre 20 y 600 y el motivo al menos 10.",
+        "NOT_FOUND": "No encontramos esto en vuestra entidad. Recargad la página.",
+        "WRONG_PHASE": "La idea ya ha cambiado de fase. Recargad la página para ver cómo está.",
+        "INVALID_CATEGORY": "Elegid una de las categorías de vuestra entidad.",
         "CHAT_CLOSED": "La conversación está cerrada: la idea ya se convirtió o se desestimó.",
         "RATE_LIMITED": "Has pedido varios enlaces seguidos. Espera unos minutos antes de pedir otro.",
         "NOT_SUSPICIOUS": "Esa firma ya cuenta como verificada.",
         "FORBIDDEN": "Tu sesión no puede hacer esto. Vuelve a entrar con la verificación en dos pasos.",
-        "failed": "No hemos podido completar la acción. Inténtalo de nuevo en unos segundos.",
+        "failed": "No hemos podido completar la acción. Probad de nuevo en unos segundos.",
         "NOT_A_SIGNER": "Tu cuenta no tiene un cargo de firma en esta entidad.",
         "HOLDS_BOTH_ROLES": "Una misma persona no puede ocupar los dos cargos de firma. Revisad los cargos de la entidad.",
         "TWO_FACTOR_REQUIRED": "Para firmar necesitas la verificación en dos pasos activada y superada en esta sesión.",
@@ -1711,14 +1740,18 @@
         "ALREADY_SIGNED": "Tu firma ya consta (o tu cargo ya ha firmado).",
         "SAME_PERSON": "Las dos firmas tienen que ser de personas distintas, con correos distintos.",
         "PROVIDER_INVOICE_MISSING": "Falta la factura del proveedor para firmar esta liquidación.",
-        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en Paycomet."
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en Paycomet.",
+        "WRONG_STATUS": "Este comercio ya no está pendiente: otra persona firmante lo ha decidido o su pago no se completó. Recargad la página.",
+        "MATCHING_TAKEN": "La bolsa Matching 2x de esta campaña ya la tiene otro comercio aprobado y no puede haber dos. Podéis no admitir a este comercio: le devolveremos todo lo que pagó.",
+        "ALREADY_SETTLED": "La iniciativa ya está liquidada: este comercio no se puede devolver desde aquí. Escribid a soporte.",
+        "INVOICING_UNAVAILABLE": "Ahora mismo no podemos anular la factura de la gestión porque faltan los datos del emisor en KORUM. Probad más tarde o escribid a soporte."
       },
       "doubleCheck": {
         "label": "Doble firma de la idea",
         "progress": "Doble firma: {signed} de 2",
         "roles": {
-          "DIRECTOR": "Dirección",
-          "COSIGNER": "Cofirma (AMPA/AFA, tesorería o patronato)"
+          "DIRECTOR": "Primera firma",
+          "COSIGNER": "Segunda firma"
         },
         "signedBy": "Firmado por {name} el {date}",
         "pending": "Pendiente de firma",
@@ -1777,7 +1810,8 @@
         "completePayout": "Las dos firmas de la liquidación están registradas.",
         "partialNotified": "Hemos enviado el enlace a la otra persona firmante para completar la doble firma.",
         "partialWaiting": "Falta la firma de la otra persona. Cuando tenga activada la verificación en dos pasos, podrá pedir su enlace desde Aprobaciones.",
-        "cta": "Volver a Aprobaciones"
+        "cta": "Volver a Aprobaciones",
+        "celebrate": "¡Una idea de las familias empieza a hacerse realidad!"
       },
       "what": "Lo que vas a firmar",
       "ideaMeta": "{alias} · {category} · {votes} firmas verificadas",
@@ -1815,6 +1849,86 @@
         "RATE_LIMITED": "Has pedido varios enlaces seguidos. Espera unos minutos antes de pedir otro."
       },
       "retry": "Volver a comprobar el enlace"
+    },
+    "sponsors": {
+      "title": "{count, plural, =0 {Comercios amigos} one {Comercios amigos · # por revisar} other {Comercios amigos · # por revisar}}",
+      "intro": "Los comercios del barrio que patrocinan vuestras campañas. Su pago ya está en la hucha de la iniciativa (o en su bolsa Matching 2x), pero no salen en vuestra página hasta que los aprobéis. Si no los admitís, les devolvemos el 100 % de lo que pagaron.",
+      "empty": {
+        "title": "Aún no hay comercios amigos",
+        "description": "Cuando un comercio patrocine una de vuestras campañas desde su ficha, aparecerá aquí para que lo reviséis.",
+        "cta": "Ver vuestra página de comercios"
+      },
+      "closedTitle": "{count, plural, one {# comercio no admitido o devuelto} other {# comercios no admitidos o devueltos}}",
+      "status": {
+        "PENDING": "Por revisar",
+        "UNPAID": "Pago sin completar",
+        "APPROVED": "Aprobado · visible",
+        "REJECTED": "No admitido · devuelto",
+        "REFUNDED": "Devuelto",
+        "CREDIT_POOL": "En bolsa de crédito"
+      },
+      "level": {
+        "ORO": "Oro",
+        "PLATA": "Plata",
+        "BRONCE": "Bronce"
+      },
+      "meta": "Categoría {level} · {sector} · pagado el {date}",
+      "sectorFallback": "Comercio local",
+      "toEscrow": "Patrocinio íntegro a la hucha",
+      "toPool": "Patrocinio íntegro a la bolsa Matching 2x",
+      "forInitiative": "para «{title}» ({wallet})",
+      "feeLabel": "Gestión publicitaria de KORUM (aparte)",
+      "feeValue": "{fee} + IVA {vat}: la paga el comercio y no sale de vuestra hucha",
+      "contact": "Contacto",
+      "promo": "Ventaja para las familias",
+      "promoWithCode": "{promo} · código {code}",
+      "promoNone": "Sin ventaja indicada",
+      "visibleUntil": "Visible en vuestra página hasta el {date}.",
+      "renewalNotice": "Le avisaremos 30 días antes de que caduque para que pueda renovar.",
+      "renewalNone": "No ha pedido aviso de renovación.",
+      "approve": "Aprobar comercio",
+      "reject": {
+        "open": "No admitir",
+        "label": "Motivo (lo leerá el comercio en su email)",
+        "help": "Entre {min} y {max} caracteres, con amabilidad y sin datos personales. Le devolveremos {amount} (patrocinio, gestión e IVA) a su medio de pago y anularemos la factura de la gestión.",
+        "confirm": "No admitir y devolver {amount}",
+        "sending": "Devolviendo…",
+        "cancel": "Cancelar",
+        "tooShort": "Escribid el motivo: al menos {min} caracteres."
+      },
+      "readOnly": "Solo las dos personas firmantes de la entidad pueden aprobar o no admitir comercios.",
+      "notices": {
+        "approved": "{name} ya es comercio amigo: sale en vuestra página durante 12 meses y le hemos enviado su bienvenida.",
+        "approvedMatching": "{name} ya es comercio amigo y su bolsa Matching 2x está activa: cada donación se duplica hasta agotarla.",
+        "rejected": "{name} no ha sido admitido. Le devolvemos {amount} y le hemos enviado el motivo por email."
+      },
+      "logo": {
+        "summary": "Subir su logotipo",
+        "summaryReplace": "Cambiar su logotipo",
+        "label": "Logotipo de {name}",
+        "replaceLabel": "Nuevo logotipo de {name}",
+        "help": "JPG, PNG o WebP de hasta {max} MB. Lo publicamos sin los datos ocultos de la foto (como la ubicación).",
+        "upload": "Subir logotipo",
+        "uploading": "Subiendo…",
+        "saved": "Logotipo publicado: ya se ve en vuestra página de comercios.",
+        "errors": {
+          "noFile": "Elegid primero una imagen.",
+          "TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Probad con otra.",
+          "SPONSOR_NOT_ACTIVE": "Este comercio ya no está activo: no se puede cambiar su logotipo.",
+          "FORBIDDEN": "Tu sesión no puede hacer esto. Vuelve a entrar con la verificación en dos pasos.",
+          "NOT_FOUND": "No encontramos este comercio en vuestra entidad.",
+          "FILE_TYPE_NOT_ALLOWED": "Solo se admiten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconocemos este archivo como imagen.",
+          "FILE_MIME_MISMATCH": "El archivo no es la imagen que parece. Probad con otra.",
+          "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Probad con otra imagen.",
+          "FILE_TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "generic": "No hemos podido subirlo. Probad de nuevo en unos segundos."
+        }
+      },
+      "metaUnpaid": "Categoría {level} · {sector}",
+      "returnedAmount": "Patrocinio devuelto al comercio",
+      "jump": "{count, plural, one {Ir a comercios amigos · # por revisar} other {Ir a comercios amigos · # por revisar}}"
     }
   },
   "gate": {
@@ -1865,7 +1979,8 @@
       "ENCRYPTION_KEY_MISSING": "Falta una clave de cifrado",
       "PRIVACY_ERASURE_FAILED": "Falló la supresión de una cuenta inactiva",
       "EMAIL_DELIVERY_FAILED": "Hay emails que no se pueden enviar",
-      "TRUSTED_IP_MISSING": "No llega la IP de las familias al firmar ideas: todas quedarían en el mismo grupo"
+      "TRUSTED_IP_MISSING": "No llega la IP de las familias al firmar ideas: todas quedarían en el mismo grupo",
+      "INVOICE_RECTIFY_PENDING": "Factura del fee de un comercio devuelto o con contracargo, pendiente de rectificar"
     }
   },
   "forbidden": {
@@ -2446,6 +2561,22 @@
         "verify": "Verificar en la Agencia Tributaria",
         "none": "Este patrocinio no genera factura de KORUM.",
         "issuerFallback": "KORUM (plataforma tecnológica)"
+      },
+      "otherDocuments": "Tus otros documentos",
+      "rectificativa": {
+        "title": "Factura rectificativa",
+        "rectifies": "Rectifica la factura",
+        "explain": "La entidad no ha admitido tu patrocinio: esta factura anula la de la gestión publicitaria. Te devolvemos el 100 % de lo que pagaste al mismo medio de pago.",
+        "none": "Este patrocinio no tiene factura rectificativa."
+      },
+      "cartel": {
+        "title": "Cartel para tu escaparate",
+        "label": "Cartel de comercio amigo",
+        "unavailable": "El cartel está disponible mientras tu comercio esté aprobado y vigente.",
+        "friendOf": "Comercio amigo de {entity}",
+        "promoWithCode": "{promo} · código {code}",
+        "scan": "Escanea el código para conocer las campañas de {entity} y sus comercios amigos.",
+        "validUntil": "Distintivo válido hasta el {date}."
       }
     },
     "ideas": {

@@ -23,7 +23,8 @@ export interface VerifactuRecord {
   generatedAt: string;
 }
 
-export const formatCents = (cents: number): string => `${Math.trunc(cents / 100)}.${String(Math.abs(cents) % 100).padStart(2, '0')}`;
+/** Una rectificativa por diferencias lleva importes negativos: el signo va delante también por debajo de un euro (`-0.50`, nunca `0.50`). */
+export const formatCents = (cents: number): string => `${cents < 0 ? '-' : ''}${Math.floor(Math.abs(cents) / 100)}.${String(Math.abs(cents) % 100).padStart(2, '0')}`;
 
 function madridParts(date: Date) {
   const parts = new Intl.DateTimeFormat('en-GB', { timeZone: HUSO_ZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', timeZoneName: 'longOffset' }).formatToParts(date);

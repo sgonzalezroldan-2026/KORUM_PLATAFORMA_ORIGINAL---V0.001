@@ -59,7 +59,7 @@ export function DoubleCheckBox({
             key={slot.role}
             className={clsx('flex flex-col gap-0.5 rounded-lg border-2 p-3', slot.signedBy ? 'border-varsity-emerald bg-emerald-50' : 'border-dashed border-stone-300 bg-stone-50')}
           >
-            <span className="text-sm font-extrabold text-varsity-navy">{t(`roles.${slot.role}`)}</span>
+            <span className="text-sm font-extrabold text-varsity-navy">{slot.holderLabel ?? t(`roles.${slot.role}`)}</span>
             {slot.signedBy ? (
               <span className="text-sm text-emerald-950">
                 {`✅ ${t('signedBy', { name: slot.signedBy.name || (slot.signedBy.roleLabel ?? ''), date: date(slot.signedBy.signedAt) })}`}

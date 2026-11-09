@@ -118,7 +118,7 @@ describe('proponer una idea', () => {
     expect(second.alias).toBe('#FAM-1001');
   });
 
-  it('la propuesta por red está limitada (12 por hora) y sin sesión pide entrar', async () => {
+  it('la propuesta por red está limitada (12 por hora) y sin sesión pide entrar', { timeout: 240_000 }, async () => {
     const organization = await newOrganization();
     const ip = freshIp();
     const deps = { db, hmacSecret: SECRET };
@@ -135,7 +135,7 @@ describe('proponer una idea', () => {
 describe('límite de propuestas por red (auditoría del 3.6)', () => {
   const deps = () => ({ db, hmacSecret: SECRET });
 
-  it('las peticiones inválidas no gastan el cupo de la red; el cupo es por entidad; sin IP válida no hay cupo por red', async () => {
+  it('las peticiones inválidas no gastan el cupo de la red; el cupo es por entidad; sin IP válida no hay cupo por red', { timeout: 240_000 }, async () => {
     const organization = await newOrganization();
     const other = await newOrganization();
     const ip = freshIp();

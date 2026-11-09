@@ -123,7 +123,7 @@ export function planInitiativeFunding(seed: KorumSeedData, initiativeId: number)
   if (pools.reduce((sum, pool) => sum + pool.amountCents, 0) !== poolTotal) throw new SeedPlanError(initiativeId, 'la bolsa Matching 2x no coincide con su patrocinador');
 
   const sponsorCents = direct.reduce((sum, sponsor) => sum + sponsor.amountCents, 0);
-  const peopleCount = initiative.totalContributions - direct.length;
+  const peopleCount = initiative.totalContributions - direct.length - pools.length;
   const peopleCents = initiative.raisedCents - sponsorCents - matchingReleased;
   if (peopleCount <= 0 || peopleCents <= 0) throw new SeedPlanError(initiativeId, 'no quedan aportaciones de familias tras patrocinios y bolsa');
 
@@ -255,7 +255,8 @@ export function planInitiativeFunding(seed: KorumSeedData, initiativeId: number)
 
   const raised = planned.reduce((sum, payment) => sum + payment.amountCents, 0) + matching.reduce((sum, release) => sum + release.amountCents, 0);
   if (raised !== initiative.raisedCents) throw new SeedPlanError(initiativeId, `los pagos suman ${raised} y lo recaudado es ${initiative.raisedCents}`);
-  if (planned.length !== initiative.totalContributions) throw new SeedPlanError(initiativeId, `${planned.length} pagos y totalContributions es ${initiative.totalContributions}`);
+  // El cobro de un comercio con bolsa Matching 2x también es una aportación (💛), como en la aplicación (`completeSponsorshipInTx`).
+  if (planned.length + poolPayins.length !== initiative.totalContributions) throw new SeedPlanError(initiativeId, `${planned.length + poolPayins.length} pagos y totalContributions es ${initiative.totalContributions}`);
   if (initiative.format === 'TICKETING' && planned.reduce((sum, payment) => sum + payment.quantity, 0) !== initiative.ticketsSold) {
     throw new SeedPlanError(initiativeId, 'las entradas de los pases no suman las vendidas');
   }

@@ -82,6 +82,10 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     if (initiative.ticketSubtype === 'RAFFLE' && (!drawn || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiativeId, initiative.rafflePrizeCount)))) {
       throw new PayoutNotAllowedError(payoutId, 'la rifa aún no se ha sorteado por completo');
     }
+    // El dinero de un comercio cobrado y sin revisar ya cuenta para la meta, pero el centro aún puede rechazarlo y devolvérselo: liquidar antes lo
+    // haría imposible (heredado del Sprint 3.5, punto 9). La iniciativa está bloqueada: nadie aprueba ni rechaza a un comercio mientras tanto.
+    const unreviewed = await tx.sponsor.count({ where: { initiativeId, status: 'PENDING', paidAt: { not: null }, contribution: { status: 'COMPLETED' } } });
+    if (unreviewed > 0) throw new PayoutNotAllowedError(payoutId, `hay ${unreviewed} comercio(s) cobrado(s) sin aprobar ni rechazar`);
     const gatewayInGoalCents = initiative.absorbsGatewayCostByKorum ? 0 : initiative.gatewayFeeCents;
     const korumFeeCents = initiative.bracketFeeCents + initiative.maintFeeCents;
     if (payout.korumFeeSettledCents !== korumFeeCents || payout.netPaidCents + korumFeeCents + gatewayInGoalCents !== initiative.raisedCents) {

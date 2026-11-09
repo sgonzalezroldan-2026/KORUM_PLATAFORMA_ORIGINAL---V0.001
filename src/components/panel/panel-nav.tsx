@@ -5,10 +5,11 @@ import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 
 /**
- * Secciones del panel de la entidad. Solo aparecen las que ya existen; las demás (aprobaciones, Estudio, liquidaciones, portería) se añaden aquí
- * al llegar su sprint. La sección activa se marca con `aria-current` y con estilo, nunca solo con color.
+ * Secciones del panel de la entidad. Solo aparecen las que ya existen; las demás (Estudio, liquidaciones, portería) se añaden aquí al llegar su
+ * sprint. La sección activa se marca con `aria-current` y con estilo, nunca solo con color. «Aprobaciones» lleva cuántas decisiones esperan, con
+ * texto para el lector de pantalla (no solo el número).
  */
-export function PanelNav({ orgSlug }: { orgSlug: string }) {
+export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; pendingApprovals?: number }) {
   const t = useTranslations('panel.nav');
   const pathname = usePathname();
   const base = `/panel/${orgSlug}`;
@@ -32,6 +33,12 @@ export function PanelNav({ orgSlug }: { orgSlug: string }) {
               )}
             >
               {t(item.key)}
+              {item.key === 'approvals' && pendingApprovals > 0 ? (
+                <span className="ms-2 inline-flex min-w-6 items-center justify-center rounded-full bg-varsity-gold px-1.5 text-xs font-extrabold tabular-nums text-varsity-navy" data-testid="approvals-pending">
+                  <span aria-hidden="true">{pendingApprovals}</span>
+                  <span className="sr-only">{t('pending', { count: pendingApprovals })}</span>
+                </span>
+              ) : null}
             </Link>
           </li>
         ))}

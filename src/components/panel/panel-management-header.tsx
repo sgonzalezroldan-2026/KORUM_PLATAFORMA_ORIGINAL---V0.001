@@ -9,7 +9,8 @@ import { ResendInvitationButton } from './resend-invitation-button';
 /**
  * Cabecera de gestión del panel (Sprint 4.1, `id="env-school"` del prototipo): la hucha de la entidad, el estado de los documentos del titular,
  * los cupos del curso (importe exento, beca de medalla y mantenimiento) y las dos personas firmantes con su cargo. Es la misma en todas las
- * páginas del panel. Componente de servidor: recibe lo que el repositorio ya eligió campo a campo (sin IBAN, CIF ni contactos).
+ * páginas del panel. Componente de servidor: recibe lo que el repositorio ya eligió campo a campo (sin IBAN, CIF ni contactos). Va antes del `h1`
+ * de cada página, así que sus títulos son párrafos destacados y no encabezados (WCAG 1.3.1: el primer encabezado de la página es su `h1`).
  */
 
 export interface PanelHeaderOrganization {
@@ -42,7 +43,20 @@ const KYB_TONE: Record<string, string> = {
 };
 const KYB_ICON: Record<string, string> = { VERIFIED: '🟢', SUBMITTED: '🔎', PENDING: '⏳', REJECTED: '⚠️' };
 
-export async function PanelManagementHeader({ locale, organization, signers, isDirector }: { locale: Locale; organization: PanelHeaderOrganization; signers: PanelHeaderSigner[]; isDirector: boolean }) {
+export async function PanelManagementHeader({
+  locale,
+  organization,
+  signers,
+  isDirector,
+  pendingApprovals = 0
+}: {
+  locale: Locale;
+  organization: PanelHeaderOrganization;
+  signers: PanelHeaderSigner[];
+  isDirector: boolean;
+  /** Decisiones que esperan en «Aprobaciones» (comercios cobrados, propuestas nuevas e ideas en la doble firma). */
+  pendingApprovals?: number;
+}) {
   const t = await getTranslations({ locale, namespace: 'panel' });
   const ready = signers.filter((signer) => signer.status === 'ACTIVE').length;
   const grant = medalGrantStatus({ availableCents: organization.medalGrantAvailableCents, usedInTitle: organization.medalGrantUsedInTitle });
@@ -65,7 +79,7 @@ export async function PanelManagementHeader({ locale, organization, signers, isD
           </div>
 
           <div className="korum-trust-vault flex flex-col gap-2 p-4">
-            <h2 className="font-corp text-sm font-extrabold text-varsity-navy">{t('header.quotas.title', { period: organization.quotaPeriod ?? '' }).trim()}</h2>
+            <p className="font-corp text-sm font-extrabold text-varsity-navy">{t('header.quotas.title', { period: organization.quotaPeriod ?? '' }).trim()}</p>
             <ul className="flex flex-col gap-1.5 text-sm">
               <li>{t.rich('header.quotas.exempt', { remaining: money(organization.exemptRemainingCents), total: money(organization.exemptLimitCents), strong })}</li>
               <li>
@@ -84,7 +98,7 @@ export async function PanelManagementHeader({ locale, organization, signers, isD
           </div>
 
           <div className="korum-trust-vault flex flex-col gap-3 p-4">
-            <h2 className="font-corp text-sm font-extrabold text-varsity-navy">{t('signers.title', { ready, total: 2 })}</h2>
+            <p className="font-corp text-sm font-extrabold text-varsity-navy">{t('signers.title', { ready, total: 2 })}</p>
             <ul className="flex flex-col gap-2">
               {signers.map((signer) => (
                 <li key={`${signer.role}-${signer.userId}`} className="rounded-xl border-2 border-varsity-navy/15 bg-white p-2.5">
@@ -103,7 +117,7 @@ export async function PanelManagementHeader({ locale, organization, signers, isD
             {isDirector && signers.some((signer) => signer.role === 'COSIGNER' && signer.status === 'INVITED') ? <ResendInvitationButton orgSlug={organization.slug} /> : null}
           </div>
         </div>
-        <PanelNav orgSlug={organization.slug} />
+        <PanelNav orgSlug={organization.slug} pendingApprovals={pendingApprovals} />
       </div>
     </section>
   );

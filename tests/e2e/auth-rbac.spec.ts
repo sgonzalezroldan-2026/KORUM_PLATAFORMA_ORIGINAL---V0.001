@@ -201,7 +201,7 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
 
     // En el panel de quien dirige, las dos firmas ya están listas.
     await page.reload();
-    await expect(page.getByRole('heading', { name: 'Doble firma (2 de 2 listas)' })).toBeVisible();
+    await expect(page.getByText('Doble firma (2 de 2 listas)', { exact: true })).toBeVisible();
   });
 });
 

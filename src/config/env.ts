@@ -61,6 +61,7 @@ const envSchema = z
     SUPABASE_SERVICE_ROLE_KEY: optional(z.string()),
     EMAIL_API_KEY: optional(z.string()),
     VERIFACTU_ISSUER_NIF: optional(z.string()),
+    VERIFACTU_ISSUER_NAME: optional(z.string()),
 
     // URL pública, errores y analítica
     NEXT_PUBLIC_APP_URL: z.preprocess(blankToUndefined, z.url().default('http://localhost:3000')),
