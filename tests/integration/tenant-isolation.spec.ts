@@ -3,10 +3,11 @@ import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadUserActor } from '@/repositories/actor';
 import { listContributions } from '@/repositories/contribution.repository';
 import { getInitiative, listInitiatives } from '@/repositories/initiative.repository';
-import { getOrganization, listOrganizations, updateOrganizationBranding } from '@/repositories/organization.repository';
+import { getOrganization, listOrganizations } from '@/repositories/organization.repository';
 import { getPublicInitiative, getPublicOrganization, listPublicInitiatives } from '@/repositories/public.repository';
 import { listIdeas, listSponsors } from '@/repositories/sponsor-idea.repository';
 import { authorizeTenant, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import { EntityBrandingError, saveEntityAccent } from '@/services/panel/entity-branding.service';
 import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
 
 /** QA-SEC01 · aislamiento entre entidades (anti-IDOR): dos colegios, sus personas y sus datos. */
@@ -67,6 +68,9 @@ afterAll(async () => {
   await db.$disconnect();
 });
 
+/** Cambiar la marca exige el segundo factor en la sesión (Sprint 4.2e); el resto de operaciones de este archivo no. */
+const withSecondFactor = (actor: SessionActor): SessionActor => (actor.kind === 'user' ? { ...actor, secondFactor: true } : actor);
+
 const denied = (organizationId: string, userId?: string) => db.auditLog.findMany({ where: { action: 'tenant.access_denied', organizationId, ...(userId ? { actorUserId: userId } : {}) }, orderBy: { id: 'desc' } });
 
 describe('QA-SEC01 · el director de Cervantes invoca todo con la entidad de San José', () => {
@@ -78,7 +82,7 @@ describe('QA-SEC01 · el director de Cervantes invoca todo con la entidad de San
       ['contribution.list', () => listContributions(db, cervantes.director, sanJose.orgId, sanJose.initiativeId)],
       ['sponsor.list', () => listSponsors(db, cervantes.director, sanJose.orgId)],
       ['idea.list', () => listIdeas(db, cervantes.director, sanJose.orgId)],
-      ['organization.branding.update', () => updateOrganizationBranding(db, cervantes.director, sanJose.orgId, { brandPrimary: '#FF0000', brandSecondary: '#FF0000' })]
+      ['organization.branding_update', () => saveEntityAccent(db, withSecondFactor(cervantes.director), sanJose.orgId, { accent: 'coral' })]
     ];
     for (const [action, attempt] of attempts) {
       const error = await attempt().catch((caught: unknown) => caught);
@@ -129,22 +133,22 @@ describe('anti-enumeración: identificadores de recursos de otra entidad', () =>
 });
 
 describe('roles dentro de la propia entidad', () => {
-  it('portería no gestiona la entidad; la persona que cofirma lee pero no cambia la marca', async () => {
+  it('portería no gestiona la entidad ni cambia la marca; sin el segundo factor tampoco quien firma', async () => {
     await expect(listInitiatives(db, cervantes.gatekeeper, cervantes.orgId)).rejects.toMatchObject({ status: 403, reason: 'ROLE_NOT_ALLOWED' });
     await expect(getOrganization(db, cervantes.cosigner, cervantes.orgId)).resolves.toMatchObject({ id: cervantes.orgId });
-    await expect(updateOrganizationBranding(db, cervantes.cosigner, cervantes.orgId, { brandPrimary: '#000000', brandSecondary: '#FFFFFF' })).rejects.toMatchObject({ status: 403, reason: 'ROLE_NOT_ALLOWED' });
+    await expect(saveEntityAccent(db, withSecondFactor(cervantes.gatekeeper), cervantes.orgId, { accent: 'sky' })).rejects.toMatchObject({ status: 403, reason: 'ROLE_NOT_ALLOWED' });
+    await expect(saveEntityAccent(db, cervantes.director, cervantes.orgId, { accent: 'sky' })).rejects.toBeInstanceOf(TenantAccessError);
     expect((await db.organization.findUniqueOrThrow({ where: { id: cervantes.orgId } })).brandPrimary).toBe('#101F38');
   });
 
-  it('quien dirige cambia la marca, con validación y con el antes y el después en AuditLog', async () => {
-    const result = await updateOrganizationBranding(db, cervantes.director, cervantes.orgId, { brandPrimary: '#047857', brandSecondary: '#F59E0B' });
-    expect(result).toEqual({ brandPrimary: '#047857', brandSecondary: '#F59E0B' });
-    const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'organization.branding.updated', organizationId: cervantes.orgId } });
-    expect(audit.metadataJson).toMatchObject({ before: { brandPrimary: '#101F38' }, after: { brandPrimary: '#047857' } });
+  it('las dos personas firmantes cambian el color, solo de la paleta, con el antes y el después en AuditLog (Sprint 4.2e)', async () => {
+    expect(await saveEntityAccent(db, withSecondFactor(cervantes.cosigner), cervantes.orgId, { accent: 'emerald' })).toBe('#10B981');
+    const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'organization.branding_updated', organizationId: cervantes.orgId } });
+    expect(audit.metadataJson).toEqual({ before: '#101F38', after: '#10B981' });
 
-    await expect(updateOrganizationBranding(db, cervantes.director, cervantes.orgId, { brandPrimary: 'rojo', brandSecondary: '#FFFFFF' })).rejects.toThrow(/Color no válido/);
-    await expect(updateOrganizationBranding(db, cervantes.director, cervantes.orgId, { brandPrimary: '#000000', brandSecondary: '#FFFFFF', iban: 'ES00' })).rejects.toThrow();
-    expect((await db.organization.findUniqueOrThrow({ where: { id: cervantes.orgId } })).brandPrimary).toBe('#047857');
+    await expect(saveEntityAccent(db, withSecondFactor(cervantes.director), cervantes.orgId, { accent: '#000000' })).rejects.toBeInstanceOf(EntityBrandingError);
+    await expect(saveEntityAccent(db, withSecondFactor(cervantes.director), cervantes.orgId, { accent: 'gold', brandSecondary: '#FFFFFF' })).rejects.toBeInstanceOf(EntityBrandingError);
+    expect((await db.organization.findUniqueOrThrow({ where: { id: cervantes.orgId } })).brandPrimary).toBe('#10B981');
   });
 });
 

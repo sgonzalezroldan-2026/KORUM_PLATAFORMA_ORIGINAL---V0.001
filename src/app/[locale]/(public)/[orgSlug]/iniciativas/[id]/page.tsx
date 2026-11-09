@@ -49,7 +49,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     title: t('initiativeTitle', { title: fitText(page.title, Math.max(titleRoom, 12)), entity: organization.name }),
     description: t('initiativeDescription', { pct: card.pct, text: fitText(page.rawDescription, DESCRIPTION_MAX - prefix.length) }),
     imageAlt: t('initiativeImageAlt', { title: page.title, pct: card.pct }),
-    imageUrl: ogInitiativeUrl(locale, card.id, page.updatedAt.getTime(), page.groupSlug),
+    // La versión cambia también cuando la entidad cambia su logotipo (Sprint 4.2e): WhatsApp guarda la tarjeta por su URL.
+    imageUrl: ogInitiativeUrl(locale, card.id, Math.max(page.updatedAt.getTime(), organization.updatedAt.getTime()), page.groupSlug),
     noindex: !organization.indexable
   });
 }

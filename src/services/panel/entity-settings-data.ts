@@ -1,5 +1,8 @@
 import { kybReadiness, requiredKybKinds, settingsFromColumns, type EntitySettingsInput, type KybDocumentKind, type KybReadiness, type KybStatus } from '@/core/panel/entity-settings-rules';
+import { accentByHex, type EntityAccentId } from '@/core/brand/entity-palette';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
+import { publicFileId } from '@/repositories/public.repository';
+import { participationGroupsView, type ParticipationGroupsData } from './participation-groups.service';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { authorizeTenant, ResourceNotFoundError, type SessionActor } from '@/repositories/tenant-guard';
 
@@ -34,6 +37,9 @@ export interface EntitySettingsData {
     readiness: KybReadiness;
   };
   settings: EntitySettingsInput;
+  /** Grupos de participación e identidad visual (Sprint 4.2e). */
+  groups: ParticipationGroupsData;
+  brand: { name: string; accentHex: string; accent: EntityAccentId | null; logoFileId: string | null; bannerFileId: string | null };
 }
 
 const asStatus = (value: string): KybStatus => (value === 'SUBMITTED' || value === 'VERIFIED' || value === 'REJECTED' ? value : 'PENDING');
@@ -59,7 +65,13 @@ export async function loadEntitySettings(db: KorumPrismaClient, actor: SessionAc
         sponsorTiersCents: true,
         phone: true,
         contentLocale: true,
-        publicIndexing: true
+        publicIndexing: true,
+        name: true,
+        vertical: true,
+        participationGroupsJson: true,
+        brandPrimary: true,
+        logoFile: { select: { id: true, visibility: true, deletedAt: true } },
+        bannerFile: { select: { id: true, visibility: true, deletedAt: true } }
       }
     }),
     db.kybDocument.findMany({
@@ -88,6 +100,14 @@ export async function loadEntitySettings(db: KorumPrismaClient, actor: SessionAc
       replacedCount,
       readiness: kybReadiness({ ley49: organization.ley49, cif: organization.cif, currentKinds: documents.map((document) => document.kind) })
     },
-    settings: settingsFromColumns(organization)
+    settings: settingsFromColumns(organization),
+    groups: participationGroupsView(organization.vertical, organization.participationGroupsJson),
+    brand: {
+      name: organization.name,
+      accentHex: organization.brandPrimary,
+      accent: accentByHex(organization.brandPrimary)?.id ?? null,
+      logoFileId: publicFileId(organization.logoFile),
+      bannerFileId: publicFileId(organization.bannerFile)
+    }
   };
 }

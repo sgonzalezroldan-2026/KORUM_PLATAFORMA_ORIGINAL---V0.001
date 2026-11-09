@@ -69,10 +69,15 @@ const PUBLIC_INITIATIVE_VIEW = {
 
 const PUBLIC_STATUSES = ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] as const;
 
+/** Un fichero solo se enseña si es público y no se ha retirado: del resto ni el identificador sale (Sprint 4.2e). */
+const PUBLIC_FILE = { select: { id: true, visibility: true, deletedAt: true } } as const;
+export const publicFileId = (file: { id: string; visibility: string; deletedAt: Date | null } | null): string | null => (file && file.visibility === 'PUBLIC' && file.deletedAt === null ? file.id : null);
+
 export async function getPublicOrganization(db: KorumPrismaClient, slug: string) {
-  const organization = await db.organization.findFirst({ where: { slug, archivedAt: null }, select: PUBLIC_ORGANIZATION_VIEW });
+  const organization = await db.organization.findFirst({ where: { slug, archivedAt: null }, select: { ...PUBLIC_ORGANIZATION_VIEW, logoFile: PUBLIC_FILE, bannerFile: PUBLIC_FILE } });
   if (!organization) throw new ResourceNotFoundError('Entidad');
-  return organization;
+  const { logoFile, bannerFile, ...rest } = organization;
+  return { ...rest, logoFileId: publicFileId(logoFile), bannerFileId: publicFileId(bannerFile) };
 }
 
 /** Campañas abiertas (`FUNDRAISING`) de la entidad: lo que ven las familias en «Iniciativas y taquilla». */
@@ -124,11 +129,12 @@ export async function getPublicInitiativeCard(db: KorumPrismaClient, initiativeI
       targetFamiliesPerCourse: true,
       updatedAt: true,
       courses: { select: { groupName: true, familiesCount: true } },
-      organization: { select: { name: true, brandPrimary: true, brandSecondary: true } }
+      organization: { select: { name: true, brandPrimary: true, brandSecondary: true, logoFile: PUBLIC_FILE } }
     }
   });
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
-  return initiative;
+  const { logoFile, ...organization } = initiative.organization;
+  return { ...initiative, organization: { ...organization, logoFileId: publicFileId(logoFile) } };
 }
 
 /**

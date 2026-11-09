@@ -83,3 +83,6 @@ export const SUPPORT_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 's
  * puede llenar el almacén. Treinta a la hora cubren de sobra subir y corregir los cinco documentos varias veces.
  */
 export const KYB_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'kyb:upload:org:', limit: 30, windowMs: 60 * 60_000 };
+
+/** Logotipo y portada por entidad (Sprint 4.2e, auditoría M5): cada subida escribe en el almacén. Veinte a la hora dan para probar varias imágenes. */
+export const ENTITY_IMAGE_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'brand:upload:org:', limit: 20, windowMs: 60 * 60_000 };

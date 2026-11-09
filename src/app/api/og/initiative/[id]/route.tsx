@@ -10,12 +10,14 @@ import { INITIATIVE_ID_PATTERN } from '@/lib/seo/portal-routes';
 import { getPrisma } from '@/lib/prisma';
 import { getPublicInitiativeCard } from '@/repositories/public.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
+import { ogEntityLogo } from '@/services/portal/og-entity-logo';
 
 /**
  * Tarjeta para WhatsApp y redes de una iniciativa (`/api/og/initiative/12?locale=es&grupo=3-primaria&v=1730000000000`), 1200×630. Diseño plano
  * (azul marino, oro y marfil, sin fotografías), así que pesa unos pocos KB, muy por debajo de los 300 KB que admite WhatsApp (QA-F02). Dibuja
  * el avance real, los días que quedan y, si `grupo` es un curso, equipo o grupo que ya suma familias, su reto **en positivo y sin nombres**.
- * El texto de la URL nunca se dibuja: `locale` y `grupo` solo se comparan con valores conocidos. `v` solo versiona la caché de WhatsApp.
+ * El texto de la URL nunca se dibuja: `locale` y `grupo` solo se comparan con valores conocidos. `v` solo versiona la caché de WhatsApp. Si la entidad
+ * tiene logotipo (Sprint 4.2e), va a la derecha, sobre marfil: la entidad lidera y KORUM pone la tecnología (co-branding de la skill de marca).
  */
 const NAVY = '#101f38';
 const GOLD = '#f59e0b';
@@ -40,7 +42,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     throw error;
   }
 
-  const t = await getTranslations({ locale, namespace: 'portal.og' });
+  const [t, logo] = await Promise.all([getTranslations({ locale, namespace: 'portal.og' }), ogEntityLogo(getPrisma(), initiative.organization.logoFileId)]);
   const brand = await getTranslations({ locale, namespace: 'brand' });
   const ticketing = initiative.format === 'TICKETING';
   const reached = initiative.status !== 'FUNDRAISING' || (ticketing ? initiative.ticketMax !== null && initiative.ticketsSold + initiative.ticketsHeld >= initiative.ticketMax : initiative.raisedCents >= initiative.goalCents);
@@ -62,17 +64,26 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   }
 
   const title = fitText(plain(initiative.title), 90);
-  const entity = fitText(plain(initiative.organization.name), 60);
+  // Con el logotipo a la derecha queda menos sitio para el nombre.
+  const entity = fitText(plain(initiative.organization.name), initiative.organization.logoFileId ? 38 : 60);
 
   return new ImageResponse(
     (
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 64, background: NAVY, color: IVORY, borderTop: `14px solid ${GOLD}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <KorumMarkSvg size={84} variant="simple" decorative />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', fontSize: 40, fontWeight: 800, letterSpacing: 8 }}>{brand('name')}</div>
-            <div style={{ display: 'flex', fontSize: 28, color: GOLD }}>{t('forEntity', { entity })}</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <KorumMarkSvg size={84} variant="simple" decorative />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', fontSize: 40, fontWeight: 800, letterSpacing: 8 }}>{brand('name')}</div>
+              <div style={{ display: 'flex', fontSize: 28, color: GOLD }}>{t('forEntity', { entity })}</div>
+            </div>
           </div>
+          {logo ? (
+            <div style={{ display: 'flex', width: 120, height: 120, borderRadius: 28, background: IVORY, alignItems: 'center', justifyContent: 'center', padding: 8 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- satori (next/og) solo dibuja <img>, sin el optimizador de imágenes */}
+              <img src={logo} alt="" width={104} height={104} style={{ objectFit: 'contain' }} />
+            </div>
+          ) : null}
         </div>
         <div style={{ display: 'flex', fontSize: title.length > 60 ? 54 : 66, fontWeight: 800, lineHeight: 1.15 }}>{title}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

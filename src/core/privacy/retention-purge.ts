@@ -163,6 +163,48 @@ export async function purgeExpiredSessions(db: Db, now: Date, limit: number): Pr
 }
 
 /**
+ * Cuentas creadas al invitar a alguien a firmar por una entidad (cofirma o relevo) que nunca se activaron (Sprint 4.2e, auditoría I6): sin contraseña ni
+ * email verificado, sin sesiones, cargos, aportaciones ni consentimientos, de hace más de 30 días, sin invitación abierta ni relevo pendiente hacia
+ * ellas. Guardaban el nombre y el email que escribió otra persona sin ningún servicio detrás. Cada una se borra en su transacción, comprobando otra vez
+ * que sigue igual; si algo la referencia (una restricción de la base), se deja.
+ */
+export async function purgeUnactivatedInvitees(db: Db, now: Date, limit: number): Promise<number> {
+  const untouched = {
+    emailVerified: false,
+    isSuperadmin: false,
+    gdprAnonymizedAt: null,
+    createdAt: { lt: daysBefore(now, RETENTION.unactivatedInviteeDays) },
+    accounts: { none: {} },
+    sessions: { none: {} },
+    memberships: { none: {} },
+    contributions: { none: {} },
+    consentRecords: { none: {} },
+    privacyRequests: { none: {} },
+    walletSubscriptions: { none: {} },
+    paymentMethodTokens: { none: {} }
+  };
+  const rows = await db.user.findMany({ where: untouched, take: limit, select: { id: true } });
+  let deleted = 0;
+  for (const { id } of rows) {
+    const [invitations, handovers] = await Promise.all([
+      db.verification.count({ where: { identifier: { startsWith: `korum-invite:${id}:` }, expiresAt: { gt: now } } }),
+      db.signerHandover.count({ where: { incomingUserId: id, status: { in: ['AWAITING_CONSENT', 'INVITED'] } } })
+    ]);
+    if (invitations > 0 || handovers > 0) continue;
+    try {
+      deleted += await inTransaction(db, async (tx) => {
+        await tx.verification.deleteMany({ where: { identifier: { startsWith: `korum-invite:${id}:` } } });
+        const { count } = await tx.user.deleteMany({ where: { id, ...untouched } });
+        return count;
+      });
+    } catch {
+      // Algún dato la sigue usando (una firma de idea, un dispositivo…): no es una cuenta vacía y se queda.
+    }
+  }
+  return deleted;
+}
+
+/**
  * Comercios que empezaron a patrocinar y nunca pagaron (`PENDING` sin `paidAt`) hace más de 30 días: se borran con su cobro fallido o abandonado.
  * Guardaban contacto y CIF cifrado sin ningún servicio detrás (minimización). Solo si ese cobro no movió dinero: ni asientos, ni repartos, ni
  * movimientos de Mi Hucha. Cada comercio se borra en su transacción, comprobando otra vez que sigue sin cobro (un pago que llegara entre la lectura y

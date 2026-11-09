@@ -111,6 +111,17 @@ export async function accountReauthIsFresh(db: Db, input: { userId: string; sess
   return fresh(session.reauthenticatedAt, now) || fresh(session.secondFactorVerifiedAt, now);
 }
 
+/**
+ * Relevo de firmantes (Sprint 4.2e): quien propone un relevo o da su visto bueno para dejar su puesto lo confirma con el código de su app de
+ * verificación (o un código de respaldo) en los últimos `REAUTH_WINDOW_MS`, en esta misma sesión. Haber entrado con el segundo factor hace horas no
+ * basta: un ordenador del centro con la sesión abierta no puede ceder un puesto que firma dinero. Sin rastro: preguntarlo no es un intento.
+ */
+export async function secondFactorIsFresh(db: Db, input: { userId: string; sessionId: string }, now: Date = new Date()): Promise<boolean> {
+  const { user, session } = await loadSession(db, { ...input, operation: 'panel.second_factor_status' });
+  if (!user || user.gdprAnonymizedAt !== null || !user.twoFactorEnabled || !session || session.expiresAt <= now) return false;
+  return fresh(session.secondFactorVerifiedAt, now);
+}
+
 /** Comprueba que el actor salió de este módulo y que su reautenticación sigue vigente. */
 export function assertVerifiedActor(actor: VerifiedActor, kind: VerifiedActor['kind'], operation: string, now: Date = new Date()): void {
   const deadline = deadlines.get(actor);

@@ -560,6 +560,36 @@
         "cta": "Read it in my account",
         "footnote": "You are receiving this notice because you suggested an idea in the organisation’s ideas box."
       }
+    },
+    "signer": {
+      "handover": {
+        "requested": {
+          "subject": "{organization}: a handover of your signing seat has been proposed",
+          "preheader": "We need your approval before inviting anyone.",
+          "title": "Your replacement has been proposed",
+          "body": "The other person who signs for {organization} proposes that someone else takes your seat. Open the dashboard to see who and give your approval with your code, or decline it. If you do nothing, the proposal expires in 7 days and you keep signing."
+        },
+        "declined": {
+          "subject": "{organization}: the handover was not approved",
+          "preheader": "Everything stays as it was.",
+          "title": "Handover declined",
+          "body": "The person whose seat you proposed to hand over at {organization} did not approve it. The same two people keep signing."
+        },
+        "completedLeaving": {
+          "subject": "{organization}: you no longer sign for the organisation",
+          "preheader": "Your replacement has accepted the position.",
+          "title": "Handover complete",
+          "body": "Your replacement at {organization} has accepted the position ({role}). From now on you no longer sign for the organisation and your pending signatures are no longer valid. Thank you for your work."
+        },
+        "completedStaying": {
+          "subject": "{organization}: there is a new person on the signing team",
+          "preheader": "The handover is complete.",
+          "title": "New signer",
+          "body": "A handover has been completed at {organization}: the new person now holds their seat ({role}). The outgoing person's pending signatures are no longer valid: if anything was half-way, request the signature again."
+        },
+        "why": "If you do not recognise this change, contact support as soon as possible.",
+        "cta": "View the signing team"
+      }
     }
   },
   "nav": {
@@ -2100,6 +2130,195 @@
           "form": "Check the highlighted fields.",
           "FORBIDDEN": "You don't have permission to change these settings.",
           "generic": "They couldn't be saved. Please try again in a few seconds."
+        }
+      },
+      "team": {
+        "title": "Signing team",
+        "intro": "The two people who sign together to approve ideas and release funds. If one of them steps down, propose their replacement here: nobody can remove the other signer without their approval.",
+        "seatsLabel": "Signing seats",
+        "seat": {
+          "DIRECTOR": "Management",
+          "COSIGNER": "Co-signer"
+        },
+        "you": "You",
+        "noRoleLabel": "No position given",
+        "ready": "Can sign (two-step verification on).",
+        "needsTwoFactor": "Cannot sign yet: two-step verification still needs to be turned on.",
+        "pending": "Invitation sent to {email}, not accepted yet.",
+        "pendingExpired": "The invitation to {email} expired without being accepted. Resend or correct it.",
+        "correctTitle": "Correct the co-signer's invitation",
+        "proposeTitle": "Propose a handover",
+        "rule": "You can hand over your own seat (the invitation goes out straight away) or propose who replaces the other person: in that case we will ask for their approval. The same two people keep signing until the new person accepts. You confirm it with the code from your authenticator app.",
+        "form": {
+          "seatLegend": "Which seat is being handed over?",
+          "seatMine": "My seat ({seat})",
+          "seatOther": "{seat}: {name}",
+          "selfHint": "We will invite this person to take your seat. Once they accept, they will sign in your place and you will stop signing for the organisation. You confirm it with the code from your authenticator app.",
+          "otherHint": "We will ask the other person for their approval. Only if they give it will we invite the person you propose.",
+          "correctHint": "If there was an invitation, it will stop working and we will send a new one to this email. You confirm it with the code from your authenticator app.",
+          "name": "Full name of the new person",
+          "email": "Their email",
+          "roleLabel": "Their position",
+          "roleLabelHint": "For example: Chair of the Parents' Association, Club Treasurer. No links or addresses.",
+          "sending": "Sending…",
+          "submitSelf": "Invite my replacement",
+          "submitOther": "Ask for their approval",
+          "submitCorrect": "Send the corrected invitation",
+          "savedSelf": "Invitation sent. You will keep signing until the new person accepts.",
+          "savedOther": "Proposal sent. We will let the other person know so they can approve it.",
+          "savedCorrected": "Invitation corrected: the previous one no longer works and we have sent the new one.",
+          "errors": {
+            "form": "Please check the highlighted fields.",
+            "name": "Enter their name (at least 2 letters, no links).",
+            "email": "Please check the email.",
+            "roleLabel": "Enter their position (at least 3 letters, no links or addresses).",
+            "REAUTH_REQUIRED": "To make this change, confirm the code from your authenticator app.",
+            "ALREADY_OPEN": "There is already a handover in progress. Finish or withdraw it before proposing another.",
+            "SEAT_EMPTY": "That seat is empty: invite the co-signer from “Invite the co-signer”.",
+            "SEAT_TAKEN": "The co-signer has already accepted: changing them needs a handover with their approval.",
+            "SAME_INBOX": "That email belongs to someone who already signs for the organisation. The two signers must be different people.",
+            "DISPOSABLE_EMAIL": "That is a temporary email. Please use a permanent address.",
+            "UNAVAILABLE": "That email cannot be given a position in an organisation. Please use another one.",
+            "RATE_LIMITED": "We have sent too many emails to that address. Please try again later.",
+            "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+            "generic": "We could not save it. Please try again in a few seconds.",
+            "INVITEE_BUSY": "That person already has another pending invitation to your organisation. Wait for them to accept it or withdraw it first."
+          }
+        },
+        "handover": {
+          "titleAwaiting": "Handover awaiting approval",
+          "titleInvited": "Handover in progress",
+          "askMe": "It has been proposed that {name} ({email}) takes your seat ({seat}) as “{role}”. If you agree, we will send them the invitation; once they accept, you will stop signing for the organisation. You have until {date}.",
+          "waitingOther": "You proposed that {name} ({email}) takes the {seat} seat as “{role}”. We are waiting for the outgoing person's approval until {date}.",
+          "invitedSelf": "Invitation sent to {name} ({email}) to take the {seat} seat as “{role}”. The outgoing person keeps signing until they accept (before {date}).",
+          "invitedOther": "The outgoing person has approved. Invitation sent to {name} ({email}) for the {seat} seat as “{role}”, valid until {date}.",
+          "expiredConsent": "The proposal for {name} to take the {seat} seat expired without approval. If the outgoing person is no longer around, contact support. Withdraw it to propose another.",
+          "expiredInvitation": "The invitation to {name} ({email}) for the {seat} seat expired without being accepted. Withdraw it and, if needed, propose the handover again.",
+          "consentHint": "Giving your approval is confirmed with the code from your authenticator app.",
+          "actions": {
+            "consent": "Give my approval",
+            "decline": "I don't agree",
+            "resend": "Resend the invitation",
+            "cancel": "Withdraw the handover"
+          },
+          "done": {
+            "consent": "Approval given: we have sent the invitation to the new person.",
+            "decline": "You have declined the handover. We will let the person who proposed it know.",
+            "resend": "Invitation resent: the previous one no longer works.",
+            "cancel": "Handover withdrawn: everything stays as it was."
+          },
+          "errors": {
+            "REAUTH_REQUIRED": "To give your approval, confirm the code from your authenticator app.",
+            "NOT_FOUND": "This handover is no longer open. Please reload the page.",
+            "SAME_INBOX": "The proposed person already signs for the organisation. Please withdraw the handover.",
+            "UNAVAILABLE": "The proposed person can no longer take the position. Please withdraw the handover.",
+            "RATE_LIMITED": "We have sent too many emails to that address. Please try again later.",
+            "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+            "generic": "We could not do it. Please try again in a few seconds.",
+            "INVITEE_BUSY": "The proposed person already has another pending invitation to your organisation. Withdraw the handover or wait for them to accept it."
+          },
+          "invitedMine": "Invitation sent to {name} ({email}) to take your seat ({seat}) as “{role}”. You will keep signing until they accept (before {date})."
+        },
+        "roleLabel": {
+          "open": "Change my position",
+          "label": "My position",
+          "hint": "What the other signer and families see on documents. It does not change what you sign.",
+          "save": "Save my position",
+          "saved": "Position updated.",
+          "errors": {
+            "invalid": "Enter your position (3 to 60 characters, no links or addresses).",
+            "generic": "We could not save it. Please try again in a few seconds."
+          }
+        },
+        "needsTwoFactorMine": "You cannot sign yet: turn on two-step verification.",
+        "inviteTitle": "Invite the co-signer",
+        "cosignerEmpty": "No co-signer: until someone accepts this seat, ideas cannot be approved and funds cannot be released."
+      },
+      "groups": {
+        "title": "Participation groups",
+        "intro": "The years, teams or groups that families choose when they contribute and that count towards challenges. Changes apply from now on: contributions already made keep their group.",
+        "blockName": "Name of block {n}",
+        "items": "Groups in this block",
+        "itemsHint": "One group per line, up to {max}.",
+        "removeBlock": "Remove block {n}",
+        "renameNote": "If you rename a group, its challenge count starts again; what it had already counted under the old name still shows at the end of that campaign's challenge.",
+        "save": "Save the groups",
+        "addBlock": "Add a block",
+        "useTemplate": "Load the official template (then save)",
+        "saved": "Groups saved: families now see them when they contribute.",
+        "errors": {
+          "form": "Please fix the blocks that show a warning.",
+          "blocks": "Each block needs a name and between 1 and {max} groups.",
+          "duplicate": "“{first}” and “{second}” are the same group for links. Please change one of them.",
+          "emptySlug": "“{name}” needs at least one letter or digit.",
+          "tooMany": "There are {total} groups; the maximum is {max}.",
+          "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+          "generic": "We could not save them. Please try again in a few seconds.",
+          "blockName": "Block {n}: the name is missing.",
+          "blockItems": "Block {n}: add between 1 and {max} groups, one per line, with no repeats."
+        },
+        "templateLoaded": "Official template loaded. Check it and press “Save the groups” to apply it."
+      },
+      "brand": {
+        "title": "Visual identity",
+        "intro": "Your organisation's logo, cover photo and colour in the header of its portal and on WhatsApp cards.",
+        "previewCaption": "This is how your portal header looks now (changes appear once saved).",
+        "accent": {
+          "legend": "Organisation colour",
+          "hint": "Colours chosen so the header always reads well on navy blue.",
+          "save": "Save the colour",
+          "saved": "Colour saved: it now shows on your portal.",
+          "names": {
+            "coral": "Coral",
+            "raspberry": "Raspberry",
+            "orange": "Orange",
+            "gold": "Gold",
+            "emerald": "Emerald",
+            "turquoise": "Turquoise",
+            "sky": "Sky blue",
+            "lilac": "Lilac"
+          },
+          "errors": {
+            "choose": "Please choose a colour.",
+            "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+            "generic": "We could not save it. Please try again in a few seconds."
+          }
+        },
+        "logo": {
+          "label": "Organisation logo or crest",
+          "replaceLabel": "New organisation logo",
+          "help": "JPG, PNG or WebP up to {max} MB, ideally square with a light background. We publish it without the photo's hidden data (such as location). On WhatsApp cards it only appears if it is JPG or PNG.",
+          "upload": "Upload logo",
+          "uploading": "Uploading…",
+          "saved": "Logo published: it now shows on your portal.",
+          "remove": "Remove the logo",
+          "removed": "Logo removed: the portal shows your initials again."
+        },
+        "banner": {
+          "label": "Cover photo",
+          "replaceLabel": "New cover photo",
+          "help": "JPG, PNG or WebP up to {max} MB, landscape; ideally around 300 KB and 1,600 pixels wide so it loads quickly on phones. It is shown darkened under the name so it reads well.",
+          "upload": "Upload cover",
+          "uploading": "Uploading…",
+          "saved": "Cover published: it now shows on your portal.",
+          "remove": "Remove the cover",
+          "removed": "Cover removed.",
+          "noMinors": "I confirm that no recognisable child appears in the photo (required)."
+        },
+        "errors": {
+          "noFile": "Please choose an image first.",
+          "TOO_LARGE": "The image is larger than {max} MB.",
+          "UNREADABLE_IMAGE": "We could not read the image. Please try another one.",
+          "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+          "CONFLICT": "The other signer changed it at the same time. Please reload the page and try again.",
+          "FILE_TYPE_NOT_ALLOWED": "Only JPG, PNG or WebP are accepted.",
+          "FILE_UNRECOGNIZED_TYPE": "We do not recognise this file as an image.",
+          "FILE_MIME_MISMATCH": "The file is not the image it appears to be. Please try another one.",
+          "FILE_EXTENSION_MISMATCH": "The file name does not match its type. Please try another image.",
+          "FILE_TOO_LARGE": "The image is larger than {max} MB.",
+          "generic": "We could not do it. Please try again in a few seconds.",
+          "MINORS_NOT_CONFIRMED": "Please confirm that no recognisable child appears in the photo.",
+          "RATE_LIMITED": "You have uploaded many images in a short time. Please try again in an hour."
         }
       }
     }

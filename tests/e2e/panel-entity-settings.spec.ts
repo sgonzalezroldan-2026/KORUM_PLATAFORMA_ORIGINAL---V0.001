@@ -136,7 +136,8 @@ test.describe('Panel de la entidad: documentos del titular y ajustes', () => {
     await page.getByLabel('Idioma en que escribís vuestras campañas').selectOption('ca');
     await page.getByLabel(/Mostrar el portal en buscadores/).uncheck();
     await page.getByRole('button', { name: /Guardar los ajustes/ }).click();
-    await server(page.getByTestId('approvals-notice').last()).toContainText('Ajustes guardados.');
+    // Cada sección tiene su aviso (el 4.2e añadió equipo, grupos y marca): se busca el de «Importes, ideas y portal».
+    await server(page.getByRole('region', { name: 'Importes, ideas y portal' }).getByTestId('approvals-notice')).toContainText('Ajustes guardados.');
     await withE2eDb(async (db) => {
       const { rows } = await db.query(`SELECT "donationPresetsCents", "defaultDonationIdx", "minVotes", "sponsorTiersCents", phone, "contentLocale", "publicIndexing" FROM "Organization" WHERE slug = $1`, [slug]);
       expect(rows[0]).toEqual({ donationPresetsCents: [500, 1500, 5000], defaultDonationIdx: 0, minVotes: 20, sponsorTiersCents: [10000, 25000, 75000], phone: '931234567', contentLocale: 'ca', publicIndexing: false });

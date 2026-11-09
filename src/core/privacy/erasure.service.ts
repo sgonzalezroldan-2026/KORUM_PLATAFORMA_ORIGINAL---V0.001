@@ -147,6 +147,12 @@ async function wipeAccount(tx: Db, user: ErasedUser, now: Date): Promise<void> {
   // Códigos y enlaces de acceso pendientes: el identificador es el email, a veces con un prefijo del tipo de código.
   const identifiers = [...new Set([user.email, user.canonicalEmail])];
   await tx.verification.deleteMany({ where: { OR: identifiers.flatMap((email) => [{ identifier: email }, { identifier: { endsWith: `-${email}` } }, { identifier: { endsWith: `:${email}` } }]) } });
+  // Invitaciones a firmar por una entidad (cofirma o relevo): su identificador lleva la cuenta, no el email.
+  await tx.verification.deleteMany({ where: { identifier: { startsWith: `korum-invite:${user.id}:` } } });
+  // Relevos de firmantes hacia esta persona: el abierto se cierra y el nombre que escribió quien la propuso se anonimiza en todos (el rastro de quién
+  // salió y quién entró se conserva con los identificadores de cuenta).
+  await tx.signerHandover.updateMany({ where: { incomingUserId: user.id, status: { in: ['AWAITING_CONSENT', 'INVITED'] } }, data: { status: 'CANCELLED', closedAt: now } });
+  await tx.signerHandover.updateMany({ where: { incomingUserId: user.id }, data: { displayName: 'anonimizado' } });
   await tx.paymentMethodToken.updateMany({ where: { userId: user.id, revokedAt: null }, data: { revokedAt: now } });
   await tx.user.update({
     where: { id: user.id },

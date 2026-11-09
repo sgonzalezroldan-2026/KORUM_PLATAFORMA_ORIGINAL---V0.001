@@ -560,6 +560,36 @@
         "cta": "Leer en mi cuenta",
         "footnote": "Recibes este aviso porque propusiste una idea en el buzón de la entidad."
       }
+    },
+    "signer": {
+      "handover": {
+        "requested": {
+          "subject": "{organization}: te proponen un relevo en tu puesto de firma",
+          "preheader": "Necesitamos tu visto bueno antes de invitar a nadie.",
+          "title": "Proponen quién te sustituye",
+          "body": "La otra persona que firma por {organization} propone que otra persona ocupe tu puesto. Entra en el panel para ver a quién y dar tu visto bueno con tu código, o rechazarlo. Si no haces nada, la propuesta caduca en 7 días y sigues firmando."
+        },
+        "declined": {
+          "subject": "{organization}: el relevo no ha recibido el visto bueno",
+          "preheader": "Todo sigue como estaba.",
+          "title": "Relevo rechazado",
+          "body": "La persona cuyo puesto propusiste relevar en {organization} no ha dado su visto bueno. Seguís firmando las mismas dos personas."
+        },
+        "completedLeaving": {
+          "subject": "{organization}: ya no firmas por la entidad",
+          "preheader": "La persona que te sustituye ha aceptado su cargo.",
+          "title": "Relevo completado",
+          "body": "La persona que te sustituye en {organization} ha aceptado su cargo ({role}). Desde ahora ya no firmas por la entidad y tus firmas pendientes han dejado de valer. Gracias por tu trabajo."
+        },
+        "completedStaying": {
+          "subject": "{organization}: hay una persona nueva en el equipo que firma",
+          "preheader": "El relevo se ha completado.",
+          "title": "Nueva persona firmante",
+          "body": "Se ha completado un relevo en {organization}: la persona nueva ya ocupa su puesto ({role}). Las firmas pendientes de quien ha salido han dejado de valer: si había algo a medias, pide de nuevo la firma."
+        },
+        "why": "Si no reconoces este cambio, escribe a soporte cuanto antes.",
+        "cta": "Ver el equipo que firma"
+      }
     }
   },
   "nav": {
@@ -2100,6 +2130,195 @@
           "form": "Revisad los campos marcados.",
           "FORBIDDEN": "No tenéis permiso para cambiar estos ajustes.",
           "generic": "No se han podido guardar. Probad de nuevo en unos segundos."
+        }
+      },
+      "team": {
+        "title": "Equipo que firma",
+        "intro": "Las dos personas que firman juntas para aprobar ideas y liberar dinero. Si una deja su cargo, propone aquí quién la sustituye: nadie puede quitar a la otra firma sin su visto bueno.",
+        "seatsLabel": "Puestos que firman",
+        "seat": {
+          "DIRECTOR": "Dirección",
+          "COSIGNER": "Cofirma"
+        },
+        "you": "Tú",
+        "noRoleLabel": "Sin cargo indicado",
+        "ready": "Puede firmar (verificación en dos pasos activada).",
+        "needsTwoFactor": "Aún no puede firmar: le falta activar la verificación en dos pasos.",
+        "pending": "Invitación enviada a {email}, aún sin aceptar.",
+        "pendingExpired": "La invitación a {email} ha caducado sin aceptarse. Reenviadla o corregidla.",
+        "correctTitle": "Corregir la invitación de la cofirma",
+        "proposeTitle": "Proponer un relevo",
+        "rule": "Puedes ceder tu puesto (la invitación sale al momento) o proponer quién sustituye a la otra persona: en ese caso le pediremos su visto bueno. Hasta que quien entra acepta, firmáis las mismas dos personas. Lo confirmas con el código de tu app de verificación.",
+        "form": {
+          "seatLegend": "¿Qué puesto se releva?",
+          "seatMine": "Mi puesto ({seat})",
+          "seatOther": "{seat}: {name}",
+          "selfHint": "Invitaremos a esta persona a ocupar tu puesto. Cuando acepte, firmará en tu lugar y tú dejarás de firmar por la entidad. Lo confirmas con el código de tu app de verificación.",
+          "otherHint": "Pediremos a la otra persona su visto bueno. Solo si lo da, invitaremos a quien propones.",
+          "correctHint": "Si había una invitación, dejará de valer y enviaremos una nueva a este email. Lo confirmas con el código de tu app de verificación.",
+          "name": "Nombre y apellidos de quien entra",
+          "email": "Su email",
+          "roleLabel": "Su cargo",
+          "roleLabelHint": "Por ejemplo: Presidencia del AMPA, Tesorería del club. Sin enlaces ni direcciones.",
+          "sending": "Enviando…",
+          "submitSelf": "Invitar a quien me sustituye",
+          "submitOther": "Pedir su visto bueno",
+          "submitCorrect": "Enviar la invitación corregida",
+          "savedSelf": "Invitación enviada. Seguirás firmando hasta que la persona nueva acepte.",
+          "savedOther": "Propuesta enviada. Avisaremos a la otra persona para que dé su visto bueno.",
+          "savedCorrected": "Invitación corregida: la anterior ya no vale y hemos enviado la nueva.",
+          "errors": {
+            "form": "Revisa los campos marcados.",
+            "name": "Escribe su nombre (al menos 2 letras, sin enlaces).",
+            "email": "Revisa el email.",
+            "roleLabel": "Escribe su cargo (al menos 3 letras, sin enlaces ni direcciones).",
+            "REAUTH_REQUIRED": "Para hacer este cambio, confirma el código de tu app de verificación.",
+            "ALREADY_OPEN": "Ya hay un relevo en curso. Termínalo o retíralo antes de proponer otro.",
+            "SEAT_EMPTY": "Ese puesto está vacío: invita a la cofirma desde «Invitar a la cofirma».",
+            "SEAT_TAKEN": "La cofirma ya ha aceptado: para cambiarla hace falta un relevo con su visto bueno.",
+            "SAME_INBOX": "Ese email es de una persona que ya firma por la entidad. Las dos firmas deben ser personas distintas.",
+            "DISPOSABLE_EMAIL": "Ese email es temporal. Usa una dirección permanente.",
+            "UNAVAILABLE": "Ese email no puede recibir un cargo en una entidad. Usa otro.",
+            "RATE_LIMITED": "Hemos enviado demasiados emails a esa dirección. Prueba dentro de un rato.",
+            "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+            "generic": "No hemos podido guardarlo. Prueba de nuevo en unos segundos.",
+            "INVITEE_BUSY": "Esa persona ya tiene otra invitación pendiente en vuestra entidad. Espera a que la acepte o retírala antes."
+          }
+        },
+        "handover": {
+          "titleAwaiting": "Relevo pendiente de visto bueno",
+          "titleInvited": "Relevo en curso",
+          "askMe": "Se propone que {name} ({email}) ocupe tu puesto ({seat}) como «{role}». Si estás de acuerdo, le enviaremos la invitación; cuando la acepte, dejarás de firmar por la entidad. Tienes hasta el {date}.",
+          "waitingOther": "Has propuesto que {name} ({email}) ocupe el puesto de {seat} como «{role}». Esperamos el visto bueno de la persona que sale hasta el {date}.",
+          "invitedSelf": "Invitación enviada a {name} ({email}) para ocupar el puesto de {seat} como «{role}». Quien sale sigue firmando hasta que la acepte (antes del {date}).",
+          "invitedOther": "La persona que sale ha dado su visto bueno. Invitación enviada a {name} ({email}) para el puesto de {seat} como «{role}», válida hasta el {date}.",
+          "expiredConsent": "La propuesta para que {name} ocupe el puesto de {seat} ha caducado sin visto bueno. Si la persona que sale ya no está, escribid a soporte. Retiradla para proponer otra.",
+          "expiredInvitation": "La invitación a {name} ({email}) para el puesto de {seat} ha caducado sin aceptarse. Retírala y, si hace falta, propón el relevo de nuevo.",
+          "consentHint": "Dar el visto bueno se confirma con el código de tu app de verificación.",
+          "actions": {
+            "consent": "Dar mi visto bueno",
+            "decline": "No estoy de acuerdo",
+            "resend": "Reenviar la invitación",
+            "cancel": "Retirar el relevo"
+          },
+          "done": {
+            "consent": "Visto bueno dado: hemos enviado la invitación a la persona nueva.",
+            "decline": "Has rechazado el relevo. Avisaremos a quien lo propuso.",
+            "resend": "Invitación reenviada: la anterior ya no vale.",
+            "cancel": "Relevo retirado: todo sigue como estaba."
+          },
+          "errors": {
+            "REAUTH_REQUIRED": "Para dar tu visto bueno, confirma el código de tu app de verificación.",
+            "NOT_FOUND": "Este relevo ya no está abierto. Recarga la página.",
+            "SAME_INBOX": "La persona propuesta ya firma por la entidad. Retira el relevo.",
+            "UNAVAILABLE": "La persona propuesta ya no puede recibir el cargo. Retira el relevo.",
+            "RATE_LIMITED": "Hemos enviado demasiados emails a esa dirección. Prueba dentro de un rato.",
+            "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+            "generic": "No hemos podido hacerlo. Prueba de nuevo en unos segundos.",
+            "INVITEE_BUSY": "La persona propuesta ya tiene otra invitación pendiente en vuestra entidad. Retira el relevo o espera a que la acepte."
+          },
+          "invitedMine": "Invitación enviada a {name} ({email}) para ocupar tu puesto ({seat}) como «{role}». Seguirás firmando hasta que la acepte (antes del {date})."
+        },
+        "roleLabel": {
+          "open": "Cambiar mi cargo",
+          "label": "Mi cargo",
+          "hint": "Lo que ven la otra persona firmante y las familias en los documentos. No cambia lo que firmas.",
+          "save": "Guardar mi cargo",
+          "saved": "Cargo actualizado.",
+          "errors": {
+            "invalid": "Escribe tu cargo (de 3 a 60 caracteres, sin enlaces ni direcciones).",
+            "generic": "No hemos podido guardarlo. Prueba de nuevo en unos segundos."
+          }
+        },
+        "needsTwoFactorMine": "Aún no puedes firmar: activa la verificación en dos pasos.",
+        "inviteTitle": "Invitar a la cofirma",
+        "cosignerEmpty": "Sin cofirma: hasta que alguien acepte este puesto no se pueden aprobar ideas ni liberar fondos."
+      },
+      "groups": {
+        "title": "Grupos de participación",
+        "intro": "Los cursos, equipos o grupos que eligen las familias al aportar y que suman en los retos. Cambiarlos vale desde ahora: cada aportación ya hecha conserva su grupo.",
+        "blockName": "Nombre del bloque {n}",
+        "items": "Grupos del bloque",
+        "itemsHint": "Un grupo por línea, hasta {max}.",
+        "removeBlock": "Quitar el bloque {n}",
+        "renameNote": "Si renombráis un grupo, empieza su cuenta en los retos; lo que ya sumaba con el nombre anterior se sigue viendo al final del reto de esa campaña.",
+        "save": "Guardar los grupos",
+        "addBlock": "Añadir un bloque",
+        "useTemplate": "Cargar la plantilla oficial (después, guardad)",
+        "saved": "Grupos guardados: ya los ven las familias al aportar.",
+        "errors": {
+          "form": "Corregid los bloques que tienen un aviso.",
+          "blocks": "Cada bloque necesita un nombre y entre 1 y {max} grupos.",
+          "duplicate": "«{first}» y «{second}» son el mismo grupo para los enlaces. Cambiad uno de los dos.",
+          "emptySlug": "«{name}» necesita alguna letra o cifra.",
+          "tooMany": "Hay {total} grupos; el máximo es {max}.",
+          "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+          "generic": "No hemos podido guardarlos. Probad de nuevo en unos segundos.",
+          "blockName": "Bloque {n}: falta el nombre.",
+          "blockItems": "Bloque {n}: pon entre 1 y {max} grupos, uno por línea, sin repetir ninguno."
+        },
+        "templateLoaded": "Plantilla oficial cargada. Revisadla y pulsad «Guardar los grupos» para aplicarla."
+      },
+      "brand": {
+        "title": "Identidad visual",
+        "intro": "El logotipo, la portada y el color de la entidad en la cabecera de su portal y en las tarjetas para WhatsApp.",
+        "previewCaption": "Así se ve ahora la cabecera de vuestro portal (los cambios aparecen al guardarlos).",
+        "accent": {
+          "legend": "Color de la entidad",
+          "hint": "Colores elegidos para que la cabecera se lea siempre bien sobre el azul marino.",
+          "save": "Guardar el color",
+          "saved": "Color guardado: ya se ve en vuestro portal.",
+          "names": {
+            "coral": "Coral",
+            "raspberry": "Frambuesa",
+            "orange": "Naranja",
+            "gold": "Oro",
+            "emerald": "Esmeralda",
+            "turquoise": "Turquesa",
+            "sky": "Azul cielo",
+            "lilac": "Lila"
+          },
+          "errors": {
+            "choose": "Elegid un color.",
+            "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+            "generic": "No hemos podido guardarlo. Probad de nuevo en unos segundos."
+          }
+        },
+        "logo": {
+          "label": "Logotipo o escudo de la entidad",
+          "replaceLabel": "Nuevo logotipo de la entidad",
+          "help": "JPG, PNG o WebP de hasta {max} MB, mejor cuadrado y con fondo claro. Lo publicamos sin los datos ocultos de la foto (como la ubicación). En las tarjetas para WhatsApp solo sale si es JPG o PNG.",
+          "upload": "Subir logotipo",
+          "uploading": "Subiendo…",
+          "saved": "Logotipo publicado: ya se ve en vuestro portal.",
+          "remove": "Quitar el logotipo",
+          "removed": "Logotipo retirado: el portal vuelve a mostrar vuestras iniciales."
+        },
+        "banner": {
+          "label": "Foto de portada",
+          "replaceLabel": "Nueva foto de portada",
+          "help": "JPG, PNG o WebP de hasta {max} MB, apaisada; mejor de unos 300 KB y 1.600 píxeles de ancho, para que cargue rápido en el móvil. Se ve oscurecida bajo el nombre para que se lea bien.",
+          "upload": "Subir portada",
+          "uploading": "Subiendo…",
+          "saved": "Portada publicada: ya se ve en vuestro portal.",
+          "remove": "Quitar la portada",
+          "removed": "Portada retirada.",
+          "noMinors": "Confirmo que en la foto no aparece ningún menor reconocible (obligatorio)."
+        },
+        "errors": {
+          "noFile": "Elegid primero una imagen.",
+          "TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Probad con otra.",
+          "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+          "CONFLICT": "La otra persona firmante la ha cambiado a la vez. Recargad la página y probad de nuevo.",
+          "FILE_TYPE_NOT_ALLOWED": "Solo se admiten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconocemos este archivo como imagen.",
+          "FILE_MIME_MISMATCH": "El archivo no es la imagen que parece. Probad con otra.",
+          "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Probad con otra imagen.",
+          "FILE_TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "generic": "No hemos podido hacerlo. Probad de nuevo en unos segundos.",
+          "MINORS_NOT_CONFIRMED": "Confirma que en la foto no aparece ningún menor reconocible.",
+          "RATE_LIMITED": "Habéis subido muchas imágenes en poco tiempo. Probad dentro de una hora."
         }
       }
     }

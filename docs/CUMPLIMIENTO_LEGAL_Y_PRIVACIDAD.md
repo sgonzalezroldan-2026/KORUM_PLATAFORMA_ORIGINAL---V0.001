@@ -124,6 +124,8 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Notificaciones enviadas | 12 meses | Borrado del contenido, se conserva el hecho del envío |
 | Consentimientos | Mientras estén vigentes + 3 años | Borrado |
 | Comercio que empezó a patrocinar y nunca pagó (contacto, CIF cifrado, ventaja) | 30 días desde que empezó el pago | Borrado, con su cobro fallido o abandonado (Sprint 4.2b) |
+| Cuenta creada al invitar a alguien a firmar por una entidad que nunca aceptó (nombre y email escritos por quien invitó) | 30 días sin invitación abierta ni relevo pendiente | Borrado (Sprint 4.2e) |
+| Historial de relevos de firmantes (`SignerHandover`: quién propuso, quién salió y quién entró, por identificador de cuenta) | Como el registro de auditoría (6 años) | El nombre escrito de la persona invitada se anonimiza si suprime su cuenta |
 | Tarjeta guardada de Mi Hucha (token de Paycomet, cifrado) | Mientras la aportación mensual esté activa o en pausa (pausa máxima: 6 meses) | Se revoca al momento y se pide a Paycomet que la borre al cancelar, terminar, pasar 6 meses en pausa, haber un contracargo o suprimir la cuenta; la purga semanal reintenta el borrado |
 | Errores en Sentry | 90 días | Automático |
 
@@ -231,6 +233,15 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 - [ ] **Qué documentos se piden y quién los verifica:** CIF, estatutos o escrituras, DNI o NIE de quien representa a la entidad, certificado de titularidad de la cuenta de la entidad y, si declara la Ley 49/2002, su acreditación. ¿Bastan para la diligencia debida de Paycomet (pregunta 4 del §2) o los pide Paycomet directamente? Si los verifica KORUM, ¿con qué base y qué contrato de encargo?
 - [ ] **DNI de la persona representante a la vista de las dos firmas:** se guarda en privado y solo lo abren las dos personas firmantes de la entidad y el Super-Admin (con registro). ¿Es correcto que la cofirma vea el DNI de quien preside, o debería verlo solo KORUM? ¿Qué cláusula informativa necesita esa persona y qué pasa si ejerce la supresión mientras la entidad sigue activa (hoy se conserva como documento de la relación)?
 - [ ] **Plazo de conservación del KYB** (§6, «mientras dure la relación + 6 años»): el vigente no se purga mientras la entidad está activa; el sustituido, 6 años desde que se sustituye. Confirmar plazo y punto de partida.
+
+**Abogado (Sprint 4.2e · relevo de firmantes e identidad visual):**
+
+- [ ] **Imagen de menores en la portada y el logotipo de la entidad:** son públicos (portal y tarjetas para WhatsApp). La portada exige marcar «Confirmo que en la foto no aparece ningún menor reconocible», que queda en la auditoría, como las fotos de logros del 3.6. ¿Basta esa declaración de la entidad? ¿Cómo se retira una imagen a petición de una familia (hoy, la entidad la quita con un clic; soporte, desde la consola en el 5.x)?
+- [ ] **Cuenta de una tercera persona creada al invitarla:** quien firma escribe el nombre y el email de la persona que la sustituye; KORUM crea una cuenta sin contraseña y le envía la invitación. ¿Base jurídica (interés legítimo de la entidad en relevar su cargo)? ¿Qué información debe recibir en el email de invitación? Se borra a los 30 días si nunca acepta (§6).
+- [ ] **Qué ve quien da su visto bueno:** para decidir si deja su puesto, la persona que sale ve el **email completo** de quien la sustituiría; el resto, a medias. ¿Es proporcionado?
+- [ ] **Contacto del alta al relevar a quien dirige:** el email de contacto de la entidad pasa al de la persona nueva y el móvil de quien salía se borra. ¿Correcto, o debe conservarse un tiempo?
+- [ ] **Historial de relevos:** se conserva quién propuso, quién salió y quién entró (identificadores de cuenta) como la auditoría (6 años); el nombre escrito se anonimiza si la persona suprime su cuenta. Confirmar plazo.
+- [ ] **Texto del aviso `signer.handover`:** «Si no reconoces este cambio, escribe a soporte cuanto antes». ¿Debe incluir algo más (quién lo propuso, cómo oponerse)?
 
 **Asesoría fiscal (Sprint 4.2b · factura rectificativa):**
 

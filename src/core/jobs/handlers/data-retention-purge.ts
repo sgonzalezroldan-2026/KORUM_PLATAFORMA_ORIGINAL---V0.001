@@ -10,6 +10,7 @@ import {
   purgeResolvedSupportTickets,
   purgeStaleDevices,
   purgeSupersededConsents,
+  purgeUnactivatedInvitees,
   purgeUnpaidSponsors
 } from '@/core/privacy/retention-purge';
 import type { JobHandler } from '../job-types';
@@ -53,6 +54,7 @@ export const dataRetentionPurgeHandler: JobHandler = async ({ db, now, batchSize
   await step('webhooks', () => purgeExpiredWebhooks(db, now, batchSize));
   await step('sessions', () => purgeExpiredSessions(db, now, batchSize));
   await step('unpaidSponsors', () => purgeUnpaidSponsors(db, now, batchSize));
+  await step('unactivatedInvitees', () => purgeUnactivatedInvitees(db, now, batchSize));
   await step(
     'consents',
     async () => {

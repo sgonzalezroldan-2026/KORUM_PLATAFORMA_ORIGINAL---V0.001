@@ -78,6 +78,17 @@ enum KybDocumentKind {
   LEY49_ACCREDITATION // Acreditación del régimen de la Ley 49/2002
 }
 
+/// Relevo de una persona firmante (Sprint 4.2e). `AWAITING_CONSENT`: lo propuso la otra firma y espera el visto bueno de quien sale;
+/// `INVITED`: la persona nueva tiene su invitación; los demás estados cierran el relevo.
+enum SignerHandoverStatus {
+  AWAITING_CONSENT
+  INVITED
+  COMPLETED
+  DECLINED
+  CANCELLED
+  EXPIRED
+}
+
 enum HealthStatus {
   OK
   CALL
@@ -816,6 +827,36 @@ model Organization {
   escrowLedgerEntries   EscrowLedgerEntry[]
   opsAlerts             OpsAlert[]
   kybDocuments          KybDocument[]
+  signerHandovers       SignerHandover[]
+}
+
+/// Relevo de una persona firmante (Sprint 4.2e, decisión del promotor del 2026-11-09). Cada persona puede ceder su puesto, y cualquiera de las dos
+/// puede proponer el relevo de la otra, pero quien sale lo confirma con su código: la doble firma nunca se vacía desde una sola cuenta. El cargo
+/// de la persona nueva no existe hasta que acepta su invitación; entonces, en la misma transacción, se da de baja la fila de quien sale y se crea la
+/// suya. Un solo relevo abierto por entidad (índice único parcial en la migración).
+model SignerHandover {
+  id               String               @id @default(cuid())
+  organizationId   String
+  /// Puesto que se releva: `DIRECTOR` o `COSIGNER` (`CHECK` en la migración).
+  role             MemberRole
+  /// Fila del cargo de quien sale al proponerlo: si deja de existir antes de aceptar, el relevo ya no vale.
+  outgoingMemberId Int
+  outgoingUserId   String
+  incomingUserId   String
+  /// Cargo visible que tendrá la persona nueva.
+  roleLabel        String
+  /// Nombre que escribió quien propone: el panel enseña este, nunca `User.name` de una cuenta que ya existía.
+  displayName      String
+  proposedByUserId String
+  status           SignerHandoverStatus
+  /// Hasta cuándo vale el paso en curso: 7 días para el visto bueno y las 72 horas de la invitación.
+  expiresAt        DateTime
+  consentedAt      DateTime?
+  closedAt         DateTime?
+  createdAt        DateTime             @default(now())
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, status])
 }
 
 /// Un documento del titular (Sprint 4.2c). El vigente de cada tipo es el que no tiene `replacedAt` (índice único parcial en la migración):

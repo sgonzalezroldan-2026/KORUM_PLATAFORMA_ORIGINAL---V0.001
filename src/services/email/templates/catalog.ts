@@ -18,6 +18,7 @@ import { accountPasskeyAdded, supportReceived } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 import { sponsorRejected, sponsorWelcome } from './definitions-sponsors';
+import { signerHandover } from './definitions-team';
 
 /**
  * Catálogo de plantillas (`templateKey` → definición). Las claves son las de EXPERIENCIA_DE_PRODUCTO §4. Una clave que no está aquí no
@@ -78,7 +79,8 @@ const ENTRIES = [
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed),
   register('idea.quorumReached', ideaQuorumReached),
-  register('idea.centerReplied', ideaCenterReplied)
+  register('idea.centerReplied', ideaCenterReplied),
+  register('signer.handover', signerHandover)
 ];
 
 export const TEMPLATE_CATALOG: ReadonlyMap<string, RegisteredTemplate> = new Map(ENTRIES);

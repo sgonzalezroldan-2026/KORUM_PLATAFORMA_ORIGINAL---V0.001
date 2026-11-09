@@ -2,6 +2,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { hashPassword } from 'better-auth/crypto';
 import { safeEqual } from '@/core/security/data-hmac';
 import { inTransaction, type Db } from '@/lib/db';
+import { completeHandoverInTx, handoverStillValid, HandoverCompletionError } from './signer-handover-completion';
 
 /**
  * Invitaciones para la segunda persona firmante de una entidad y para el primer Super-Admin.
@@ -12,12 +13,14 @@ import { inTransaction, type Db } from '@/lib/db';
  *   vez (se consume con un borrado condicional) y pedir otra anula la anterior.
  * - **El cargo no existe hasta que se acepta** (auditoría del 3.2, I3): la persona invitada no pasa a ser `COSIGNER` de una entidad que no
  *   conoce por el mero hecho de que alguien escriba su email. Al aceptar se crea la membresía con el cargo guardado en la invitación.
+ * - **Relevo de firmantes** (`HANDOVER`, Sprint 4.2e): la invitación lleva el relevo; al aceptarla se completa en la misma transacción
+ *   (`completeHandoverInTx`). Si el puesto ha cambiado desde la propuesta, el enlace no vale.
  * - Sin contraseña todavía: aceptar fija la contraseña y verifica el email (la persona demuestra que controla esa bandeja). Con cuenta y
  *   contraseña: se acepta con su propia sesión iniciada. Nunca se cambia la contraseña de una cuenta que ya la tiene.
  */
 
 export const INVITATION_HOURS = 72;
-export type InvitationPurpose = 'COSIGNER' | 'SUPERADMIN';
+export type InvitationPurpose = 'COSIGNER' | 'SUPERADMIN' | 'HANDOVER';
 
 const PREFIX = 'korum-invite:';
 const identifierOf = (userId: string, organizationId: string | null) => `${PREFIX}${userId}:${organizationId ?? 'platform'}`;
@@ -35,6 +38,8 @@ interface StoredInvitation {
    * quien solo sabe su email revelaría datos de una persona ajena (auditoría del 3.2, I4).
    */
   displayName: string | null;
+  /** Solo `HANDOVER`: el relevo que completa al aceptarse. */
+  handoverId?: string | null;
 }
 
 export interface InvitationInput {
@@ -43,6 +48,7 @@ export interface InvitationInput {
   purpose: InvitationPurpose;
   roleLabel?: string | null;
   displayName?: string | null;
+  handoverId?: string | null;
 }
 
 /** Crea la invitación (anulando las anteriores de esa persona y entidad) y devuelve el token para el enlace. */
@@ -50,7 +56,7 @@ export async function createInvitation(db: Db, input: InvitationInput, now: Date
   const id = randomUUID();
   const secret = randomBytes(32).toString('base64url');
   const expiresAt = new Date(now.getTime() + INVITATION_HOURS * 3_600_000);
-  const stored: StoredInvitation = { purpose: input.purpose, secretHash: digest(secret), userId: input.userId, organizationId: input.organizationId, roleLabel: input.roleLabel ?? null, displayName: input.displayName ?? null };
+  const stored: StoredInvitation = { purpose: input.purpose, secretHash: digest(secret), userId: input.userId, organizationId: input.organizationId, roleLabel: input.roleLabel ?? null, displayName: input.displayName ?? null, handoverId: input.handoverId ?? null };
   await inTransaction(db, async (tx) => {
     await tx.verification.deleteMany({ where: { identifier: identifierOf(input.userId, input.organizationId) } });
     await tx.verification.create({ data: { id, identifier: identifierOf(input.userId, input.organizationId), value: JSON.stringify(stored), expiresAt } });
@@ -69,6 +75,31 @@ export async function listPendingCosignerInvitations(db: Db, organizationId: str
     .map((row) => ({ stored: JSON.parse(row.value) as StoredInvitation, expiresAt: row.expiresAt }))
     .filter(({ stored }) => stored.purpose === 'COSIGNER' && stored.organizationId === organizationId)
     .map(({ stored, expiresAt }) => ({ userId: stored.userId, roleLabel: stored.roleLabel, displayName: stored.displayName ?? null, expired: expiresAt.getTime() <= now }));
+}
+
+/**
+ * Anula la invitación de un relevo (retirado o caducado): el enlace deja de valer al momento. Solo si es la de **ese** relevo: la misma persona puede
+ * tener después otra invitación a la entidad (por ejemplo, como cofirma) y esa no se toca (auditoría del 4.2e, I4).
+ */
+export async function revokeHandoverInvitation(db: Db, userId: string, organizationId: string, handoverId: string): Promise<number> {
+  const rows = await db.verification.findMany({ where: { identifier: identifierOf(userId, organizationId) }, select: { id: true, value: true } });
+  const ids = rows.filter((row) => (JSON.parse(row.value) as StoredInvitation).handoverId === handoverId).map((row) => row.id);
+  if (ids.length === 0) return 0;
+  const { count } = await db.verification.deleteMany({ where: { id: { in: ids } } });
+  return count;
+}
+
+/** La persona ya tiene una invitación sin aceptar a esta entidad (de cofirma o de un relevo): otra la sustituiría sin avisar. */
+export async function hasPendingInvitation(db: Db, userId: string, organizationId: string, now: Date = new Date()): Promise<boolean> {
+  return (await db.verification.count({ where: { identifier: identifierOf(userId, organizationId), expiresAt: { gt: now } } })) > 0;
+}
+
+/** Anula todas las invitaciones de cofirmante de una entidad aún sin aceptar (al corregir a quién se invita). Devuelve a quiénes iban. */
+export async function revokePendingCosignerInvitations(db: Db, organizationId: string): Promise<string[]> {
+  const rows = await db.verification.findMany({ where: { identifier: { startsWith: PREFIX, endsWith: `:${organizationId}` } }, select: { id: true, value: true } });
+  const cosigner = rows.map((row) => ({ id: row.id, stored: JSON.parse(row.value) as StoredInvitation })).filter(({ stored }) => stored.purpose === 'COSIGNER' && stored.organizationId === organizationId);
+  if (cosigner.length > 0) await db.verification.deleteMany({ where: { id: { in: cosigner.map((row) => row.id) } } });
+  return cosigner.map(({ stored }) => stored.userId);
 }
 
 async function findInvitation(db: Db, token: string, now: Date): Promise<(StoredInvitation & { id: string }) | null> {
@@ -99,7 +130,8 @@ export async function inspectInvitation(db: Db, token: string, now: Date = new D
   const user = await db.user.findUnique({ where: { id: invitation.userId }, select: { email: true, gdprAnonymizedAt: true, isSuperadmin: true } });
   if (!user || user.gdprAnonymizedAt) return null;
   const organization = invitation.organizationId ? await db.organization.findFirst({ where: { id: invitation.organizationId, archivedAt: null }, select: { name: true, slug: true } }) : null;
-  if (invitation.purpose === 'COSIGNER' && (!organization || user.isSuperadmin)) return null;
+  if ((invitation.purpose === 'COSIGNER' || invitation.purpose === 'HANDOVER') && (!organization || user.isSuperadmin)) return null;
+  if (invitation.purpose === 'HANDOVER' && (!invitation.handoverId || (await handoverStillValid(db, invitation.handoverId, invitation.userId, now)) !== null)) return null;
   return {
     userId: invitation.userId,
     purpose: invitation.purpose,
@@ -123,7 +155,15 @@ async function consume(tx: Db, invitation: StoredInvitation & { id: string }, no
   // Consumir antes de escribir nada: dos envíos simultáneos del mismo enlace no hacen dos veces el trabajo.
   const consumed = await tx.verification.deleteMany({ where: { id: invitation.id, expiresAt: { gt: now } } });
   if (consumed.count !== 1) throw new InvitationError('INVALID_LINK');
-  if (invitation.purpose === 'COSIGNER' && invitation.organizationId) {
+  if (invitation.purpose === 'HANDOVER') {
+    // El relevo se completa aquí mismo: baja de quien sale y alta de quien entra, o nada.
+    try {
+      await completeHandoverInTx(tx, invitation.handoverId ?? '', invitation.userId, now);
+    } catch (error) {
+      if (error instanceof HandoverCompletionError) throw new InvitationError('INVALID_LINK');
+      throw error;
+    }
+  } else if (invitation.purpose === 'COSIGNER' && invitation.organizationId) {
     await tx.organizationMember.createMany({ data: [{ organizationId: invitation.organizationId, userId: invitation.userId, role: 'COSIGNER', roleLabel: invitation.roleLabel }], skipDuplicates: true });
   }
   await tx.auditLog.create({
@@ -132,7 +172,8 @@ async function consume(tx: Db, invitation: StoredInvitation & { id: string }, no
 }
 
 /** Cuenta sin contraseña: fija la contraseña, verifica el email y acepta el cargo. Devuelve el email para iniciar sesión a continuación. */
-export async function acceptInvitation(db: Db, token: string, password: string, now: Date = new Date()): Promise<{ email: string; userId: string }> {
+/** `handoverId`: el relevo que se ha completado al aceptar (sus avisos esperan en la bandeja para salir al momento). */
+export async function acceptInvitation(db: Db, token: string, password: string, now: Date = new Date()): Promise<{ email: string; userId: string; handoverId: string | null }> {
   if (password.length < 12 || password.length > 128) throw new InvitationError('WEAK_PASSWORD');
   const view = await inspectInvitation(db, token, now);
   const invitation = view ? await findInvitation(db, token, now) : null;
@@ -147,15 +188,15 @@ export async function acceptInvitation(db: Db, token: string, password: string, 
     await tx.account.create({ data: { id: randomUUID(), userId: invitation.userId, accountId: invitation.userId, providerId: 'credential', password: passwordHash } });
     await tx.user.update({ where: { id: invitation.userId }, data: { emailVerified: true, emailVerifiedAt: now } });
   });
-  return { email: view.email, userId: invitation.userId };
+  return { email: view.email, userId: invitation.userId, handoverId: invitation.purpose === 'HANDOVER' ? (invitation.handoverId ?? null) : null };
 }
 
 /** Cuenta que ya tiene contraseña: acepta el cargo con la sesión de esa misma persona (de la cookie, nunca del formulario). */
-export async function acceptInvitationWithSession(db: Db, token: string, sessionUserId: string, now: Date = new Date()): Promise<{ organizationSlug: string | null }> {
+export async function acceptInvitationWithSession(db: Db, token: string, sessionUserId: string, now: Date = new Date()): Promise<{ organizationSlug: string | null; handoverId: string | null }> {
   const view = await inspectInvitation(db, token, now);
   const invitation = view ? await findInvitation(db, token, now) : null;
   if (!view || !invitation) throw new InvitationError('INVALID_LINK');
   if (view.userId !== sessionUserId) throw new InvitationError('WRONG_ACCOUNT');
   await inTransaction(db, (tx) => consume(tx, invitation, now));
-  return { organizationSlug: view.organizationSlug };
+  return { organizationSlug: view.organizationSlug, handoverId: invitation.purpose === 'HANDOVER' ? (invitation.handoverId ?? null) : null };
 }

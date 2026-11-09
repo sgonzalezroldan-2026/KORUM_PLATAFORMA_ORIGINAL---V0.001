@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
 import { achievementsPath } from '@/lib/seo/portal-routes';
 import type { VisibleHuchaMode } from '@/core/public/catalog';
+import { EntityCrest, heroBackground } from './entity-crest';
 import { HuchaPill } from './hucha-pill';
 
 export interface PortalHeroProps {
@@ -12,46 +13,36 @@ export interface PortalHeroProps {
   vertical: 'SCHOOL' | 'SPORTS_CLUB' | 'CULTURAL';
   /** Color de acento de la entidad (`#RRGGBB`): se valida antes de pintarlo. */
   accent: string;
+  /** Logotipo y portada públicos de la entidad (`/api/files/public/{id}`), si los ha subido (Sprint 4.2e). */
+  logoSrc?: string | null;
+  bannerSrc?: string | null;
   /** Idioma en el que la entidad escribe su nombre, si no es el de la página. */
   contentLang?: string;
   huchaMode: VisibleHuchaMode | null;
   impact: { academicYear: string; raisedCents: number; achievementsCount: number };
 }
 
-const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
-
-/** Iniciales para el escudo de la entidad mientras no tenga logotipo propio: hasta dos letras, sin símbolos. */
-export function monogram(name: string): string {
-  const letters = name
-    .split(/\s+/)
-    .map((word) => [...word].find((char) => /\p{L}/u.test(char)) ?? '')
-    .filter((char) => char !== '');
-  return letters.slice(0, 2).join('').toUpperCase();
-}
-
 /**
  * Cabecera personalizable de la comunidad (`id="school-hero-header"`): nombre de la entidad como único `h1`, tipo de entidad, la promesa de
  * custodia en lenguaje llano (el dinero queda retenido en Paycomet; nunca «banco» ni «escrow»), la píldora de Mi Hucha según su modo y la
- * barra de impacto colectivo del curso. Fondo azul marino con el color de la entidad como acento: el texto blanco mantiene el contraste.
+ * barra de impacto colectivo del curso. Fondo azul marino con el color de la entidad como acento y, si la tiene, su portada bajo un velo azul
+ * marino: el texto blanco mantiene el contraste. Escudo con su logotipo o, sin él, sus iniciales.
  */
-export function PortalHero({ orgSlug, name, vertical, accent, contentLang, huchaMode, impact }: PortalHeroProps) {
+export function PortalHero({ orgSlug, name, vertical, accent, logoSrc = null, bannerSrc = null, contentLang, huchaMode, impact }: PortalHeroProps) {
   const t = useTranslations('portal');
   const current = useLocale();
   const locale: MoneyLocale = isLocale(current) ? current : 'es';
-  const color = HEX_COLOR.test(accent) ? accent : '#f59e0b';
 
   return (
     <section
       id="school-hero-header"
       aria-labelledby="portal-name"
       className="relative overflow-hidden rounded-3xl bg-varsity-navy p-5 text-varsity-ivory shadow-xl sm:p-6"
-      style={{ backgroundImage: `radial-gradient(circle at 100% 0%, ${color}59, transparent 55%)`, borderBottom: `6px solid ${color}` }}
+      style={heroBackground(accent, bannerSrc)}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div aria-hidden="true" className="flex size-16 shrink-0 items-center justify-center rounded-3xl border-2 border-white/80 bg-white font-joy text-2xl font-bold text-varsity-navy shadow-lg">
-            {monogram(name)}
-          </div>
+          <EntityCrest name={name} logoSrc={logoSrc} />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 id="portal-name" lang={contentLang} className="font-joy text-2xl font-bold tracking-tight wrap-anywhere sm:text-3xl">

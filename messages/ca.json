@@ -560,6 +560,36 @@
         "cta": "Llegir-ho al meu compte",
         "footnote": "Reps aquest avís perquè vas proposar una idea a la bústia de l’entitat."
       }
+    },
+    "signer": {
+      "handover": {
+        "requested": {
+          "subject": "{organization}: et proposen un relleu al teu lloc de signatura",
+          "preheader": "Necessitem el teu vistiplau abans de convidar ningú.",
+          "title": "Proposen qui et substitueix",
+          "body": "L'altra persona que signa per {organization} proposa que una altra persona ocupi el teu lloc. Entra al panell per veure qui és i donar el teu vistiplau amb el teu codi, o rebutjar-lo. Si no fas res, la proposta caduca en 7 dies i continues signant."
+        },
+        "declined": {
+          "subject": "{organization}: el relleu no ha rebut el vistiplau",
+          "preheader": "Tot continua com estava.",
+          "title": "Relleu rebutjat",
+          "body": "La persona el lloc de la qual vas proposar rellevar a {organization} no ha donat el vistiplau. Continueu signant les mateixes dues persones."
+        },
+        "completedLeaving": {
+          "subject": "{organization}: ja no signes per l'entitat",
+          "preheader": "La persona que et substitueix ha acceptat el càrrec.",
+          "title": "Relleu completat",
+          "body": "La persona que et substitueix a {organization} ha acceptat el càrrec ({role}). Des d'ara ja no signes per l'entitat i les teves signatures pendents han deixat de valer. Gràcies per la teva feina."
+        },
+        "completedStaying": {
+          "subject": "{organization}: hi ha una persona nova a l'equip que signa",
+          "preheader": "El relleu s'ha completat.",
+          "title": "Nova persona signant",
+          "body": "S'ha completat un relleu a {organization}: la persona nova ja ocupa el seu lloc ({role}). Les signatures pendents de qui ha sortit han deixat de valer: si hi havia alguna cosa a mitges, torna a demanar la signatura."
+        },
+        "why": "Si no reconeixes aquest canvi, escriu a suport com més aviat millor.",
+        "cta": "Veure l'equip que signa"
+      }
     }
   },
   "nav": {
@@ -2100,6 +2130,195 @@
           "form": "Reviseu els camps marcats.",
           "FORBIDDEN": "No teniu permís per canviar aquesta configuració.",
           "generic": "No s'ha pogut desar. Torneu-ho a provar d'aquí a uns segons."
+        }
+      },
+      "team": {
+        "title": "Equip que signa",
+        "intro": "Les dues persones que signen juntes per aprovar idees i alliberar diners. Si una deixa el càrrec, proposa aquí qui la substitueix: ningú no pot treure l'altra signatura sense el seu vistiplau.",
+        "seatsLabel": "Llocs que signen",
+        "seat": {
+          "DIRECTOR": "Direcció",
+          "COSIGNER": "Cosignatura"
+        },
+        "you": "Tu",
+        "noRoleLabel": "Sense càrrec indicat",
+        "ready": "Pot signar (verificació en dos passos activada).",
+        "needsTwoFactor": "Encara no pot signar: li falta activar la verificació en dos passos.",
+        "pending": "Invitació enviada a {email}, encara sense acceptar.",
+        "pendingExpired": "La invitació a {email} ha caducat sense acceptar-se. Reenvieu-la o corregiu-la.",
+        "correctTitle": "Corregir la invitació de la cosignatura",
+        "proposeTitle": "Proposar un relleu",
+        "rule": "Pots cedir el teu lloc (la invitació surt de seguida) o proposar qui substitueix l'altra persona: en aquest cas li demanarem el vistiplau. Fins que qui entra accepta, signeu les mateixes dues persones. Ho confirmes amb el codi de la teva app de verificació.",
+        "form": {
+          "seatLegend": "Quin lloc es releva?",
+          "seatMine": "El meu lloc ({seat})",
+          "seatOther": "{seat}: {name}",
+          "selfHint": "Convidarem aquesta persona a ocupar el teu lloc. Quan accepti, signarà al teu lloc i tu deixaràs de signar per l'entitat. Ho confirmes amb el codi de la teva app de verificació.",
+          "otherHint": "Demanarem el vistiplau a l'altra persona. Només si el dona, convidarem qui proposes.",
+          "correctHint": "Si hi havia una invitació, deixarà de valer i n'enviarem una de nova a aquest correu. Ho confirmes amb el codi de la teva app de verificació.",
+          "name": "Nom i cognoms de qui entra",
+          "email": "El seu correu",
+          "roleLabel": "El seu càrrec",
+          "roleLabelHint": "Per exemple: Presidència de l'AFA, Tresoreria del club. Sense enllaços ni adreces.",
+          "sending": "Enviant…",
+          "submitSelf": "Convidar qui em substitueix",
+          "submitOther": "Demanar el seu vistiplau",
+          "submitCorrect": "Enviar la invitació corregida",
+          "savedSelf": "Invitació enviada. Continuaràs signant fins que la persona nova accepti.",
+          "savedOther": "Proposta enviada. Avisarem l'altra persona perquè doni el seu vistiplau.",
+          "savedCorrected": "Invitació corregida: l'anterior ja no val i hem enviat la nova.",
+          "errors": {
+            "form": "Revisa els camps marcats.",
+            "name": "Escriu el seu nom (com a mínim 2 lletres, sense enllaços).",
+            "email": "Revisa el correu.",
+            "roleLabel": "Escriu el seu càrrec (com a mínim 3 lletres, sense enllaços ni adreces).",
+            "REAUTH_REQUIRED": "Per fer aquest canvi, confirma el codi de la teva app de verificació.",
+            "ALREADY_OPEN": "Ja hi ha un relleu en curs. Acaba'l o retira'l abans de proposar-ne un altre.",
+            "SEAT_EMPTY": "Aquest lloc és buit: convida la cosignatura des de «Convidar la cosignatura».",
+            "SEAT_TAKEN": "La cosignatura ja ha acceptat: per canviar-la cal un relleu amb el seu vistiplau.",
+            "SAME_INBOX": "Aquest correu és d'una persona que ja signa per l'entitat. Les dues signatures han de ser persones diferents.",
+            "DISPOSABLE_EMAIL": "Aquest correu és temporal. Fes servir una adreça permanent.",
+            "UNAVAILABLE": "Aquest correu no pot rebre un càrrec en una entitat. Fes-ne servir un altre.",
+            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d'aquí a una estona.",
+            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No ho hem pogut desar. Torna-ho a provar d'aquí a uns segons.",
+            "INVITEE_BUSY": "Aquesta persona ja té una altra invitació pendent a la vostra entitat. Espera que l'accepti o retira-la abans."
+          }
+        },
+        "handover": {
+          "titleAwaiting": "Relleu pendent de vistiplau",
+          "titleInvited": "Relleu en curs",
+          "askMe": "Es proposa que {name} ({email}) ocupi el teu lloc ({seat}) com a «{role}». Si hi estàs d'acord, li enviarem la invitació; quan l'accepti, deixaràs de signar per l'entitat. Tens fins al {date}.",
+          "waitingOther": "Has proposat que {name} ({email}) ocupi el lloc de {seat} com a «{role}». Esperem el vistiplau de la persona que surt fins al {date}.",
+          "invitedSelf": "Invitació enviada a {name} ({email}) per ocupar el lloc de {seat} com a «{role}». Qui surt continua signant fins que l'accepti (abans del {date}).",
+          "invitedOther": "La persona que surt ha donat el vistiplau. Invitació enviada a {name} ({email}) per al lloc de {seat} com a «{role}», vàlida fins al {date}.",
+          "expiredConsent": "La proposta perquè {name} ocupi el lloc de {seat} ha caducat sense vistiplau. Si la persona que surt ja no hi és, escriviu a suport. Retireu-la per proposar-ne una altra.",
+          "expiredInvitation": "La invitació a {name} ({email}) per al lloc de {seat} ha caducat sense acceptar-se. Retira-la i, si cal, torna a proposar el relleu.",
+          "consentHint": "Donar el vistiplau es confirma amb el codi de la teva app de verificació.",
+          "actions": {
+            "consent": "Donar el meu vistiplau",
+            "decline": "No hi estic d'acord",
+            "resend": "Reenviar la invitació",
+            "cancel": "Retirar el relleu"
+          },
+          "done": {
+            "consent": "Vistiplau donat: hem enviat la invitació a la persona nova.",
+            "decline": "Has rebutjat el relleu. Avisarem qui el va proposar.",
+            "resend": "Invitació reenviada: l'anterior ja no val.",
+            "cancel": "Relleu retirat: tot continua com estava."
+          },
+          "errors": {
+            "REAUTH_REQUIRED": "Per donar el vistiplau, confirma el codi de la teva app de verificació.",
+            "NOT_FOUND": "Aquest relleu ja no és obert. Recarrega la pàgina.",
+            "SAME_INBOX": "La persona proposada ja signa per l'entitat. Retira el relleu.",
+            "UNAVAILABLE": "La persona proposada ja no pot rebre el càrrec. Retira el relleu.",
+            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d'aquí a una estona.",
+            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No ho hem pogut fer. Torna-ho a provar d'aquí a uns segons.",
+            "INVITEE_BUSY": "La persona proposada ja té una altra invitació pendent a la vostra entitat. Retira el relleu o espera que l'accepti."
+          },
+          "invitedMine": "Invitació enviada a {name} ({email}) per ocupar el teu lloc ({seat}) com a «{role}». Continuaràs signant fins que l'accepti (abans del {date})."
+        },
+        "roleLabel": {
+          "open": "Canviar el meu càrrec",
+          "label": "El meu càrrec",
+          "hint": "El que veuen l'altra persona signant i les famílies als documents. No canvia el que signes.",
+          "save": "Desar el meu càrrec",
+          "saved": "Càrrec actualitzat.",
+          "errors": {
+            "invalid": "Escriu el teu càrrec (de 3 a 60 caràcters, sense enllaços ni adreces).",
+            "generic": "No l'hem pogut desar. Torna-ho a provar d'aquí a uns segons."
+          }
+        },
+        "needsTwoFactorMine": "Encara no pots signar: activa la verificació en dos passos.",
+        "inviteTitle": "Convidar la cosignatura",
+        "cosignerEmpty": "Sense cosignatura: fins que algú accepti aquest lloc no es poden aprovar idees ni alliberar fons."
+      },
+      "groups": {
+        "title": "Grups de participació",
+        "intro": "Els cursos, equips o grups que trien les famílies en aportar i que sumen als reptes. Canviar-los val des d'ara: cada aportació ja feta conserva el seu grup.",
+        "blockName": "Nom del bloc {n}",
+        "items": "Grups del bloc",
+        "itemsHint": "Un grup per línia, fins a {max}.",
+        "removeBlock": "Treure el bloc {n}",
+        "renameNote": "Si canvieu el nom d'un grup, comença el seu compte als reptes; el que ja sumava amb el nom anterior es continua veient al final del repte d'aquella campanya.",
+        "save": "Desar els grups",
+        "addBlock": "Afegir un bloc",
+        "useTemplate": "Carregar la plantilla oficial (després, deseu)",
+        "saved": "Grups desats: ja els veuen les famílies en aportar.",
+        "errors": {
+          "form": "Corregiu els blocs que tenen un avís.",
+          "blocks": "Cada bloc necessita un nom i entre 1 i {max} grups.",
+          "duplicate": "«{first}» i «{second}» són el mateix grup per als enllaços. Canvieu-ne un dels dos.",
+          "emptySlug": "«{name}» necessita alguna lletra o xifra.",
+          "tooMany": "Hi ha {total} grups; el màxim és {max}.",
+          "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+          "generic": "No els hem pogut desar. Torneu-ho a provar d'aquí a uns segons.",
+          "blockName": "Bloc {n}: falta el nom.",
+          "blockItems": "Bloc {n}: posa entre 1 i {max} grups, un per línia, sense repetir-ne cap."
+        },
+        "templateLoaded": "Plantilla oficial carregada. Reviseu-la i premeu «Desar els grups» per aplicar-la."
+      },
+      "brand": {
+        "title": "Identitat visual",
+        "intro": "El logotip, la portada i el color de l'entitat a la capçalera del seu portal i a les targetes per a WhatsApp.",
+        "previewCaption": "Així es veu ara la capçalera del vostre portal (els canvis apareixen en desar-los).",
+        "accent": {
+          "legend": "Color de l'entitat",
+          "hint": "Colors triats perquè la capçalera es llegeixi sempre bé sobre el blau marí.",
+          "save": "Desar el color",
+          "saved": "Color desat: ja es veu al vostre portal.",
+          "names": {
+            "coral": "Corall",
+            "raspberry": "Gerd",
+            "orange": "Taronja",
+            "gold": "Or",
+            "emerald": "Maragda",
+            "turquoise": "Turquesa",
+            "sky": "Blau cel",
+            "lilac": "Lila"
+          },
+          "errors": {
+            "choose": "Trieu un color.",
+            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No l'hem pogut desar. Torneu-ho a provar d'aquí a uns segons."
+          }
+        },
+        "logo": {
+          "label": "Logotip o escut de l'entitat",
+          "replaceLabel": "Nou logotip de l'entitat",
+          "help": "JPG, PNG o WebP de fins a {max} MB, millor quadrat i amb fons clar. El publiquem sense les dades amagades de la foto (com la ubicació). A les targetes per a WhatsApp només surt si és JPG o PNG.",
+          "upload": "Pujar el logotip",
+          "uploading": "Pujant…",
+          "saved": "Logotip publicat: ja es veu al vostre portal.",
+          "remove": "Treure el logotip",
+          "removed": "Logotip retirat: el portal torna a mostrar les vostres inicials."
+        },
+        "banner": {
+          "label": "Foto de portada",
+          "replaceLabel": "Nova foto de portada",
+          "help": "JPG, PNG o WebP de fins a {max} MB, apaïsada; millor de cap a 300 KB i 1.600 píxels d’amplada, perquè carregui ràpid al mòbil. Es veu enfosquida sota el nom perquè es llegeixi bé.",
+          "upload": "Pujar la portada",
+          "uploading": "Pujant…",
+          "saved": "Portada publicada: ja es veu al vostre portal.",
+          "remove": "Treure la portada",
+          "removed": "Portada retirada.",
+          "noMinors": "Confirmo que a la foto no hi apareix cap menor reconeixible (obligatori)."
+        },
+        "errors": {
+          "noFile": "Trieu primer una imatge.",
+          "TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Proveu-ne una altra.",
+          "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+          "CONFLICT": "L'altra persona signant l'ha canviada alhora. Recarregueu la pàgina i torneu-ho a provar.",
+          "FILE_TYPE_NOT_ALLOWED": "Només s'admeten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconeixem aquest fitxer com a imatge.",
+          "FILE_MIME_MISMATCH": "El fitxer no és la imatge que sembla. Proveu-ne una altra.",
+          "FILE_EXTENSION_MISMATCH": "El nom del fitxer no correspon al seu tipus. Proveu una altra imatge.",
+          "FILE_TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "generic": "No ho hem pogut fer. Torneu-ho a provar d'aquí a uns segons.",
+          "MINORS_NOT_CONFIRMED": "Confirma que a la foto no hi apareix cap menor reconeixible.",
+          "RATE_LIMITED": "Heu pujat moltes imatges en poc temps. Proveu-ho d'aquí a una hora."
         }
       }
     }

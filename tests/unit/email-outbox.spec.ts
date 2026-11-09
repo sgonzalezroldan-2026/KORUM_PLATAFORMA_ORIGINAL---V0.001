@@ -64,7 +64,8 @@ const SAMPLES: Record<string, unknown> = {
   'idea.quorumReached': { ideaId: 503, alias: '#FAM-4821', ideaTitle: 'Toldos para el patio' },
   'idea.centerReplied': { ideaId: 503, alias: '#FAM-4821', kind: 'REPLY' },
   'sponsor.welcome': { sponsorId: 3, level: 'ORO', matching: true, expiresAt: IN_3_DAYS, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
-  'sponsor.rejected': { sponsorId: 3, reason: 'Ya tenemos una panadería patrocinando esta campaña.', refundCents: 29_538, rectified: true, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) }
+  'sponsor.rejected': { sponsorId: 3, reason: 'Ya tenemos una panadería patrocinando esta campaña.', refundCents: 29_538, rectified: true, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
+  'signer.handover': { stage: 'REQUESTED', role: 'COSIGNER', roleLabel: 'Tesorería del AMPA', leaving: true }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>
@@ -145,6 +146,19 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
     expect(noInvoice.text).toContain('/en/colegio-sol/comercios/documentos/justificante?pedido=');
     expect(noInvoice.text).not.toContain('corrective invoice');
     expect(secretFieldsOf('sponsor.rejected')).toEqual(['sig']);
+  });
+
+  it('signer.handover pide el visto bueno sin nombres ni emails de nadie y lleva al equipo que firma; al completarse distingue a quien sale (Sprint 4.2e)', async () => {
+    const requested = await render('signer.handover', 'es');
+    expect(requested.subject).toBe('AMPA Colegio Sol: te proponen un relevo en tu puesto de firma');
+    expect(requested.text).toContain('https://korum.test/panel/colegio-sol/ajustes#equipo');
+    expect(requested.text).not.toMatch(/@/);
+    const leaving = await render('signer.handover', 'ca', { payload: { stage: 'COMPLETED', role: 'DIRECTOR', roleLabel: 'Direcció del centre', leaving: true } });
+    expect(leaving.subject).toContain('ja no signes');
+    expect(leaving.text).toContain('Direcció del centre');
+    const staying = await render('signer.handover', 'en', { payload: { stage: 'COMPLETED', role: 'COSIGNER', roleLabel: 'Treasurer', leaving: false } });
+    expect(staying.subject).toContain('new person on the signing team');
+    expect((await render('signer.handover', 'es', { payload: { stage: 'DECLINED', role: 'COSIGNER', roleLabel: 'Tesorería', leaving: false } })).text).toContain('Relevo rechazado');
   });
 
   it('la aportación voluntaria a KORUM solo aparece en el recibo si se marcó', async () => {

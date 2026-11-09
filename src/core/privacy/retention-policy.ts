@@ -30,7 +30,12 @@ export const RETENTION = {
   /** Consentimientos: mientras estén vigentes + 3 años. */
   consentDaysAfterSuperseded: 3 * 365,
   /** Comercio que empezó a patrocinar y nunca pagó (contacto y CIF cifrado sin ningún cobro detrás): 30 días (heredado del Sprint 3.5, punto 6). */
-  unpaidSponsorDays: 30
+  unpaidSponsorDays: 30,
+  /**
+   * Cuenta creada al invitar a alguien a firmar (cofirma o relevo, Sprint 4.2e) que nunca se activó: nombre y email que escribió otra persona, sin
+   * ningún servicio detrás. 30 días sin invitación abierta ni relevo pendiente (auditoría del 4.2e, I6).
+   */
+  unactivatedInviteeDays: 30
 } as const;
 
 export const daysBefore = (now: Date, days: number) => new Date(now.getTime() - days * DAY_MS);

@@ -61,7 +61,8 @@ const PUBLIC_RULE = { visibility: 'PUBLIC', types: IMAGES, retentionRequired: fa
 
 export const FILE_RULES: Record<FilePurpose, FileRule> = {
   ORG_LOGO: { ...PUBLIC_RULE, maxBytes: 2 * MB },
-  ORG_BANNER: { ...PUBLIC_RULE, maxBytes: 5 * MB },
+  // 4 MB: tope de 4,5 MB del cuerpo en Vercel (como el KYB); una portada se comprime antes.
+  ORG_BANNER: { ...PUBLIC_RULE, maxBytes: 4 * MB },
   INITIATIVE_COVER: { ...PUBLIC_RULE, maxBytes: 5 * MB },
   INITIATIVE_BEFORE: { ...PUBLIC_RULE, maxBytes: 8 * MB },
   INITIATIVE_AFTER: { ...PUBLIC_RULE, maxBytes: 8 * MB },

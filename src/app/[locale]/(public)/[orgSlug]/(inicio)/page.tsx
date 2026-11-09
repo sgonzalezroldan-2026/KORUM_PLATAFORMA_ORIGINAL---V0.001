@@ -10,6 +10,7 @@ import { breadcrumbJsonLd, entityJsonLd } from '@/lib/seo/json-ld';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
 import { initiativePath, portalPath } from '@/lib/seo/portal-routes';
+import { publicFileSrc } from '@/services/portal/achievements-data';
 import { loadPortalHome, loadPortalOrganization } from '@/services/portal/portal-data';
 
 interface PageProps {
@@ -62,6 +63,8 @@ export default async function PortalPage({ params }: PageProps) {
         name={organization.name}
         vertical={organization.vertical}
         accent={organization.brandPrimary}
+        logoSrc={organization.logoFileId ? publicFileSrc(organization.logoFileId) : null}
+        bannerSrc={organization.bannerFileId ? publicFileSrc(organization.bannerFileId) : null}
         contentLang={home.contentLang}
         huchaMode={home.huchaMode}
         impact={home.impact}
