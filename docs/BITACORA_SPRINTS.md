@@ -19,6 +19,25 @@
 
 ## Entradas
 
+### Mantenimiento — Base de pruebas con PostgreSQL 16 real · 2026-11-09 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Sonnet 5.5 · medio (suficiente: lanzar suites, comparar números y documentar; sin lógica nueva ni auditores).
+- **Qué se ha hecho:** instalación (por el promotor) de PostgreSQL 16.15 para Windows en el puerto **5433** (convive con una 18.6 en el 5432, que no se usa); base `korum_test` creada **en UTC** (`ALTER DATABASE korum_test SET timezone TO 'UTC'`). Las suites se lanzan con `TEST_DATABASE_URL` y `E2E_DATABASE_URL` apuntando a ella. **No se ha cambiado ni una línea de código de la aplicación ni de las pruebas.** `npm run db:dev` sigue funcionando como alternativa.
+- **Referencia antes (base local de Prisma Postgres) frente a después (PostgreSQL 16):**
+
+  | Puerta | Antes | Después |
+  | :--- | :--- | :--- |
+  | P1 invariantes, `typecheck`, `lint` | 0 / 0 / 0 (37 s) | 0 / 0 / 0 (37 s) |
+  | Unitarias | 43 archivos, 947 pasadas, 1 omitida | idéntico (33 s) |
+  | Integración | 28 archivos, 590 pruebas · **6.111 s (~102 min)** | 28 archivos, 590 pruebas · **85 s** |
+  | Compilación de producción | verde (27 s) | verde (21 s) |
+  | E2E completa (CI=1, 4 workers) | 316 pasadas, **4 fallidas, 7 intermitentes, 12 sin ejecutar**, 19 omitidas · 26 min | **339 pasadas, 0 fallos, 0 intermitentes**, 19 omitidas · 4,2 min |
+
+- **Decisiones tomadas** (detalle en [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §3): la base de pruebas debe estar en **UTC**. Con la hora local de Windows (Madrid), una prueba que inserta con SQL directo y `now()` dejaba el mensaje del centro una hora «en el futuro» y el bloqueo del chat no se calculaba (fallo falso de `chat-faq-soporte.spec.ts`, no de la aplicación). Los fallos de la E2E con la base lenta se debían a su única conexión; con PostgreSQL real desaparecen. Los ajustes pensados para la base lenta (`maxConnections: 1`, límites de 120 s, `connection_limit=1`) se retiran solos cuando hay `TEST_DATABASE_URL`/`E2E_DATABASE_URL`; Playwright ya usaba 4 workers (el `--workers=1` era solo una opción manual del 4.2c).
+- **Pendiente / deuda:** ninguna. Producción (Supabase) y la CI (`postgres:16`) no se ven afectadas. La base de 18.6 del equipo puede desinstalarse si no se usa para otra cosa (decisión del promotor).
+- **Puertas:** P1 ✅ · P2 ✅ · P3 no aplica (sin código de aplicación) · P4 ✅ (E2E completa) · P5 ✅ (todas repetidas con la base nueva).
+- **Siguiente sprint:** 4.2e · modelo recomendado: **Claude Opus 5.5 · esfuerzo alto** (como en la entrada del 4.2c).
+
 ### Sprint 4.2c — Documentos del titular (KYB) y ajustes generales de la entidad · 2026-11-09 · terminado
 
 - **Modelo y esfuerzo usados:** constructor Claude Opus 5.5 · alto (el de la ficha, coincidía con la sesión), en la sesión principal y sin subagente constructor. Catalán e inglés escritos por el mismo modelo: **revisión de nativo al final de la batida**. Auditoría: `antifraud-legal-guardian` y `ux-school-director-reviewer` (estática, sin navegador: la base local es de una sola conexión). Las Puertas 2, 4 y 5 las ejecuté yo, con el recorrido manual con el MCP de Playwright.
@@ -891,7 +910,7 @@
   - **QA:** aprobado; sus hallazgos coincidían con los anteriores.
 - **Pendiente / deuda:**
   - **La concurrencia real solo la demuestra la CI con PostgreSQL 16, que aún no se ha ejecutado** (no hay repositorio remoto). Hasta entonces, QA-C03 queda verificado en funcionalidad pero no en «concurrencia real».
-  - El rol `korum_app` bloquea el paso a producción (casilla de [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §8).
+  - El rol `korum_app` bloquea el paso a producción (casilla de [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §3).
   - La supresión RGPD (Sprints 2.5 y 3.7) debe anonimizar al usuario y no borrarlo: los apuntes tienen clave foránea `RESTRICT` hacia `User`.
   - `amountCents` es `Int`: máximo 21.474.836,47 € por apunte.
 - **Puertas:**
