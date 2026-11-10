@@ -466,7 +466,7 @@ describe('QA-P04 · contracargos y publicación', () => {
   });
 
   it('rechaza publicar una campaña más larga que maxCampaignDays y no reserva cupos', async () => {
-    const organization = await createOrganization(db, { exemptRemainingCents: 100_000 });
+    const organization = await createOrganization(db, { exemptRemainingCents: 100_000, kybStatus: 'VERIFIED' });
     const now = new Date('2026-11-01T00:00:00Z');
     const tooLong = await createInitiative(db, organization.id, { closesAt: new Date('2027-01-15T00:00:00Z'), defaultExemptAppliedCents: 100_000 });
     await expect(publishInitiative(db, tooLong.id, now)).rejects.toBeInstanceOf(CampaignDurationError);
@@ -475,7 +475,7 @@ describe('QA-P04 · contracargos y publicación', () => {
   });
 
   it('publica una campaña válida, reserva sus cupos y repetirlo no hace nada', async () => {
-    const organization = await createOrganization(db, { exemptRemainingCents: 100_000 });
+    const organization = await createOrganization(db, { exemptRemainingCents: 100_000, kybStatus: 'VERIFIED' });
     const now = new Date('2026-11-01T00:00:00Z');
     const initiative = await createInitiative(db, organization.id, { closesAt: new Date('2026-12-20T00:00:00Z'), defaultExemptAppliedCents: 60_000 });
     expect(await publishInitiative(db, initiative.id, now)).toEqual({ published: true });

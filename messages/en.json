@@ -1607,7 +1607,8 @@
       "achievements": "Achievements",
       "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}",
       "settings": "Settings",
-      "fund": "Activity Fund"
+      "fund": "Activity Fund",
+      "studio": "Studio"
     },
     "header": {
       "label": "Organisation management",
@@ -1677,7 +1678,9 @@
         "progress": "Progress of “{title}”: {percent}%",
         "contributions": "{count, plural, =0 {No contributions yet} one {💛 1 contribution} other {💛 # contributions}}",
         "closes": "Closes on {date}",
-        "viewPublic": "View the public page of “{title}”"
+        "viewPublic": "View the public page of “{title}”",
+        "editInStudio": "Edit in Studio: {title}",
+        "poster": "A4 poster with QR: {title}"
       },
       "steps": {
         "moderation": "1. Moderation",
@@ -1724,10 +1727,13 @@
           "studio": {
             "title": "Create the campaign",
             "done": "The campaign is created.",
-            "todo": "The editing Studio is coming very soon: you’ll design the campaign there, with its budget balanced to the cent."
+            "todo": "In the editing Studio you will design the campaign, with its budget balanced to the cent, and publish it once the documents are verified.",
+            "cta": "Open the editing Studio"
           }
         }
-      }
+      },
+      "newInitiative": "+ New initiative",
+      "newTicketing": "+ New ticketing / raffle"
     },
     "medals": {
       "title": "KORUM medals",
@@ -1845,7 +1851,7 @@
         "hint": "Title of 8 to 90 characters and description of 20 to 600. You can fix typos or clarify the proposal: the family will be notified. The signature period starts on the day you approve it."
       },
       "converted": "Dual sign-off complete: it is now an initiative being budgeted (wallet {wallet}).",
-      "convertedLink": "See it on the dashboard",
+      "convertedLink": "Edit in the Studio",
       "actions": {
         "approve": "Approve and open for signatures",
         "reject": "Decline"
@@ -2613,6 +2619,280 @@
         "signatureLine": "{role}: {name}, on {date}",
         "legal": "KORUM is a technology platform and does not hold funds. Charges and transfers are executed by PAYCOMET, an authorised payment institution. The purpose is declared by the organisation; KORUM does not check how the money is used. This receipt is not an invoice or a tax certificate.",
         "generated": "Document generated on {date}."
+      }
+    },
+    "studio": {
+      "title": "Editing Studio",
+      "intro": "This is where you design the campaign: your supplier’s quote, the internal board balanced to the cent and what families will see. KORUM never charges suppliers commissions.",
+      "back": "← Back to the Studio",
+      "formLabel": "Campaign details",
+      "picker": {
+        "newTitle": "Start a campaign",
+        "newBudget": "+ New initiative",
+        "newTicketing": "+ New ticketing / raffle",
+        "tooManyDrafts": "You already have {max} open drafts. Publish or finish one before creating another.",
+        "templatesTitle": "Ready-to-use templates",
+        "templatesHint": "They fill in the title and description. You enter the budget from your supplier’s quote: KORUM does not suggest prices.",
+        "useTemplate": "Use template",
+        "existingTitle": "Your campaigns",
+        "existingEmpty": "There are no campaigns yet. Start from a template or from scratch.",
+        "edit": "Edit in Studio",
+        "open": "Open"
+      },
+      "format": {
+        "BUDGET": "Budget / works",
+        "TICKETING": "Ticketing or raffle"
+      },
+      "templates": {
+        "climate": {
+          "name": "Classroom comfort",
+          "summary": "Ventilation, cooling or awnings for the heat and the cold.",
+          "title": "Cooler, more comfortable classrooms",
+          "description": "We want to improve classroom comfort with ventilation and shade so that hot and cold days are easier to learn in. The budget is our supplier’s quote and is detailed on the campaign page."
+        },
+        "playground": {
+          "name": "Playground and sport",
+          "summary": "Courts, goals, games and sports equipment.",
+          "title": "A better playground for play and sport",
+          "description": "We will renew the playground with games and sports equipment so every child has room to move. The budget is our supplier’s quote."
+        },
+        "kit": {
+          "name": "Kits and equipment",
+          "summary": "Kits, balls and equipment for the teams.",
+          "title": "Kits and equipment for every team",
+          "description": "We want every player to have their kit and training to have good equipment. The budget is our supplier’s quote."
+        },
+        "tech": {
+          "name": "Technology and resources",
+          "summary": "Computers, projectors and digital resources.",
+          "title": "Technology to learn and create",
+          "description": "This campaign will give the community equipment and digital resources to learn and create better. The budget is our supplier’s quote."
+        },
+        "trip": {
+          "name": "Outing or trip",
+          "summary": "Outings and trips that bring the community together.",
+          "title": "End-of-year outing for everyone",
+          "description": "We want nobody to miss the end-of-year outing. What we raise covers transport and tickets for everyone taking part."
+        },
+        "solidarity": {
+          "name": "Grants and solidarity",
+          "summary": "Support so nobody is left out.",
+          "title": "Grants so nobody is left out",
+          "description": "We are creating a support fund so that no family gives up the year’s activities for financial reasons."
+        },
+        "festival": {
+          "name": "Festival with tickets",
+          "summary": "Tickets with controlled capacity and a QR code.",
+          "title": "End-of-year festival",
+          "description": "Ticket sales with controlled capacity and a QR code for our festival. What we raise goes to the community’s activities."
+        },
+        "raffle": {
+          "name": "Charity raffle",
+          "summary": "Numbered tickets with a certified draw.",
+          "title": "Community charity raffle",
+          "description": "Numbered tickets with an on-screen draw and a record. What we raise goes to the community’s activities."
+        }
+      },
+      "rewardPresets": {
+        "cinema": "Movie afternoon with popcorn in the assembly hall",
+        "games": "Special day of playground games and music",
+        "noHomework": "Homework-free Friday with a shared snack"
+      },
+      "stages": {
+        "all": "The whole community",
+        "infantil": "Pre-school",
+        "primaria": "Primary",
+        "eso": "Secondary",
+        "base": "Youth teams",
+        "senior": "Senior teams",
+        "students": "Students",
+        "families": "Families and members"
+      },
+      "fields": {
+        "title": "Title of the initiative, event or raffle",
+        "category": "Category",
+        "categoryChoose": "Choose a category",
+        "ticketingCategory": "Ticketing and raffles",
+        "stage": "Who it benefits",
+        "stageChoose": "Choose who it benefits",
+        "closesOn": "Deadline",
+        "closesOnHint": "At most {days} days from today.",
+        "description": "Description",
+        "ticketingTitle": "Ticketing or raffle with a QR code",
+        "ticketSubtype": "Type",
+        "subtypeEvent": "Ticket with capacity control",
+        "subtypeRaffle": "Numbered raffle ticket",
+        "ticketPrice": "Ticket price (€)",
+        "ticketMax": "Maximum capacity or number of tickets",
+        "digitalFee": "Digital handling fees",
+        "digitalFeeHint": "Set by KORUM; shown here for the calculation.",
+        "digitalFeeValue": "{fixed} + {pct} ({unit} each)",
+        "venue": "Place or date of the event or draw",
+        "venueHint": "Optional. Shown on the public page.",
+        "feeMode": "Digital handling fees",
+        "feeModeAdd": "Add them to the buyer’s total",
+        "feeModeInc": "Absorb them within the ticket price",
+        "raffleNotice": "Raffles and lotteries are regulated by each region and may need prior notification or authorisation depending on their value. Prizes in kind cannot be exchanged for cash.",
+        "rafflePrizes": "Prizes to draw",
+        "rafflePrizesHint": "Set before publishing and cannot be changed afterwards: without it the draw could not be held.",
+        "raffleConfirm": "We confirm that the raffle complies with the rules of our region",
+        "budgetTitle": "Budget",
+        "costMat": "Supplier quote (€)",
+        "costMatHint": "Your own supplier’s quote, with no KORUM commission.",
+        "costInst": "Installation or works (€)",
+        "contingency": "% reserve for maintenance, risks and contingencies",
+        "rewardTitle": "Group challenge and plaque",
+        "showBreakdown": "Show the 100%-balanced budget breakdown on the public page",
+        "rewardEnabled": "Attach a group-challenge prize",
+        "rewardHint": "Shown only in a positive way, without singling anyone out.",
+        "plaque": "Include a commemorative plaque for the year group",
+        "rewardPreset": "Challenge prize",
+        "rewardCustom": "Write your own prize…",
+        "rewardCustomLabel": "Challenge prize",
+        "targetFamilies": "Target families per group",
+        "amountInvalid": "Enter a valid amount, for example 1,250.50",
+        "amountNegative": "The amount cannot be negative",
+        "amountTooBig": "The amount is too large",
+        "publicTitle": "What families see"
+      },
+      "board": {
+        "label": "Campaign TCO board",
+        "title": "The organisation’s internal audit",
+        "medal": {
+          "1": "Bronze",
+          "2": "Silver",
+          "3": "Gold"
+        },
+        "base": "Supplier + installation",
+        "contingency": "Reserve for maintenance, risks and contingencies ({pct})",
+        "net": "Net guaranteed for the organisation",
+        "internalTitle": "Internal breakdown of exemptions and payment gateway",
+        "line1": "1. Default exempt amount",
+        "atZero": "{amount} at 0%",
+        "line2": "2. Medal exempt grant",
+        "atZeroMedal": "{amount} at 0% ({medal} medal · saving {saved})",
+        "line3": "3. Remainder subject to the bracket ({taxable} at {rate})",
+        "line3Exempt": "3. Platform commission (0% category)",
+        "line4": "4. Platform maintenance charge",
+        "line5": "5. Payment gateway cost (Paycomet)",
+        "gatewayFormula": "How it is calculated: {pct} variable on {subtotal} ({variable}) + {count, plural, one {# estimated contribution} other {# estimated contributions}} (based on the suggested contribution of {ticket}) × {fixed} ({fixedTotal}) + {rounding} rounding up to the euro. Balanced total: {net} + {fee} + {maint} + {gateway} = {goal}.",
+        "ticketGross": "Gross takings at full capacity (capacity × price)",
+        "ticketGrossRaffle": "Gross takings from the tickets (tickets × price)",
+        "ticketModelTitle": "Digital handling fees (QR ticketing)",
+        "ticketDigitalFee": "Digital handling fee per ticket",
+        "perUnitAdd": "{amount} each (added to the buyer’s total)",
+        "perUnitInc": "{amount} each (included in the price)",
+        "ticketGateway": "Payment gateway cost (covered by the fees)",
+        "ticketMaint": "Platform maintenance charge",
+        "ticketNet": "Net guaranteed for the organisation",
+        "maintShortfall": "The takings do not cover the maintenance charge: {amount} would be missing.",
+        "gatewayNotCovered": "At these prices the handling fees do not cover the payment gateway ({amount} per ticket). KORUM reviews it; it does not change what the organisation receives.",
+        "badgeTicketing": "Ticketing or raffle with QR",
+        "badgeExempt": "0% commission category",
+        "badgeBracket": "Bracket {rate}",
+        "badgeExact": "Exact breakdown",
+        "goalLabel": "Exact final public goal",
+        "goalLabelTicketing": "Into the piggy bank at full capacity"
+      },
+      "blockers": {
+        "title": "Before publishing you still need:",
+        "kybLink": "Go to the documents",
+        "KYB": "The account holder’s documents are not verified yet.",
+        "GOAL_ZERO": "The budget is missing: the goal cannot be €0.00.",
+        "STAGE_MISSING": "Say who the campaign benefits.",
+        "DESCRIPTION_MISSING": "The description is missing.",
+        "TICKET_MAX_ZERO": "Enter the capacity or the number of tickets.",
+        "TICKET_PRICE_ZERO": "The price cannot be €0.00: with no amount there is nothing to put in the piggy bank.",
+        "TICKET_FEE_EXCEEDS_PRICE": "With the handling fees inside the price nothing would be left for the piggy bank: raise the price or add the fees to the buyer’s total.",
+        "RAFFLE_PRIZES": "Enter how many prizes are drawn (at most as many as tickets).",
+        "RAFFLE_NOTICE": "Confirm that the raffle complies with the rules of your region.",
+        "INVALID_CATEGORY": "Choose an improvement category.",
+        "CLOSING_INVALID": "The closing date is not valid.",
+        "CLOSING_PAST": "The closing date has already passed: choose one after today.",
+        "CLOSING_TOO_LATE": "The campaign would run longer than allowed: choose an earlier closing date.",
+        "RAFFLE_PRIZES_EXCEED": "There cannot be more prizes than tickets.",
+        "TITLE_MISSING": "Write a title of at least 3 letters.",
+        "MAINT_EXCEEDS_TAKINGS": "At this price and capacity the takings do not cover the platform maintenance charge: raise the price or the capacity."
+      },
+      "errors": {
+        "INVALID_INPUT": "Some data is not valid. Check the form.",
+        "PROBLEMS": "Nothing was saved. Fix this first:",
+        "BLOCKED": "The draft was saved, but it cannot be published yet:",
+        "NOT_EDITABLE": "This campaign can no longer be edited.",
+        "STALE_BOARD": "The organisation’s allowances changed and the goal is no longer the one you saw. We recalculated the board: review it and publish again.",
+        "QUOTA": "The organisation no longer has enough allowance for this campaign. The draft was saved: review the board.",
+        "NOT_PUBLISHABLE": "It could not be published right now. The draft was saved: check that everything is complete and try again.",
+        "TOO_MANY_DRAFTS": "There are too many open drafts. Publish or finish one before creating another.",
+        "FORBIDDEN": "You do not have permission to do this.",
+        "generic": "Something went wrong. Nothing has been lost: try again.",
+        "SEMANTIC_LOCK": "Nothing was saved: the text mentions equipment or infrastructure and this campaign was published in a 0% commission category. Keep the original description."
+      },
+      "actions": {
+        "publish": "Save and publish on KORUM",
+        "publishing": "Publishing…",
+        "publishHint": "The button turns on when nothing is left on the list.",
+        "saveDraft": "Save draft",
+        "saving": "Saving…",
+        "saveChanges": "Save changes",
+        "discard": "Discard this draft",
+        "discarding": "Discarding…"
+      },
+      "confirm": {
+        "title": "Publish the campaign with a goal of {goal}?",
+        "body": "Publishing reserves the organisation’s allowances, and the budget, price, capacity and closing date ({date}) can no longer be changed. Families will be able to take part from this moment.",
+        "yes": "Yes, publish",
+        "no": "No, keep editing",
+        "refund": "If the goal is not reached, 100% is refunded to every family."
+      },
+      "saved": {
+        "draft": "Draft saved. Current goal: {goal}.",
+        "soft": "Changes saved."
+      },
+      "published": {
+        "title": "Campaign published in piggy bank {wallet}!",
+        "body": "Families can now see it and contribute. Print the poster with its QR code or share the link."
+      },
+      "lock": {
+        "soft": "The campaign is already collecting: only the description, the public breakdown, the challenge and the plaque can be changed. The budget, price and date are already used by contributions.",
+        "all": "This campaign is closed: it is shown without any option to change it."
+      },
+      "lockAlert": {
+        "title": "Category audit notice",
+        "body": "The text mentions “{term}”, which is equipment or infrastructure: the board already applies the bracket commission. If it is not, change the text; if it is, choose a category with brackets."
+      },
+      "links": {
+        "public": "See the public page",
+        "poster": "A4 poster with QR"
+      },
+      "poster": {
+        "back": "← Back to the campaign",
+        "title": "Poster for “{title}”",
+        "intro": "Change the title and message, check the sheet and press Print. The QR code leads to the campaign’s public page.",
+        "customTitle": "Poster title",
+        "customMessage": "Poster message",
+        "print": "Print A4 poster",
+        "downloadQr": "Download the QR only",
+        "sheetLabel": "A4 poster to print",
+        "platform": "KORUM · contributions platform",
+        "payments": "Payments by PAYCOMET",
+        "withKorum": "{entity} × KORUM",
+        "qrLabel": "QR code leading to the campaign",
+        "guarantee": "Initiative piggy bank {wallet}: the money is held at PAYCOMET until the goal is reached and 100% is refunded if it is not. No supplier intermediation.",
+        "defaultTitle": "Join in and let’s improve our community!",
+        "defaultMessage": "Scan the QR code with your phone to see the project and contribute by card or Bizum in 10 seconds.",
+        "unavailable": {
+          "title": "This poster is not available yet",
+          "description": "The poster is generated once the campaign is collecting: until then its QR code would lead nowhere. Publish it from the Studio and come back."
+        },
+        "defaultMessageTickets": "Scan the QR code with your phone, choose your ticket and pay by card or Bizum in 10 seconds.",
+        "defaultMessageRaffle": "Scan the QR code with your phone, choose your raffle tickets and pay by card or Bizum in 10 seconds.",
+        "guaranteeTickets": "Secure payment with PAYCOMET. If the event is cancelled, we refund 100% of what you paid to the same payment method. Initiative piggy bank {wallet}."
+      },
+      "discard": {
+        "title": "Discard this draft?",
+        "body": "It is removed from your list and cannot be recovered. Nothing has been charged or reserved, so there is nothing to refund.",
+        "yes": "Yes, discard",
+        "no": "No, keep it"
       }
     }
   },

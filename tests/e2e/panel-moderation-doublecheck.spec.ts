@@ -145,8 +145,11 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
     await page.getByText(/Últimas \d+ ideas cerradas|Última idea cerrada/).click();
     const converted = card(ideas.quorum);
     await server(converted.getByText(/Doble firma completa: ya es una iniciativa en presupuestación \(hucha WLT-ESC-[A-Z0-9]{6}\)/)).toBeVisible();
-    await converted.getByRole('link', { name: 'Ver en el cuadro de mandos' }).click();
-    await server(page.getByText(ideas.quorum).first()).toBeVisible();
+    await converted.getByRole('link', { name: 'Editar en el Estudio' }).click();
+    await server(page.getByRole('heading', { level: 1, name: ideas.quorum })).toBeVisible();
+    await expect(page.getByTestId('studio-publish')).toBeDisabled();
+    await expect(page.getByTestId('studio-blockers')).toContainText('Falta el presupuesto');
+    await expect(page.getByTestId('studio-blockers')).toContainText('Indicad a quién beneficia la campaña');
     await checkPage(page, errors);
 
     // --- La misma bandeja en catalán ---

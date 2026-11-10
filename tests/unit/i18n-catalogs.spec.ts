@@ -97,7 +97,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Fondo de actividades (Sprint 4.2f): «Retirada», «Enviada el…» y el patrón «{role}: {name}, el {date}» se escriben igual en catalán.
       'panel.fund.history.cancelReason.WITHDRAWN', 'panel.fund.history.executedOn', 'panel.fund.history.status.CANCELLED', 'panel.fund.receipt.executedAt', 'panel.fund.receipt.signatureLine',
       // Invitación a renovar (Sprint 4.2f): «caduca» se escribe igual en catalán.
-      'email.sponsor.renewalInvite.verbFuture']);
+      'email.sponsor.renewalInvite.verbFuture',
+      // Estudio de edición (Sprint 4.3): «Infantil», «ESO», «Plata», «Sí, publicar», «Taquilla o rifa», «Meta pública final exacta» y los patrones sin texto traducible se escriben igual en catalán.
+      'panel.studio.board.atZero', 'panel.studio.board.goalLabel', 'panel.studio.board.medal.2', 'panel.studio.confirm.yes', 'panel.studio.format.TICKETING', 'panel.studio.poster.withKorum', 'panel.studio.stages.eso', 'panel.studio.stages.infantil', 'panel.studio.discard.yes']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.
       'panel.settings.team.form.seatOther', 'panel.settings.brand.accent.names.coral',
@@ -114,7 +116,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Aprobaciones (Sprint 4.2a): «KORUM» es un nombre propio.
       'panel.approvals.chat.fromKorum',
       // Renovación de comercios (Sprint 4.2d): «Bizum» y «Total» son iguales en inglés.
-      'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total']);
+      'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total',
+      // Estudio de edición (Sprint 4.3): el patrón «{entity} × KORUM» no tiene texto traducible.
+      'panel.studio.poster.withKorum']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

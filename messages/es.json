@@ -1607,7 +1607,8 @@
       "achievements": "Logros",
       "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}",
       "settings": "Ajustes",
-      "fund": "Fondo de actividades"
+      "fund": "Fondo de actividades",
+      "studio": "Estudio"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1677,7 +1678,9 @@
         "progress": "Avance de «{title}»: {percent} %",
         "contributions": "{count, plural, =0 {Sin aportaciones todavía} one {💛 1 aportación} other {💛 # aportaciones}}",
         "closes": "Cierra el {date}",
-        "viewPublic": "Ver la ficha pública de «{title}»"
+        "viewPublic": "Ver la ficha pública de «{title}»",
+        "editInStudio": "Editar en Estudio: {title}",
+        "poster": "Cartel A4 con QR: {title}"
       },
       "steps": {
         "moderation": "1. Moderación",
@@ -1724,10 +1727,13 @@
           "studio": {
             "title": "Crear la campaña",
             "done": "La campaña está creada.",
-            "todo": "El Estudio de edición llegará muy pronto: desde él diseñaréis la campaña, con su presupuesto cuadrado al céntimo."
+            "todo": "Desde el Estudio de edición diseñaréis la campaña, con su presupuesto cuadrado al céntimo, y la publicaréis cuando los documentos estén verificados.",
+            "cta": "Abrir el Estudio de edición"
           }
         }
-      }
+      },
+      "newInitiative": "+ Nueva iniciativa",
+      "newTicketing": "+ Nueva taquilla / rifa"
     },
     "medals": {
       "title": "Medallas KORUM",
@@ -1845,7 +1851,7 @@
         "hint": "Título de 8 a 90 caracteres y descripción de 20 a 600. Puedes corregir erratas o aclarar la propuesta: la familia recibirá un aviso. El plazo de firmas empieza el día que la apruebas."
       },
       "converted": "Doble firma completa: ya es una iniciativa en presupuestación (hucha {wallet}).",
-      "convertedLink": "Ver en el cuadro de mandos",
+      "convertedLink": "Editar en el Estudio",
       "actions": {
         "approve": "Aprobar y abrir a firmas",
         "reject": "Desestimar"
@@ -2613,6 +2619,280 @@
         "signatureLine": "{role}: {name}, el {date}",
         "legal": "KORUM es una plataforma tecnológica y no custodia fondos. Los cobros y los envíos los ejecuta PAYCOMET, entidad de pago autorizada. El destino lo declara la entidad; KORUM no comprueba el uso del dinero. Este justificante no es una factura ni un certificado fiscal.",
         "generated": "Documento generado el {date}."
+      }
+    },
+    "studio": {
+      "title": "Estudio de edición",
+      "intro": "Aquí diseñáis la campaña: el presupuesto de vuestro proveedor, la pizarra interna cuadrada al céntimo y lo que verán las familias. KORUM nunca cobra comisiones a proveedores.",
+      "back": "← Volver al Estudio",
+      "formLabel": "Datos de la campaña",
+      "picker": {
+        "newTitle": "Empezar una campaña",
+        "newBudget": "+ Nueva iniciativa",
+        "newTicketing": "+ Nueva taquilla / rifa",
+        "tooManyDrafts": "Ya tenéis {max} borradores abiertos. Publicad o terminad alguno antes de crear otro.",
+        "templatesTitle": "Plantillas listas para usar",
+        "templatesHint": "Rellenan el título y la descripción. El presupuesto lo ponéis vosotros con el presupuesto de vuestro proveedor: KORUM no propone precios.",
+        "useTemplate": "Usar plantilla",
+        "existingTitle": "Vuestras campañas",
+        "existingEmpty": "Aún no hay ninguna campaña. Empezad con una plantilla o en blanco.",
+        "edit": "Editar en Estudio",
+        "open": "Abrir"
+      },
+      "format": {
+        "BUDGET": "Presupuesto / obra",
+        "TICKETING": "Taquilla o rifa"
+      },
+      "templates": {
+        "climate": {
+          "name": "Confort en las aulas",
+          "summary": "Ventilación, climatización o toldos para el calor y el frío.",
+          "title": "Aulas más frescas y confortables",
+          "description": "Queremos mejorar el confort de las aulas con ventilación y sombra para que los días de calor y de frío se estudie mejor. El presupuesto es el de nuestro proveedor y se detalla en la ficha."
+        },
+        "playground": {
+          "name": "Patio y deporte",
+          "summary": "Pistas, porterías, juegos y material deportivo.",
+          "title": "Un patio mejor para jugar y hacer deporte",
+          "description": "Vamos a renovar el patio con juegos y material deportivo para que todos los niños y niñas tengan espacio donde moverse. El presupuesto es el de nuestro proveedor."
+        },
+        "kit": {
+          "name": "Equipaciones y material",
+          "summary": "Equipaciones, balones y material para los equipos.",
+          "title": "Equipaciones y material para todos los equipos",
+          "description": "Queremos que cada jugador y jugadora tenga su equipación y que los entrenamientos cuenten con buen material. El presupuesto es el de nuestro proveedor."
+        },
+        "tech": {
+          "name": "Tecnología y recursos",
+          "summary": "Ordenadores, proyectores y recursos digitales.",
+          "title": "Tecnología para aprender y crear",
+          "description": "Con esta campaña dotaremos a la comunidad de equipos y recursos digitales para aprender y crear mejor. El presupuesto es el de nuestro proveedor."
+        },
+        "trip": {
+          "name": "Excursión o viaje",
+          "summary": "Salidas y viajes que unen a la comunidad.",
+          "title": "Excursión de fin de curso para todos",
+          "description": "Queremos que ninguna persona se quede sin la excursión de fin de curso. Lo recaudado cubre el transporte y las entradas de quienes participan."
+        },
+        "solidarity": {
+          "name": "Becas y solidaridad",
+          "summary": "Ayudas para que nadie se quede fuera.",
+          "title": "Becas para que nadie se quede fuera",
+          "description": "Creamos un fondo de ayudas para que ninguna familia renuncie a las actividades del curso por motivos económicos."
+        },
+        "festival": {
+          "name": "Festival con entradas",
+          "summary": "Entradas con aforo controlado y código QR.",
+          "title": "Festival de fin de curso",
+          "description": "Venta de entradas con aforo controlado y código QR para nuestro festival. Lo recaudado se destina a las actividades de la comunidad."
+        },
+        "raffle": {
+          "name": "Rifa solidaria",
+          "summary": "Papeletas numeradas con sorteo certificado.",
+          "title": "Rifa solidaria de la comunidad",
+          "description": "Papeletas numeradas con sorteo en pantalla y acta. Lo recaudado se destina a las actividades de la comunidad."
+        }
+      },
+      "rewardPresets": {
+        "cinema": "Tarde de cine con palomitas en el salón de actos",
+        "games": "Jornada especial de juegos de patio y música",
+        "noHomework": "Viernes libre de deberes y merienda colectiva"
+      },
+      "stages": {
+        "all": "Toda la comunidad",
+        "infantil": "Infantil",
+        "primaria": "Primaria",
+        "eso": "ESO",
+        "base": "Equipos base",
+        "senior": "Equipos superiores",
+        "students": "Alumnado",
+        "families": "Familias y socios"
+      },
+      "fields": {
+        "title": "Título de la iniciativa, evento o rifa",
+        "category": "Categoría",
+        "categoryChoose": "Elegid una categoría",
+        "ticketingCategory": "Taquilla y rifas",
+        "stage": "A quién beneficia",
+        "stageChoose": "Elegid a quién beneficia",
+        "closesOn": "Fecha límite",
+        "closesOnHint": "Como máximo {days} días desde hoy.",
+        "description": "Descripción",
+        "ticketingTitle": "Taquilla o rifa con código QR",
+        "ticketSubtype": "Tipo",
+        "subtypeEvent": "Entrada con control de aforo",
+        "subtypeRaffle": "Papeleta de rifa numerada",
+        "ticketPrice": "Precio de la entrada o papeleta (€)",
+        "ticketMax": "Aforo máximo o número de papeletas",
+        "digitalFee": "Gastos de gestión digital",
+        "digitalFeeHint": "Los fija KORUM; los veis aquí para calcular.",
+        "digitalFeeValue": "{fixed} + {pct} ({unit} por unidad)",
+        "venue": "Lugar o fecha del acto o del sorteo",
+        "venueHint": "Opcional. Se enseña en la ficha pública.",
+        "feeMode": "Gastos de gestión digital",
+        "feeModeAdd": "Sumarlos al comprador",
+        "feeModeInc": "Asumirlos dentro del precio de la entrada",
+        "raffleNotice": "Las rifas y tómbolas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa según su importe. Los premios en especie no se pueden canjear por dinero.",
+        "rafflePrizes": "Premios que se sortean",
+        "rafflePrizesHint": "Se fija antes de publicar y no se puede cambiar después: sin él no se podría sortear.",
+        "raffleConfirm": "Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma",
+        "budgetTitle": "Presupuesto",
+        "costMat": "Presupuesto del proveedor (€)",
+        "costMatHint": "El de vuestro proveedor, sin comisiones de KORUM.",
+        "costInst": "Instalación u obra (€)",
+        "contingency": "% de reserva de mantenimiento, riesgos y contingencia",
+        "rewardTitle": "Reto colectivo y placa",
+        "showBreakdown": "Publicar en la ficha pública el desglose del presupuesto cuadrado al 100 %",
+        "rewardEnabled": "Asociar un premio de reto colectivo por grupo",
+        "rewardHint": "Se enseña solo en positivo, sin señalar a nadie.",
+        "plaque": "Incluir placa conmemorativa de la promoción",
+        "rewardPreset": "Premio del reto",
+        "rewardCustom": "Escribir un premio propio…",
+        "rewardCustomLabel": "Premio del reto",
+        "targetFamilies": "Meta de familias por grupo",
+        "amountInvalid": "Escribid un importe válido, por ejemplo 1.250,50",
+        "amountNegative": "El importe no puede ser negativo",
+        "amountTooBig": "El importe es demasiado grande",
+        "publicTitle": "Lo que ven las familias"
+      },
+      "board": {
+        "label": "Pizarra TCO de la campaña",
+        "title": "Auditoría interna de la entidad",
+        "medal": {
+          "1": "Bronce",
+          "2": "Plata",
+          "3": "Oro"
+        },
+        "base": "Proveedor + instalación",
+        "contingency": "Reserva de mantenimiento, riesgos y contingencia ({pct})",
+        "net": "Neto garantizado para la entidad",
+        "internalTitle": "Desglose interno de exenciones y pasarela",
+        "line1": "1. Importe exento por defecto",
+        "atZero": "{amount} al 0 %",
+        "line2": "2. Beca exenta por medalla",
+        "atZeroMedal": "{amount} al 0 % (medalla {medal} · ahorro {saved})",
+        "line3": "3. Resto sujeto a tramo ({taxable} al {rate})",
+        "line3Exempt": "3. Comisión de la plataforma (categoría al 0 %)",
+        "line4": "4. Cargo de mantenimiento de la plataforma",
+        "line5": "5. Coste de la pasarela de pago (Paycomet)",
+        "gatewayFormula": "Cómo se calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportación estimada} other {# aportaciones estimadas}} (según la aportación sugerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} de redondeo al euro. Suma cuadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
+        "ticketGross": "Recaudación bruta del aforo (aforo × precio)",
+        "ticketGrossRaffle": "Recaudación bruta de las papeletas (papeletas × precio)",
+        "ticketModelTitle": "Gastos de gestión digital (taquilla con QR)",
+        "ticketDigitalFee": "Gastos de gestión digital por entrada",
+        "perUnitAdd": "{amount} por unidad (se suman al comprador)",
+        "perUnitInc": "{amount} por unidad (incluidos en el precio)",
+        "ticketGateway": "Coste de la pasarela (cubierto por la gestión)",
+        "ticketMaint": "Cargo de mantenimiento de la plataforma",
+        "ticketNet": "Neto garantizado para la entidad",
+        "maintShortfall": "La recaudación no alcanza a cubrir el mantenimiento: faltarían {amount}.",
+        "gatewayNotCovered": "Con estos precios los gastos de gestión no cubren la pasarela ({amount} por entrada). Lo revisa KORUM; no cambia lo que recibe la entidad.",
+        "badgeTicketing": "Taquilla o rifa con QR",
+        "badgeExempt": "Categoría al 0 % de comisión",
+        "badgeBracket": "Tramo {rate}",
+        "badgeExact": "Desglose exacto",
+        "goalLabel": "Meta pública final exacta",
+        "goalLabelTicketing": "A la hucha con el aforo completo"
+      },
+      "blockers": {
+        "title": "Para publicar falta:",
+        "kybLink": "Ir a los documentos",
+        "KYB": "Los documentos del titular aún no están verificados.",
+        "GOAL_ZERO": "Falta el presupuesto: la meta no puede ser 0,00 €.",
+        "STAGE_MISSING": "Indicad a quién beneficia la campaña.",
+        "DESCRIPTION_MISSING": "Falta la descripción.",
+        "TICKET_MAX_ZERO": "Indicad el aforo o el número de papeletas.",
+        "TICKET_PRICE_ZERO": "El precio no puede ser 0,00 €: sin importe no hay nada que guardar en la hucha.",
+        "TICKET_FEE_EXCEEDS_PRICE": "Con los gastos de gestión dentro del precio no quedaría nada para la hucha: subid el precio o sumad los gastos al comprador.",
+        "RAFFLE_PRIZES": "Indicad cuántos premios se sortean (como mucho, tantos como papeletas).",
+        "RAFFLE_NOTICE": "Confirmad que la rifa cumple la normativa de vuestra comunidad autónoma.",
+        "INVALID_CATEGORY": "Elegid una categoría de mejora.",
+        "CLOSING_INVALID": "La fecha de cierre no es válida.",
+        "CLOSING_PAST": "La fecha de cierre ya ha pasado: elegid una posterior a hoy.",
+        "CLOSING_TOO_LATE": "La campaña duraría más del máximo permitido: elegid una fecha de cierre anterior.",
+        "RAFFLE_PRIZES_EXCEED": "No puede haber más premios que papeletas.",
+        "TITLE_MISSING": "Escribid un título de al menos 3 letras.",
+        "MAINT_EXCEEDS_TAKINGS": "Con este precio y este aforo la recaudación no cubre el mantenimiento de la plataforma: subid el precio o el aforo."
+      },
+      "errors": {
+        "INVALID_INPUT": "Hay datos que no son válidos. Revisad el formulario.",
+        "PROBLEMS": "No se ha guardado. Corregid esto primero:",
+        "BLOCKED": "Se ha guardado el borrador, pero aún no se puede publicar:",
+        "NOT_EDITABLE": "Esta campaña ya no se puede editar.",
+        "STALE_BOARD": "Los cupos de la entidad han cambiado y la meta ya no es la que visteis. Hemos recalculado la pizarra: revisadla y volved a publicar.",
+        "QUOTA": "La entidad ya no tiene cupo suficiente para esta campaña. Se ha guardado el borrador: revisad la pizarra.",
+        "NOT_PUBLISHABLE": "No se ha podido publicar ahora. Se ha guardado el borrador: revisad que todo esté completo e intentadlo de nuevo.",
+        "TOO_MANY_DRAFTS": "Hay demasiados borradores abiertos. Publicad o terminad alguno antes de crear otro.",
+        "FORBIDDEN": "No tenéis permiso para hacer esto.",
+        "generic": "Algo ha fallado. No se ha perdido nada: intentadlo de nuevo.",
+        "SEMANTIC_LOCK": "No se ha guardado: el texto habla de equipamiento o infraestructura y esta campaña se publicó en una categoría al 0 % de comisión. Mantened la descripción original."
+      },
+      "actions": {
+        "publish": "Guardar y publicar en KORUM",
+        "publishing": "Publicando…",
+        "publishHint": "El botón se activa cuando no falte nada de la lista.",
+        "saveDraft": "Guardar borrador",
+        "saving": "Guardando…",
+        "saveChanges": "Guardar cambios",
+        "discard": "Descartar este borrador",
+        "discarding": "Descartando…"
+      },
+      "confirm": {
+        "title": "¿Publicar la campaña con una meta de {goal}?",
+        "body": "Al publicar se reservan los cupos de la entidad y ya no se pueden cambiar el presupuesto, el precio, el aforo ni la fecha de cierre ({date}). Las familias podrán participar desde este momento.",
+        "yes": "Sí, publicar",
+        "no": "No, seguir editando",
+        "refund": "Si no se llega a la meta, se devuelve el 100 % a cada familia."
+      },
+      "saved": {
+        "draft": "Borrador guardado. Meta actual: {goal}.",
+        "soft": "Cambios guardados."
+      },
+      "published": {
+        "title": "¡Campaña publicada en la hucha {wallet}!",
+        "body": "Las familias ya pueden verla y aportar. Imprimid el cartel con su QR o compartid el enlace."
+      },
+      "lock": {
+        "soft": "La campaña ya está recaudando: solo se pueden cambiar la descripción, el desglose público, el reto y la placa. El presupuesto, el precio y la fecha ya los usan las aportaciones.",
+        "all": "Esta campaña ya está cerrada: se muestra sin poder cambiar nada."
+      },
+      "lockAlert": {
+        "title": "Aviso de auditoría de categoría",
+        "body": "El texto habla de «{term}», que es equipamiento o infraestructura: la pizarra ya aplica la comisión por tramos. Si no lo es, cambiad el texto; si lo es, elegid una categoría con tramos."
+      },
+      "links": {
+        "public": "Ver la ficha pública",
+        "poster": "Cartel A4 con QR"
+      },
+      "poster": {
+        "back": "← Volver a la campaña",
+        "title": "Cartel de «{title}»",
+        "intro": "Cambiad el título y el mensaje, comprobad la hoja y pulsad Imprimir. El código QR lleva a la ficha pública de la campaña.",
+        "customTitle": "Título del cartel",
+        "customMessage": "Mensaje del cartel",
+        "print": "Imprimir cartel A4",
+        "downloadQr": "Descargar solo el QR",
+        "sheetLabel": "Cartel A4 para imprimir",
+        "platform": "KORUM · plataforma de aportaciones",
+        "payments": "Pagos con PAYCOMET",
+        "withKorum": "{entity} × KORUM",
+        "qrLabel": "Código QR que lleva a la campaña",
+        "guarantee": "Hucha de la iniciativa {wallet}: el dinero queda retenido en PAYCOMET hasta lograr la meta y se devuelve el 100 % si no se consigue. Sin intermediación de proveedores.",
+        "defaultTitle": "¡Súmate y mejoremos nuestra comunidad!",
+        "defaultMessage": "Escanea el código QR con tu móvil para ver el proyecto y aportar con Bizum o tarjeta en 10 segundos.",
+        "unavailable": {
+          "title": "Este cartel aún no está disponible",
+          "description": "El cartel se genera cuando la campaña está recaudando: hasta entonces su código QR no llevaría a ninguna página. Publicadla desde el Estudio y volved aquí."
+        },
+        "defaultMessageTickets": "Escanea el código QR con tu móvil, elige tu entrada y paga con Bizum o tarjeta en 10 segundos.",
+        "defaultMessageRaffle": "Escanea el código QR con tu móvil, elige tus papeletas y paga con Bizum o tarjeta en 10 segundos.",
+        "guaranteeTickets": "Pago seguro con PAYCOMET. Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago. Hucha de la iniciativa {wallet}."
+      },
+      "discard": {
+        "title": "¿Descartar este borrador?",
+        "body": "Se quita de vuestra lista y no se puede recuperar. No se ha cobrado ni reservado nada, así que no hay nada que devolver.",
+        "yes": "Sí, descartar",
+        "no": "No, conservarlo"
       }
     }
   },

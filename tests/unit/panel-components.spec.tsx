@@ -128,7 +128,7 @@ describe('cuadro de mandos (QA-S02)', () => {
     expect(steps).toHaveLength(3);
     expect(steps[0]).toHaveTextContent('Falta que la otra persona firmante active su cuenta');
     expect(steps[1]).toHaveTextContent('Faltan los documentos del titular');
-    expect(steps[2]).toHaveTextContent('Estudio de edición llegará muy pronto');
+    expect(steps[2]).toHaveTextContent('Desde el Estudio de edición diseñaréis la campaña');
     expect(screen.queryByRole('button', { name: /Filtrar/ })).toBeNull();
   });
 

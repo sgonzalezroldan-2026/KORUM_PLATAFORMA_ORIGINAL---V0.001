@@ -75,6 +75,11 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                   {t('empty.steps.documents.cta')}
                 </Link>
               ) : null}
+              {step.key === 'studio' ? (
+                <Link href={`/panel/${orgSlug}/estudio`} className="inline-flex min-h-11 w-fit items-center text-sm font-bold text-varsity-navy underline underline-offset-4" data-testid="empty-studio-cta">
+                  {t('empty.steps.studio.cta')}
+                </Link>
+              ) : null}
             </li>
           ))}
         </ol>
@@ -96,6 +101,13 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
         <h2 id={`${ids.panel}-title`} className="font-corp text-sm font-extrabold uppercase tracking-wide text-ink-soft">
           {t('summaryTitle')}
         </h2>
+        <div className="flex flex-wrap items-center gap-2">
+        <Link href={`/panel/${orgSlug}/estudio?nueva=presupuesto`} className="tactile-btn" data-testid="dashboard-new-initiative">
+          {t('newInitiative')}
+        </Link>
+        <Link href={`/panel/${orgSlug}/estudio?nueva=taquilla`} className="tactile-btn" data-testid="dashboard-new-ticketing">
+          {t('newTicketing')}
+        </Link>
         <button
           type="button"
           className="inline-flex min-h-11 items-center gap-2 rounded-2xl border-2 border-varsity-navy bg-white px-4 font-corp text-sm font-extrabold text-varsity-navy"
@@ -113,6 +125,7 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
           ) : null}
           <span aria-hidden="true">{open ? '▴' : '▾'}</span>
         </button>
+        </div>
       </div>
 
       <div id={ids.panel} hidden={!open} className="korum-trust-vault p-4">
@@ -227,11 +240,23 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                 </ol>
                 <p className="text-sm text-ink-soft">{t('timeline.now', { step: t(`steps.${currentStep}`), hint: t(`stepTip.${currentStep}`) })}</p>
 
-                {hasPublicPage(item.status) ? (
-                  <Link href={`/${orgSlug}/iniciativas/${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">
-                    {t('card.viewPublic', { title: item.title })}
+                <div className="flex flex-wrap gap-x-5">
+                  <Link href={`/panel/${orgSlug}/estudio?iniciativa=${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4" data-testid={`edit-in-studio-${item.id}`}>
+                    <span aria-hidden="true">{'✏️ '}</span>
+                    {t('card.editInStudio', { title: item.title })}
                   </Link>
-                ) : null}
+                  {item.status === 'FUNDRAISING' ? (
+                    <Link href={`/panel/${orgSlug}/estudio/${item.id}/cartel`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">
+                      <span aria-hidden="true">{'🖨️ '}</span>
+                      {t('card.poster', { title: item.title })}
+                    </Link>
+                  ) : null}
+                  {hasPublicPage(item.status) ? (
+                    <Link href={`/${orgSlug}/iniciativas/${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">
+                      {t('card.viewPublic', { title: item.title })}
+                    </Link>
+                  ) : null}
+                </div>
               </li>
             );
           })}

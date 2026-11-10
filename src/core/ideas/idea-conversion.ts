@@ -23,6 +23,18 @@ export interface ConvertedInitiative {
   created: boolean;
 }
 
+/**
+ * Identificador de hucha libre (`WLT-ESC-XXXXXX`). Seis caracteres al azar: una colisión es casi imposible, pero dentro de una transacción un `P2002`
+ * la abortaría entera, así que se comprueba antes. Lo usan la conversión de una idea y el Estudio al crear una campaña.
+ */
+export async function allocateWalletId(tx: Db): Promise<string> {
+  let walletEscrowId = newWalletId();
+  for (let attempt = 1; attempt < WALLET_ATTEMPTS && (await tx.initiative.findUnique({ where: { walletEscrowId }, select: { id: true } })); attempt += 1) {
+    walletEscrowId = newWalletId();
+  }
+  return walletEscrowId;
+}
+
 export async function createInitiativeFromIdea(tx: Db, ideaId: number, now: Date): Promise<ConvertedInitiative> {
   const existing = await tx.initiative.findUnique({ where: { sourceIdeaId: ideaId }, select: { id: true, walletEscrowId: true } });
   if (existing) return { initiativeId: existing.id, walletEscrowId: existing.walletEscrowId, created: false };
@@ -32,11 +44,7 @@ export async function createInitiativeFromIdea(tx: Db, ideaId: number, now: Date
   const { maxCampaignDays } = await tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { maxCampaignDays: true } });
   const closesAt = new Date(now.getTime() + maxCampaignDays * DAY_MS);
 
-  // Seis caracteres al azar: una colisión es casi imposible, pero dentro de una transacción un `P2002` la abortaría entera, así que se comprueba antes.
-  let walletEscrowId = newWalletId();
-  for (let attempt = 1; attempt < WALLET_ATTEMPTS && (await tx.initiative.findUnique({ where: { walletEscrowId }, select: { id: true } })); attempt += 1) {
-    walletEscrowId = newWalletId();
-  }
+  const walletEscrowId = await allocateWalletId(tx);
 
   const initiative = await tx.initiative.create({
     data: {

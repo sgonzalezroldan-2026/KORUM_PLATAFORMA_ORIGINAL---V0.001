@@ -226,6 +226,7 @@ Código vigente: `calculateStudioTicketingTCO` en [src/core/finance/tco.service.
 - **Pasarela por entrada:** `round(cobro × pct / 10000) + fijo`, sobre el **cobro bruto total**. Un cobro de `0` no pasa por Paycomet: coste `0`.
 - **Margen de KORUM:** `gestión − pasarela`, por entrada (`netKorumMarginPerTicketCents`) y con el aforo completo (`netKorumMarginAt100Cents`). `isGatewayCovered` exige margen estrictamente positivo (Regla 02 §6).
 - **Neto de la entidad:** `max(0, bruto − gestión retenida del precio − mantenimiento)`. `maintShortfallCents` recoge el mantenimiento que la recaudación no cubre, para que el neto a `0` no lo esconda.
+- **Meta de la campaña de taquilla (Sprint 4.3):** lo que entra en la hucha con el aforo completo: en `ADD`, `precio × aforo`; en `INC`, `precio × aforo − gastos de gestión retenidos` (con el precio entero como meta una campaña `INC` vendida por completo nunca llegaría al 100 %). En taquilla `Initiative.gatewayFeeCents` se guarda a `0`: la pasarela ya la pagan los gastos de gestión digital y la liquidación no debe restarla otra vez.
 - **Ejemplo (QA-FIN03):** `ADD`, entrada de `500` cts y gestión de `55` cts, con Paycomet `1 % + 9` cts: cobro `555`, pasarela `6 + 9 = 15` y margen `+40` cts.
 
 ---

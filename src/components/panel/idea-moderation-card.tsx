@@ -172,7 +172,7 @@ export function IdeaModerationCard({
       {idea.phase === 'CONVERTED' && idea.initiative ? (
         <p className="rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">
           {t('converted', { wallet: idea.initiative.walletEscrowId })}{' '}
-          <Link href={`/panel/${orgSlug}`} className="underline underline-offset-4">
+          <Link href={`/panel/${orgSlug}/estudio?iniciativa=${idea.initiative.id}`} className="underline underline-offset-4" data-testid="converted-studio-link">
             {t('convertedLink')}
           </Link>
         </p>

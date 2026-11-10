@@ -276,6 +276,16 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 - [ ] **Cobro tardío sin decisión de la entidad:** el comercio recibe un aviso al momento y la entidad un recordatorio (alerta crítica pasado el día 70). ¿Debe fijarse un plazo máximo de decisión con devolución automática si la entidad no decide?
 - [ ] **«No se devuelve nunca» si la entidad incumple la publicidad** (entidad archivada o dada de baja, directorio sin publicar, distintivo retirado): ¿procede devolver por incumplimiento de la contraprestación?
 
+**Abogado (Sprint 4.3 · Estudio, rifas y cartel A4):**
+
+- [ ] **Rifas:** validar el texto del aviso normativo y de la casilla «Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma» (es, ca, en); decidir si basta con que la entidad lo declare (queda en `AuditLog` como `studio.raffle_notice_confirmed`) o si KORUM debe pedir antes de publicar, según la comunidad, el número de autorización o comunicación, las bases, los premios y la fecha del sorteo, y mostrarlos en la ficha y en el cartel.
+- [ ] **PAYCOMET en el cartel impreso:** «Pagos con PAYCOMET» y «el dinero queda retenido en PAYCOMET hasta lograr la meta» necesitan la redacción aprobada por Paycomet y su permiso para usar la marca en material impreso.
+- [ ] **Promesa impresa «se devuelve el 100 % si no se consigue»** (cartel de presupuesto): encaje con la votación de redimensionamiento y con los eventos que no agotan el aforo; en papel no se puede corregir después. El cartel de taquilla usa el texto aprobado el 2026-11-06 («Si el evento se cancela, te devolvemos el 100 %…»).
+- [ ] **«Sorteo certificado»** (plantilla de rifa): saber si puede llamarse así sin notario ni tercero independiente.
+- [ ] **Cambios con la campaña recaudando** (descripción, reto, placa, desglose público): ¿hay que conservar las versiones del texto público que vio cada donante (reclamaciones, contracargos, consumo) o avisar de un cambio sustancial?
+- [ ] **Plantillas redactadas por KORUM** («lo recaudado se destina a las actividades de la comunidad», «sin intermediación de proveedores»): responsabilidad por textos sugeridos y si hace falta un aviso de que la entidad responde de lo que publica.
+- [ ] **Candado semántico:** es un filtro de buena fe; la revisión de las campañas al 0 % por el Super-Admin (`studio.exempt_category_saved`, `studio.semantic_lock_triggered`, `studio.semantic_lock_after_publish`) se construye en el 5.1/5.3.
+
 **Asesoría fiscal (Sprint 4.2f):**
 
 - [ ] **Fee de un cobro tardío** que no llega a ninguna campaña concreta (va a la bolsa y quizá al Fondo): se factura igual que cualquier patrocinio. Si la entidad no lo admite, se rectifica. ¿Correcto?

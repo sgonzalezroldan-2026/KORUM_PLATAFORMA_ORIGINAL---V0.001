@@ -232,6 +232,15 @@
   animation: korum-confetti-fall 1.6s ease-in forwards;
 }
 
+/* Cartel A4 del Estudio (Sprint 4.3): hoja A4 vertical con margen estrecho; solo afecta a la página que lleva esta clase (página con nombre) */
+@page korum-poster {
+  size: A4 portrait;
+  margin: 8mm;
+}
+.korum-poster-sheet {
+  page: korum-poster;
+}
+
 /* Pase imprimible: hoja blanca, sin sombras ni fondos de patio; la cabecera, el pie y los botones llevan `print:hidden` */
 @media print {
   body, .korum-paper-dots, .korum-court-grid {

@@ -40,6 +40,9 @@
 | **Paycomet** | Entidad de pago que cobra, retiene, reparte y devuelve el dinero. KORUM no custodia fondos. |
 | ***Split transfer*** | Reparto de Paycomet desde el saldo cobrado a la cuenta destino de una entidad. Solo dentro de los **90 días** siguientes al cobro. |
 | **KYB** | Verificación de la entidad titular antes de cobrar: CIF, estatutos o escrituras, DNI de quien la representa y certificado de titularidad de su cuenta (más la acreditación de la Ley 49/2002 si la declara). Se suben en *Ajustes* del panel y se envían a revisión. |
+| **Estudio de edición** | Pantalla de la entidad (`/panel/{slug}/estudio`) donde diseña una campaña de presupuesto o de taquilla/rifa, ve la pizarra TCO en vivo y la publica con confirmación. |
+| **Plantilla de campaña** | Punto de partida del Estudio (confort, patio, excursión, becas, festival, rifa…): rellena título, descripción y categoría, nunca el presupuesto de un proveedor. |
+| **Cartel A4 con QR** | Hoja imprimible de una campaña que está recaudando, con QR real hacia su ficha pública, título y mensaje de la entidad y la dirección escrita. |
 | **TCO / pizarra TCO** | Desglose interno del coste total de una campaña en el Estudio (5 líneas en `BUDGET`). |
 | **Desglose de 4 líneas** | Versión pública del presupuesto, que suma exactamente la meta. |
 | **Importe exento** | Cupo anual sin comisión (`exemptLimitCents`, 1.000 € por defecto). |

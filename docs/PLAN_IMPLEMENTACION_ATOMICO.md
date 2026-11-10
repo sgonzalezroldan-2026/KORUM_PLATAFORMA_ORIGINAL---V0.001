@@ -330,7 +330,7 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Gate QA:** `QA-S02` (una bolsa vencida pasa al Fondo de actividades y se liquida a la entidad con doble firma, sin devolver nada al comercio).
   - **Decisiones del promotor (2026-11-10):** justificante = destino escrito + PDF; una persona firmante cambia la regla y lleva la bolsa a una campaña; el cobro tardío y la renovación pagada dos veces ya no se devuelven; una invitación a renovar por año. Detalle en DECISIONES_TECNICAS §2.14 y CUMPLIMIENTO §8 (17–20).
 
-- [ ] **SPRINT 4.3 — Estudio dual, pizarra TCO al céntimo, plantillas de campaña y cartel A4 con QR:**
+- [x] **SPRINT 4.3 — Estudio dual, pizarra TCO al céntimo, plantillas de campaña y cartel A4 con QR:**
   - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `fintech-escrow-auditor` en **Claude Opus 5.5 · alto**.
   - **Alcance (`~950 LOC`):** Estudio (anclas `id="sch-sub-studio"`, `function loadInitiativeIntoStudio`, `function recalcStudioTCO`, `function saveInitiativeFromStudio`) y cartel (`id="poster-modal"`, `function updatePosterPreview`): modos `BUDGET` y `TICKETING` (`EVENT`/`RAFFLE` con aviso y confirmación de normativa), **plantillas de campaña listas para usar**, candado semántico en vivo, placa y reto independientes, duración máxima de 60 días, pizarra de 5 líneas cuadrada al céntimo (`"0,00 €"` limpio) y cartel A4 imprimible con QR real + `tests/e2e/panel-studio-poster.spec.ts`.
   - **Imágenes:** ilustraciones de portada para las plantillas de campaña → SVG (Claude o Gemini) o ilustración en mapa de bits con el **modelo de imagen de Gemini**.
@@ -342,6 +342,7 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-tco-calculator`, `korum-quorum-antifraud`, `korum-ticketing-qr`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` + `korum-brand-visual-director` ➔ `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-S01`.
+  - **Hecho (2026-11-10):** ver la bitácora y [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §2.15. **Queda para el 4.4** (decisión consciente al cerrar el sprint): la imagen representativa de la campaña (`handleInitiativeCoverUpload`, `coverFileId`: subir, quitar sin metadatos, tope de 4 MB por Vercel, casilla de menores como la portada de la entidad) **y que el portal y la tarjeta de WhatsApp la pinten** (hoy `coverFileId` no se muestra en ningún sitio); y el listado en la consola del Super-Admin de las campañas en categorías al 0 % (`studio.exempt_category_saved`, 5.1/5.3).
 
 - [ ] **SPRINT 4.4 — Logros, liquidación con doble firma, redimensionamiento y reembolso del 100 %:**
   - 🤖 **IA recomendada:** constructor **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio) · auditoría **Claude Opus 5.5 · alto**. **Agente constructor:** `korum-backoffice-bi-builder` con modelo `opus` en esta llamada (su valor por defecto es `sonnet`).

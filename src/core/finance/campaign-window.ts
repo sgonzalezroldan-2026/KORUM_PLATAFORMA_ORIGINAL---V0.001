@@ -30,6 +30,14 @@ export class InitiativeNotPublishableError extends Error {
   }
 }
 
+/** La meta de la campaña ya no es la que aceptó quien publica: alguien la cambió entre medias. No se publica una cifra distinta de la aceptada. */
+export class PublishGoalChangedError extends Error {
+  constructor(initiativeId: number) {
+    super(`La meta de la iniciativa ${initiativeId} ha cambiado mientras se publicaba.`);
+    this.name = 'PublishGoalChangedError';
+  }
+}
+
 export class SplitWindowExpiredError extends Error {
   readonly missingCents: number;
 
@@ -90,12 +98,31 @@ export function planPayoutSplits(candidates: readonly SplitCandidate[], netCents
   return splits;
 }
 
-/** Publica una campaña: comprueba la duración, reserva sus cupos y la pasa a `FUNDRAISING`, todo o nada. Repetirla no hace nada. */
-export async function publishInitiative(db: Db, initiativeId: number, now: Date = new Date()): Promise<{ published: boolean }> {
+/**
+ * Publica una campaña: comprueba la duración, reserva sus cupos y la pasa a `FUNDRAISING`, todo o nada. Repetirla no hace nada.
+ * Con `expectedGoalCents` (el Estudio manda la meta que aceptó quien publica) la fila se bloquea **antes** de leer nada y solo si sigue valiendo esa meta: un
+ * guardado a la vez espera su turno y ya no puede cambiar presupuesto ni cupos entre la comprobación y la reserva.
+ */
+export async function publishInitiative(db: Db, initiativeId: number, now: Date = new Date(), options: { expectedGoalCents?: number } = {}): Promise<{ published: boolean }> {
   return inTransaction(db, async (tx) => {
-    const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: { status: true, closesAt: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true } });
+    if (options.expectedGoalCents !== undefined) {
+      const locked = await tx.initiative.updateMany({ where: { id: initiativeId, status: 'BUDGETING', goalCents: options.expectedGoalCents }, data: { updatedAt: now } });
+      if (locked.count === 0) {
+        const current = await tx.initiative.findUnique({ where: { id: initiativeId }, select: { status: true } });
+        if (current?.status === 'BUDGETING') throw new PublishGoalChangedError(initiativeId);
+      }
+    }
+    const initiative = await tx.initiative.findUniqueOrThrow({
+      where: { id: initiativeId },
+      select: { status: true, closesAt: true, goalCents: true, stage: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true, organization: { select: { kybStatus: true } } }
+    });
     if (initiative.status === 'FUNDRAISING') return { published: false };
     if (initiative.status !== 'BUDGETING') throw new InitiativeNotPublishableError(initiativeId, `está en estado ${initiative.status}`);
+    // Una campaña cobra dinero de familias: sin meta no hay qué cobrar (una idea convertida nace con meta 0), sin curso beneficiario no se sabe a quién
+    // sirve y sin los documentos del titular verificados el dinero no se podría liquidar después (PRD §4, `BUDGETING ──publicar (KYB verificado)──► FUNDRAISING`).
+    if (initiative.goalCents <= 0) throw new InitiativeNotPublishableError(initiativeId, 'no tiene meta: falta el presupuesto');
+    if (initiative.stage.trim() === '') throw new InitiativeNotPublishableError(initiativeId, 'falta indicar a quién beneficia');
+    if (initiative.organization.kybStatus !== 'VERIFIED') throw new InitiativeNotPublishableError(initiativeId, 'los documentos del titular aún no están verificados');
     if (initiative.closesAt.getTime() <= now.getTime()) throw new InitiativeNotPublishableError(initiativeId, 'su fecha de cierre ya ha pasado');
     // Publicada, los premios ya no se pueden cambiar: sin ellos la rifa vendería y luego no podría sortearse ni liquidarse.
     if (initiative.ticketSubtype === 'RAFFLE' && (initiative.rafflePrizeCount === null || initiative.ticketMax === null || initiative.rafflePrizeCount > initiative.ticketMax)) {

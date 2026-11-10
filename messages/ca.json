@@ -1607,7 +1607,8 @@
       "achievements": "Fites",
       "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}",
       "settings": "Configuració",
-      "fund": "Fons d’activitats"
+      "fund": "Fons d’activitats",
+      "studio": "Estudi"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1677,7 +1678,9 @@
         "progress": "Avenç de «{title}»: {percent} %",
         "contributions": "{count, plural, =0 {Encara sense aportacions} one {💛 1 aportació} other {💛 # aportacions}}",
         "closes": "Tanca el {date}",
-        "viewPublic": "Veure la fitxa pública de «{title}»"
+        "viewPublic": "Veure la fitxa pública de «{title}»",
+        "editInStudio": "Editar a l’Estudi: {title}",
+        "poster": "Cartell A4 amb QR: {title}"
       },
       "steps": {
         "moderation": "1. Moderació",
@@ -1724,10 +1727,13 @@
           "studio": {
             "title": "Crear la campanya",
             "done": "La campanya està creada.",
-            "todo": "L'Estudi d'edició arribarà molt aviat: des d'allà dissenyareu la campanya, amb el pressupost quadrat al cèntim."
+            "todo": "Des de l’Estudi d’edició dissenyareu la campanya, amb el seu pressupost quadrat al cèntim, i la publicareu quan els documents estiguin verificats.",
+            "cta": "Obrir l’Estudi d’edició"
           }
         }
-      }
+      },
+      "newInitiative": "+ Nova iniciativa",
+      "newTicketing": "+ Nova taquilla / rifa"
     },
     "medals": {
       "title": "Medalles KORUM",
@@ -1845,7 +1851,7 @@
         "hint": "Títol de 8 a 90 caràcters i descripció de 20 a 600. Pots corregir errates o aclarir la proposta: la família rebrà un avís. El termini de signatures comença el dia que l’aproves."
       },
       "converted": "Doble signatura completa: ja és una iniciativa en pressupost (guardiola {wallet}).",
-      "convertedLink": "Veure-ho al quadre de comandament",
+      "convertedLink": "Editar a l’Estudi",
       "actions": {
         "approve": "Aprovar i obrir a signatures",
         "reject": "Desestimar"
@@ -2613,6 +2619,280 @@
         "signatureLine": "{role}: {name}, el {date}",
         "legal": "KORUM és una plataforma tecnològica i no custodia fons. Els cobraments i els enviaments els executa PAYCOMET, entitat de pagament autoritzada. La destinació la declara l’entitat; KORUM no comprova l’ús dels diners. Aquest justificant no és una factura ni un certificat fiscal.",
         "generated": "Document generat el {date}."
+      }
+    },
+    "studio": {
+      "title": "Estudi d’edició",
+      "intro": "Aquí dissenyeu la campanya: el pressupost del vostre proveïdor, la pissarra interna quadrada al cèntim i el que veuran les famílies. KORUM mai cobra comissions als proveïdors.",
+      "back": "← Tornar a l’Estudi",
+      "formLabel": "Dades de la campanya",
+      "picker": {
+        "newTitle": "Començar una campanya",
+        "newBudget": "+ Nova iniciativa",
+        "newTicketing": "+ Nova taquilla / rifa",
+        "tooManyDrafts": "Ja teniu {max} esborranys oberts. Publiqueu o acabeu-ne algun abans de crear-ne un altre.",
+        "templatesTitle": "Plantilles a punt per fer servir",
+        "templatesHint": "Omplen el títol i la descripció. El pressupost el poseu vosaltres amb el del vostre proveïdor: KORUM no proposa preus.",
+        "useTemplate": "Fer servir la plantilla",
+        "existingTitle": "Les vostres campanyes",
+        "existingEmpty": "Encara no hi ha cap campanya. Comenceu amb una plantilla o en blanc.",
+        "edit": "Editar a l’Estudi",
+        "open": "Obrir"
+      },
+      "format": {
+        "BUDGET": "Pressupost / obra",
+        "TICKETING": "Taquilla o rifa"
+      },
+      "templates": {
+        "climate": {
+          "name": "Confort a les aules",
+          "summary": "Ventilació, climatització o tendals per a la calor i el fred.",
+          "title": "Aules més fresques i confortables",
+          "description": "Volem millorar el confort de les aules amb ventilació i ombra perquè els dies de calor i de fred s’estudiï millor. El pressupost és el del nostre proveïdor i es detalla a la fitxa."
+        },
+        "playground": {
+          "name": "Pati i esport",
+          "summary": "Pistes, porteries, jocs i material esportiu.",
+          "title": "Un pati millor per jugar i fer esport",
+          "description": "Renovarem el pati amb jocs i material esportiu perquè tots els nens i nenes tinguin espai on moure’s. El pressupost és el del nostre proveïdor."
+        },
+        "kit": {
+          "name": "Equipaments i material",
+          "summary": "Equipacions, pilotes i material per als equips.",
+          "title": "Equipacions i material per a tots els equips",
+          "description": "Volem que cada jugador i jugadora tingui la seva equipació i que els entrenaments comptin amb bon material. El pressupost és el del nostre proveïdor."
+        },
+        "tech": {
+          "name": "Tecnologia i recursos",
+          "summary": "Ordinadors, projectors i recursos digitals.",
+          "title": "Tecnologia per aprendre i crear",
+          "description": "Amb aquesta campanya dotarem la comunitat d’equips i recursos digitals per aprendre i crear millor. El pressupost és el del nostre proveïdor."
+        },
+        "trip": {
+          "name": "Excursió o viatge",
+          "summary": "Sortides i viatges que uneixen la comunitat.",
+          "title": "Excursió de final de curs per a tothom",
+          "description": "Volem que ningú es quedi sense l’excursió de final de curs. Allò que es recapta cobreix el transport i les entrades de qui hi participa."
+        },
+        "solidarity": {
+          "name": "Beques i solidaritat",
+          "summary": "Ajudes perquè ningú es quedi fora.",
+          "title": "Beques perquè ningú es quedi fora",
+          "description": "Creem un fons d’ajudes perquè cap família renunciï a les activitats del curs per motius econòmics."
+        },
+        "festival": {
+          "name": "Festival amb entrades",
+          "summary": "Entrades amb aforament controlat i codi QR.",
+          "title": "Festival de final de curs",
+          "description": "Venda d’entrades amb aforament controlat i codi QR per al nostre festival. El que es recapti es destina a les activitats de la comunitat."
+        },
+        "raffle": {
+          "name": "Rifa solidària",
+          "summary": "Butlletes numerades amb sorteig certificat.",
+          "title": "Rifa solidària de la comunitat",
+          "description": "Butlletes numerades amb sorteig en pantalla i acta. El que es recapti es destina a les activitats de la comunitat."
+        }
+      },
+      "rewardPresets": {
+        "cinema": "Tarda de cinema amb crispetes al saló d’actes",
+        "games": "Jornada especial de jocs de pati i música",
+        "noHomework": "Divendres sense deures i berenar col·lectiu"
+      },
+      "stages": {
+        "all": "Tota la comunitat",
+        "infantil": "Infantil",
+        "primaria": "Primària",
+        "eso": "ESO",
+        "base": "Equips base",
+        "senior": "Equips superiors",
+        "students": "Alumnat",
+        "families": "Famílies i socis"
+      },
+      "fields": {
+        "title": "Títol de la iniciativa, esdeveniment o rifa",
+        "category": "Categoria",
+        "categoryChoose": "Trieu una categoria",
+        "ticketingCategory": "Taquilla i rifes",
+        "stage": "A qui beneficia",
+        "stageChoose": "Trieu a qui beneficia",
+        "closesOn": "Data límit",
+        "closesOnHint": "Com a màxim {days} dies des d’avui.",
+        "description": "Descripció",
+        "ticketingTitle": "Taquilla o rifa amb codi QR",
+        "ticketSubtype": "Tipus",
+        "subtypeEvent": "Entrada amb control d’aforament",
+        "subtypeRaffle": "Butlleta de rifa numerada",
+        "ticketPrice": "Preu de l’entrada o butlleta (€)",
+        "ticketMax": "Aforament màxim o nombre de butlletes",
+        "digitalFee": "Despeses de gestió digital",
+        "digitalFeeHint": "Les fixa KORUM; les veieu aquí per calcular.",
+        "digitalFeeValue": "{fixed} + {pct} ({unit} per unitat)",
+        "venue": "Lloc o data de l’acte o del sorteig",
+        "venueHint": "Opcional. Es mostra a la fitxa pública.",
+        "feeMode": "Despeses de gestió digital",
+        "feeModeAdd": "Sumar-les al comprador",
+        "feeModeInc": "Assumir-les dins del preu de l’entrada",
+        "raffleNotice": "Les rifes i tómboles són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia segons l’import. Els premis en espècie no es poden bescanviar per diners.",
+        "rafflePrizes": "Premis que se sortegen",
+        "rafflePrizesHint": "Es fixa abans de publicar i no es pot canviar després: sense aquest nombre no es podria sortejar.",
+        "raffleConfirm": "Confirmem que la rifa compleix la normativa de la nostra comunitat autònoma",
+        "budgetTitle": "Pressupost",
+        "costMat": "Pressupost del proveïdor (€)",
+        "costMatHint": "El del vostre proveïdor, sense comissions de KORUM.",
+        "costInst": "Instal·lació o obra (€)",
+        "contingency": "% de reserva de manteniment, riscos i contingència",
+        "rewardTitle": "Repte col·lectiu i placa",
+        "showBreakdown": "Publicar a la fitxa pública el desglossament del pressupost quadrat al 100 %",
+        "rewardEnabled": "Associar un premi de repte col·lectiu per grup",
+        "rewardHint": "Es mostra només en positiu, sense assenyalar ningú.",
+        "plaque": "Incloure placa commemorativa de la promoció",
+        "rewardPreset": "Premi del repte",
+        "rewardCustom": "Escriure un premi propi…",
+        "rewardCustomLabel": "Premi del repte",
+        "targetFamilies": "Meta de famílies per grup",
+        "amountInvalid": "Escriviu un import vàlid, per exemple 1.250,50",
+        "amountNegative": "L’import no pot ser negatiu",
+        "amountTooBig": "L’import és massa gran",
+        "publicTitle": "El que veuen les famílies"
+      },
+      "board": {
+        "label": "Pissarra TCO de la campanya",
+        "title": "Auditoria interna de l’entitat",
+        "medal": {
+          "1": "Bronze",
+          "2": "Plata",
+          "3": "Or"
+        },
+        "base": "Proveïdor + instal·lació",
+        "contingency": "Reserva de manteniment, riscos i contingència ({pct})",
+        "net": "Net garantit per a l’entitat",
+        "internalTitle": "Desglossament intern d’exempcions i passarel·la",
+        "line1": "1. Import exempt per defecte",
+        "atZero": "{amount} al 0 %",
+        "line2": "2. Beca exempta per medalla",
+        "atZeroMedal": "{amount} al 0 % (medalla {medal} · estalvi {saved})",
+        "line3": "3. Resta subjecta a tram ({taxable} al {rate})",
+        "line3Exempt": "3. Comissió de la plataforma (categoria al 0 %)",
+        "line4": "4. Càrrec de manteniment de la plataforma",
+        "line5": "5. Cost de la passarel·la de pagament (Paycomet)",
+        "gatewayFormula": "Com es calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportació estimada} other {# aportacions estimades}} (segons l’aportació suggerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} d’arrodoniment a l’euro. Suma quadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
+        "ticketGross": "Recaptació bruta de l’aforament (aforament × preu)",
+        "ticketGrossRaffle": "Recaptació bruta de les butlletes (butlletes × preu)",
+        "ticketModelTitle": "Despeses de gestió digital (taquilla amb QR)",
+        "ticketDigitalFee": "Despeses de gestió digital per entrada",
+        "perUnitAdd": "{amount} per unitat (se sumen al comprador)",
+        "perUnitInc": "{amount} per unitat (inclosos al preu)",
+        "ticketGateway": "Cost de la passarel·la (cobert per la gestió)",
+        "ticketMaint": "Càrrec de manteniment de la plataforma",
+        "ticketNet": "Net garantit per a l’entitat",
+        "maintShortfall": "La recaptació no arriba a cobrir el manteniment: faltarien {amount}.",
+        "gatewayNotCovered": "Amb aquests preus les despeses de gestió no cobreixen la passarel·la ({amount} per entrada). Ho revisa KORUM; no canvia el que rep l’entitat.",
+        "badgeTicketing": "Taquilla o rifa amb QR",
+        "badgeExempt": "Categoria al 0 % de comissió",
+        "badgeBracket": "Tram {rate}",
+        "badgeExact": "Desglossament exacte",
+        "goalLabel": "Meta pública final exacta",
+        "goalLabelTicketing": "A la guardiola amb l’aforament complet"
+      },
+      "blockers": {
+        "title": "Per publicar falta:",
+        "kybLink": "Anar als documents",
+        "KYB": "Els documents del titular encara no estan verificats.",
+        "GOAL_ZERO": "Falta el pressupost: la meta no pot ser 0,00 €.",
+        "STAGE_MISSING": "Indiqueu a qui beneficia la campanya.",
+        "DESCRIPTION_MISSING": "Falta la descripció.",
+        "TICKET_MAX_ZERO": "Indiqueu l’aforament o el nombre de butlletes.",
+        "TICKET_PRICE_ZERO": "El preu no pot ser 0,00 €: sense import no hi ha res a guardar a la guardiola.",
+        "TICKET_FEE_EXCEEDS_PRICE": "Amb les despeses de gestió dins del preu no quedaria res per a la guardiola: pugeu el preu o sumeu les despeses al comprador.",
+        "RAFFLE_PRIZES": "Indiqueu quants premis se sortegen (com a màxim, tants com butlletes).",
+        "RAFFLE_NOTICE": "Confirmeu que la rifa compleix la normativa de la vostra comunitat autònoma.",
+        "INVALID_CATEGORY": "Trieu una categoria de millora.",
+        "CLOSING_INVALID": "La data de tancament no és vàlida.",
+        "CLOSING_PAST": "La data de tancament ja ha passat: trieu-ne una de posterior a avui.",
+        "CLOSING_TOO_LATE": "La campanya duraria més del màxim permès: trieu una data de tancament anterior.",
+        "RAFFLE_PRIZES_EXCEED": "No pot haver-hi més premis que butlletes.",
+        "TITLE_MISSING": "Escriviu un títol d’almenys 3 lletres.",
+        "MAINT_EXCEEDS_TAKINGS": "Amb aquest preu i aquest aforament la recaptació no cobreix el manteniment de la plataforma: pugeu el preu o l’aforament."
+      },
+      "errors": {
+        "INVALID_INPUT": "Hi ha dades que no són vàlides. Reviseu el formulari.",
+        "PROBLEMS": "No s’ha desat. Corregiu això primer:",
+        "BLOCKED": "S’ha desat l’esborrany, però encara no es pot publicar:",
+        "NOT_EDITABLE": "Aquesta campanya ja no es pot editar.",
+        "STALE_BOARD": "Les quotes de l’entitat han canviat i la meta ja no és la que vau veure. Hem recalculat la pissarra: reviseu-la i torneu a publicar.",
+        "QUOTA": "L’entitat ja no té prou quota per a aquesta campanya. S’ha desat l’esborrany: reviseu la pissarra.",
+        "NOT_PUBLISHABLE": "No s’ha pogut publicar ara. S’ha desat l’esborrany: reviseu que tot estigui complet i torneu-ho a provar.",
+        "TOO_MANY_DRAFTS": "Hi ha massa esborranys oberts. Publiqueu o acabeu-ne algun abans de crear-ne un altre.",
+        "FORBIDDEN": "No teniu permís per fer això.",
+        "generic": "Alguna cosa ha fallat. No s’ha perdut res: torneu-ho a provar.",
+        "SEMANTIC_LOCK": "No s’ha desat: el text parla d’equipament o infraestructura i aquesta campanya es va publicar en una categoria al 0 % de comissió. Mantingueu la descripció original."
+      },
+      "actions": {
+        "publish": "Desar i publicar a KORUM",
+        "publishing": "Publicant…",
+        "publishHint": "El botó s’activa quan no falti res de la llista.",
+        "saveDraft": "Desar esborrany",
+        "saving": "Desant…",
+        "saveChanges": "Desar canvis",
+        "discard": "Descartar aquest esborrany",
+        "discarding": "Descartant…"
+      },
+      "confirm": {
+        "title": "Publicar la campanya amb una meta de {goal}?",
+        "body": "En publicar es reserven les quotes de l’entitat i ja no es poden canviar el pressupost, el preu, l’aforament ni la data de tancament ({date}). Les famílies podran participar des d’aquest moment.",
+        "yes": "Sí, publicar",
+        "no": "No, continuar editant",
+        "refund": "Si no s’arriba a la meta, es retorna el 100 % a cada família."
+      },
+      "saved": {
+        "draft": "Esborrany desat. Meta actual: {goal}.",
+        "soft": "Canvis desats."
+      },
+      "published": {
+        "title": "Campanya publicada a la guardiola {wallet}!",
+        "body": "Les famílies ja la poden veure i aportar. Imprimiu el cartell amb el seu QR o compartiu l’enllaç."
+      },
+      "lock": {
+        "soft": "La campanya ja està recaptant: només es poden canviar la descripció, el desglossament públic, el repte i la placa. El pressupost, el preu i la data ja els fan servir les aportacions.",
+        "all": "Aquesta campanya ja està tancada: es mostra sense poder canviar res."
+      },
+      "lockAlert": {
+        "title": "Avís d’auditoria de categoria",
+        "body": "El text parla de «{term}», que és equipament o infraestructura: la pissarra ja aplica la comissió per trams. Si no ho és, canvieu el text; si ho és, trieu una categoria amb trams."
+      },
+      "links": {
+        "public": "Veure la fitxa pública",
+        "poster": "Cartell A4 amb QR"
+      },
+      "poster": {
+        "back": "← Tornar a la campanya",
+        "title": "Cartell de «{title}»",
+        "intro": "Canvieu el títol i el missatge, comproveu el full i premeu Imprimir. El codi QR porta a la fitxa pública de la campanya.",
+        "customTitle": "Títol del cartell",
+        "customMessage": "Missatge del cartell",
+        "print": "Imprimir cartell A4",
+        "downloadQr": "Descarregar només el QR",
+        "sheetLabel": "Cartell A4 per imprimir",
+        "platform": "KORUM · plataforma d’aportacions",
+        "payments": "Pagaments amb PAYCOMET",
+        "withKorum": "{entity} × KORUM",
+        "qrLabel": "Codi QR que porta a la campanya",
+        "guarantee": "Guardiola de la iniciativa {wallet}: els diners queden retinguts a PAYCOMET fins a assolir la meta i es retorna el 100 % si no s’aconsegueix. Sense intermediació de proveïdors.",
+        "defaultTitle": "Suma’t i millorem la nostra comunitat!",
+        "defaultMessage": "Escaneja el codi QR amb el mòbil per veure el projecte i aportar amb Bizum o targeta en 10 segons.",
+        "unavailable": {
+          "title": "Aquest cartell encara no està disponible",
+          "description": "El cartell es genera quan la campanya està recaptant: fins llavors el seu codi QR no portaria a cap pàgina. Publiqueu-la des de l’Estudi i torneu aquí."
+        },
+        "defaultMessageTickets": "Escaneja el codi QR amb el mòbil, tria la teva entrada i paga amb Bizum o targeta en 10 segons.",
+        "defaultMessageRaffle": "Escaneja el codi QR amb el mòbil, tria les teves butlletes i paga amb Bizum o targeta en 10 segons.",
+        "guaranteeTickets": "Pagament segur amb PAYCOMET. Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament. Guardiola de la iniciativa {wallet}."
+      },
+      "discard": {
+        "title": "Voleu descartar aquest esborrany?",
+        "body": "Se suprimeix de la vostra llista i no es pot recuperar. No s’ha cobrat ni reservat res, així que no hi ha res a retornar.",
+        "yes": "Sí, descartar",
+        "no": "No, conservar-lo"
       }
     }
   },

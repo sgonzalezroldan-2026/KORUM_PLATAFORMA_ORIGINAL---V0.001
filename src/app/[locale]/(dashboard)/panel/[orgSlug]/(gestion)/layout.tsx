@@ -28,8 +28,11 @@ export default async function PanelLayout({ children, params }: { children: Reac
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <ConsoleHeader title={organization.name} subtitle={t('headerSubtitle')} />
-      <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} pendingApprovals={pendingApprovals} />
+      {/* Al imprimir (el cartel del Estudio) solo sale la hoja: las cabeceras no. */}
+      <div className="print:hidden">
+        <ConsoleHeader title={organization.name} subtitle={t('headerSubtitle')} />
+        <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} pendingApprovals={pendingApprovals} />
+      </div>
       <main id="contenido" className="korum-paper-dots flex-1">
         {children}
       </main>
