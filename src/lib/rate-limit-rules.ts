@@ -12,6 +12,9 @@ export const WEBHOOK_INVALID_RULE: RateLimitRule & PurgeRule = { prefix: 'webhoo
 /** Peticiones de enlace y código de firma por persona y objetivo: evita una avalancha de correos a quien firma. */
 export const SIGNATURE_REQUEST_RULE: RateLimitRule & PurgeRule = { prefix: 'double-check:req:', limit: 5, windowMs: 10 * 60_000 };
 
+/** Pedir una liquidación del Fondo de actividades (y retirarla y volver a pedirla) y reintentar su envío, por entidad (Sprint 4.2f). */
+export const ACTIVITY_FUND_RULE: RateLimitRule & PurgeRule = { prefix: 'activity-fund:', limit: 10, windowMs: 60 * 60_000 };
+
 /** Emails de acceso (enlace, código, invitación) por destinatario: nadie puede llenar la bandeja de otra persona pidiendo enlaces. */
 export const AUTH_EMAIL_RULE: RateLimitRule & PurgeRule = { prefix: 'auth:mail:', limit: 5, windowMs: 15 * 60_000 };
 

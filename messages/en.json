@@ -395,7 +395,8 @@
       "payout": "Release the funds for “{title}”",
       "codeLabel": "Your 6-digit code",
       "cta": "Sign now",
-      "footnote": "The link works once. If you were not expecting this signature, do not complete it and tell the other signer."
+      "footnote": "The link works once. If you were not expecting this signature, do not complete it and tell the other signer.",
+      "activityFund": "Pay out the Activity Fund: “{title}”"
     },
     "split": {
       "expiring": {
@@ -468,7 +469,8 @@
         "preheader": "Thank you for another year.",
         "title": "Thank you for another year!",
         "body": "We have received your renewal. Your {level} Friendly Business badge for {organization} is valid until {date}.",
-        "placed": "Your {amount} in full is already adding up in: {list}."
+        "placed": "Your {amount} in full is already adding up in: {list}.",
+        "chained": "You had already renewed this year: this second payment renews the following year, until {date}. If it was a mistake, write to us from the support page."
       },
       "reassigned": {
         "subject": "Your sponsorship of {organization} keeps adding up",
@@ -487,6 +489,40 @@
         "bodyManual": "{organization} will choose which campaign to take your {amount} to. It remains held by PAYCOMET until {deadline}; if it has not been placed by then, it will go to the organisation for its activities this school year.",
         "visible": "In the meantime you still appear as a friendly business.",
         "deadline": "Held until"
+      },
+      "renewalInvite": {
+        "subject": "{organization} invites you to remain a Friendly business",
+        "preheader": "An invitation, with no commitment and no automatic charges.",
+        "title": "Shall we carry on for another year?",
+        "body": "{organization} would like to invite you to renew your Friendly business badge ({amount} sponsorship), which {verb} on {date}. It is only an invitation: if you would like to continue, you can renew it with the button below until {until}. There are no automatic charges and we will not write to you about this again this year.",
+        "amount": "Amount",
+        "date": "You can renew until",
+        "cta": "See the renewal",
+        "verbFuture": "expires",
+        "verbPast": "expired"
+      },
+      "toEntityFund": {
+        "subject": "Your contribution goes to {organization} for its activities",
+        "preheader": "There was no campaign to take it to in time.",
+        "title": "Your contribution keeps adding up",
+        "body": "{organization} had no campaign to take your {amount} to before its deadline. That is why it goes to its Activity Fund: the organisation will use it for its activities this school year, with the signature of both of its officers.",
+        "why": "This is what the sponsorship terms provide: your contribution is for the organisation and is not returned once the business has been accepted. Your advertising stays the same."
+      },
+      "awaitingDecision": {
+        "subject": "A friendly business is waiting for your decision at {organization}",
+        "preheader": "Its money cannot be moved until you decide.",
+        "title": "Your decision on a business is pending",
+        "body": "A business has paid its {amount} sponsorship in a campaign that is no longer raising money. Until you decide whether to accept it, its money cannot be taken to another campaign. If you accept it after {deadline}, it can only go to your Activity Fund; if you do not accept it, we will refund 100%.",
+        "what": "If you accept it before then, it will go to your campaigns according to your rule.",
+        "deadline": "Decide before",
+        "cta": "Review the business"
+      },
+      "lateReceived": {
+        "subject": "Your payment to {organization} arrived after the campaign had closed",
+        "preheader": "The organisation will decide; your money is still held by PAYCOMET.",
+        "title": "Your payment arrived a little late",
+        "body": "We have received your {amount} sponsorship, but when it arrived the campaign of {organization} was no longer raising money. Your money is still held by PAYCOMET while the organisation decides whether to accept you as a friendly business.",
+        "next": "If {organization} accepts you, your contribution will go to another of its campaigns or, if there is none in time, to its Activity Fund. If it does not accept you, we will refund 100% of what you paid, including the management fee and its VAT."
       }
     },
     "tax": {
@@ -626,6 +662,34 @@
         },
         "why": "If you do not recognise this change, contact support as soon as possible.",
         "cta": "View the signing team"
+      }
+    },
+    "activityFund": {
+      "amount": "Amount",
+      "deadline": "Pay out before",
+      "how": "To receive it in your account, one of the two signers requests the payout in the panel, stating what the money will be used for, and you both sign with your code.",
+      "cta": "Open the Activity Fund",
+      "received": {
+        "subject": "{amount} has gone to the Activity Fund of {organization}",
+        "preheader": "Money from a friendly business for your activities.",
+        "title": "New money in your Activity Fund",
+        "body": "{amount} from a friendly business has gone to your Activity Fund: there was no campaign to take it to in time. It is money for the organisation’s activities. Pay it out before {deadline}: after that, PAYCOMET could no longer send it."
+      },
+      "reminder": {
+        "subject": "Pay out the Activity Fund of {organization} before {deadline}",
+        "preheader": "PAYCOMET’s deadline to send the money is running out.",
+        "title": "The deadline to pay out the Fund is running out",
+        "body": "Your Activity Fund holds {amount} that has not been paid out. PAYCOMET can only send it to your account until {deadline}.",
+        "footnote": "If you have already requested the payout, both signatures still need to be completed."
+      },
+      "paid": {
+        "subject": "{amount} from the Activity Fund sent to {organization}",
+        "preheader": "The payout is on its way to your account.",
+        "title": "Activity Fund paid out",
+        "body": "PAYCOMET has sent the {amount} of payout {reference} of the Activity Fund to the organisation’s account.",
+        "receipt": "In the panel you have its PDF receipt, with the purpose you signed and which businesses the money came from.",
+        "reference": "Reference",
+        "cta": "Open the Activity Fund"
       }
     }
   },
@@ -1542,7 +1606,8 @@
       "approvals": "Approvals",
       "achievements": "Achievements",
       "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}",
-      "settings": "Settings"
+      "settings": "Settings",
+      "fund": "Activity Fund"
     },
     "header": {
       "label": "Organisation management",
@@ -1819,7 +1884,8 @@
         "INVOICING_UNAVAILABLE": "We can’t cancel the management invoice right now because the issuer details are missing in KORUM. Please try later or contact support.",
         "POOL_CHANGED": "This business no longer has money waiting in its pool: another signatory has moved it to a campaign, or the daily task has. Reload the page.",
         "TARGET_NOT_ELIGIBLE": "That campaign cannot receive it: it is no longer fundraising or it closes after its payment window runs out. Choose another.",
-        "RENEWAL_NOT_OPEN": "The link cannot be sent right now: the business has already renewed, does not renew every year or its badge is outside the renewal period."
+        "RENEWAL_NOT_OPEN": "The link cannot be sent now: the business has already renewed or its badge is not within the renewal period.",
+        "ALREADY_INVITED": "You already sent this year’s invitation to renew: it is only sent once."
       },
       "doubleCheck": {
         "label": "Dual sign-off for the idea",
@@ -1886,7 +1952,19 @@
         "partialNotified": "We have sent the link to the other signer to complete the dual sign-off.",
         "partialWaiting": "The other person still needs to sign. Once they have two-step verification turned on, they can request their link from Approvals.",
         "cta": "Back to Approvals",
-        "celebrate": "An idea from the families is starting to come true!"
+        "celebrate": "An idea from the families is starting to come true!",
+        "ctaFund": "Back to the Activity Fund",
+        "fund": {
+          "executed": "Both signatures are recorded and the money is on its way to the organisation’s account. The receipt is in the Activity Fund.",
+          "pending": "Both signatures are recorded. Sending to the organisation’s account has not finished yet: we will retry and you can follow it in the Activity Fund.",
+          "changed": "The Fund has changed since the payout was requested (a business reversed its payment). We have cancelled it: request it again with what there is now.",
+          "blocked": "Both signatures are recorded, but we cannot send the money yet: the verified holder’s documents or the destination account are missing. Check it in Settings.",
+          "changedTitle": "The payout has been cancelled",
+          "blockedTitle": "Signed, but it cannot be sent yet",
+          "expiredTitle": "The payout has been cancelled",
+          "expired": "A charge in the payout has passed the 90-day period in which PAYCOMET can send it. We have cancelled it: request it again with what can be paid out and the KORUM team will review the rest."
+        },
+        "ctaDocuments": "Go to the holder’s documents"
       },
       "what": "What you are signing",
       "ideaMeta": "{alias} · {category} · {votes} verified signatures",
@@ -1923,7 +2001,11 @@
         "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a Paycomet destination account yet.",
         "RATE_LIMITED": "You have requested several links in a row. Please wait a few minutes before asking for another."
       },
-      "retry": "Check the link again"
+      "retry": "Check the link again",
+      "fundMeta": "{amount} · {count, plural, one {from # business} other {from # businesses}}",
+      "fundPurpose": "What it will be used for (written by the organisation):",
+      "fundEffect": "With both signatures, the money is sent to the organisation’s account. This cannot be undone.",
+      "fundTitle": "Payout {reference} from the Activity Fund"
     },
     "sponsors": {
       "title": "{count, plural, =0 {Friendly businesses} one {Friendly businesses · # to review} other {Friendly businesses · # to review}}",
@@ -2008,7 +2090,7 @@
       "moved": "This business’s sponsorship in full",
       "rule": {
         "label": "Where renewal money, and money from campaigns that don’t go ahead, is sent",
-        "help": "An admitted business’s money is not refunded. When it renews for another year, or the campaign it sponsored does not go ahead (or has part of its Matching 2x pool left over), it goes to another of your active campaigns. If there are none, it waits, held by PAYCOMET (for {days} days at most and always within 85 days of its payment) and, if it is not placed in time, it goes to the organisation for its activities.",
+        "help": "An admitted business’s money is not refunded. When it renews for another year, or the campaign it sponsored does not go ahead (or has part of its Matching 2x pool left over), it goes to another of your active campaigns. If there are none, it waits, held by PAYCOMET (for {days} days at most and always within 70 days of its payment) and, if it is not placed in time, it goes to your Activity Fund.",
         "options": {
           "SOONEST": "To the active campaign that closes first",
           "PROPORTIONAL": "Shared among the active ones, according to what each still needs",
@@ -2044,9 +2126,15 @@
         "summaryFor": "for {name}",
         "assignOption": "{title} · closes on {date}",
         "assignHelp": "This cannot be undone from here. We let the business know by email.",
-        "renewalOpensOn": "You will be able to send it the renewal link from {date}."
+        "renewalOpensOn": "You will be able to send it the renewal link from {date}.",
+        "fund": "{amount} in your Activity Fund",
+        "sendInvite": "Invite it to renew (once this year)",
+        "inviteHelp": "It did not ask to renew every year. You can send it an invitation with the payment link; only one per year.",
+        "inviteSent": "We have sent {name} the invitation to renew.",
+        "invitedOn": "You sent it the invitation to renew on {date}."
       },
-      "renewedElsewhere": "Already renewed: its new year appears on another card in this list."
+      "renewedElsewhere": "Already renewed: its new year appears on another card in this list.",
+      "lateCharge": "Its payment arrived when the campaign was no longer raising money. Its money is waiting in its pool: if you accept it, it will go to your campaigns according to your rule (or, if its deadline passes, to your Activity Fund); if you do not accept it, we will refund 100%."
     },
     "settings": {
       "metaTitle": "Entity settings",
@@ -2404,6 +2492,128 @@
           "RATE_LIMITED": "You have uploaded many images in a short time. Please try again in an hour."
         }
       }
+    },
+    "fund": {
+      "metaTitle": "Activity Fund",
+      "title": "Activity Fund",
+      "intro": "This is where money from friendly businesses you have accepted arrives when it could not be taken to any campaign before its deadline. It is not returned to the business: it is for the organisation’s activities. To receive it in your account, one person requests it stating what it will be used for and you both sign.",
+      "summary": {
+        "title": "Available to pay out",
+        "deadline": "Pay it out before {date}: after that PAYCOMET could no longer send it.",
+        "where": "In the meantime, the money remains held by PAYCOMET, the authorised payment institution that handles charges and transfers.",
+        "stuck": "{amount} can no longer be sent because PAYCOMET’s deadline has passed. The KORUM team is reviewing it with PAYCOMET and will write to you.",
+        "notPayable": "To receive the Fund you need verified holder’s documents and a destination account.",
+        "notPayableCta": "Go to the documents",
+        "inPayout": "Being paid out, awaiting both signatures: {amount}"
+      },
+      "empty": {
+        "title": "Your Fund is empty",
+        "text": "When money from an accepted business cannot be taken to any campaign in time, it will arrive here and we will let you know by email.",
+        "cta": "See the friendly businesses"
+      },
+      "deposits": {
+        "title": "{count, plural, =0 {What has arrived in the Fund} one {What has arrived in the Fund · # entry} other {What has arrived in the Fund · # entries}}",
+        "none": "Nothing has arrived yet.",
+        "meta": "Paid in “{origin}” on {charged} · reached the Fund on {arrived}"
+      },
+      "levels": {
+        "ORO": "GOLD category",
+        "PLATA": "SILVER category",
+        "BRONCE": "BRONZE category"
+      },
+      "request": {
+        "title": "Request the payout to your account",
+        "lead": "Today you can pay out <amount></amount>. Say what the organisation will use it for: both of you will sign it and it will appear on the receipt.",
+        "purposeLabel": "What the money will be used for",
+        "purposeHelp": "For example: “Materials for the spring camp and the end-of-year party”. Between {min} and {max} characters, no links. Do not write pupils’ names or other personal data: the text appears on the receipt and cannot be changed.",
+        "purposeLength": "Write between {min} and {max} characters, no links.",
+        "effect": "When you request it, we email you your signing link and your code. When both of you have signed, the money is sent to the organisation’s account.",
+        "submit": "Request the payout and my signing link",
+        "sending": "Requesting…",
+        "requested": "Payout requested. We have sent you your signing link and code; they are valid until {date}.",
+        "requestedNoLink": "Payout requested. Request your signing link from the payout itself."
+      },
+      "pending": {
+        "title": "Payout {reference} · awaiting both signatures",
+        "purpose": "Requested by {name} on {date}. What it will be used for:",
+        "someone": "a signer",
+        "splits": "{count, plural, one {Which business it comes from (# business)} other {Which businesses it comes from (# businesses)}}",
+        "requestLink": "Request my signing link",
+        "waitingOther": "Your signature is recorded. The other signer’s is still missing; they receive their link by email.",
+        "cancel": "Withdraw this payout",
+        "cancelConfirmLabel": "Confirm that the payout is withdrawn",
+        "cancelConfirm": "Once withdrawn, the signing links stop working and the money becomes available again to request it anew (for example, with a different purpose).",
+        "cancelYes": "Yes, withdraw it",
+        "cancelNo": "No, keep it",
+        "cancelled": "Payout withdrawn. You can request it again whenever you want."
+      },
+      "history": {
+        "title": "Payouts",
+        "none": "You have not paid out the Fund yet.",
+        "status": {
+          "PENDING_DOUBLE_CHECK": "Awaiting both signatures",
+          "APPROVED": "Signed · sending",
+          "PROCESSING": "Signed · sending",
+          "EXECUTED": "Sent to your account",
+          "FAILED": "Signed · transfer pending",
+          "CANCELLED": "Withdrawn"
+        },
+        "cancelReason": {
+          "WITHDRAWN": "Withdrawn",
+          "FUND_CHANGED": "Cancelled: the Fund changed",
+          "WINDOW_EXPIRED": "Cancelled: the 90-day period passed"
+        },
+        "executedOn": "Sent on {date}",
+        "requestedOn": "Requested by {name} on {date}",
+        "someone": "a signer",
+        "receipt": "Download the receipt (PDF)",
+        "retry": "Retry sending now",
+        "retrying": "Retrying…",
+        "retryDone": "Done: the money is on its way to your account.",
+        "retryPending": "It has not finished yet. We keep trying every day; if it is not resolved, the KORUM team will write to you."
+      },
+      "errors": {
+        "INVALID_INPUT": "Write what the money will be used for: between 10 and 500 characters, no links.",
+        "NOT_FOUND": "We cannot find this payout in your organisation. Reload the page.",
+        "NOTHING_TO_PAY": "There is nothing in the Fund that can be paid out right now.",
+        "PAYOUT_PENDING": "A payout is already awaiting both signatures: sign it or withdraw it before requesting another one.",
+        "KYB_NOT_VERIFIED": "To pay out the Fund you need verified holder’s documents.",
+        "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a destination account in PAYCOMET yet.",
+        "WRONG_STATUS": "This payout has already changed: someone else has signed or withdrawn it. Reload the page.",
+        "FUND_CHANGED": "The Fund has changed since it was requested (a business reversed its payment). The payout has been cancelled: request it again.",
+        "FORBIDDEN": "Your session cannot do this. Sign in again with two-step verification.",
+        "LINK_NOT_SENT": "The payout has been requested, but we could not send you your signing link right now. Request it from the payout itself in a few minutes.",
+        "NOT_A_SIGNER": "Your account does not hold a signing role in this organisation.",
+        "HOLDS_BOTH_ROLES": "The same person cannot hold both signing roles. Review the organisation’s roles.",
+        "TWO_FACTOR_REQUIRED": "To sign you need two-step verification enabled and completed in this session.",
+        "TARGET_CLOSED": "This payout is no longer awaiting signatures.",
+        "ALREADY_SIGNED": "Your signature is already recorded (or your role has already signed).",
+        "SAME_PERSON": "The two signatures must be from different people, with different email addresses.",
+        "PROVIDER_INVOICE_MISSING": "The supplier’s invoice is missing.",
+        "RATE_LIMITED": "You have made several requests in a row. Wait a while before trying again.",
+        "failed": "We could not complete the action. Try again in a few seconds.",
+        "WINDOW_EXPIRED": "A charge in the payout has passed PAYCOMET’s 90-day period. The payout has been cancelled: request it again with what can be paid out."
+      },
+      "receipt": {
+        "title": "Activity Fund payout receipt",
+        "intro": "KORUM records that {entity} ({legalName}) has paid out to its account the money from its Activity Fund detailed below, with the double signature of both of its officers.",
+        "sections": {
+          "payout": "Payout",
+          "purpose": "What it will be used for (purpose signed by the organisation)",
+          "origin": "Where the money comes from",
+          "signatures": "Double signature",
+          "notes": "Notes"
+        },
+        "reference": "Reference",
+        "amount": "Amount sent",
+        "requestedAt": "Requested on",
+        "executedAt": "Sent on",
+        "originIntro": "Contributions from friendly businesses accepted by the organisation that could not be taken to any campaign before their deadline. They are not returned to the business: they are for the organisation’s activities.",
+        "originLine": "{name} ({level}): {amount}, paid on {charged}",
+        "signatureLine": "{role}: {name}, on {date}",
+        "legal": "KORUM is a technology platform and does not hold funds. Charges and transfers are executed by PAYCOMET, an authorised payment institution. The purpose is declared by the organisation; KORUM does not check how the money is used. This receipt is not an invoice or a tax certificate.",
+        "generated": "Document generated on {date}."
+      }
     }
   },
   "gate": {
@@ -2455,7 +2665,18 @@
       "PRIVACY_ERASURE_FAILED": "Erasing an inactive account failed",
       "EMAIL_DELIVERY_FAILED": "Some emails cannot be sent",
       "TRUSTED_IP_MISSING": "Families’ IP addresses are not reaching the idea box: everyone would fall in the same group",
-      "INVOICE_RECTIFY_PENDING": "Fee invoice of a refunded or charged-back business, pending correction"
+      "INVOICE_RECTIFY_PENDING": "Fee invoice of a refunded or charged-back business, pending correction",
+      "ACTIVITY_FUND_WINDOW": "Activity Fund close to (or past) the 90-day deadline",
+      "SPONSOR_MONEY_BLOCKED": "A business’s money is blocked while its deadline runs"
+    },
+    "fundsTitle": "{count, plural, =0 {Activity Funds} one {Activity Funds · # organisation} other {Activity Funds · # organisations}}",
+    "fundsNone": "No organisation has money in its Activity Fund.",
+    "fundPayout": {
+      "NONE": "No payout requested",
+      "PENDING_DOUBLE_CHECK": "Payout awaiting both signatures",
+      "APPROVED": "Payout signed, sending",
+      "PROCESSING": "Payout signed, sending",
+      "FAILED": "Payout signed, transfer pending"
     }
   },
   "forbidden": {

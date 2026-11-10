@@ -73,7 +73,7 @@
 2. **Cuadro de mandos:** filtros ocultos tras `🔍 Filtrar`, 5 KPIs, línea de 6 estados con su `WLT-ESC-XXX` y acceso al Estudio. Para una entidad nueva, guía de 3 pasos.
 3. **Aprobaciones, doble firma y ajustes:**
    - Ideas con auditoría de firmas (`🟢 Verificadas` / `⚠️ Sospechosas`), chat anónimo y **doble firma real (`1/2` → `2/2`) entre `DIRECTOR` y `COSIGNER`**, con enlace de un solo uso y OTP.
-   - KYB (4 documentos + acreditación de Ley 49/2002 si procede), moderación y renovación de comercios (con `CREDIT_POOL`), importes de donación, grupos de participación, identidad visual, idioma del contenido e indexación pública.
+   - KYB (4 documentos + acreditación de Ley 49/2002 si procede), moderación y renovación de comercios (con `CREDIT_POOL` y una invitación a renovar por año a quien no lo pidió), **Fondo de actividades** (`/panel/{slug}/fondo`, Sprint 4.2f: bolsas de comercios vencidas, liquidación a la cuenta de la entidad con destino escrito, doble firma y justificante en PDF), importes de donación, grupos de participación, identidad visual, idioma del contenido e indexación pública.
 4. **Estudio dual:** plantillas de campaña; presupuesto con proveedor libre o taquilla/rifa (con aviso y confirmación de normativa); candado semántico; reto y placa independientes; duración máxima de 60 días; pizarra TCO en céntimos (`0,00 €` limpio cuando no hay mantenimiento); cartel A4 con QR.
 5. **Logros, liquidaciones y portería:**
    - Liquidación a la cuenta de la entidad o al proveedor, con factura adjunta y **doble firma obligatoria**; aviso de la ventana de 90 días; fotos Antes/Después; votación de redimensionamiento o reembolso del 100 % (liberando cupos y reasignando comercios o enviándolos a `CREDIT_POOL`).

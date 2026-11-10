@@ -8,12 +8,12 @@ import { SIGNATURE_REQUEST_RULE } from '@/lib/rate-limit-rules';
 import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, ResourceNotFoundError, type SessionActor } from '@/repositories/tenant-guard';
 import { dataHmac, safeEqual } from './data-hmac';
 import { evaluateDoubleCheck, loadSignerMemberships, SIGNER_ROLES, type DoubleCheckContext, type DoubleCheckEvaluation, type SignerMembership, type SignerRole, type StoredSignature } from './double-check-evaluation';
-import { queueChallengeEmail, revokeOpenChallenges, type SignatureTarget } from './double-check-email';
-import { computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from './signature-hash';
+import { queueChallengeEmail, revokeOpenChallenges, targetColumns, targetIdOf, type SignatureTarget } from './double-check-email';
+import { activityFundTargetDigest, computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from './signature-hash';
 
 /**
- * Doble firma mancomunada (skill korum-quorum-antifraud §3): `DIRECTOR` + `COSIGNER`, dos personas distintas, para aprobar una idea o
- * liberar una liquidación. Toda firma se hace con un enlace de un solo uso y un OTP, y además con la sesión de esa misma persona: el enlace
+ * Doble firma mancomunada (skill korum-quorum-antifraud §3): `DIRECTOR` + `COSIGNER`, dos personas distintas, para aprobar una idea,
+ * liberar una liquidación o liquidar el Fondo de actividades (Sprint 4.2f). Toda firma se hace con un enlace de un solo uso y un OTP, y además con la sesión de esa misma persona: el enlace
  * y el código van al mismo correo, y una bandeja de entrada comprometida no debe bastar para mover dinero.
  *
  * El enlace y el OTP en claro **nunca salen de este módulo hacia el navegador**: se escriben en la bandeja de salida (`doubleCheck.pending`),
@@ -38,9 +38,6 @@ export class DoubleCheckNotAllowedError extends Error {
   }
 }
 
-const targetColumns = (target: SignatureTarget) => (target.targetType === 'IDEA_APPROVAL' ? { ideaId: target.ideaId } : { payoutId: target.payoutId });
-const targetIdOf = (target: SignatureTarget) => (target.targetType === 'IDEA_APPROVAL' ? target.ideaId : target.payoutId);
-
 interface LockedTarget {
   context: DoubleCheckContext;
   open: boolean;
@@ -54,6 +51,16 @@ async function lockTarget(tx: Db, secret: string, target: SignatureTarget, now: 
     const idea = await tx.idea.update({ where: { id: target.ideaId }, data: { votes: { increment: 0 } }, include: { doubleCheckSignatures: true } });
     const context = { organizationId: idea.organizationId, targetType: target.targetType, targetId: idea.id, targetDigest: ideaTargetDigest(secret, idea) };
     return { context, open: idea.phase === 'DOUBLE_CHECK' && idea.expiresAt > now, block: null, signatures: idea.doubleCheckSignatures };
+  }
+  if (target.targetType === 'ACTIVITY_FUND_PAYOUT') {
+    const fund = await tx.activityFundPayout.update({
+      where: { id: target.fundPayoutId },
+      data: { amountCents: { increment: 0 } },
+      include: { signatures: true, splits: { select: { sponsorId: true, amountCents: true } }, organization: { select: { paycometSplitId: true } } }
+    });
+    const account = fund.organization.paycometSplitId;
+    const context = { organizationId: fund.organizationId, targetType: target.targetType, targetId: fund.id, targetDigest: activityFundTargetDigest(secret, fund, account) };
+    return { context, open: fund.status === 'PENDING_DOUBLE_CHECK', block: account ? null : 'DESTINATION_ACCOUNT_MISSING', signatures: fund.signatures };
   }
   const payout = await tx.escrowPayout.update({ where: { id: target.payoutId }, data: { netPaidCents: { increment: 0 } }, include: { signatures: true, organization: { select: { paycometSplitId: true } } } });
   const account = payout.organization.paycometSplitId;
@@ -93,9 +100,12 @@ async function issueChallenge(tx: Db, secret: string, target: SignatureTarget, c
 }
 
 async function targetOrganization(db: Db, target: SignatureTarget): Promise<string | null> {
-  const row = target.targetType === 'IDEA_APPROVAL'
-    ? await db.idea.findUnique({ where: { id: target.ideaId }, select: { organizationId: true } })
-    : await db.escrowPayout.findUnique({ where: { id: target.payoutId }, select: { organizationId: true } });
+  const row =
+    target.targetType === 'IDEA_APPROVAL'
+      ? await db.idea.findUnique({ where: { id: target.ideaId }, select: { organizationId: true } })
+      : target.targetType === 'ESCROW_PAYOUT'
+        ? await db.escrowPayout.findUnique({ where: { id: target.payoutId }, select: { organizationId: true } })
+        : await db.activityFundPayout.findUnique({ where: { id: target.fundPayoutId }, select: { organizationId: true } });
   return row?.organizationId ?? null;
 }
 
@@ -161,7 +171,18 @@ export async function requestSignature(db: KorumPrismaClient, secret: string, ac
 }
 
 export type CompleteSignatureResult =
-  | { status: 'SIGNED'; signatures: number; complete: boolean; ideaConverted: boolean; /** La iniciativa en `BUDGETING` que nace de la idea convertida. */ initiativeId: number | null; /** Para la otra persona firmante, si falta su firma. */ nextChallenges: SignatureReceipt[] }
+  | {
+      status: 'SIGNED';
+      /** Qué se ha firmado: quien llama aprueba la liquidación (de campaña o del Fondo) al completarse las dos firmas. */
+      target: SignatureTarget;
+      signatures: number;
+      complete: boolean;
+      ideaConverted: boolean;
+      /** La iniciativa en `BUDGETING` que nace de la idea convertida. */
+      initiativeId: number | null;
+      /** Para la otra persona firmante, si falta su firma. */
+      nextChallenges: SignatureReceipt[];
+    }
   | { status: 'INVALID_OTP'; attemptsLeft: number }
   /** El enlace no existe, ha caducado, ya se usó, se agotaron sus intentos o no es de esta persona. No se distingue, para no dar pistas. */
   | { status: 'INVALID_LINK' }
@@ -169,8 +190,10 @@ export type CompleteSignatureResult =
   | { status: 'TARGET_CHANGED' }
   | { status: 'NOT_ALLOWED'; reason: DoubleCheckBlock };
 
-function challengeTarget(challenge: { targetType: DoubleCheckTargetType; ideaId: number | null; payoutId: number | null }): SignatureTarget {
-  return challenge.targetType === 'IDEA_APPROVAL' ? { targetType: 'IDEA_APPROVAL', ideaId: challenge.ideaId! } : { targetType: 'ESCROW_PAYOUT', payoutId: challenge.payoutId! };
+function challengeTarget(challenge: { targetType: DoubleCheckTargetType; ideaId: number | null; payoutId: number | null; fundPayoutId: number | null }): SignatureTarget {
+  if (challenge.targetType === 'IDEA_APPROVAL') return { targetType: 'IDEA_APPROVAL', ideaId: challenge.ideaId! };
+  if (challenge.targetType === 'ACTIVITY_FUND_PAYOUT') return { targetType: 'ACTIVITY_FUND_PAYOUT', fundPayoutId: challenge.fundPayoutId! };
+  return { targetType: 'ESCROW_PAYOUT', payoutId: challenge.payoutId! };
 }
 
 /** Firma con enlace + OTP. Los fallos se devuelven sin lanzar: así el intento consumido y su auditoría quedan guardados aunque la firma no se haga. */
@@ -179,7 +202,7 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
   const challenge = await db.doubleCheckChallenge.findUnique({ where: { tokenHash } });
   if (!challenge) return { status: 'INVALID_LINK' };
   if (actor.kind !== 'user' || actor.isSuperadmin || actor.userId !== challenge.signerUserId) {
-    await recordAudit(db, actor, { action: 'double_check.wrong_signer', organizationId: challenge.organizationId, targetType: challenge.targetType, targetId: String(challenge.ideaId ?? challenge.payoutId), metadata: { challengeId: challenge.id } });
+    await recordAudit(db, actor, { action: 'double_check.wrong_signer', organizationId: challenge.organizationId, targetType: challenge.targetType, targetId: String(challenge.ideaId ?? challenge.payoutId ?? challenge.fundPayoutId), metadata: { challengeId: challenge.id } });
     return { status: 'INVALID_LINK' };
   }
   const target = challengeTarget(challenge);
@@ -257,12 +280,12 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
     const remaining = locked.signatures.filter((existing) => existing.id !== stale?.id);
     const after = await evaluateDoubleCheck(tx, secret, locked.context, [...remaining, signature]);
     if (after.complete) {
-      if (target.targetType !== 'IDEA_APPROVAL') return { status: 'SIGNED', signatures: 2, complete: true, ideaConverted: false, initiativeId: null, nextChallenges: [] };
+      if (target.targetType !== 'IDEA_APPROVAL') return { status: 'SIGNED', target, signatures: 2, complete: true, ideaConverted: false, initiativeId: null, nextChallenges: [] };
       // La idea pasa a `CONVERTED` y crea su iniciativa en presupuestación en la misma transacción: o las dos cosas o ninguna (PRD §4.2).
       await tx.idea.update({ where: { id: target.ideaId }, data: { phase: 'CONVERTED' } });
       const { initiativeId } = await createInitiativeFromIdea(tx, target.ideaId, now);
       await audit('idea.converted', { initiativeId });
-      return { status: 'SIGNED', signatures: 2, complete: true, ideaConverted: true, initiativeId, nextChallenges: [] };
+      return { status: 'SIGNED', target, signatures: 2, complete: true, ideaConverted: true, initiativeId, nextChallenges: [] };
     }
     const missingRole: SignerRole = signerRole === 'DIRECTOR' ? 'COSIGNER' : 'DIRECTOR';
     const candidates = await tx.organizationMember.findMany({ where: { organizationId: challenge.organizationId, role: missingRole, userId: { not: actor.userId }, user: { twoFactorEnabled: true } }, select: { userId: true } });
@@ -271,6 +294,6 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
     for (const candidate of candidates) {
       if (candidateRoles.get(candidate.userId)?.length === 1) nextChallenges.push(await issueChallenge(tx, secret, target, locked.context, { userId: candidate.userId, role: missingRole }, now));
     }
-    return { status: 'SIGNED', signatures: 1, complete: false, ideaConverted: false, initiativeId: null, nextChallenges };
+    return { status: 'SIGNED', target, signatures: 1, complete: false, ideaConverted: false, initiativeId: null, nextChallenges };
   });
 }

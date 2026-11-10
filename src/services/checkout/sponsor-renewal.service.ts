@@ -19,6 +19,9 @@ import { startHostedRedirect } from './hosted-checkout';
  * día que vence) y paga en la página de Paycomet, con el mismo flujo que su primer patrocinio. Cada año es un patrocinio nuevo (fila y pedido `KR`
  * propios, con su factura); la entidad ya lo admitió, así que no vuelve a moderación. Su dinero entra en su bolsa y se coloca según la regla de la
  * entidad al confirmarse el cobro (`completeRenewalInTx`). El importe es el del año anterior; el fee, el de la entidad hoy.
+ *
+ * También renueva quien no marcó «renovar cada año» si la entidad le envió su invitación de ese año (Sprint 4.2f, `renewalInvitedAt`); su año nuevo
+ * sigue sin renovación automática: el año siguiente necesitará otra invitación.
  */
 
 /** Comercio que se puede renovar con este enlace: el mismo vencimiento que firmó el enlace, aún en plazo y sin renovación pagada. */
@@ -47,6 +50,7 @@ async function findRenewable(db: KorumPrismaClient, secret: string, slug: string
       code: true,
       status: true,
       autoRenew: true,
+      renewalInvitedAt: true,
       paidAt: true,
       expiresAt: true,
       contribution: { select: { locale: true } },
@@ -56,7 +60,7 @@ async function findRenewable(db: KorumPrismaClient, secret: string, slug: string
   });
   if (!sponsor || sponsor.paidAt === null) return { status: 'INVALID' as const };
   if (sponsor.renewals.length > 0) return { status: 'RENEWED' as const };
-  if (sponsor.expiresAt.getTime() !== parsed.expiresAt.getTime() || (sponsor.status !== 'APPROVED' && sponsor.status !== 'CREDIT_POOL') || !sponsor.autoRenew || !renewalWindowOpen(sponsor.expiresAt, now)) {
+  if (sponsor.expiresAt.getTime() !== parsed.expiresAt.getTime() || (sponsor.status !== 'APPROVED' && sponsor.status !== 'CREDIT_POOL') || !(sponsor.autoRenew || sponsor.renewalInvitedAt !== null) || !renewalWindowOpen(sponsor.expiresAt, now)) {
     return { status: 'EXPIRED' as const };
   }
   return { status: 'OK' as const, sponsor };
@@ -117,7 +121,7 @@ export async function startSponsorRenewal(deps: CheckoutDeps, raw: unknown, cont
   const charge = calculateSponsorCharge(sponsor.amountCents, sponsor.organization.sponsorFeeBps);
   const order = newRenewalOrder();
   await inTransaction(deps.db, async (tx) => {
-    // Un pedido de renovación sin pagar del mismo año se da por abandonado (si al final llega su cobro, se devuelve: solo vale una renovación).
+    // Un pedido de renovación sin pagar del mismo año se da por abandonado (si al final llega su cobro, renueva el año siguiente: Sprint 4.2f).
     await tx.contribution.updateMany({ where: { status: 'PENDING', type: 'SPONSORSHIP', sponsor: { renewedFromId: sponsor.id } }, data: { status: 'FAILED' } });
     const renewal = await tx.sponsor.create({
       data: {
@@ -141,7 +145,8 @@ export async function startSponsorRenewal(deps: CheckoutDeps, raw: unknown, cont
         isMatchingPool: false,
         promo: sponsor.promo,
         code: sponsor.code,
-        autoRenew: true,
+        // Quien renueva por invitación (sin «renovar cada año») sigue igual: el año que viene no recibe avisos sin otra invitación.
+        autoRenew: sponsor.autoRenew,
         status: 'PENDING',
         expiresAt: renewalExpiry(sponsor.expiresAt, now)
       },

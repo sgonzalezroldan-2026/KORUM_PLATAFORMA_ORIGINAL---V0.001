@@ -1,7 +1,9 @@
 import type { Db } from '@/lib/db';
 import { reportError } from '@/lib/error-reporting';
+import { resumeFundPayouts } from '@/services/payments/activity-fund-payout.service';
 import { chargePledgeCycle } from '@/services/pledges/pledge-billing';
 import { pledgeModeEnabled, retirePledgeCard } from '@/services/pledges/pledge.service';
+import { checkActivityFunds, checkBlockedSponsorMoney } from '@/services/sponsors/activity-fund-sweeps';
 import { expireCreditPools, queueRenewalLinks, renewalLinkPayload, sweepSponsorMoney } from '@/services/sponsors/sponsor-sweeps';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert } from '../ops-alerts';
@@ -9,7 +11,7 @@ import { raiseAlert, resolveAlert } from '../ops-alerts';
 /**
  * Tareas de cobros recurrentes (patrocinios y Mi Hucha). Mi Hucha cobra cada mes con la tarjeta guardada (Sprint 3.8). Los comercios (Sprint 4.2d)
  * renuevan con un enlace de pago (sin tarjeta guardada: el checkout usa la página de Paycomet), su dinero se reasigna o espera en la bolsa con su
- * plazo, y la bolsa vencida se devuelve. Las alertas no llevan datos del comercio ni de la familia: solo recuentos, fechas e identificadores.
+ * plazo, y la bolsa vencida pasa al Fondo de actividades de la entidad (Sprint 4.2f). Las alertas no llevan datos del comercio ni de la familia: solo recuentos, fechas e identificadores.
  */
 
 const DAY_MS = 86_400_000;
@@ -72,15 +74,24 @@ export const sponsorRenewalChargeHandler: JobHandler = async ({ db, now, batchSi
 };
 
 /**
- * `CREDIT_POOL_EXPIRY` (Sprint 4.2d): reasigna el dinero de comercios que espera (bolsa sobrante de campañas liquidadas, campañas que fracasaron, bolsa
- * con campañas nuevas) y avisa de las bolsas vencidas (`expireCreditPools`: no se devuelven, decisión del promotor del 2026-11-10; pasarán a la entidad
- * con el Fondo de actividades del 4.2f). La alerta agregada antigua se sustituye por una por comercio.
+ * `CREDIT_POOL_EXPIRY` (Sprints 4.2d y 4.2f): reasigna el dinero de comercios que espera (bolsa sobrante de campañas liquidadas, campañas que fracasaron,
+ * bolsa con campañas nuevas); pasa las bolsas vencidas al Fondo de actividades de su entidad (no se devuelven, decisión del promotor del 2026-11-10);
+ * recuerda a quienes firman que liquiden el Fondo antes de los 90 días de Paycomet; avisa del dinero de comercios bloqueado; y reanuda las liquidaciones
+ * del Fondo que Paycomet no terminó. Lo que falla en un comercio o una liquidación no impide lo demás.
  */
-export const creditPoolExpiryHandler: JobHandler = async ({ db, now, batchSize }) => {
+export const creditPoolExpiryHandler: JobHandler = async ({ db, now, batchSize, deps }) => {
   const sweep = await sweepSponsorMoney(db, now, batchSize);
   const expiry = await expireCreditPools(db, now, batchSize);
   await resolveAlert(db, 'CREDIT_POOL_EXPIRED:global', now);
-  return { processed: sweep.placed + sweep.pooled + expiry.expired, hasMore: false, detail: { ...sweep, ...expiry } };
+  const funds = await checkActivityFunds(db, now);
+  const blocked = await checkBlockedSponsorMoney(db, now, batchSize);
+  let resumed = { executed: 0, pending: 0, approved: 0, errors: 0 };
+  if ((await db.activityFundPayout.count({ where: { status: { in: ['PENDING_DOUBLE_CHECK', 'APPROVED', 'PROCESSING', 'FAILED'] } } })) > 0) resumed = await resumeFundPayouts(db, await deps.paymentProvider(), now, batchSize, deps.hmacSecret());
+  return {
+    processed: sweep.placed + sweep.pooled + expiry.expired + resumed.executed,
+    hasMore: false,
+    detail: { ...sweep, expired: expiry.expired, toFundCents: expiry.toFundCents, fundErrors: expiry.errors, ...funds, ...blocked, fundPayoutsExecuted: resumed.executed, fundPayoutsPending: resumed.pending, fundPayoutsApproved: resumed.approved, fundPayoutErrors: resumed.errors }
+  };
 };
 
 /** Un cobro mensual sin confirmar pasado este tiempo (resultado desconocido) se avisa en la consola: alguien tiene que mirarlo en Paycomet. */

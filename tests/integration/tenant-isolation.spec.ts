@@ -4,6 +4,8 @@ import { loadRenewalOffer } from '@/services/checkout/sponsor-renewal.service';
 import { assignPooledSponsor, saveSponsorRenewalRule, sendRenewalLink } from '@/services/sponsors/sponsor-renewal-panel.service';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadUserActor } from '@/repositories/actor';
+import { loadActivityFundRows, loadFundReceiptRows } from '@/repositories/activity-fund.repository';
+import { requestFundPayout } from '@/services/sponsors/activity-fund.service';
 import { listContributions } from '@/repositories/contribution.repository';
 import { getInitiative, listInitiatives } from '@/repositories/initiative.repository';
 import { getOrganization, listOrganizations } from '@/repositories/organization.repository';
@@ -297,5 +299,18 @@ describe('lecturas públicas (familias, socios y comercios)', () => {
     await expect(getPublicOrganization(db, archived.slug)).rejects.toBeInstanceOf(ResourceNotFoundError);
     await expect(getPublicOrganization(db, 'no-existe')).rejects.toBeInstanceOf(ResourceNotFoundError);
     expect(await listPublicInitiatives(db, archived.slug)).toEqual([]);
+  });
+});
+
+describe('Fondo de actividades (Sprint 4.2f)', () => {
+  it('el director de Cervantes no lee el Fondo ni el justificante de San José; el Super-Admin lo lee con registro; la portería no entra', async () => {
+    await expect(loadActivityFundRows(db, cervantes.director, sanJose.orgId)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(loadFundReceiptRows(db, cervantes.director, sanJose.orgId, 1)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(loadActivityFundRows(db, sanJose.gatekeeper, sanJose.orgId)).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await denied(sanJose.orgId, cervantes.directorId)).some((row) => (row.metadataJson as { attempted?: string } | null)?.attempted === 'activity_fund.read')).toBe(true);
+    await expect(loadActivityFundRows(db, superadmin, sanJose.orgId)).resolves.toMatchObject({ balances: [], pending: null, history: [] });
+    expect(await db.auditLog.count({ where: { action: 'superadmin.access', actorUserId: superadminId, organizationId: sanJose.orgId } })).toBeGreaterThanOrEqual(1);
+    // Pedir o retirar una liquidación del Fondo lo hace la entidad: el Super-Admin no.
+    await expect(requestFundPayout(db, TEST_HMAC_SECRET, withSecondFactor(superadmin), sanJose.orgId, { purpose: 'Material para las colonias de primavera' })).rejects.toBeInstanceOf(TenantAccessError);
   });
 });

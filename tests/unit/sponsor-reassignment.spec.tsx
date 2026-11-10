@@ -5,7 +5,7 @@ import { ApprovalsNoticeProvider } from '@/components/panel/approvals-notice';
 import { SponsorMoneyDetail } from '@/components/panel/sponsor-money-detail';
 import { SponsorRenewalRuleForm } from '@/components/panel/sponsor-renewal-rule-form';
 import {
-  CREDIT_POOL_HARD_CAP_DAYS,
+  ACTIVITY_FUND_DAY,
   creditPoolDeadline,
   isEligibleTarget,
   planPlacement,
@@ -88,9 +88,11 @@ describe('Sprint 4.2d · plan de colocación según la regla de la entidad', () 
 });
 
 describe('Sprint 4.2d · plazo de la bolsa y renovación', () => {
-  it('la bolsa dura min(máximo de la consola desde la entrada, 85 días desde el cobro)', () => {
+  it('la bolsa dura min(máximo de la consola desde la entrada, 70 días desde el cobro: después pasa al Fondo de actividades)', () => {
     const paidAt = new Date(NOW.getTime() - 50 * DAY);
-    expect(creditPoolDeadline({ paidAt, creditPoolAt: NOW }, 60).getTime()).toBe(paidAt.getTime() + CREDIT_POOL_HARD_CAP_DAYS * DAY);
+    expect(creditPoolDeadline({ paidAt, creditPoolAt: NOW }, 60).getTime()).toBe(paidAt.getTime() + ACTIVITY_FUND_DAY * DAY);
+    // Un máximo de la consola mayor que el día del Fondo no alarga la bolsa (Sprint 4.2f).
+    expect(creditPoolDeadline({ paidAt: NOW, creditPoolAt: NOW }, 90).getTime()).toBe(NOW.getTime() + ACTIVITY_FUND_DAY * DAY);
     expect(creditPoolDeadline({ paidAt: NOW, creditPoolAt: NOW }, 60).getTime()).toBe(NOW.getTime() + 60 * DAY);
     expect(creditPoolDeadline({ paidAt: NOW, creditPoolAt: NOW }, -3).getTime()).toBe(NOW.getTime());
   });
@@ -141,7 +143,10 @@ const view = (overrides: Partial<ModerationSponsorView> = {}): ModerationSponsor
   expiresAt: '2027-10-01T10:00:00.000Z',
   logoSrc: null,
   initiative: { id: 3, title: 'Toldos para el patio', walletEscrowId: 'WLT-ESC-101', status: 'REFUNDED' },
-  money: { originCents: 0, placed: [], poolCents: 25_000, poolDeadline: '2026-12-25T10:00:00.000Z' },
+  money: { originCents: 0, placed: [], poolCents: 25_000, poolDeadline: '2026-12-25T10:00:00.000Z', fundCents: 0 },
+  lateCharge: false,
+  renewalInvitable: false,
+  renewalInvitedAt: null,
   isRenewal: false,
   renewed: false,
   renewalOpen: false,
@@ -188,7 +193,7 @@ describe('Sprint 4.2d · ficha del comercio en el panel («Ficha / Renovar»)', 
 
   it('el dinero colocado en otras campañas aparece con su hucha; en solo lectura no hay botones', async () => {
     renderDetail(
-      view({ status: 'APPROVED', renewalOpen: true, assignable: [], money: { originCents: 0, placed: [{ initiativeId: 11, title: 'Biblioteca de aula', walletEscrowId: 'WLT-ESC-111', amountCents: 25_000 }], poolCents: 0, poolDeadline: null } }),
+      view({ status: 'APPROVED', renewalOpen: true, assignable: [], money: { originCents: 0, placed: [{ initiativeId: 11, title: 'Biblioteca de aula', walletEscrowId: 'WLT-ESC-111', amountCents: 25_000 }], poolCents: 0, poolDeadline: null, fundCents: 0 } }),
       false
     );
     await userEvent.click(screen.getByText('Ficha / Renovar'));

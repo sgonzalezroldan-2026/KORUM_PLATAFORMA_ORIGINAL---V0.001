@@ -185,6 +185,18 @@ enum IdeaMessageSender {
 enum DoubleCheckTargetType {
   IDEA_APPROVAL
   ESCROW_PAYOUT
+  /// Liquidación del Fondo de actividades a la cuenta de la entidad (Sprint 4.2f).
+  ACTIVITY_FUND_PAYOUT
+}
+
+/// Liquidación del Fondo de actividades (Sprint 4.2f). `CANCELLED`: retirada antes de la doble firma, o anulada porque el fondo cambió (contracargo).
+enum ActivityFundPayoutStatus {
+  PENDING_DOUBLE_CHECK
+  APPROVED
+  PROCESSING
+  EXECUTED
+  FAILED
+  CANCELLED
 }
 
 enum ContributionType {
@@ -336,6 +348,7 @@ enum LedgerAccount {
   GATEWAY_FEES_EXPENSE // Gasto: comisiones cobradas por Paycomet
   AUTO_BOOST_EXPENSE // Gasto: Auto-Impulso aportado por KORUM
   CHARGEBACK_LOSSES // Gasto: contracargos no recuperables
+  ORG_ACTIVITY_FUND // Pasivo: Fondo de actividades de la entidad (bolsas de comercios vencidas, Sprint 4.2f), por comercio
 }
 
 enum LedgerDirection {
@@ -361,6 +374,8 @@ enum LedgerJournalKind {
   CHARGEBACK
   INVOICE_VAT
   REVERSAL
+  ACTIVITY_FUND_DEPOSIT // Bolsa de un comercio vencida → Fondo de actividades de la entidad
+  ACTIVITY_FUND_PAYOUT_APPROVAL // Liquidación del Fondo aprobada con doble firma → lo debido a la entidad
 }
 
 // --- Plataforma, privacidad y operación --------------------------------------
@@ -397,7 +412,7 @@ enum JobType {
   MONTHLY_TOPUP // Cargo mensual programado de Mi Hucha / aportación recurrente
   SPONSOR_RENEWAL_NOTICE // Preaviso de renovación a 30 días
   SPONSOR_RENEWAL_CHARGE // Cargo de renovación anual
-  CREDIT_POOL_EXPIRY // Bolsa de patrocinio sin asignar: reembolso al comercio
+  CREDIT_POOL_EXPIRY // Reasigna el dinero de comercios, pasa las bolsas vencidas al Fondo de actividades y vigila sus plazos (Sprints 4.2d y 4.2f)
   SPLIT_WINDOW_GUARD // Aviso antes de que venza la ventana de 90 días de Paycomet
   PSP_RECONCILIATION // Conciliación diaria Paycomet ↔ libro mayor
   MODEL182_REMINDER // Recordatorio de enero para exportar el Modelo 182
@@ -436,6 +451,10 @@ enum OpsAlertType {
   TRUSTED_IP_MISSING
   /// La factura del fee de un patrocinio devuelto o contracargado fuera del rechazo no se ha podido rectificar sola (Sprint 4.2b): la revisa el Super-Admin.
   INVOICE_RECTIFY_PENDING
+  /// El Fondo de actividades de una entidad tiene dinero cuyo cobro está cerca de los 90 días de Paycomet (o ya los pasó) sin liquidar (Sprint 4.2f).
+  ACTIVITY_FUND_WINDOW
+  /// El dinero de un comercio no se puede mover y su plazo corre: la entidad no lo ha admitido ni rechazado, o quedan devoluciones sin terminar (Sprint 4.2f).
+  SPONSOR_MONEY_BLOCKED
 }
 
 enum OpsAlertSeverity {
@@ -619,6 +638,7 @@ model User {
   contributions         Contribution[]
   walletTransactions    WalletTransaction[]
   walletSubscriptions   WalletSubscription[]
+  activityFundPayouts   ActivityFundPayout[]   @relation("ActivityFundPayoutRequester")
   doubleCheckSignatures DoubleCheckSignature[]
   paymentMethodTokens   PaymentMethodToken[]
   doubleCheckChallenges DoubleCheckChallenge[]
@@ -829,6 +849,8 @@ model Organization {
   opsAlerts             OpsAlert[]
   kybDocuments          KybDocument[]
   signerHandovers       SignerHandover[]
+  activityFundDeposits  ActivityFundDeposit[]
+  activityFundPayouts   ActivityFundPayout[]
 }
 
 /// Relevo de una persona firmante (Sprint 4.2e, decisión del promotor del 2026-11-09). Cada persona puede ceder su puesto, y cualquiera de las dos
@@ -1045,24 +1067,29 @@ model Sponsor {
   paidAt               DateTime?
   status               SponsorStatus        @default(PENDING)
   expiresAt            DateTime
-  /// Entrada en la bolsa (`CREDIT_POOL`, Sprint 4.2d): su plazo es `min(creditPoolMaxDays desde aquí, 85 días desde el cobro)`. Nulo fuera de la bolsa.
+  /// Entrada en la bolsa (`CREDIT_POOL`, Sprint 4.2d): su plazo es `min(creditPoolMaxDays desde aquí, 70 días desde el cobro)` (Sprint 4.2f). Nulo fuera de la bolsa.
   creditPoolAt         DateTime?
   /// Lo que ha salido de su campaña de origen (reasignado): vive en la bolsa o en otras campañas (`SponsorAllocation`), no en su asiento de cobro.
   reassignedCents      Int                  @default(0)
   /// Renovación anual (Sprint 4.2d): el patrocinio que renueva. Un comercio, un cobro: cada año es una fila nueva con su propio pedido.
   renewedFromId        Int?
+  /// Invitación a renovar enviada por la entidad a un comercio que no marcó «renovar cada año» (Sprint 4.2f, decisión del promotor del 2026-11-10):
+  /// una sola vez por año de distintivo (cada año es una fila nueva). Abre el enlace de pago de la renovación como si la hubiera pedido.
+  renewalInvitedAt     DateTime?
   createdAt            DateTime             @default(now())
 
-  organization        Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  initiative          Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
-  logoFile            FileAsset?          @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
-  paymentMethodToken  PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
-  renewedFrom         Sponsor?            @relation("SponsorRenewal", fields: [renewedFromId], references: [id], onDelete: Restrict)
-  renewals            Sponsor[]           @relation("SponsorRenewal")
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative          Initiative?           @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  logoFile            FileAsset?            @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  paymentMethodToken  PaymentMethodToken?   @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
+  renewedFrom         Sponsor?              @relation("SponsorRenewal", fields: [renewedFromId], references: [id], onDelete: Restrict)
+  renewals            Sponsor[]             @relation("SponsorRenewal")
   invoices            Invoice[]
   escrowLedgerEntries EscrowLedgerEntry[]
   contribution        Contribution?
   allocations         SponsorAllocation[]
+  fundDeposits        ActivityFundDeposit[]
+  fundSplits          ActivityFundSplit[]
 
   @@index([organizationId, status])
   @@index([renewedFromId])
@@ -1088,6 +1115,76 @@ model SponsorAllocation {
 
   @@index([initiativeId, withdrawnAt])
   @@index([sponsorId, withdrawnAt])
+}
+
+/// Entrada en el Fondo de actividades de una entidad (Sprint 4.2f, decisión del promotor del 2026-11-10): lo que quedaba en la bolsa de un comercio
+/// admitido al vencer su plazo, sin campaña a la que llevarlo. El dinero no se devuelve al comercio: la entidad lo usa para sus actividades y lo liquida
+/// a su cuenta con doble firma, cobro a cobro desde el pedido original del comercio (`contributionId`). Solo alta (trigger).
+model ActivityFundDeposit {
+  id             Int      @id @default(autoincrement())
+  organizationId String
+  sponsorId      Int
+  contributionId Int
+  amountCents    Int
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  sponsor      Sponsor      @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  contribution Contribution @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, createdAt])
+  @@index([sponsorId])
+}
+
+/// Liquidación del Fondo de actividades a la cuenta de la entidad (Sprint 4.2f). Lleva el destino que escribe la entidad (`purpose`, el justificante de
+/// uso) y su importe, que las dos personas firmantes firman junto a la cuenta destino. Los repartos (`ActivityFundSplit`) se fijan al pedirla, uno por
+/// comercio, para que quien firma vea de quién es el dinero. Una sola abierta por entidad (índice único parcial en la migración).
+model ActivityFundPayout {
+  id                 Int                      @id @default(autoincrement())
+  organizationId     String
+  amountCents        Int
+  purpose            String
+  status             ActivityFundPayoutStatus @default(PENDING_DOUBLE_CHECK)
+  requestedById      String
+  /// Cuenta destino fijada al aprobar: las firmas valen para esa cuenta, aunque la entidad cambie la suya después.
+  destinationSplitId String?
+  cancelReason       String?
+  approvedAt         DateTime?
+  executedAt         DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime                 @default(now())
+
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  requestedBy           User                   @relation("ActivityFundPayoutRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  splits                ActivityFundSplit[]
+  signatures            DoubleCheckSignature[]
+  doubleCheckChallenges DoubleCheckChallenge[]
+
+  @@index([organizationId, status])
+}
+
+/// Un reparto de una liquidación del Fondo: el dinero de un comercio, desde su cobro original y con su ventana de 90 días (como `EscrowPayoutSplit`).
+model ActivityFundSplit {
+  id             Int               @id @default(autoincrement())
+  payoutId       Int
+  sponsorId      Int
+  contributionId Int
+  amountCents    Int
+  status         PayoutSplitStatus @default(PENDING)
+  splitAuthCode  String?
+  errorMessage   String?
+  attempts       Int               @default(0)
+  sentAt         DateTime?
+  executedAt     DateTime?
+  createdAt      DateTime          @default(now())
+
+  payout       ActivityFundPayout @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  sponsor      Sponsor            @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  contribution Contribution       @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+
+  @@unique([payoutId, sponsorId])
+  @@index([payoutId, status])
+  @@index([contributionId])
 }
 
 // -----------------------------------------------------------------------------
@@ -1180,6 +1277,7 @@ model DoubleCheckSignature {
   targetType     DoubleCheckTargetType
   ideaId         Int?
   payoutId       Int?
+  fundPayoutId   Int?
   signerUserId   String
   signerRole     MemberRole
   /// Lo que se firmó, para poder volver a verificar la huella aunque el importe cambie después.
@@ -1194,10 +1292,12 @@ model DoubleCheckSignature {
   organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Restrict)
   payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  fundPayout     ActivityFundPayout?   @relation(fields: [fundPayoutId], references: [id], onDelete: Restrict)
   signer         User                  @relation(fields: [signerUserId], references: [id], onDelete: Restrict)
 
   @@unique([targetType, ideaId, signerRole])
   @@unique([targetType, payoutId, signerRole])
+  @@unique([targetType, fundPayoutId, signerRole])
 }
 
 /// Enlace de un solo uso + OTP para firmar. Solo se guardan sus HMAC; `targetDigest` fija lo que se pidió firmar.
@@ -1207,6 +1307,7 @@ model DoubleCheckChallenge {
   targetType     DoubleCheckTargetType
   ideaId         Int?
   payoutId       Int?
+  fundPayoutId   Int?
   signerUserId   String
   signerRole     MemberRole
   tokenHash      String                @unique
@@ -1220,10 +1321,12 @@ model DoubleCheckChallenge {
   organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   idea           Idea?                 @relation(fields: [ideaId], references: [id], onDelete: Restrict)
   payout         EscrowPayout?         @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  fundPayout     ActivityFundPayout?   @relation(fields: [fundPayoutId], references: [id], onDelete: Restrict)
   signer         User                  @relation(fields: [signerUserId], references: [id], onDelete: Restrict)
 
   @@index([targetType, ideaId, signerUserId])
   @@index([targetType, payoutId, signerUserId])
+  @@index([targetType, fundPayoutId, signerUserId])
   @@index([expiresAt])
 }
 
@@ -1232,17 +1335,17 @@ model DoubleCheckChallenge {
 // -----------------------------------------------------------------------------
 
 model Contribution {
-  id                         Int                 @id @default(autoincrement())
+  id                         Int                   @id @default(autoincrement())
   organizationId             String
   initiativeId               Int
   userId                     String?
   /// Solo SPONSORSHIP: el comercio que paga. Un cobro de patrocinio corresponde a un único comercio (y un comercio, a un único cobro).
-  sponsorId                  Int?                @unique
+  sponsorId                  Int?                  @unique
   guestEmail                 String?
   canonicalEmail             String?
-  locale                     Locale              @default(es)
+  locale                     Locale                @default(es)
   fiscalYear                 Int
-  type                       ContributionType    @default(DONATION)
+  type                       ContributionType      @default(DONATION)
   groupName                  String?
   /// Solo TICKET: entradas o papeletas de esta compra.
   ticketQuantity             Int?
@@ -1250,10 +1353,10 @@ model Contribution {
   ticketHoldUntil            DateTime?
   amountCents                Int
   /// Aportación voluntaria de garantía KORUM (0 si el check no se marcó; va DESMARCADO por defecto).
-  guaranteeContributionCents Int                 @default(0)
-  matchedBonusCents          Int                 @default(0)
+  guaranteeContributionCents Int                   @default(0)
+  matchedBonusCents          Int                   @default(0)
   totalChargedCents          Int
-  isTaxDeductible            Boolean             @default(false)
+  isTaxDeductible            Boolean               @default(false)
   /// Datos del donante para el Modelo 182 (solo DONATION en entidades ley49 verificadas).
   donorFullName              String?
   donorTaxIdEnc              String?
@@ -1261,37 +1364,39 @@ model Contribution {
   donorTaxIdKeyVersion       Int?
   donorProvinceCode          String?
   /// Solo para SELF_BOOST: si el Auto-Impulso se muestra en público (lo decide el Super-Admin).
-  publiclyDisclosed          Boolean             @default(true)
+  publiclyDisclosed          Boolean               @default(true)
   paymentMethod              PaymentMethod
-  paycometOrder              String?             @unique
+  paycometOrder              String?               @unique
   paycometAuthCode           String?
-  status                     ContributionStatus  @default(PENDING)
-  refundedCents              Int                 @default(0)
+  status                     ContributionStatus    @default(PENDING)
+  refundedCents              Int                   @default(0)
   refundedAt                 DateTime?
   /// Devolución pedida a Paycomet sin confirmar: mientras esté puesta no se vuelve a pedir, para no devolver dos veces.
   refundSendingAt            DateTime?
   /// Solo las donaciones de una aportación mensual (Mi Hucha `PLEDGE`): de cuál y de qué mes. Un mes nunca se cobra dos veces.
   walletSubscriptionId       Int?
   pledgeCycle                Int?
-  createdAt                  DateTime            @default(now())
-  organization               Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  initiative                 Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
-  user                       User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  sponsor                    Sponsor?            @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
-  walletSubscription         WalletSubscription? @relation(fields: [walletSubscriptionId], references: [id], onDelete: Restrict)
+  createdAt                  DateTime              @default(now())
+  organization               Organization          @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  initiative                 Initiative            @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  user                       User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sponsor                    Sponsor?              @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  walletSubscription         WalletSubscription?   @relation(fields: [walletSubscriptionId], references: [id], onDelete: Restrict)
   ticketPass                 TicketPass?
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]
   payoutSplits               EscrowPayoutSplit[]
   sponsorAllocations         SponsorAllocation[]
+  fundDeposits               ActivityFundDeposit[]
+  fundSplits                 ActivityFundSplit[]
 
+  @@unique([walletSubscriptionId, pledgeCycle])
   @@index([initiativeId, status])
   @@index([initiativeId, ticketHoldUntil])
   @@index([status, refundSendingAt])
   @@index([organizationId, fiscalYear, type])
   @@index([donorTaxIdHmac, fiscalYear])
   @@index([canonicalEmail])
-  @@unique([walletSubscriptionId, pledgeCycle])
 }
 
 model TicketPass {

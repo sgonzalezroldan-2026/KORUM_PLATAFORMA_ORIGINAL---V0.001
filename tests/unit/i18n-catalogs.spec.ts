@@ -93,7 +93,11 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Renovación de comercios (Sprint 4.2d): «Plata», «Bizum» y «Total» se escriben igual en catalán.
       'portal.sponsorRenewal.levels.PLATA', 'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total',
       // «de {name}» (nombre accesible de la ficha) se escribe igual en catalán.
-      'panel.sponsors.detail.summaryFor']);
+      'panel.sponsors.detail.summaryFor',
+      // Fondo de actividades (Sprint 4.2f): «Retirada», «Enviada el…» y el patrón «{role}: {name}, el {date}» se escriben igual en catalán.
+      'panel.fund.history.cancelReason.WITHDRAWN', 'panel.fund.history.executedOn', 'panel.fund.history.status.CANCELLED', 'panel.fund.receipt.executedAt', 'panel.fund.receipt.signatureLine',
+      // Invitación a renovar (Sprint 4.2f): «caduca» se escribe igual en catalán.
+      'email.sponsor.renewalInvite.verbFuture']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.
       'panel.settings.team.form.seatOther', 'panel.settings.brand.accent.names.coral',

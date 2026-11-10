@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
+import { CurrencyText } from '@/components/ui/currency-text';
 import { EmptyState } from '@/components/ui/empty-state';
 import type { Locale } from '@/i18n/routing';
 import { requireSuperadminAccess } from '@/lib/auth/guards';
@@ -29,6 +30,26 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
           <dd className="font-corp text-3xl font-extrabold tabular-nums text-varsity-navy">{overview.pendingKyb}</dd>
         </div>
       </dl>
+      <section aria-labelledby="admin-funds" className="flex flex-col gap-3" data-testid="admin-funds">
+        <h2 id="admin-funds" className="font-corp text-xl font-extrabold text-varsity-navy">
+          {t('fundsTitle', { count: overview.activityFunds.length })}
+        </h2>
+        {overview.activityFunds.length === 0 ? (
+          <p className="text-ink-soft">{t('fundsNone')}</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {overview.activityFunds.map((fund) => (
+              <li key={fund.slug} className="flex flex-col gap-1 rounded-xl border-2 border-varsity-navy/15 bg-white p-3 md:flex-row md:items-center md:justify-between">
+                <span className="font-bold text-varsity-navy">{fund.name}</span>
+                <span className="flex flex-wrap items-center gap-3 text-sm">
+                  <CurrencyText cents={fund.balanceCents} className="font-extrabold text-varsity-navy" />
+                  <span className="text-ink-soft">{fund.openPayout ? t(`fundPayout.${fund.openPayout.status}`) : t('fundPayout.NONE')}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       <section aria-labelledby="admin-alerts" className="flex flex-col gap-3">
         <h2 id="admin-alerts" className="font-corp text-xl font-extrabold text-varsity-navy">
           {t('alertsTitle', { count: overview.alerts.length })}

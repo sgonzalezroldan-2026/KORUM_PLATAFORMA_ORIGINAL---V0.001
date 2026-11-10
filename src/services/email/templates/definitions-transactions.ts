@@ -123,8 +123,8 @@ export const refundIssued: TemplateDefinition<z.infer<typeof refundPayload>> = {
 };
 
 const doubleCheckPayload = z.object({
-  targetType: z.enum(['IDEA_APPROVAL', 'ESCROW_PAYOUT']),
-  /** Título de la idea o de la iniciativa cuyos fondos se liberan, tal como estaba al pedir la firma. */
+  targetType: z.enum(['IDEA_APPROVAL', 'ESCROW_PAYOUT', 'ACTIVITY_FUND_PAYOUT']),
+  /** Título de la idea, de la iniciativa cuyos fondos se liberan o importe del Fondo de actividades, tal como estaba al pedir la firma. */
   targetTitle: z.string().min(1).max(200),
   token: z.string().min(20).max(128),
   otp: z.string().regex(/^\d{6}$/),
@@ -139,7 +139,7 @@ export const doubleCheckPending: TemplateDefinition<z.infer<typeof doubleCheckPa
   build(payload, context) {
     const { t } = context;
     const organization = requireOrganization(context, 'doubleCheck.pending');
-    const what = t(payload.targetType === 'IDEA_APPROVAL' ? 'doubleCheck.ideaApproval' : 'doubleCheck.payout', { title: payload.targetTitle });
+    const what = t(payload.targetType === 'IDEA_APPROVAL' ? 'doubleCheck.ideaApproval' : payload.targetType === 'ACTIVITY_FUND_PAYOUT' ? 'doubleCheck.activityFund' : 'doubleCheck.payout', { title: payload.targetTitle });
     return {
       subject: t('doubleCheck.subject', { organization: organization.name }),
       preheader: t('doubleCheck.preheader'),

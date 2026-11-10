@@ -86,25 +86,33 @@ export async function assignPooledSponsor(db: KorumPrismaClient, actor: SessionA
 /**
  * Envía (otra vez) al comercio el enlace de pago de su renovación, desde 30 días antes de que venza su distintivo hasta 30 días después. Una vez al día
  * como mucho: la clave lleva la fecha. Devuelve el mensaje, para enviarlo al momento.
+ *
+ * A un comercio que no marcó «renovar cada año» se le puede enviar **una invitación por año de distintivo** (decisión del promotor del 2026-11-10,
+ * Sprint 4.2f): queda anotada (`renewalInvitedAt`), su texto la presenta como invitación y abre el mismo enlace de pago. No se repite.
  */
 export async function sendRenewalLink(db: KorumPrismaClient, actor: SessionActor, organizationId: string, payload: unknown, secret: string, now: Date = new Date()): Promise<{ messageId: number | null }> {
   const { sponsorId } = parse(renewalLinkSchema, payload);
   const userId = await authorize(db, actor, organizationId, 'sponsor.renewal_link', sponsorId);
   const sponsor = await db.sponsor.findUniqueOrThrow({
     where: { id: sponsorId },
-    select: { id: true, status: true, autoRenew: true, paidAt: true, email: true, amountCents: true, expiresAt: true, organization: { select: { contentLocale: true } }, contribution: { select: { locale: true } }, renewals: { where: { paidAt: { not: null } }, select: { id: true }, take: 1 } }
+    select: { id: true, status: true, autoRenew: true, renewalInvitedAt: true, paidAt: true, email: true, amountCents: true, expiresAt: true, organization: { select: { contentLocale: true } }, contribution: { select: { locale: true } }, renewals: { where: { paidAt: { not: null } }, select: { id: true }, take: 1 } }
   });
-  if ((sponsor.status !== 'APPROVED' && sponsor.status !== 'CREDIT_POOL') || !sponsor.autoRenew || sponsor.paidAt === null || sponsor.renewals.length > 0 || !renewalWindowOpen(sponsor.expiresAt, now)) {
+  if ((sponsor.status !== 'APPROVED' && sponsor.status !== 'CREDIT_POOL') || sponsor.paidAt === null || sponsor.renewals.length > 0 || !renewalWindowOpen(sponsor.expiresAt, now)) {
     throw new SponsorReassignmentError('RENEWAL_NOT_OPEN');
   }
-  // Antes de que caduque, el texto es el del preaviso («caduca el…»); después, el de «ha caducado». Mismo enlace firmado.
-  const idempotencyKey = `sponsor.renewalLink:${sponsor.id}:manual:${now.toISOString().slice(0, 10)}`;
+  const invitation = !sponsor.autoRenew;
+  if (invitation && sponsor.renewalInvitedAt !== null) throw new SponsorReassignmentError('ALREADY_INVITED');
+  // Antes de que caduque, el texto es el del preaviso («caduca el…»); después, el de «ha caducado». Mismo enlace firmado. La invitación tiene el suyo.
+  const idempotencyKey = invitation ? `sponsor.renewalInvite:${sponsor.id}` : `sponsor.renewalLink:${sponsor.id}:manual:${now.toISOString().slice(0, 10)}`;
+  const templateKey = invitation ? 'sponsor.renewalInvite' : sponsor.expiresAt > now ? 'sponsor.renewalNotice' : 'sponsor.renewalLink';
   await inTransaction(db, async (tx) => {
+    // Dos personas a la vez: solo la primera anota la invitación (la segunda no envía otra).
+    if (invitation && (await tx.sponsor.updateMany({ where: { id: sponsor.id, renewalInvitedAt: null, autoRenew: false }, data: { renewalInvitedAt: now } })).count !== 1) throw new SponsorReassignmentError('ALREADY_INVITED');
     await tx.outboxMessage.createMany({
-    data: [{ idempotencyKey, templateKey: sponsor.expiresAt > now ? 'sponsor.renewalNotice' : 'sponsor.renewalLink', locale: sponsor.contribution?.locale ?? sponsor.organization.contentLocale, toAddress: sponsor.email, organizationId, payloadJson: renewalLinkPayload(secret, sponsor) }],
-    skipDuplicates: true
+      data: [{ idempotencyKey, templateKey, locale: sponsor.contribution?.locale ?? sponsor.organization.contentLocale, toAddress: sponsor.email, organizationId, payloadJson: renewalLinkPayload(secret, sponsor) }],
+      skipDuplicates: true
     });
-    await recordAudit(tx, actor, { action: 'sponsor.renewal_link_sent', organizationId, targetType: 'Sponsor', targetId: String(sponsorId), metadata: { by: userId } }, { required: true });
+    await recordAudit(tx, actor, { action: invitation ? 'sponsor.renewal_invited' : 'sponsor.renewal_link_sent', organizationId, targetType: 'Sponsor', targetId: String(sponsorId), metadata: { by: userId } }, { required: true });
   });
   const message = await db.outboxMessage.findUnique({ where: { idempotencyKey }, select: { id: true, status: true } });
   return { messageId: message?.status === 'PENDING' ? message.id : null };

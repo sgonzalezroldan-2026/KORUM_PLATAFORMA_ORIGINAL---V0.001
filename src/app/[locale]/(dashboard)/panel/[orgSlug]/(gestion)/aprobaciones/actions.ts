@@ -146,7 +146,8 @@ export async function approveSponsorAction(orgSlug: string, payload: unknown): P
     await approveSponsor(db, actor, organizationId, payload, { hmacSecret: getEnv().DATA_HMAC_SECRET });
     revalidatePortal(orgSlug.slice(0, 64));
     const sponsorId = sponsorIdOf(payload);
-    if (sponsorId !== null) dispatchSoon(await pendingSponsorEmails(organizationId, sponsorId));
+    // Un comercio cuyo pago llegó tarde se coloca al aprobarlo (Sprint 4.2f): sus avisos de reasignación salen también al momento.
+    if (sponsorId !== null) dispatchSoon([...(await pendingSponsorEmails(organizationId, sponsorId)), ...(await pendingReassignmentEmails(organizationId))]);
     return { status: 'OK' };
   });
 }

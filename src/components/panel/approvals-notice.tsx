@@ -8,10 +8,11 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
  * sobrevive al refresco, se anuncia (`role="status"`) y recibe el foco.
  */
 
-const NoticeContext = createContext<(message: string) => void>(() => undefined);
+export type NoticeTone = 'success' | 'warning';
+const NoticeContext = createContext<(message: string, tone?: NoticeTone) => void>(() => undefined);
 
 export function ApprovalsNoticeProvider({ children }: { children: ReactNode }) {
-  const [notice, setNotice] = useState<{ message: string; at: number } | null>(null);
+  const [notice, setNotice] = useState<{ message: string; tone: NoticeTone; at: number } | null>(null);
   const region = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,9 +20,13 @@ export function ApprovalsNoticeProvider({ children }: { children: ReactNode }) {
   }, [notice]);
 
   return (
-    <NoticeContext.Provider value={(message) => setNotice({ message, at: Date.now() })}>
+    <NoticeContext.Provider value={(message, tone = 'success') => setNotice({ message, tone, at: Date.now() })}>
       <div ref={region} tabIndex={-1} role="status" aria-live="polite" data-testid="approvals-notice">
-        {notice ? <p className="rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">{notice.message}</p> : null}
+        {notice ? (
+          <p className={notice.tone === 'warning' ? 'rounded-xl border-2 border-amber-400 bg-amber-50 p-3 text-sm font-semibold text-amber-950' : 'rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-3 text-sm font-semibold text-emerald-950'}>
+            {notice.message}
+          </p>
+        ) : null}
       </div>
       {children}
     </NoticeContext.Provider>

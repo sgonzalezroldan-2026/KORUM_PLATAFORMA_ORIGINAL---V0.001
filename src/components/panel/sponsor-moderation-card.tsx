@@ -86,7 +86,8 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
   };
   const active = sponsor.status === 'PENDING' || sponsor.status === 'APPROVED' || sponsor.status === 'CREDIT_POOL';
   // Si su dinero ya salió de la campaña que eligió (reasignado o en su bolsa, Sprint 4.2d), dónde está lo cuenta la ficha: aquí no se nombra esa campaña.
-  const inOrigin = sponsor.needsDecision || sponsor.money.originCents > 0;
+  // Un pago llegado con la campaña cerrada (Sprint 4.2f) nunca estuvo en ella: espera en la bolsa del comercio a que la entidad decida.
+  const inOrigin = (sponsor.needsDecision && !sponsor.lateCharge) || sponsor.money.originCents > 0;
   const returned = sponsor.status === 'REJECTED' || sponsor.status === 'REFUNDED';
   const cancelReject = () => {
     setRejecting(false);
@@ -123,6 +124,11 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
             })}
       </p>
 
+      {sponsor.lateCharge && sponsor.needsDecision ? (
+        <p className="rounded-xl border-2 border-amber-300 bg-amber-50 p-3 text-sm font-semibold text-amber-950" data-testid="sponsor-late">
+          {t('lateCharge')}
+        </p>
+      ) : null}
       <dl className="korum-trust-vault grid gap-2 p-3 text-sm sm:grid-cols-2">
         <div>
           <dt className="font-bold text-ink-soft">{t(returned ? 'returnedAmount' : !inOrigin ? 'moved' : sponsor.matching ? 'toPool' : 'toEscrow')}</dt>

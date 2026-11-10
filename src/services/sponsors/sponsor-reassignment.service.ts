@@ -32,7 +32,7 @@ const LOADED = {
   creditPoolAt: true,
   renewedFromId: true,
   organization: { select: { sponsorRenewalRule: true, contentLocale: true } },
-  initiative: { select: { status: true, payout: { select: { status: true } } } },
+  initiative: { select: { status: true, matchingPoolTotalCents: true, payout: { select: { status: true } } } },
   contribution: { select: { id: true, initiativeId: true, status: true, paycometOrder: true, createdAt: true, locale: true } },
   allocations: { where: { withdrawnAt: null }, select: { id: true, initiativeId: true, amountCents: true } }
 } as const;
@@ -66,8 +66,10 @@ async function eligibleTargets(tx: Db, organizationId: string, chargedAt: Date, 
 /** ¿Hay que sacar dinero del origen? Si fracasó, sí (con bolsa Matching 2x, cuando ya no queda nada por devolver: los bonus vuelven antes a la bolsa). */
 async function originToMove(tx: Db, sponsor: LoadedSponsor): Promise<{ move: boolean; failed: boolean }> {
   const origin = sponsor.contribution?.initiativeId;
-  if (origin === undefined || sponsor.reassignedCents >= sponsor.amountCents || !sponsor.initiative) return { move: false, failed: false };
+  if (origin === undefined || !sponsor.initiative) return { move: false, failed: false };
   const failed = isFailedInitiative(sponsor.initiative.status);
+  // Sin nada que mover, solo queda apagar una bolsa Matching aún encendida en una campaña que fracasó (su 💛, heredado del 4.2d, punto 8).
+  if (sponsor.reassignedCents >= sponsor.amountCents && !(sponsor.isMatchingPool && failed && sponsor.initiative.matchingPoolTotalCents > 0)) return { move: false, failed: false };
   if (!sponsor.isMatchingPool) return { move: failed, failed };
   if (!failed) return { move: sponsor.initiative.status === 'GOAL_REACHED' || sponsor.initiative.status === 'CLOSED' || payoutSettled(sponsor.initiative.payout), failed };
   const pendingRefunds = await tx.contribution.count({ where: { initiativeId: origin, OR: [{ status: 'REFUND_PENDING' }, { status: 'COMPLETED', type: { in: ['DONATION', 'TICKET'] } }] } });

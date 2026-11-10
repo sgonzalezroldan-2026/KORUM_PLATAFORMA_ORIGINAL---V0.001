@@ -131,7 +131,7 @@ describe('sumas, saldos y forma canónica', () => {
 
   it('cada cuenta del esquema tiene naturaleza definida', () => {
     for (const rule of Object.values(ACCOUNT_RULES)) expect(['ASSET', 'LIABILITY', 'REVENUE', 'EXPENSE']).toContain(rule.nature);
-    expect(Object.keys(ACCOUNT_RULES)).toHaveLength(18);
+    expect(Object.keys(ACCOUNT_RULES)).toHaveLength(19);
   });
 
   it('la forma canónica no depende del orden de los apuntes', () => {

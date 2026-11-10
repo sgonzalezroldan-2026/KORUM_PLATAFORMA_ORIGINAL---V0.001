@@ -40,7 +40,15 @@ export interface ModerationSponsorView {
     placed: Array<{ initiativeId: number; title: string; walletEscrowId: string; amountCents: number }>;
     poolCents: number;
     poolDeadline: string | null;
+    /** En el Fondo de actividades de la entidad, aún sin liquidar (Sprint 4.2f). */
+    fundCents: number;
   };
+  /** Su pago llegó con la campaña ya cerrada: su dinero espera en su bolsa a que la entidad decida (Sprint 4.2f). */
+  lateCharge: boolean;
+  /** No marcó «renovar cada año» y aún se le puede enviar la invitación de este año (una sola vez, Sprint 4.2f). */
+  renewalInvitable: boolean;
+  /** Ya se le envió la invitación de este año. */
+  renewalInvitedAt: string | null;
   /** Es la renovación de un año anterior. */
   isRenewal: boolean;
   /** Ya ha pagado la renovación del año siguiente. */
@@ -56,7 +64,8 @@ export interface ModerationSponsorView {
 type RenewalContext = Awaited<ReturnType<typeof loadSponsorRenewalContext>>;
 
 function view(row: ModerationSponsorRow, context: RenewalContext, now: Date): ModerationSponsorView {
-  const renewable = (row.status === 'APPROVED' || row.status === 'CREDIT_POOL') && row.autoRenew && row.paidAt !== null && row.renewals.length === 0;
+  const active = (row.status === 'APPROVED' || row.status === 'CREDIT_POOL') && row.paidAt !== null && row.renewals.length === 0;
+  const renewable = active && row.autoRenew;
   const opensAt = new Date(row.expiresAt.getTime() - RENEWAL_LINK_DAYS * 86_400_000);
   const status = row.status as SponsorModerationStatus;
   // De un comercio ya cerrado (no admitido o devuelto) la entidad no necesita el contacto: no se envía al navegador (minimización).
@@ -89,6 +98,9 @@ function view(row: ModerationSponsorRow, context: RenewalContext, now: Date): Mo
     renewed: row.renewals.length > 0,
     renewalOpen: renewable && renewalWindowOpen(row.expiresAt, now),
     renewalOpensAt: renewable && now.getTime() < opensAt.getTime() ? opensAt.toISOString() : null,
+    lateCharge: row.status === 'PENDING' && row.renewedFromId === null && row.amountCents > 0 && row.reassignedCents >= row.amountCents,
+    renewalInvitable: active && !row.autoRenew && row.renewalInvitedAt === null && renewalWindowOpen(row.expiresAt, now),
+    renewalInvitedAt: row.renewalInvitedAt?.toISOString() ?? null,
     assignable:
       status === 'CREDIT_POOL' && row.contribution
         ? context.targets.filter((target) => isEligibleTarget(target, row.contribution?.createdAt ?? now, now)).map((target) => ({ id: target.id, title: target.title, closesAt: target.closesAt.toISOString() }))
@@ -103,7 +115,8 @@ function moneyOf(row: ModerationSponsorRow, context: RenewalContext): Moderation
     originCents: row.renewedFromId === null && !failedOrigin ? row.amountCents - row.reassignedCents : 0,
     placed: row.allocations.map((allocation) => ({ initiativeId: allocation.initiative.id, title: allocation.initiative.title, walletEscrowId: allocation.initiative.walletEscrowId, amountCents: allocation.amountCents })),
     poolCents,
-    poolDeadline: row.creditPoolAt && row.contribution ? creditPoolDeadline({ paidAt: row.contribution.createdAt, creditPoolAt: row.creditPoolAt }, context.creditPoolMaxDays).toISOString() : null
+    poolDeadline: row.creditPoolAt && row.contribution ? creditPoolDeadline({ paidAt: row.contribution.createdAt, creditPoolAt: row.creditPoolAt }, context.creditPoolMaxDays).toISOString() : null,
+    fundCents: Math.max(0, context.fundCents.get(row.id) ?? 0)
   };
 }
 

@@ -21,6 +21,19 @@ export function payoutTargetDigest(
   );
 }
 
+/**
+ * Liquidación del Fondo de actividades (Sprint 4.2f): importe, destino escrito por la entidad (el justificante de uso), cuenta destino y de qué comercio
+ * es cada parte. Si cambia cualquiera de esos datos, las firmas dejan de valer.
+ */
+export function activityFundTargetDigest(
+  secret: string,
+  payout: { id: number; organizationId: string; amountCents: number; purpose: string; splits: ReadonlyArray<{ sponsorId: number; amountCents: number }> },
+  destinationAccount: string | null
+): string {
+  const parts = [...payout.splits].sort((a, b) => a.sponsorId - b.sponsorId).flatMap((split) => [split.sponsorId, split.amountCents]);
+  return dataHmac(secret, 'double-check-target-activity-fund-v1', toText([payout.organizationId, payout.id, payout.amountCents, payout.purpose, destinationAccount, ...parts]));
+}
+
 export function ideaTargetDigest(secret: string, idea: { organizationId: string; title: string; category: string; description: string }): string {
   return dataHmac(secret, 'double-check-target-idea-v1', toText([idea.organizationId, idea.title, idea.category, idea.description]));
 }

@@ -69,7 +69,15 @@ const SAMPLES: Record<string, unknown> = {
   'idea.centerReplied': { ideaId: 503, alias: '#FAM-4821', kind: 'REPLY' },
   'sponsor.welcome': { sponsorId: 3, level: 'ORO', matching: true, expiresAt: IN_3_DAYS, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
   'sponsor.rejected': { sponsorId: 3, reason: 'Ya tenemos una panadería patrocinando esta campaña.', refundCents: 29_538, rectified: true, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
-  'signer.handover': { stage: 'REQUESTED', role: 'COSIGNER', roleLabel: 'Tesorería del AMPA', leaving: true }
+  'signer.handover': { stage: 'REQUESTED', role: 'COSIGNER', roleLabel: 'Tesorería del AMPA', leaving: true },
+  // Fondo de actividades e invitación a renovar (Sprint 4.2f).
+  'sponsor.renewalInvite': { sponsorId: 3, amountCents: 25_000, badgeExpiresAt: IN_3_DAYS, expiresAt: IN_3_DAYS, token: `3.1798761600000.${'b'.repeat(64)}` },
+  'sponsor.toEntityFund': { sponsorId: 3, amountCents: 25_000 },
+  'sponsor.awaitingDecision': { sponsorId: 3, amountCents: 25_000, deadline: IN_3_DAYS },
+  'sponsor.lateReceived': { sponsorId: 3, amountCents: 25_000 },
+  'activityFund.received': { amountCents: 25_000, deadline: IN_3_DAYS },
+  'activityFund.reminder': { amountCents: 25_000, deadline: IN_3_DAYS },
+  'activityFund.paid': { payoutId: 4, amountCents: 25_000 }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

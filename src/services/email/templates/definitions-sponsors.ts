@@ -90,7 +90,7 @@ type RenewalLinkPayload = z.infer<typeof renewalLinkPayload>;
 
 const renewalUrl = (context: TemplateContext, slug: string, token: string) => context.url(`${sponsorRenewalPath(slug)}?${new URLSearchParams({ r: token }).toString()}`);
 
-function renewalEmail(key: 'renewalNotice' | 'renewalLink'): TemplateDefinition<RenewalLinkPayload> {
+function renewalEmail(key: 'renewalNotice' | 'renewalLink' | 'renewalInvite'): TemplateDefinition<RenewalLinkPayload> {
   return {
     schema: renewalLinkPayload,
     secretFields: ['token'],
@@ -101,11 +101,13 @@ function renewalEmail(key: 'renewalNotice' | 'renewalLink'): TemplateDefinition<
       const date = context.formatDate(payload.badgeExpiresAt);
       const until = context.formatDate(payload.expiresAt);
       const amount = context.formatMoney(payload.amountCents);
+      // La invitación dice «caduca» o «caducó» según si el distintivo ya había caducado al escribir el mensaje.
+      const verb = key === 'renewalInvite' ? t(new Date(payload.badgeExpiresAt).getTime() <= context.createdAt.getTime() ? 'sponsor.renewalInvite.verbPast' : 'sponsor.renewalInvite.verbFuture') : '';
       return {
         subject: t(`sponsor.${key}.subject`, { organization: organization.name, date }),
         preheader: t(`sponsor.${key}.preheader`),
         title: t(`sponsor.${key}.title`),
-        paragraphs: [t(`sponsor.${key}.body`, { organization: organization.name, date, amount, until })],
+        paragraphs: [t(`sponsor.${key}.body`, { organization: organization.name, date, amount, until, verb })],
         facts: [
           { label: t(`sponsor.${key}.amount`), value: amount },
           { label: t(`sponsor.${key}.date`), value: key === 'renewalNotice' ? date : until }
@@ -121,6 +123,8 @@ function renewalEmail(key: 'renewalNotice' | 'renewalLink'): TemplateDefinition<
 
 export const sponsorRenewalNotice = renewalEmail('renewalNotice');
 export const sponsorRenewalLink = renewalEmail('renewalLink');
+/** Invitación a renovar a un comercio que no marcó «renovar cada año» (Sprint 4.2f): la envía la entidad, una vez por año de distintivo. */
+export const sponsorRenewalInvite = renewalEmail('renewalInvite');
 
 const titles = z.array(z.string().min(1).max(200)).min(1).max(5);
 /** «A, B y 2 más»: los títulos de las campañas que han recibido el dinero (como mucho 5 en el mensaje). */
@@ -136,6 +140,7 @@ const renewedPayload = z.object({
   more: z.number().int().min(0).max(1_000).optional(),
   poolDeadline: z.iso.datetime().optional(),
   manual: z.boolean().optional(),
+  chained: z.boolean().optional(),
   order: z
     .string()
     .regex(/^KR[0-9A-F]{16}$/)
@@ -161,7 +166,7 @@ export const sponsorRenewed: TemplateDefinition<z.infer<typeof renewedPayload>> 
       subject: t('sponsor.renewed.subject', { organization: organization.name }),
       preheader: t('sponsor.renewed.preheader'),
       title: t('sponsor.renewed.title'),
-      paragraphs: [t('sponsor.renewed.body', { organization: organization.name, level, date }), ...(destination ? [destination] : [])],
+      paragraphs: [t('sponsor.renewed.body', { organization: organization.name, level, date }), ...(payload.chained ? [t('sponsor.renewed.chained', { date })] : []), ...(destination ? [destination] : [])],
       facts: [
         { label: t('sponsor.welcome.levelLabel'), value: level },
         { label: t('sponsor.welcome.until'), value: date }

@@ -25,6 +25,14 @@ export type ChallengePreview =
       expiresAt: Date;
       payout: { initiativeTitle: string; walletEscrowId: string; netPaidCents: number; destinationType: 'ORGANIZATION' | 'PROVIDER' };
     }
+  | {
+      status: 'READY';
+      targetType: 'ACTIVITY_FUND_PAYOUT';
+      signerRole: SignerRole;
+      expiresAt: Date;
+      /** Liquidación del Fondo de actividades (Sprint 4.2f): importe, para qué es y de cuántos comercios sale (sin sus datos). */
+      fund: { reference: string; amountCents: number; purpose: string; sponsors: number };
+    }
   | { status: 'INVALID_LINK' };
 
 const INVALID: ChallengePreview = { status: 'INVALID_LINK' };
@@ -33,7 +41,7 @@ export async function previewChallenge(db: Db, secret: string, actor: SessionAct
   if (actor.kind !== 'user' || actor.isSuperadmin || actor.secondFactor !== true) return INVALID;
   const challenge = await db.doubleCheckChallenge.findUnique({
     where: { tokenHash: hashChallengeToken(secret, input.token) },
-    select: { signerUserId: true, signerRole: true, targetType: true, ideaId: true, payoutId: true, expiresAt: true, consumedAt: true, revokedAt: true, attempts: true, organization: { select: { slug: true } } }
+    select: { signerUserId: true, signerRole: true, targetType: true, ideaId: true, payoutId: true, fundPayoutId: true, expiresAt: true, consumedAt: true, revokedAt: true, attempts: true, organization: { select: { slug: true } } }
   });
   const usable = challenge && challenge.signerUserId === actor.userId && challenge.organization.slug === input.organizationSlug && !challenge.consumedAt && !challenge.revokedAt && challenge.expiresAt > now && challenge.attempts < MAX_OTP_ATTEMPTS;
   if (!usable) return INVALID;
@@ -45,6 +53,11 @@ export async function previewChallenge(db: Db, secret: string, actor: SessionAct
     // Cuántas firmas cuentan porque la entidad las validó a mano: quien firma lo ve antes de dar su firma.
     const revalidatedVotes = await db.ideaSignatureAudit.count({ where: { ideaId: challenge.ideaId, status: 'VERIFIED', reason: { in: [...SUSPICIOUS_REASONS] } } });
     return { status: 'READY', targetType: 'IDEA_APPROVAL', signerRole, expiresAt: challenge.expiresAt, idea: { ...idea, revalidatedVotes } };
+  }
+  if (challenge.targetType === 'ACTIVITY_FUND_PAYOUT' && challenge.fundPayoutId !== null) {
+    const fund = await db.activityFundPayout.findUnique({ where: { id: challenge.fundPayoutId }, select: { amountCents: true, purpose: true, _count: { select: { splits: true } } } });
+    if (!fund) return INVALID;
+    return { status: 'READY', targetType: 'ACTIVITY_FUND_PAYOUT', signerRole, expiresAt: challenge.expiresAt, fund: { reference: `FA-${challenge.fundPayoutId}`, amountCents: fund.amountCents, purpose: fund.purpose, sponsors: fund._count.splits } };
   }
   if (challenge.payoutId === null) return INVALID;
   const payout = await db.escrowPayout.findUnique({ where: { id: challenge.payoutId }, select: { netPaidCents: true, destinationType: true, initiative: { select: { title: true, walletEscrowId: true } } } });

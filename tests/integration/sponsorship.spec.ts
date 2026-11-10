@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { signPaymentSimulator, verifyCheckoutResult } from '@/core/checkout/checkout-rules';
-import { getRaisedFromLedger } from '@/core/finance/ledger.service';
+import { getAccountBalance, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { sortSponsorsByLevel } from '@/core/sponsors/sponsorship-rules';
 import { openSponsorTaxId } from '@/core/tax/tax-id-vault';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -16,7 +16,7 @@ import { createInitiative, createOrganization, createTestClient, TEST_HMAC_SECRE
 
 /**
  * QA-F05 · Patrocinio de comercios contra PostgreSQL real: el patrocinio y su cobro pendientes, el nivel validado en servidor, el asiento con el 100 %
- * íntegro más el fee y el IVA encima, la factura del fee, la bolsa Matching 2x, el cobro tardío que se devuelve entero y el directorio público que solo
+ * íntegro más el fee y el IVA encima, la factura del fee, la bolsa Matching 2x, el cobro tardío que espera en la bolsa (Sprint 4.2f) y el directorio público que solo
  * enseña lo aprobado y vigente, sin importes.
  */
 
@@ -272,23 +272,21 @@ describe('QA-F05 · cobro confirmado', () => {
     expect(await db.initiative.findUniqueOrThrow({ where: { id: init.id }, select: { status: true, raisedCents: true } })).toEqual({ status: 'GOAL_REACHED', raisedCents: 25_000 });
   });
 
-  it('un cobro que llega con la campaña ya cerrada se devuelve entero: sin avance, sin factura y con el comercio como devuelto', async () => {
+  it('un cobro que llega con la campaña ya cerrada no se devuelve (Sprint 4.2f): espera en la bolsa del comercio a la moderación, sin avance y con su factura', async () => {
     const { org, init } = await setup();
     const order = orderOf(await startSponsorship(deps(), sponsorship(org.slug, init.id), { session: null, ip: freshIp() }));
     await db.initiative.update({ where: { id: init.id }, data: { status: 'CLOSED' } });
     await settle(org.slug, init.id, order);
 
     const row = await db.contribution.findUniqueOrThrow({ where: { paycometOrder: order }, include: { sponsor: true } });
-    expect(row.status).toBe('REFUND_PENDING');
-    expect(row.sponsor?.status).toBe('REFUNDED');
+    expect(row.status).toBe('COMPLETED');
+    expect(row.sponsor).toMatchObject({ status: 'PENDING', reassignedCents: 25_000 });
     expect(await db.initiative.findUniqueOrThrow({ where: { id: init.id }, select: { raisedCents: true, totalContributions: true } })).toEqual({ raisedCents: 0, totalContributions: 0 });
-    expect(await db.invoice.count({ where: { organizationId: org.id } })).toBe(0);
-
-    // La tarea de devoluciones lo recoge y devuelve el total cobrado (nivel + fee + IVA) al medio de pago original.
-    const refunded = await refundContribution(db, mock, row.id, '10.0.0.1');
-    expect(refunded.outcome).toBe('REFUNDED');
-    expect((await db.contribution.findUniqueOrThrow({ where: { id: row.id } })).refundedCents).toBe(29_538);
+    expect(await db.invoice.count({ where: { organizationId: org.id } })).toBe(1);
+    expect((await getAccountBalance(db, 'SPONSOR_CREDIT_POOL', { organizationId: org.id, sponsorId: row.sponsorId! })).balanceCents).toBe(25_000);
     expect(await getRaisedFromLedger(db, init.id)).toBe(0);
+    // Si la entidad no lo admite, se le devuelve el 100 % como a cualquier comercio no admitido (lo prueba `activity-fund.spec.ts`).
+    expect(refundContribution).toBeTypeOf('function');
   });
 });
 
@@ -445,11 +443,13 @@ describe('QA-F05 · reversiones y concurrencia de un patrocinio', () => {
     expect(await db.initiative.findUniqueOrThrow({ where: { id: init.id }, select: { raisedCents: true } })).toEqual({ raisedCents: 0 });
   });
 
-  it('un cobro tardío se devuelve aunque no haya NIF emisor: no necesita factura', async () => {
+  it('un cobro tardío también necesita el NIF emisor (Sprint 4.2f: ya no se devuelve, se factura): sin él la notificación falla y se reintenta', async () => {
     const { org, init } = await setup();
     const order = orderOf(await startSponsorship(deps(), sponsorship(org.slug, init.id), { session: null, ip: freshIp() }));
     await db.initiative.update({ where: { id: init.id }, data: { status: 'CLOSED' } });
-    expect(await settle(org.slug, init.id, order, { withInvoicing: false })).toBe('SETTLED');
-    expect((await db.contribution.findUniqueOrThrow({ where: { paycometOrder: order } })).status).toBe('REFUND_PENDING');
+    expect(await settle(org.slug, init.id, order, { withInvoicing: false })).toBe('INVALID');
+    expect((await db.contribution.findUniqueOrThrow({ where: { paycometOrder: order } })).status).toBe('PENDING');
+    expect(await settle(org.slug, init.id, order)).toBe('SETTLED');
+    expect((await db.contribution.findUniqueOrThrow({ where: { paycometOrder: order } })).status).toBe('COMPLETED');
   });
 });

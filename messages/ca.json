@@ -395,7 +395,8 @@
       "payout": "Alliberar els fons de «{title}»",
       "codeLabel": "El teu codi de 6 xifres",
       "cta": "Signar ara",
-      "footnote": "L’enllaç serveix una sola vegada. Si no esperaves aquesta signatura, no la completis i avisa l’altra persona signatària."
+      "footnote": "L’enllaç serveix una sola vegada. Si no esperaves aquesta signatura, no la completis i avisa l’altra persona signatària.",
+      "activityFund": "Liquidar el Fons d’activitats: «{title}»"
     },
     "split": {
       "expiring": {
@@ -468,7 +469,8 @@
         "preheader": "Gràcies per un any més.",
         "title": "Gràcies per un any més!",
         "body": "Hem rebut la teva renovació. El teu distintiu {level} de Comerç amic de {organization} és vigent fins al {date}.",
-        "placed": "Els teus {amount} íntegres ja sumen a: {list}."
+        "placed": "Els teus {amount} íntegres ja sumen a: {list}.",
+        "chained": "Ja havies renovat aquest any: aquest segon pagament renova l’any següent, fins al {date}. Si va ser un error, escriu-nos des de la pàgina de suport."
       },
       "reassigned": {
         "subject": "El teu patrocini a {organization} continua sumant",
@@ -487,6 +489,40 @@
         "bodyManual": "{organization} triarà a quina campanya portar els teus {amount}. Continuen retinguts a PAYCOMET fins al {deadline}; si aleshores no s’han portat a cap, passaran a l’entitat per a les seves activitats del curs.",
         "visible": "Mentrestant continues apareixent com a comerç amic.",
         "deadline": "Retingut fins al"
+      },
+      "renewalInvite": {
+        "subject": "{organization} et convida a continuar sent Comerç amic",
+        "preheader": "Una invitació, sense compromís i sense cobraments automàtics.",
+        "title": "Continuem junts un any més?",
+        "body": "{organization} et vol convidar a renovar el teu distintiu de Comerç amic (patrocini de {amount}), que {verb} el {date}. És només una invitació: si vols continuar, pots renovar-lo amb el botó de sota fins al {until}. No fem cap cobrament automàtic i no et tornarem a escriure per això aquest any.",
+        "amount": "Import",
+        "date": "Pots renovar fins al",
+        "cta": "Veure la renovació",
+        "verbFuture": "caduca",
+        "verbPast": "va caducar"
+      },
+      "toEntityFund": {
+        "subject": "La teva aportació passa a {organization} per a les seves activitats",
+        "preheader": "No hi havia cap campanya on portar-la a temps.",
+        "title": "La teva aportació continua sumant",
+        "body": "{organization} no ha tingut cap campanya on portar els teus {amount} abans que vencés el seu termini. Per això passen al seu Fons d’activitats: l’entitat els farà servir per a les seves activitats del curs, amb la signatura dels seus dos responsables.",
+        "why": "Així ho preveuen les condicions del patrocini: la teva aportació és per a l’entitat i no es retorna un cop admès el comerç. La teva publicitat continua igual."
+      },
+      "awaitingDecision": {
+        "subject": "Un comerç amic espera la vostra decisió a {organization}",
+        "preheader": "Els seus diners no es poden moure fins que decidiu.",
+        "title": "Falta la vostra decisió sobre un comerç",
+        "body": "Un comerç ha pagat el seu patrocini de {amount} en una campanya que ja no recapta. Mentre no decidiu si l’admeteu, els seus diners no es poden portar a una altra campanya. Si l’admeteu després del {deadline}, ja només podran anar al vostre Fons d’activitats; si no l’admeteu, li retornarem el 100 %.",
+        "what": "Si l’admeteu abans, anirà a les vostres campanyes segons la vostra regla.",
+        "deadline": "Decidiu abans del",
+        "cta": "Revisar el comerç"
+      },
+      "lateReceived": {
+        "subject": "El teu pagament a {organization} va arribar amb la campanya ja tancada",
+        "preheader": "L’entitat decidirà; els teus diners continuen retinguts a PAYCOMET.",
+        "title": "El teu pagament va arribar una mica tard",
+        "body": "Hem rebut el teu patrocini de {amount}, però quan va arribar la campanya de {organization} ja no recaptava. Els teus diners continuen retinguts a PAYCOMET mentre l’entitat decideix si t’admet com a comerç amic.",
+        "next": "Si {organization} t’admet, la teva aportació anirà a una altra de les seves campanyes o, si no n’hi ha cap a temps, al seu Fons d’activitats. Si no t’admet, et retornarem el 100 % del que vas pagar, també la gestió i el seu IVA."
       }
     },
     "tax": {
@@ -626,6 +662,34 @@
         },
         "why": "Si no reconeixes aquest canvi, escriu a suport com més aviat millor.",
         "cta": "Veure l'equip que signa"
+      }
+    },
+    "activityFund": {
+      "amount": "Import",
+      "deadline": "Liquidar abans del",
+      "how": "Per rebre’l al vostre compte, una de les dues persones signants demana la liquidació al panell indicant per a què es farà servir, i totes dues signeu amb el vostre codi.",
+      "cta": "Obrir el Fons d’activitats",
+      "received": {
+        "subject": "{amount} han passat al Fons d’activitats de {organization}",
+        "preheader": "Diners d’un comerç amic per a les vostres activitats.",
+        "title": "Diners nous al vostre Fons d’activitats",
+        "body": "Han passat {amount} d’un comerç amic al vostre Fons d’activitats: no hi havia cap campanya on portar-los a temps. Són diners per a les activitats de l’entitat. Liquideu-los abans del {deadline}: després, PAYCOMET ja no els podria enviar."
+      },
+      "reminder": {
+        "subject": "Liquideu el Fons d’activitats de {organization} abans del {deadline}",
+        "preheader": "El termini de PAYCOMET per enviar els diners s’acaba.",
+        "title": "El termini per liquidar el Fons s’acaba",
+        "body": "Al vostre Fons d’activitats hi ha {amount} sense liquidar. PAYCOMET només els pot enviar al vostre compte fins al {deadline}.",
+        "footnote": "Si ja heu demanat la liquidació, falta completar la doble signatura."
+      },
+      "paid": {
+        "subject": "{amount} del Fons d’activitats enviats a {organization}",
+        "preheader": "La liquidació ja va cap al vostre compte.",
+        "title": "Fons d’activitats liquidat",
+        "body": "PAYCOMET ja ha enviat al compte de l’entitat els {amount} de la liquidació {reference} del Fons d’activitats.",
+        "receipt": "Al panell teniu el justificant en PDF, amb la destinació que vau signar i de quins comerços van sortir els diners.",
+        "reference": "Referència",
+        "cta": "Obrir el Fons d’activitats"
       }
     }
   },
@@ -1542,7 +1606,8 @@
       "approvals": "Aprovacions",
       "achievements": "Fites",
       "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}",
-      "settings": "Configuració"
+      "settings": "Configuració",
+      "fund": "Fons d’activitats"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1819,7 +1884,8 @@
         "INVOICING_UNAVAILABLE": "Ara mateix no podem anul·lar la factura de la gestió perquè falten les dades de l’emissor a KORUM. Proveu-ho més tard o escriviu a suport.",
         "POOL_CHANGED": "Aquest comerç ja no té diners esperant a la seva bossa: una altra persona signant els ha portat a una campanya o ho ha fet la tasca diària. Recarregueu la pàgina.",
         "TARGET_NOT_ELIGIBLE": "Aquesta campanya no el pot rebre: ja no recapta o tanca després que venci el termini del seu pagament. Trieu-ne una altra.",
-        "RENEWAL_NOT_OPEN": "Ara no es pot enviar l’enllaç: el comerç ja ha renovat, no renova cada any o el seu distintiu no està dins del termini de la renovació."
+        "RENEWAL_NOT_OPEN": "Ara no es pot enviar l’enllaç: el comerç ja ha renovat o el seu distintiu no és dins del termini de la renovació.",
+        "ALREADY_INVITED": "Ja li vau enviar la invitació a renovar d’aquest any: només s’envia un cop."
       },
       "doubleCheck": {
         "label": "Doble signatura de la idea",
@@ -1886,7 +1952,19 @@
         "partialNotified": "Hem enviat l’enllaç a l’altra persona signant per completar la doble signatura.",
         "partialWaiting": "Falta la signatura de l’altra persona. Quan tingui activada la verificació en dos passos, podrà demanar el seu enllaç des d’Aprovacions.",
         "cta": "Tornar a Aprovacions",
-        "celebrate": "Una idea de les famílies comença a fer-se realitat!"
+        "celebrate": "Una idea de les famílies comença a fer-se realitat!",
+        "ctaFund": "Tornar al Fons d’activitats",
+        "fund": {
+          "executed": "Les dues signatures estan registrades i els diners ja van cap al compte de l’entitat. Teniu el justificant al Fons d’activitats.",
+          "pending": "Les dues signatures estan registrades. L’enviament al compte de l’entitat encara no ha acabat: el reintentem i veureu com va al Fons d’activitats.",
+          "changed": "El Fons ha canviat des que es va demanar la liquidació (un comerç ha anul·lat el seu pagament). L’hem anul·lada: demaneu-la de nou amb el que hi ha ara.",
+          "blocked": "Les dues signatures estan registrades, però encara no podem enviar els diners: falten els documents del titular verificats o el compte de destinació. Reviseu-ho a Ajustos.",
+          "changedTitle": "La liquidació s’ha anul·lat",
+          "blockedTitle": "Signada, però encara no es pot enviar",
+          "expiredTitle": "La liquidació s’ha anul·lat",
+          "expired": "Algun cobrament de la liquidació ha passat el termini de 90 dies en què PAYCOMET el pot enviar. L’hem anul·lada: demaneu-la de nou amb el que es pugui liquidar i l’equip de KORUM revisarà la resta."
+        },
+        "ctaDocuments": "Anar als documents del titular"
       },
       "what": "El que signaràs",
       "ideaMeta": "{alias} · {category} · {votes} signatures verificades",
@@ -1923,7 +2001,11 @@
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a Paycomet.",
         "RATE_LIMITED": "Has demanat diversos enllaços seguits. Espera uns minuts abans de demanar-ne un altre."
       },
-      "retry": "Tornar a comprovar l’enllaç"
+      "retry": "Tornar a comprovar l’enllaç",
+      "fundMeta": "{amount} · {count, plural, one {de # comerç} other {de # comerços}}",
+      "fundPurpose": "Per a què es farà servir (ho va escriure l’entitat):",
+      "fundEffect": "Amb les dues signatures, els diners s’envien al compte de l’entitat. No es pot desfer.",
+      "fundTitle": "Liquidació {reference} del Fons d’activitats"
     },
     "sponsors": {
       "title": "{count, plural, =0 {Comerços amics} one {Comerços amics · # per revisar} other {Comerços amics · # per revisar}}",
@@ -2008,7 +2090,7 @@
       "moved": "Patrocini íntegre d’aquest comerç",
       "rule": {
         "label": "On van els diners de les renovacions i de les campanyes que no surten",
-        "help": "Els diners d’un comerç admès no se li retornen. Quan renova un altre any, o la campanya que patrocinava no tira endavant (o li sobra part de la seva bossa Matching 2x), van a una altra de les vostres campanyes actives. Si no n’hi ha cap, esperen retinguts a PAYCOMET (com a màxim {days} dies i sempre dins dels 85 des del seu pagament) i, si no es porten a cap campanya a temps, passen a l’entitat per a les seves activitats.",
+        "help": "Els diners d’un comerç admès no se li retornen. Quan renova un altre any, o la campanya que patrocinava no tira endavant (o li sobra part de la seva bossa Matching 2x), van a una altra de les vostres campanyes actives. Si no n’hi ha cap, esperen retinguts a PAYCOMET (com a màxim {days} dies i sempre dins dels 70 des del seu pagament) i, si no es porten a cap campanya a temps, passen al vostre Fons d’activitats.",
         "options": {
           "SOONEST": "A la campanya activa que tanca abans",
           "PROPORTIONAL": "Repartit entre les actives, segons el que li falti a cadascuna",
@@ -2044,9 +2126,15 @@
         "summaryFor": "de {name}",
         "assignOption": "{title} · tanca el {date}",
         "assignHelp": "No es pot desfer des d’aquí. Avisem el comerç per correu.",
-        "renewalOpensOn": "Li podreu enviar l’enllaç de renovació a partir del {date}."
+        "renewalOpensOn": "Li podreu enviar l’enllaç de renovació a partir del {date}.",
+        "fund": "{amount} al vostre Fons d’activitats",
+        "sendInvite": "Convidar-lo a renovar (un cop aquest any)",
+        "inviteHelp": "No va demanar renovar cada any. Li podeu enviar una invitació amb l’enllaç de pagament; només una per any.",
+        "inviteSent": "Hem enviat a {name} la invitació a renovar.",
+        "invitedOn": "Li vau enviar la invitació a renovar el {date}."
       },
-      "renewedElsewhere": "Ja ha renovat: el seu nou any apareix en una altra targeta d’aquesta llista."
+      "renewedElsewhere": "Ja ha renovat: el seu nou any apareix en una altra targeta d’aquesta llista.",
+      "lateCharge": "El seu pagament va arribar quan la campanya ja no recaptava. Els seus diners esperen a la seva borsa: si l’admeteu, aniran a les vostres campanyes segons la vostra regla (o, si venç el termini, al vostre Fons d’activitats); si no l’admeteu, li retornarem el 100 %."
     },
     "settings": {
       "metaTitle": "Configuració de l'entitat",
@@ -2404,6 +2492,128 @@
           "RATE_LIMITED": "Heu pujat moltes imatges en poc temps. Proveu-ho d'aquí a una hora."
         }
       }
+    },
+    "fund": {
+      "metaTitle": "Fons d’activitats",
+      "title": "Fons d’activitats",
+      "intro": "Aquí arriben els diners dels comerços amics que heu admès quan no s’han pogut portar a cap campanya abans que vencés el seu termini. No es retornen al comerç: són per a les activitats de l’entitat. Per rebre’ls al vostre compte, una persona els demana indicant per a què es faran servir i totes dues signeu.",
+      "summary": {
+        "title": "Disponible per liquidar",
+        "deadline": "Liquideu-ho abans del {date}: després PAYCOMET ja no ho podria enviar.",
+        "where": "Mentrestant, els diners continuen retinguts a PAYCOMET, l’entitat de pagament autoritzada que fa els cobraments i els enviaments.",
+        "stuck": "{amount} ja no es poden enviar perquè ha passat el termini de PAYCOMET. L’equip de KORUM ho revisa amb PAYCOMET i us escriurà.",
+        "notPayable": "Per rebre el Fons necessiteu els documents del titular verificats i el compte de destinació.",
+        "notPayableCta": "Anar als documents",
+        "inPayout": "En liquidació, esperant la doble signatura: {amount}"
+      },
+      "empty": {
+        "title": "El vostre Fons és buit",
+        "text": "Quan els diners d’un comerç admès no es puguin portar a cap campanya a temps, arribaran aquí i us avisarem per correu.",
+        "cta": "Veure els comerços amics"
+      },
+      "deposits": {
+        "title": "{count, plural, =0 {Què ha arribat al Fons} one {Què ha arribat al Fons · # entrada} other {Què ha arribat al Fons · # entrades}}",
+        "none": "Encara no ha arribat res.",
+        "meta": "Va pagar a «{origin}» el {charged} · va arribar al Fons el {arrived}"
+      },
+      "levels": {
+        "ORO": "Categoria OR",
+        "PLATA": "Categoria PLATA",
+        "BRONCE": "Categoria BRONZE"
+      },
+      "request": {
+        "title": "Demanar la liquidació al vostre compte",
+        "lead": "Avui podeu liquidar <amount></amount>. Expliqueu per a què ho farà servir l’entitat: ho signareu les dues persones i sortirà al justificant.",
+        "purposeLabel": "Per a què es faran servir els diners",
+        "purposeHelp": "Per exemple: «Material per a les colònies de primavera i la festa de final de curs». Entre {min} i {max} caràcters, sense enllaços. No escriviu noms d’alumnes ni altres dades personals: el text surt al justificant i no es pot canviar.",
+        "purposeLength": "Escriviu entre {min} i {max} caràcters, sense enllaços.",
+        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura i el teu codi. Quan signeu les dues persones, els diners s’envien al compte de l’entitat.",
+        "submit": "Demanar la liquidació i el meu enllaç de signatura",
+        "sending": "Demanant…",
+        "requested": "Liquidació demanada. T’hem enviat el teu enllaç de signatura i el teu codi; valen fins al {date}.",
+        "requestedNoLink": "Liquidació demanada. Demana el teu enllaç de signatura des de la mateixa liquidació."
+      },
+      "pending": {
+        "title": "Liquidació {reference} · esperant la doble signatura",
+        "purpose": "La va demanar {name} el {date}. Per a què es farà servir:",
+        "someone": "una persona signant",
+        "splits": "{count, plural, one {De quin comerç surt (# comerç)} other {De quins comerços surt (# comerços)}}",
+        "requestLink": "Demanar el meu enllaç de signatura",
+        "waitingOther": "La teva signatura ja hi consta. Falta la de l’altra persona signant, que rep el seu enllaç per correu.",
+        "cancel": "Retirar aquesta liquidació",
+        "cancelConfirmLabel": "Confirmar que es retira la liquidació",
+        "cancelConfirm": "En retirar-la, els enllaços de signatura deixen de valer i els diners tornen a estar disponibles per demanar-la de nou (per exemple, amb un altre ús).",
+        "cancelYes": "Sí, retirar-la",
+        "cancelNo": "No, mantenir-la",
+        "cancelled": "Liquidació retirada. La podeu tornar a demanar quan vulgueu."
+      },
+      "history": {
+        "title": "Liquidacions",
+        "none": "Encara no heu liquidat el Fons.",
+        "status": {
+          "PENDING_DOUBLE_CHECK": "Esperant la doble signatura",
+          "APPROVED": "Signada · enviant",
+          "PROCESSING": "Signada · enviant",
+          "EXECUTED": "Enviada al vostre compte",
+          "FAILED": "Signada · enviament pendent",
+          "CANCELLED": "Retirada"
+        },
+        "cancelReason": {
+          "WITHDRAWN": "Retirada",
+          "FUND_CHANGED": "Anul·lada: el Fons va canviar",
+          "WINDOW_EXPIRED": "Anul·lada: va passar el termini de 90 dies"
+        },
+        "executedOn": "Enviada el {date}",
+        "requestedOn": "Demanada per {name} el {date}",
+        "someone": "una persona signant",
+        "receipt": "Descarregar el justificant (PDF)",
+        "retry": "Reintentar l’enviament ara",
+        "retrying": "Reintentant…",
+        "retryDone": "Fet: els diners ja van cap al vostre compte.",
+        "retryPending": "Encara no ha acabat. Ho continuem intentant cada dia; si no es resol, l’equip de KORUM us escriurà."
+      },
+      "errors": {
+        "INVALID_INPUT": "Escriviu per a què es faran servir els diners: entre 10 i 500 caràcters, sense enllaços.",
+        "NOT_FOUND": "No trobem aquesta liquidació a la vostra entitat. Recarregueu la pàgina.",
+        "NOTHING_TO_PAY": "Ara no hi ha res que es pugui liquidar del Fons.",
+        "PAYOUT_PENDING": "Ja hi ha una liquidació esperant la doble signatura: signeu-la o retireu-la abans de demanar-ne una altra.",
+        "KYB_NOT_VERIFIED": "Per liquidar el Fons necessiteu els documents del titular verificats.",
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a PAYCOMET.",
+        "WRONG_STATUS": "Aquesta liquidació ja ha canviat: una altra persona l’ha signada o retirada. Recarregueu la pàgina.",
+        "FUND_CHANGED": "El Fons ha canviat des que es va demanar (un comerç ha anul·lat el seu pagament). La liquidació s’ha anul·lat: demaneu-la de nou.",
+        "FORBIDDEN": "La teva sessió no pot fer això. Torna a entrar amb la verificació en dos passos.",
+        "LINK_NOT_SENT": "La liquidació està demanada, però ara no t’hem pogut enviar el teu enllaç de signatura. Demana’l des de la mateixa liquidació d’aquí a uns minuts.",
+        "NOT_A_SIGNER": "El teu compte no té un càrrec de signatura en aquesta entitat.",
+        "HOLDS_BOTH_ROLES": "Una mateixa persona no pot ocupar els dos càrrecs de signatura. Reviseu els càrrecs de l’entitat.",
+        "TWO_FACTOR_REQUIRED": "Per signar necessites la verificació en dos passos activada i superada en aquesta sessió.",
+        "TARGET_CLOSED": "Aquesta liquidació ja no espera signatures.",
+        "ALREADY_SIGNED": "La teva signatura ja hi consta (o el teu càrrec ja ha signat).",
+        "SAME_PERSON": "Les dues signatures han de ser de persones diferents, amb correus diferents.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveïdor.",
+        "RATE_LIMITED": "Heu fet diverses peticions seguides. Espereu una estona abans de tornar-ho a provar.",
+        "failed": "No hem pogut completar l’acció. Proveu-ho de nou d’aquí a uns segons.",
+        "WINDOW_EXPIRED": "Algun cobrament de la liquidació ha passat el termini de 90 dies de PAYCOMET. La liquidació s’ha anul·lat: demaneu-la de nou amb el que es pugui liquidar."
+      },
+      "receipt": {
+        "title": "Justificant de liquidació del Fons d’activitats",
+        "intro": "KORUM deixa constància que {entity} ({legalName}) ha liquidat al seu compte els diners del seu Fons d’activitats que es detallen, amb la doble signatura dels seus dos responsables.",
+        "sections": {
+          "payout": "Liquidació",
+          "purpose": "Per a què es farà servir (destinació signada per l’entitat)",
+          "origin": "D’on provenen els diners",
+          "signatures": "Doble signatura",
+          "notes": "Notes"
+        },
+        "reference": "Referència",
+        "amount": "Import enviat",
+        "requestedAt": "Demanada el",
+        "executedAt": "Enviada el",
+        "originIntro": "Aportacions de comerços amics admesos per l’entitat que no es van poder portar a cap campanya abans que vencés el seu termini. No es retornen al comerç: són per a les activitats de l’entitat.",
+        "originLine": "{name} ({level}): {amount}, pagat el {charged}",
+        "signatureLine": "{role}: {name}, el {date}",
+        "legal": "KORUM és una plataforma tecnològica i no custodia fons. Els cobraments i els enviaments els executa PAYCOMET, entitat de pagament autoritzada. La destinació la declara l’entitat; KORUM no comprova l’ús dels diners. Aquest justificant no és una factura ni un certificat fiscal.",
+        "generated": "Document generat el {date}."
+      }
     }
   },
   "gate": {
@@ -2455,7 +2665,18 @@
       "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d'un compte inactiu",
       "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar",
       "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup",
-      "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar"
+      "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar",
+      "ACTIVITY_FUND_WINDOW": "Fons d’activitats a prop del termini de 90 dies (o passat)",
+      "SPONSOR_MONEY_BLOCKED": "Diners d’un comerç bloquejats amb el termini corrent"
+    },
+    "fundsTitle": "{count, plural, =0 {Fons d’activitats} one {Fons d’activitats · # entitat} other {Fons d’activitats · # entitats}}",
+    "fundsNone": "Cap entitat no té diners al seu Fons d’activitats.",
+    "fundPayout": {
+      "NONE": "Sense liquidació demanada",
+      "PENDING_DOUBLE_CHECK": "Liquidació esperant la doble signatura",
+      "APPROVED": "Liquidació signada, enviant",
+      "PROCESSING": "Liquidació signada, enviant",
+      "FAILED": "Liquidació signada, enviament pendent"
     }
   },
   "forbidden": {

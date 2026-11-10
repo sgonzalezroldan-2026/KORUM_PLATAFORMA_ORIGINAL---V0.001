@@ -10,6 +10,7 @@ import { authorizeTenant, recordAudit, TenantAccessError, type SessionActor } fr
 import { RectificationNotAllowedError, rectifyInvoice } from '@/services/invoicing/invoice.service';
 import { approveRefundInTx, PaymentReconciliationError, RefundNotAllowedError } from '@/services/payments/payment-reversals';
 import type { InvoicingContext } from '@/services/payments/sponsorship-events';
+import { relocateSponsor } from './sponsor-reassignment.service';
 
 /**
  * Moderación de comercios amigos desde el panel (Sprint 4.2b, `function moderateSponsor` del prototipo). Como las ideas: solo `DIRECTOR` o
@@ -55,6 +56,7 @@ async function lockSponsor(tx: Db, id: number) {
       status: true,
       paidAt: true,
       amountCents: true,
+      reassignedCents: true,
       isMatchingPool: true,
       categoryLevel: true,
       logoFileId: true,
@@ -75,6 +77,9 @@ function assertDecidable(sponsor: LockedSponsor): asserts sponsor is LockedSpons
 /**
  * Aprueba al comercio: sale en el directorio durante 12 meses y, si eligió la bolsa Matching 2x, la bolsa se activa en la iniciativa en la misma
  * transacción (heredado del Sprint 3.5, punto 1). La bolsa debe estar entera en el libro: si no cuadra, no se activa nada.
+ *
+ * Un comercio cuyo pago llegó con la campaña ya cerrada (Sprint 4.2f) tiene su dinero en su bolsa: al admitirlo se coloca en el acto con la regla de la
+ * entidad (o espera en la bolsa con su plazo, y si vence, pasa al Fondo de actividades). Su bolsa Matching 2x nunca se activa en esa campaña.
  */
 export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor, organizationId: string, payload: unknown, options: { hmacSecret: string }, now: Date = new Date()): Promise<{ matching: boolean }> {
   const { sponsorId } = parse(approveSponsorSchema, payload);
@@ -84,7 +89,8 @@ export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor,
     assertDecidable(sponsor);
     // La bolsa solo se activa si la campaña sigue recaudando: en una que ya no admite donaciones nadie la liberaría. Ahí se queda en `MATCHING_POOL`
     // y la reasigna la tarea de comercios al liquidarse o devolverse la campaña (heredado del 4.2b, punto 2).
-    const initiative = sponsor.isMatchingPool ? await tx.initiative.findUniqueOrThrow({ where: { id: sponsor.initiativeId }, select: { matchingPoolTotalCents: true, status: true } }) : null;
+    const late = sponsor.reassignedCents >= sponsor.amountCents;
+    const initiative = sponsor.isMatchingPool && !late ? await tx.initiative.findUniqueOrThrow({ where: { id: sponsor.initiativeId }, select: { matchingPoolTotalCents: true, status: true } }) : null;
     const activatePool = initiative?.status === 'FUNDRAISING';
     if (initiative && activatePool) {
       if (initiative.matchingPoolTotalCents > 0) throw new SponsorModerationError('MATCHING_TAKEN');
@@ -95,6 +101,7 @@ export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor,
     const expiresAt = badgeExpiryFrom(now);
     const { count } = await tx.sponsor.updateMany({ where: { id: sponsor.id, status: 'PENDING' }, data: { status: 'APPROVED', expiresAt } });
     if (count !== 1) throw new SponsorModerationError('WRONG_STATUS');
+    if (late) await relocateSponsor(tx, sponsor.id, now);
 
     const order = sponsor.contribution.paycometOrder;
     await tx.outboxMessage.createMany({
@@ -110,7 +117,7 @@ export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor,
       ],
       skipDuplicates: true
     });
-    await recordAudit(tx, actor, { action: 'sponsor.approved', organizationId, targetType: 'Sponsor', targetId: String(sponsor.id), metadata: { matching: activatePool, amountCents: sponsor.amountCents, by: userId } }, { required: true });
+    await recordAudit(tx, actor, { action: 'sponsor.approved', organizationId, targetType: 'Sponsor', targetId: String(sponsor.id), metadata: { matching: activatePool, late, amountCents: sponsor.amountCents, by: userId } }, { required: true });
     return { matching: activatePool };
   });
 }

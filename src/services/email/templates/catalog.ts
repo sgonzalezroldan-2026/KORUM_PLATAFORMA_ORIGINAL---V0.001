@@ -16,7 +16,8 @@ import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } fro
 import { accountPasskeyAdded, supportReceived } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
-import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
+import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAwaitingDecision, sponsorLateReceived, sponsorToEntityFund } from './definitions-activity-fund';
+import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { signerHandover } from './definitions-team';
 
 /**
@@ -73,6 +74,13 @@ const ENTRIES = [
   register('sponsor.renewed', sponsorRenewed),
   register('sponsor.reassigned', sponsorReassigned),
   register('sponsor.creditPool', sponsorCreditPool),
+  register('sponsor.renewalInvite', sponsorRenewalInvite),
+  register('sponsor.toEntityFund', sponsorToEntityFund),
+  register('sponsor.awaitingDecision', sponsorAwaitingDecision),
+  register('sponsor.lateReceived', sponsorLateReceived),
+  register('activityFund.received', activityFundReceived),
+  register('activityFund.reminder', activityFundReminder),
+  register('activityFund.paid', activityFundPaid),
   register('tax.certificateReady', taxCertificateReady),
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),

@@ -3,7 +3,7 @@ import { getAccountBalance, getRaisedFromLedger, getTrialBalance } from '@/core/
 import type { JobDeps } from '@/core/jobs/job-types';
 import { massRefundHandler } from '@/core/jobs/handlers/mass-refund';
 import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
-import { CREDIT_POOL_HARD_CAP_DAYS, SponsorReassignmentError } from '@/core/sponsors/sponsor-reassignment-rules';
+import { ACTIVITY_FUND_DAY, SponsorReassignmentError } from '@/core/sponsors/sponsor-reassignment-rules';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { listFriendlySponsors } from '@/repositories/sponsorship.repository';
@@ -134,10 +134,10 @@ describe('QA-S02 · sin campañas activas, el patrocinio va a la bolsa con su pl
     // Sin dinero en la hucha al cerrar: ninguna alerta de dinero huérfano.
     expect(await db.opsAlert.findUnique({ where: { dedupeKey: `ESCROW_LEFTOVER:${origin.id}` } })).toBeNull();
 
-    // Plazo: el máximo de la consola (60 días) desde que entra, sin pasar de 85 desde el cobro.
+    // Plazo: el máximo de la consola (60 días) desde que entra, sin pasar del día 70 desde el cobro (después pasa al Fondo de actividades, Sprint 4.2f).
     const notice = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'sponsor.creditPool', organizationId: organization.id } });
     const deadline = new Date((notice.payloadJson as { deadline: string }).deadline).getTime();
-    expect(deadline).toBe(Math.min(sponsor.creditPoolAt!.getTime() + 60 * DAY, contribution.createdAt.getTime() + CREDIT_POOL_HARD_CAP_DAYS * DAY));
+    expect(deadline).toBe(Math.min(sponsor.creditPoolAt!.getTime() + 60 * DAY, contribution.createdAt.getTime() + ACTIVITY_FUND_DAY * DAY));
     expect(notice).toMatchObject({ toAddress: 'rosa@elfaro.example', payloadJson: { sponsorId, amountCents: 25_000, manual: false } });
     // Decisión del promotor: sigue visible en el directorio mientras espera.
     expect((await listFriendlySponsors(db, organization.slug, now)).map((row) => row.id)).toEqual([sponsorId]);
@@ -148,7 +148,7 @@ describe('QA-S02 · sin campañas activas, el patrocinio va a la bolsa con su pl
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
-  it('un comercio que lleva 50 días cobrado solo espera hasta el día 85 desde su cobro', async () => {
+  it('un comercio que lleva 50 días cobrado solo espera hasta el día 70 desde su cobro (Sprint 4.2f)', async () => {
     const { organization, origin, directorActor } = await team();
     const { sponsorId, contribution } = await paidSponsor(organization.slug, origin.id, directorActor);
     await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '50 days' WHERE id = ${contribution.id}`);
@@ -158,7 +158,7 @@ describe('QA-S02 · sin campañas activas, el patrocinio va a la bolsa con su pl
     const notice = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'sponsor.creditPool', organizationId: organization.id } });
     // El plazo cuenta desde el cobro (la fecha más prudente, la misma que usa la liquidación para la ventana de 90 días).
     const charged = (await db.contribution.findUniqueOrThrow({ where: { id: contribution.id } })).createdAt;
-    expect(new Date((notice.payloadJson as { deadline: string }).deadline).getTime()).toBe(charged.getTime() + CREDIT_POOL_HARD_CAP_DAYS * DAY);
+    expect(new Date((notice.payloadJson as { deadline: string }).deadline).getTime()).toBe(charged.getTime() + ACTIVITY_FUND_DAY * DAY);
   });
 });
 
@@ -305,26 +305,33 @@ describe('Regla MANUAL y decisiones del panel', () => {
 });
 
 describe('Bolsa vencida (decisión del promotor, 2026-11-10: no se devuelve al comercio)', () => {
-  it('al vencer no se devuelve nada ni se rectifica: queda en la bolsa con una alerta, ya no se coloca en ninguna campaña y el comercio sigue visible', async () => {
+  it('al vencer no se devuelve nada ni se rectifica: pasa al Fondo de actividades de la entidad, ya no se coloca en ninguna campaña y el comercio sigue visible', async () => {
     const { organization, origin, directorActor } = await team();
     const { sponsorId, contribution } = await paidSponsor(organization.slug, origin.id, directorActor);
     await fail(origin.id);
     await sweepSponsorMoney(db, new Date(), 50);
     // La tarea recorre todas las entidades de la base de pruebas: se mira este comercio.
     await expireCreditPools(db, new Date(Date.now() + 59 * DAY), 500);
-    expect(await db.opsAlert.findUnique({ where: { dedupeKey: `CREDIT_POOL_EXPIRED:${sponsorId}` } })).toBeNull();
+    expect(await db.activityFundDeposit.count({ where: { sponsorId } })).toBe(0);
 
     const later = new Date(Date.now() + 61 * DAY);
     expect((await expireCreditPools(db, later, 500)).expired).toBeGreaterThanOrEqual(1);
-    expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `CREDIT_POOL_EXPIRED:${sponsorId}` } })).toMatchObject({ status: 'OPEN', severity: 'CRITICAL', detailJson: { poolCents: 25_000, amountCents: 25_000 } });
-    expect(await sponsorOf(sponsorId)).toMatchObject({ status: 'CREDIT_POOL' });
+    expect(await sponsorOf(sponsorId)).toMatchObject({ status: 'APPROVED', creditPoolAt: null, reassignedCents: 25_000 });
     expect(await db.contribution.findUniqueOrThrow({ where: { id: contribution.id } })).toMatchObject({ status: 'COMPLETED' });
     expect(await db.invoice.count({ where: { sponsorId, invoiceType: 'R1' } })).toBe(0);
-    expect(await poolOf(organization.id, sponsorId)).toBe(25_000);
-    // Vencida, es de la entidad (Fondo de actividades, Sprint 4.2f): una campaña nueva ya no la recibe.
+    expect(await poolOf(organization.id, sponsorId)).toBe(0);
+    expect((await getAccountBalance(db, 'ORG_ACTIVITY_FUND', { organizationId: organization.id, sponsorId })).balanceCents).toBe(25_000);
+    expect(await db.activityFundDeposit.findFirstOrThrow({ where: { sponsorId } })).toMatchObject({ amountCents: 25_000, contributionId: contribution.id });
+    expect(await db.outboxMessage.count({ where: { templateKey: 'sponsor.toEntityFund', organizationId: organization.id } })).toBe(1);
+    expect(await db.outboxMessage.count({ where: { templateKey: 'activityFund.received', organizationId: organization.id } })).toBe(2);
+    expect(await db.opsAlert.findUnique({ where: { dedupeKey: `CREDIT_POOL_EXPIRED:${sponsorId}` } })).toBeNull();
+    // Ya es de la entidad: una campaña nueva no la recibe, y repetir la tarea no mueve nada dos veces.
     const fresh = await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'BUDGET', goalCents: 1_000_000, title: 'Demasiado tarde', closesAt: new Date(later.getTime() + 5 * DAY) });
-    await expect(inTransactionRelocate(sponsorId, later)).resolves.toMatchObject({ kind: 'POOLED' });
+    await expect(inTransactionRelocate(sponsorId, later)).resolves.toMatchObject({ kind: 'NOTHING' });
+    await expireCreditPools(db, later, 500);
+    expect(await db.activityFundDeposit.count({ where: { sponsorId } })).toBe(1);
     expect(await initiativeOf(fresh.id)).toMatchObject({ raisedCents: 0 });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
     expect((await listFriendlySponsors(db, organization.slug, new Date())).map((row) => row.id)).toEqual([sponsorId]);
   });
 });
@@ -420,19 +427,22 @@ describe('Liquidaciones con dinero reasignado (auditoría financiera del 4.2d, B
     expect(await poolOf(organization.id, sponsorId)).toBe(10_000);
     expect((await getAccountBalance(db, 'MATCHING_POOL', { initiativeId: origin.id, sponsorId })).balanceCents).toBe(0);
 
+    // Antes de fracasar, el comercio sigue contando en el 💛 de su campaña (la donación ya se deshizo).
+    expect((await initiativeOf(origin.id)).totalContributions).toBe(1);
     await fail(origin.id);
     await sweepSponsorMoney(db, new Date(), 50);
     const after = await initiativeOf(origin.id);
     await sweepSponsorMoney(db, new Date(), 50);
     expect((await initiativeOf(origin.id)).totalContributions).toBe(after.totalContributions);
-    expect(after.totalContributions).toBeGreaterThanOrEqual(0);
+    // Al fracasar deja de contar, una sola vez, y su bolsa se apaga (heredado del 4.2d, punto 8, Sprint 4.2f).
+    expect(after).toMatchObject({ totalContributions: 0, matchingPoolTotalCents: 0 });
     expect(await escrowOf(origin.id)).toBe(0);
     expect(await initiativeOf(target.id)).toMatchObject({ raisedCents: 25_000 });
     expect(await poolOf(organization.id, sponsorId)).toBe(0);
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
-  it('las bolsas vencidas ya avisadas no tapan a las que vencen después (lote de 1, auditoría financiera N2)', async () => {
+  it('las bolsas vencidas no se atascan con lotes llenos: con un lote de 1, todas pasan al Fondo (auditoría financiera N2)', async () => {
     const ids: number[] = [];
     for (let index = 0; index < 2; index += 1) {
       const { organization, origin, directorActor } = await team();
@@ -445,7 +455,7 @@ describe('Liquidaciones con dinero reasignado (auditoría financiera del 4.2d, B
     for (let run = 0; run < 400; run += 1) {
       if ((await expireCreditPools(db, later, 1)).expired === 0) break;
     }
-    for (const id of ids) expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `CREDIT_POOL_EXPIRED:${id}` } })).toMatchObject({ status: 'OPEN' });
+    for (const id of ids) expect(await db.activityFundDeposit.count({ where: { sponsorId: id } })).toBe(1);
   });
 
   it('la conciliación avisa si la bolsa de un comercio devuelto aún tiene dinero', async () => {
@@ -516,7 +526,7 @@ describe('Renovación anual con enlace de pago', () => {
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
-  it('dos pedidos del mismo enlace pagados (dos pestañas, a la vez): solo uno renueva; el otro se devuelve entero, sin factura y sin tocar ninguna campaña', async () => {
+  it('dos pedidos del mismo enlace pagados (dos pestañas, a la vez): no se devuelve nada (Sprint 4.2f); el segundo renueva el año siguiente, con su factura y su dinero a las campañas', async () => {
     const { organization, origin, directorActor } = await team('SOONEST');
     const { sponsorId } = await paidSponsor(organization.slug, origin.id, directorActor);
     await db.sponsor.update({ where: { id: sponsorId }, data: { expiresAt: new Date(Date.now() - DAY) } });
@@ -532,25 +542,27 @@ describe('Renovación anual con enlace de pago', () => {
     // Abrir un segundo pago da por abandonado el primero sin pagar…
     expect((await db.contribution.findUniqueOrThrow({ where: { id: first.id } })).status).toBe('FAILED');
     const raisedBefore = (await initiativeOf(origin.id)).raisedCents;
-    // …pero si Paycomet acaba cobrando los dos, a la vez, solo uno renueva.
+    // …y si Paycomet acaba cobrando los dos, a la vez, los dos cuentan: el segundo renueva el año que sigue al primero.
     const results = await Promise.all([deliver('PAYMENT', first.paycometOrder!, first.totalChargedCents), deliver('PAYMENT', second.paycometOrder!, second.totalChargedCents)]);
     expect(results.every((result) => result.status === 200)).toBe(true);
 
-    const renewals = await db.sponsor.findMany({ where: { renewedFromId: sponsorId }, include: { contribution: true, invoices: true } });
-    const paid = renewals.filter((row) => row.paidAt !== null);
-    const refunded = renewals.filter((row) => row.contribution?.status === 'REFUND_PENDING');
-    expect(paid).toHaveLength(1);
-    expect(paid[0]?.invoices).toHaveLength(1);
-    expect(refunded).toHaveLength(1);
-    expect(refunded[0]).toMatchObject({ status: 'REFUNDED', invoices: [] });
-    expect(await linesOf({ contributionId: refunded[0]!.contribution!.id, kind: 'ESCROW_REFUND_DONOR' })).toEqual({
-      'DEBIT:SPONSOR_CREDIT_POOL': 25_000,
-      'DEBIT:KORUM_REVENUE_SPONSOR_FEE': 3_750,
-      'DEBIT:TAX_PAYABLE_VAT': 788,
-      'CREDIT:REFUNDS_PAYABLE': 29_538
-    });
-    // La campaña solo recibe la renovación que vale.
-    expect((await initiativeOf(origin.id)).raisedCents).toBe(raisedBefore + 25_000);
+    const year1 = await db.sponsor.findMany({ where: { renewedFromId: sponsorId, paidAt: { not: null } }, include: { contribution: true, invoices: true } });
+    expect(year1).toHaveLength(1);
+    const year2 = await db.sponsor.findMany({ where: { renewedFromId: year1[0]!.id, paidAt: { not: null } }, include: { contribution: true, invoices: true } });
+    expect(year2).toHaveLength(1);
+    for (const row of [...year1, ...year2]) {
+      expect(row.contribution?.status).toBe('COMPLETED');
+      expect(row.invoices).toHaveLength(1);
+    }
+    expect(await db.auditLog.count({ where: { action: 'sponsor.renewal_chained', targetId: String(year2[0]!.id) } })).toBe(1);
+    // El comercio sabe que pagó dos veces y que el segundo pago renueva el año siguiente (auditoría de seguridad y legal del 4.2f, I2).
+    expect((await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `sponsor.renewed:${year2[0]!.id}` } })).payloadJson).toMatchObject({ chained: true });
+    expect((await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `sponsor.renewed:${year1[0]!.id}` } })).payloadJson).toMatchObject({ chained: false });
+    // Sin días perdidos: el segundo año empieza cuando acaba el primero.
+    expect(year2[0]!.expiresAt.getTime()).toBeGreaterThan(year1[0]!.expiresAt.getTime());
+    // La campaña recibe las dos renovaciones.
+    expect((await initiativeOf(origin.id)).raisedCents).toBe(raisedBefore + 50_000);
+    // El directorio enseña al comercio una sola vez (el año en vigor).
     expect((await listFriendlySponsors(db, organization.slug, new Date())).filter((row) => row.id !== sponsorId)).toHaveLength(1);
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });

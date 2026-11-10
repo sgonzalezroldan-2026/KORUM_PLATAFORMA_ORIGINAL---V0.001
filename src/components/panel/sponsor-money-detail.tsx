@@ -21,7 +21,7 @@ export function SponsorMoneyDetail({ orgSlug, sponsor, canModerate }: { orgSlug:
   const locale = useLocale();
   const router = useRouter();
   const announce = useApprovalsNotice();
-  const ids = { target: useId(), help: useId() };
+  const ids = { target: useId(), help: useId(), invite: useId() };
   const [chosen, setTarget] = useState<string>(String(sponsor.assignable[0]?.id ?? ''));
   // Si al recargar cambian las campañas elegibles, la elección vuelve a una que exista (se calcula, no se guarda dos veces).
   const target = sponsor.assignable.some((option) => String(option.id) === chosen) ? chosen : String(sponsor.assignable[0]?.id ?? '');
@@ -30,7 +30,7 @@ export function SponsorMoneyDetail({ orgSlug, sponsor, canModerate }: { orgSlug:
   const [pending, startTransition] = useTransition();
   const money = (cents: number) => formatCents(cents, locale as 'es' | 'ca' | 'en');
   const date = (iso: string) => format.dateTime(new Date(iso), { dateStyle: 'medium', timeZone: 'Europe/Madrid' });
-  const { originCents, placed, poolCents, poolDeadline } = sponsor.money;
+  const { originCents, placed, poolCents, poolDeadline, fundCents } = sponsor.money;
 
   function act(operation: () => ReturnType<typeof assignPooledSponsorAction>, success: (result: { title?: string }) => string) {
     setError(null);
@@ -56,7 +56,8 @@ export function SponsorMoneyDetail({ orgSlug, sponsor, canModerate }: { orgSlug:
     );
   };
   const sendLink = () => act(() => sendSponsorRenewalLinkAction(orgSlug, { sponsorId: sponsor.id }), () => t('linkSent', { name: sponsor.name }));
-  const nothingHeld = originCents === 0 && placed.length === 0 && poolCents === 0;
+  const sendInvite = () => act(() => sendSponsorRenewalLinkAction(orgSlug, { sponsorId: sponsor.id }), () => t('inviteSent', { name: sponsor.name }));
+  const nothingHeld = originCents === 0 && placed.length === 0 && poolCents === 0 && fundCents === 0;
 
   return (
     <details className="rounded-xl border border-stone-200 p-3" data-testid="sponsor-detail">
@@ -74,6 +75,7 @@ export function SponsorMoneyDetail({ orgSlug, sponsor, canModerate }: { orgSlug:
               <li key={entry.initiativeId}>{t('placed', { amount: money(entry.amountCents), title: entry.title, wallet: entry.walletEscrowId })}</li>
             ))}
             {poolCents > 0 ? <li className="font-semibold text-amber-950">{poolDeadline ? t('pool', { amount: money(poolCents), date: date(poolDeadline) }) : t('poolNoDate', { amount: money(poolCents) })}</li> : null}
+            {fundCents > 0 ? <li className="font-semibold text-varsity-navy">{t('fund', { amount: money(fundCents) })}</li> : null}
             {nothingHeld ? <li>{t('nothingHeld')}</li> : null}
           </ul>
         </section>
@@ -122,6 +124,18 @@ export function SponsorMoneyDetail({ orgSlug, sponsor, canModerate }: { orgSlug:
               {pending ? t('sending') : t('sendLink')}
             </button>
           ) : null}
+          {canModerate && sponsor.renewalInvitable ? (
+            <div className="flex flex-col gap-1">
+              <button type="button" onClick={sendInvite} disabled={pending} aria-describedby={ids.invite} className="inline-flex min-h-11 items-center self-start rounded-xl border-2 border-varsity-emerald px-4 font-bold text-varsity-emerald disabled:opacity-60">
+                <span aria-hidden="true">{'✉️ '}</span>
+                {pending ? t('sending') : t('sendInvite')}
+              </button>
+              <p id={ids.invite} className="text-ink-soft">
+                {t('inviteHelp')}
+              </p>
+            </div>
+          ) : null}
+          {sponsor.renewalInvitedAt && !sponsor.renewed ? <p className="text-ink-soft">{t('invitedOn', { date: date(sponsor.renewalInvitedAt) })}</p> : null}
         </section>
         {error ? <FormAlert>{error}</FormAlert> : null}
       </div>

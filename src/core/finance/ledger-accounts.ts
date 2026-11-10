@@ -33,7 +33,9 @@ export const ACCOUNT_RULES: Record<LedgerAccount, AccountRule> = {
   GATEWAY_FEES_RECOVERED: { nature: 'REVENUE', requires: [] },
   GATEWAY_FEES_EXPENSE: { nature: 'EXPENSE', requires: [] },
   AUTO_BOOST_EXPENSE: { nature: 'EXPENSE', requires: [] },
-  CHARGEBACK_LOSSES: { nature: 'EXPENSE', requires: [] }
+  CHARGEBACK_LOSSES: { nature: 'EXPENSE', requires: [] },
+  // Fondo de actividades de la entidad (Sprint 4.2f): por comercio, porque cada parte se liquida desde el cobro original de su comercio.
+  ORG_ACTIVITY_FUND: { nature: 'LIABILITY', requires: ['organizationId', 'sponsorId'] }
 };
 
 /** Cuentas que crecen al DEBE. */

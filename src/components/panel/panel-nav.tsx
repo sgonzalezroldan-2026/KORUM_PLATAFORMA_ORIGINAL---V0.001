@@ -17,6 +17,7 @@ export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; p
     { key: 'dashboard', href: base, active: pathname === base },
     { key: 'approvals', href: `${base}/aprobaciones`, active: pathname.startsWith(`${base}/aprobaciones`) },
     { key: 'achievements', href: `${base}/logros`, active: pathname.startsWith(`${base}/logros`) },
+    { key: 'fund', href: `${base}/fondo`, active: pathname.startsWith(`${base}/fondo`) },
     { key: 'settings', href: `${base}/ajustes`, active: pathname.startsWith(`${base}/ajustes`) }
   ] as const;
 

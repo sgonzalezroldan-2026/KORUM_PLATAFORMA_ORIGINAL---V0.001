@@ -8,15 +8,21 @@ import { SPONSORSHIP_MONTHS } from './sponsorship-rules';
  * - **Regla de la entidad** (`Organization.sponsorRenewalRule`): a dónde va el dinero de un patrocinio que se renueva o cuya campaña fracasa.
  *   `SOONEST`, todo a la campaña activa que cierra antes; `PROPORTIONAL`, repartido entre las activas en proporción a lo que le falta a cada una;
  *   `MANUAL`, espera en la bolsa a que el centro elija.
- * - **Bolsa** (`CREDIT_POOL`): si no hay campaña a la que llevarlo, espera como mucho `min(creditPoolMaxDays desde la entrada, 85 días desde el
- *   cobro)` (Regla 02 §4, ventana de 90 días de Paycomet) y después se devuelve al comercio.
+ * - **Bolsa** (`CREDIT_POOL`): si no hay campaña a la que llevarlo, espera como mucho `min(creditPoolMaxDays desde la entrada, 70 días desde el
+ *   cobro)` (Regla 02 §4, ventana de 90 días de Paycomet) y después pasa al Fondo de actividades de la entidad (Sprint 4.2f): nunca se devuelve al
+ *   comercio admitido. Los 20 días que quedan hasta el 90 son para firmar y ejecutar la liquidación del Fondo.
  * - **Campaña elegible:** activa, de la misma entidad, de presupuesto, y que cierra antes de que venza la ventana de su cobro: la liquidación reparte
  *   desde ese cobro, y pasado el día 85 ya no podría hacerlo.
  */
 
 const DAY_MS = 86_400_000;
-/** Un patrocinio no puede esperar ni colocarse más allá de esto desde su cobro: la ventana de 90 días de Paycomet menos 5 de margen (skill de pagos §5). */
+/** Un patrocinio no puede colocarse en una campaña que cierre más allá de esto desde su cobro: la ventana de 90 días de Paycomet menos 5 de margen (skill de pagos §5). */
 export const CREDIT_POOL_HARD_CAP_DAYS = 85;
+/**
+ * Día (desde el cobro) en que la bolsa pasa como muy tarde al Fondo de actividades (Sprint 4.2f): deja 20 días de la ventana de 90 de Paycomet para que
+ * las dos personas firmantes liquiden el Fondo. También es el máximo de `creditPoolMaxDays` (la base de datos lo impide con un `CHECK`).
+ */
+export const ACTIVITY_FUND_DAY = 70;
 /** Días que vale el enlace de pago de una renovación desde que vence el distintivo (el preaviso sale 30 días antes con el mismo enlace). */
 export const RENEWAL_LINK_DAYS = 30;
 /** Máximo en la bolsa si la consola aún no tiene su valor (`GlobalConfig.creditPoolMaxDays`, mismo valor por defecto). */
@@ -30,10 +36,13 @@ export const renewalRuleSchema = z.object({ rule: z.enum(SPONSOR_RENEWAL_RULES) 
 export const assignPooledSchema = z.object({ sponsorId: id, initiativeId: id });
 export const renewalLinkSchema = z.object({ sponsorId: id });
 
-/** Fin del plazo en la bolsa: lo que antes llegue entre el máximo de la consola desde la entrada y el día 85 desde el cobro. */
+/** El máximo de la consola nunca pasa del día del Fondo (aunque una base antigua guardara más). */
+export const effectiveCreditPoolMaxDays = (creditPoolMaxDays: number): number => Math.min(Math.max(0, creditPoolMaxDays), ACTIVITY_FUND_DAY);
+
+/** Fin del plazo en la bolsa: lo que antes llegue entre el máximo de la consola desde la entrada y el día 70 desde el cobro (pasa al Fondo). */
 export function creditPoolDeadline(sponsor: { paidAt: Date; creditPoolAt: Date }, creditPoolMaxDays: number): Date {
-  const byPool = sponsor.creditPoolAt.getTime() + Math.max(0, creditPoolMaxDays) * DAY_MS;
-  const byCharge = sponsor.paidAt.getTime() + CREDIT_POOL_HARD_CAP_DAYS * DAY_MS;
+  const byPool = sponsor.creditPoolAt.getTime() + effectiveCreditPoolMaxDays(creditPoolMaxDays) * DAY_MS;
+  const byCharge = sponsor.paidAt.getTime() + ACTIVITY_FUND_DAY * DAY_MS;
   return new Date(Math.min(byPool, byCharge));
 }
 
@@ -113,8 +122,10 @@ export type SponsorReassignmentRejection =
   | 'POOL_CHANGED'
   /** La campaña no puede recibirlo: cerrada, de otra entidad o fuera de la ventana de 90 días de su cobro. */
   | 'TARGET_NOT_ELIGIBLE'
-  /** El comercio no renueva solo o su distintivo no está en el plazo de la renovación. */
-  | 'RENEWAL_NOT_OPEN';
+  /** El distintivo no está en el plazo de la renovación (o ya está renovado). */
+  | 'RENEWAL_NOT_OPEN'
+  /** Ya se le envió la invitación a renovar de este año (Sprint 4.2f): solo una por año a quien no marcó «renovar cada año». */
+  | 'ALREADY_INVITED';
 
 export class SponsorReassignmentError extends Error {
   readonly reason: SponsorReassignmentRejection;

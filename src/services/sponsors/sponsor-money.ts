@@ -79,14 +79,17 @@ const escrowLine = (sponsor: MovableSponsor, initiativeId: number, direction: 'D
  * Lleva a la bolsa lo que el comercio tiene aún en su campaña de origen. Sin bolsa Matching 2x, su nivel entero sale de la hucha (que debe tenerlo);
  * con bolsa, lo que quede en ella (lo ya liberado se quedó en la campaña con las donaciones que duplicó). `failed` dice si la campaña fracasó: entonces el
  * comercio deja de contar en su 💛 y su bolsa se apaga del todo; si no (bolsa sobrante de una campaña liquidada), solo deja de liberar.
+ *
+ * Una bolsa Matching cuyo sobrante ya salió al llegar a la meta y cuya campaña fracasa después sigue encendida en ella (y contando en su 💛) aunque ya no
+ * quede dinero por mover: se apaga igualmente (heredado del 4.2d, punto 8, Sprint 4.2f).
  */
 export async function moveOriginToPool(tx: Db, sponsor: MovableSponsor, originId: number, failed: boolean, now: Date): Promise<number> {
   const left = sponsor.amountCents - sponsor.reassignedCents;
-  if (left <= 0) return 0;
+  if (left <= 0 && !(sponsor.isMatchingPool && failed)) return 0;
   let moved: number;
   if (sponsor.isMatchingPool) {
     const { balanceCents } = await getAccountBalance(tx, 'MATCHING_POOL', { initiativeId: originId, sponsorId: sponsor.id });
-    moved = Math.min(Math.max(balanceCents, 0), left);
+    moved = Math.min(Math.max(balanceCents, 0), Math.max(left, 0));
     if (moved > 0) {
       await transfer(tx, sponsor, {
         key: `sponsor:to-pool:${sponsor.id}:matching`,
@@ -95,10 +98,13 @@ export async function moveOriginToPool(tx: Db, sponsor: MovableSponsor, originId
         lines: [{ account: 'MATCHING_POOL', direction: 'DEBIT', amountCents: moved, organizationId: sponsor.organizationId, initiativeId: originId, sponsorId: sponsor.id }, poolLine(sponsor, 'CREDIT', moved)]
       }, now);
     }
-    const firstExit = sponsor.reassignedCents === 0;
+    // Sigue contando en el 💛 de su campaña hasta que sale de ella por fracaso: nunca salió nada, o su bolsa sigue encendida (un sobrante que salió al
+    // llegar a la meta solo deja de liberar). Apagar la bolsa es la marca de esa salida: repetir la tarea no vuelve a restar.
+    const origin = await tx.initiative.findUniqueOrThrow({ where: { id: originId }, select: { matchingPoolTotalCents: true } });
+    const stillCounted = sponsor.reassignedCents === 0 || origin.matchingPoolTotalCents > 0;
     await tx.initiative.update({
       where: { id: originId },
-      data: failed ? { matchingPoolTotalCents: 0, matchingPoolRemainingCents: 0, matchingSponsorName: null, ...(firstExit ? { totalContributions: { decrement: 1 } } : {}) } : { matchingPoolRemainingCents: 0 }
+      data: failed ? { matchingPoolTotalCents: 0, matchingPoolRemainingCents: 0, matchingSponsorName: null, ...(stillCounted ? { totalContributions: { decrement: 1 } } : {}) } : { matchingPoolRemainingCents: 0 }
     });
   } else {
     const { balanceCents } = await getAccountBalance(tx, 'INITIATIVE_ESCROW', { initiativeId: originId });

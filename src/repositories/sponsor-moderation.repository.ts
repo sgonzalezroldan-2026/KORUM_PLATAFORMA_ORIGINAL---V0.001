@@ -26,6 +26,7 @@ const SPONSOR_VIEW = {
   phone: true,
   email: true,
   autoRenew: true,
+  renewalInvitedAt: true,
   paidAt: true,
   expiresAt: true,
   status: true,
@@ -55,19 +56,24 @@ export async function listModerationSponsors(db: KorumPrismaClient, actor: Sessi
  */
 export async function loadSponsorRenewalContext(db: KorumPrismaClient, actor: SessionActor, organizationId: string, now: Date) {
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'sponsor.moderation_list', targetType: 'Organization' });
-  const [organization, config, pools, targets] = await Promise.all([
+  const [organization, config, pools, funds, targets] = await Promise.all([
     db.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { sponsorRenewalRule: true } }),
     db.globalConfig.findUnique({ where: { id: 'GLOBAL' }, select: { creditPoolMaxDays: true } }),
     db.escrowLedgerEntry.groupBy({ by: ['sponsorId', 'direction'], where: { account: 'SPONSOR_CREDIT_POOL', organizationId }, _sum: { amountCents: true } }),
+    // Lo que cada comercio tiene en el Fondo de actividades de la entidad (Sprint 4.2f), sin liquidar.
+    db.escrowLedgerEntry.groupBy({ by: ['sponsorId', 'direction'], where: { account: 'ORG_ACTIVITY_FUND', organizationId }, _sum: { amountCents: true } }),
     db.initiative.findMany({ where: { organizationId, status: 'FUNDRAISING', format: 'BUDGET', closesAt: { gt: now } }, orderBy: [{ closesAt: 'asc' }, { id: 'asc' }], select: { id: true, title: true, closesAt: true } })
   ]);
-  const poolCents = new Map<number, number>();
-  for (const row of pools) {
-    if (row.sponsorId === null) continue;
-    const amount = row._sum.amountCents ?? 0;
-    poolCents.set(row.sponsorId, (poolCents.get(row.sponsorId) ?? 0) + (row.direction === 'CREDIT' ? amount : -amount));
-  }
-  return { rule: organization.sponsorRenewalRule, creditPoolMaxDays: config?.creditPoolMaxDays ?? DEFAULT_CREDIT_POOL_MAX_DAYS, poolCents, targets };
+  const bySponsor = (rows: typeof pools) => {
+    const balances = new Map<number, number>();
+    for (const row of rows) {
+      if (row.sponsorId === null) continue;
+      const amount = row._sum.amountCents ?? 0;
+      balances.set(row.sponsorId, (balances.get(row.sponsorId) ?? 0) + (row.direction === 'CREDIT' ? amount : -amount));
+    }
+    return balances;
+  };
+  return { rule: organization.sponsorRenewalRule, creditPoolMaxDays: config?.creditPoolMaxDays ?? DEFAULT_CREDIT_POOL_MAX_DAYS, poolCents: bySponsor(pools), fundCents: bySponsor(funds), targets };
 }
 
 export type ModerationSponsorRow = Awaited<ReturnType<typeof listModerationSponsors>>['open'][number];

@@ -46,6 +46,20 @@ type Preview = Extract<PreviewResult, { status: 'READY' }>;
 type Done = Extract<SignResult, { status: 'SIGNED' }>;
 const subscribeNever = () => () => undefined;
 
+/** Qué ha pasado con una liquidación del Fondo al completarse las dos firmas (Sprint 4.2f), como clave de `panel.sign.done.fund`. */
+function fundOutcome(done: Done): string | null {
+  if (!done.fund || !done.complete) return null;
+  const settlement = done.fund.settlement;
+  if (!settlement) return 'pending';
+  if (settlement.status === 'EXECUTED') return 'executed';
+  if (settlement.status === 'NOT_APPROVED') {
+    if (settlement.reason === 'FUND_CHANGED') return 'changed';
+    if (settlement.reason === 'WINDOW_EXPIRED') return 'expired';
+    return settlement.reason === 'KYB_NOT_VERIFIED' || settlement.reason === 'DESTINATION_ACCOUNT_MISSING' ? 'blocked' : 'pending';
+  }
+  return 'pending';
+}
+
 export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: string; session: SignSessionState; nextPath: string }) {
   const t = useTranslations('panel.sign');
   const format = useFormatter();
@@ -146,12 +160,16 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
   }
 
   if (done) {
+    const fundKey = fundOutcome(done);
+    const backHref = done.fund ? (fundKey === 'blocked' ? `/panel/${orgSlug}/ajustes#documentos` : `/panel/${orgSlug}/fondo`) : `/panel/${orgSlug}/aprobaciones`;
+    // Las dos firmas cuentan, pero la liquidación no sale: título propio y tono de atención, no de éxito.
+    const warning = fundKey === 'changed' || fundKey === 'blocked' || fundKey === 'expired';
     return (
-      <section className="korum-trust-vault flex flex-col gap-3 rounded-2xl border-2 border-varsity-emerald bg-emerald-50 p-5" data-testid="sign-done">
+      <section className={warning ? 'flex flex-col gap-3 rounded-2xl border-2 border-amber-400 bg-amber-50 p-5' : 'korum-trust-vault flex flex-col gap-3 rounded-2xl border-2 border-varsity-emerald bg-emerald-50 p-5'} data-testid="sign-done">
         {/* Una idea de las familias se convierte en iniciativa: momento de celebración (revisión de experiencia del 4.2a). El confeti solo se pinta con movimiento permitido. */}
         {done.complete && done.initiativeId !== null ? <Confetti /> : null}
-        <h1 ref={resultRef} tabIndex={-1} className="font-corp text-2xl font-extrabold text-emerald-950">
-          {done.complete ? t('done.completeTitle') : t('done.partialTitle')}
+        <h1 ref={resultRef} tabIndex={-1} className={warning ? 'font-corp text-2xl font-extrabold text-amber-950' : 'font-corp text-2xl font-extrabold text-emerald-950'}>
+          {warning ? t(`done.fund.${fundKey}Title`) : done.complete ? t('done.completeTitle') : t('done.partialTitle')}
         </h1>
         {done.complete && done.initiativeId !== null ? (
           <p className="die-cut-sticker self-start font-joy text-lg font-bold text-varsity-navy">
@@ -163,13 +181,15 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
           {done.complete
             ? done.initiativeId !== null
               ? t('done.completeIdea')
-              : t('done.completePayout')
+              : fundKey
+                ? t(`done.fund.${fundKey}`)
+                : t('done.completePayout')
             : done.otherSignerNotified
               ? t('done.partialNotified')
               : t('done.partialWaiting')}
         </p>
-        <Link href={`/panel/${orgSlug}/aprobaciones`} className="tactile-btn justify-center">
-          {t('done.cta')}
+        <Link href={backHref} className="tactile-btn justify-center">
+          {t(done.fund ? (fundKey === 'blocked' ? 'done.ctaDocuments' : 'done.ctaFund') : 'done.cta')}
         </Link>
       </section>
     );
@@ -229,6 +249,14 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
             ) : null}
             <p className="whitespace-pre-line wrap-break-word">{preview.idea.description}</p>
             <p className="text-sm font-semibold text-varsity-navy">{t('ideaEffect')}</p>
+          </>
+        ) : preview.targetType === 'ACTIVITY_FUND_PAYOUT' ? (
+          <>
+            <p className="font-corp text-lg font-extrabold text-varsity-navy">{t('fundTitle', { reference: preview.fund.reference })}</p>
+            <p className="font-corp tabular-nums">{t('fundMeta', { amount: money(preview.fund.amountCents), count: preview.fund.sponsors })}</p>
+            <p className="text-sm font-semibold text-ink-soft">{t('fundPurpose')}</p>
+            <p className="whitespace-pre-line wrap-break-word">{preview.fund.purpose}</p>
+            <p className="text-sm font-semibold text-varsity-navy">{t('fundEffect')}</p>
           </>
         ) : (
           <>

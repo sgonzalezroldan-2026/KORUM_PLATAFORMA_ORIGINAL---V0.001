@@ -11,7 +11,8 @@ import { isFailedInitiative, lockInitiatives, payoutSettled } from '@/services/s
  * - lo que sigue en el origen, como siempre (si el origen ya se liquidó, ese dinero salió: lo asume KORUM);
  * - lo que espera en la bolsa (`SPONSOR_CREDIT_POOL`);
  * - lo colocado en campañas sin liquidar (`INITIATIVE_ESCROW` de cada una, que baja su recaudado);
- * - lo colocado en campañas ya liquidadas, que ya salió: `CHARGEBACK_LOSSES`.
+ * - lo que está en el Fondo de actividades de la entidad sin liquidar (`ORG_ACTIVITY_FUND`, Sprint 4.2f);
+ * - lo colocado en campañas ya liquidadas o liquidado con el Fondo, que ya salió: `CHARGEBACK_LOSSES`.
  *
  * Las líneas que devuelve son un «cobro virtual» (al haber): quien llama las refleja al debe como con cualquier cobro.
  */
@@ -64,6 +65,8 @@ export async function movedPayinLines(tx: Db, contribution: ChargeToUndo, payinL
 
   const poolCents = Math.max(0, (await getAccountBalance(tx, 'SPONSOR_CREDIT_POOL', { organizationId, sponsorId: sponsor.id })).balanceCents);
   if (poolCents > 0) lines.push({ account: 'SPONSOR_CREDIT_POOL', direction: 'CREDIT', amountCents: poolCents, organizationId, sponsorId: sponsor.id });
+  const fundCents = Math.max(0, (await getAccountBalance(tx, 'ORG_ACTIVITY_FUND', { organizationId, sponsorId: sponsor.id })).balanceCents);
+  if (fundCents > 0) lines.push({ account: 'ORG_ACTIVITY_FUND', direction: 'CREDIT', amountCents: fundCents, organizationId, sponsorId: sponsor.id });
   const decrements: MovedUndo['decrements'] = [];
   let placedCents = 0;
   for (const allocation of allocations) {
@@ -74,13 +77,15 @@ export async function movedPayinLines(tx: Db, contribution: ChargeToUndo, payinL
       decrements.push({ initiativeId: allocation.initiativeId, cents: allocation.amountCents });
     }
   }
-  // Lo reasignado que ya no está ni en la bolsa ni en una campaña abierta se liquidó con una campaña: salió de Paycomet y lo asume KORUM.
-  const consumed = sponsor.reassignedCents - poolCents - placedCents;
-  if (consumed < 0) throw new Error(`El comercio ${sponsor.id} tiene más dinero colocado (${poolCents + placedCents}) del que salió de su origen (${sponsor.reassignedCents}).`);
+  // Lo reasignado que ya no está ni en la bolsa, ni en el Fondo, ni en una campaña abierta se liquidó (con una campaña o con el Fondo): salió de Paycomet
+  // y lo asume KORUM.
+  const consumed = sponsor.reassignedCents - poolCents - fundCents - placedCents;
+  if (consumed < 0) throw new Error(`El comercio ${sponsor.id} tiene más dinero colocado (${poolCents + fundCents + placedCents}) del que salió de su origen (${sponsor.reassignedCents}).`);
   lossCents += consumed;
   if (lossCents > 0) lines.push({ account: 'CHARGEBACK_LOSSES', direction: 'CREDIT', amountCents: lossCents, organizationId });
 
-  const originCounted = sponsor.renewedFromId === null && !isFailedInitiative(contribution.initiative.status) && !originSettled;
+  // Un cobro que entró directamente en la bolsa (renovación, o patrocinio que llegó con la campaña ya cerrada, Sprint 4.2f) nunca contó en su campaña.
+  const originCounted = levelLine.account !== 'SPONSOR_CREDIT_POOL' && sponsor.renewedFromId === null && !isFailedInitiative(contribution.initiative.status) && !originSettled;
   return { lines, originLines, undo: { allocationIds: allocations.map((allocation) => allocation.id), decrements, originCounted } };
 }
 

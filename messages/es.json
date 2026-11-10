@@ -395,7 +395,8 @@
       "payout": "Liberar los fondos de «{title}»",
       "codeLabel": "Tu código de 6 dígitos",
       "cta": "Firmar ahora",
-      "footnote": "El enlace sirve una sola vez. Si no esperabas esta firma, no la completes y avisa a la otra persona firmante."
+      "footnote": "El enlace sirve una sola vez. Si no esperabas esta firma, no la completes y avisa a la otra persona firmante.",
+      "activityFund": "Liquidar el Fondo de actividades: «{title}»"
     },
     "split": {
       "expiring": {
@@ -468,7 +469,8 @@
         "preheader": "Gracias por un año más.",
         "title": "¡Gracias por un año más!",
         "body": "Hemos recibido tu renovación. Tu distintivo {level} de Comercio amigo de {organization} está vigente hasta el {date}.",
-        "placed": "Tus {amount} íntegros ya suman en: {list}."
+        "placed": "Tus {amount} íntegros ya suman en: {list}.",
+        "chained": "Ya habías renovado este año: este segundo pago renueva el año siguiente, hasta el {date}. Si fue un error, escríbenos desde la página de soporte."
       },
       "reassigned": {
         "subject": "Tu patrocinio a {organization} sigue sumando",
@@ -487,6 +489,40 @@
         "bodyManual": "{organization} elegirá a qué campaña llevar tus {amount}. Siguen retenidos en PAYCOMET hasta el {deadline}; si para entonces no se han llevado a ninguna, pasarán a la entidad para sus actividades del curso.",
         "visible": "Mientras tanto sigues apareciendo como comercio amigo.",
         "deadline": "Retenido hasta"
+      },
+      "renewalInvite": {
+        "subject": "{organization} te invita a seguir siendo Comercio amigo",
+        "preheader": "Una invitación, sin compromiso y sin cobros automáticos.",
+        "title": "¿Seguimos juntos otro año?",
+        "body": "{organization} quiere invitarte a renovar tu distintivo de Comercio amigo (patrocinio de {amount}), que {verb} el {date}. Es solo una invitación: si te apetece seguir, puedes renovarlo con el botón de abajo hasta el {until}. No hacemos ningún cobro automático y no volveremos a escribirte por esto este año.",
+        "amount": "Importe",
+        "date": "Puedes renovar hasta",
+        "cta": "Ver la renovación",
+        "verbFuture": "caduca",
+        "verbPast": "caducó"
+      },
+      "toEntityFund": {
+        "subject": "Tu aportación pasa a {organization} para sus actividades",
+        "preheader": "No había ninguna campaña a la que llevarla a tiempo.",
+        "title": "Tu aportación sigue sumando",
+        "body": "{organization} no ha tenido ninguna campaña a la que llevar tus {amount} antes de que venciera su plazo. Por eso pasan a su Fondo de actividades: la entidad los usará para sus actividades del curso, con la firma de sus dos responsables.",
+        "why": "Así lo prevén las condiciones del patrocinio: tu aportación es para la entidad y no se devuelve una vez admitido el comercio. Tu publicidad sigue igual."
+      },
+      "awaitingDecision": {
+        "subject": "Un comercio amigo espera vuestra decisión en {organization}",
+        "preheader": "Su dinero no se puede mover hasta que decidáis.",
+        "title": "Falta vuestra decisión sobre un comercio",
+        "body": "Un comercio ha pagado su patrocinio de {amount} en una campaña que ya no recauda. Mientras no decidáis si lo admitís, su dinero no se puede llevar a otra campaña. Si lo admitís después del {deadline}, ya solo podrá ir a vuestro Fondo de actividades; si no lo admitís, le devolveremos el 100 %.",
+        "what": "Si lo admitís antes, irá a vuestras campañas según vuestra regla.",
+        "deadline": "Decidid antes del",
+        "cta": "Revisar el comercio"
+      },
+      "lateReceived": {
+        "subject": "Tu pago a {organization} llegó con la campaña ya cerrada",
+        "preheader": "La entidad decidirá; tu dinero sigue retenido en PAYCOMET.",
+        "title": "Tu pago llegó un poco tarde",
+        "body": "Hemos recibido tu patrocinio de {amount}, pero cuando llegó la campaña de {organization} ya no recaudaba. Tu dinero sigue retenido en PAYCOMET mientras la entidad decide si te admite como comercio amigo.",
+        "next": "Si {organization} te admite, tu aportación irá a otra de sus campañas o, si no hay ninguna a tiempo, a su Fondo de actividades. Si no te admite, te devolveremos el 100 % de lo que pagaste, también la gestión y su IVA."
       }
     },
     "tax": {
@@ -626,6 +662,34 @@
         },
         "why": "Si no reconoces este cambio, escribe a soporte cuanto antes.",
         "cta": "Ver el equipo que firma"
+      }
+    },
+    "activityFund": {
+      "amount": "Importe",
+      "deadline": "Liquidar antes del",
+      "how": "Para recibirlo en vuestra cuenta, una de las dos personas firmantes pide la liquidación en el panel indicando para qué se usará el dinero, y las dos firmáis con vuestro código.",
+      "cta": "Abrir el Fondo de actividades",
+      "received": {
+        "subject": "{amount} han pasado al Fondo de actividades de {organization}",
+        "preheader": "Dinero de un comercio amigo para vuestras actividades.",
+        "title": "Nuevo dinero en vuestro Fondo de actividades",
+        "body": "Han pasado {amount} de un comercio amigo a vuestro Fondo de actividades: no había ninguna campaña a la que llevarlos a tiempo. Es dinero para las actividades de la entidad. Liquidadlo antes del {deadline}: después, PAYCOMET ya no podría enviarlo."
+      },
+      "reminder": {
+        "subject": "Liquidad el Fondo de actividades de {organization} antes del {deadline}",
+        "preheader": "El plazo de PAYCOMET para enviar el dinero se acaba.",
+        "title": "El plazo para liquidar el Fondo se acaba",
+        "body": "En vuestro Fondo de actividades hay {amount} sin liquidar. PAYCOMET solo puede enviarlos a vuestra cuenta hasta el {deadline}.",
+        "footnote": "Si ya habéis pedido la liquidación, falta completar la doble firma."
+      },
+      "paid": {
+        "subject": "{amount} del Fondo de actividades enviados a {organization}",
+        "preheader": "La liquidación ya va de camino a vuestra cuenta.",
+        "title": "Fondo de actividades liquidado",
+        "body": "PAYCOMET ya ha enviado a la cuenta de la entidad los {amount} de la liquidación {reference} del Fondo de actividades.",
+        "receipt": "En el panel tenéis su justificante en PDF, con el destino que firmasteis y de qué comercios salió el dinero.",
+        "reference": "Referencia",
+        "cta": "Abrir el Fondo de actividades"
       }
     }
   },
@@ -1542,7 +1606,8 @@
       "approvals": "Aprobaciones",
       "achievements": "Logros",
       "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}",
-      "settings": "Ajustes"
+      "settings": "Ajustes",
+      "fund": "Fondo de actividades"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1819,7 +1884,8 @@
         "INVOICING_UNAVAILABLE": "Ahora mismo no podemos anular la factura de la gestión porque faltan los datos del emisor en KORUM. Probad más tarde o escribid a soporte.",
         "POOL_CHANGED": "Este comercio ya no tiene dinero esperando en su bolsa: otra persona firmante lo ha llevado a una campaña o lo ha hecho la tarea diaria. Recargad la página.",
         "TARGET_NOT_ELIGIBLE": "Esa campaña no puede recibirlo: ya no recauda o cierra después de que venza el plazo de su pago. Elegid otra.",
-        "RENEWAL_NOT_OPEN": "Ahora no se puede enviar el enlace: el comercio ya ha renovado, no renueva cada año o su distintivo no está en el plazo de la renovación."
+        "RENEWAL_NOT_OPEN": "Ahora no se puede enviar el enlace: el comercio ya ha renovado o su distintivo no está en el plazo de la renovación.",
+        "ALREADY_INVITED": "Ya le enviasteis la invitación a renovar de este año: solo se envía una vez."
       },
       "doubleCheck": {
         "label": "Doble firma de la idea",
@@ -1886,7 +1952,19 @@
         "partialNotified": "Hemos enviado el enlace a la otra persona firmante para completar la doble firma.",
         "partialWaiting": "Falta la firma de la otra persona. Cuando tenga activada la verificación en dos pasos, podrá pedir su enlace desde Aprobaciones.",
         "cta": "Volver a Aprobaciones",
-        "celebrate": "¡Una idea de las familias empieza a hacerse realidad!"
+        "celebrate": "¡Una idea de las familias empieza a hacerse realidad!",
+        "ctaFund": "Volver al Fondo de actividades",
+        "fund": {
+          "executed": "Las dos firmas están registradas y el dinero ya va de camino a la cuenta de la entidad. Tenéis el justificante en el Fondo de actividades.",
+          "pending": "Las dos firmas están registradas. El envío a la cuenta de la entidad aún no ha terminado: lo reintentamos y veréis cómo va en el Fondo de actividades.",
+          "changed": "El Fondo ha cambiado desde que se pidió la liquidación (un comercio ha anulado su pago). La hemos anulado: pedidla de nuevo con lo que hay ahora.",
+          "blocked": "Las dos firmas están registradas, pero aún no podemos enviar el dinero: faltan los documentos del titular verificados o la cuenta destino. Revisadlo en Ajustes.",
+          "changedTitle": "La liquidación se ha anulado",
+          "blockedTitle": "Firmada, pero aún no se puede enviar",
+          "expiredTitle": "La liquidación se ha anulado",
+          "expired": "Algún cobro de la liquidación ha pasado el plazo de 90 días en que PAYCOMET puede enviarlo. La hemos anulado: pedidla de nuevo con lo que se pueda liquidar y el equipo de KORUM revisará el resto."
+        },
+        "ctaDocuments": "Ir a los documentos del titular"
       },
       "what": "Lo que vas a firmar",
       "ideaMeta": "{alias} · {category} · {votes} firmas verificadas",
@@ -1923,7 +2001,11 @@
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en Paycomet.",
         "RATE_LIMITED": "Has pedido varios enlaces seguidos. Espera unos minutos antes de pedir otro."
       },
-      "retry": "Volver a comprobar el enlace"
+      "retry": "Volver a comprobar el enlace",
+      "fundMeta": "{amount} · {count, plural, one {de # comercio} other {de # comercios}}",
+      "fundPurpose": "Para qué se usará (lo escribió la entidad):",
+      "fundEffect": "Con las dos firmas, el dinero se envía a la cuenta de la entidad. No se puede deshacer.",
+      "fundTitle": "Liquidación {reference} del Fondo de actividades"
     },
     "sponsors": {
       "title": "{count, plural, =0 {Comercios amigos} one {Comercios amigos · # por revisar} other {Comercios amigos · # por revisar}}",
@@ -2008,7 +2090,7 @@
       "moved": "Patrocinio íntegro de este comercio",
       "rule": {
         "label": "A dónde va el dinero de las renovaciones y de las campañas que no salen",
-        "help": "El dinero de un comercio admitido no se le devuelve. Cuando renueva otro año, o la campaña que patrocinaba no sale adelante (o le sobra parte de su bolsa Matching 2x), va a otra de vuestras campañas activas. Si no hay ninguna, espera retenido en PAYCOMET (como mucho {days} días y siempre dentro de los 85 desde su pago) y, si no se lleva a ninguna campaña a tiempo, pasa a la entidad para sus actividades.",
+        "help": "El dinero de un comercio admitido no se le devuelve. Cuando renueva otro año, o la campaña que patrocinaba no sale adelante (o le sobra parte de su bolsa Matching 2x), va a otra de vuestras campañas activas. Si no hay ninguna, espera retenido en PAYCOMET (como mucho {days} días y siempre dentro de los 70 desde su pago) y, si no se lleva a ninguna campaña a tiempo, pasa a vuestro Fondo de actividades.",
         "options": {
           "SOONEST": "A la campaña activa que cierra antes",
           "PROPORTIONAL": "Repartido entre las activas, según lo que le falte a cada una",
@@ -2044,9 +2126,15 @@
         "summaryFor": "de {name}",
         "assignOption": "{title} · cierra el {date}",
         "assignHelp": "No se puede deshacer desde aquí. Al comercio le avisamos por email.",
-        "renewalOpensOn": "Podréis enviarle el enlace de renovación desde el {date}."
+        "renewalOpensOn": "Podréis enviarle el enlace de renovación desde el {date}.",
+        "fund": "{amount} en vuestro Fondo de actividades",
+        "sendInvite": "Invitarle a renovar (una vez este año)",
+        "inviteHelp": "No pidió renovar cada año. Podéis enviarle una invitación con el enlace de pago; solo una por año.",
+        "inviteSent": "Hemos enviado a {name} la invitación a renovar.",
+        "invitedOn": "Le enviasteis la invitación a renovar el {date}."
       },
-      "renewedElsewhere": "Ya ha renovado: su nuevo año aparece en otra tarjeta de esta lista."
+      "renewedElsewhere": "Ya ha renovado: su nuevo año aparece en otra tarjeta de esta lista.",
+      "lateCharge": "Su pago llegó cuando la campaña ya no recaudaba. Su dinero espera en su bolsa: si lo admitís, irá a vuestras campañas según vuestra regla (o, si vence su plazo, a vuestro Fondo de actividades); si no lo admitís, le devolveremos el 100 %."
     },
     "settings": {
       "metaTitle": "Ajustes de la entidad",
@@ -2404,6 +2492,128 @@
           "RATE_LIMITED": "Habéis subido muchas imágenes en poco tiempo. Probad dentro de una hora."
         }
       }
+    },
+    "fund": {
+      "metaTitle": "Fondo de actividades",
+      "title": "Fondo de actividades",
+      "intro": "Aquí llega el dinero de los comercios amigos que habéis admitido cuando no se ha podido llevar a ninguna campaña antes de que venciera su plazo. No se devuelve al comercio: es para las actividades de la entidad. Para recibirlo en vuestra cuenta, una persona lo pide indicando para qué se usará y las dos firmáis.",
+      "summary": {
+        "title": "Disponible para liquidar",
+        "deadline": "Liquidadlo antes del {date}: después PAYCOMET ya no podría enviarlo.",
+        "where": "Mientras tanto, el dinero sigue retenido en PAYCOMET, la entidad de pago autorizada que hace los cobros y los envíos.",
+        "stuck": "{amount} ya no se pueden enviar porque ha pasado el plazo de PAYCOMET. El equipo de KORUM lo revisa con PAYCOMET y os escribirá.",
+        "notPayable": "Para recibir el Fondo necesitáis los documentos del titular verificados y la cuenta destino.",
+        "notPayableCta": "Ir a los documentos",
+        "inPayout": "En liquidación, esperando la doble firma: {amount}"
+      },
+      "empty": {
+        "title": "Vuestro Fondo está vacío",
+        "text": "Cuando el dinero de un comercio admitido no se pueda llevar a ninguna campaña a tiempo, llegará aquí y os avisaremos por email.",
+        "cta": "Ver los comercios amigos"
+      },
+      "deposits": {
+        "title": "{count, plural, =0 {Qué ha llegado al Fondo} one {Qué ha llegado al Fondo · # entrada} other {Qué ha llegado al Fondo · # entradas}}",
+        "none": "Todavía no ha llegado nada.",
+        "meta": "Pagó en «{origin}» el {charged} · llegó al Fondo el {arrived}"
+      },
+      "levels": {
+        "ORO": "Categoría ORO",
+        "PLATA": "Categoría PLATA",
+        "BRONCE": "Categoría BRONCE"
+      },
+      "request": {
+        "title": "Pedir la liquidación a vuestra cuenta",
+        "lead": "Hoy podéis liquidar <amount></amount>. Contad para qué lo usará la entidad: lo firmaréis las dos personas y saldrá en el justificante.",
+        "purposeLabel": "Para qué se usará el dinero",
+        "purposeHelp": "Por ejemplo: «Material para las colonias de primavera y la fiesta de fin de curso». Entre {min} y {max} caracteres, sin enlaces. No escribáis nombres de alumnos ni otros datos personales: el texto sale en el justificante y no se puede cambiar.",
+        "purposeLength": "Escribid entre {min} y {max} caracteres, sin enlaces.",
+        "effect": "Al pedirla te enviamos por email tu enlace de firma y tu código. Cuando firméis las dos personas, el dinero se envía a la cuenta de la entidad.",
+        "submit": "Pedir la liquidación y mi enlace de firma",
+        "sending": "Pidiendo…",
+        "requested": "Liquidación pedida. Te hemos enviado tu enlace de firma y tu código; valen hasta el {date}.",
+        "requestedNoLink": "Liquidación pedida. Pide tu enlace de firma desde la propia liquidación."
+      },
+      "pending": {
+        "title": "Liquidación {reference} · esperando la doble firma",
+        "purpose": "La pidió {name} el {date}. Para qué se usará:",
+        "someone": "una persona firmante",
+        "splits": "{count, plural, one {De qué comercio sale (# comercio)} other {De qué comercios sale (# comercios)}}",
+        "requestLink": "Pedir mi enlace de firma",
+        "waitingOther": "Tu firma ya consta. Falta la de la otra persona firmante, que recibe su enlace por email.",
+        "cancel": "Retirar esta liquidación",
+        "cancelConfirmLabel": "Confirmar que se retira la liquidación",
+        "cancelConfirm": "Al retirarla, los enlaces de firma dejan de valer y el dinero vuelve a estar disponible para pedirla de nuevo (por ejemplo, con otro uso).",
+        "cancelYes": "Sí, retirarla",
+        "cancelNo": "No, mantenerla",
+        "cancelled": "Liquidación retirada. Podéis pedirla de nuevo cuando queráis."
+      },
+      "history": {
+        "title": "Liquidaciones",
+        "none": "Aún no habéis liquidado el Fondo.",
+        "status": {
+          "PENDING_DOUBLE_CHECK": "Esperando la doble firma",
+          "APPROVED": "Firmada · enviando",
+          "PROCESSING": "Firmada · enviando",
+          "EXECUTED": "Enviada a vuestra cuenta",
+          "FAILED": "Firmada · envío pendiente",
+          "CANCELLED": "Retirada"
+        },
+        "cancelReason": {
+          "WITHDRAWN": "Retirada",
+          "FUND_CHANGED": "Anulada: el Fondo cambió",
+          "WINDOW_EXPIRED": "Anulada: pasó el plazo de 90 días"
+        },
+        "executedOn": "Enviada el {date}",
+        "requestedOn": "Pedida por {name} el {date}",
+        "someone": "una persona firmante",
+        "receipt": "Descargar el justificante (PDF)",
+        "retry": "Reintentar el envío ahora",
+        "retrying": "Reintentando…",
+        "retryDone": "Listo: el dinero ya va de camino a vuestra cuenta.",
+        "retryPending": "Aún no ha terminado. Lo seguimos intentando cada día; si no se resuelve, el equipo de KORUM os escribirá."
+      },
+      "errors": {
+        "INVALID_INPUT": "Escribid para qué se usará el dinero: entre 10 y 500 caracteres, sin enlaces.",
+        "NOT_FOUND": "No encontramos esta liquidación en vuestra entidad. Recargad la página.",
+        "NOTHING_TO_PAY": "Ahora no hay nada que se pueda liquidar del Fondo.",
+        "PAYOUT_PENDING": "Ya hay una liquidación esperando la doble firma: firmadla o retiradla antes de pedir otra.",
+        "KYB_NOT_VERIFIED": "Para liquidar el Fondo necesitáis los documentos del titular verificados.",
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en PAYCOMET.",
+        "WRONG_STATUS": "Esta liquidación ya ha cambiado: otra persona la ha firmado o retirado. Recargad la página.",
+        "FUND_CHANGED": "El Fondo ha cambiado desde que se pidió (un comercio ha anulado su pago). La liquidación se ha anulado: pedidla de nuevo.",
+        "FORBIDDEN": "Tu sesión no puede hacer esto. Vuelve a entrar con la verificación en dos pasos.",
+        "LINK_NOT_SENT": "La liquidación está pedida, pero no hemos podido enviarte tu enlace de firma ahora. Pídelo desde la propia liquidación en unos minutos.",
+        "NOT_A_SIGNER": "Tu cuenta no tiene un cargo de firma en esta entidad.",
+        "HOLDS_BOTH_ROLES": "Una misma persona no puede ocupar los dos cargos de firma. Revisad los cargos de la entidad.",
+        "TWO_FACTOR_REQUIRED": "Para firmar necesitas la verificación en dos pasos activada y superada en esta sesión.",
+        "TARGET_CLOSED": "Esta liquidación ya no espera firmas.",
+        "ALREADY_SIGNED": "Tu firma ya consta (o tu cargo ya ha firmado).",
+        "SAME_PERSON": "Las dos firmas tienen que ser de personas distintas, con correos distintos.",
+        "PROVIDER_INVOICE_MISSING": "Falta la factura del proveedor.",
+        "RATE_LIMITED": "Habéis hecho varias peticiones seguidas. Esperad un rato antes de volver a intentarlo.",
+        "failed": "No hemos podido completar la acción. Probad de nuevo en unos segundos.",
+        "WINDOW_EXPIRED": "Algún cobro de la liquidación ha pasado el plazo de 90 días de PAYCOMET. La liquidación se ha anulado: pedidla de nuevo con lo que se pueda liquidar."
+      },
+      "receipt": {
+        "title": "Justificante de liquidación del Fondo de actividades",
+        "intro": "KORUM deja constancia de que {entity} ({legalName}) ha liquidado a su cuenta el dinero de su Fondo de actividades que se detalla, con la doble firma de sus dos responsables.",
+        "sections": {
+          "payout": "Liquidación",
+          "purpose": "Para qué se usará (destino firmado por la entidad)",
+          "origin": "De dónde procede el dinero",
+          "signatures": "Doble firma",
+          "notes": "Notas"
+        },
+        "reference": "Referencia",
+        "amount": "Importe enviado",
+        "requestedAt": "Pedida el",
+        "executedAt": "Enviada el",
+        "originIntro": "Aportaciones de comercios amigos admitidos por la entidad que no se pudieron llevar a ninguna campaña antes de que venciera su plazo. No se devuelven al comercio: son para las actividades de la entidad.",
+        "originLine": "{name} ({level}): {amount}, pagado el {charged}",
+        "signatureLine": "{role}: {name}, el {date}",
+        "legal": "KORUM es una plataforma tecnológica y no custodia fondos. Los cobros y los envíos los ejecuta PAYCOMET, entidad de pago autorizada. El destino lo declara la entidad; KORUM no comprueba el uso del dinero. Este justificante no es una factura ni un certificado fiscal.",
+        "generated": "Documento generado el {date}."
+      }
     }
   },
   "gate": {
@@ -2455,7 +2665,18 @@
       "PRIVACY_ERASURE_FAILED": "Falló la supresión de una cuenta inactiva",
       "EMAIL_DELIVERY_FAILED": "Hay emails que no se pueden enviar",
       "TRUSTED_IP_MISSING": "No llega la IP de las familias al firmar ideas: todas quedarían en el mismo grupo",
-      "INVOICE_RECTIFY_PENDING": "Factura del fee de un comercio devuelto o con contracargo, pendiente de rectificar"
+      "INVOICE_RECTIFY_PENDING": "Factura del fee de un comercio devuelto o con contracargo, pendiente de rectificar",
+      "ACTIVITY_FUND_WINDOW": "Fondo de actividades cerca del plazo de 90 días (o pasado)",
+      "SPONSOR_MONEY_BLOCKED": "Dinero de un comercio bloqueado con su plazo corriendo"
+    },
+    "fundsTitle": "{count, plural, =0 {Fondos de actividades} one {Fondos de actividades · # entidad} other {Fondos de actividades · # entidades}}",
+    "fundsNone": "Ninguna entidad tiene dinero en su Fondo de actividades.",
+    "fundPayout": {
+      "NONE": "Sin liquidación pedida",
+      "PENDING_DOUBLE_CHECK": "Liquidación esperando la doble firma",
+      "APPROVED": "Liquidación firmada, enviando",
+      "PROCESSING": "Liquidación firmada, enviando",
+      "FAILED": "Liquidación firmada, envío pendiente"
     }
   },
   "forbidden": {
