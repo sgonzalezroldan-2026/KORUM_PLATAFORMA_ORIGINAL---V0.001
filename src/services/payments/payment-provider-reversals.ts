@@ -14,11 +14,18 @@ import type { InvoicingContext } from './sponsorship-events';
  * KORUM o desde su panel) y un contracargo. Mismas reglas: la fila de la iniciativa bloqueada y el asiento según dónde esté el dinero.
  */
 
+/** `true` si el cobro es de un comercio que ya movió dinero fuera de su campaña de origen (reasignado o en la bolsa). */
+async function isMovedSponsorship(tx: Db, contribution: Pick<ContributionRow, 'type' | 'sponsorId'>): Promise<boolean> {
+  if (contribution.type !== 'SPONSORSHIP' || !contribution.sponsorId) return false;
+  const sponsor = await tx.sponsor.findUnique({ where: { id: contribution.sponsorId }, select: { reassignedCents: true } });
+  return (sponsor?.reassignedCents ?? 0) > 0;
+}
+
 /** Un patrocinio devuelto o contracargado ya no es un comercio amigo vigente, aunque la iniciativa ya estuviera liquidada; su bolsa, si tenía, se apaga. */
 async function markSponsorRefunded(tx: Db, contribution: Pick<ContributionRow, 'type' | 'sponsorId' | 'initiativeId'>, at: Date): Promise<void> {
   if (contribution.type !== 'SPONSORSHIP' || !contribution.sponsorId) return;
   const sponsor = await tx.sponsor.findUniqueOrThrow({ where: { id: contribution.sponsorId }, select: { id: true, isMatchingPool: true, status: true } });
-  await tx.sponsor.update({ where: { id: sponsor.id }, data: { status: 'REFUNDED' } });
+  await tx.sponsor.update({ where: { id: sponsor.id }, data: { status: 'REFUNDED', creditPoolAt: null } });
   await retireMatchingPool(tx, sponsor, contribution.initiativeId, at);
 }
 
@@ -45,7 +52,8 @@ export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNoti
   const contribution = await loadLockedContribution(tx, { paycometOrder: notification.order });
   if (!contribution) throw new PaymentReconciliationError(`Reembolso de un pedido desconocido: ${notification.order}`);
   assertMatchesCharge(contribution, notification, 'Reembolso');
-  if (contribution.status === 'COMPLETED' && isSettled(contribution.initiative.payout?.status)) {
+  // Un patrocinio reasignado (Sprint 4.2d) no sigue el camino «ya liquidada»: su dinero puede estar en la bolsa o en otras campañas, y sale de allí.
+  if (contribution.status === 'COMPLETED' && isSettled(contribution.initiative.payout?.status) && !(await isMovedSponsorship(tx, contribution))) {
     await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'REFUNDED', refundedCents: contribution.totalChargedCents, refundedAt: occurredAt } });
     // Ya liquidada, el aforo no se recalcula; pero el pase de quien ha recuperado su dinero deja de valer.
     await revokePassInTx(tx, contribution.id, occurredAt);
@@ -88,9 +96,10 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
   if (contribution.status !== 'COMPLETED' && contribution.status !== 'REFUND_PENDING' && contribution.status !== 'REFUNDED') return false;
   await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'CHARGEBACK', refundSendingAt: null } });
 
-  const settled = isSettled(contribution.initiative.payout?.status);
+  // Reasignado (Sprint 4.2d): la liquidación del origen no decide nada; el asiento sale de donde esté cada parte del dinero y lo ya liquidado es pérdida.
+  const settled = isSettled(contribution.initiative.payout?.status) && !(await isMovedSponsorship(tx, contribution));
   const mode: ChargebackMode = contribution.status === 'REFUND_PENDING' ? 'REFUND_PENDING' : contribution.status === 'REFUNDED' || settled ? 'KORUM_LOSS' : 'IN_ESCROW';
-  const payin = mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution) : { lines: [], poolReleasedCents: 0 };
+  const payin = mode === 'IN_ESCROW' ? await payinLinesOf(tx, contribution, laterOf(occurredAt)) : { lines: [], poolReleasedCents: 0 };
   // Sin la hucha, lo asume KORUM; pero el sobrante de una bolsa Matching 2x sigue en la bolsa y sale de ella (antes de apagarla).
   const lossLines = mode === 'KORUM_LOSS' ? await korumLossLines(tx, contribution) : null;
   await postJournal(tx, {
@@ -105,7 +114,7 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
     createdById: 'webhook',
     lines: lossLines ?? chargebackLines(mode, payin.lines, contribution.organizationId, contribution.totalChargedCents)
   });
-  if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution, laterOf(occurredAt), payin.poolReleasedCents);
+  if (mode === 'IN_ESCROW') await removeFromInitiative(tx, contribution, laterOf(occurredAt), payin);
   else {
     await revokePassInTx(tx, contribution.id, occurredAt);
     await markSponsorRefunded(tx, contribution, occurredAt);

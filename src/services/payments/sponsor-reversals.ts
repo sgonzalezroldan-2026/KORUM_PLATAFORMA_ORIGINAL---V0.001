@@ -3,6 +3,7 @@ import { getAccountBalance } from '@/core/finance/ledger-balances';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
 import type { Db } from '@/lib/db';
 import { RectificationNotAllowedError, rectifyInvoice } from '@/services/invoicing/invoice.service';
+import type { MovedUndo } from './moved-sponsor-reversals';
 import type { InvoicingContext } from './sponsorship-events';
 
 /**
@@ -15,6 +16,8 @@ import type { InvoicingContext } from './sponsorship-events';
 export interface PayinToUndo {
   lines: JournalLine[];
   poolReleasedCents: number;
+  /** Solo si el comercio movió su dinero (Sprint 4.2d): dónde lo tenía y qué campañas pierden su parte. */
+  moved?: MovedUndo;
 }
 
 /**

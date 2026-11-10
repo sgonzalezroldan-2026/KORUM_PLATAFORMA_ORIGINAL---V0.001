@@ -26,7 +26,12 @@ const nextConfig: NextConfig = {
       { source: '/:path*', headers: securityHeaders },
       // Abrir un documento del titular redirige a una URL firmada del almacén: no debe viajar en el `Referer` de nada (Sprint 4.2c). Va después de la
       // regla general porque, con la misma cabecera, gana la última.
-      { source: '/api/panel/documentos/:id', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] }
+      { source: '/api/panel/documentos/:id', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },
+      // Renovación y documentos de un comercio (Sprint 4.2d): su URL lleva un enlace firmado; tampoco viaja en el `Referer` dentro del propio dominio.
+      { source: '/:orgSlug/comercios/renovar', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },
+      { source: '/:locale(ca|en)/:orgSlug/comercios/renovar', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },
+      { source: '/:orgSlug/comercios/documentos/:kind', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },
+      { source: '/:locale(ca|en)/:orgSlug/comercios/documentos/:kind', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] }
     ];
   }
 };

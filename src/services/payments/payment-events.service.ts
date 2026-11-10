@@ -77,6 +77,8 @@ export interface PaymentEventOptions {
   keyring?: () => Keyring;
   /** Proveedor que guarda la tarjeta (`PaymentMethodToken.provider`). Lo pone el webhook. */
   cardProvider?: string;
+  /** `DATA_HMAC_SECRET`: firma el enlace a los documentos en el email de una renovación pagada (Sprint 4.2d). Sin él, el email lleva al directorio. */
+  documentsSecret?: string;
 }
 
 async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions): Promise<void> {
@@ -90,7 +92,7 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     throw new PaymentReconciliationError(`Cobro ${order} confirmado por ${notification.amountCents} y se esperaban ${contribution.totalChargedCents}.`);
   }
   if (contribution.type === 'SPONSORSHIP') {
-    await completeSponsorshipInTx(tx, contribution, { order, authCode: notification.authCode }, occurredAt, options.invoicing);
+    await completeSponsorshipInTx(tx, contribution, { order, authCode: notification.authCode }, occurredAt, options.invoicing, options.documentsSecret);
     return;
   }
   if (contribution.type !== 'DONATION' && contribution.type !== 'TICKET') {

@@ -21,10 +21,12 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 const refresh = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
-const actions = { approveSponsorAction: vi.fn(), rejectSponsorAction: vi.fn() };
+const actions = { approveSponsorAction: vi.fn(), rejectSponsorAction: vi.fn(), assignPooledSponsorAction: vi.fn(), sendSponsorRenewalLinkAction: vi.fn() };
 vi.mock('@/app/[locale]/(dashboard)/panel/[orgSlug]/(gestion)/aprobaciones/actions', () => ({
   approveSponsorAction: (...args: unknown[]) => actions.approveSponsorAction(...args),
-  rejectSponsorAction: (...args: unknown[]) => actions.rejectSponsorAction(...args)
+  rejectSponsorAction: (...args: unknown[]) => actions.rejectSponsorAction(...args),
+  assignPooledSponsorAction: (...args: unknown[]) => actions.assignPooledSponsorAction(...args),
+  sendSponsorRenewalLinkAction: (...args: unknown[]) => actions.sendSponsorRenewalLinkAction(...args)
 }));
 
 const sponsor = (overrides: Partial<ModerationSponsorView> = {}): ModerationSponsorView => ({
@@ -49,6 +51,12 @@ const sponsor = (overrides: Partial<ModerationSponsorView> = {}): ModerationSpon
   expiresAt: '2027-11-08T10:00:00.000Z',
   logoSrc: null,
   initiative: { id: 3, title: 'Toldos para el patio', walletEscrowId: 'WLT-ESC-101', status: 'FUNDRAISING' },
+  money: { originCents: 25_000, placed: [], poolCents: 0, poolDeadline: null },
+  isRenewal: false,
+  renewed: false,
+  renewalOpen: false,
+  renewalOpensAt: null,
+  assignable: [],
   ...overrides
 });
 
@@ -152,7 +160,7 @@ describe('Sprint 4.2b · tarjeta del comercio en la bandeja', () => {
     view.unmount();
     renderCard(sponsor({ status: 'REJECTED', needsDecision: false }));
     expect(screen.getByText('Patrocinio devuelto al comercio')).toBeInTheDocument();
-    expect(screen.queryByText(/Le avisaremos 30 días antes/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Le enviaremos el enlace para renovar 30 días antes/)).not.toBeInTheDocument();
     expect(screen.queryByText('Patrocinio íntegro a la hucha')).not.toBeInTheDocument();
   });
 

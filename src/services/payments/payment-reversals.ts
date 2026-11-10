@@ -5,6 +5,7 @@ import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
 import { queueRefundIssued } from '@/services/email/outbox-writers';
+import { applyMovedUndo, movedPayinLines } from './moved-sponsor-reversals';
 import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 import { retireMatchingPool, splitReleasedPool, type PayinToUndo } from './sponsor-reversals';
 
@@ -48,7 +49,11 @@ export async function loadLockedContribution(tx: Db, where: { id: number } | { p
   return loadContribution(tx, where);
 }
 
-export async function payinLinesOf(db: Db, contribution: Pick<ContributionRow, 'id' | 'paycometOrder'>): Promise<PayinToUndo> {
+/**
+ * Lo que se deshace de un cobro: sus líneas al haber, con la bolsa Matching 2x en parte liberada separada (`splitReleasedPool`) y, si el comercio ya
+ * movió su dinero (reasignado o en la bolsa, Sprint 4.2d), la línea del nivel repartida según dónde está ahora (`movedPayinLines`).
+ */
+export async function payinLinesOf(db: Db, contribution: ContributionRow, now: Date = new Date()): Promise<PayinToUndo> {
   const journal = await db.ledgerJournal.findFirst({ where: { contributionId: contribution.id, kind: { in: [...PAYIN_KINDS] } }, include: { entries: true } });
   if (!journal) throw new PaymentReconciliationError(`El cobro ${contribution.paycometOrder ?? contribution.id} no tiene asiento: no se puede deshacer.`);
   const lines: JournalLine[] = journal.entries.map((entry) => ({
@@ -60,7 +65,10 @@ export async function payinLinesOf(db: Db, contribution: Pick<ContributionRow, '
     userId: entry.userId,
     sponsorId: entry.sponsorId
   }));
-  return splitReleasedPool(db, lines);
+  const moved = await movedPayinLines(db, contribution, lines, now);
+  if (!moved) return splitReleasedPool(db, lines);
+  const origin = await splitReleasedPool(db, moved.originLines);
+  return { lines: [...moved.lines, ...origin.lines], poolReleasedCents: origin.poolReleasedCents, moved: moved.undo };
 }
 
 /**
@@ -74,11 +82,35 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
   const journal = await tx.ledgerJournal.findFirst({ where: { contributionId: release.id, kind: 'MATCHING_RELEASE' }, select: { id: true, entries: { where: { account: 'MATCHING_POOL' }, select: { sponsorId: true } } } });
   if (!journal) throw new PaymentReconciliationError(`La liberación de bolsa de ${contribution.paycometOrder} no tiene asiento.`);
   const poolSponsorId = journal.entries[0]?.sponsorId;
-  const poolSponsor = poolSponsorId ? await tx.sponsor.findUnique({ where: { id: poolSponsorId }, select: { status: true } }) : null;
-  if (poolSponsor?.status !== 'APPROVED') return 0;
+  const poolSponsor = poolSponsorId
+    ? await tx.sponsor.findUnique({ where: { id: poolSponsorId }, select: { id: true, organizationId: true, status: true, reassignedCents: true, amountCents: true, creditPoolAt: true } })
+    : null;
+  const moved = poolSponsor !== null && poolSponsor.reassignedCents > 0;
+  if (!poolSponsor || (poolSponsor.status !== 'APPROVED' && !(moved && poolSponsor.status === 'CREDIT_POOL'))) return 0;
   await reverseJournal(tx, { journalId: journal.id, idempotencyKey: `payment:matching-undo:${release.id}`, description: `Anulación del bonus Matching 2x de ${contribution.paycometOrder}`, createdById: 'system' });
   await tx.contribution.update({ where: { id: release.id }, data: { status: 'REFUNDED', refundedCents: release.amountCents, refundedAt: new Date() } });
-  await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { matchingPoolRemainingCents: { increment: release.amountCents } } });
+  if (!moved) {
+    await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { matchingPoolRemainingCents: { increment: release.amountCents } } });
+    return release.amountCents;
+  }
+  // La bolsa ya salió de la campaña (reasignada, Sprint 4.2d; auditoría financiera N1): el bonus que vuelve no se queda en una bolsa apagada, sigue al
+  // comercio a su bolsa de reasignación y la tarea lo coloca con la regla de la entidad.
+  const amount = Math.min(release.amountCents, poolSponsor.amountCents - poolSponsor.reassignedCents);
+  if (amount > 0) {
+    await postJournal(tx, {
+      idempotencyKey: `sponsor:to-pool:release:${release.id}`,
+      kind: 'CREDIT_POOL_TRANSFER',
+      description: `Bonus Matching 2x devuelto a la bolsa de reasignación del comercio ${poolSponsor.id}`,
+      organizationId: poolSponsor.organizationId,
+      initiativeId: contribution.initiativeId,
+      createdById: 'system',
+      lines: [
+        { account: 'MATCHING_POOL', direction: 'DEBIT', amountCents: amount, organizationId: poolSponsor.organizationId, initiativeId: contribution.initiativeId, sponsorId: poolSponsor.id },
+        { account: 'SPONSOR_CREDIT_POOL', direction: 'CREDIT', amountCents: amount, organizationId: poolSponsor.organizationId, sponsorId: poolSponsor.id }
+      ]
+    });
+    await tx.sponsor.update({ where: { id: poolSponsor.id }, data: { reassignedCents: { increment: amount }, status: 'CREDIT_POOL', creditPoolAt: poolSponsor.creditPoolAt ?? new Date() } });
+  }
   return release.amountCents;
 }
 
@@ -88,22 +120,29 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
  * y se quedaría sin salida; se liquida lo que queda. Tampoco se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
  * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026).
  */
-export async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date, poolReleasedCents = 0): Promise<void> {
+export async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date, payin: Pick<PayinToUndo, 'poolReleasedCents' | 'moved'> = { poolReleasedCents: 0 }): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
   const releasedTickets = await revokePassInTx(tx, contribution.id, at);
   let leavesRaised = contribution.amountCents + bonusCents;
+  let leavesCount = 1;
   if (contribution.type === 'SPONSORSHIP' && contribution.sponsorId) {
     const sponsor = await tx.sponsor.findUniqueOrThrow({ where: { id: contribution.sponsorId }, select: { id: true, isMatchingPool: true, status: true } });
-    await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED' } });
-    // De una bolsa Matching 2x solo había sumado a lo recaudado lo ya liberado. Se apaga: ninguna donación posterior la buscará.
-    if (sponsor.isMatchingPool) {
-      leavesRaised = poolReleasedCents;
+    await tx.sponsor.update({ where: { id: contribution.sponsorId }, data: { status: 'REFUNDED', creditPoolAt: null } });
+    if (payin.moved) {
+      // Reasignado (Sprint 4.2d): el origen solo pierde lo que aún tenía (lo liberado de su bolsa) y las otras campañas, lo suyo.
+      leavesRaised = payin.poolReleasedCents;
+      leavesCount = payin.moved.originCounted ? 1 : 0;
+      await applyMovedUndo(tx, payin.moved, at);
+      if (sponsor.isMatchingPool) await retireMatchingPool(tx, sponsor, contribution.initiativeId, at);
+    } else if (sponsor.isMatchingPool) {
+      // De una bolsa Matching 2x solo había sumado a lo recaudado lo ya liberado. Se apaga: ninguna donación posterior la buscará.
+      leavesRaised = payin.poolReleasedCents;
       await retireMatchingPool(tx, sponsor, contribution.initiativeId, at);
     }
   }
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
-    data: { raisedCents: { decrement: leavesRaised }, totalContributions: { decrement: 1 }, ticketsSold: { decrement: releasedTickets } },
+    data: { raisedCents: { decrement: leavesRaised }, totalContributions: { decrement: leavesCount }, ticketsSold: { decrement: releasedTickets } },
     select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
   });
   if (contribution.groupName) {
@@ -123,10 +162,12 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
   const contribution = await loadLockedContribution(tx, { id: contributionId });
   if (!contribution) throw new RefundNotAllowedError(contributionId, 'no existe');
   if (contribution.status !== 'COMPLETED') return;
-  if (!options.lateCharge && isSettled(contribution.initiative.payout?.status)) throw new RefundNotAllowedError(contributionId, 'la iniciativa ya está liquidada');
+  const at = options.at ?? new Date();
+  const payin = await payinLinesOf(tx, contribution, at);
+  // Un patrocinio reasignado no depende de que su campaña de origen esté liquidada: lo que salió con ella lo asume KORUM y el resto vuelve de donde está.
+  if (!options.lateCharge && !payin.moved && isSettled(contribution.initiative.payout?.status)) throw new RefundNotAllowedError(contributionId, 'la iniciativa ya está liquidada');
 
   await tx.contribution.update({ where: { id: contributionId }, data: { status: 'REFUND_PENDING' } });
-  const payin = await payinLinesOf(tx, contribution);
   await postJournal(tx, {
     idempotencyKey: `payment:refund-approval:${contributionId}`,
     kind: 'ESCROW_REFUND_DONOR',
@@ -138,7 +179,7 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
     createdById: 'system',
     lines: refundApprovalLines(payin.lines, contribution.organizationId, contribution.totalChargedCents)
   });
-  await removeFromInitiative(tx, contribution, options.at ?? new Date(), payin.poolReleasedCents);
+  await removeFromInitiative(tx, contribution, at, payin);
 }
 
 /** Registra que el dinero ya ha vuelto al medio de pago. Idempotente: lo pueden avisar la respuesta de la API y el webhook. */

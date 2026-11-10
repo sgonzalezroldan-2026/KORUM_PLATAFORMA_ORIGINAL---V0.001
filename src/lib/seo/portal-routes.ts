@@ -19,6 +19,8 @@ export const sponsorsPath = (orgSlug: string): string => `/${orgSlug}/comercios`
 /** Documentos del comercio con el mismo enlace firmado de su pedido: justificante, factura del fee, su rectificativa (si se le devolvió) y el cartel del escaparate. */
 export const SPONSOR_DOCUMENTS = ['justificante', 'factura', 'rectificativa', 'cartel'] as const;
 export type SponsorDocumentKind = (typeof SPONSOR_DOCUMENTS)[number];
+/** Renovación anual de un comercio amigo (Sprint 4.2d): `?r=` con el enlace firmado del email, o `?pedido=&sig=` a la vuelta del pago. */
+export const sponsorRenewalPath = (orgSlug: string): string => `/${orgSlug}/comercios/renovar`;
 export const sponsorDocumentPath = (orgSlug: string, kind: SponsorDocumentKind): string => `/${orgSlug}/comercios/documentos/${kind}`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */
 export const INITIATIVE_ID_PATTERN = /^[1-9]\d{0,8}$/;

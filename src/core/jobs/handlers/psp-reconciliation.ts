@@ -5,6 +5,7 @@ import type { Db } from '@/lib/db';
 import { PaymentProviderError, type PaymentProvider, type PspCharge } from '@/services/payments/payment-provider';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert } from '../ops-alerts';
+import { checkSponsorMoney } from './sponsor-money-checks';
 
 /** Cuánto atrás se concilia cada día: las ejecuciones se solapan a propósito, para no perder un cobro que caiga en el límite de dos días. */
 export const RECONCILIATION_WINDOW_MS = 48 * 3_600_000;
@@ -61,6 +62,8 @@ async function checkLedger(db: Db, now: Date): Promise<number> {
     await raiseAlert(db, { type: 'RECONCILIATION_MISMATCH', severity: 'CRITICAL', dedupeKey: `${RAISED_PREFIX}${initiative.id}`, organizationId: initiative.organizationId, targetType: 'Initiative', targetId: String(initiative.id), detail: { kind: 'RAISED_MISMATCH', cachedCents: initiative.raisedCents, ledgerCents: ledger } }, now);
   }
   await db.opsAlert.updateMany({ where: { type: 'RECONCILIATION_MISMATCH', status: 'OPEN', dedupeKey: { startsWith: RAISED_PREFIX, notIn: wrong } }, data: { status: 'RESOLVED', resolvedAt: now } });
+  // Dinero de los comercios (Sprint 4.2d): bolsas, colocaciones y cobros repartidos más de una vez.
+  problems += await checkSponsorMoney(db, now);
   return problems;
 }
 

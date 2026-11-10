@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ApprovalsNoticeProvider } from '@/components/panel/approvals-notice';
 import { IdeaModerationCard } from '@/components/panel/idea-moderation-card';
 import { SponsorModerationCard } from '@/components/panel/sponsor-moderation-card';
+import { SponsorRenewalRuleForm } from '@/components/panel/sponsor-renewal-rule-form';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Link } from '@/i18n/navigation';
 import { getEnv } from '@/config/env';
@@ -104,6 +105,8 @@ export default async function ApprovalsPage({ params }: { params: Promise<{ loca
           </header>
           {/* Su propio aviso de éxito, encima de los comercios: al aprobar uno de abajo, el foco no salta al principio de la página. */}
           <ApprovalsNoticeProvider>
+            {/* Con `key`, si otra persona firmante cambia la regla, el selector arranca de la guardada al recargar. */}
+            <SponsorRenewalRuleForm key={sponsors.rule} orgSlug={organization.slug} rule={sponsors.rule} canEdit={canModerate} maxDays={sponsors.creditPoolMaxDays} />
             {sponsors.open.length === 0 ? (
               <EmptyState
                 icon="🏪"

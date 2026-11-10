@@ -9,10 +9,13 @@ import { ResourceNotFoundError } from './tenant-guard';
  * firmado de su pedido.
  */
 
-/** Comercios amigos visibles: aprobados por el centro y dentro de su vigencia. El orden estricto ORO > PLATA > BRONCE lo aplica quien llama. */
+/**
+ * Comercios amigos visibles: aprobados por el centro y dentro de su vigencia. También los que esperan en la bolsa a una campaña nueva (decisión del
+ * promotor, 2026-11-09: siguen visibles hasta que caduca su distintivo o se les devuelve). El orden ORO > PLATA > BRONCE lo aplica quien llama.
+ */
 export async function listFriendlySponsors(db: KorumPrismaClient, slug: string, now: Date) {
   return db.sponsor.findMany({
-    where: { status: 'APPROVED', expiresAt: { gt: now }, organization: { slug, archivedAt: null } },
+    where: { status: { in: ['APPROVED', 'CREDIT_POOL'] }, expiresAt: { gt: now }, organization: { slug, archivedAt: null } },
     select: { id: true, name: true, sector: true, categoryLevel: true, tierRank: true, promo: true, code: true, logoFile: { select: { id: true, visibility: true, deletedAt: true } } },
     orderBy: [{ tierRank: 'desc' }, { id: 'asc' }]
   });
@@ -99,6 +102,7 @@ export async function getSponsorshipDocuments(db: KorumPrismaClient, slug: strin
           cifKeyVersion: true,
           categoryLevel: true,
           isMatchingPool: true,
+          renewedFromId: true,
           feeGeneratedCents: true,
           status: true,
           expiresAt: true,

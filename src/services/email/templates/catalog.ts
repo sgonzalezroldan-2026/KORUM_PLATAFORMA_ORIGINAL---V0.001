@@ -10,14 +10,13 @@ import {
   privacyInactivityNotice,
   splitWindowExpired,
   splitWindowExpiring,
-  sponsorRenewalNotice,
   taxCertificateReady
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
 import { accountPasskeyAdded, supportReceived } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
-import { sponsorRejected, sponsorWelcome } from './definitions-sponsors';
+import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { signerHandover } from './definitions-team';
 
 /**
@@ -70,6 +69,10 @@ const ENTRIES = [
   register('sponsor.renewalNotice', sponsorRenewalNotice),
   register('sponsor.welcome', sponsorWelcome),
   register('sponsor.rejected', sponsorRejected),
+  register('sponsor.renewalLink', sponsorRenewalLink),
+  register('sponsor.renewed', sponsorRenewed),
+  register('sponsor.reassigned', sponsorReassigned),
+  register('sponsor.creditPool', sponsorCreditPool),
   register('tax.certificateReady', taxCertificateReady),
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),

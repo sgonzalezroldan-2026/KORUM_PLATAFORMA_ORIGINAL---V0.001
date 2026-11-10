@@ -124,7 +124,7 @@ test.describe('QA-F05 · patrocinio de un comercio', () => {
     await expect(summary).toContainText('Total: 708,90 €');
     await modal.getByLabel('Descuento o ventaja para las familias (opcional)').fill('10 % en pan');
     await modal.getByLabel('Código o cupón (opcional)').fill('E2E10');
-    await expect(modal.getByLabel(/Recordatorio de renovación/)).toBeChecked();
+    await expect(modal.getByLabel(/Renovación anual: envíame por email el enlace/)).toBeChecked();
     await expect(modal).not.toContainText('propina');
 
     if (testInfo.project.name === 'mobile') await expectNoHorizontalOverflow(page);

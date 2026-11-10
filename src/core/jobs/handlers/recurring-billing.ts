@@ -2,22 +2,20 @@ import type { Db } from '@/lib/db';
 import { reportError } from '@/lib/error-reporting';
 import { chargePledgeCycle } from '@/services/pledges/pledge-billing';
 import { pledgeModeEnabled, retirePledgeCard } from '@/services/pledges/pledge.service';
+import { expireCreditPools, queueRenewalLinks, renewalLinkPayload, sweepSponsorMoney } from '@/services/sponsors/sponsor-sweeps';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert } from '../ops-alerts';
 
 /**
- * Tareas de cobros recurrentes (patrocinios y Mi Hucha). Mi Hucha cobra cada mes con la tarjeta guardada (Sprint 3.8). Los patrocinios aún
- * no mueven dinero aquí (renovación y bolsa vencida llegan con el Sprint 4.2): esas tareas detectan lo que ya ha vencido y lo dejan en una
- * alerta agregada para el Super-Admin, que desaparece sola cuando no queda nada.
- * Las alertas no llevan datos del comercio ni de la familia: solo recuentos y fechas.
+ * Tareas de cobros recurrentes (patrocinios y Mi Hucha). Mi Hucha cobra cada mes con la tarjeta guardada (Sprint 3.8). Los comercios (Sprint 4.2d)
+ * renuevan con un enlace de pago (sin tarjeta guardada: el checkout usa la página de Paycomet), su dinero se reasigna o espera en la bolsa con su
+ * plazo, y la bolsa vencida se devuelve. Las alertas no llevan datos del comercio ni de la familia: solo recuentos, fechas e identificadores.
  */
 
 const DAY_MS = 86_400_000;
 export const SPONSOR_NOTICE_DAYS = 30;
-/** Un patrocinio en bolsa no puede pasar de aquí desde su cobro: la ventana de 90 días de Paycomet menos 5 de margen (skill de pagos §5). */
-export const CREDIT_POOL_HARD_CAP_DAYS = 85;
 
-async function syncAggregate(db: Db, input: { type: 'SPONSOR_RENEWAL_DUE' | 'CREDIT_POOL_EXPIRED' | 'MONTHLY_TOPUP_DUE'; severity: 'INFO' | 'WARNING' | 'CRITICAL'; count: number; detail: Record<string, string | number | null> }, now: Date): Promise<void> {
+async function syncAggregate(db: Db, input: { type: 'SPONSOR_RENEWAL_DUE' | 'MONTHLY_TOPUP_DUE'; severity: 'INFO' | 'WARNING' | 'CRITICAL'; count: number; detail: Record<string, string | number | null> }, now: Date): Promise<void> {
   const dedupeKey = `${input.type}:global`;
   if (input.count === 0) {
     await resolveAlert(db, dedupeKey, now);
@@ -27,27 +25,30 @@ async function syncAggregate(db: Db, input: { type: 'SPONSOR_RENEWAL_DUE' | 'CRE
 }
 
 /** `SPONSOR_RENEWAL_NOTICE`: a 30 días de caducar, avisa al comercio con renovación automática. Una sola vez por patrocinio y vencimiento. */
-export const sponsorRenewalNoticeHandler: JobHandler = async ({ db, now, batchSize }) => {
+export const sponsorRenewalNoticeHandler: JobHandler = async ({ db, now, batchSize, deps }) => {
+  const secret = deps.hmacSecret();
   // Se recorren todos con cursor: ordenados por vencimiento y recortados, siempre serían los mismos los que ocuparan el lote y el resto se quedaría sin aviso.
   let cursor: number | undefined;
   let processed = 0;
   let notified = 0;
   for (;;) {
     const sponsors = await db.sponsor.findMany({
-      where: { status: 'APPROVED', autoRenew: true, expiresAt: { gt: now, lte: new Date(now.getTime() + SPONSOR_NOTICE_DAYS * DAY_MS) } },
+      where: { status: { in: ['APPROVED', 'CREDIT_POOL'] }, autoRenew: true, paidAt: { not: null }, renewals: { none: { paidAt: { not: null } } }, organization: { archivedAt: null }, expiresAt: { gt: now, lte: new Date(now.getTime() + SPONSOR_NOTICE_DAYS * DAY_MS) } },
       orderBy: { id: 'asc' },
       take: batchSize,
       ...(cursor === undefined ? {} : { skip: 1, cursor: { id: cursor } }),
-      select: { id: true, organizationId: true, email: true, amountCents: true, expiresAt: true, organization: { select: { contentLocale: true } } }
+      select: { id: true, organizationId: true, email: true, amountCents: true, expiresAt: true, organization: { select: { contentLocale: true } }, contribution: { select: { locale: true } } }
     });
     const { count } = await db.outboxMessage.createMany({
       data: sponsors.map((sponsor) => ({
         idempotencyKey: `sponsor.renewalNotice:${sponsor.id}:${sponsor.expiresAt.toISOString().slice(0, 10)}`,
         templateKey: 'sponsor.renewalNotice',
-        locale: sponsor.organization.contentLocale,
+        // En el idioma en que pagó el comercio, como el resto de sus emails.
+        locale: sponsor.contribution?.locale ?? sponsor.organization.contentLocale,
         toAddress: sponsor.email,
         organizationId: sponsor.organizationId,
-        payloadJson: { sponsorId: sponsor.id, amountCents: sponsor.amountCents, expiresAt: sponsor.expiresAt.toISOString() }
+        // Con el enlace de pago de la renovación (Sprint 4.2d): el comercio puede renovar desde hoy sin perder días de distintivo.
+        payloadJson: renewalLinkPayload(secret, sponsor)
       })),
       skipDuplicates: true
     });
@@ -60,20 +61,26 @@ export const sponsorRenewalNoticeHandler: JobHandler = async ({ db, now, batchSi
   return { processed, hasMore: false, detail: { notified } };
 };
 
-/** `SPONSOR_RENEWAL_CHARGE`: patrocinios con renovación automática ya vencidos. El cobro de la renovación llega con el Sprint 4.2 (junto a la moderación de comercios): no hay tarjeta guardada, así que será un enlace de pago. */
-export const sponsorRenewalChargeHandler: JobHandler = async ({ db, now }) => {
-  const where = { status: 'APPROVED', autoRenew: true, expiresAt: { lte: now } } as const;
-  const [due, oldest] = await Promise.all([db.sponsor.count({ where }), db.sponsor.findFirst({ where, orderBy: { expiresAt: 'asc' }, select: { expiresAt: true } })]);
-  await syncAggregate(db, { type: 'SPONSOR_RENEWAL_DUE', severity: 'WARNING', count: due, detail: { oldestExpiresAt: oldest?.expiresAt.toISOString() ?? null } }, now);
-  return { processed: due, hasMore: false };
+/**
+ * `SPONSOR_RENEWAL_CHARGE`: el día que vence el distintivo, el enlace de pago de la renovación (Sprint 4.2d; antes solo se detectaba). No hay cobro
+ * automático: el comercio paga en la página de Paycomet. La antigua alerta agregada `SPONSOR_RENEWAL_DUE` ya no tiene sentido y se cierra.
+ */
+export const sponsorRenewalChargeHandler: JobHandler = async ({ db, now, batchSize, deps }) => {
+  const sent = await queueRenewalLinks(db, now, batchSize, deps.hmacSecret());
+  await syncAggregate(db, { type: 'SPONSOR_RENEWAL_DUE', severity: 'WARNING', count: 0, detail: {} }, now);
+  return { processed: sent, hasMore: sent === batchSize, detail: { sent } };
 };
 
-/** `CREDIT_POOL_EXPIRY`: bolsas de patrocinio que superan el tope de la ventana de Paycomet. El reembolso al comercio llega con el Sprint 4.2. */
-export const creditPoolExpiryHandler: JobHandler = async ({ db, now }) => {
-  const where = { status: 'CREDIT_POOL', paidAt: { not: null, lte: new Date(now.getTime() - CREDIT_POOL_HARD_CAP_DAYS * DAY_MS) } } as const;
-  const [due, oldest] = await Promise.all([db.sponsor.count({ where }), db.sponsor.findFirst({ where, orderBy: { paidAt: 'asc' }, select: { paidAt: true } })]);
-  await syncAggregate(db, { type: 'CREDIT_POOL_EXPIRED', severity: 'CRITICAL', count: due, detail: { oldestPaidAt: oldest?.paidAt?.toISOString() ?? null } }, now);
-  return { processed: due, hasMore: false };
+/**
+ * `CREDIT_POOL_EXPIRY` (Sprint 4.2d): reasigna el dinero de comercios que espera (bolsa sobrante de campañas liquidadas, campañas que fracasaron, bolsa
+ * con campañas nuevas) y avisa de las bolsas vencidas (`expireCreditPools`: no se devuelven, decisión del promotor del 2026-11-10; pasarán a la entidad
+ * con el Fondo de actividades del 4.2f). La alerta agregada antigua se sustituye por una por comercio.
+ */
+export const creditPoolExpiryHandler: JobHandler = async ({ db, now, batchSize }) => {
+  const sweep = await sweepSponsorMoney(db, now, batchSize);
+  const expiry = await expireCreditPools(db, now, batchSize);
+  await resolveAlert(db, 'CREDIT_POOL_EXPIRED:global', now);
+  return { processed: sweep.placed + sweep.pooled + expiry.expired, hasMore: false, detail: { ...sweep, ...expiry } };
 };
 
 /** Un cobro mensual sin confirmar pasado este tiempo (resultado desconocido) se avisa en la consola: alguien tiene que mirarlo en Paycomet. */

@@ -416,9 +416,9 @@
     "sponsor": {
       "renewalNotice": {
         "subject": "Tu distintivo de Comercio amigo de {organization} caduca el {date}",
-        "preheader": "Si quieres seguir, puedes renovarlo.",
+        "preheader": "Renuévalo con un clic: no pierdes ningún día.",
         "title": "Tu distintivo caduca pronto",
-        "body": "El {date} caduca tu distintivo de Comercio amigo de {organization} (patrocinio de {amount}). No hacemos ningún cobro automático: si quieres seguir, renuévalo antes de esa fecha desde la página de comercios amigos.",
+        "body": "El {date} caduca tu distintivo de Comercio amigo de {organization} (patrocinio de {amount}). No hacemos ningún cobro automático: si quieres seguir, renuévalo con el botón de abajo. Tu nuevo año empieza cuando acabe el actual, así que no pierdes ningún día.",
         "amount": "Importe",
         "date": "Fecha de caducidad",
         "cta": "Renovar mi patrocinio"
@@ -450,6 +450,43 @@
         "cta": "Ver mi justificante",
         "ctaRectified": "Ver la factura rectificativa",
         "footnote": "La devolución la hace Paycomet y puede tardar unos días en aparecer en tu medio de pago. Te avisaremos cuando salga."
+      },
+      "renewalLink": {
+        "subject": "Tu distintivo de Comercio amigo de {organization} ha caducado",
+        "preheader": "Aún puedes renovarlo con este enlace.",
+        "title": "¿Seguimos juntos otro año?",
+        "body": "El {date} caducó tu distintivo de Comercio amigo de {organization} (patrocinio de {amount}). Si quieres seguir apoyando a sus familias, puedes renovarlo con el botón de abajo hasta el {until}. No hacemos ningún cobro automático.",
+        "amount": "Importe",
+        "date": "Puedes renovar hasta",
+        "cta": "Renovar mi patrocinio"
+      },
+      "renewal": {
+        "footnote": "El pago se hace en la página segura de PAYCOMET, la entidad de pago autorizada que procesa el cobro. El 100 % de tu patrocinio va a las campañas de la entidad según su regla; la gestión publicitaria y su IVA van aparte, con su factura."
+      },
+      "renewed": {
+        "subject": "Renovado: sigues siendo Comercio amigo de {organization}",
+        "preheader": "Gracias por un año más.",
+        "title": "¡Gracias por un año más!",
+        "body": "Hemos recibido tu renovación. Tu distintivo {level} de Comercio amigo de {organization} está vigente hasta el {date}.",
+        "placed": "Tus {amount} íntegros ya suman en: {list}."
+      },
+      "reassigned": {
+        "subject": "Tu patrocinio a {organization} sigue sumando",
+        "preheader": "Tu aportación ha pasado a otra campaña.",
+        "title": "Tu aportación sigue sumando",
+        "body": "Según la regla de {organization}, tus {amount} íntegros se han llevado a: {list}.",
+        "why": "Así funciona el patrocinio: si la campaña que apoyabas no sale adelante o, al acabar, le sobra parte de tu aportación Matching 2x, tu dinero no se pierde: pasa a otra campaña de la entidad. Sigues apareciendo como comercio amigo.",
+        "listMore": "{list} y {more, plural, one {# más} other {# más}}",
+        "cta": "Ver los comercios amigos"
+      },
+      "creditPool": {
+        "subject": "Tu patrocinio a {organization} espera una nueva campaña",
+        "preheader": "Tu aportación sigue retenida en PAYCOMET, con su plazo.",
+        "title": "Tu aportación espera una campaña",
+        "bodyWaiting": "Ahora mismo {organization} no tiene ninguna campaña a la que llevar tus {amount}. Siguen retenidos en PAYCOMET hasta el {deadline}: en cuanto abra una, irán a ella. Si para entonces no se han llevado a ninguna, pasarán a la entidad para sus actividades del curso.",
+        "bodyManual": "{organization} elegirá a qué campaña llevar tus {amount}. Siguen retenidos en PAYCOMET hasta el {deadline}; si para entonces no se han llevado a ninguna, pasarán a la entidad para sus actividades del curso.",
+        "visible": "Mientras tanto sigues apareciendo como comercio amigo.",
+        "deadline": "Retenido hasta"
       }
     },
     "tax": {
@@ -913,7 +950,7 @@
           {
             "title": "Si la campaña no llega a la meta",
             "paragraphs": [
-              "El patrocinio se reasigna según la regla de la entidad. Si no hay otra campaña activa, se guarda en una bolsa de crédito a nombre del comercio durante un plazo limitado y, si no se usa, se le reembolsa."
+              "El patrocinio se reasigna según la regla de la entidad. Si no hay otra campaña activa, espera retenido en PAYCOMET durante un plazo limitado y, si no se lleva a ninguna campaña, pasa a la entidad para sus actividades. Solo se devuelve si la entidad no admite al comercio."
             ]
           }
         ],
@@ -1779,7 +1816,10 @@
         "WRONG_STATUS": "Este comercio ya no está pendiente: otra persona firmante lo ha decidido o su pago no se completó. Recargad la página.",
         "MATCHING_TAKEN": "La bolsa Matching 2x de esta campaña ya la tiene otro comercio aprobado y no puede haber dos. Podéis no admitir a este comercio: le devolveremos todo lo que pagó.",
         "ALREADY_SETTLED": "La iniciativa ya está liquidada: este comercio no se puede devolver desde aquí. Escribid a soporte.",
-        "INVOICING_UNAVAILABLE": "Ahora mismo no podemos anular la factura de la gestión porque faltan los datos del emisor en KORUM. Probad más tarde o escribid a soporte."
+        "INVOICING_UNAVAILABLE": "Ahora mismo no podemos anular la factura de la gestión porque faltan los datos del emisor en KORUM. Probad más tarde o escribid a soporte.",
+        "POOL_CHANGED": "Este comercio ya no tiene dinero esperando en su bolsa: otra persona firmante lo ha llevado a una campaña o lo ha hecho la tarea diaria. Recargad la página.",
+        "TARGET_NOT_ELIGIBLE": "Esa campaña no puede recibirlo: ya no recauda o cierra después de que venza el plazo de su pago. Elegid otra.",
+        "RENEWAL_NOT_OPEN": "Ahora no se puede enviar el enlace: el comercio ya ha renovado, no renueva cada año o su distintivo no está en el plazo de la renovación."
       },
       "doubleCheck": {
         "label": "Doble firma de la idea",
@@ -1900,7 +1940,8 @@
         "APPROVED": "Aprobado · visible",
         "REJECTED": "No admitido · devuelto",
         "REFUNDED": "Devuelto",
-        "CREDIT_POOL": "En bolsa de crédito"
+        "CREDIT_POOL": "Esperando campaña · visible",
+        "RENEWED": "Renovado"
       },
       "level": {
         "ORO": "Oro",
@@ -1919,8 +1960,8 @@
       "promoWithCode": "{promo} · código {code}",
       "promoNone": "Sin ventaja indicada",
       "visibleUntil": "Visible en vuestra página hasta el {date}.",
-      "renewalNotice": "Le avisaremos 30 días antes de que caduque para que pueda renovar.",
-      "renewalNone": "No ha pedido aviso de renovación.",
+      "renewalNotice": "Le enviaremos el enlace para renovar 30 días antes de que caduque.",
+      "renewalNone": "No ha pedido renovar cada año.",
       "approve": "Aprobar comercio",
       "reject": {
         "open": "No admitir",
@@ -1963,7 +2004,49 @@
       },
       "metaUnpaid": "Categoría {level} · {sector}",
       "returnedAmount": "Patrocinio devuelto al comercio",
-      "jump": "{count, plural, one {Ir a comercios amigos · # por revisar} other {Ir a comercios amigos · # por revisar}}"
+      "jump": "{count, plural, one {Ir a comercios amigos · # por revisar} other {Ir a comercios amigos · # por revisar}}",
+      "moved": "Patrocinio íntegro de este comercio",
+      "rule": {
+        "label": "A dónde va el dinero de las renovaciones y de las campañas que no salen",
+        "help": "El dinero de un comercio admitido no se le devuelve. Cuando renueva otro año, o la campaña que patrocinaba no sale adelante (o le sobra parte de su bolsa Matching 2x), va a otra de vuestras campañas activas. Si no hay ninguna, espera retenido en PAYCOMET (como mucho {days} días y siempre dentro de los 85 desde su pago) y, si no se lleva a ninguna campaña a tiempo, pasa a la entidad para sus actividades.",
+        "options": {
+          "SOONEST": "A la campaña activa que cierra antes",
+          "PROPORTIONAL": "Repartido entre las activas, según lo que le falte a cada una",
+          "MANUAL": "Lo elegimos nosotros en cada caso"
+        },
+        "save": "Guardar la regla",
+        "saving": "Guardando…",
+        "saved": "Regla guardada: «{rule}».",
+        "savedPlaced": "{count, plural, one {Regla guardada. Hemos llevado a una campaña el dinero de # comercio que esperaba en su bolsa.} other {Regla guardada. Hemos llevado a campañas el dinero de # comercios que esperaban en su bolsa.}}",
+        "readOnly": "Solo las dos personas firmantes de la entidad pueden cambiar la regla."
+      },
+      "detail": {
+        "summary": "Ficha / Renovar",
+        "moneyTitle": "Dónde está ahora su dinero",
+        "origin": "{amount} en «{title}» ({wallet})",
+        "placed": "{amount} llevados a «{title}» ({wallet})",
+        "pool": "{amount} esperando campaña, retenidos en PAYCOMET hasta el {date}",
+        "poolNoDate": "{amount} esperando campaña, retenidos en PAYCOMET",
+        "nothingHeld": "Su patrocinio ya se ha usado entero en vuestras campañas.",
+        "assignLabel": "Campaña a la que llevar lo que espera",
+        "assign": "Llevar {amount} a «{title}»",
+        "assigning": "Llevando…",
+        "assigned": "Los {amount} de {name} ya suman en «{title}». Le hemos avisado por email.",
+        "noTargets": "Ahora no hay ninguna campaña recaudando que cierre antes de que venza el plazo de su pago. Sigue esperando, retenido en PAYCOMET; si vence sin campaña, pasará a la entidad para sus actividades.",
+        "renewalTitle": "Renovación anual",
+        "isRenewal": "Es la renovación de su patrocinio del año anterior.",
+        "renewed": "Ya ha pagado la renovación del año que viene.",
+        "renewalAuto": "Le enviamos un enlace de pago 30 días antes de que caduque y el día que caduca. No hay cobros automáticos.",
+        "renewalOff": "No ha pedido renovar cada año.",
+        "sendLink": "Enviarle el enlace de renovación",
+        "sending": "Enviando…",
+        "linkSent": "Hemos enviado a {name} el enlace para renovar.",
+        "summaryFor": "de {name}",
+        "assignOption": "{title} · cierra el {date}",
+        "assignHelp": "No se puede deshacer desde aquí. Al comercio le avisamos por email.",
+        "renewalOpensOn": "Podréis enviarle el enlace de renovación desde el {date}."
+      },
+      "renewedElsewhere": "Ya ha renovado: su nuevo año aparece en otra tarjeta de esta lista."
     },
     "settings": {
       "metaTitle": "Ajustes de la entidad",
@@ -2767,8 +2850,8 @@
         "perk": {
           "legend": "Opcional: ventaja para las familias"
         },
-        "renewal": "Recordatorio de renovación: avísame por email 30 días antes de que venza mi distintivo.",
-        "legal": "El centro revisará si tu comercio encaja con sus valores y normativa; si no lo admite, te devolvemos el 100 % de lo que has pagado (importe, gestión publicitaria e IVA). Si la iniciativa venciera sin completarse, tu patrocinio pasa a otra iniciativa activa del centro; si no hay ninguna, te lo devolvemos. En ambos casos te avisamos.",
+        "renewal": "Renovación anual: envíame por email el enlace para renovar (30 días antes de que venza mi distintivo y el día que vence). No hay cobros automáticos.",
+        "legal": "El centro revisará si tu comercio encaja con sus valores y normativa; si no lo admite, te devolvemos el 100 % de lo que has pagado (importe, gestión publicitaria e IVA). Una vez admitido, tu patrocinio es una aportación a la entidad: si la iniciativa no sale adelante (o, con Matching 2x, le sobra parte), pasa a otra iniciativa activa; si no hay ninguna a tiempo, se queda la entidad para sus actividades. Te avisamos en cada paso.",
         "summary": "{amount} íntegros a la iniciativa + {fee} de gestión publicitaria ({pct} %) + {vat} de IVA",
         "errors": {
           "form": "Revisa los datos marcados.",
@@ -2935,7 +3018,9 @@
         "amount": "Importe íntegro",
         "date": "Fecha del pago",
         "whole": "El 100 % de este importe ({amount}) llega íntegro a la iniciativa. La gestión publicitaria de KORUM y su IVA se cobran aparte y constan en la factura.",
-        "notInvoice": "Este justificante acredita tu patrocinio; no sustituye a la factura de KORUM ni es un certificado fiscal."
+        "notInvoice": "Este justificante acredita tu patrocinio; no sustituye a la factura de KORUM ni es un certificado fiscal.",
+        "renewal": "Renovación anual: campañas de la entidad según su regla",
+        "wholeRenewal": "El 100 % de este importe ({amount}) es para la entidad: va a sus campañas según su regla y, si no hay ninguna a tiempo, a sus actividades. La gestión publicitaria de KORUM y su IVA se cobran aparte y constan en la factura."
       },
       "factura": {
         "title": "Factura",
@@ -3169,6 +3254,64 @@
           "SUPERADMIN": "Te contestará el equipo de KORUM."
         },
         "limits": "Asunto: mínimo {subjectMin} caracteres. Mensaje: mínimo {messageMin} caracteres."
+      }
+    },
+    "sponsorRenewal": {
+      "metaTitle": "Renovar mi patrocinio",
+      "title": "{name}: renueva tu año de comercio amigo",
+      "intro": "Seguirás apoyando a {organization} como comercio amigo {level} hasta el {date}. Tu nuevo año empieza cuando acaba el actual: no pierdes ningún día.",
+      "levels": {
+        "ORO": "Oro",
+        "PLATA": "Plata",
+        "BRONCE": "Bronce"
+      },
+      "amount": "Patrocinio íntegro para la entidad",
+      "fee": "Gestión publicitaria de KORUM",
+      "vat": "IVA de la gestión",
+      "total": "Total",
+      "destination": {
+        "SOONEST": "El 100 % de tu patrocinio irá a la campaña activa de la entidad que cierra antes. Si ahora no tiene ninguna, esperará retenido en PAYCOMET hasta que abra una; si no abre a tiempo, se lo queda la entidad para sus actividades.",
+        "PROPORTIONAL": "El 100 % de tu patrocinio se repartirá entre las campañas activas de la entidad, según lo que le falte a cada una. Si ahora no tiene ninguna, esperará retenido en PAYCOMET hasta que abra una; si no abre a tiempo, se lo queda la entidad para sus actividades.",
+        "MANUAL": "El 100 % de tu patrocinio esperará retenido en PAYCOMET hasta que la entidad elija a qué campaña llevarlo; si no lo hace a tiempo, se lo queda la entidad para sus actividades."
+      },
+      "method": "Forma de pago",
+      "methods": {
+        "CARD": "Tarjeta, Apple Pay o Google Pay",
+        "BIZUM": "Bizum"
+      },
+      "pay": "Pagar {total} y renovar",
+      "paying": "Abriendo la página de pago…",
+      "legal": "El pago se hace en la página segura de PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM es una plataforma tecnológica y no guarda el dinero. Recibirás el justificante del patrocinio y la factura de la gestión.",
+      "errors": {
+        "INVALID": "Este enlace no es válido. Usa el del último email que te enviamos.",
+        "EXPIRED": "Este enlace ya no vale: el plazo para renovar ha pasado o tu patrocinio ha cambiado. Escribe a la entidad.",
+        "RENEWED": "Ya has renovado: no hace falta pagar otra vez.",
+        "RATE_LIMITED": "Has hecho varios intentos seguidos. Espera unos minutos y vuelve a probar.",
+        "UNAVAILABLE": "Ahora mismo no podemos abrir la página de pago. Prueba de nuevo en unos minutos."
+      },
+      "invalid": {
+        "title": "Este enlace no es válido",
+        "description": "Usa el enlace del último email que te enviamos o escribe a la entidad."
+      },
+      "expired": {
+        "title": "Este enlace ya no vale",
+        "description": "El plazo para renovar ha pasado o tu patrocinio ha cambiado. Escribe a la entidad si quieres seguir."
+      },
+      "renewed": {
+        "title": "Ya has renovado",
+        "description": "¡Gracias! Tu patrocinio ya está renovado: no hace falta pagar otra vez."
+      },
+      "result": {
+        "doneTitle": "¡Renovado! Gracias por un año más",
+        "done": "{name} sigue siendo comercio amigo hasta el {date}. Te hemos enviado un email con tus documentos y la campaña a la que va tu patrocinio (o el plazo, si aún espera).",
+        "failedTitle": "El pago no se ha completado",
+        "failed": "No se ha cobrado nada. Puedes volver a intentarlo con el enlace del email.",
+        "pendingTitle": "Estamos confirmando tu pago",
+        "pending": "En cuanto PAYCOMET nos lo confirme te enviaremos un email. No hace falta que pagues otra vez.",
+        "documents": "Ver mi justificante y mi factura",
+        "directory": "Ver los comercios amigos",
+        "duplicateTitle": "Ya habías renovado",
+        "duplicate": "Este segundo pago no hacía falta: te lo devolvemos entero a tu medio de pago y te avisaremos por email cuando esté hecho."
       }
     }
   },

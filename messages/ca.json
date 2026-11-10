@@ -416,9 +416,9 @@
     "sponsor": {
       "renewalNotice": {
         "subject": "El teu distintiu de Comerç amic de {organization} caduca el {date}",
-        "preheader": "Si vols continuar, el pots renovar.",
+        "preheader": "Renova’l amb un clic: no perds cap dia.",
         "title": "El teu distintiu caduca aviat",
-        "body": "El {date} caduca el teu distintiu de Comerç amic de {organization} (patrocini de {amount}). No fem cap cobrament automàtic: si vols continuar, renova'l abans d'aquesta data des de la pàgina de comerços amics.",
+        "body": "El {date} caduca el teu distintiu de Comerç amic de {organization} (patrocini de {amount}). No fem cap cobrament automàtic: si vols continuar, renova’l amb el botó de sota. El teu nou any comença quan s’acaba l’actual, així que no perds cap dia.",
         "amount": "Import",
         "date": "Data de caducitat",
         "cta": "Renovar el meu patrocini"
@@ -450,6 +450,43 @@
         "cta": "Veure el meu justificant",
         "ctaRectified": "Veure la factura rectificativa",
         "footnote": "La devolució la fa Paycomet i pot trigar uns dies a aparèixer al teu mitjà de pagament. T’avisarem quan surti."
+      },
+      "renewalLink": {
+        "subject": "El teu distintiu de Comerç amic de {organization} ha caducat",
+        "preheader": "Encara el pots renovar amb aquest enllaç.",
+        "title": "Continuem junts un altre any?",
+        "body": "El {date} va caducar el teu distintiu de Comerç amic de {organization} (patrocini de {amount}). Si vols continuar donant suport a les seves famílies, el pots renovar amb el botó de sota fins al {until}. No fem cap cobrament automàtic.",
+        "amount": "Import",
+        "date": "Pots renovar fins al",
+        "cta": "Renovar el meu patrocini"
+      },
+      "renewal": {
+        "footnote": "El pagament es fa a la pàgina segura de PAYCOMET, l’entitat de pagament autoritzada que processa el cobrament. El 100 % del teu patrocini va a les campanyes de l’entitat segons la seva regla; la gestió publicitària i el seu IVA van a part, amb la seva factura."
+      },
+      "renewed": {
+        "subject": "Renovat: continues sent Comerç amic de {organization}",
+        "preheader": "Gràcies per un any més.",
+        "title": "Gràcies per un any més!",
+        "body": "Hem rebut la teva renovació. El teu distintiu {level} de Comerç amic de {organization} és vigent fins al {date}.",
+        "placed": "Els teus {amount} íntegres ja sumen a: {list}."
+      },
+      "reassigned": {
+        "subject": "El teu patrocini a {organization} continua sumant",
+        "preheader": "La teva aportació ha passat a una altra campanya.",
+        "title": "La teva aportació continua sumant",
+        "body": "Segons la regla de {organization}, els teus {amount} íntegres s’han portat a: {list}.",
+        "why": "Així funciona el patrocini: si la campanya a la qual donaves suport no tira endavant o, en acabar, li sobra part de la teva aportació Matching 2x, els teus diners no es perden: passen a una altra campanya de l’entitat. Continues apareixent com a comerç amic.",
+        "listMore": "{list} i {more, plural, one {# més} other {# més}}",
+        "cta": "Veure els comerços amics"
+      },
+      "creditPool": {
+        "subject": "El teu patrocini a {organization} espera una nova campanya",
+        "preheader": "La teva aportació continua retinguda a PAYCOMET, amb el seu termini.",
+        "title": "La teva aportació espera una campanya",
+        "bodyWaiting": "Ara mateix {organization} no té cap campanya on portar els teus {amount}. Continuen retinguts a PAYCOMET fins al {deadline}: tan bon punt n’obri una, hi aniran. Si aleshores no s’han portat a cap, passaran a l’entitat per a les seves activitats del curs.",
+        "bodyManual": "{organization} triarà a quina campanya portar els teus {amount}. Continuen retinguts a PAYCOMET fins al {deadline}; si aleshores no s’han portat a cap, passaran a l’entitat per a les seves activitats del curs.",
+        "visible": "Mentrestant continues apareixent com a comerç amic.",
+        "deadline": "Retingut fins al"
       }
     },
     "tax": {
@@ -913,7 +950,7 @@
           {
             "title": "Si la campanya no arriba a la meta",
             "paragraphs": [
-              "El patrocini es reassigna segons la regla de l’entitat. Si no hi ha una altra campanya activa, es guarda en una borsa de crèdit a nom del comerç durant un termini limitat i, si no s’utilitza, se li reemborsa."
+              "El patrocini es reassigna segons la regla de l’entitat. Si no hi ha una altra campanya activa, espera retingut a PAYCOMET durant un termini limitat i, si no es porta a cap campanya, passa a l’entitat per a les seves activitats. Només es retorna si l’entitat no admet el comerç."
             ]
           }
         ],
@@ -1779,7 +1816,10 @@
         "WRONG_STATUS": "Aquest comerç ja no està pendent: una altra persona signant ho ha decidit o el seu pagament no es va completar. Torneu a carregar la pàgina.",
         "MATCHING_TAKEN": "La bossa Matching 2x d’aquesta campanya ja la té un altre comerç aprovat i no n’hi pot haver dues. Podeu no admetre aquest comerç: li retornarem tot el que va pagar.",
         "ALREADY_SETTLED": "La iniciativa ja està liquidada: aquest comerç no es pot retornar des d’aquí. Escriviu a suport.",
-        "INVOICING_UNAVAILABLE": "Ara mateix no podem anul·lar la factura de la gestió perquè falten les dades de l’emissor a KORUM. Proveu-ho més tard o escriviu a suport."
+        "INVOICING_UNAVAILABLE": "Ara mateix no podem anul·lar la factura de la gestió perquè falten les dades de l’emissor a KORUM. Proveu-ho més tard o escriviu a suport.",
+        "POOL_CHANGED": "Aquest comerç ja no té diners esperant a la seva bossa: una altra persona signant els ha portat a una campanya o ho ha fet la tasca diària. Recarregueu la pàgina.",
+        "TARGET_NOT_ELIGIBLE": "Aquesta campanya no el pot rebre: ja no recapta o tanca després que venci el termini del seu pagament. Trieu-ne una altra.",
+        "RENEWAL_NOT_OPEN": "Ara no es pot enviar l’enllaç: el comerç ja ha renovat, no renova cada any o el seu distintiu no està dins del termini de la renovació."
       },
       "doubleCheck": {
         "label": "Doble signatura de la idea",
@@ -1900,7 +1940,8 @@
         "APPROVED": "Aprovat · visible",
         "REJECTED": "No admès · retornat",
         "REFUNDED": "Retornat",
-        "CREDIT_POOL": "A la bossa de crèdit"
+        "CREDIT_POOL": "Esperant campanya · visible",
+        "RENEWED": "Renovat"
       },
       "level": {
         "ORO": "Or",
@@ -1919,8 +1960,8 @@
       "promoWithCode": "{promo} · codi {code}",
       "promoNone": "Sense avantatge indicat",
       "visibleUntil": "Visible a la vostra pàgina fins al {date}.",
-      "renewalNotice": "L’avisarem 30 dies abans que caduqui perquè pugui renovar.",
-      "renewalNone": "No ha demanat avís de renovació.",
+      "renewalNotice": "Li enviarem l’enllaç per renovar 30 dies abans que caduqui.",
+      "renewalNone": "No ha demanat renovar cada any.",
       "approve": "Aprovar el comerç",
       "reject": {
         "open": "No admetre",
@@ -1963,7 +2004,49 @@
       },
       "metaUnpaid": "Categoria {level} · {sector}",
       "returnedAmount": "Patrocini retornat al comerç",
-      "jump": "{count, plural, one {Anar als comerços amics · # per revisar} other {Anar als comerços amics · # per revisar}}"
+      "jump": "{count, plural, one {Anar als comerços amics · # per revisar} other {Anar als comerços amics · # per revisar}}",
+      "moved": "Patrocini íntegre d’aquest comerç",
+      "rule": {
+        "label": "On van els diners de les renovacions i de les campanyes que no surten",
+        "help": "Els diners d’un comerç admès no se li retornen. Quan renova un altre any, o la campanya que patrocinava no tira endavant (o li sobra part de la seva bossa Matching 2x), van a una altra de les vostres campanyes actives. Si no n’hi ha cap, esperen retinguts a PAYCOMET (com a màxim {days} dies i sempre dins dels 85 des del seu pagament) i, si no es porten a cap campanya a temps, passen a l’entitat per a les seves activitats.",
+        "options": {
+          "SOONEST": "A la campanya activa que tanca abans",
+          "PROPORTIONAL": "Repartit entre les actives, segons el que li falti a cadascuna",
+          "MANUAL": "Ho triem nosaltres en cada cas"
+        },
+        "save": "Desar la regla",
+        "saving": "Desant…",
+        "saved": "Regla desada: «{rule}».",
+        "savedPlaced": "{count, plural, one {Regla desada. Hem portat a una campanya els diners de # comerç que esperava a la seva bossa.} other {Regla desada. Hem portat a campanyes els diners de # comerços que esperaven a la seva bossa.}}",
+        "readOnly": "Només les dues persones signants de l’entitat poden canviar la regla."
+      },
+      "detail": {
+        "summary": "Fitxa / Renovar",
+        "moneyTitle": "On són ara els seus diners",
+        "origin": "{amount} a «{title}» ({wallet})",
+        "placed": "{amount} portats a «{title}» ({wallet})",
+        "pool": "{amount} esperant campanya, retinguts a PAYCOMET fins al {date}",
+        "poolNoDate": "{amount} esperant campanya, retinguts a PAYCOMET",
+        "nothingHeld": "El seu patrocini ja s’ha fet servir sencer en les vostres campanyes.",
+        "assignLabel": "Campanya on portar el que espera",
+        "assign": "Portar {amount} a «{title}»",
+        "assigning": "Portant…",
+        "assigned": "Els {amount} de {name} ja sumen a «{title}». L’hem avisat per correu.",
+        "noTargets": "Ara no hi ha cap campanya recaptant que tanqui abans que venci el termini del seu pagament. Continua esperant, retingut a PAYCOMET; si venç sense campanya, passarà a l’entitat per a les seves activitats.",
+        "renewalTitle": "Renovació anual",
+        "isRenewal": "És la renovació del seu patrocini de l’any anterior.",
+        "renewed": "Ja ha pagat la renovació de l’any que ve.",
+        "renewalAuto": "Li enviem un enllaç de pagament 30 dies abans que caduqui i el dia que caduca. No hi ha cobraments automàtics.",
+        "renewalOff": "No ha demanat renovar cada any.",
+        "sendLink": "Enviar-li l’enllaç de renovació",
+        "sending": "Enviant…",
+        "linkSent": "Hem enviat a {name} l’enllaç per renovar.",
+        "summaryFor": "de {name}",
+        "assignOption": "{title} · tanca el {date}",
+        "assignHelp": "No es pot desfer des d’aquí. Avisem el comerç per correu.",
+        "renewalOpensOn": "Li podreu enviar l’enllaç de renovació a partir del {date}."
+      },
+      "renewedElsewhere": "Ja ha renovat: el seu nou any apareix en una altra targeta d’aquesta llista."
     },
     "settings": {
       "metaTitle": "Configuració de l'entitat",
@@ -2767,8 +2850,8 @@
         "perk": {
           "legend": "Opcional: avantatge per a les famílies"
         },
-        "renewal": "Recordatori de renovació: avisa'm per email 30 dies abans que caduqui el meu distintiu.",
-        "legal": "El centre revisarà si el teu comerç s'ajusta als seus valors i normativa; si no l'admet, et retornem el 100 % del que has pagat (import, gestió publicitària i IVA). Si la iniciativa vencés sense completar-se, el teu patrocini passa a una altra iniciativa activa del centre; si no n'hi ha cap, te'l retornem. En tots dos casos t'avisem.",
+        "renewal": "Renovació anual: envia’m per correu l’enllaç per renovar (30 dies abans que venci el meu distintiu i el dia que venç). No hi ha cobraments automàtics.",
+        "legal": "El centre revisarà si el teu comerç s'ajusta als seus valors i normativa; si no l'admet, et retornem el 100 % del que has pagat (import, gestió publicitària i IVA). Un cop admès, el teu patrocini és una aportació a l'entitat: si la iniciativa no tira endavant (o, amb Matching 2x, li'n sobra una part), passa a una altra iniciativa activa; si no n'hi ha cap a temps, se'l queda l'entitat per a les seves activitats. T'avisem a cada pas.",
         "summary": "{amount} íntegres a la iniciativa + {fee} de gestió publicitària ({pct} %) + {vat} d'IVA",
         "errors": {
           "form": "Revisa les dades marcades.",
@@ -2935,7 +3018,9 @@
         "amount": "Import íntegre",
         "date": "Data del pagament",
         "whole": "El 100 % d'aquest import ({amount}) arriba íntegre a la iniciativa. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura.",
-        "notInvoice": "Aquest justificant acredita el teu patrocini; no substitueix la factura de KORUM ni és un certificat fiscal."
+        "notInvoice": "Aquest justificant acredita el teu patrocini; no substitueix la factura de KORUM ni és un certificat fiscal.",
+        "renewal": "Renovació anual: campanyes de l’entitat segons la seva regla",
+        "wholeRenewal": "El 100 % d’aquest import ({amount}) és per a l’entitat: va a les seves campanyes segons la seva regla i, si no n’hi ha cap a temps, a les seves activitats. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura."
       },
       "factura": {
         "title": "Factura",
@@ -3169,6 +3254,64 @@
           "SUPERADMIN": "Et contestarà l’equip de KORUM."
         },
         "limits": "Assumpte: mínim {subjectMin} caràcters. Missatge: mínim {messageMin} caràcters."
+      }
+    },
+    "sponsorRenewal": {
+      "metaTitle": "Renovar el meu patrocini",
+      "title": "{name}: renova el teu any de comerç amic",
+      "intro": "Continuaràs donant suport a {organization} com a comerç amic {level} fins al {date}. El teu nou any comença quan s’acaba l’actual: no perds cap dia.",
+      "levels": {
+        "ORO": "Or",
+        "PLATA": "Plata",
+        "BRONCE": "Bronze"
+      },
+      "amount": "Patrocini íntegre per a l’entitat",
+      "fee": "Gestió publicitària de KORUM",
+      "vat": "IVA de la gestió",
+      "total": "Total",
+      "destination": {
+        "SOONEST": "El 100 % del teu patrocini anirà a la campanya activa de l’entitat que tanca abans. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
+        "PROPORTIONAL": "El 100 % del teu patrocini es repartirà entre les campanyes actives de l’entitat, segons el que li falti a cadascuna. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
+        "MANUAL": "El 100 % del teu patrocini esperarà retingut a PAYCOMET fins que l’entitat triï a quina campanya portar-lo; si no ho fa a temps, se’l queda l’entitat per a les seves activitats."
+      },
+      "method": "Forma de pagament",
+      "methods": {
+        "CARD": "Targeta, Apple Pay o Google Pay",
+        "BIZUM": "Bizum"
+      },
+      "pay": "Pagar {total} i renovar",
+      "paying": "Obrint la pàgina de pagament…",
+      "legal": "El pagament es fa a la pàgina segura de PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és una plataforma tecnològica i no guarda els diners. Rebràs el justificant del patrocini i la factura de la gestió.",
+      "errors": {
+        "INVALID": "Aquest enllaç no és vàlid. Fes servir el de l’últim correu que et vam enviar.",
+        "EXPIRED": "Aquest enllaç ja no val: el termini per renovar ha passat o el teu patrocini ha canviat. Escriu a l’entitat.",
+        "RENEWED": "Ja has renovat: no cal tornar a pagar.",
+        "RATE_LIMITED": "Has fet diversos intents seguits. Espera uns minuts i torna-ho a provar.",
+        "UNAVAILABLE": "Ara mateix no podem obrir la pàgina de pagament. Torna-ho a provar d’aquí a uns minuts."
+      },
+      "invalid": {
+        "title": "Aquest enllaç no és vàlid",
+        "description": "Fes servir l’enllaç de l’últim correu que et vam enviar o escriu a l’entitat."
+      },
+      "expired": {
+        "title": "Aquest enllaç ja no val",
+        "description": "El termini per renovar ha passat o el teu patrocini ha canviat. Escriu a l’entitat si vols continuar."
+      },
+      "renewed": {
+        "title": "Ja has renovat",
+        "description": "Gràcies! El teu patrocini ja està renovat: no cal tornar a pagar."
+      },
+      "result": {
+        "doneTitle": "Renovat! Gràcies per un any més",
+        "done": "{name} continua sent comerç amic fins al {date}. T’hem enviat un correu amb els teus documents i la campanya on va el teu patrocini (o el termini, si encara espera).",
+        "failedTitle": "El pagament no s’ha completat",
+        "failed": "No s’ha cobrat res. Pots tornar-ho a intentar amb l’enllaç del correu.",
+        "pendingTitle": "Estem confirmant el teu pagament",
+        "pending": "Tan bon punt PAYCOMET ens ho confirmi t’enviarem un correu. No cal que tornis a pagar.",
+        "documents": "Veure el meu justificant i la meva factura",
+        "directory": "Veure els comerços amics",
+        "duplicateTitle": "Ja havies renovat",
+        "duplicate": "Aquest segon pagament no calia: te’l retornem sencer al teu mitjà de pagament i t’avisarem per correu quan estigui fet."
       }
     }
   },

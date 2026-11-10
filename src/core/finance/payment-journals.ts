@@ -38,14 +38,15 @@ export function donationOrTicketPayinLines(
  */
 export function sponsorshipPayinLines(
   scope: Scope,
-  input: { sponsorId: number; amountCents: number; feeCents: number; vatCents: number; totalChargedCents: number; toMatchingPool: boolean }
+  input: { sponsorId: number; amountCents: number; feeCents: number; vatCents: number; totalChargedCents: number; toMatchingPool: boolean; toCreditPool?: boolean }
 ): JournalLine[] {
-  const lines: JournalLine[] = [
-    { account: 'PSP_CLEARING', direction: 'DEBIT', amountCents: input.totalChargedCents, organizationId: scope.organizationId },
-    input.toMatchingPool
+  // Una renovación anual (Sprint 4.2d) entra en la bolsa del comercio y desde ella se coloca según la regla de la entidad.
+  const level: JournalLine = input.toCreditPool
+    ? { account: 'SPONSOR_CREDIT_POOL', direction: 'CREDIT', amountCents: input.amountCents, organizationId: scope.organizationId, sponsorId: input.sponsorId }
+    : input.toMatchingPool
       ? { account: 'MATCHING_POOL', direction: 'CREDIT', amountCents: input.amountCents, ...scope, sponsorId: input.sponsorId }
-      : { account: 'INITIATIVE_ESCROW', direction: 'CREDIT', amountCents: input.amountCents, ...scope }
-  ];
+      : { account: 'INITIATIVE_ESCROW', direction: 'CREDIT', amountCents: input.amountCents, ...scope };
+  const lines: JournalLine[] = [{ account: 'PSP_CLEARING', direction: 'DEBIT', amountCents: input.totalChargedCents, organizationId: scope.organizationId }, level];
   if (input.feeCents > 0) lines.push({ account: 'KORUM_REVENUE_SPONSOR_FEE', direction: 'CREDIT', amountCents: input.feeCents, organizationId: scope.organizationId });
   if (input.vatCents > 0) lines.push({ account: 'TAX_PAYABLE_VAT', direction: 'CREDIT', amountCents: input.vatCents, organizationId: scope.organizationId });
   return lines;

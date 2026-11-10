@@ -3,6 +3,7 @@ import { releaseInitiativeQuotas } from '@/core/finance/quota-reservation';
 import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { inTransaction, type Db } from '@/lib/db';
 import { refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
+import { sweepSponsorMoney } from '@/services/sponsors/sponsor-sweeps';
 import { retryDelayMs } from '../job-schedule';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert, resolveAlertsNotIn } from '../ops-alerts';
@@ -155,12 +156,14 @@ export const massRefundHandler: JobHandler = async ({ db, now, batchSize, deps, 
   }
   const stuck = await flagStuckReservations(db, now);
   await closeSettledRejections(db, now);
+  // Antes de cerrar las devueltas: el patrocinio de comercios aprobados no se devuelve, se reasigna (Sprint 4.2d) y así su hucha queda vacía.
+  const sponsors = await sweepSponsorMoney(db, now, batchSize);
   const closed = await closeFinishedRefunds(db, batchSize, now);
   // Si alguna avanzó, el fallo de otra es cosa suya (ya cuenta como intento de esa aportación). Si ninguna avanzó, apunta a algo general: la tarea falla y se reintenta.
   const progressed = counts.refunded + counts.rejected + counts.unknown + counts.inProgress + counts.notAllowed;
   const firstFailure = failures[0];
   if (firstFailure !== undefined && progressed === 0) throw firstFailure;
-  return { processed: started, hasMore: due.length > started || fetched.length >= batchSize * FETCH_FACTOR, detail: { ...counts, stuck, closed } };
+  return { processed: started, hasMore: due.length > started || fetched.length >= batchSize * FETCH_FACTOR, detail: { ...counts, stuck, closed, sponsorsPlaced: sponsors.placed, sponsorsPooled: sponsors.pooled } };
 };
 
 /**

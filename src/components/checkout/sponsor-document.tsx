@@ -133,15 +133,23 @@ export async function SponsorDocument({ kind, locale, documents, taxId, issuerNa
               <span className="font-mono">{taxId}</span>
             </Row>
             <Row label={t('justificante.recipient')}>{documents.organization.legalName}</Row>
-            <Row label={t('justificante.initiative')}>{documents.initiative.title}</Row>
-            <Row label={t('justificante.destination')}>{sponsor?.isMatchingPool ? t('justificante.pool') : t('justificante.escrow')}</Row>
+            {sponsor?.renewedFromId ? (
+              <Row label={t('justificante.destination')}>{t('justificante.renewal')}</Row>
+            ) : (
+              <>
+                <Row label={t('justificante.initiative')}>{documents.initiative.title}</Row>
+                <Row label={t('justificante.destination')}>{sponsor?.isMatchingPool ? t('justificante.pool') : t('justificante.escrow')}</Row>
+              </>
+            )}
             <Row label={t('justificante.category')}>{t(`level.${sponsor?.categoryLevel ?? 'PLATA'}`)}</Row>
             <Row label={t('justificante.amount')}>
               <CurrencyText cents={documents.amountCents} className="font-corp text-lg font-extrabold text-varsity-navy" />
             </Row>
             <Row label={t('justificante.date')}>{date(documents.createdAt)}</Row>
           </dl>
-          <p className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">{t('justificante.whole', { amount: formatCents(documents.amountCents, locale) })}</p>
+          <p className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">
+            {t(sponsor?.renewedFromId ? 'justificante.wholeRenewal' : 'justificante.whole', { amount: formatCents(documents.amountCents, locale) })}
+          </p>
           <p className="text-sm text-ink-soft">{t('justificante.notInvoice')}</p>
         </>
       ) : shownInvoice ? (

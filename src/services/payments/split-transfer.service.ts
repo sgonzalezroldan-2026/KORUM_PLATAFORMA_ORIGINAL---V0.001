@@ -1,4 +1,4 @@
-import { planPayoutSplits, SPLIT_WINDOW_DAYS } from '@/core/finance/campaign-window';
+import { planPayoutSplits, SPLIT_WINDOW_DAYS, type SplitCandidate } from '@/core/finance/campaign-window';
 import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
 import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
@@ -41,6 +41,38 @@ const DAY_MS = 86_400_000;
 function assertVerifiedOrganization(payoutId: number, organization: { kybStatus: string; archivedAt: Date | null }): void {
   if (organization.kybStatus !== 'VERIFIED') throw new PayoutNotAllowedError(payoutId, 'la entidad no ha superado la verificación (KYB)');
   if (organization.archivedAt) throw new PayoutNotAllowedError(payoutId, 'la entidad está archivada');
+}
+
+/**
+ * Cobros desde los que puede repartir la liquidación de una iniciativa (heredado del 4.2b, punto 1): los suyos y el dinero de comercios reasignado a
+ * ella (`SponsorAllocation`), que reparte desde el cobro **original** del comercio, hasta lo asignado y con la ventana de ese cobro. Un patrocinio
+ * propio que movió parte de su dinero a otra campaña solo aporta lo que no salió: entre todas las campañas, nunca se reparte un cobro dos veces.
+ */
+async function payoutCandidates(tx: Db, initiativeId: number, payoutId: number): Promise<SplitCandidate[]> {
+  const usable = { status: 'COMPLETED' as const, paycometOrder: { not: null }, paycometAuthCode: { not: null } };
+  const [charges, allocations] = await Promise.all([
+    tx.contribution.findMany({
+      where: { initiativeId, totalChargedCents: { gt: 0 }, ...usable },
+      select: { id: true, totalChargedCents: true, createdAt: true, sponsor: { select: { id: true, reassignedCents: true, isMatchingPool: true } } }
+    }),
+    tx.sponsorAllocation.findMany({ where: { initiativeId, withdrawnAt: null, contribution: usable }, select: { contributionId: true, amountCents: true, contribution: { select: { createdAt: true, totalChargedCents: true } } } })
+  ]);
+  const ids = [...new Set([...charges.map((charge) => charge.id), ...allocations.map((allocation) => allocation.contributionId)])];
+  const used = await tx.escrowPayoutSplit.groupBy({ by: ['contributionId'], where: { contributionId: { in: ids }, payoutId: { not: payoutId } }, _sum: { amountCents: true } });
+  const usedByCharge = new Map(used.map((row) => [row.contributionId, row._sum.amountCents ?? 0]));
+  const byCharge = new Map<number, SplitCandidate & { cap: number }>();
+  const add = (contributionId: number, cents: number, chargedAt: Date, totalChargedCents: number) => {
+    const current = byCharge.get(contributionId);
+    const cap = totalChargedCents - (usedByCharge.get(contributionId) ?? 0);
+    const wanted = (current?.totalChargedCents ?? 0) + Math.max(0, cents);
+    byCharge.set(contributionId, { contributionId, totalChargedCents: Math.max(0, Math.min(wanted, cap)), chargedAt, cap });
+  };
+  for (const charge of charges) {
+    const pool = charge.sponsor?.isMatchingPool ? (await getAccountBalance(tx, 'MATCHING_POOL', { initiativeId, sponsorId: charge.sponsor.id })).balanceCents : 0;
+    add(charge.id, charge.totalChargedCents - (charge.sponsor?.reassignedCents ?? 0) - Math.max(0, pool), charge.createdAt, charge.totalChargedCents);
+  }
+  for (const allocation of allocations) add(allocation.contributionId, allocation.amountCents, allocation.contribution.createdAt, allocation.contribution.totalChargedCents);
+  return [...byCharge.values()].map(({ contributionId, totalChargedCents, chargedAt }) => ({ contributionId, totalChargedCents, chargedAt }));
 }
 
 /**
@@ -95,15 +127,7 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     const escrow = (await getAccountBalance(tx, 'INITIATIVE_ESCROW', scope)).balanceCents;
     if (escrow !== initiative.raisedCents) throw new PayoutNotAllowedError(payoutId, `la hucha tiene ${escrow} céntimos y lo recaudado es ${initiative.raisedCents}`);
 
-    const charges = await tx.contribution.findMany({
-      where: { initiativeId: payout.initiativeId, status: 'COMPLETED', totalChargedCents: { gt: 0 }, paycometOrder: { not: null }, paycometAuthCode: { not: null } },
-      select: { id: true, totalChargedCents: true, createdAt: true }
-    });
-    const plan = planPayoutSplits(
-      charges.map((charge) => ({ contributionId: charge.id, totalChargedCents: charge.totalChargedCents, chargedAt: charge.createdAt })),
-      payout.netPaidCents,
-      now
-    );
+    const plan = planPayoutSplits(await payoutCandidates(tx, payout.initiativeId, payoutId), payout.netPaidCents, now);
     await tx.escrowPayoutSplit.createMany({ data: plan.map((split) => ({ payoutId, contributionId: split.contributionId, amountCents: split.amountCents })) });
     await tx.escrowPayout.update({ where: { id: payoutId }, data: { destinationSplitId: payout.organization.paycometSplitId } });
     await postJournal(tx, {

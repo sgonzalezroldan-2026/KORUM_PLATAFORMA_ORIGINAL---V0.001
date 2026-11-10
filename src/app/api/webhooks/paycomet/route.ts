@@ -39,7 +39,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!(await reserveAttempt(db, attemptKey, WEBHOOK_INVALID_RULE))) return new Response(null, { status: 429 });
 
   const provider = await getPaymentProvider(db);
-  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db), keyring: getKeyring });
+  const result = await handlePaymentWebhook(db, provider, rawBody, request.headers.get('content-type'), new Date(), { qrSecret: env.QR_HMAC_SECRET, invoicing: await loadInvoicingContext(db), keyring: getKeyring, documentsSecret: env.DATA_HMAC_SECRET });
   if (result.status !== 401) await releaseAttempt(db, attemptKey);
   if (result.outcome === 'PROCESSED') {
     after(async () => {

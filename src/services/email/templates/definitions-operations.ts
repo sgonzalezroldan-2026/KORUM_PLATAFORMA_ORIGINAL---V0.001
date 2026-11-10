@@ -3,7 +3,7 @@ import type { EmailContent, TemplateContext, TemplateDefinition } from './email-
 
 /**
  * Emails de acceso, de operación de la entidad y de avisos periódicos: enlace y código de acceso, PIN de portería, meta lograda,
- * campaña vencida, ventana de reparto, renovación de patrocinio, certificado fiscal, Modelo 182 y aviso de inactividad.
+ * campaña vencida, ventana de reparto, certificado fiscal, Modelo 182 y aviso de inactividad.
  */
 
 function organizationOf(context: TemplateContext, template: string): NonNullable<TemplateContext['organization']> {
@@ -173,28 +173,6 @@ export const splitWindowExpired: TemplateDefinition<z.infer<typeof splitPayload>
       facts: [],
       button: { label: t('split.expired.cta'), url: context.url(`/panel/${organization.slug}`) },
       footer: 'organization'
-    };
-  }
-};
-
-const renewalPayload = z.object({ sponsorId: z.number().int().positive(), amountCents: z.number().int().positive(), expiresAt: z.iso.datetime() });
-export const sponsorRenewalNotice: TemplateDefinition<z.infer<typeof renewalPayload>> = {
-  schema: renewalPayload,
-  needs: 'organization',
-  build(payload, context): EmailContent {
-    const { t } = context;
-    const organization = organizationOf(context, 'sponsor.renewalNotice');
-    const date = context.formatDate(payload.expiresAt);
-    const amount = context.formatMoney(payload.amountCents);
-    return {
-      subject: t('sponsor.renewalNotice.subject', { organization: organization.name, date }),
-      preheader: t('sponsor.renewalNotice.preheader'),
-      title: t('sponsor.renewalNotice.title'),
-      paragraphs: [t('sponsor.renewalNotice.body', { organization: organization.name, date, amount })],
-      facts: [{ label: t('sponsor.renewalNotice.amount'), value: amount }, { label: t('sponsor.renewalNotice.date'), value: date }],
-      // El preaviso es un recordatorio: no hay cobro automático. El enlace lleva a donde se puede renovar (los comercios amigos de la entidad).
-      button: { label: t('sponsor.renewalNotice.cta'), url: context.url(`/${organization.slug}/comercios`) },
-      footer: 'transactional'
     };
   }
 };

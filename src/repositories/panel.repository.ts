@@ -62,7 +62,7 @@ export async function getDashboardData(db: KorumPrismaClient, actor: SessionActo
 
 /** Comercios amigos activos: cobrados, aprobados por el centro y dentro de su vigencia. */
 async function countActiveSponsors(db: KorumPrismaClient, organizationId: string, now: Date): Promise<number> {
-  return db.sponsor.count({ where: { organizationId, status: 'APPROVED', paidAt: { not: null }, expiresAt: { gt: now } } });
+  return db.sponsor.count({ where: { organizationId, status: { in: ['APPROVED', 'CREDIT_POOL'] }, paidAt: { not: null }, expiresAt: { gt: now } } });
 }
 
 /**

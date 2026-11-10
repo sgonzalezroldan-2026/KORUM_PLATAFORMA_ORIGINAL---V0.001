@@ -11,7 +11,7 @@ import { getAuthSession } from '@/lib/auth/session';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { localizedPath } from '@/lib/seo/marketing-routes';
-import { checkoutResultPath, huchaResultPath } from '@/lib/seo/portal-routes';
+import { checkoutResultPath, huchaResultPath, sponsorRenewalPath } from '@/lib/seo/portal-routes';
 import { startCheckout, type CheckoutStart } from '@/services/checkout/checkout.service';
 import { startSponsorship, type SponsorshipStart } from '@/services/checkout/sponsorship.service';
 import { settleSimulatedPayment } from '@/services/checkout/payment-simulator';
@@ -96,5 +96,7 @@ export async function settleSimulatedPaymentAction(raw: unknown): Promise<{ url:
   // El primer pago de Mi Hucha vuelve a Mi Hucha, como con Paycomet: allí se ve si la aportación mensual quedó activada.
   if (input.order.startsWith('KH')) return { url: localizedPath(locale, huchaResultPath(input.order)) };
   const query = new URLSearchParams({ pedido: input.order, sig: signCheckoutResult(env.DATA_HMAC_SECRET, input.order) });
+  // La renovación de un comercio (Sprint 4.2d) vuelve a la propia renovación, como con Paycomet: no va a una campaña concreta.
+  if (input.order.startsWith('KR')) return { url: `${localizedPath(locale, sponsorRenewalPath(input.orgSlug))}?${query.toString()}` };
   return { url: `${localizedPath(locale, checkoutResultPath(input.orgSlug, input.initiativeId))}?${query.toString()}` };
 }

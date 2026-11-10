@@ -11,6 +11,7 @@ import { SPONSOR_REJECTION_REASON_MAX, SPONSOR_REJECTION_REASON_MIN } from '@/co
 import type { ModerationSponsorView } from '@/services/panel/sponsor-moderation-data';
 import { useApprovalsNotice } from './approvals-notice';
 import { SponsorLogoForm } from './sponsor-logo-form';
+import { SponsorMoneyDetail } from './sponsor-money-detail';
 
 /**
  * Un comercio amigo en la bandeja de aprobaciones (`id="sch-sponsors-moderation-list"`, `function moderateSponsor` del prototipo). Enseña lo que la
@@ -83,7 +84,9 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
       })
     );
   };
-  const active = sponsor.status === 'PENDING' || sponsor.status === 'APPROVED';
+  const active = sponsor.status === 'PENDING' || sponsor.status === 'APPROVED' || sponsor.status === 'CREDIT_POOL';
+  // Si su dinero ya salió de la campaña que eligió (reasignado o en su bolsa, Sprint 4.2d), dónde está lo cuenta la ficha: aquí no se nombra esa campaña.
+  const inOrigin = sponsor.needsDecision || sponsor.money.originCents > 0;
   const returned = sponsor.status === 'REJECTED' || sponsor.status === 'REFUNDED';
   const cancelReject = () => {
     setRejecting(false);
@@ -104,7 +107,7 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
           </h3>
         </div>
         <span className="rounded-full border-2 border-varsity-navy/30 bg-varsity-ivory px-3 py-1 text-sm font-bold text-varsity-navy">
-          {t(`status.${sponsor.needsDecision ? 'PENDING' : sponsor.status === 'PENDING' ? 'UNPAID' : sponsor.status}`)}
+          {t(`status.${sponsor.needsDecision ? 'PENDING' : sponsor.status === 'PENDING' ? 'UNPAID' : sponsor.renewed ? 'RENEWED' : sponsor.status}`)}
         </span>
       </header>
       <p className="text-sm text-ink-soft">
@@ -122,10 +125,10 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
 
       <dl className="korum-trust-vault grid gap-2 p-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="font-bold text-ink-soft">{t(returned ? 'returnedAmount' : sponsor.matching ? 'toPool' : 'toEscrow')}</dt>
+          <dt className="font-bold text-ink-soft">{t(returned ? 'returnedAmount' : !inOrigin ? 'moved' : sponsor.matching ? 'toPool' : 'toEscrow')}</dt>
           <dd className="flex flex-wrap items-baseline gap-1">
             <CurrencyText cents={sponsor.amountCents} className="font-corp text-lg font-extrabold text-varsity-emerald" />
-            {sponsor.initiative ? (
+            {sponsor.initiative && (returned || inOrigin) ? (
               <span className="wrap-anywhere text-ink">
                 {t('forInitiative', {
                   title: sponsor.initiative.title,
@@ -177,9 +180,11 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
         </div>
       </dl>
       {/* La renovación solo tiene sentido para un comercio vigente o por decidir: en uno devuelto sería falso. */}
-      {sponsor.status === 'APPROVED' || sponsor.needsDecision ? (
+      {/* Ya renovado: su año nuevo es otra tarjeta, y esta ya no está visible ni se renueva (revisión de experiencia del 4.2d). */}
+      {sponsor.renewed ? <p className="text-sm text-ink-soft">{t('renewedElsewhere')}</p> : null}
+      {!sponsor.renewed && (sponsor.status === 'APPROVED' || sponsor.status === 'CREDIT_POOL' || sponsor.needsDecision) ? (
         <p className="text-sm text-ink-soft">
-          {sponsor.status === 'APPROVED' ? `${t('visibleUntil', { date: date(sponsor.expiresAt) })} ` : null}
+          {sponsor.status === 'APPROVED' || sponsor.status === 'CREDIT_POOL' ? `${t('visibleUntil', { date: date(sponsor.expiresAt) })} ` : null}
           {t(sponsor.autoRenew ? 'renewalNotice' : 'renewalNone')}
         </p>
       ) : null}
@@ -247,6 +252,8 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
       ) : null}
       {!canModerate && sponsor.needsDecision ? <p className="text-sm text-ink-soft">{t('readOnly')}</p> : null}
       {error ? <FormAlert>{error}</FormAlert> : null}
+
+      {active && sponsor.paidAt && !sponsor.needsDecision ? <SponsorMoneyDetail orgSlug={orgSlug} sponsor={sponsor} canModerate={canModerate} /> : null}
 
       {canModerate && active && sponsor.paidAt ? (
         <details className="rounded-xl border border-stone-200 p-3">

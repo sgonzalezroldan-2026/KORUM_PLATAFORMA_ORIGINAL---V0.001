@@ -41,7 +41,7 @@
   - Pago con Bizum, tarjeta, Apple Pay o Google Pay (y saldo de Mi Hucha solo en `REGULATED_WALLET`).
   - Tras pagar: pantalla de celebración con el nuevo progreso y la opción de compartir.
 - **Modo 2 · Taquilla y rifas:** selector `-` / `+` con **aforo atómico** (`ticketMax − ticketsSold`), desglose de precio + *"Gastos de gestión digital"*, y pase o papeleta numerada con QR firmado (`#PASE-2026-XXXX` / `#RIFA-2026-XXXX`, números `#0001`–`#N`) enviado por email.
-- **Modo 3 · Comercio (100 % íntegro + fee encima):** categoría `🥉 BRONCE`, `🥈 PLATA ⭐` u `🥇 ORO` (con opción de destinarlo a *Matching 2x*), datos fiscales, cupón para familias y renovación anual (`JET-ID`) con preaviso de 30 días; justificante del 100 % + factura de KORUM registrada en Veri\*factu.
+- **Modo 3 · Comercio (100 % íntegro + fee encima):** categoría `🥉 BRONCE`, `🥈 PLATA ⭐` u `🥇 ORO` (con opción de destinarlo a *Matching 2x*), datos fiscales, cupón para familias y renovación anual con enlace de pago (sin tarjeta guardada) y preaviso de 30 días; su dinero solo se devuelve si la entidad no lo admite; justificante del 100 % + factura de KORUM registrada en Veri\*factu.
 
 ### 1.6 Buzón de ideas (quórum con regla padre/madre en servidor)
 

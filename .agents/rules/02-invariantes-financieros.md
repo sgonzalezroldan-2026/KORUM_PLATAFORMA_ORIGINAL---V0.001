@@ -40,13 +40,15 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
 - Paycomet solo permite repartir fondos (*split transfer*) durante **90 días desde cada cobro**. Por eso:
   - Duración máxima de una campaña: `maxCampaignDays` (por defecto **60 días**, nunca más de 75), contados desde la publicación.
   - La tarea `SPLIT_WINDOW_GUARD` avisa a la entidad y al Super-Admin cuando queden **15 días** para que venza la ventana del primer cobro de una iniciativa sin liquidar.
-  - La bolsa `CREDIT_POOL` dura `min(creditPoolMaxDays, 85 − días transcurridos desde el cobro del patrocinio)`. Al vencer, se reembolsa al comercio.
+  - La bolsa `CREDIT_POOL` dura `min(creditPoolMaxDays, 85 − días transcurridos desde el cobro del patrocinio)`. Al vencer **no se reembolsa al comercio** (decisión del promotor, 2026-11-10): pasa a la entidad para sus actividades («Fondo de actividades», Sprint 4.2f); hasta entonces queda con la alerta `CREDIT_POOL_EXPIRED` y ya no se coloca en ninguna campaña.
 
 ## 5. Patrocinio de comercios: 100 % íntegro + fee encima + Veri\*factu
 
 - El **100 % del nivel elegido** (`100 €`, `250 €` o `500 €`) se suma íntegro a la iniciativa.
 - El fee de gestión publicitaria (`15 %` por defecto + IVA) se **suma encima** (`250,00 € íntegros + 37,50 € de fee`). Se emite un justificante del patrocinio y una **factura de KORUM registrada en Veri\*factu** por el fee.
-- Si la campaña vence sin éxito, el patrocinio se reasigna según la regla de la entidad; si no hay otra campaña activa, pasa a `CREDIT_POOL` con aviso al comercio (ver §4 para el plazo máximo).
+- **El dinero de un comercio admitido no se le devuelve nunca** (decisión del promotor, 2026-11-10: es una aportación a fondo perdido y el comercio ya disfruta de su publicidad). Solo se devuelve el 100 % (nivel + fee + IVA, con rectificativa) si la entidad **no lo admite** en la moderación. Un contracargo del banco o un cobro que llega a una campaña ya cerrada siguen su camino propio (§7).
+- Si la campaña vence sin éxito, o al dejar de recaudar le sobra parte de una bolsa *Matching 2x*, el patrocinio se reasigna según la regla de la entidad (`SOONEST`, `PROPORTIONAL`, `MANUAL`) a campañas activas que cierren antes del día 85 desde su cobro; si no hay ninguna, pasa a `CREDIT_POOL` con aviso al comercio (ver §4). La liquidación de la campaña que lo recibe reparte desde el cobro original del comercio (`SponsorAllocation`) y un cobro nunca se reparte por encima de lo cobrado.
+- La renovación anual es un cobro nuevo (pedido `KR`, enlace de pago por email, sin tarjeta guardada) que entra en la bolsa del comercio y se coloca con la misma regla.
 
 ## 6. "Gastos de gestión digital" en entradas y papeletas
 

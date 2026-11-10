@@ -34,6 +34,6 @@ export async function settleSimulatedPayment(
   const card = payment.walletSubscriptionId !== null && input.approve ? provider.savedCardFor(input.order) : undefined;
   const notification = provider.buildNotification({ kind: 'PAYMENT', order: input.order, amountCents: payment.totalChargedCents, response: input.approve ? 'OK' : 'KO', bankDateTime: bankDateTime(now), card });
   const { keyring } = secrets;
-  const result = await handlePaymentWebhook(db, provider, notification.rawBody, notification.contentType, now, { qrSecret: secrets.qrSecret, invoicing: secrets.invoicing, keyring: keyring ? () => keyring : undefined });
+  const result = await handlePaymentWebhook(db, provider, notification.rawBody, notification.contentType, now, { qrSecret: secrets.qrSecret, invoicing: secrets.invoicing, keyring: keyring ? () => keyring : undefined, documentsSecret: secrets.hmacSecret });
   return result.outcome === 'PROCESSED' || result.outcome === 'DUPLICATE' ? 'SETTLED' : 'INVALID';
 }

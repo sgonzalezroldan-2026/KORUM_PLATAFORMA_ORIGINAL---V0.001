@@ -815,6 +815,7 @@ model Organization {
   initiatives           Initiative[]
   ideas                 Idea[]
   sponsors              Sponsor[]
+  sponsorAllocations    SponsorAllocation[]
   contributions         Contribution[]
   ledgerJournals        LedgerJournal[]
   walletTransactions    WalletTransaction[]
@@ -987,6 +988,7 @@ model Initiative {
   afterFile           FileAsset?                 @relation("InitiativeAfter", fields: [afterFileId], references: [id], onDelete: SetNull)
   courses             InitiativeCourseProgress[]
   sponsors            Sponsor[]
+  sponsorAllocations  SponsorAllocation[]
   contributions       Contribution[]
   pledges             WalletSubscription[]
   ticketPasses        TicketPass[]
@@ -1043,17 +1045,49 @@ model Sponsor {
   paidAt               DateTime?
   status               SponsorStatus        @default(PENDING)
   expiresAt            DateTime
+  /// Entrada en la bolsa (`CREDIT_POOL`, Sprint 4.2d): su plazo es `min(creditPoolMaxDays desde aquí, 85 días desde el cobro)`. Nulo fuera de la bolsa.
+  creditPoolAt         DateTime?
+  /// Lo que ha salido de su campaña de origen (reasignado): vive en la bolsa o en otras campañas (`SponsorAllocation`), no en su asiento de cobro.
+  reassignedCents      Int                  @default(0)
+  /// Renovación anual (Sprint 4.2d): el patrocinio que renueva. Un comercio, un cobro: cada año es una fila nueva con su propio pedido.
+  renewedFromId        Int?
   createdAt            DateTime             @default(now())
 
   organization        Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative          Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
   logoFile            FileAsset?          @relation("SponsorLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
   paymentMethodToken  PaymentMethodToken? @relation(fields: [paymentMethodTokenId], references: [id], onDelete: SetNull)
+  renewedFrom         Sponsor?            @relation("SponsorRenewal", fields: [renewedFromId], references: [id], onDelete: Restrict)
+  renewals            Sponsor[]           @relation("SponsorRenewal")
   invoices            Invoice[]
   escrowLedgerEntries EscrowLedgerEntry[]
   contribution        Contribution?
+  allocations         SponsorAllocation[]
 
   @@index([organizationId, status])
+  @@index([renewedFromId])
+}
+
+/// Dinero de un patrocinio colocado desde la bolsa en otra campaña (Sprint 4.2d). Paycomet reparte cobro a cobro con el pedido original y su ventana de
+/// 90 días: la liquidación de la campaña que lo recibe reparte desde ese cobro (`contributionId`), hasta este importe. Solo alta; al volver a salir (la
+/// campaña fracasa, se devuelve o hay contracargo) se cierra con `withdrawnAt`.
+model SponsorAllocation {
+  id             Int       @id @default(autoincrement())
+  organizationId String
+  sponsorId      Int
+  contributionId Int
+  initiativeId   Int
+  amountCents    Int
+  withdrawnAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  sponsor      Sponsor      @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
+  contribution Contribution @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+  initiative   Initiative   @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+
+  @@index([initiativeId, withdrawnAt])
+  @@index([sponsorId, withdrawnAt])
 }
 
 // -----------------------------------------------------------------------------
@@ -1249,6 +1283,7 @@ model Contribution {
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]
   payoutSplits               EscrowPayoutSplit[]
+  sponsorAllocations         SponsorAllocation[]
 
   @@index([initiativeId, status])
   @@index([initiativeId, ticketHoldUntil])

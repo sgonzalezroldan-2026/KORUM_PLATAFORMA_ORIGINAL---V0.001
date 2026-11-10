@@ -34,7 +34,8 @@
 3. ¿Se puede pagar directamente al IBAN de un tercero (el proveedor elegido por la entidad), o solo a la cuenta destino de la entidad?
 4. ¿Quién hace el KYB de cada entidad (alta como cuenta destino) y qué documentos pide?
 5. Contracargos: proceso, plazos y quién asume el importe si la iniciativa ya se liquidó.
-6. Cobros recurrentes con tarjeta tokenizada (`JET-ID`) para la aportación mensual de Mi Hucha y la renovación de comercios: requisitos de autenticación reforzada (SCA) en el primer cobro y en los siguientes.
+6. Cobros recurrentes con tarjeta tokenizada (`JET-ID`) para la aportación mensual de Mi Hucha: requisitos de autenticación reforzada (SCA) en el primer cobro y en los siguientes. (La renovación de comercios no usa tarjeta guardada: es un enlace de pago, Sprint 4.2d.)
+10. Reasignación de patrocinios (Sprint 4.2d): ¿se puede repartir (*split*) un cobro hacia la cuenta de la entidad desde la liquidación de una campaña distinta de la del pedido (el dinero de un comercio llevado a otra campaña), dentro de los 90 días de ese cobro? ¿Admite devoluciones parciales de un pedido?
 7. ¿Ofrece Paycomet monederos con saldo a nombre de cada usuario (necesario para el modo `REGULATED_WALLET` de Mi Hucha)?
 8. Redacción aprobada para mencionar a Paycomet en la web, los emails y los recibos, y uso de su logotipo.
 9. Repartos: la API exige citar el cobro original en cada *split transfer*. ¿Una liquidación son tantos repartos como cobros? ¿El tope de cada uno es lo cobrado en ese pedido, o se puede repartir el saldo global? ¿Hay límite de repartos o una forma de agruparlos?
@@ -123,7 +124,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Registro de auditoría | 6 años | Borrado |
 | Notificaciones enviadas | 12 meses | Borrado del contenido, se conserva el hecho del envío |
 | Consentimientos | Mientras estén vigentes + 3 años | Borrado |
-| Comercio que empezó a patrocinar y nunca pagó (contacto, CIF cifrado, ventaja) | 30 días desde que empezó el pago | Borrado, con su cobro fallido o abandonado (Sprint 4.2b) |
+| Comercio que empezó a patrocinar y nunca pagó (contacto, CIF cifrado, ventaja), también una renovación que no se pagó | 30 días desde que empezó el pago | Borrado, con su cobro fallido o abandonado (Sprints 4.2b y 4.2d) |
 | Cuenta creada al invitar a alguien a firmar por una entidad que nunca aceptó (nombre y email escritos por quien invitó) | 30 días sin invitación abierta ni relevo pendiente | Borrado (Sprint 4.2e) |
 | Historial de relevos de firmantes (`SignerHandover`: quién propuso, quién salió y quién entró, por identificador de cuenta) | Como el registro de auditoría (6 años) | El nombre escrito de la persona invitada se anonimiza si suprime su cuenta |
 | Tarjeta guardada de Mi Hucha (token de Paycomet, cifrado) | Mientras la aportación mensual esté activa o en pausa (pausa máxima: 6 meses) | Se revoca al momento y se pide a Paycomet que la borre al cancelar, terminar, pasar 6 meses en pausa, haber un contracargo o suprimir la cuenta; la purga semanal reintenta el borrado |
@@ -163,6 +164,9 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 | 10 | Campañas de 60 días como máximo (ventana de 90 días de Paycomet) | Propuesta técnica | Aplicada |
 | 11 | Las respuestas escritas de Paycomet (§2) y la revisión del abogado y de la asesoría fiscal (§9) **se aplazan hasta ver el resultado del proyecto** (29-10-2026) | Promotor | **Aplazada.** No bloquea la construcción (simulador y textos en borrador); **sí bloquea cobrar dinero real** (Sprints 6.1 y 6.2) |
 | 12 | Tramos de comisión, fee de Mi Hucha y demás comisiones **configurables** por el Super-Admin; si una regla pierde dinero o es incoherente, la consola avisa y decide el Super-Admin (puede aceptar y registrar la pérdida) | Promotor | Aplicada ([DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §6.1) |
+| 14 | Bolsa de un comercio vencida: ~~devolución del 100 % con rectificativa~~ (2026-11-09) **sustituida** el 2026-11-10: el dinero de un comercio admitido **no se le devuelve nunca**; si su campaña no sale se reasigna y, si vence la bolsa, pasa a la entidad para sus actividades (Fondo de actividades). Solo se devuelve si la entidad no lo admite | Promotor | Reasignación aplicada (Sprint 4.2d); Fondo de actividades en el Sprint 4.2f. **Revisión del abogado (§9)** |
+| 15 | Un comercio con dinero esperando en la bolsa **sigue visible** en el directorio hasta que caduca su distintivo | Promotor (2026-11-09) | Aplicada (Sprint 4.2d) |
+| 16 | Lo que sobra de una bolsa *Matching 2x* al dejar de recaudar la campaña **se reasigna** a otras campañas (no se queda en la suya) | Promotor (2026-11-09) | Aplicada (Sprint 4.2d) |
 | 13 | El logotipo de referencia es la lámina `public/brand/korum-logo.jpg`; los SVG antiguos y el sello de custodia quedan **descartados** y no se usan | Promotor | Aplicada (el sello de custodia no existe en la aplicación, coherente con la decisión 5) |
 
 ---
@@ -242,6 +246,16 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 - [ ] **Contacto del alta al relevar a quien dirige:** el email de contacto de la entidad pasa al de la persona nueva y el móvil de quien salía se borra. ¿Correcto, o debe conservarse un tiempo?
 - [ ] **Historial de relevos:** se conserva quién propuso, quién salió y quién entró (identificadores de cuenta) como la auditoría (6 años); el nombre escrito se anonimiza si la persona suprime su cuenta. Confirmar plazo.
 - [ ] **Texto del aviso `signer.handover`:** «Si no reconoces este cambio, escribe a soporte cuanto antes». ¿Debe incluir algo más (quién lo propuso, cómo oponerse)?
+
+**Abogado (Sprint 4.2d · renovación y reasignación de comercios):**
+
+- [ ] **El patrocinio como aportación a fondo perdido** (decisión 14 del §8): el comercio paga un nivel + la gestión publicitaria; una vez admitido, su dinero no se le devuelve nunca: se reasigna a otras campañas y, si vence la bolsa, pasa a la entidad para sus actividades. ¿Es válido con el texto actual del checkout (`portal.checkout.sponsor.legal`) como base contractual, también con la regla `MANUAL` (la entidad elige la campaña)? ¿Debe aceptarlo el comercio de forma expresa (casilla)? ¿De quién es el dinero mientras espera en la bolsa?
+- [ ] **Sobrante de una bolsa Matching 2x reasignado** a otra campaña (decisión 16): el comercio eligió duplicar las donaciones de una campaña concreta.
+- [ ] **Avisos de renovación (LSSI art. 21):** preaviso a 30 días, enlace el día que vence y reenvíos desde el panel, cuando el comercio solo pidió «renovar cada año». ¿Hace falta una forma de darse de baja en cada email?
+- [ ] **Datos de la renovación:** reutiliza razón social, CIF y contacto del año anterior sin dejar corregirlos (exactitud, RGPD art. 5.1.d; datos de la factura, RD 1619/2012 art. 6), y el plazo de conservación del contacto de un comercio cobrado (punto del 4.2b) se aplica a cada fila.
+- [ ] **Coherencia de la política:** un cobro de patrocinio que llega a una campaña ya cerrada (antes de la moderación) y una renovación pagada dos veces se siguen devolviendo enteros. Confirmar que encaja con la decisión 14.
+
+**Asesoría fiscal (Sprint 4.2d):** factura del fee de cada renovación anual (una por año, en la serie normal); y, con el Fondo de actividades (4.2f), el tratamiento del dinero de un comercio que acaba en la entidad sin campaña concreta (¿sigue siendo patrocinio o es donación?).
 
 **Asesoría fiscal (Sprint 4.2b · factura rectificativa):**
 

@@ -1,4 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { signRenewalToken } from '@/core/sponsors/sponsor-renewal-token';
+import { loadRenewalOffer } from '@/services/checkout/sponsor-renewal.service';
+import { assignPooledSponsor, saveSponsorRenewalRule, sendRenewalLink } from '@/services/sponsors/sponsor-renewal-panel.service';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadUserActor } from '@/repositories/actor';
 import { listContributions } from '@/repositories/contribution.repository';
@@ -8,7 +11,7 @@ import { getPublicInitiative, getPublicOrganization, listPublicInitiatives } fro
 import { listIdeas, listSponsors } from '@/repositories/sponsor-idea.repository';
 import { authorizeTenant, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { EntityBrandingError, saveEntityAccent } from '@/services/panel/entity-branding.service';
-import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, uniqueId } from './test-database';
 
 /** QA-SEC01 · aislamiento entre entidades (anti-IDOR): dos colegios, sus personas y sus datos. */
 
@@ -25,6 +28,7 @@ interface Tenant {
   cosigner: SessionActor;
   gatekeeper: SessionActor;
   directorId: string;
+  sponsorId: number;
 }
 
 let cervantes: Tenant;
@@ -40,7 +44,7 @@ async function createTenant(name: string, brand: string): Promise<Tenant> {
   await db.contribution.create({
     data: { organizationId: organization.id, initiativeId: initiative.id, guestEmail: `donante-${organization.id}@familias.example`, canonicalEmail: `donante-${organization.id}@familias.example`, fiscalYear: 2026, amountCents: 2_500, totalChargedCents: 2_500, paymentMethod: 'CARD', status: 'COMPLETED' }
   });
-  await db.sponsor.create({ data: { organizationId: organization.id, name: `Comercio de ${name}`, contactPerson: 'x', phone: '1', email: 'c@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: uniqueId('C'), expiresAt: new Date('2027-01-01') } });
+  const sponsor = await db.sponsor.create({ data: { organizationId: organization.id, name: `Comercio de ${name}`, contactPerson: 'x', phone: '1', email: 'c@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: uniqueId('C'), expiresAt: new Date('2027-01-01') } });
   await db.idea.create({ data: { organizationId: organization.id, alias: 'Código #FAM-0001', authorCanonicalEmail: `autor-${organization.id}@familias.example`, title: `Idea de ${name}`, category: 'Patios y Deporte', description: 'd', expiresAt: new Date('2027-01-01') } });
 
   const members = await Promise.all(
@@ -51,7 +55,7 @@ async function createTenant(name: string, brand: string): Promise<Tenant> {
     })
   );
   const pick = (role: string) => members.find((member) => member.role === role)!;
-  return { orgId: organization.id, slug: organization.slug, initiativeId: initiative.id, draftInitiativeId: draft.id, director: pick('DIRECTOR').actor, cosigner: pick('COSIGNER').actor, gatekeeper: pick('GATEKEEPER').actor, directorId: pick('DIRECTOR').userId };
+  return { orgId: organization.id, slug: organization.slug, initiativeId: initiative.id, draftInitiativeId: draft.id, director: pick('DIRECTOR').actor, cosigner: pick('COSIGNER').actor, gatekeeper: pick('GATEKEEPER').actor, directorId: pick('DIRECTOR').userId, sponsorId: sponsor.id };
 }
 
 beforeAll(async () => {
@@ -73,6 +77,21 @@ const withSecondFactor = (actor: SessionActor): SessionActor => (actor.kind === 
 
 const denied = (organizationId: string, userId?: string) => db.auditLog.findMany({ where: { action: 'tenant.access_denied', organizationId, ...(userId ? { actorUserId: userId } : {}) }, orderBy: { id: 'desc' } });
 
+describe('Comercios amigos: renovación y bolsa (Sprint 4.2d)', () => {
+  it('un comercio de otra entidad con el id de la propia da el mismo 404 que uno inexistente y queda registrado', async () => {
+    const other = await sendRenewalLink(db, withSecondFactor(cervantes.director), cervantes.orgId, { sponsorId: sanJose.sponsorId }, TEST_HMAC_SECRET).catch((error: unknown) => error);
+    const missing = await sendRenewalLink(db, withSecondFactor(cervantes.director), cervantes.orgId, { sponsorId: 2_000_000_000 }, TEST_HMAC_SECRET).catch((error: unknown) => error);
+    expect(other).toBeInstanceOf(ResourceNotFoundError);
+    expect((other as Error).message).toBe((missing as Error).message);
+    expect(await db.auditLog.count({ where: { action: 'tenant.resource_outside_tenant', organizationId: cervantes.orgId, targetId: String(sanJose.sponsorId) } })).toBeGreaterThanOrEqual(1);
+  });
+
+  it('el enlace de renovación de un comercio de San José no sirve en el portal de Cervantes', async () => {
+    const token = signRenewalToken(TEST_HMAC_SECRET, sanJose.sponsorId, new Date('2027-01-01T00:00:00.000Z'));
+    expect(await loadRenewalOffer(db, TEST_HMAC_SECRET, cervantes.slug, token)).toEqual({ status: 'INVALID' });
+  });
+});
+
 describe('QA-SEC01 · el director de Cervantes invoca todo con la entidad de San José', () => {
   it('cada repositorio responde 403 y queda en AuditLog sin que se lea ni modifique nada', async () => {
     const attempts: Array<[string, () => Promise<unknown>]> = [
@@ -82,7 +101,11 @@ describe('QA-SEC01 · el director de Cervantes invoca todo con la entidad de San
       ['contribution.list', () => listContributions(db, cervantes.director, sanJose.orgId, sanJose.initiativeId)],
       ['sponsor.list', () => listSponsors(db, cervantes.director, sanJose.orgId)],
       ['idea.list', () => listIdeas(db, cervantes.director, sanJose.orgId)],
-      ['organization.branding_update', () => saveEntityAccent(db, withSecondFactor(cervantes.director), sanJose.orgId, { accent: 'coral' })]
+      ['organization.branding_update', () => saveEntityAccent(db, withSecondFactor(cervantes.director), sanJose.orgId, { accent: 'coral' })],
+      // Renovación y reasignación de comercios (Sprint 4.2d).
+      ['sponsor.renewal_rule', () => saveSponsorRenewalRule(db, withSecondFactor(cervantes.director), sanJose.orgId, { rule: 'MANUAL' })],
+      ['sponsor.assign_pool', () => assignPooledSponsor(db, withSecondFactor(cervantes.director), sanJose.orgId, { sponsorId: sanJose.sponsorId, initiativeId: sanJose.initiativeId })],
+      ['sponsor.renewal_link', () => sendRenewalLink(db, withSecondFactor(cervantes.director), sanJose.orgId, { sponsorId: sanJose.sponsorId }, TEST_HMAC_SECRET)]
     ];
     for (const [action, attempt] of attempts) {
       const error = await attempt().catch((caught: unknown) => caught);

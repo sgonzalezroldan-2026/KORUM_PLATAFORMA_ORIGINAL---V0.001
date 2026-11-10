@@ -89,7 +89,11 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Ajustes de la entidad (Sprint 4.2c): «Plata (€)», «Falta», «CIF del titular», «Forma jurídica: …» y «el CIF del titular» se escriben igual en catalán.
       'panel.settings.general.sponsors.tier.silver', 'panel.settings.kyb.documents.missing', 'panel.settings.kyb.identity.cif', 'panel.settings.kyb.identity.legalForm', 'panel.settings.kyb.submit.missingCif',
       // Equipo, grupos y marca (Sprint 4.2e): «Lila», «Turquesa», «Foto de portada», «Portada retirada.» y el patrón «{seat}: {name}» se escriben igual en catalán.
-      'panel.settings.brand.accent.names.lilac', 'panel.settings.brand.accent.names.turquoise', 'panel.settings.brand.banner.label', 'panel.settings.brand.banner.removed', 'panel.settings.team.form.seatOther']);
+      'panel.settings.brand.accent.names.lilac', 'panel.settings.brand.accent.names.turquoise', 'panel.settings.brand.banner.label', 'panel.settings.brand.banner.removed', 'panel.settings.team.form.seatOther',
+      // Renovación de comercios (Sprint 4.2d): «Plata», «Bizum» y «Total» se escriben igual en catalán.
+      'portal.sponsorRenewal.levels.PLATA', 'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total',
+      // «de {name}» (nombre accesible de la ficha) se escribe igual en catalán.
+      'panel.sponsors.detail.summaryFor']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.
       'panel.settings.team.form.seatOther', 'panel.settings.brand.accent.names.coral',
@@ -104,7 +108,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Mi cuenta y soporte (Sprint 3.9): «KORUM» es un nombre propio.
       'account.proposals.fromKorum', 'account.support.toKorum',
       // Aprobaciones (Sprint 4.2a): «KORUM» es un nombre propio.
-      'panel.approvals.chat.fromKorum']);
+      'panel.approvals.chat.fromKorum',
+      // Renovación de comercios (Sprint 4.2d): «Bizum» y «Total» son iguales en inglés.
+      'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

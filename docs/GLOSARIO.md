@@ -50,7 +50,7 @@
 | **Gastos de gestión digital** | Importe por entrada o papeleta que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
 | **Matching 2x** | Bolsa de un comercio que duplica las donaciones de las familias hasta agotarse. |
 | **Comercios amigos** | Patrocinadores locales por categoría ORO, PLATA o BRONCE. El 100 % va a la iniciativa; el fee se cobra encima. |
-| **`CREDIT_POOL`** | Bolsa donde espera un patrocinio cuya campaña falló y no hay otra activa; plazo limitado por la ventana de 90 días. |
+| **`CREDIT_POOL`** | Bolsa donde espera (retenido en Paycomet) un patrocinio cuya campaña falló o una renovación, mientras no hay campaña a la que llevarlo; plazo limitado por la ventana de 90 días. Al vencer no se devuelve al comercio: pasa a la entidad (Fondo de actividades, Sprint 4.2f). |
 | **Auto-Impulso** | Aportación de KORUM para completar una campaña cuando es rentable hacerlo. Siempre asentada; su visibilidad pública la decide el Super-Admin. |
 | **Retorno negativo** | Campaña en la que KORUM pierde dinero (`netRevenueCents < 0`). |
 | **Salud de precios** | Comprobación (`evaluatePricingHealth`) que avisa al Super-Admin con `❗` / `⚠️` cuando una regla de precio pierde dinero o es incoherente. Nunca bloquea: el Super-Admin ajusta o acepta y registra. |

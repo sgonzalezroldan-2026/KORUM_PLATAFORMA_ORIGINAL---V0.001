@@ -415,10 +415,10 @@
     },
     "sponsor": {
       "renewalNotice": {
-        "subject": "Your Friendly business badge for {organization} expires on {date}",
-        "preheader": "If you want to continue, you can renew it.",
+        "subject": "Your Friendly Business badge for {organization} expires on {date}",
+        "preheader": "Renew in one click without losing a single day.",
         "title": "Your badge expires soon",
-        "body": "Your Friendly business badge for {organization} (a {amount} sponsorship) expires on {date}. We make no automatic charge: if you want to continue, renew it before then from the friendly businesses page.",
+        "body": "Your Friendly Business badge for {organization} ({amount} sponsorship) expires on {date}. We never charge you automatically: if you want to carry on, renew with the button below. Your new year starts when the current one ends, so you do not lose a single day.",
         "amount": "Amount",
         "date": "Expiry date",
         "cta": "Renew my sponsorship"
@@ -450,6 +450,43 @@
         "cta": "See my receipt",
         "ctaRectified": "See the corrective invoice",
         "footnote": "Paycomet processes the refund and it may take a few days to appear on your payment method. We’ll let you know when it goes through."
+      },
+      "renewalLink": {
+        "subject": "Your Friendly Business badge for {organization} has expired",
+        "preheader": "You can still renew with this link.",
+        "title": "Shall we carry on for another year?",
+        "body": "Your Friendly Business badge for {organization} ({amount} sponsorship) expired on {date}. If you would like to keep supporting its families, you can renew with the button below until {until}. We never charge you automatically.",
+        "amount": "Amount",
+        "date": "You can renew until",
+        "cta": "Renew my sponsorship"
+      },
+      "renewal": {
+        "footnote": "Payment is made on the secure page of PAYCOMET, the authorised payment institution that processes the charge. 100% of your sponsorship goes to the organisation’s campaigns according to its rule; the advertising management fee and its VAT are separate, with their own invoice."
+      },
+      "renewed": {
+        "subject": "Renewed: you are still a Friendly Business of {organization}",
+        "preheader": "Thank you for another year.",
+        "title": "Thank you for another year!",
+        "body": "We have received your renewal. Your {level} Friendly Business badge for {organization} is valid until {date}.",
+        "placed": "Your {amount} in full is already adding up in: {list}."
+      },
+      "reassigned": {
+        "subject": "Your sponsorship of {organization} keeps adding up",
+        "preheader": "Your contribution has moved to another campaign.",
+        "title": "Your contribution keeps adding up",
+        "body": "Following the rule set by {organization}, your {amount} in full has gone to: {list}.",
+        "why": "This is how sponsorship works: if the campaign you supported does not go ahead or, when it ends, has part of your Matching 2x contribution left over, your money is not lost: it moves to another campaign of the organisation. You still appear as a friendly business.",
+        "listMore": "{list} and {more, plural, one {# more} other {# more}}",
+        "cta": "See the friendly businesses"
+      },
+      "creditPool": {
+        "subject": "Your sponsorship of {organization} is waiting for a new campaign",
+        "preheader": "Your contribution is still held by PAYCOMET, with a deadline.",
+        "title": "Your contribution is waiting for a campaign",
+        "bodyWaiting": "Right now {organization} has no campaign to take your {amount} to. It remains held by PAYCOMET until {deadline}: as soon as a campaign opens, it will go there. If it has not been placed by then, it will go to the organisation for its activities this school year.",
+        "bodyManual": "{organization} will choose which campaign to take your {amount} to. It remains held by PAYCOMET until {deadline}; if it has not been placed by then, it will go to the organisation for its activities this school year.",
+        "visible": "In the meantime you still appear as a friendly business.",
+        "deadline": "Held until"
       }
     },
     "tax": {
@@ -913,7 +950,7 @@
           {
             "title": "If the campaign does not reach its goal",
             "paragraphs": [
-              "The sponsorship is reassigned according to the organisation’s rule. If there is no other active campaign, it is kept as a credit pot in the business’s name for a limited period and, if unused, refunded to it."
+              "The sponsorship is reassigned according to the organisation’s rule. If there is no other active campaign, it waits, held by PAYCOMET, for a limited time and, if it is not placed in any campaign, it goes to the organisation for its activities. It is only refunded if the organisation does not admit the business."
             ]
           }
         ],
@@ -1779,7 +1816,10 @@
         "WRONG_STATUS": "This business is no longer pending: the other signatory has decided, or its payment was never completed. Please reload the page.",
         "MATCHING_TAKEN": "Another approved business already holds this campaign’s Matching 2x pool, and there can’t be two. You can decline this business: we’ll refund everything it paid.",
         "ALREADY_SETTLED": "This initiative has already been paid out, so this business cannot be refunded from here. Please contact support.",
-        "INVOICING_UNAVAILABLE": "We can’t cancel the management invoice right now because the issuer details are missing in KORUM. Please try later or contact support."
+        "INVOICING_UNAVAILABLE": "We can’t cancel the management invoice right now because the issuer details are missing in KORUM. Please try later or contact support.",
+        "POOL_CHANGED": "This business no longer has money waiting in its pool: another signatory has moved it to a campaign, or the daily task has. Reload the page.",
+        "TARGET_NOT_ELIGIBLE": "That campaign cannot receive it: it is no longer fundraising or it closes after its payment window runs out. Choose another.",
+        "RENEWAL_NOT_OPEN": "The link cannot be sent right now: the business has already renewed, does not renew every year or its badge is outside the renewal period."
       },
       "doubleCheck": {
         "label": "Dual sign-off for the idea",
@@ -1900,7 +1940,8 @@
         "APPROVED": "Approved · visible",
         "REJECTED": "Not accepted · refunded",
         "REFUNDED": "Refunded",
-        "CREDIT_POOL": "In the credit pool"
+        "CREDIT_POOL": "Waiting for a campaign · visible",
+        "RENEWED": "Renewed"
       },
       "level": {
         "ORO": "Gold",
@@ -1919,8 +1960,8 @@
       "promoWithCode": "{promo} · code {code}",
       "promoNone": "No offer given",
       "visibleUntil": "Visible on your page until {date}.",
-      "renewalNotice": "We’ll remind them 30 days before it expires so they can renew.",
-      "renewalNone": "They didn’t ask for a renewal reminder.",
+      "renewalNotice": "We will send it the renewal link 30 days before it expires.",
+      "renewalNone": "It has not asked to renew every year.",
       "approve": "Approve business",
       "reject": {
         "open": "Don’t accept",
@@ -1963,7 +2004,49 @@
       },
       "metaUnpaid": "{level} tier · {sector}",
       "returnedAmount": "Sponsorship refunded to the business",
-      "jump": "{count, plural, one {Go to friendly businesses · # to review} other {Go to friendly businesses · # to review}}"
+      "jump": "{count, plural, one {Go to friendly businesses · # to review} other {Go to friendly businesses · # to review}}",
+      "moved": "This business’s sponsorship in full",
+      "rule": {
+        "label": "Where renewal money, and money from campaigns that don’t go ahead, is sent",
+        "help": "An admitted business’s money is not refunded. When it renews for another year, or the campaign it sponsored does not go ahead (or has part of its Matching 2x pool left over), it goes to another of your active campaigns. If there are none, it waits, held by PAYCOMET (for {days} days at most and always within 85 days of its payment) and, if it is not placed in time, it goes to the organisation for its activities.",
+        "options": {
+          "SOONEST": "To the active campaign that closes first",
+          "PROPORTIONAL": "Shared among the active ones, according to what each still needs",
+          "MANUAL": "We choose each time"
+        },
+        "save": "Save the rule",
+        "saving": "Saving…",
+        "saved": "Rule saved: “{rule}”.",
+        "savedPlaced": "{count, plural, one {Rule saved. We have moved the money of # business waiting in its pool to a campaign.} other {Rule saved. We have moved the money of # businesses waiting in their pools to campaigns.}}",
+        "readOnly": "Only the organisation’s two signatories can change the rule."
+      },
+      "detail": {
+        "summary": "Details / Renew",
+        "moneyTitle": "Where its money is now",
+        "origin": "{amount} in “{title}” ({wallet})",
+        "placed": "{amount} moved to “{title}” ({wallet})",
+        "pool": "{amount} waiting for a campaign, held by PAYCOMET until {date}",
+        "poolNoDate": "{amount} waiting for a campaign, held by PAYCOMET",
+        "nothingHeld": "Its sponsorship has already been used in full in your campaigns.",
+        "assignLabel": "Campaign to move the waiting money to",
+        "assign": "Move {amount} to “{title}”",
+        "assigning": "Moving…",
+        "assigned": "{name}’s {amount} is now adding up in “{title}”. We have let them know by email.",
+        "noTargets": "Right now no fundraising campaign closes before the end of that business’s payment window. It keeps waiting, held by PAYCOMET; if that runs out with no campaign, it will go to the organisation for its activities.",
+        "renewalTitle": "Annual renewal",
+        "isRenewal": "This is the renewal of its sponsorship from last year.",
+        "renewed": "It has already paid for next year’s renewal.",
+        "renewalAuto": "We send it a payment link 30 days before it expires and on the day it expires. There are no automatic charges.",
+        "renewalOff": "It has not asked to renew every year.",
+        "sendLink": "Send it the renewal link",
+        "sending": "Sending…",
+        "linkSent": "We have sent {name} the link to renew.",
+        "summaryFor": "for {name}",
+        "assignOption": "{title} · closes on {date}",
+        "assignHelp": "This cannot be undone from here. We let the business know by email.",
+        "renewalOpensOn": "You will be able to send it the renewal link from {date}."
+      },
+      "renewedElsewhere": "Already renewed: its new year appears on another card in this list."
     },
     "settings": {
       "metaTitle": "Entity settings",
@@ -2767,8 +2850,8 @@
         "perk": {
           "legend": "Optional: perk for families"
         },
-        "renewal": "Renewal reminder: email me 30 days before my badge expires.",
-        "legal": "The school or club will check that your business fits its values and rules; if it is not admitted, we refund 100 % of what you paid (amount, advertising management and VAT). If the initiative ends without reaching its goal, your sponsorship moves to another active initiative; if there is none, we refund it. Either way, we let you know.",
+        "renewal": "Annual renewal: email me the link to renew (30 days before my badge expires and on the day it expires). There are no automatic charges.",
+        "legal": "The school or club will check that your business fits its values and rules; if it is not admitted, we refund 100 % of what you paid (amount, advertising management and VAT). Once admitted, your sponsorship is a contribution to the organisation: if the initiative does not go ahead (or, with Matching 2x, has part left over), it moves to another active initiative; if there is none in time, the organisation keeps it for its activities. We let you know at every step.",
         "summary": "{amount} in full to the initiative + {fee} advertising management ({pct} %) + {vat} VAT",
         "errors": {
           "form": "Check the highlighted fields.",
@@ -2935,7 +3018,9 @@
         "amount": "Amount in full",
         "date": "Payment date",
         "whole": "100 % of this amount ({amount}) reaches the initiative in full. KORUM's advertising management fee and its VAT are charged separately and appear on the invoice.",
-        "notInvoice": "This receipt proves your sponsorship; it does not replace KORUM's invoice and it is not a tax certificate."
+        "notInvoice": "This receipt proves your sponsorship; it does not replace KORUM's invoice and it is not a tax certificate.",
+        "renewal": "Annual renewal: the organisation’s campaigns, according to its rule",
+        "wholeRenewal": "100% of this amount ({amount}) is for the organisation: it goes to its campaigns according to its rule and, if there is none in time, to its activities. The KORUM advertising management fee and its VAT are charged separately and appear on the invoice."
       },
       "factura": {
         "title": "Invoice",
@@ -3169,6 +3254,64 @@
           "SUPERADMIN": "The KORUM team will answer you."
         },
         "limits": "Subject: at least {subjectMin} characters. Message: at least {messageMin} characters."
+      }
+    },
+    "sponsorRenewal": {
+      "metaTitle": "Renew my sponsorship",
+      "title": "{name}: renew your year as a friendly business",
+      "intro": "You will keep supporting {organization} as a {level} friendly business until {date}. Your new year starts when the current one ends, so you do not lose a single day.",
+      "levels": {
+        "ORO": "Gold",
+        "PLATA": "Silver",
+        "BRONCE": "Bronze"
+      },
+      "amount": "Sponsorship in full for the organisation",
+      "fee": "KORUM advertising management",
+      "vat": "VAT on the management fee",
+      "total": "Total",
+      "destination": {
+        "SOONEST": "100% of your sponsorship will go to the organisation’s active campaign that closes first. If there is none right now, it will wait, held by PAYCOMET, until one opens; if none opens in time, the organisation keeps it for its activities.",
+        "PROPORTIONAL": "100% of your sponsorship will be shared among the organisation’s active campaigns, according to what each still needs. If there is none right now, it will wait, held by PAYCOMET, until one opens; if none opens in time, the organisation keeps it for its activities.",
+        "MANUAL": "100% of your sponsorship will wait, held by PAYCOMET, until the organisation chooses which campaign to take it to; if it does not do so in time, the organisation keeps it for its activities."
+      },
+      "method": "Payment method",
+      "methods": {
+        "CARD": "Card, Apple Pay or Google Pay",
+        "BIZUM": "Bizum"
+      },
+      "pay": "Pay {total} and renew",
+      "paying": "Opening the payment page…",
+      "legal": "Payment is made on the secure page of PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is a technology platform and does not hold the money. You will receive the sponsorship receipt and the invoice for the management fee.",
+      "errors": {
+        "INVALID": "This link is not valid. Please use the one in the latest email we sent you.",
+        "EXPIRED": "This link no longer works: the renewal period is over or your sponsorship has changed. Please contact the organisation.",
+        "RENEWED": "You have already renewed: there is no need to pay again.",
+        "RATE_LIMITED": "You have made several attempts in a row. Please wait a few minutes and try again.",
+        "UNAVAILABLE": "We cannot open the payment page right now. Please try again in a few minutes."
+      },
+      "invalid": {
+        "title": "This link is not valid",
+        "description": "Please use the link in the latest email we sent you, or contact the organisation."
+      },
+      "expired": {
+        "title": "This link no longer works",
+        "description": "The renewal period is over or your sponsorship has changed. Contact the organisation if you would like to carry on."
+      },
+      "renewed": {
+        "title": "You have already renewed",
+        "description": "Thank you! Your sponsorship is already renewed: there is no need to pay again."
+      },
+      "result": {
+        "doneTitle": "Renewed! Thank you for another year",
+        "done": "{name} remains a friendly business until {date}. We have emailed you your documents and the campaign your sponsorship goes to (or the deadline, if it is still waiting).",
+        "failedTitle": "The payment was not completed",
+        "failed": "Nothing has been charged. You can try again with the link in the email.",
+        "pendingTitle": "We are confirming your payment",
+        "pending": "As soon as PAYCOMET confirms it, we will email you. There is no need to pay again.",
+        "documents": "See my receipt and invoice",
+        "directory": "See the friendly businesses",
+        "duplicateTitle": "You had already renewed",
+        "duplicate": "This second payment was not needed: we are refunding it in full to your original payment method and will email you when it is done."
       }
     }
   },

@@ -1,5 +1,6 @@
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { CLOSED_SPONSORS_SHOWN } from '@/core/sponsors/sponsor-moderation-rules';
+import { DEFAULT_CREDIT_POOL_MAX_DAYS } from '@/core/sponsors/sponsor-reassignment-rules';
 import type { Prisma } from '@/generated/prisma/client';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { authorizeTenant, type SessionActor } from './tenant-guard';
@@ -30,7 +31,13 @@ const SPONSOR_VIEW = {
   status: true,
   logoFile: { select: { id: true, visibility: true, deletedAt: true } },
   initiative: { select: { id: true, title: true, walletEscrowId: true, status: true } },
-  contribution: { select: { status: true, totalChargedCents: true } }
+  contribution: { select: { status: true, totalChargedCents: true, createdAt: true } },
+  // Renovación y reasignación (Sprint 4.2d): dónde está su dinero ahora y si ya ha renovado.
+  reassignedCents: true,
+  creditPoolAt: true,
+  renewedFromId: true,
+  allocations: { where: { withdrawnAt: null }, orderBy: { id: 'asc' }, select: { amountCents: true, initiative: { select: { id: true, title: true, walletEscrowId: true } } } },
+  renewals: { where: { paidAt: { not: null } }, select: { id: true }, take: 1 }
 } satisfies Prisma.SponsorSelect;
 
 export async function listModerationSponsors(db: KorumPrismaClient, actor: SessionActor, organizationId: string) {
@@ -40,6 +47,27 @@ export async function listModerationSponsors(db: KorumPrismaClient, actor: Sessi
     db.sponsor.findMany({ where: { organizationId, paidAt: { not: null }, status: { in: ['REJECTED', 'REFUNDED'] } }, orderBy: { id: 'desc' }, take: CLOSED_SPONSORS_SHOWN, select: SPONSOR_VIEW })
   ]);
   return { open, closed };
+}
+
+/**
+ * Lo que necesita la renovación y la reasignación en la bandeja (Sprint 4.2d): la regla de la entidad, el plazo máximo de la bolsa, lo que cada comercio
+ * tiene en ella (según el libro) y las campañas a las que el centro puede llevarlo. Mismo permiso que la bandeja.
+ */
+export async function loadSponsorRenewalContext(db: KorumPrismaClient, actor: SessionActor, organizationId: string, now: Date) {
+  await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'sponsor.moderation_list', targetType: 'Organization' });
+  const [organization, config, pools, targets] = await Promise.all([
+    db.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { sponsorRenewalRule: true } }),
+    db.globalConfig.findUnique({ where: { id: 'GLOBAL' }, select: { creditPoolMaxDays: true } }),
+    db.escrowLedgerEntry.groupBy({ by: ['sponsorId', 'direction'], where: { account: 'SPONSOR_CREDIT_POOL', organizationId }, _sum: { amountCents: true } }),
+    db.initiative.findMany({ where: { organizationId, status: 'FUNDRAISING', format: 'BUDGET', closesAt: { gt: now } }, orderBy: [{ closesAt: 'asc' }, { id: 'asc' }], select: { id: true, title: true, closesAt: true } })
+  ]);
+  const poolCents = new Map<number, number>();
+  for (const row of pools) {
+    if (row.sponsorId === null) continue;
+    const amount = row._sum.amountCents ?? 0;
+    poolCents.set(row.sponsorId, (poolCents.get(row.sponsorId) ?? 0) + (row.direction === 'CREDIT' ? amount : -amount));
+  }
+  return { rule: organization.sponsorRenewalRule, creditPoolMaxDays: config?.creditPoolMaxDays ?? DEFAULT_CREDIT_POOL_MAX_DAYS, poolCents, targets };
 }
 
 export type ModerationSponsorRow = Awaited<ReturnType<typeof listModerationSponsors>>['open'][number];

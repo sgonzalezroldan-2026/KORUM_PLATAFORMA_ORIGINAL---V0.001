@@ -7,6 +7,7 @@ import { approveIdeaForVoting, IdeaModerationError, rejectIdea, replyToIdea, rev
 import { buildJobDeps } from '@/core/jobs/job-deps';
 import { DoubleCheckNotAllowedError, requestSignature, type DoubleCheckBlock } from '@/core/security/double-check.service';
 import { SponsorModerationError, type SponsorModerationRejection } from '@/core/sponsors/sponsor-moderation-rules';
+import { SponsorReassignmentError, type SponsorReassignmentRejection } from '@/core/sponsors/sponsor-reassignment-rules';
 import { getSessionActor } from '@/lib/auth/session';
 import { revalidatePortal } from '@/lib/portal/revalidate-portal';
 import { getPrisma } from '@/lib/prisma';
@@ -18,6 +19,7 @@ import { dispatchOutbox } from '@/services/email/outbox-processor';
 import { loadInvoicingContext } from '@/services/invoicing/invoicing-context';
 import { executePendingRefund } from '@/services/payments/payment-reversals';
 import { approveSponsor, rejectSponsor } from '@/services/sponsors/sponsor-moderation.service';
+import { assignPooledSponsor, saveSponsorRenewalRule, sendRenewalLink } from '@/services/sponsors/sponsor-renewal-panel.service';
 import { getStorageProvider } from '@/services/storage/provider-factory';
 
 /**
@@ -27,8 +29,8 @@ import { getStorageProvider } from '@/services/storage/provider-factory';
  */
 
 export type ApprovalActionResult =
-  | { status: 'OK'; phase?: 'PUBLIC_VOTING' | 'DOUBLE_CHECK'; expiresAt?: string }
-  | { status: 'ERROR'; reason: ModerationRejection | DoubleCheckBlock | SponsorModerationRejection | 'FORBIDDEN' };
+  | { status: 'OK'; phase?: 'PUBLIC_VOTING' | 'DOUBLE_CHECK'; expiresAt?: string; placed?: number; title?: string }
+  | { status: 'ERROR'; reason: ModerationRejection | DoubleCheckBlock | SponsorModerationRejection | SponsorReassignmentRejection | 'FORBIDDEN' };
 
 async function panelContext(orgSlug: string): Promise<{ actor: SessionActor; organizationId: string } | null> {
   const organizationId = await findOrganizationIdBySlug(getPrisma(), orgSlug.slice(0, 64));
@@ -78,6 +80,7 @@ async function run(orgSlug: string, payload: unknown, operation: (context: { act
     if (error instanceof IdeaModerationError) return { status: 'ERROR', reason: error.reason };
     if (error instanceof DoubleCheckNotAllowedError) return { status: 'ERROR', reason: error.reason };
     if (error instanceof SponsorModerationError) return { status: 'ERROR', reason: error.reason };
+    if (error instanceof SponsorReassignmentError) return { status: 'ERROR', reason: error.reason };
     if (error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'NOT_FOUND' };
     if (error instanceof TenantAccessError) return { status: 'ERROR', reason: 'FORBIDDEN' };
     throw error;
@@ -174,4 +177,44 @@ export async function rejectSponsorAction(orgSlug: string, payload: unknown): Pr
     });
     return { status: 'OK' };
   });
+}
+
+/**
+ * Regla de la entidad para el dinero de las renovaciones y de las campañas que no salen (Sprint 4.2d, `function saveSponsorRenewalRule`). Lo que ya esperaba
+ * en la bolsa se coloca al momento con la regla nueva, y su comercio recibe el aviso.
+ */
+export async function saveSponsorRenewalRuleAction(orgSlug: string, payload: unknown): Promise<ApprovalActionResult> {
+  return run(orgSlug, payload, async ({ actor, organizationId }, db) => {
+    const { placed } = await saveSponsorRenewalRule(db, actor, organizationId, payload);
+    if (placed > 0) {
+      revalidatePortal(orgSlug.slice(0, 64));
+      dispatchSoon(await pendingReassignmentEmails(organizationId));
+    }
+    return { status: 'OK', placed };
+  });
+}
+
+/** Lleva a la campaña elegida lo que un comercio tiene en la bolsa (regla `MANUAL`, o cuando el centro prefiere otra). Su aviso sale al momento. */
+export async function assignPooledSponsorAction(orgSlug: string, payload: unknown): Promise<ApprovalActionResult> {
+  return run(orgSlug, payload, async ({ actor, organizationId }, db) => {
+    const { title } = await assignPooledSponsor(db, actor, organizationId, payload);
+    revalidatePortal(orgSlug.slice(0, 64));
+    dispatchSoon(await pendingReassignmentEmails(organizationId));
+    return { status: 'OK', title };
+  });
+}
+
+/** Envía al comercio el enlace de pago de su renovación (el prototipo lo «simulaba»: aquí lo paga él en la página de Paycomet). */
+export async function sendSponsorRenewalLinkAction(orgSlug: string, payload: unknown): Promise<ApprovalActionResult> {
+  return run(orgSlug, payload, async ({ actor, organizationId }, db) => {
+    const { messageId } = await sendRenewalLink(db, actor, organizationId, payload, getEnv().DATA_HMAC_SECRET);
+    if (messageId !== null) dispatchSoon([messageId]);
+    return { status: 'OK' };
+  });
+}
+
+/** Avisos de reasignación de la entidad aún por enviar (los acaba de escribir la operación). */
+async function pendingReassignmentEmails(organizationId: string): Promise<number[]> {
+  const rows = await getPrisma().outboxMessage.findMany({ where: { organizationId, status: 'PENDING', templateKey: { in: ['sponsor.reassigned', 'sponsor.creditPool', 'initiative.goalReached'] } }, select: { id: true }, take: 50 });
+  return rows.map((row) => row.id);
 }

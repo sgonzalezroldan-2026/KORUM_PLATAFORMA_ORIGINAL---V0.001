@@ -82,8 +82,11 @@ export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor,
   return inTransaction(db, async (tx) => {
     const sponsor = await lockSponsor(tx, sponsorId);
     assertDecidable(sponsor);
-    if (sponsor.isMatchingPool) {
-      const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: sponsor.initiativeId }, select: { matchingPoolTotalCents: true } });
+    // La bolsa solo se activa si la campaña sigue recaudando: en una que ya no admite donaciones nadie la liberaría. Ahí se queda en `MATCHING_POOL`
+    // y la reasigna la tarea de comercios al liquidarse o devolverse la campaña (heredado del 4.2b, punto 2).
+    const initiative = sponsor.isMatchingPool ? await tx.initiative.findUniqueOrThrow({ where: { id: sponsor.initiativeId }, select: { matchingPoolTotalCents: true, status: true } }) : null;
+    const activatePool = initiative?.status === 'FUNDRAISING';
+    if (initiative && activatePool) {
       if (initiative.matchingPoolTotalCents > 0) throw new SponsorModerationError('MATCHING_TAKEN');
       const { balanceCents } = await getAccountBalance(tx, 'MATCHING_POOL', { initiativeId: sponsor.initiativeId, sponsorId: sponsor.id });
       if (balanceCents !== sponsor.amountCents) throw new PaymentReconciliationError(`La bolsa Matching 2x del comercio ${sponsor.id} tiene ${balanceCents} céntimos y su nivel es ${sponsor.amountCents}.`);
@@ -102,13 +105,13 @@ export async function approveSponsor(db: KorumPrismaClient, actor: SessionActor,
           locale: sponsor.contribution.locale,
           toAddress: sponsor.email,
           organizationId,
-          payloadJson: { sponsorId: sponsor.id, level: sponsor.categoryLevel, matching: sponsor.isMatchingPool, expiresAt: expiresAt.toISOString(), order, sig: signCheckoutResult(options.hmacSecret, order) }
+          payloadJson: { sponsorId: sponsor.id, level: sponsor.categoryLevel, matching: activatePool, expiresAt: expiresAt.toISOString(), order, sig: signCheckoutResult(options.hmacSecret, order) }
         }
       ],
       skipDuplicates: true
     });
-    await recordAudit(tx, actor, { action: 'sponsor.approved', organizationId, targetType: 'Sponsor', targetId: String(sponsor.id), metadata: { matching: sponsor.isMatchingPool, amountCents: sponsor.amountCents, by: userId } }, { required: true });
-    return { matching: sponsor.isMatchingPool };
+    await recordAudit(tx, actor, { action: 'sponsor.approved', organizationId, targetType: 'Sponsor', targetId: String(sponsor.id), metadata: { matching: activatePool, amountCents: sponsor.amountCents, by: userId } }, { required: true });
+    return { matching: activatePool };
   });
 }
 

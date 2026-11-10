@@ -289,45 +289,46 @@ describe('OPS_HOUSEKEEPING · limpieza diaria', () => {
   });
 });
 
-describe('tareas de cobros recurrentes (sin mover dinero)', () => {
+describe('tareas de cobros recurrentes de comercios (sin mover dinero)', () => {
   it('el preaviso de renovación se escribe una vez por patrocinio y vencimiento', async () => {
     const now = new Date();
     const organization = await createOrganization(db);
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() + 20 * DAY) }
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, paidAt: new Date(now.getTime() - 340 * DAY), expiresAt: new Date(now.getTime() + 20 * DAY) }
     });
     for (let step = 0; step < 3; step += 1) await run('SPONSOR_RENEWAL_NOTICE', sponsorRenewalNoticeHandler, new Date(now.getTime() + step * DAY));
     const notices = await db.outboxMessage.findMany({ where: { templateKey: 'sponsor.renewalNotice', organizationId: organization.id } });
     expect(notices).toHaveLength(1);
-    expect(notices[0]).toMatchObject({ toAddress: sponsor.email, payloadJson: { sponsorId: sponsor.id, amountCents: 25_000 } });
+    // Sprint 4.2d: el preaviso lleva el enlace de pago de la renovación, que vale hasta 30 días después del vencimiento.
+    expect(notices[0]).toMatchObject({ toAddress: sponsor.email, payloadJson: { sponsorId: sponsor.id, amountCents: 25_000, badgeExpiresAt: sponsor.expiresAt.toISOString() } });
+    expect((notices[0]?.payloadJson as { token: string }).token.startsWith(`${sponsor.id}.`)).toBe(true);
   });
 
-  it('lo vencido que aún no se puede cobrar queda en una alerta agregada y desaparece solo al resolverse', async () => {
+  it('el día que vence, el enlace de pago de la renovación sale una vez; la antigua alerta agregada se cierra (Sprint 4.2d)', async () => {
     const now = new Date();
     const organization = await createOrganization(db);
+    await db.opsAlert.upsert({ where: { dedupeKey: 'SPONSOR_RENEWAL_DUE:global' }, create: { type: 'SPONSOR_RENEWAL_DUE', severity: 'WARNING', dedupeKey: 'SPONSOR_RENEWAL_DUE:global', detailJson: {} }, update: { status: 'OPEN', resolvedAt: null } });
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt: new Date(now.getTime() - DAY) }
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, paidAt: new Date(now.getTime() - 366 * DAY), expiresAt: new Date(now.getTime() - DAY) }
     });
     await run('SPONSOR_RENEWAL_CHARGE', sponsorRenewalChargeHandler, now);
-    const alert = await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'SPONSOR_RENEWAL_DUE:global' } });
-    expect(alert).toMatchObject({ status: 'OPEN', type: 'SPONSOR_RENEWAL_DUE' });
-    expect(JSON.stringify(alert.detailJson)).not.toContain(sponsor.email);
-
-    // Con todo en regla (para esta comprobación, sin patrocinios vencidos de nadie) la alerta se cierra.
-    const nextDay = new Date(now.getTime() + DAY);
-    await db.sponsor.updateMany({ where: { status: 'APPROVED', autoRenew: true, expiresAt: { lte: nextDay } }, data: { autoRenew: false } });
-    await run('SPONSOR_RENEWAL_CHARGE', sponsorRenewalChargeHandler, nextDay);
+    await run('SPONSOR_RENEWAL_CHARGE', sponsorRenewalChargeHandler, new Date(now.getTime() + DAY));
+    const links = await db.outboxMessage.findMany({ where: { templateKey: 'sponsor.renewalLink', organizationId: organization.id } });
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ toAddress: sponsor.email, payloadJson: { sponsorId: sponsor.id, badgeExpiresAt: sponsor.expiresAt.toISOString() } });
     expect((await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'SPONSOR_RENEWAL_DUE:global' } })).status).toBe('RESOLVED');
   });
 
-  it('las bolsas de patrocinio pasadas de 85 días y las aportaciones mensuales vencidas se señalan sin cobrar nada', async () => {
+  it('la tarea de la bolsa no toca comercios sin cobro confirmado y cierra la antigua alerta agregada; las aportaciones mensuales siguen su curso', async () => {
     const now = uniqueDay();
     const organization = await createOrganization(db);
-    await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'CREDIT_POOL', paidAt: new Date(now.getTime() - 86 * DAY), expiresAt: new Date(now.getTime() + 30 * DAY) }
+    await db.opsAlert.upsert({ where: { dedupeKey: 'CREDIT_POOL_EXPIRED:global' }, create: { type: 'CREDIT_POOL_EXPIRED', severity: 'CRITICAL', dedupeKey: 'CREDIT_POOL_EXPIRED:global', detailJson: {} }, update: { status: 'OPEN', resolvedAt: null } });
+    const sponsor = await db.sponsor.create({
+      data: { organizationId: organization.id, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'CREDIT_POOL', creditPoolAt: new Date(now.getTime() - 80 * DAY), paidAt: new Date(now.getTime() - 86 * DAY), expiresAt: new Date(now.getTime() + 30 * DAY) }
     });
     await run('CREDIT_POOL_EXPIRY', creditPoolExpiryHandler, now);
-    expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'CREDIT_POOL_EXPIRED:global' } })).toMatchObject({ severity: 'CRITICAL', status: 'OPEN' });
+    expect(await db.sponsor.findUniqueOrThrow({ where: { id: sponsor.id } })).toMatchObject({ status: 'CREDIT_POOL' });
+    expect((await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: 'CREDIT_POOL_EXPIRED:global' } })).status).toBe('RESOLVED');
     expect(await run('MONTHLY_TOPUP', monthlyTopupHandler, now)).toMatchObject([{ outcome: 'DONE' }]);
   });
 });
@@ -399,7 +400,7 @@ describe('renovación de cupos al publicar y en la tarea', () => {
 describe('recorridos completos aunque el lote sea pequeño', () => {
   const newSponsor = (organizationId: string, expiresAt: Date) =>
     db.sponsor.create({
-      data: { organizationId, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, expiresAt }
+      data: { organizationId, name: 'Comercio', cifEnc: null, contactPerson: 'Persona', phone: '600000000', email: `${uniqueId('comercio')}@pruebas.example`, sector: 'Panadería', tierLabel: 'Plata', amountCents: 25_000, feeGeneratedCents: 3_750, promo: 'x', code: uniqueId('C'), status: 'APPROVED', autoRenew: true, paidAt: new Date(expiresAt.getTime() - 365 * DAY), expiresAt }
     });
 
   it('el preaviso llega a todos los comercios de la ventana, no solo a los primeros del lote', async () => {
