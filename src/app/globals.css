@@ -42,6 +42,18 @@
   --animate-tooltip-in: korum-fade-in 150ms ease-out;
 }
 
+/* Entrada de un solo uso de los números del sorteo (no parpadea: WCAG 2.2.2). */
+@keyframes korum-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes korum-skeleton {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }

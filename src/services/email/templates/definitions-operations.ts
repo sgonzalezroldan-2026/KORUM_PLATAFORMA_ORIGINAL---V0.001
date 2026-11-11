@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { safeDisplayText } from '@/core/security/safe-text';
 import type { EmailContent, TemplateContext, TemplateDefinition } from './email-content';
 
 /**
@@ -78,6 +79,41 @@ export const authInvitation: TemplateDefinition<z.infer<typeof invitationPayload
   }
 };
 
+const raffleNumbers = z.array(z.number().int().positive()).max(100).default([]);
+const raffleExtraPayload = z.object({
+  initiativeId: z.number().int().positive(),
+  round: z.number().int().positive(),
+  prizes: z.number().int().positive().max(100),
+  reason: z.enum(['PRIZE_UNCLAIMED', 'WINNER_REFUNDED']),
+  /** Las papeletas nuevas y los números ganadores que sustituyen: la otra persona firmante puede comprobar lo que se declaró. */
+  numbers: raffleNumbers,
+  replaced: raffleNumbers,
+  /** Quién la hizo (su nombre en KORUM): quien recibe el aviso es de la misma entidad. */
+  by: z.string().trim().max(120).optional(),
+  /** Quién la hizo (identificador): permite quitar su nombre de este aviso si suprime su cuenta. */
+  byUserId: z.string().max(64).optional()
+});
+const raffleLabel = (number: number) => `#${String(number).padStart(4, '0')}`;
+/** Aviso a la otra persona firmante de que se ha hecho una ronda extra del sorteo (Sprint 4.6): la hace una sola, así que la otra queda informada y puede comprobar qué se sustituyó (Sprint 4.7). */
+export const raffleExtraRound: TemplateDefinition<z.infer<typeof raffleExtraPayload>> = {
+  schema: raffleExtraPayload,
+  needs: 'initiative',
+  build(payload, context): EmailContent {
+    const { t } = context;
+    const initiative = initiativeOf(context, 'raffle.extraRound');
+    const organization = organizationOf(context, 'raffle.extraRound');
+    return {
+      subject: t('raffle.extraRound.subject', { initiative: initiative.title }),
+      preheader: t('raffle.extraRound.preheader'),
+      title: t('raffle.extraRound.title'),
+      paragraphs: [t('raffle.extraRound.body', { by: safeDisplayText(payload.by ?? '') || t('raffle.extraRound.someone'), initiative: initiative.title, prizes: payload.prizes, round: payload.round, reason: t(`raffle.extraRound.reason.${payload.reason}`) })],
+      facts: payload.numbers.length > 0 ? [{ label: t('raffle.extraRound.factNew'), value: payload.numbers.map(raffleLabel).join(', ') }, ...(payload.replaced.length > 0 ? [{ label: t('raffle.extraRound.factReplaced'), value: payload.replaced.map(raffleLabel).join(', ') }] : [])] : [],
+      button: { label: t('raffle.extraRound.cta'), url: context.url(`/panel/${organization.slug}/taquilla`) },
+      footer: 'organization'
+    };
+  }
+};
+
 const gatePayload = z.object({ initiativeId: z.number().int().positive() });
 export const gatePinRevoked: TemplateDefinition<z.infer<typeof gatePayload>> = {
   schema: gatePayload,
@@ -92,7 +128,7 @@ export const gatePinRevoked: TemplateDefinition<z.infer<typeof gatePayload>> = {
       title: t('gate.pinRevoked.title'),
       paragraphs: [t('gate.pinRevoked.body', { initiative: initiative.title })],
       facts: [],
-      button: { label: t('gate.pinRevoked.cta'), url: context.url(`/panel/${organization.slug}/porteria`) },
+      button: { label: t('gate.pinRevoked.cta'), url: context.url(`/panel/${organization.slug}/taquilla`) },
       footer: 'organization'
     };
   }

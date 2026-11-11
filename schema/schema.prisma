@@ -992,6 +992,8 @@ model Initiative {
   /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
   gatePinHash                String?
   gatePinExpiresAt           DateTime?
+  /// Código no adivinable de la puerta del evento (10 caracteres): va en el enlace de la portería y se genera al crear el primer PIN. El identificador numérico ya no se usa en la ruta pública: no se puede recorrer.
+  gateCode                   String?          @unique
   plaqueEnabled              Boolean          @default(true)
   rewardEnabled              Boolean          @default(true)
   targetFamiliesPerCourse    Int              @default(35)
@@ -1456,6 +1458,8 @@ model RaffleDraw {
   participantsJson   Json
   participantsSha256 String
   winningNumbers     Int[]
+  /// Solo rondas extra: los números ganadores que esta ronda sustituye (uno por premio nuevo). Vacío en una ronda normal.
+  replacedNumbers    Int[]      @default([])
   actSha256          String
   drawnByType        String
   drawnById          String
@@ -1486,10 +1490,17 @@ model TicketCheckIn {
   quantity      Int
   accepted      Boolean
   reason        String? // "FIRMA_INVALIDA", "PASE_AGOTADO"...
+  /// Momento en que se leyó el QR (con el móvil sin cobertura, antes de que llegara al servidor); nunca anterior a la sesión ni futuro.
   createdAt     DateTime     @default(now())
+  /// Lectura hecha sin red y sincronizada después (Sprint 4.5).
+  offline       Boolean      @default(false)
+  /// Identificador que genera el móvil por cada lectura: reenviar la cola dos veces no deja entrar dos veces (único por sesión).
+  clientScanId  String?
   ticketPass    TicketPass   @relation(fields: [ticketPassId], references: [id], onDelete: Restrict)
   gateSession   GateSession? @relation(fields: [gateSessionId], references: [id], onDelete: SetNull)
 
+  @@unique([gateSessionId, clientScanId])
+  @@index([clientScanId])
   @@index([ticketPassId, createdAt])
 }
 

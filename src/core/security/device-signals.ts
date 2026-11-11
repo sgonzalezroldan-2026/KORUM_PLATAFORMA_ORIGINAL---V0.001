@@ -33,7 +33,7 @@ export function readDeviceCookieId(secret: string, value: string | undefined): s
 export const hashDeviceCookieId = (secret: string, cookieId: string) => dataHmac(secret, 'device-cookie-id', cookieId);
 
 /** Las 8 agrupaciones de una IPv6 en minúsculas, sea cual sea la forma en que venga escrita. */
-function expandIpv6(ip: string): string[] {
+export function expandIpv6(ip: string): string[] {
   const lastColon = ip.lastIndexOf(':');
   const tail = ip.slice(lastColon + 1);
   let text = ip;

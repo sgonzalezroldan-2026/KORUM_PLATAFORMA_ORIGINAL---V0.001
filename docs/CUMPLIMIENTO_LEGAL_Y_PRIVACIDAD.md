@@ -119,6 +119,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Auditoría de firmas de ideas | Vida de la idea + 1 año | Anonimización |
 | Chat anónimo de una idea (mensajes de la familia) | Vida de la idea + 1 año; o al suprimir la cuenta | Borrado (las respuestas del centro se conservan, sin nadie detrás) |
 | Consultas de soporte (email, asunto, mensaje y respuesta) | 2 años desde que se resuelven (`resolvedAt`, la fecha de cierre; Sprint 4.4c) o desde que se abren, si nunca se resuelven; o el email y el texto, al suprimir la cuenta | Se vacían email y textos; queda la fila (código, tema y fechas) para las estadísticas |
+| Nombre que el voluntario da a su móvil de portería (`GateSession.deviceLabel`, Sprint 4.5) | 90 días desde que caduca la sesión | Se vacía (la sesión y sus lecturas se conservan, sin nadie detrás) |
 | Cookie de dispositivo | 13 meses | Caduca |
 | HMAC de IP y huella | 12 meses | Borrado |
 | Registro de auditoría | 6 años | Borrado |
@@ -323,6 +324,26 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 
 - [ ] **Lo que escribió una persona en nombre de su entidad a KORUM** (`fromOrganization`): pertenece a la entidad, así que ya no sale en *Mi cuenta* de quien lo firmó (deja de ser firmante) y, si esa persona suprime su cuenta, solo se suelta su email y el texto se conserva. ¿Es correcto o debe borrarse también el texto?
 - [ ] **Una respuesta abusiva del centro:** la familia la lee en *Mi cuenta* bajo el nombre del centro, y puede contener enlaces o un trato inadecuado. ¿Hace falta un canal para denunciarla o que KORUM pueda retirarla (consola, 5.x)?
+
+**Abogado (Sprint 4.5 · portería móvil y sorteo certificado):**
+
+- [ ] **Voluntarios sin cuenta que entran con un PIN compartido:** no hay identificación individual (solo el nombre opcional que ponen a su móvil, que puede ser su nombre). ¿Basta el PIN por evento, que caduca y se puede cambiar, o la entidad debe tener un registro de quién estuvo en la puerta? El nombre del móvil se vacía a los 90 días de caducar la sesión (§6); su IP queda solo como HMAC en la auditoría.
+- [ ] **Lista de pases y cola de lecturas en el móvil del voluntario:** el navegador guarda los identificadores de pase con la huella de su firma (sin emails ni datos personales) y, de las lecturas sin enviar, **el contenido completo del QR con su firma** (que hasta enviarse sirve como credencial para las plazas que queden al pase). Se borra al cerrar la portería y caduca a los 3 días. Si el móvil es personal, ¿hace falta avisarlo al voluntario y a la entidad, o incluirlo en el contrato de encargo?
+- [ ] **Conservación de las lecturas de portería (`TicketCheckIn`, `GateSession`):** un registro de asistencia con hora, ligado a un pase (y por tanto al comprador, que puede ser quien acompaña a menores). No tiene fila en §6: ¿plazo? Hoy se conservan con la iniciativa. El plazo del acta del sorteo también está por fijar (punto anterior).
+- [ ] **El Super-Admin no entra en la portería ni crea PIN** (decisión técnica del 4.5): solo ve el panel «Taquilla y portería». Si el promotor quiere que pueda intervenir (por ejemplo, para ayudar a una entidad el día del evento), debe quedar documentado y auditado.
+- [ ] **Lectura sin cobertura:** un pase puede admitirse en un móvil mientras otro ya lo había dejado entrar; el conflicto se detecta al volver la red, cuando la persona ya está dentro. ¿Qué responsabilidad asume la entidad y qué debe decir el aviso al voluntario?
+- [ ] **La cámara del voluntario:** solo se usa para leer el QR en el propio navegador; no se graba ni se envía ninguna imagen. ¿Hace falta mencionarlo en la política de privacidad?
+- [ ] **Sorteo certificado:** el acta (papeletas participantes con número y serie, huellas SHA-256, hora) se genera en servidor con un generador aleatorio criptográfico y se puede descargar. ¿Tiene valor suficiente ante la comunidad autónoma o se exige acta notarial o presencia de un representante? Se conserva con la iniciativa (sin datos personales): ¿plazo? Sigue pendiente lo de esta lista sobre la autorización o comunicación previa de la rifa (número de autorización en la ficha y el cartel).
+- [ ] **Sorteo desde el día del evento:** se abre a las 00:00 de ese día (hora de España). ¿Debe poder sortearse solo a la hora del acto, o la entidad puede hacerlo antes de empezar la fiesta ese mismo día?
+- [ ] **Evento sin el aforo completo:** hoy una campaña de taquilla que llega a su fecha sin agotar el aforo pasa a «vencida» (decisión del Sprint 2.4) aunque la gente ya tenga su entrada y pueda presentarse; la portería seguiría validando pases hasta que la entidad decida. ¿Debe un evento con entradas vendidas celebrarse y liquidarse aunque no agote el aforo? (decisión del promotor y del abogado; no cambia en este sprint).
+
+**Abogado (Sprint 4.6 · ronda extra del sorteo):**
+
+- [ ] **Ronda extra por una sola persona firmante:** sustituye un premio sin reclamar o el de un ganador reembolsado, sin doble firma (decisión del promotor), con aviso por email a la otra persona firmante y constancia en el acta y la auditoría. La persona que la hace **declara** el motivo (no se comprueba que el premio no se reclamó). ¿Es suficiente ante la comunidad autónoma o las bases de la rifa? **El mecanismo ya existe** (ajuste `raffle.extraRoundMinHours`, por defecto 0, contado desde la ronda en que ganó cada papeleta): falta que el abogado fije cuántas horas y que se publique en las bases y la ficha.
+- [ ] **Qué ven quienes participaron:** la ronda extra cambia quién gana después de un sorteo ya anunciado. ¿Se debe comunicar a las personas participantes (en la ficha pública, por email) y conservar el acta de todas las rondas junto con las bases?
+
+- [ ] **Nombre de quien hace la ronda extra en el aviso por email** (Sprint 4.7): el aviso a la otra persona firmante lleva el nombre de quien la hizo; se quita si esa persona suprime su cuenta y, si no, se purga con la bandeja a los 12 meses. ¿Es proporcionado?
+- [ ] **El enlace de la portería es una credencial compartida por WhatsApp:** quien lo tenga puede probar PINs (con tope y revocación). La entidad puede cambiarlo. ¿Debe informarse a los voluntarios de que no lo reenvíen?
 
 **Asesoría fiscal (Sprint 4.2f):**
 

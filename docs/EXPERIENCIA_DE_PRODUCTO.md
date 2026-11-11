@@ -55,7 +55,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | `auth.invitation` | Al dar de alta una entidad (cofirmante) o el primer Super-Admin | Persona invitada | Enlace de un solo uso (72 h) para crear la contraseña; recuerda que después se activa la verificación en dos pasos |
 | `contribution.receipt` | Pago confirmado | Donante | Importe, iniciativa, titular legal que recibe, qué pasa si no se llega; *Ver la iniciativa* |
 | `ticket.pass` | Entrada o papeleta comprada | Comprador | QR adjunto, número de serie, fecha y lugar; *Ver mi entrada* (el calendario va como `.ics` adjunto) |
-| `gate.pinRevoked` | 20 intentos fallidos de PIN en un evento | Firmantes | Que el PIN se ha revocado por seguridad y que las sesiones abiertas siguen; *Generar otro PIN* |
+| `gate.pinRevoked` | 25 intentos fallidos de PIN en un evento | Firmantes (las dos personas) | Que el PIN se ha revocado por seguridad, que las sesiones abiertas siguen, que crear uno nuevo las cierra, y *Crear un PIN nuevo* (lleva a «Taquilla y portería») |
 | `initiative.goalReached` | Campaña al 100 % | Firmantes | Celebración y próximos pasos; *Ir al panel* |
 | `initiative.goalReachedSupporter` | Campaña al 100 % (Sprint 4.4a; por lotes, tarea `SUPPORTER_BROADCAST`) | Quienes donaron (donaciones completadas, una vez por persona) | «¡Lo hemos conseguido!», cuántas aportaciones lo han hecho posible y que el dinero espera en la hucha de la iniciativa hasta la doble firma; *Compartir el logro* |
 | `initiative.achievementPhotos` | Campaña cerrada (liquidación hecha) con las dos fotos (Sprint 4.4a) | Quienes donaron (una vez por persona) | «Mirad cómo ha quedado»: Antes y Después; *Ver cómo ha quedado* |

@@ -207,7 +207,7 @@ export function buildIdentityProofHook(deps: HookDeps, emails: AuthEmailDeps) {
 
 /**
  * Almacén de los límites de Better Auth sobre `RateLimit`, con claves propias (`auth:ip:` + HMAC). El almacén de base de datos de Better
- * Auth no sirve: purga **todas** las filas más viejas que su ventana más larga, y borraría los contadores de la portería (15 minutos por IP
+ * Auth no sirve: purga **todas** las filas más viejas que su ventana más larga, y borraría los contadores de la portería (6 minutos por IP
  * y sin caducidad por evento, QA-SEC06) y del resto de KORUM.
  */
 export function buildRateLimitStorage(deps: HookDeps) {

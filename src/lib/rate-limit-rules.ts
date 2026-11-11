@@ -105,3 +105,17 @@ export const KYB_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'kyb:upload:
 
 /** Logotipo y portada por entidad (Sprint 4.2e, auditoría M5): cada subida escribe en el almacén. Veinte a la hora dan para probar varias imágenes. */
 export const ENTITY_IMAGE_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'brand:upload:org:', limit: 20, windowMs: 60 * 60_000 };
+
+/**
+ * Portería (Sprint 4.5, QA-SEC09). La ruta del PIN y las del escáner están expuestas a Internet y no exigen cuenta, así que un límite **global por red**
+ * actúa antes de escribir nada más que su propio contador. Es generoso porque los voluntarios de un colegio comparten wifi, y sin IP válida todos caen
+ * en el mismo grupo (`unknown-ip`).
+ */
+/** Intentos de entrar con un PIN, contando **todos** los eventos: recorrer identificadores de evento desde una red no puede llenar la auditoría. */
+export const GATE_ENTRY_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:entry:ip:', limit: 60, windowMs: 15 * 60_000 };
+/** Peticiones de portería con sesión (lector, aforo, lista, sorteo, pantallas), también las de un token ya revocado que insiste. */
+export const GATE_REQUEST_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:req:ip:', limit: 1_200, windowMs: 60_000 };
+/** Marca de «ya anotado en la auditoría» de un bloqueo: solo el primero de cada ventana deja fila (`AuditLog` no se puede purgar). */
+export const GATE_BLOCK_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:notice:', limit: 1, windowMs: 15 * 60_000 };
+/** Marca de «ya anotado» de una sesión de portería cerrada que sigue intentando entrar: una fila por sesión y 6 horas, no una por petición. */
+export const GATE_REJECTED_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:rejected:', limit: 1, windowMs: 6 * 3_600_000 };

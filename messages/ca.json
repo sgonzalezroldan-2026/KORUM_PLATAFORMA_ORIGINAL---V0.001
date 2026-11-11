@@ -354,11 +354,11 @@
     },
     "gate": {
       "pinRevoked": {
-        "subject": "Hem revocat el PIN de porteria de «{initiative}»",
+        "subject": "Hem anul·lat el PIN de porteria de «{initiative}»",
         "preheader": "Per seguretat. La porta no s’atura.",
-        "title": "PIN de porteria revocat",
-        "body": "Després de massa intents fallits, hem revocat el PIN de porteria de «{initiative}». Les sessions que ja eren obertes continuen funcionant, de manera que la porta no s’atura.",
-        "cta": "Generar un altre PIN"
+        "title": "PIN de porteria anul·lat",
+        "body": "Després de massa intents fallits, hem anul·lat el PIN de porteria de «{initiative}». 1) Les sessions que ja eren obertes continuen funcionant: la porta no s’atura. 2) Perquè entrin més voluntaris, crea un PIN nou a «Taquilla i porteria». 3) En crear-lo es tancaran les sessions obertes i caldrà tornar a entrar amb el nou: fes-ho quan la cua ho permeti. Ho pot fer qualsevol de les dues persones signants.",
+        "cta": "Crear un PIN nou"
       }
     },
     "goalReached": {
@@ -797,6 +797,22 @@
         "how": "Torna al teu mitjà de pagament original (targeta o Bizum) sense que hagis de fer res. T’avisarem quan estigui fet; pot trigar uns dies a aparèixer a la teva targeta o a Bizum.",
         "thanks": "Gràcies per donar suport a {organization}.",
         "cta": "Veure altres iniciatives"
+      }
+    },
+    "raffle": {
+      "extraRound": {
+        "subject": "S’ha fet una ronda extra del sorteig de «{initiative}»",
+        "preheader": "Si no et sona, revisa l’acta i parla amb l’altra persona signant.",
+        "title": "Ronda extra del sorteig",
+        "body": "{by} ha fet la ronda {round} del sorteig de «{initiative}»: {prizes, plural, one {substitueix # premi} other {substitueix # premis}} ({reason}). Per simplificar, la ronda extra la fa una sola persona; per això t’avisem. Queda a l’acta del sorteig, que pots revisar i descarregar a «Taquilla i porteria».",
+        "cta": "Veure el sorteig",
+        "reason": {
+          "PRIZE_UNCLAIMED": "premi sense reclamar",
+          "WINNER_REFUNDED": "butlleta guanyadora reemborsada"
+        },
+        "someone": "Una de les persones signants",
+        "factNew": "Butlletes noves",
+        "factReplaced": "Substitueixen"
       }
     }
   },
@@ -1721,7 +1737,8 @@
       "payouts": "Liquidacions",
       "expired": "Campanyes vençudes",
       "support": "Suport",
-      "supportPending": "{count, plural, one {# consulta espera resposta} other {# consultes esperen resposta}}"
+      "supportPending": "{count, plural, one {# consulta espera resposta} other {# consultes esperen resposta}}",
+      "gate": "Taquilla i porteria"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -3396,13 +3413,121 @@
         "no": "Cancel·lar"
       },
       "sentNoNotice": "Resposta enviada a la consulta {code}. La família la veurà al seu compte, però no tenim el seu email per avisar-la."
+    },
+    "gate": {
+      "metaTitle": "Taquilla i porteria",
+      "title": "Taquilla i porteria",
+      "intro": "Aquí fixes el PIN de la porta de cada esdeveniment i veus quins mòbils de voluntaris són dins. El PIN és només d’aquest esdeveniment, es mostra una vegada i caduca sis hores després d’acabar el dia de l’esdeveniment.",
+      "kind": {
+        "event": "Esdeveniment amb entrades",
+        "raffle": "Rifa"
+      },
+      "sold": "{sold, plural, one {# venuda} other {# venudes}}",
+      "soldOf": "{sold} de {max} venudes",
+      "pin": {
+        "none": "Aquesta porta encara no té PIN: cap voluntari no pot obrir la porteria encara.",
+        "active": "PIN actiu fins al {date}.",
+        "create": "Crear el PIN de la porta",
+        "change": "Canviar el PIN",
+        "created": "PIN de la porta (apunta’l: no es torna a mostrar)",
+        "digits": "PIN {pin}",
+        "once": "Comparteix-lo només amb qui sigui a la porta. Val fins al {date}.",
+        "changeWarning": "{count, plural, =0 {Es crearà un PIN nou i l’anterior deixarà de valer.} one {Es crearà un PIN nou: l’anterior deixarà de valer i es tancarà # mòbil que és dins.} other {Es crearà un PIN nou: l’anterior deixarà de valer i es tancaran # mòbils que són dins.}}",
+        "changeConfirm": "Sí, canviar el PIN",
+        "changeCancel": "No canviar-lo",
+        "copy": "Copia el PIN",
+        "copied": "PIN copiat",
+        "revoked": "{count, plural, =0 {Hem anul·lat el PIN per massa intents fallits. No hi ha cap mòbil dins. Crea’n un de nou perquè hi puguin entrar.} one {Hem anul·lat el PIN per massa intents fallits. El mòbil que ja és dins continua funcionant. Crea’n un de nou quan la cua ho permeti: en crear-lo, aquesta sessió es tancarà i haurà de tornar a entrar.} other {Hem anul·lat el PIN per massa intents fallits. Els # mòbils que ja són dins continuen funcionant. Crea’n un de nou quan la cua ho permeti: en crear-lo, aquestes sessions es tancaran i caldrà tornar a entrar.}}",
+        "createNew": "Crear un PIN nou"
+      },
+      "link": {
+        "hint": "Els voluntaris obren la porteria al seu mòbil amb aquest enllaç i escriuen el PIN. No necessiten compte.",
+        "open": "Obrir la porteria",
+        "newTab": " (s’obre en una pestanya nova)",
+        "afterPin": "L’enllaç de la porteria apareix en crear el PIN.",
+        "rotate": "Canviar l’enllaç de la porteria",
+        "rotateWarning": "L’enllaç anterior deixarà de funcionar: qui el tingui ja no podrà obrir la porteria ni provar PINs. Els mòbils que ja són dins continuen funcionant, però si recarreguen la pàgina hauran d’obrir l’enllaç nou. Passa’ls el nou enllaç.",
+        "rotateYes": "Sí, canviar l’enllaç",
+        "rotateNo": "No canviar-lo"
+      },
+      "sessions": {
+        "title": "{count, plural, =0 {Cap mòbil dins} one {# mòbil dins} other {# mòbils dins}}",
+        "empty": "Quan un voluntari entri amb el PIN, apareixerà aquí.",
+        "noName": "Mòbil sense nom",
+        "since": "des del {time}",
+        "scans": "{count, plural, =0 {sense lectures} one {# lectura} other {# lectures}}",
+        "close": "Tancar sessió",
+        "closeLabel": "Tancar sessió de {device}"
+      },
+      "readOnly": "Només qui signa pot crear el PIN i tancar sessions.",
+      "empty": {
+        "title": "Encara no hi ha esdeveniments amb entrades",
+        "text": "Quan publiquis un esdeveniment o una rifa des de l’Estudi, podràs crear aquí el PIN de la seva porta.",
+        "action": "Anar a l’Estudi"
+      },
+      "errors": {
+        "FORBIDDEN": "No tens permís per fer-ho.",
+        "NOT_FOUND": "Aquest esdeveniment ja no existeix.",
+        "NOT_ALLOWED": "No es pot crear el PIN: l’esdeveniment ja ha acabat o la seva data no és vàlida."
+      },
+      "raffle": {
+        "title": "Sorteig i rondes extra",
+        "notDrawn": "Aquesta rifa encara no s’ha sortejat. El sorteig es fa a la porta el dia de l’esdeveniment; quan acabi, aquí podràs substituir un premi que ningú no reclami.",
+        "summary": "Premis sortejats: {drawn} de {prizes}. Substituïts amb rondes extra: {extra}.",
+        "round": "Ronda {round}",
+        "roundExtra": "Ronda {round} (extra: {reason})",
+        "reason": {
+          "PRIZE_UNCLAIMED": "premi sense reclamar",
+          "WINNER_REFUNDED": "butlleta guanyadora reemborsada"
+        },
+        "download": "Descarregar acta",
+        "downloadLabel": "Descarregar acta de la ronda {round}",
+        "extraTitle": "Ronda extra",
+        "extraIntro": "Si ningú no reclama el premi d’una butlleta, o qui la va comprar ha demanat el reemborsament, pots sortejar una altra butlleta per substituir-lo. N’hi ha prou amb una de les dues persones signants: l’altra rebrà un avís i la ronda queda a l’acta. Només es pot fer abans de liquidar la rifa.",
+        "reasonLabel": "Motiu",
+        "reasonOption": "{reason} (fins a {max, plural, one {# premi} other {# premis}})",
+        "prepare": "Preparar la ronda extra",
+        "confirmTitle": "Sortejar 1 butlleta per substituir la {replaced}?",
+        "confirmBody": "Motiu: {reason}. Fes-ho només quan hagi passat el termini per recollir el premi i el que donin les bases de la rifa. El sorteig és aleatori i no es pot desfer ni repetir. Quedarà a l’acta i a l’historial de l’entitat, i avisarem l’altra persona signant si n’hi ha.",
+        "confirmYes": "Sí, sortejar ara",
+        "confirmNo": "Cancel·lar",
+        "drawing": "Sortejant…",
+        "done": "Ronda {round} feta: {numbers} substitueix {replaced}. Anota quin premi era. L’altra persona signant rebrà un avís.",
+        "readOnly": "Només qui signa pot fer una ronda extra.",
+        "blocked": {
+          "prizesExhausted": "No queden premis que substituir.",
+          "notJustified": "Amb aquest motiu no es poden substituir tants premis ara. Recarrega la pàgina per veure’n quants queden.",
+          "notEnough": "No queden prou butlletes per sortejar tants premis.",
+          "keyReused": "Aquesta ronda ja s’havia sortejat amb altres dades. Recarrega la pàgina.",
+          "other": "Ara no es pot fer aquest sorteig.",
+          "replacedInvalid": "Aquestes butlletes ja no es poden substituir. Recarrega la pàgina per veure quines queden.",
+          "tooSoon": "Encara no ha passat el termini mínim per substituir un premi sense reclamar. Recarrega la pàgina per veure des de quan es pot."
+        },
+        "errors": {
+          "FORBIDDEN": "No tens permís per fer-ho.",
+          "NOT_FOUND": "Aquesta rifa ja no existeix.",
+          "INVALID_INPUT": "Revisa les dades de la ronda.",
+          "NETWORK": "No hem pogut confirmar el sorteig. Torna-ho a provar: si ja s’ha fet, veuràs la mateixa ronda; mai no se sorteja dues vegades.",
+          "DOWNLOAD": "No s’ha pogut descarregar l’acta. Torna-ho a provar."
+        },
+        "doneAlone": "Ronda {round} feta: {numbers} substitueix {replaced}. Anota quin premi era. No hi ha cap altra persona signant activa a qui avisar; la ronda queda a l’acta i a l’historial de l’entitat.",
+        "noneAllReplaced": "Ja s’han substituït tots els premis que es poden substituir. Cada premi només es pot substituir una vegada; si tampoc es reclama, l’entitat decideix què fer-ne.",
+        "noneNoEntries": "No queden butlletes que no hagin guanyat: no hi ha a qui sortejar.",
+        "replaceLegend": "Quina butlleta guanyadora substitueixes?",
+        "replaceHint": "Tria la butlleta guanyadora que ningú no ha reclamat. Es fa d’una en una: si hi ha més premis sense reclamar, repeteix la ronda.",
+        "replaceHintRefunded": "Només apareixen les butlletes guanyadores que s’han reemborsat. Es fa d’una en una.",
+        "refundedTag": "reemborsada",
+        "selectNone": "Marca almenys una butlleta guanyadora per substituir-la.",
+        "noneWaiting": "Podràs substituir un premi sense reclamar a partir del {date}: és el termini mínim que ha fixat KORUM perquè es pugui reclamar. Si les bases de la teva rifa donen més temps, espera que acabi.",
+        "replacesText": "substitueix {replaced}"
+      }
     }
   },
   "gate": {
     "mode": "Mode porteria",
-    "chooseTitle": "A quin esdeveniment ets a la porta?",
-    "emptyTitle": "No hi ha cap porteria oberta",
-    "emptyText": "L'entitat obre la porteria de cada esdeveniment amb un PIN. Demana'l a qui organitza.",
+    "chooseTitle": "Porteria d’esdeveniments",
+    "emptyTitle": "Obre l’enllaç del teu esdeveniment",
+    "emptyText": "Qui organitza l’esdeveniment et dona un enllaç i un PIN de 6 xifres. Obre l’enllaç en aquest mòbil i escriu el PIN.",
     "capacityTitle": "Aforament en directe",
     "capacity": "{checkedIn} de {capacity} persones a dins",
     "insideHint": "Ets a la porteria d'aquest esdeveniment. En acabar, tanca la sessió.",
@@ -3412,8 +3537,150 @@
     "leave": "Tancar la porteria en aquest mòbil",
     "errors": {
       "INVALID": "El PIN no és correcte o ja no és actiu.",
-      "LOCKED": "Massa intents des d'aquesta connexió. Espera 15 minuts o demana ajuda a qui organitza."
-    }
+      "LOCKED": "Massa intents des d’aquesta connexió. Espera uns minuts, prova amb les dades del mòbil en lloc de la wifi o demana ajuda a qui organitza.",
+      "BUSY": "Massa peticions seguides des d’aquesta connexió. Espera un minut i torna-ho a provar."
+    },
+    "busyTitle": "Massa peticions",
+    "deviceLabel": "Nom d’aquest mòbil (opcional)",
+    "deviceHint": "Per exemple, «Porta nord». Així l’entitat sabrà quin mòbil és cadascun.",
+    "raffleTitle": "Sorteig de la rifa",
+    "raffleText": "Aquesta rifa no fa servir lector d’entrades. Quan arribi l’acte, obre el sorteig per projectar-lo en pantalla.",
+    "raffleOpen": "Obrir el sorteig certificat",
+    "raffleBack": "Tornar a la porteria",
+    "scanner": {
+      "capacityTitle": "Aforament en directe",
+      "capacity": "{checkedIn} / {capacity} assistents dins del recinte",
+      "camera": {
+        "title": "Lector d’entrades",
+        "start": "Activar la càmera",
+        "starting": "Obrint la càmera…",
+        "stop": "Apagar la càmera",
+        "hint": "Apunta al codi QR de l’entrada.",
+        "videoLabel": "Imatge de la càmera",
+        "denied": "No tenim permís per fer servir la càmera. Pots permetre-la als ajustos del navegador o escriure el codi del passi aquí sota.",
+        "unsupported": "Aquest navegador o aquest mòbil no pot fer servir la càmera. Escriu el codi del passi aquí sota o fes servir un lector de codis amb teclat.",
+        "error": "No s’ha pogut obrir la càmera. Escriu el codi del passi aquí sota."
+      },
+      "manual": {
+        "hint": "Si la càmera no funciona o fas servir un lector de codis amb teclat, el codi arriba a aquest camp.",
+        "label": "Codi del passi",
+        "submit": "Comprovar passi"
+      },
+      "result": {
+        "accepted": "Entra",
+        "acceptedDetail": "{remaining, plural, =0 {Entren {entered} · passi de {quantity} · passi complet} one {Entren {entered} · passi de {quantity} · en queda 1 per entrar} other {Entren {entered} · passi de {quantity} · en queden # per entrar}}",
+        "choose": "Quantes persones entren?",
+        "chooseDetail": "Aquest passi és per a {quantity} persones i en queden {remaining} per entrar.",
+        "chooseConfirm": "{count, plural, one {Deixar entrar # persona} other {Deixar entrar # persones}}",
+        "chooseCancel": "Cancel·lar aquesta lectura",
+        "fewer": "Una persona menys",
+        "more": "Una persona més",
+        "peopleLabel": "Persones que entren",
+        "insufficient": "No caben tantes persones",
+        "insufficientDetail": "{remaining, plural, one {Només en queda # per entrar amb aquest passi.} other {Només en queden # per entrar amb aquest passi.}}",
+        "insufficientDetailAt": "{remaining, plural, one {Només en queda # per entrar amb aquest passi. Primer accés a les {time}.} other {Només en queden # per entrar amb aquest passi. Primer accés a les {time}.}}",
+        "exhausted": "ALERTA VERMELLA: PASSI JA UTILITZAT",
+        "exhaustedDetail": "Primer accés a les {time}. No deixis entrar.",
+        "exhaustedDetailNoTime": "Aquest passi ja s’havia utilitzat abans de descarregar la llista. No deixis entrar.",
+        "invalidSignature": "SIGNATURA NO VÀLIDA",
+        "invalidSignatureDetail": "Aquest codi no l’ha emès KORUM. No deixis entrar.",
+        "otherEvent": "Passi d’un altre esdeveniment",
+        "otherEventDetail": "Aquest codi és vàlid, però no és d’aquest esdeveniment.",
+        "revoked": "Passi anul·lat",
+        "revokedDetail": "S’ha reemborsat o anul·lat: ja no val. No deixis entrar.",
+        "notPaid": "Passi sense pagar",
+        "notPaidDetail": "El pagament d’aquest passi no està completat.",
+        "notApplicable": "Això és una butlleta de rifa",
+        "notApplicableDetail": "Les butlletes no donen accés: no és una entrada.",
+        "eventClosed": "Esdeveniment tancat",
+        "eventClosedDetail": "L’esdeveniment s’ha cancel·lat o retornat: no deixis entrar.",
+        "unknown": "No és a la llista descarregada",
+        "unknownDetail": "Sense connexió no es pot comprovar. Pot ser una compra recent: espera a tenir xarxa o demana a qui organitza que ho comprovi.",
+        "invalidFormat": "Això no és un codi d’entrada de KORUM",
+        "invalidFormatDetail": "Torna-ho a provar o escriu el codi a mà.",
+        "duplicate": "Lectura ja rebuda",
+        "duplicateDetail": "Aquesta lectura ja s’havia enviat.",
+        "next": "Següent passi",
+        "savedOffline": "Guardat en aquest mòbil: s’enviarà sol quan torni la connexió."
+      },
+      "offline": {
+        "banner": "Sense connexió: es valida amb la llista descarregada. Les lectures s’enviaran soles quan torni la xarxa.",
+        "pending": "{count, plural, one {# lectura pendent d’enviar} other {# lectures pendents d’enviar}}",
+        "syncing": "enviant…",
+        "storageBlocked": "Aquest navegador no deixa desar dades: sense connexió no podrà validar ni desar lectures."
+      },
+      "problem": {
+        "BUSY": "Massa lectures seguides des d’aquesta connexió. Espera un minut.",
+        "FAILED": "No s’ha pogut comprovar el passi. Torna-ho a provar.",
+        "QUEUE_FULL": "La cua de lectures sense enviar és plena. Busca cobertura per enviar-les abans de continuar."
+      },
+      "conflicts": {
+        "title": "Conflictes en enviar lectures",
+        "intro": "Aquestes lectures, fetes sense connexió, no s’han pogut admetre perquè el servidor tenia una altra informació (per exemple, un altre mòbil ja havia deixat entrar el passi). Revisa aquestes persones.",
+        "item": "Passi {serial}: {verdict}",
+        "dismiss": "Entesos"
+      },
+      "list": {
+        "info": "Llista de {count} passis descarregada a les {time}.",
+        "missing": "Encara no s’ha descarregat la llista de passis: sense connexió no es podrà validar."
+      },
+      "sound": "So i vibració",
+      "leave": {
+        "button": "Tancar la porteria en aquest mòbil",
+        "warning": "{count, plural, one {Hi ha # lectura sense enviar i es perdria en sortir.} other {Hi ha # lectures sense enviar i es perdrien en sortir.}}",
+        "confirm": "Sortir i perdre aquestes lectures",
+        "cancel": "No sortir"
+      },
+      "ended": {
+        "title": "La sessió de porteria ja no val",
+        "text": "L’entitat l’ha tancada o ha caducat. Demana el PIN a qui organitza per tornar a entrar.",
+        "again": "Tornar a entrar",
+        "pending": "{count, plural, one {Hi ha # lectura desada en aquest mòbil: s’enviarà en tornar a entrar amb el PIN nou.} other {Hi ha # lectures desades en aquest mòbil: s’enviaran en tornar a entrar amb el PIN nou.}}"
+      },
+      "capacityFull": "Aforament complet"
+    },
+    "raffle": {
+      "title": "Sorteig certificat",
+      "fullscreen": "Pantalla completa",
+      "exitFullscreen": "Sortir de pantalla completa",
+      "entries": "Butlletes vàlides",
+      "prizesLeft": "Premis per sortejar",
+      "winnersLabel": "Quants premis sortejes ara? (en queden {left})",
+      "winnersHint": "Cada ronda queda registrada a la seva acta.",
+      "drawOne": "Sortejar",
+      "drawMany": "Sortejar {count} premis",
+      "drawing": "Sortejant…",
+      "result": "{count, plural, one {Ronda {round}: butlleta guanyadora} other {Ronda {round}: butlletes guanyadores}}",
+      "resultExtra": "{count, plural, one {Ronda extra {round}: butlleta guanyadora} other {Ronda extra {round}: butlletes guanyadores}}",
+      "numbersLabel": "Butlletes guanyadores",
+      "act": {
+        "time": "Sorteig fet el",
+        "participants": "Butlletes que han participat",
+        "listHash": "Empremta de la llista de butlletes (SHA-256)",
+        "actHash": "Empremta de l’acta (SHA-256)",
+        "verify": "Amb l’acta descarregada qualsevol pot comprovar que la llista de butlletes i el resultat no s’han modificat després del sorteig: conté les butlletes que han participat i les dues empremtes. El sorteig el fa el servidor amb un generador aleatori criptogràfic, només entre butlletes pagades i no anul·lades.",
+        "download": "Descarregar l’acta (arxiu de dades)",
+        "print": "Imprimir l’acta"
+      },
+      "rounds": "Rondes fetes",
+      "roundButton": "Ronda {round}: {numbers}",
+      "blocked": {
+        "notRaffle": "Aquest esdeveniment no és una rifa.",
+        "salesOpen": "La venda de butlletes continua oberta: el sorteig es fa quan es tanca.",
+        "tooEarly": "El sorteig s’obre el {date}, el dia de l’esdeveniment.",
+        "prizesNotSet": "Aquesta rifa no té premis fixats: es fixen a l’Estudi abans de vendre.",
+        "done": "Ja s’han sortejat tots els premis.",
+        "notEnough": "No hi ha prou butlletes per sortejar tants premis.",
+        "extraNotAllowed": "Una ronda extra només la pot fer qui signa.",
+        "keyReused": "Aquesta ronda ja s’havia sortejat amb altres dades. Recarrega la pantalla.",
+        "busy": "Massa peticions seguides. Espera un minut.",
+        "failed": "No s’ha pogut completar el sorteig. Torna a prémer: si ja s’ha fet, en veuràs l’acta.",
+        "notAvailable": "Aquesta rifa s’ha cancel·lat, ha vençut o s’està retornant: no hi ha sorteig.",
+        "closed": "Aquesta rifa ja és tancada."
+      }
+    },
+    "organiserHint": "Organitzes l’esdeveniment? Crea el PIN i l’enllaç de la porteria a «Taquilla i porteria».",
+    "organiserLink": "Anar a Taquilla i porteria"
   },
   "admin": {
     "headerTitle": "Consola de KORUM",

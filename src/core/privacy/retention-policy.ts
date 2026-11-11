@@ -25,6 +25,8 @@ export const RETENTION = {
   ideaChatDaysAfterIdea: 365,
   /** Consultas de soporte: 2 años desde que se cerraron (o desde que se abrieron, si nunca se resuelven); después pierden el email y el texto (queda el hecho de la consulta). */
   supportTicketDaysAfterResolved: 2 * 365,
+  /** Nombre que un voluntario da a su móvil de portería («Puerta norte»; puede ser un nombre de persona): se vacía 90 días después de que la sesión caduque (Sprint 4.5). */
+  gateDeviceLabelDaysAfterExpiry: 90,
   /** Contenido de las notificaciones enviadas: 12 meses (se conserva el hecho del envío). */
   notificationDays: 365,
   /** Consentimientos: mientras estén vigentes + 3 años. */

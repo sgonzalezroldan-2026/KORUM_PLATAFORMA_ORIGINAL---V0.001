@@ -216,9 +216,12 @@ test.describe('Portería con PIN (QA-SEC05)', () => {
       // Lo que hace `setGatePin` desde el panel (Sprint 4.5): solo el hash del PIN, con caducidad. Solo si no hay uno vigente: escritorio y
       // móvil comparten el evento y cambiar la huella a mitad de una entrada la invalida (comportamiento correcto del servidor).
       await db.query(`UPDATE "Initiative" SET "gatePinHash" = $1, "gatePinExpiresAt" = now() + interval '1 day' WHERE id = $2 AND ("gatePinHash" IS NULL OR "gatePinExpiresAt" < now())`, [await hashGatePin(E2E_SERVER_ENV.DATA_HMAC_SECRET!, pin), id]);
+      // El enlace de la portería lleva el código no adivinable de la puerta (Sprint 4.7), que se crea con el primer PIN.
+      await db.query(`UPDATE "Initiative" SET "gateCode" = COALESCE("gateCode", 'cervg2a3b4') WHERE id = $1`, [id]);
       return id;
     });
-    await page.goto(`/panel/cervantes/porteria/${eventId}`);
+    const gateCode = await withE2eDb(async (db) => (await db.query(`SELECT "gateCode" FROM "Initiative" WHERE id = $1`, [eventId])).rows[0].gateCode as string);
+    await page.goto(`/panel/cervantes/porteria/${gateCode}`);
     await page.getByLabel('PIN del evento').fill('000000');
     await page.getByRole('button', { name: 'Entrar en la portería' }).click();
     await server(page.getByText('El PIN no es correcto o ya no está activo.')).toBeVisible();

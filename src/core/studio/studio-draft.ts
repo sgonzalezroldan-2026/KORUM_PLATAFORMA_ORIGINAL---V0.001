@@ -150,6 +150,19 @@ export function endOfDayInMadrid(isoDate: string): Date | null {
   return new Date(guess.getTime() - madridOffsetMinutes(guess) * 60_000);
 }
 
+/** Instante en que empieza el día `AAAA-MM-DD` en España (00:00, con el horario de ese momento: un día de cambio de hora no se desplaza). `null` si la fecha no existe. */
+export function startOfDayInMadrid(isoDate: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate);
+  if (!match) return null;
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const guess = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+  if (guess.getUTCFullYear() !== year || guess.getUTCMonth() !== month - 1 || guess.getUTCDate() !== day) return null;
+  // El desfase se mide en un instante cercano al de la hora local buscada (medianoche local = UTC − desfase): se prueba con el de la víspera y el del propio día.
+  const offsetBefore = madridOffsetMinutes(new Date(guess.getTime() - 3 * 3_600_000));
+  const candidate = new Date(guess.getTime() - offsetBefore * 60_000);
+  return madridOffsetMinutes(candidate) === offsetBefore ? candidate : new Date(guess.getTime() - madridOffsetMinutes(candidate) * 60_000);
+}
+
 /** Día `AAAA-MM-DD` de un instante según la hora de España (el campo de fecha del Estudio). */
 export function madridIsoDate(at: Date): string {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: MADRID, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(at);

@@ -354,11 +354,11 @@
     },
     "gate": {
       "pinRevoked": {
-        "subject": "We have revoked the door PIN for “{initiative}”",
+        "subject": "We cancelled the door PIN for “{initiative}”",
         "preheader": "For security. The door keeps running.",
-        "title": "Door PIN revoked",
-        "body": "After too many failed attempts, we revoked the door PIN for “{initiative}”. Sessions that were already open keep working, so the door does not stop.",
-        "cta": "Generate another PIN"
+        "title": "Door PIN cancelled",
+        "body": "After too many failed attempts, we cancelled the door PIN for “{initiative}”. 1) Sessions that were already open keep working: the door does not stop. 2) For more volunteers to get in, create a new PIN in “Box office and door”. 3) Creating it closes the open sessions and everyone has to sign in again with the new one: do it when the queue allows. Either of the two signatories can do it.",
+        "cta": "Create a new PIN"
       }
     },
     "goalReached": {
@@ -797,6 +797,22 @@
         "how": "It goes back to your original payment method (card or Bizum) without you having to do anything. We will let you know when it is done; it may take a few days to show on your card or in Bizum.",
         "thanks": "Thank you for supporting {organization}.",
         "cta": "See other initiatives"
+      }
+    },
+    "raffle": {
+      "extraRound": {
+        "subject": "An extra round was drawn for “{initiative}”",
+        "preheader": "If this does not ring a bell, review the record and talk to the other signatory.",
+        "title": "Extra raffle round",
+        "body": "{by} made round {round} of the draw for “{initiative}”: {prizes, plural, one {it replaces # prize} other {it replaces # prizes}} ({reason}). To keep things simple, a single person makes the extra round; that is why we let you know. It is in the draw record, which you can review and download in “Box office and door”.",
+        "cta": "See the draw",
+        "reason": {
+          "PRIZE_UNCLAIMED": "unclaimed prize",
+          "WINNER_REFUNDED": "refunded winning ticket"
+        },
+        "someone": "One of the signatories",
+        "factNew": "New tickets",
+        "factReplaced": "Replacing"
       }
     }
   },
@@ -1721,7 +1737,8 @@
       "payouts": "Payouts",
       "expired": "Expired campaigns",
       "support": "Support",
-      "supportPending": "{count, plural, one {# enquiry waiting} other {# enquiries waiting}}"
+      "supportPending": "{count, plural, one {# enquiry waiting} other {# enquiries waiting}}",
+      "gate": "Box office and door"
     },
     "header": {
       "label": "Organisation management",
@@ -3396,13 +3413,121 @@
         "no": "Cancel"
       },
       "sentNoNotice": "Reply sent to enquiry {code}. The family will see it in their account, but we have no email to notify them."
+    },
+    "gate": {
+      "metaTitle": "Box office and door",
+      "title": "Box office and door",
+      "intro": "Here you set the door PIN for each event and see which volunteer phones are inside. The PIN belongs to that event only, is shown once and expires six hours after the event day ends.",
+      "kind": {
+        "event": "Event with tickets",
+        "raffle": "Raffle"
+      },
+      "sold": "{sold} sold",
+      "soldOf": "{sold} of {max} sold",
+      "pin": {
+        "none": "This door has no PIN yet: no volunteer can open door check-in yet.",
+        "active": "PIN active until {date}.",
+        "create": "Create the door PIN",
+        "change": "Change the PIN",
+        "created": "Door PIN (write it down: it is not shown again)",
+        "digits": "PIN {pin}",
+        "once": "Share it only with the people at the door. It is valid until {date}.",
+        "changeWarning": "{count, plural, =0 {A new PIN will be created and the old one will stop working.} one {A new PIN will be created: the old one will stop working and # phone that is inside will be closed.} other {A new PIN will be created: the old one will stop working and # phones that are inside will be closed.}}",
+        "changeConfirm": "Yes, change the PIN",
+        "changeCancel": "Do not change it",
+        "copy": "Copy the PIN",
+        "copied": "PIN copied",
+        "revoked": "{count, plural, =0 {We cancelled the PIN after too many failed attempts. No phones are inside. Create a new one so volunteers can get in.} one {We cancelled the PIN after too many failed attempts. The phone that is already inside keeps working. Create a new one when the queue allows: creating it closes that session and it will have to sign in again.} other {We cancelled the PIN after too many failed attempts. The # phones that are already inside keep working. Create a new one when the queue allows: creating it closes those sessions and they will have to sign in again.}}",
+        "createNew": "Create a new PIN"
+      },
+      "link": {
+        "hint": "Volunteers open door check-in on their phone with this link and type the PIN. They do not need an account.",
+        "open": "Open door check-in",
+        "newTab": " (opens in a new tab)",
+        "afterPin": "The door check-in link appears once you create the PIN.",
+        "rotate": "Change the door check-in link",
+        "rotateWarning": "The old link will stop working: anyone who has it will no longer be able to open door check-in or try PINs. Phones that are already inside keep working, but if they reload the page they will have to open the new link. Send them the new link.",
+        "rotateYes": "Yes, change the link",
+        "rotateNo": "Do not change it"
+      },
+      "sessions": {
+        "title": "{count, plural, =0 {No phones inside} one {# phone inside} other {# phones inside}}",
+        "empty": "When a volunteer gets in with the PIN, they will appear here.",
+        "noName": "Unnamed phone",
+        "since": "since {time}",
+        "scans": "{count, plural, =0 {no scans} one {# scan} other {# scans}}",
+        "close": "Close session",
+        "closeLabel": "Close session of {device}"
+      },
+      "readOnly": "Only the signatories can create the PIN and close sessions.",
+      "empty": {
+        "title": "There are no events with tickets yet",
+        "text": "When you publish an event or a raffle from the Studio, you can create the PIN for its door here.",
+        "action": "Go to the Studio"
+      },
+      "errors": {
+        "FORBIDDEN": "You do not have permission to do that.",
+        "NOT_FOUND": "That event no longer exists.",
+        "NOT_ALLOWED": "The PIN cannot be created: the event has already ended or its date is not valid."
+      },
+      "raffle": {
+        "title": "Draw and extra rounds",
+        "notDrawn": "This raffle has not been drawn yet. The draw is made at the door on the day of the event; once it is done, you can replace an unclaimed prize here.",
+        "summary": "Prizes drawn: {drawn} of {prizes}. Replaced with extra rounds: {extra}.",
+        "round": "Round {round}",
+        "roundExtra": "Round {round} (extra: {reason})",
+        "reason": {
+          "PRIZE_UNCLAIMED": "unclaimed prize",
+          "WINNER_REFUNDED": "refunded winning ticket"
+        },
+        "download": "Download record",
+        "downloadLabel": "Download record of round {round}",
+        "extraTitle": "Extra round",
+        "extraIntro": "If nobody claims the prize of a ticket, or the person who bought it asked for a refund, you can draw another ticket to replace it. One of the two signatories is enough: the other one gets a notice and the round is recorded. It can only be done before the raffle is settled.",
+        "reasonLabel": "Reason",
+        "reasonOption": "{reason} (up to {max, plural, one {# prize} other {# prizes}})",
+        "prepare": "Prepare the extra round",
+        "confirmTitle": "Draw 1 ticket to replace {replaced}?",
+        "confirmBody": "Reason: {reason}. Do it only once the deadline to collect the prize has passed, including any longer one in the raffle rules. The draw is random and cannot be undone or repeated. It will be recorded in the draw record and the organisation’s history, and we will let the other signatory know, if there is one.",
+        "confirmYes": "Yes, draw now",
+        "confirmNo": "Cancel",
+        "drawing": "Drawing…",
+        "done": "Round {round} done: {numbers} replaces {replaced}. Note which prize it was. The other signatory will get a notice.",
+        "readOnly": "Only the signatories can make an extra round.",
+        "blocked": {
+          "prizesExhausted": "There are no prizes left to replace.",
+          "notJustified": "That reason does not allow replacing that many prizes right now. Reload the page to see how many are left.",
+          "notEnough": "There are not enough tickets left to draw that many prizes.",
+          "keyReused": "That round had already been drawn with different details. Reload the page.",
+          "other": "This draw cannot be made right now.",
+          "replacedInvalid": "Those tickets can no longer be replaced. Reload the page to see which ones are left.",
+          "tooSoon": "The minimum time to replace an unclaimed prize has not passed yet. Reload the page to see from when it is possible."
+        },
+        "errors": {
+          "FORBIDDEN": "You do not have permission to do that.",
+          "NOT_FOUND": "That raffle no longer exists.",
+          "INVALID_INPUT": "Check the round details.",
+          "NETWORK": "We could not confirm the draw. Try again: if it was already made, you will see the same round; a draw is never made twice.",
+          "DOWNLOAD": "The record could not be downloaded. Please try again."
+        },
+        "doneAlone": "Round {round} done: {numbers} replaces {replaced}. Note which prize it was. There is no other active signatory to notify; the round is in the draw record and the organisation’s history.",
+        "noneAllReplaced": "All the prizes that can be replaced have already been replaced. Each prize can only be replaced once; if it is not claimed either, the organisation decides what to do with it.",
+        "noneNoEntries": "There are no tickets left that have not already won: there is nobody to draw.",
+        "replaceLegend": "Which winning ticket are you replacing?",
+        "replaceHint": "Choose the winning ticket whose prize nobody claims. It is done one at a time: if more prizes are unclaimed, repeat the round.",
+        "replaceHintRefunded": "Only the winning tickets that were refunded are shown. It is done one at a time.",
+        "refundedTag": "refunded",
+        "selectNone": "Tick at least one winning ticket to replace it.",
+        "noneWaiting": "You will be able to replace an unclaimed prize from {date}: that is the minimum time KORUM has set for it to be claimed. If your raffle rules allow more time, wait until it ends.",
+        "replacesText": "replaces {replaced}"
+      }
     }
   },
   "gate": {
     "mode": "Door mode",
-    "chooseTitle": "Which event are you on the door for?",
-    "emptyTitle": "No door is open",
-    "emptyText": "The organisation opens the door for each event with a PIN. Ask the organiser for it.",
+    "chooseTitle": "Door check-in for events",
+    "emptyTitle": "Open the link for your event",
+    "emptyText": "The event organiser gives you a link and a 6-digit PIN. Open the link on this phone and type the PIN.",
     "capacityTitle": "Live attendance",
     "capacity": "{checkedIn} of {capacity} people inside",
     "insideHint": "You're on the door for this event. When you finish, close the session.",
@@ -3412,8 +3537,150 @@
     "leave": "Close the door on this phone",
     "errors": {
       "INVALID": "The PIN is not correct or is no longer active.",
-      "LOCKED": "Too many attempts from this connection. Wait 15 minutes or ask the organiser for help."
-    }
+      "LOCKED": "Too many attempts from this connection. Wait a few minutes, try mobile data instead of wifi, or ask the organiser for help.",
+      "BUSY": "Too many requests in a row from this connection. Wait a minute and try again."
+    },
+    "busyTitle": "Too many requests",
+    "deviceLabel": "Name of this phone (optional)",
+    "deviceHint": "For example, “North door”. That way the organisation can tell which phone is which.",
+    "raffleTitle": "Raffle draw",
+    "raffleText": "This raffle does not use a ticket scanner. When the event starts, open the draw to show it on a screen.",
+    "raffleOpen": "Open the certified draw",
+    "raffleBack": "Back to door check-in",
+    "scanner": {
+      "capacityTitle": "Live attendance",
+      "capacity": "{checkedIn} / {capacity} people inside the venue",
+      "camera": {
+        "title": "Ticket scanner",
+        "start": "Turn on the camera",
+        "starting": "Opening the camera…",
+        "stop": "Turn off the camera",
+        "hint": "Point at the QR code on the ticket.",
+        "videoLabel": "Camera image",
+        "denied": "We do not have permission to use the camera. You can allow it in the browser settings or type the ticket code below.",
+        "unsupported": "This browser or phone cannot use the camera. Type the ticket code below or use a keyboard-style code reader.",
+        "error": "The camera could not be opened. Type the ticket code below."
+      },
+      "manual": {
+        "hint": "If the camera does not work or you use a keyboard-style code reader, the code arrives in this field.",
+        "label": "Ticket code",
+        "submit": "Check ticket"
+      },
+      "result": {
+        "accepted": "Let in",
+        "acceptedDetail": "{remaining, plural, =0 {{entered} in · ticket for {quantity} · ticket complete} one {{entered} in · ticket for {quantity} · 1 still to come in} other {{entered} in · ticket for {quantity} · # still to come in}}",
+        "choose": "How many people are coming in?",
+        "chooseDetail": "This ticket is for {quantity} people and {remaining} have yet to come in.",
+        "chooseConfirm": "{count, plural, one {Let in # person} other {Let in # people}}",
+        "chooseCancel": "Cancel this scan",
+        "fewer": "One person fewer",
+        "more": "One person more",
+        "peopleLabel": "People coming in",
+        "insufficient": "Not that many places left",
+        "insufficientDetail": "{remaining, plural, one {Only # more person can come in with this ticket.} other {Only # more people can come in with this ticket.}}",
+        "insufficientDetailAt": "{remaining, plural, one {Only # more person can come in with this ticket. First entry at {time}.} other {Only # more people can come in with this ticket. First entry at {time}.}}",
+        "exhausted": "RED ALERT: TICKET ALREADY USED",
+        "exhaustedDetail": "First entry at {time}. Do not let them in.",
+        "exhaustedDetailNoTime": "This ticket was already used before the list was downloaded. Do not let them in.",
+        "invalidSignature": "INVALID SIGNATURE",
+        "invalidSignatureDetail": "KORUM did not issue this code. Do not let them in.",
+        "otherEvent": "Ticket for another event",
+        "otherEventDetail": "This code is valid, but it is not for this event.",
+        "revoked": "Ticket cancelled",
+        "revokedDetail": "It was refunded or cancelled and is no longer valid. Do not let them in.",
+        "notPaid": "Ticket not paid",
+        "notPaidDetail": "Payment for this ticket is not complete.",
+        "notApplicable": "This is a raffle ticket",
+        "notApplicableDetail": "Raffle tickets do not give entry: this is not an admission ticket.",
+        "eventClosed": "Event closed",
+        "eventClosedDetail": "The event was cancelled or refunded: do not let them in.",
+        "unknown": "Not in the downloaded list",
+        "unknownDetail": "It cannot be checked without a connection. It may be a recent purchase: wait for a connection or ask the organiser to check it.",
+        "invalidFormat": "This is not a KORUM ticket code",
+        "invalidFormatDetail": "Try again or type the code by hand.",
+        "duplicate": "Scan already received",
+        "duplicateDetail": "This scan had already been sent.",
+        "next": "Next ticket",
+        "savedOffline": "Saved on this phone: it will be sent automatically when the connection returns."
+      },
+      "offline": {
+        "banner": "No connection: checking against the downloaded list. Scans will be sent automatically when the network returns.",
+        "pending": "{count, plural, one {# scan waiting to be sent} other {# scans waiting to be sent}}",
+        "syncing": "sending…",
+        "storageBlocked": "This browser does not allow saving data: without a connection it cannot check or store scans."
+      },
+      "problem": {
+        "BUSY": "Too many scans in a row from this connection. Wait a minute.",
+        "FAILED": "The ticket could not be checked. Please try again.",
+        "QUEUE_FULL": "The queue of unsent scans is full. Find a connection to send them before carrying on."
+      },
+      "conflicts": {
+        "title": "Conflicts while sending scans",
+        "intro": "These scans, made offline, could not be accepted because the server had different information (for example, another phone had already let the ticket in). Check those people.",
+        "item": "Ticket {serial}: {verdict}",
+        "dismiss": "Understood"
+      },
+      "list": {
+        "info": "List of {count} tickets downloaded at {time}.",
+        "missing": "The ticket list has not been downloaded yet: without a connection nothing can be checked."
+      },
+      "sound": "Sound and vibration",
+      "leave": {
+        "button": "Sign out on this phone",
+        "warning": "{count, plural, one {There is # unsent scan and it would be lost if you leave.} other {There are # unsent scans and they would be lost if you leave.}}",
+        "confirm": "Leave and lose those scans",
+        "cancel": "Stay"
+      },
+      "ended": {
+        "title": "The door check-in session is no longer valid",
+        "text": "The organisation closed it or it has expired. Ask the organiser for the PIN to get back in.",
+        "again": "Get back in",
+        "pending": "{count, plural, one {There is # scan saved on this phone: it will be sent when you get back in with the new PIN.} other {There are # scans saved on this phone: they will be sent when you get back in with the new PIN.}}"
+      },
+      "capacityFull": "Attendance complete"
+    },
+    "raffle": {
+      "title": "Certified draw",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen",
+      "entries": "Valid tickets",
+      "prizesLeft": "Prizes still to draw",
+      "winnersLabel": "How many prizes are you drawing now? ({left} left)",
+      "winnersHint": "Every round is recorded in its own record.",
+      "drawOne": "Draw",
+      "drawMany": "Draw {count} prizes",
+      "drawing": "Drawing…",
+      "result": "{count, plural, one {Round {round}: winning ticket} other {Round {round}: winning tickets}}",
+      "resultExtra": "{count, plural, one {Extra round {round}: winning ticket} other {Extra round {round}: winning tickets}}",
+      "numbersLabel": "Winning tickets",
+      "act": {
+        "time": "Draw made on",
+        "participants": "Tickets that took part",
+        "listHash": "Fingerprint of the ticket list (SHA-256)",
+        "actHash": "Fingerprint of the record (SHA-256)",
+        "verify": "With the downloaded record anyone can check that the ticket list and the result have not been changed since the draw: it contains the tickets that took part and both fingerprints. The server makes the draw with a cryptographic random generator, only among paid, non-cancelled tickets.",
+        "download": "Download the record (data file)",
+        "print": "Print the record"
+      },
+      "rounds": "Rounds made",
+      "roundButton": "Round {round}: {numbers}",
+      "blocked": {
+        "notRaffle": "This event is not a raffle.",
+        "salesOpen": "Ticket sales are still open: the draw is made once they close.",
+        "tooEarly": "The draw opens on {date}, the day of the event.",
+        "prizesNotSet": "This raffle has no prizes set: they are set in the Studio before selling.",
+        "done": "All the prizes have already been drawn.",
+        "notEnough": "There are not enough tickets to draw that many prizes.",
+        "extraNotAllowed": "Only the signatories can make an extra round.",
+        "keyReused": "That round had already been drawn with different details. Reload the screen.",
+        "busy": "Too many requests in a row. Wait a minute.",
+        "failed": "The draw could not be completed. Press again: if it was already made, you will see its record.",
+        "notAvailable": "This raffle was cancelled, has expired or is being refunded: there is no draw.",
+        "closed": "This raffle is already closed."
+      }
+    },
+    "organiserHint": "Are you organising the event? Create the PIN and the door check-in link in “Box office and door”.",
+    "organiserLink": "Go to Box office and door"
   },
   "admin": {
     "headerTitle": "KORUM console",

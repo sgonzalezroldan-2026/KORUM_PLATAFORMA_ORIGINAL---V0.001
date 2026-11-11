@@ -130,6 +130,7 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   const messages = { OR: [{ userId: user.id }, ...(user.emailVerified ? [{ toAddress: user.email }] : [])] };
   await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
+  await clearRaffleAuthorName(tx, user.id);
   // Las consultas de soporte (sobre todo las de «Corregir mis datos») llevan datos personales en texto libre: se vacían con el email, no solo el email.
   // Las que la persona escribió en nombre de su entidad hacia KORUM (`fromOrganization`) son de la entidad: solo se suelta su email (Sprint 4.4c).
   if (user.emailVerified) {
@@ -179,6 +180,15 @@ async function wipeAccount(tx: Db, user: ErasedUser, now: Date): Promise<void> {
       gdprAnonymizedAt: now
     }
   });
+}
+
+/** Los avisos de una ronda extra que **ella hizo** (los recibió la otra persona firmante) llevan su nombre: se quita al suprimir su cuenta. */
+export async function clearRaffleAuthorName(db: Db, userId: string): Promise<void> {
+  const named = await db.outboxMessage.findMany({ where: { templateKey: 'raffle.extraRound', payloadJson: { path: ['byUserId'], equals: userId } }, select: { id: true, payloadJson: true } });
+  for (const message of named) {
+    const { by: _name, byUserId: _id, ...rest } = message.payloadJson as Record<string, unknown>;
+    await db.outboxMessage.update({ where: { id: message.id }, data: { payloadJson: rest as never } });
+  }
 }
 
 export async function erasePersonalData(db: Db, deps: ErasureDeps, input: { userId: string; requestedBy: ErasureRequester; requestId?: number }, now: Date = new Date()): Promise<ErasureResult> {

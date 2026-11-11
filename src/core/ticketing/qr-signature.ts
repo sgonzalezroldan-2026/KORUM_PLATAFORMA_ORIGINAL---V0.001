@@ -1,4 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { QR_PAYLOAD_PREFIX } from './qr-payload';
+
+export { parsePassQrPayload, QR_PAYLOAD_PREFIX } from './qr-payload';
 
 /**
  * Firma de los pases QR (skill korum-ticketing-qr §4): `korum://v1/pass/{passUuid}?sig={hmac}`.
@@ -7,7 +10,6 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
  * resto del motor de taquilla.
  */
 
-export const QR_PAYLOAD_PREFIX = 'korum://v1/pass/';
 const MIN_SECRET_LENGTH = 32;
 
 function assertSecret(secret: string) {
@@ -38,12 +40,6 @@ export function verifyPassViewSignature(secret: string, passUuid: string, signat
 /** Contenido completo del código QR de un pase. */
 export function buildPassQrPayload(secret: string, passUuid: string): string {
   return `${QR_PAYLOAD_PREFIX}${passUuid}?sig=${signPass(secret, passUuid)}`;
-}
-
-/** Separa el identificador y la firma de un contenido de QR, o `null` si no tiene el formato esperado. */
-export function parsePassQrPayload(payload: string): { passUuid: string; signature: string } | null {
-  const match = /^korum:\/\/v1\/pass\/([0-9a-f-]{36})\?sig=([A-Za-z0-9_-]{43})$/.exec(payload.trim());
-  return match ? { passUuid: match[1]!, signature: match[2]! } : null;
 }
 
 /** Comprueba la firma en tiempo constante (sin revelar cuántos caracteres coinciden). */

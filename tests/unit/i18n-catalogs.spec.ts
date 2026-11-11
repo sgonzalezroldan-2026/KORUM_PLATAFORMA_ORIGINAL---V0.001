@@ -101,7 +101,11 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Liquidaciones (Sprint 4.4a): «Liquidar», «Factura adjunta», «Enviada» y «Enviada el…» se escriben igual en catalán.
       'panel.dashboard.card.settle', 'panel.payouts.form.invoiceReady', 'panel.payouts.history.executed', 'panel.payouts.history.status.EXECUTED',
       // Estudio de edición (Sprint 4.3): «Infantil», «ESO», «Plata», «Sí, publicar», «Taquilla o rifa», «Meta pública final exacta» y los patrones sin texto traducible se escriben igual en catalán.
-      'panel.studio.board.atZero', 'panel.studio.board.goalLabel', 'panel.studio.board.medal.2', 'panel.studio.confirm.yes', 'panel.studio.format.TICKETING', 'panel.studio.poster.withKorum', 'panel.studio.stages.eso', 'panel.studio.stages.infantil', 'panel.studio.discard.yes']);
+      'panel.studio.board.atZero', 'panel.studio.board.goalLabel', 'panel.studio.board.medal.2', 'panel.studio.confirm.yes', 'panel.studio.format.TICKETING', 'panel.studio.poster.withKorum', 'panel.studio.stages.eso', 'panel.studio.stages.infantil', 'panel.studio.discard.yes',
+      // Portería móvil (Sprint 4.5): «Pantalla completa», «Entra» y «Rifa» se escriben igual en catalán; los dos patrones no tienen texto traducible.
+      'gate.raffle.fullscreen', 'gate.raffle.roundButton', 'gate.scanner.result.accepted', 'panel.gate.kind.raffle', 'panel.gate.pin.digits',
+      // Ronda extra del sorteo (Sprint 4.6): «ronda» se escribe igual en catalán.
+      'panel.gate.raffle.extraTitle', 'panel.gate.raffle.prepare', 'panel.gate.raffle.round', 'panel.gate.raffle.roundExtra']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.
       'panel.settings.team.form.seatOther', 'panel.settings.brand.accent.names.coral',
@@ -120,7 +124,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Renovación de comercios (Sprint 4.2d): «Bizum» y «Total» son iguales en inglés.
       'portal.sponsorRenewal.methods.BIZUM', 'portal.sponsorRenewal.total',
       // Estudio de edición (Sprint 4.3): el patrón «{entity} × KORUM» no tiene texto traducible.
-      'panel.studio.poster.withKorum']);
+      'panel.studio.poster.withKorum',
+      // Portería móvil (Sprint 4.5): patrones sin texto traducible.
+      'gate.raffle.roundButton', 'panel.gate.pin.digits']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

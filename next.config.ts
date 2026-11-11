@@ -9,9 +9,12 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   // Sin `preload`: entrar en la lista de precarga de los navegadores es difícil de deshacer; se decide en la preproducción (Sprint 6.1).
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
-  // La cámara solo se concede a la portería (se ampliará en su sprint); el resto de sensores quedan cerrados.
+  // La cámara solo se concede a la portería (más abajo, solo en sus rutas); el resto de sensores quedan cerrados.
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(self)' }
 ];
+
+/** Solo la portería (el lector de QR del móvil de los voluntarios) puede abrir la cámara, y solo ella misma: ni siquiera un iframe de otro origen (Sprint 4.5, QA-S04). */
+const gatePermissions = [{ key: 'Permissions-Policy', value: 'camera=(self), microphone=(), geolocation=(), payment=(self)' }];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -24,6 +27,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
+      // Va después de la regla general porque, con la misma cabecera, gana la última.
+      { source: '/panel/:orgSlug/porteria/:path*', headers: gatePermissions },
+      { source: '/:locale(ca|en)/panel/:orgSlug/porteria/:path*', headers: gatePermissions },
       // Abrir un documento del titular redirige a una URL firmada del almacén: no debe viajar en el `Referer` de nada (Sprint 4.2c). Va después de la
       // regla general porque, con la misma cabecera, gana la última.
       { source: '/api/panel/documentos/:id', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },

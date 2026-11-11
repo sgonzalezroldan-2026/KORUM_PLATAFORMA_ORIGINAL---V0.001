@@ -354,11 +354,11 @@
     },
     "gate": {
       "pinRevoked": {
-        "subject": "Hemos revocado el PIN de portería de «{initiative}»",
+        "subject": "Hemos anulado el PIN de portería de «{initiative}»",
         "preheader": "Por seguridad. La puerta no se detiene.",
-        "title": "PIN de portería revocado",
-        "body": "Tras demasiados intentos fallidos, hemos revocado el PIN de portería de «{initiative}». Las sesiones que ya estaban abiertas siguen funcionando, así que la puerta no se detiene.",
-        "cta": "Generar otro PIN"
+        "title": "PIN de portería anulado",
+        "body": "Tras demasiados intentos fallidos, hemos anulado el PIN de portería de «{initiative}». 1) Las sesiones que ya estaban abiertas siguen funcionando: la puerta no se detiene. 2) Para que entren más voluntarios, crea un PIN nuevo en «Taquilla y portería». 3) Al crearlo se cerrarán las sesiones abiertas y habrá que volver a entrar con el nuevo: hazlo cuando la cola lo permita. Puede hacerlo cualquiera de las dos personas firmantes.",
+        "cta": "Crear un PIN nuevo"
       }
     },
     "goalReached": {
@@ -797,6 +797,22 @@
         "how": "Vuelve a tu medio de pago original (tarjeta o Bizum) sin que tengas que hacer nada. Te avisaremos cuando esté hecho; puede tardar unos días en aparecer en tu tarjeta o en Bizum.",
         "thanks": "Gracias por apoyar a {organization}.",
         "cta": "Ver otras iniciativas"
+      }
+    },
+    "raffle": {
+      "extraRound": {
+        "subject": "Se ha hecho una ronda extra del sorteo de «{initiative}»",
+        "preheader": "Si no te suena, revisa el acta y habla con la otra persona firmante.",
+        "title": "Ronda extra del sorteo",
+        "body": "{by} ha hecho la ronda {round} del sorteo de «{initiative}»: {prizes, plural, one {sustituye # premio} other {sustituye # premios}} ({reason}). Para simplificar, la ronda extra la hace una sola persona; por eso te avisamos. Queda en el acta del sorteo, que puedes revisar y descargar en «Taquilla y portería».",
+        "cta": "Ver el sorteo",
+        "reason": {
+          "PRIZE_UNCLAIMED": "premio sin reclamar",
+          "WINNER_REFUNDED": "papeleta ganadora reembolsada"
+        },
+        "someone": "Una de las personas firmantes",
+        "factNew": "Papeletas nuevas",
+        "factReplaced": "Sustituyen a"
       }
     }
   },
@@ -1721,7 +1737,8 @@
       "payouts": "Liquidaciones",
       "expired": "Campañas vencidas",
       "support": "Soporte",
-      "supportPending": "{count, plural, one {# consulta espera respuesta} other {# consultas esperan respuesta}}"
+      "supportPending": "{count, plural, one {# consulta espera respuesta} other {# consultas esperan respuesta}}",
+      "gate": "Taquilla y portería"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -3396,13 +3413,121 @@
         "no": "Cancelar"
       },
       "sentNoNotice": "Respuesta enviada a la consulta {code}. La familia la verá en su cuenta, pero no tenemos su email para avisarla."
+    },
+    "gate": {
+      "metaTitle": "Taquilla y portería",
+      "title": "Taquilla y portería",
+      "intro": "Aquí fijas el PIN de la puerta de cada evento y ves qué móviles de voluntarios están dentro. El PIN es solo de ese evento, se enseña una vez y caduca seis horas después de acabar el día del evento.",
+      "kind": {
+        "event": "Evento con entradas",
+        "raffle": "Rifa"
+      },
+      "sold": "{sold, plural, one {# vendida} other {# vendidas}}",
+      "soldOf": "{sold} de {max} vendidas",
+      "pin": {
+        "none": "Esta puerta aún no tiene PIN: ningún voluntario puede abrir la portería todavía.",
+        "active": "PIN activo hasta el {date}.",
+        "create": "Crear el PIN de la puerta",
+        "change": "Cambiar el PIN",
+        "created": "PIN de la puerta (apúntalo: no se vuelve a mostrar)",
+        "digits": "PIN {pin}",
+        "once": "Compártelo solo con quienes estén en la puerta. Vale hasta el {date}.",
+        "changeWarning": "{count, plural, =0 {Se creará un PIN nuevo y el anterior dejará de valer.} one {Se creará un PIN nuevo: el anterior dejará de valer y se cerrará # móvil que está dentro.} other {Se creará un PIN nuevo: el anterior dejará de valer y se cerrarán # móviles que están dentro.}}",
+        "changeConfirm": "Sí, cambiar el PIN",
+        "changeCancel": "No cambiarlo",
+        "copy": "Copiar el PIN",
+        "copied": "PIN copiado",
+        "revoked": "{count, plural, =0 {Hemos anulado el PIN por demasiados intentos fallidos. No hay ningún móvil dentro. Crea uno nuevo para que puedan entrar.} one {Hemos anulado el PIN por demasiados intentos fallidos. El móvil que ya está dentro sigue funcionando. Crea uno nuevo cuando la cola lo permita: al crearlo, esa sesión se cerrará y tendrá que volver a entrar.} other {Hemos anulado el PIN por demasiados intentos fallidos. Los # móviles que ya están dentro siguen funcionando. Crea uno nuevo cuando la cola lo permita: al crearlo, esas sesiones se cerrarán y habrá que volver a entrar.}}",
+        "createNew": "Crear un PIN nuevo"
+      },
+      "link": {
+        "hint": "Los voluntarios abren la portería en su móvil con este enlace y escriben el PIN. No necesitan cuenta.",
+        "open": "Abrir la portería",
+        "newTab": " (se abre en una pestaña nueva)",
+        "afterPin": "El enlace de la portería aparece al crear el PIN.",
+        "rotate": "Cambiar el enlace de la portería",
+        "rotateWarning": "El enlace anterior dejará de funcionar: quien lo tenga ya no podrá abrir la portería ni probar PINs. Los móviles que ya están dentro siguen funcionando, pero si recargan la página tendrán que abrir el enlace nuevo. Pásales el nuevo enlace.",
+        "rotateYes": "Sí, cambiar el enlace",
+        "rotateNo": "No cambiarlo"
+      },
+      "sessions": {
+        "title": "{count, plural, =0 {Ningún móvil dentro} one {# móvil dentro} other {# móviles dentro}}",
+        "empty": "Cuando un voluntario entre con el PIN, aparecerá aquí.",
+        "noName": "Móvil sin nombre",
+        "since": "desde el {time}",
+        "scans": "{count, plural, =0 {sin lecturas} one {# lectura} other {# lecturas}}",
+        "close": "Cerrar sesión",
+        "closeLabel": "Cerrar sesión de {device}"
+      },
+      "readOnly": "Solo quienes firman pueden crear el PIN y cerrar sesiones.",
+      "empty": {
+        "title": "Aún no hay eventos con entradas",
+        "text": "Cuando publiques un evento o una rifa desde el Estudio, podrás crear aquí el PIN de su puerta.",
+        "action": "Ir al Estudio"
+      },
+      "errors": {
+        "FORBIDDEN": "No tienes permiso para hacerlo.",
+        "NOT_FOUND": "Ese evento ya no existe.",
+        "NOT_ALLOWED": "No se puede crear el PIN: el evento ya ha terminado o su fecha no es válida."
+      },
+      "raffle": {
+        "title": "Sorteo y rondas extra",
+        "notDrawn": "Esta rifa aún no se ha sorteado. El sorteo se hace en la puerta el día del evento; cuando termine, aquí podrás sustituir un premio que nadie reclame.",
+        "summary": "Premios sorteados: {drawn} de {prizes}. Sustituidos con rondas extra: {extra}.",
+        "round": "Ronda {round}",
+        "roundExtra": "Ronda {round} (extra: {reason})",
+        "reason": {
+          "PRIZE_UNCLAIMED": "premio sin reclamar",
+          "WINNER_REFUNDED": "papeleta ganadora reembolsada"
+        },
+        "download": "Descargar acta",
+        "downloadLabel": "Descargar acta de la ronda {round}",
+        "extraTitle": "Ronda extra",
+        "extraIntro": "Si nadie reclama el premio de una papeleta, o quien la compró ha pedido el reembolso, puedes sortear otra papeleta para sustituirlo. Basta con una de las dos personas firmantes: la otra recibirá un aviso y la ronda queda en el acta. Solo se puede hacer antes de liquidar la rifa.",
+        "reasonLabel": "Motivo",
+        "reasonOption": "{reason} (hasta {max, plural, one {# premio} other {# premios}})",
+        "prepare": "Preparar la ronda extra",
+        "confirmTitle": "¿Sortear 1 papeleta para sustituir la {replaced}?",
+        "confirmBody": "Motivo: {reason}. Hazlo solo cuando haya pasado el plazo para recoger el premio y el que den las bases de la rifa. El sorteo es aleatorio y no se puede deshacer ni repetir. Quedará en el acta y en el historial de la entidad, y avisaremos a la otra persona firmante si la hay.",
+        "confirmYes": "Sí, sortear ahora",
+        "confirmNo": "Cancelar",
+        "drawing": "Sorteando…",
+        "done": "Ronda {round} hecha: {numbers} sustituye a {replaced}. Anota qué premio era. La otra persona firmante recibirá un aviso.",
+        "readOnly": "Solo quienes firman pueden hacer una ronda extra.",
+        "blocked": {
+          "prizesExhausted": "No quedan premios que sustituir.",
+          "notJustified": "Con ese motivo no se pueden sustituir tantos premios ahora. Recarga la página para ver cuántos quedan.",
+          "notEnough": "No quedan papeletas suficientes para sortear tantos premios.",
+          "keyReused": "Esa ronda ya se había sorteado con otros datos. Recarga la página.",
+          "other": "Ahora no se puede hacer este sorteo.",
+          "replacedInvalid": "Esas papeletas ya no se pueden sustituir. Recarga la página para ver cuáles quedan.",
+          "tooSoon": "Todavía no ha pasado el plazo mínimo para sustituir un premio sin reclamar. Recarga la página para ver desde cuándo se puede."
+        },
+        "errors": {
+          "FORBIDDEN": "No tienes permiso para hacerlo.",
+          "NOT_FOUND": "Esa rifa ya no existe.",
+          "INVALID_INPUT": "Revisa los datos de la ronda.",
+          "NETWORK": "No hemos podido confirmar el sorteo. Vuelve a intentarlo: si ya se hizo, verás la misma ronda; nunca se sortea dos veces.",
+          "DOWNLOAD": "No se ha podido descargar el acta. Inténtalo de nuevo."
+        },
+        "doneAlone": "Ronda {round} hecha: {numbers} sustituye a {replaced}. Anota qué premio era. No hay otra persona firmante activa a quien avisar; la ronda queda en el acta y en el historial de la entidad.",
+        "noneAllReplaced": "Ya se han sustituido todos los premios que se pueden sustituir. Cada premio solo se puede sustituir una vez; si tampoco se reclama, la entidad decide qué hacer con él.",
+        "noneNoEntries": "No quedan papeletas que no hayan ganado: no hay a quién sortear.",
+        "replaceLegend": "¿Qué papeleta ganadora sustituyes?",
+        "replaceHint": "Elige la papeleta ganadora cuyo premio nadie reclama. Se hace de una en una: si hay más premios sin reclamar, repite la ronda.",
+        "replaceHintRefunded": "Solo aparecen las papeletas ganadoras que se han reembolsado. Se hace de una en una.",
+        "refundedTag": "reembolsada",
+        "selectNone": "Marca al menos una papeleta ganadora para sustituirla.",
+        "noneWaiting": "Podrás sustituir un premio sin reclamar a partir del {date}: es el plazo mínimo que ha fijado KORUM para que se pueda reclamar. Si las bases de tu rifa dan más tiempo, espera a que termine.",
+        "replacesText": "sustituye a {replaced}"
+      }
     }
   },
   "gate": {
     "mode": "Modo portería",
-    "chooseTitle": "¿En qué evento estás en la puerta?",
-    "emptyTitle": "No hay ninguna portería abierta",
-    "emptyText": "La entidad abre la portería de cada evento con un PIN. Pídeselo a quien organiza.",
+    "chooseTitle": "Portería de eventos",
+    "emptyTitle": "Abre el enlace de tu evento",
+    "emptyText": "Quien organiza el evento te da un enlace y un PIN de 6 cifras. Abre el enlace en este móvil y escribe el PIN.",
     "capacityTitle": "Aforo en directo",
     "capacity": "{checkedIn} de {capacity} personas dentro",
     "insideHint": "Estás en la portería de este evento. Al terminar, cierra la sesión.",
@@ -3412,8 +3537,150 @@
     "leave": "Cerrar la portería en este móvil",
     "errors": {
       "INVALID": "El PIN no es correcto o ya no está activo.",
-      "LOCKED": "Demasiados intentos desde esta conexión. Espera 15 minutos o pide ayuda a quien organiza."
-    }
+      "LOCKED": "Demasiados intentos desde esta conexión. Espera unos minutos, prueba con los datos del móvil en vez de la wifi o pide ayuda a quien organiza.",
+      "BUSY": "Demasiadas peticiones seguidas desde esta conexión. Espera un minuto y vuelve a intentarlo."
+    },
+    "busyTitle": "Demasiadas peticiones",
+    "deviceLabel": "Nombre de este móvil (opcional)",
+    "deviceHint": "Por ejemplo, «Puerta norte». Así la entidad sabrá qué móvil es cada uno.",
+    "raffleTitle": "Sorteo de la rifa",
+    "raffleText": "Esta rifa no usa lector de entradas. Cuando llegue el acto, abre el sorteo para proyectarlo en pantalla.",
+    "raffleOpen": "Abrir el sorteo certificado",
+    "raffleBack": "Volver a la portería",
+    "scanner": {
+      "capacityTitle": "Aforo en directo",
+      "capacity": "{checkedIn} / {capacity} asistentes dentro del recinto",
+      "camera": {
+        "title": "Lector de entradas",
+        "start": "Activar la cámara",
+        "starting": "Abriendo la cámara…",
+        "stop": "Apagar la cámara",
+        "hint": "Apunta al código QR de la entrada.",
+        "videoLabel": "Imagen de la cámara",
+        "denied": "No tenemos permiso para usar la cámara. Puedes permitirla en los ajustes del navegador o escribir el código del pase aquí abajo.",
+        "unsupported": "Este navegador o este móvil no puede usar la cámara. Escribe el código del pase aquí abajo o usa un lector de códigos con teclado.",
+        "error": "No se pudo abrir la cámara. Escribe el código del pase aquí abajo."
+      },
+      "manual": {
+        "hint": "Si la cámara no funciona o usas un lector de códigos con teclado, el código llega a este campo.",
+        "label": "Código del pase",
+        "submit": "Comprobar pase"
+      },
+      "result": {
+        "accepted": "Entra",
+        "acceptedDetail": "{remaining, plural, =0 {Entran {entered} · pase de {quantity} · pase completo} one {Entran {entered} · pase de {quantity} · queda 1 por entrar} other {Entran {entered} · pase de {quantity} · quedan # por entrar}}",
+        "choose": "¿Cuántas personas entran?",
+        "chooseDetail": "Este pase es para {quantity} personas y quedan {remaining} por entrar.",
+        "chooseConfirm": "{count, plural, one {Dejar entrar a # persona} other {Dejar entrar a # personas}}",
+        "chooseCancel": "Cancelar esta lectura",
+        "fewer": "Una persona menos",
+        "more": "Una persona más",
+        "peopleLabel": "Personas que entran",
+        "insufficient": "No caben tantas personas",
+        "insufficientDetail": "{remaining, plural, one {Solo queda # persona por entrar con este pase.} other {Solo quedan # personas por entrar con este pase.}}",
+        "insufficientDetailAt": "{remaining, plural, one {Solo queda # persona por entrar con este pase. Primer acceso a las {time}.} other {Solo quedan # personas por entrar con este pase. Primer acceso a las {time}.}}",
+        "exhausted": "ALERTA ROJA: PASE YA UTILIZADO",
+        "exhaustedDetail": "Primer acceso a las {time}. No dejes entrar.",
+        "exhaustedDetailNoTime": "Este pase ya se había usado antes de descargar la lista. No dejes entrar.",
+        "invalidSignature": "FIRMA INVÁLIDA",
+        "invalidSignatureDetail": "Este código no lo ha emitido KORUM. No dejes entrar.",
+        "otherEvent": "Pase de otro evento",
+        "otherEventDetail": "Este código es válido, pero no es de este evento.",
+        "revoked": "Pase anulado",
+        "revokedDetail": "Se reembolsó o se anuló: ya no vale. No dejes entrar.",
+        "notPaid": "Pase sin pagar",
+        "notPaidDetail": "El pago de este pase no está completado.",
+        "notApplicable": "Esto es una papeleta de rifa",
+        "notApplicableDetail": "Las papeletas no dan acceso: no es una entrada.",
+        "eventClosed": "Evento cerrado",
+        "eventClosedDetail": "El evento se ha cancelado o devuelto: no dejes entrar.",
+        "unknown": "No está en la lista descargada",
+        "unknownDetail": "Sin conexión no se puede comprobar. Puede ser una compra reciente: espera a tener red o pide a quien organiza que lo compruebe.",
+        "invalidFormat": "Esto no es un código de entrada de KORUM",
+        "invalidFormatDetail": "Prueba otra vez o escribe el código a mano.",
+        "duplicate": "Lectura ya recibida",
+        "duplicateDetail": "Esta lectura ya se había enviado.",
+        "next": "Siguiente pase",
+        "savedOffline": "Guardado en este móvil: se enviará solo al volver la conexión."
+      },
+      "offline": {
+        "banner": "Sin conexión: se valida con la lista descargada. Las lecturas se enviarán solas al volver la red.",
+        "pending": "{count, plural, one {# lectura pendiente de enviar} other {# lecturas pendientes de enviar}}",
+        "syncing": "enviando…",
+        "storageBlocked": "Este navegador no deja guardar datos: sin conexión no podrá validar ni guardar lecturas."
+      },
+      "problem": {
+        "BUSY": "Demasiadas lecturas seguidas desde esta conexión. Espera un minuto.",
+        "FAILED": "No se pudo comprobar el pase. Inténtalo otra vez.",
+        "QUEUE_FULL": "La cola de lecturas sin enviar está llena. Busca cobertura para enviarlas antes de seguir."
+      },
+      "conflicts": {
+        "title": "Conflictos al enviar lecturas",
+        "intro": "Estas lecturas, hechas sin conexión, no se han podido admitir porque el servidor tenía otra información (por ejemplo, otro móvil ya había dejado entrar el pase). Revisa a esas personas.",
+        "item": "Pase {serial}: {verdict}",
+        "dismiss": "Entendido"
+      },
+      "list": {
+        "info": "Lista de {count} pases descargada a las {time}.",
+        "missing": "Aún no se ha descargado la lista de pases: sin conexión no se podrá validar."
+      },
+      "sound": "Sonido y vibración",
+      "leave": {
+        "button": "Cerrar la portería en este móvil",
+        "warning": "{count, plural, one {Hay # lectura sin enviar y se perdería al salir.} other {Hay # lecturas sin enviar y se perderían al salir.}}",
+        "confirm": "Salir y perder esas lecturas",
+        "cancel": "No salir"
+      },
+      "ended": {
+        "title": "La sesión de portería ya no vale",
+        "text": "La entidad la ha cerrado o ha caducado. Pide el PIN a quien organiza para volver a entrar.",
+        "again": "Volver a entrar",
+        "pending": "{count, plural, one {Hay # lectura guardada en este móvil: se enviará al volver a entrar con el PIN nuevo.} other {Hay # lecturas guardadas en este móvil: se enviarán al volver a entrar con el PIN nuevo.}}"
+      },
+      "capacityFull": "Aforo completo"
+    },
+    "raffle": {
+      "title": "Sorteo certificado",
+      "fullscreen": "Pantalla completa",
+      "exitFullscreen": "Salir de pantalla completa",
+      "entries": "Papeletas válidas",
+      "prizesLeft": "Premios por sortear",
+      "winnersLabel": "¿Cuántos premios sorteas ahora? (quedan {left})",
+      "winnersHint": "Cada ronda queda registrada en su acta.",
+      "drawOne": "Sortear",
+      "drawMany": "Sortear {count} premios",
+      "drawing": "Sorteando…",
+      "result": "{count, plural, one {Ronda {round}: papeleta ganadora} other {Ronda {round}: papeletas ganadoras}}",
+      "resultExtra": "{count, plural, one {Ronda extra {round}: papeleta ganadora} other {Ronda extra {round}: papeletas ganadoras}}",
+      "numbersLabel": "Papeletas ganadoras",
+      "act": {
+        "time": "Sorteo hecho el",
+        "participants": "Papeletas que participaron",
+        "listHash": "Huella de la lista de papeletas (SHA-256)",
+        "actHash": "Huella del acta (SHA-256)",
+        "verify": "Con el acta descargada cualquiera puede comprobar que la lista de papeletas y el resultado no se han modificado después del sorteo: contiene las papeletas que participaron y las dos huellas. El sorteo lo hace el servidor con un generador aleatorio criptográfico, solo entre papeletas pagadas y no anuladas.",
+        "download": "Descargar el acta (archivo de datos)",
+        "print": "Imprimir el acta"
+      },
+      "rounds": "Rondas hechas",
+      "roundButton": "Ronda {round}: {numbers}",
+      "blocked": {
+        "notRaffle": "Este evento no es una rifa.",
+        "salesOpen": "La venta de papeletas sigue abierta: el sorteo se hace cuando se cierra.",
+        "tooEarly": "El sorteo se abre el {date}, el día del evento.",
+        "prizesNotSet": "Esta rifa no tiene premios fijados: se fijan en el Estudio antes de vender.",
+        "done": "Ya se han sorteado todos los premios.",
+        "notEnough": "No hay papeletas suficientes para sortear tantos premios.",
+        "extraNotAllowed": "Una ronda extra solo la pueden hacer quienes firman.",
+        "keyReused": "Esa ronda ya se había sorteado con otros datos. Recarga la pantalla.",
+        "busy": "Demasiadas peticiones seguidas. Espera un minuto.",
+        "failed": "No se pudo completar el sorteo. Vuelve a pulsar: si ya se hizo, verás su acta.",
+        "notAvailable": "Esta rifa se ha cancelado, ha vencido o se está devolviendo: no hay sorteo.",
+        "closed": "Esta rifa ya está cerrada."
+      }
+    },
+    "organiserHint": "¿Organizas el evento? Crea el PIN y el enlace de la portería en «Taquilla y portería».",
+    "organiserLink": "Ir a Taquilla y portería"
   },
   "admin": {
     "headerTitle": "Consola de KORUM",

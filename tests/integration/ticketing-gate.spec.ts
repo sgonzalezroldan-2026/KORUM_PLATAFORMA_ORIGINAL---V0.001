@@ -7,6 +7,7 @@ import { MAX_FAILURES_PER_EVENT, openGateSession, resolveGateSession, revokeGate
 import { buildPassQrPayload } from '@/core/ticketing/qr-signature';
 import { verifyDrawAct, type RaffleEntry } from '@/core/ticketing/raffle-draw';
 import { drawRaffle, RaffleDrawNotAllowedError } from '@/core/ticketing/raffle-draw.service';
+import { loadRaffleAdminView } from '@/core/ticketing/raffle-extra';
 import { releaseExpiredTicketHolds, reserveTickets, TICKET_HOLD_MS, TicketReservationError } from '@/core/ticketing/ticket-reservation.service';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -52,8 +53,22 @@ async function buy(initiativeId: number, quantity: number) {
   return { reservation, pass };
 }
 
+/** El sorteo se abre el día del evento (`closesAt`): las rifas de estas pruebas se venden con la fecha lejana y se sortean «hoy» (QA-SEC09). */
+const setEventToday = (initiativeId: number) => db.initiative.update({ where: { id: initiativeId }, data: { closesAt: new Date() } });
+async function drawToday(actor: SessionActor, event: { organizationId: string; initiativeId: number }, request: Parameters<typeof drawRaffle>[3]) {
+  await setEventToday(event.initiativeId);
+  return drawRaffle(db, actor, event, request);
+}
+
+/** Los números ganadores que una ronda extra puede sustituir ahora (Sprint 4.7: la ronda debe decir cuáles sustituye). */
+async function replaceableNumbers(initiativeId: number, reason?: 'PRIZE_UNCLAIMED' | 'WINNER_REFUNDED'): Promise<number[]> {
+  const initiative = await db.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: { rafflePrizeCount: true } });
+  const view = await loadRaffleAdminView(db, initiativeId, initiative.rafflePrizeCount);
+  return (view?.replaceable ?? []).filter((winner) => reason !== 'WINNER_REFUNDED' || winner.refunded).map((winner) => winner.number);
+}
+
 const counters = (id: number) => db.initiative.findUniqueOrThrow({ where: { id }, select: { ticketsSold: true, ticketsHeld: true, status: true, raisedCents: true } });
-const member = (organizationId: string, role: 'DIRECTOR' | 'GATEKEEPER' = 'DIRECTOR'): SessionActor => ({ kind: 'user', userId: uniqueId('user'), isSuperadmin: false, memberships: [{ organizationId, role }] });
+const member = (organizationId: string, role: 'DIRECTOR' | 'GATEKEEPER' = 'DIRECTOR'): SessionActor => ({ kind: 'user', userId: uniqueId('user'), isSuperadmin: false, memberships: [{ organizationId, role }], secondFactor: true });
 
 describe('QA-P03 · aforo atómico bajo concurrencia', () => {
   it('196/200: de dos compras de 3 a la vez solo una sigue, y nunca 202/200', async () => {
@@ -261,7 +276,8 @@ describe('QA-REG01 · QR anti-fotocopia', () => {
 
     const log = await db.ticketCheckIn.findMany({ where: { ticketPassId: pass.id }, orderBy: { id: 'asc' } });
     expect(log.map((entry) => [entry.accepted, entry.reason])).toEqual([[true, null], [false, 'CANTIDAD_SUPERIOR'], [true, null], [false, 'PASE_AGOTADO']]);
-    expect(await db.auditLog.count({ where: { action: 'gate.qr_invalid', targetId: String(initiative.id) } })).toBe(2);
+    // Una fila por tipo y sesión (QA-SEC09): dos QR inválidos seguidos de la misma sesión no escriben dos.
+    expect(await db.auditLog.count({ where: { action: 'gate.qr_invalid', targetId: String(initiative.id) } })).toBe(1);
   });
 
   it('dos lecturas simultáneas de una fotocopia: solo entra una', async () => {
@@ -320,7 +336,7 @@ describe('QA-REG01 · QR anti-fotocopia', () => {
 
 /** Abre una sesión de portería de verdad, con su PIN. */
 async function gateActorWithSession(organizationId: string, initiativeId: number): Promise<SessionActor> {
-  const { pin } = await setGatePin(db, PIN_SECRET, member(organizationId), organizationId, initiativeId, new Date(Date.now() + 3_600_000));
+  const { pin } = await setGatePin(db, PIN_SECRET, member(organizationId), organizationId, initiativeId);
   const opened = await openGateSession(db, PIN_SECRET, { initiativeId, pin, requestMeta: { ipHash: uniqueId('ip') } });
   if (opened.status !== 'OPENED') throw new Error('La sesión de prueba no se abrió');
   return { kind: 'gate', gateSessionId: opened.gateSessionId, organizationId, initiativeId };
@@ -330,27 +346,29 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
   const wrong = (pin: string) => (pin === '000000' ? '000001' : '000000');
   const fiveMinutes = 5 * 60_000;
 
-  it('solo los firmantes generan el PIN, se guarda con hash y caduca 6 h tras el evento', async () => {
-    const { organization, initiative } = await eventSetup();
+  it('solo los firmantes generan el PIN, se guarda con hash y caduca 6 h tras la fecha del evento guardada en la iniciativa', async () => {
     const end = new Date(Date.now() + 3_600_000);
-    await expect(setGatePin(db, PIN_SECRET, member(organization.id, 'GATEKEEPER'), organization.id, initiative.id, end)).rejects.toBeInstanceOf(TenantAccessError);
-    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, end);
+    const { organization, initiative } = await eventSetup({ closesAt: end });
+    await expect(setGatePin(db, PIN_SECRET, member(organization.id, 'GATEKEEPER'), organization.id, initiative.id)).rejects.toBeInstanceOf(TenantAccessError);
+    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     expect(expiresAt.getTime()).toBe(end.getTime() + 6 * 3_600_000);
     const stored = await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } });
     expect(stored.gatePinHash).not.toContain(pin);
-    await expect(setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() - 7 * 3_600_000))).rejects.toThrow();
+    expect(stored.gatePinExpiresAt?.getTime()).toBe(end.getTime() + 6 * 3_600_000);
+    // Un evento que terminó hace más de 6 horas ya no admite PIN.
+    await db.initiative.update({ where: { id: initiative.id }, data: { closesAt: new Date(Date.now() - 7 * 3_600_000) } });
+    await expect(setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id)).rejects.toThrow('ya ha terminado');
     const other = await eventSetup();
-    await expect(setGatePin(db, PIN_SECRET, member(organization.id), organization.id, other.initiative.id, end)).rejects.toThrow('no encontrado');
+    await expect(setGatePin(db, PIN_SECRET, member(organization.id), organization.id, other.initiative.id)).rejects.toThrow('no encontrado');
   });
 
   it('un PIN de otro evento no sirve', async () => {
     const a = await eventSetup();
     const b = await eventSetup();
-    const end = new Date(Date.now() + 3_600_000);
-    const { pin } = await setGatePin(db, PIN_SECRET, member(a.organization.id), a.organization.id, a.initiative.id, end);
-    let other = await setGatePin(db, PIN_SECRET, member(b.organization.id), b.organization.id, b.initiative.id, end);
+    const { pin } = await setGatePin(db, PIN_SECRET, member(a.organization.id), a.organization.id, a.initiative.id);
+    let other = await setGatePin(db, PIN_SECRET, member(b.organization.id), b.organization.id, b.initiative.id);
     // Una entre un millón coincidirían por azar, y la prueba no diría nada.
-    while (other.pin === pin) other = await setGatePin(db, PIN_SECRET, member(b.organization.id), b.organization.id, b.initiative.id, end);
+    while (other.pin === pin) other = await setGatePin(db, PIN_SECRET, member(b.organization.id), b.organization.id, b.initiative.id);
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: b.initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } })).toEqual({ status: 'INVALID' });
   });
 
@@ -358,48 +376,54 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
     const own = await eventSetup();
     const other = await eventSetup();
     const director = member(own.organization.id);
-    await expect(setGatePin(db, PIN_SECRET, director, own.organization.id, other.initiative.id, new Date(Date.now() + 3_600_000))).rejects.toThrow('no encontrado');
+    await expect(setGatePin(db, PIN_SECRET, director, own.organization.id, other.initiative.id)).rejects.toThrow('no encontrado');
     await expect(getGateSummary(db, director, { organizationId: own.organization.id, initiativeId: other.initiative.id })).rejects.toThrow('no encontrado');
     expect(await db.auditLog.count({ where: { action: 'tenant.resource_outside_tenant', targetId: String(other.initiative.id) } })).toBe(2);
-    await expect(setGatePin(db, PIN_SECRET, director, own.organization.id, own.initiative.id, new Date(Date.now() + 2 * 365 * 86_400_000))).rejects.toThrow('demasiado lejana');
+    await db.initiative.update({ where: { id: own.initiative.id }, data: { closesAt: new Date(Date.now() + 2 * 365 * 86_400_000) } });
+    await expect(setGatePin(db, PIN_SECRET, director, own.organization.id, own.initiative.id)).rejects.toThrow('demasiado lejana');
 
+    // Recorrer identificadores que no existen solo escribe el contador global de su red (que se purga): ni auditoría ni un contador por evento.
+    const ipHash = uniqueId('ip');
     const rows = await db.rateLimit.count();
-    expect(await openGateSession(db, PIN_SECRET, { initiativeId: 999_999_998, pin: '123456', requestMeta: { ipHash: uniqueId('ip') } })).toEqual({ status: 'INVALID' });
-    expect(await db.rateLimit.count()).toBe(rows);
+    const audits = await db.auditLog.count();
+    expect(await openGateSession(db, PIN_SECRET, { initiativeId: 999_999_998, pin: '123456', requestMeta: { ipHash } })).toEqual({ status: 'INVALID' });
+    expect(await db.rateLimit.count()).toBe(rows + 1);
+    expect(await db.rateLimit.count({ where: { key: { startsWith: 'gate:entry:ip:' }, id: { endsWith: ipHash } } })).toBe(1);
+    expect(await db.auditLog.count()).toBe(audits);
   });
 
-  it('no caben más de 5 fallos en 15 minutos, tampoco repartidos alrededor del final de la ventana', async () => {
+  it('no caben más de 5 fallos en 6 minutos, tampoco repartidos alrededor del final de la ventana', async () => {
     const { organization, initiative } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 86_400_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const requestMeta = { ipHash: uniqueId('ip') };
     const start = Date.now();
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, new Date(start))).toEqual({ status: 'INVALID' });
-    for (let attempt = 0; attempt < 4; attempt += 1) expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, new Date(start + 14 * 60_000))).toEqual({ status: 'INVALID' });
-    expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, new Date(start + 16 * 60_000))).toEqual({ status: 'LOCKED' });
+    for (let attempt = 0; attempt < 4; attempt += 1) expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, new Date(start + 5 * 60_000))).toEqual({ status: 'INVALID' });
+    expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, new Date(start + 7 * 60_000))).toEqual({ status: 'LOCKED' });
   }, 30_000);
 
   it('un PIN nuevo quita los bloqueos de la wifi de los voluntarios', async () => {
     const { organization, initiative } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const requestMeta = { ipHash: uniqueId('ip') };
     for (let attempt = 0; attempt < 5; attempt += 1) await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta });
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta })).toEqual({ status: 'LOCKED' });
-    const renewed = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const renewed = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: renewed.pin, requestMeta })).toMatchObject({ status: 'OPENED' });
   }, 30_000);
 
   it('si falló la revocación, el siguiente intento la completa y avisa', async () => {
     const { organization, initiative } = await eventSetup();
-    await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     await db.rateLimit.create({ data: { id: `gate-pin:event:${initiative.id}`, key: `gate-pin:event:${initiative.id}`, count: MAX_FAILURES_PER_EVENT, lastRequest: BigInt(Date.now() - 120_000) } });
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: '123456', requestMeta: { ipHash: uniqueId('ip') } })).toEqual({ status: 'LOCKED' });
     expect((await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } })).gatePinHash).toBeNull();
     expect(await db.auditLog.count({ where: { action: 'gate.pin_revoked', targetId: String(initiative.id) } })).toBe(1);
   });
 
-  it('5 fallos desde la misma IP en 15 minutos bloquean, y a los 15 minutos se puede volver a probar', async () => {
+  it('5 fallos desde la misma IP bloquean esa red 6 minutos, y pasados 6 minutos se puede volver a probar; otra red no se ve afectada', async () => {
     const { organization, initiative } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 86_400_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const requestMeta = { ipHash: uniqueId('ip') };
     const start = new Date();
     for (let attempt = 0; attempt < 5; attempt += 1) expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta }, start)).toEqual({ status: 'INVALID' });
@@ -407,32 +431,34 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta }, start)).toEqual({ status: 'LOCKED' });
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta }, new Date(start.getTime() + fiveMinutes))).toEqual({ status: 'LOCKED' });
     expect(await db.auditLog.count({ where: { action: 'gate.pin_failed', targetId: String(initiative.id) } })).toBe(5);
-    expect(await db.auditLog.count({ where: { action: 'gate.pin_blocked', targetId: String(initiative.id) } })).toBe(2);
+    // Solo el primer bloqueo de la ventana deja fila de auditoría (QA-SEC09): el segundo, cinco minutos después, no escribe otra.
+    expect(await db.auditLog.count({ where: { action: 'gate.pin_blocked', targetId: String(initiative.id) } })).toBe(1);
     // Otra IP no está bloqueada.
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } }, start)).toMatchObject({ status: 'OPENED' });
-    expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta }, new Date(start.getTime() + 15 * 60_000))).toMatchObject({ status: 'OPENED' });
+    expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta }, new Date(start.getTime() + 6 * 60_000))).toMatchObject({ status: 'OPENED' });
   }, 30_000);
 
   it('muchos intentos simultáneos no pasan del límite', async () => {
     const { organization, initiative } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const requestMeta = { ipHash: uniqueId('ip') };
     const results = await Promise.all(Array.from({ length: 8 }, () => openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta })));
     expect(results.filter((result) => result.status === 'INVALID')).toHaveLength(5);
     expect(results.filter((result) => result.status === 'LOCKED')).toHaveLength(3);
   }, 30_000);
 
-  it('con 20 fallos en el evento el PIN se revoca y se avisa a los firmantes; las sesiones abiertas siguen', async () => {
+  it('con 25 fallos en el evento el PIN se revoca y se avisa a los firmantes; las sesiones abiertas siguen', async () => {
     const { organization, initiative } = await eventSetup();
     const director = await createUser(db);
     const cosigner = await createUser(db);
     await db.organizationMember.createMany({ data: [{ userId: director.id, organizationId: organization.id, role: 'DIRECTOR' }, { userId: cosigner.id, organizationId: organization.id, role: 'COSIGNER' }] });
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const open = await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } });
     if (open.status !== 'OPENED') throw new Error('Debía abrirse');
 
     for (let attempt = 0; attempt < MAX_FAILURES_PER_EVENT; attempt += 1) {
-      expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta: { ipHash: uniqueId('ip') } })).toEqual({ status: 'INVALID' });
+      // El intento que anula el PIN devuelve además los avisos creados (se envían al momento).
+      expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: wrong(pin), requestMeta: { ipHash: uniqueId('ip') } })).toMatchObject({ status: 'INVALID' });
     }
     const stored = await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } });
     expect(stored.gatePinHash).toBeNull();
@@ -443,15 +469,14 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
     expect(await resolveGateSession(db, PIN_SECRET, open.token)).not.toBeNull();
 
     // Un PIN nuevo vuelve a funcionar, con el contador a cero.
-    const renewed = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const renewed = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin: renewed.pin, requestMeta: { ipHash: uniqueId('ip') } })).toMatchObject({ status: 'OPENED' });
     expect(await resolveGateSession(db, PIN_SECRET, open.token)).toBeNull();
   }, 240_000);
 
   it('un PIN caducado no abre sesión, y el token solo se guarda como hash', async () => {
     const { organization, initiative } = await eventSetup();
-    const end = new Date(Date.now() + 3_600_000);
-    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, end);
+    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     expect(await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } }, new Date(expiresAt.getTime() + 1))).toEqual({ status: 'INVALID' });
     const opened = await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } });
     if (opened.status !== 'OPENED') throw new Error('Debía abrirse');
@@ -464,7 +489,7 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
   it('la entidad cierra una sesión y deja de valer al instante; otra entidad no puede cerrarla', async () => {
     const { organization, initiative } = await eventSetup();
     const other = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id, new Date(Date.now() + 3_600_000));
+    const { pin } = await setGatePin(db, PIN_SECRET, member(organization.id), organization.id, initiative.id);
     const opened = await openGateSession(db, PIN_SECRET, { initiativeId: initiative.id, pin, requestMeta: { ipHash: uniqueId('ip') } });
     if (opened.status !== 'OPENED') throw new Error('Debía abrirse');
     const actor = (await resolveGateSession(db, PIN_SECRET, opened.token))!;
@@ -474,7 +499,10 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
     expect(await resolveGateSession(db, PIN_SECRET, opened.token)).toBeNull();
     await expect(getGateSummary(db, actor, { organizationId: organization.id, initiativeId: initiative.id })).rejects.toBeInstanceOf(TenantAccessError);
     expect(await resolveGateSession(db, PIN_SECRET, opened.token, { ipHash: 'hash-de-ip' })).toBeNull();
-    expect(await db.auditLog.count({ where: { action: 'gate.session_rejected', targetId: opened.gateSessionId } })).toBe(3);
+    // Una sola fila por sesión cerrada y ventana de 6 horas, aunque insista varias veces (QA-SEC09).
+    expect(await db.auditLog.count({ where: { action: 'gate.session_rejected', targetId: opened.gateSessionId } })).toBe(1);
+    expect(await resolveGateSession(db, PIN_SECRET, opened.token, undefined, new Date(Date.now() + 6 * 3_600_000 + 60_000))).toBeNull();
+    expect(await db.auditLog.count({ where: { action: 'gate.session_rejected', targetId: opened.gateSessionId } })).toBe(2);
     const auditRows = await db.auditLog.count({ where: { action: 'gate.session_rejected' } });
     expect(await resolveGateSession(db, PIN_SECRET, 'token-que-no-existe')).toBeNull();
     expect(await db.auditLog.count({ where: { action: 'gate.session_rejected' } })).toBe(auditRows);
@@ -483,7 +511,11 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
 
 describe('QA-REG01 · rifas y sorteo certificado', () => {
   const raffle = (overrides: Parameters<typeof createInitiative>[2] = {}) => eventSetup({ ticketSubtype: 'RAFFLE', ticketMax: 10, goalCents: 5_000, rafflePrizeCount: 1, ...overrides });
-  const draw = (actor: SessionActor, event: { organizationId: string; initiativeId: number }, winnersCount: number, extra: Partial<Parameters<typeof drawRaffle>[3]> = {}) => drawRaffle(db, actor, event, { winnersCount, idempotencyKey: uniqueId('sorteo'), ...extra });
+  const draw = async (actor: SessionActor, event: { organizationId: string; initiativeId: number }, winnersCount: number, extra: Partial<Parameters<typeof drawRaffle>[3]> = {}) => {
+    const request = { winnersCount, idempotencyKey: uniqueId('sorteo'), ...extra };
+    if (request.extraRoundReason && !request.replacesNumbers) request.replacesNumbers = (await replaceableNumbers(event.initiativeId, request.extraRoundReason)).slice(0, winnersCount);
+    return drawToday(actor, event, request);
+  };
 
   it('números correlativos, sin repetirse, y el número de un pase anulado se reutiliza', async () => {
     const { initiative } = await raffle();
@@ -672,9 +704,9 @@ describe('Liquidar lo vendido', () => {
     await expect(approvePayout(db, unsigned.id, SIGNATURE_SECRET)).rejects.toThrow('sorteado');
 
     const event = { organizationId: organization.id, initiativeId: initiative.id };
-    await drawRaffle(db, member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
+    await drawToday(member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
     await expect(approvePayout(db, unsigned.id, SIGNATURE_SECRET)).rejects.toThrow('por completo');
-    await drawRaffle(db, member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
+    await drawToday(member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
     await deliver('CHARGEBACK', lost.reservation.paycometOrder, lost.reservation.totalChargedCents);
     const { raisedCents, status } = await counters(initiative.id);
     expect(status).toBe('GOAL_REACHED');
@@ -687,7 +719,7 @@ describe('Liquidar lo vendido', () => {
     const { organization, initiative } = await eventSetup({ ticketSubtype: 'RAFFLE', ticketMax: 3, goalCents: 1_500, rafflePrizeCount: 1 });
     await buy(initiative.id, 2);
     const lost = await buy(initiative.id, 1);
-    await drawRaffle(db, member(organization.id), { organizationId: organization.id, initiativeId: initiative.id }, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
+    await drawToday(member(organization.id), { organizationId: organization.id, initiativeId: initiative.id }, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
     await deliver('CHARGEBACK', lost.reservation.paycometOrder, lost.reservation.totalChargedCents);
     expect((await counters(initiative.id)).status).toBe('GOAL_REACHED');
     const payout = await signedPayout(organization.id, initiative.id);

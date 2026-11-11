@@ -16,7 +16,7 @@ export default async function GateLayout({ children, params }: { children: React
   const t = await getTranslations({ locale, namespace: 'gate' });
   return (
     <div className="flex min-h-dvh flex-col bg-varsity-navy-deep text-varsity-ivory">
-      <header className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4 py-3">
+      <header className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4 py-3 print:hidden">
         <KorumLogo size={36} tone="dark" />
         <p className="font-corp font-extrabold">{t('mode')}</p>
       </header>

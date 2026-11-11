@@ -46,6 +46,7 @@ const SAMPLES: Record<string, unknown> = {
   'contribution.receipt': { initiativeId: 7, amountCents: 2_500, guaranteeCents: 150, totalCents: 2_650, reference: 'KOR-2026-0001', groupName: '3º de Primaria', fiscalCertificate: true },
   'ticket.pass': { passUuid: PASS_UUID, serialCode: 'PASE-2026-000012', initiativeId: 7, quantity: 2, raffleNumbers: [] },
   'gate.pinRevoked': { initiativeId: 7 },
+  'raffle.extraRound': { initiativeId: 7, round: 2, prizes: 1, reason: 'PRIZE_UNCLAIMED' },
   'initiative.goalReached': { initiativeId: 7 },
   'initiative.expired': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', raisedCents: 90_000, goalCents: 120_000 },
   'refund.issued': { initiativeId: 7, amountCents: 2_650 },
@@ -255,12 +256,25 @@ describe('QA-NOT01 · firma pendiente y datos de un solo uso', () => {
 
   it('el pie dice la verdad de cada destinatario: operación propia, gestión de la entidad o acción sobre la cuenta', async () => {
     expect((await render('contribution.receipt', 'es')).text).toContain('has hecho una operación en AMPA Colegio Sol');
-    for (const templateKey of ['gate.pinRevoked', 'initiative.goalReached', 'initiative.expired', 'split.windowExpiring', 'split.windowExpired', 'model182.reminder', 'doubleCheck.pending']) {
+    for (const templateKey of ['gate.pinRevoked', 'raffle.extraRound', 'initiative.goalReached', 'initiative.expired', 'split.windowExpiring', 'split.windowExpired', 'model182.reminder', 'doubleCheck.pending']) {
       const text = (await render(templateKey, 'es')).text;
       expect(text, templateKey).toContain('gestionas AMPA Colegio Sol en KORUM');
       expect(text, templateKey).not.toContain('has hecho una operación');
     }
     expect((await render('auth.otp', 'ca')).text).toContain('T’escrivim');
+  });
+
+  it('el aviso de una ronda extra dice quién la hizo, qué papeletas son las nuevas y cuáles sustituyen, en los tres idiomas', async () => {
+    const payload = { initiativeId: 7, round: 2, prizes: 2, reason: 'PRIZE_UNCLAIMED', numbers: [3, 12], replaced: [1, 4], by: 'Carla Puig' };
+    const es = (await render('raffle.extraRound', 'es', { payload })).text;
+    expect(es).toContain('Carla Puig ha hecho la ronda 2');
+    expect(es).toContain('#0003, #0012');
+    expect(es).toContain('#0001, #0004');
+    expect(es).toContain('premio sin reclamar');
+    const sinNombre = (await render('raffle.extraRound', 'es', { payload: { ...payload, by: undefined } })).text;
+    expect(sinNombre).toContain('Una de las personas firmantes ha hecho la ronda 2');
+    expect((await render('raffle.extraRound', 'ca', { payload })).text).toContain('Carla Puig ha fet la ronda 2');
+    expect((await render('raffle.extraRound', 'en', { payload })).text).toContain('Carla Puig made round 2');
   });
 
   it('el plazo de la firma lleva fecha y hora de Madrid, y el inglés usa fechas británicas', async () => {

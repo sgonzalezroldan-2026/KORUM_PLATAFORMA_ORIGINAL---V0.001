@@ -55,6 +55,8 @@ export const SETTING_DEFINITIONS = {
   'invoicing.issuerNif': def(taxId, { envFallback: 'VERIFACTU_ISSUER_NIF', auditValue: true }),
   'invoicing.issuerName': def(text(), { envFallback: 'VERIFACTU_ISSUER_NAME', auditValue: true }),
   'invoicing.series': def(z.string().regex(/^[A-Z0-9]{1,10}$/, 'Serie en mayúsculas y cifras'), { auditValue: true }),
+  /** Horas que deben pasar desde el sorteo normal antes de poder sustituir un **premio sin reclamar** (Sprint 4.7). 0 = sin espera. Lo fija el abogado (CUMPLIMIENTO §9); el reembolso de un ganador no espera. */
+  'raffle.extraRoundMinHours': def(z.number().int().min(0).max(720), { defaultValue: 0, auditValue: true }),
   'hucha.mode': def(z.enum(['DISABLED', 'PLEDGE', 'REGULATED_WALLET']), { defaultValue: 'PLEDGE', auditValue: true }),
   'hucha.walletProvider': def(text(60), { auditValue: true }),
   'autoBoost.publicDisclosureDefault': def(z.enum(['SHOW', 'HIDE']), { defaultValue: 'SHOW', auditValue: true }),

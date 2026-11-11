@@ -86,6 +86,14 @@ export async function purgeResolvedSupportTickets(db: Db, now: Date, limit: numb
   return count;
 }
 
+/** El nombre que un voluntario dio a su móvil de portería se vacía a los 90 días de caducar la sesión (la sesión y sus lecturas se conservan, sin nadie detrás). */
+export async function purgeGateDeviceLabels(db: Db, now: Date, limit: number): Promise<number> {
+  const stale = await db.gateSession.findMany({ where: { deviceLabel: { not: null }, expiresAt: { lt: daysBefore(now, RETENTION.gateDeviceLabelDaysAfterExpiry) } }, take: limit, select: { id: true } });
+  if (stale.length === 0) return 0;
+  const { count } = await db.gateSession.updateMany({ where: { id: { in: stale.map((row) => row.id) } }, data: { deviceLabel: null } });
+  return count;
+}
+
 /** Dispositivos sin uso en 13 meses (lo que dura su cookie): se borran con sus cuentas, porque la cookie ya no existe en ningún navegador. */
 export async function purgeStaleDevices(db: Db, now: Date, limit: number): Promise<number> {
   const stale = await db.device.findMany({ where: { lastSeenAt: { lt: daysBefore(now, RETENTION.deviceDays) } }, take: limit, select: { id: true } });

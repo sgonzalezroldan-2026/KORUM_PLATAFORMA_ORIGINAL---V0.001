@@ -1,3 +1,4 @@
 {
-    "antigravity.enableInlineDiff": false
+    "antigravity.enableInlineDiff": false,
+    "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/.hg/**", "**/.svn/**", "**/prototype/**"]
 }

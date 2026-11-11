@@ -215,19 +215,6 @@ export async function listPublicDirectory(db: KorumPrismaClient) {
 }
 
 /**
- * Eventos de una entidad con la portería abierta (PIN vigente), para la pantalla de entrada de los voluntarios. Solo el título y el
- * identificador: nada del aforo, el dinero ni las personas, que solo ve quien ya ha entrado con el PIN (QA-SEC05).
- */
-export async function listGateEvents(db: KorumPrismaClient, slug: string, now: Date = new Date()) {
-  return db.initiative.findMany({
-    where: { organization: { slug, archivedAt: null }, format: 'TICKETING', gatePinHash: { not: null }, gatePinExpiresAt: { gt: now } },
-    select: { id: true, title: true, organization: { select: { id: true, name: true } } },
-    orderBy: { gatePinExpiresAt: 'asc' },
-    take: 20
-  });
-}
-
-/**
  * Pase de entrada para su dueño, desde el enlace del email (`/[orgSlug]/entrada/[passUuid]?sig=…`). Se busca siempre junto a la entidad de la
  * URL: un pase de otra entidad responde igual que uno inexistente. No devuelve el email de quien compró ni el contenido del QR: el QR lo
  * compone la página solo después de comprobar la firma de visualización.
