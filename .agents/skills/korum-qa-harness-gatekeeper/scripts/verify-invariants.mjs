@@ -212,7 +212,10 @@ if (fs.existsSync(migrationsDir)) {
     'RaffleDraw_immutable',
     'RaffleDraw_no_truncate',
     'Initiative_tickets_within_capacity',
-    'Initiative_prize_count_locked'
+    'Initiative_prize_count_locked',
+    // La votación de redimensionamiento decide sobre el dinero de quienes donaron: ni ella ni sus votos se retocan ni se borran (Sprint 4.4b).
+    'ResizePoll_keep_history',
+    'ResizeVote_keep_history'
   ];
   // Lo que cuenta es el estado FINAL de cada guarda: se recorren las migraciones en orden y gana el último evento (crear/eliminar).
   // Una migración puede eliminar una guarda y otra posterior restaurarla (ocurrió en 1.3); lo que no puede quedar es eliminada.

@@ -735,6 +735,62 @@
         "thanks": "Gràcies per ajudar a fer-ho possible.",
         "cta": "Veure com ha quedat"
       }
+    },
+    "resize": {
+      "decided": {
+        "refundSubject": "Es retorna el 100 % de «{initiative}»",
+        "refundPreheader": "Una persona signant ha decidit retornar el que s’ha recaptat.",
+        "refundTitle": "Decidit: es retorna el 100 %",
+        "refundBody": "S’ha decidit retornar el 100 % del que s’ha recaptat a «{initiative}». Cada aportació torna al seu mitjà de pagament original, per lots; podeu seguir-ne el progrés al tauler.",
+        "voteSubject": "Votació oberta: «{initiative}»",
+        "votePreheader": "Qui va fer un donatiu decideix què es fa amb el que s’ha recaptat.",
+        "voteTitle": "Decidit: preguntem a qui va fer un donatiu",
+        "voteBody": "S’ha llançat la votació de «{initiative}». Qui va fer un donatiu vota fins al {date}; qui demani la devolució la té en marxa tan bon punt vota, i a qui no voti se li retornarà quan es tanqui.",
+        "cta": "Veure les campanyes vençudes"
+      },
+      "closed": {
+        "wonSubject": "«{initiative}» tira endavant redimensionada",
+        "wonPreheader": "La votació ha triat un projecte. Toca liquidar.",
+        "wonTitle": "La votació ha triat un projecte",
+        "wonBody": "A «{initiative}» ha guanyat «{option}». La meta nova és {amount}: el que van aportar qui va votar una opció de projecte (a qui no va votar o va demanar la devolució se li ha retornat).",
+        "wonNext": "La comissió de KORUM baixa en la mateixa proporció. Per liquidar calen, com sempre, la factura i les dues signatures.",
+        "newGoal": "Meta nova",
+        "settleCta": "Anar a Liquidacions",
+        "refundSubject": "La votació de «{initiative}» acaba sense projecte",
+        "refundPreheader": "Es retorna el 100 % a totes les persones.",
+        "refundTitle": "Es retorna el 100 %",
+        "reasonNO_VOTES": "La votació de «{initiative}» ha acabat sense vots a cap opció de projecte.",
+        "reasonTIE": "La votació de «{initiative}» ha acabat en empat.",
+        "reasonNOTHING_LEFT": "Després de les devolucions demanades, a «{initiative}» no queda res amb què fer el projecte.",
+        "refundNext": "Tal com estava previst, es retorna el 100 % a totes les persones que van fer una aportació, al seu mitjà de pagament original."
+      },
+      "poll": {
+        "subject": "Tu decideixes: què fem amb «{initiative}»?",
+        "preheader": "Vota fins al {date}. També pots demanar que et retornem la teva aportació.",
+        "title": "El teu vot decideix",
+        "body": "«{initiative}» de {organization} no va arribar a la meta. Abans de retornar els diners, {organization} vol saber si prefereixes que es faci una versió més petita del projecte amb el que s’ha recaptat.",
+        "rules": "Un vot per persona, fins al {date}. Guanya l’opció més votada i es fa amb el que aportin qui vota un projecte. Si no votes, et retornem el 100 %. Aquest enllaç és només teu: no el reenviïs.",
+        "refund": "Si prefereixes recuperar la teva aportació, tria «Prefereixo que em retorneu la meva aportació»: te la retornem sencera, passi el que passi.",
+        "until": "Pots votar fins al",
+        "cta": "Votar ara"
+      },
+      "result": {
+        "subject": "«{initiative}» tira endavant",
+        "preheader": "Gràcies a les famílies de {organization} que han votat.",
+        "title": "Tira endavant!",
+        "body": "La votació de «{initiative}» ha triat: «{option}». Es farà amb el que vau aportar qui vau votar, inclosa la teva aportació.",
+        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones de {organization} signin la liquidació. Quan estigui fet, t’ensenyarem l’Abans i el Després.",
+        "cta": "Veure els assoliments"
+      },
+      "refunding": {
+        "subject": "Et retornem la teva aportació a «{initiative}»",
+        "preheader": "Torna sencera al teu mitjà de pagament original.",
+        "title": "Et retornem el 100 %",
+        "body": "«{initiative}» de {organization} no va arribar a la meta, així que et retornem tot el que vas aportar, també l’aportació voluntària a KORUM si la vas fer.",
+        "how": "Torna al teu mitjà de pagament original (targeta o Bizum) sense que hagis de fer res. T’avisarem quan estigui fet; pot trigar uns dies a aparèixer a la teva targeta o a Bizum.",
+        "thanks": "Gràcies per donar suport a {organization}.",
+        "cta": "Veure altres iniciatives"
+      }
     }
   },
   "nav": {
@@ -1655,7 +1711,8 @@
       "settings": "Configuració",
       "fund": "Fons d’activitats",
       "studio": "Estudi",
-      "payouts": "Liquidacions"
+      "payouts": "Liquidacions",
+      "expired": "Campanyes vençudes"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1728,7 +1785,10 @@
         "viewPublic": "Veure la fitxa pública de «{title}»",
         "editInStudio": "Editar a l’Estudi: {title}",
         "poster": "Cartell A4 amb QR: {title}",
-        "settle": "Liquidar «{title}»"
+        "settle": "Liquidar «{title}»",
+        "decideExpired": "Decidir què fer amb «{title}»",
+        "followVote": "Veure la votació de «{title}»",
+        "followRefund": "Veure la devolució de «{title}»"
       },
       "steps": {
         "moderation": "1. Moderació",
@@ -3115,6 +3175,94 @@
         "underReview": "Una part de l’enviament està en revisió: l’equip de KORUM ho resol amb PAYCOMET. No heu de fer res.",
         "photosCta": "Pujar les fotos de l’Abans i el Després"
       }
+    },
+    "expired": {
+      "metaTitle": "Campanyes vençudes",
+      "title": "Campanyes que van vèncer sense arribar a la meta",
+      "intro": "Quan una campanya acaba sense arribar a la meta, els diners continuen retinguts a PAYCOMET. Decidiu vosaltres: preguntar a qui va fer un donatiu si es fa una versió més petita del projecte amb el que s’ha recaptat, o retornar el 100 % a cada persona.",
+      "empty": {
+        "title": "Cap campanya no ha vençut sense arribar-hi",
+        "text": "Si alguna acaba sense assolir la meta, apareixerà aquí perquè decidiu què fer.",
+        "cta": "Tornar al quadre de comandament"
+      },
+      "historyTitle": "Ja resoltes",
+      "status": {
+        "EXPIRED": "Vençuda · falta la vostra decisió",
+        "RESIZE_VOTING": "Votació oberta",
+        "REFUNDING": "Retornant",
+        "REFUNDED": "Retornada al 100 %",
+        "GOAL_REACHED": "Redimensionada · per liquidar",
+        "CLOSED": "Redimensionada i liquidada"
+      },
+      "closedOn": "Va vèncer el {date}",
+      "raised": "Recaptat {raised} de {goal} ({percent} %)",
+      "decideIntro": "Decideix una persona signant i l’altra rep un avís. Cap de les dues opcions no envia diners a l’entitat: per a això continuarà fent falta la doble signatura de la liquidació.",
+      "readOnly": "Només les persones que signen a l’entitat poden decidir què fer amb aquesta campanya.",
+      "poll": {
+        "open": "Votació oberta fins al {date}",
+        "turnout": "{votes, plural, =0 {Encara no ha votat ningú} one {Ha votat 1 persona} other {Han votat # persones}} · {refunds, plural, =0 {ningú no ha demanat la devolució} one {1 ha demanat la devolució} other {# han demanat la devolució}}",
+        "hidden": "El recompte de cada opció es veurà quan es tanqui la votació. Qui demana la devolució la té en marxa tan bon punt vota (pot trigar uns dies a veure’s a la seva targeta o a Bizum) i la seva aportació deixa de comptar.",
+        "won": "La votació va triar: «{option}»",
+        "noWinner": "La votació va acabar sense cap opció guanyadora (sense vots o amb empat): es retorna el 100 % a totes les persones.",
+        "count": "{option}: {votes, plural, one {1 vot} other {# vots}}",
+        "refundCount": "Van demanar la devolució: {votes}",
+        "newGoal": "Meta nova (el que van aportar qui va votar un projecte):",
+        "settle": "Liquidar la campanya",
+        "refundingNonVoters": "Estem retornant la seva aportació a qui no va votar cap opció de projecte. Quan acabi, la campanya passarà a Liquidacions amb la meta nova."
+      },
+      "refund": {
+        "progress": "Retornades {done} de {total} aportacions ({amount} de {totalAmount})",
+        "done": "Retornat el 100 %: {count, plural, one {1 aportació} other {# aportacions}} ({amount})",
+        "howItWorks": "Cada aportació torna al seu mitjà de pagament original (targeta o Bizum), per lots. Als comerços amics no se’ls retorna: el seu patrocini passa a una altra campanya segons la vostra regla, o a la seva bossa. En acabar, les quotes de la campanya tornen a l’entitat.",
+        "quotasBack": "Les quotes que feia servir la campanya (exempt, beca de medalla i manteniment) han tornat a l’entitat.",
+        "closed": "La campanya està tancada. Les seves quotes eren d’un curs ja acabat, així que no se sumen a les d’aquest curs."
+      },
+      "decide": {
+        "voteTitle": "Preguntar a qui va fer un donatiu",
+        "voteRules": "Durant {days} dies, cada persona que va fer un donatiu vota una sola vegada entre les vostres opcions; proposeu una cosa que es pugui fer amb el que s’ha recaptat. Guanya l’opció més votada i es fa amb el que van aportar qui va votar una opció de projecte. A qui no voti o triï «Prefereixo que em retorneu la meva aportació» se li retorna el 100 %; sense vots o amb empat, es retorna tot. La comissió de KORUM baixa en proporció al que quedi. {donors, plural, one {Hi ha 1 donatiu que pot votar.} other {Hi ha # donatius que poden votar.}}",
+        "optionsLegend": "Opcions de projecte (de {min} a {max})",
+        "optionLabel": "Opció {letter}",
+        "optionPlaceholderA": "Per exemple: comprar 14 tauletes amb el que s’ha recaptat",
+        "optionPlaceholderB": "Per exemple: 10 tauletes i un armari carregador",
+        "optionLength": "Escriviu entre {min} i {max} caràcters.",
+        "removeOption": "Treure l’opció {letter}",
+        "addOption": "Afegir una altra opció",
+        "refundOptionAlways": "A més, la papereta inclou sempre «Prefereixo que em retorneu la meva aportació».",
+        "launchVote": "Llançar la votació",
+        "voteBlockedLabel": "Per què no es pot votar",
+        "voteBlocked": {
+          "NOT_BUDGET": "Un esdeveniment o una rifa no tenen una versió més petita: només es poden retornar els diners.",
+          "NO_DONATIONS": "No hi ha donatius de famílies que puguin votar: només es pot retornar.",
+          "WINDOW_TOO_SHORT": "Queda poc dels 90 dies en què PAYCOMET pot enviar els diners: no hi ha temps per votar i liquidar. Només es pot retornar.",
+          "POLL_EXISTS": "Aquesta campanya ja va tenir la seva votació."
+        },
+        "refundTitle": "Retornar el 100 % a totes les persones",
+        "refundText": "Cada persona recupera tot el que va pagar, al seu mitjà de pagament original i sense haver-ho de demanar. Els patrocinis de comerços passen a una altra campanya o a la seva bossa, i les quotes tornen a l’entitat.",
+        "refundButton": "Retornar el 100 %",
+        "confirmVoteTitle": "Llançar la votació de «{title}»?",
+        "confirmVoteText": "Enviarem la papereta a qui va fer un donatiu. Durarà {days} dies i les opcions no es podran canviar. Qui demani la devolució la tindrà en marxa tan bon punt voti, i a qui no voti se li retornarà quan es tanqui.",
+        "confirmRefundTitle": "Retornar el 100 % de «{title}»?",
+        "confirmRefundText": "Començarem a retornar cada aportació al seu mitjà de pagament original. Els patrocinis de comerços passaran a una altra campanya o a la seva bossa. No es pot desfer.",
+        "confirmVote": "Sí, llançar la votació",
+        "confirmRefund": "Sí, retornar el 100 %",
+        "cancel": "No, tornar",
+        "sending": "Enviant…",
+        "voteLaunched": "Votació llançada. Qui va fer un donatiu rep la papereta per correu; es tanca el {date}.",
+        "refundStarted": "Devolució en marxa. Qui va fer una aportació rep un avís i els diners tornen al seu mitjà de pagament en els propers dies."
+      },
+      "errors": {
+        "INVALID_INPUT": "Reviseu les opcions.",
+        "NOT_FOUND": "No trobem aquesta campanya a la vostra entitat.",
+        "WRONG_STATUS": "Aquesta campanya ja no espera cap decisió: algú l’ha presa mentrestant.",
+        "NOT_BUDGET": "Un esdeveniment o una rifa no tenen una versió més petita: només es poden retornar els diners.",
+        "NO_DONATIONS": "No hi ha donatius de famílies que puguin votar: només es pot retornar.",
+        "WINDOW_TOO_SHORT": "Queda poc dels 90 dies en què PAYCOMET pot enviar els diners: només es pot retornar.",
+        "POLL_EXISTS": "Aquesta campanya ja va tenir la seva votació.",
+        "DUPLICATE_OPTIONS": "Hi ha dues opcions iguals. Canvieu-ne una.",
+        "RATE_LIMITED": "Heu fet moltes peticions seguides. Espereu uns minuts.",
+        "FORBIDDEN": "No teniu permís per fer això.",
+        "failed": "No hem pogut completar l’operació. Torneu-ho a provar d’aquí a uns segons."
+      }
     }
   },
   "gate": {
@@ -4035,6 +4183,58 @@
         "directory": "Veure els comerços amics",
         "duplicateTitle": "Ja havies renovat",
         "duplicate": "Aquest segon pagament no calia: te’l retornem sencer al teu mitjà de pagament i t’avisarem per correu quan estigui fet."
+      }
+    },
+    "resizeVote": {
+      "metaTitle": "El teu vot",
+      "title": "Què fem amb «{initiative}»?",
+      "intro": "{organization} va recaptar {raised} dels {goal} que necessitava ({percent} %). No va arribar a la meta, així que qui va fer un donatiu decideix què es fa amb els diners.",
+      "rules": {
+        "oneVote": "Un vot per persona, encara que fessis més d’un donatiu. No es pot canviar.",
+        "refund": "Si prefereixes que et retornem la teva aportació, te la retornem sencera, passi el que passi.",
+        "result": "Guanya l’opció més votada i es fa amb el que aportin qui vota una opció de projecte. Si no votes, et retornem el 100 %; sense vots o amb empat, es retorna a totes les persones.",
+        "until": "Pots votar fins al {date}."
+      },
+      "legend": "Tria una opció",
+      "refundOption": "Prefereixo que em retorneu la meva aportació",
+      "refundAmount": "Et retornem el 100 % del que vas aportar al teu mitjà de pagament original (targeta o Bizum).",
+      "submit": "Vota",
+      "confirmTitle": "El teu vot: «{choice}»",
+      "confirmRefund": "{amount} La teva aportació deixarà de comptar per a la campanya. No es pot desfer.",
+      "confirmOption": "La teva aportació es quedarà en el projecte que guanyi la votació. Hi ha un sol vot per persona i no es pot canviar.",
+      "confirm": "Confirmar el meu vot",
+      "back": "Canviar d’opció",
+      "sending": "Enviant el teu vot…",
+      "legal": "Els diners continuen retinguts a PAYCOMET, a la guardiola de la iniciativa {wallet}, fins que es decideixi.",
+      "backToPortal": "Anar a la pàgina de l’entitat",
+      "invalid": {
+        "title": "Aquest enllaç de votació no és vàlid",
+        "description": "Fes servir l’enllaç del correu que et vam enviar. Si el vas copiar, comprova que sigui complet."
+      },
+      "voted": {
+        "title": "El teu vot està registrat",
+        "option": "Vas votar «{option}».",
+        "refund": "Vas demanar que et retornéssim la teva aportació: te la retornem sencera al teu mitjà de pagament original en els propers dies.",
+        "until": "La votació es tanca el {date}; t’escriurem amb el resultat.",
+        "refundNotice": "T’avisarem quan la devolució estigui feta."
+      },
+      "closed": {
+        "title": "La votació ja està tancada",
+        "won": "Va guanyar «{option}»: el projecte es fa amb el que van aportar qui va votar, i a qui no va votar se li retorna la seva aportació.",
+        "refund": "Va acabar sense cap opció guanyadora: es retorna el 100 % a totes les persones."
+      },
+      "noDonation": {
+        "title": "No trobem el teu donatiu",
+        "description": "El teu donatiu ja no és en aquesta campanya (per exemple, perquè ja se t’ha retornat). Si creus que és un error, escriu a l’entitat des de la seva pàgina d’ajuda."
+      },
+      "errors": {
+        "INVALID_LINK": "Aquest enllaç de votació no és vàlid.",
+        "CLOSED": "La votació ja està tancada.",
+        "NOT_A_DONOR": "No trobem cap donatiu teu en aquesta campanya.",
+        "ALREADY_VOTED": "Ja havies votat: hi ha un sol vot per persona.",
+        "INVALID_CHOICE": "Tria una opció abans de votar.",
+        "RATE_LIMITED": "Ara mateix hi ha molts vots des de la teva xarxa. Torna-ho a provar d’aquí a uns minuts.",
+        "FAILED": "No hem pogut registrar el teu vot. Torna-ho a provar d’aquí a uns segons."
       }
     }
   },

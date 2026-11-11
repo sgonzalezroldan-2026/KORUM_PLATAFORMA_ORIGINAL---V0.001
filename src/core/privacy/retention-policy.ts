@@ -35,7 +35,12 @@ export const RETENTION = {
    * Cuenta creada al invitar a alguien a firmar (cofirma o relevo, Sprint 4.2e) que nunca se activó: nombre y email que escribió otra persona, sin
    * ningún servicio detrás. 30 días sin invitación abierta ni relevo pendiente (auditoría del 4.2e, I6).
    */
-  unactivatedInviteeDays: 30
+  unactivatedInviteeDays: 30,
+  /**
+   * Votos de redimensionamiento (Sprint 4.4b, heredado del 2.5): el email canónico de quien votó, 1 año desde que se cerró la votación. Después queda el
+   * voto anónimo (el recuento se puede rehacer) y la devolución de quien la pidió sigue en su aportación, su asiento y la auditoría.
+   */
+  resizeVoteDaysAfterClose: 365
 } as const;
 
 export const daysBefore = (now: Date, days: number) => new Date(now.getTime() - days * DAY_MS);

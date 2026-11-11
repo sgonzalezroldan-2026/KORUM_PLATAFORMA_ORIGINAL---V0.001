@@ -1397,6 +1397,7 @@ model Contribution {
   sponsorAllocations         SponsorAllocation[]
   fundDeposits               ActivityFundDeposit[]
   fundSplits                 ActivityFundSplit[]
+  resizeVotes                ResizeVote[]
 
   @@unique([walletSubscriptionId, pledgeCycle])
   @@index([initiativeId, status])
@@ -1729,26 +1730,52 @@ model SupporterBroadcast {
   @@index([completedAt, id])
 }
 
+/// Votación de redimensionamiento de una campaña vencida (Sprint 4.4b): votan quienes donaron, una persona un voto, durante 7 días. Sus opciones, su plazo y
+/// lo que había al lanzarla no cambian; el estado solo pasa de `OPEN` a cerrada una vez, con su resultado (trigger `ResizePoll_keep_history`).
 model ResizePoll {
-  id           Int              @id @default(autoincrement())
-  initiativeId Int              @unique
-  optionsJson  Json
-  closesAt     DateTime
-  status       ResizePollStatus @default(OPEN)
-  createdAt    DateTime         @default(now())
-  initiative   Initiative       @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
-  votes        ResizeVote[]
+  id                  Int              @id @default(autoincrement())
+  initiativeId        Int              @unique
+  /// Opciones de proyecto que escribió la entidad (2 a 4 textos). «Prefiero que me devolváis mi aportación» no es una opción: es `ResizeVote.wantsRefund`.
+  optionsJson         Json
+  closesAt            DateTime
+  status              ResizePollStatus @default(OPEN)
+  createdAt           DateTime         @default(now())
+  /// Persona firmante que la lanzó.
+  createdById         String?
+  /// Meta y recaudado al lanzarla: la comisión proporcional se calcula sobre la meta original.
+  originalGoalCents   Int
+  raisedAtLaunchCents Int
+  closedAt            DateTime?
+  /// Recuento hecho con un proyecto ganador: desde aquí se devuelve su aportación a quien no votó un proyecto, por lotes, y después se cierra.
+  talliedAt           DateTime?
+  /// Cerrada a favor de un proyecto: la opción ganadora y la meta nueva (lo que quedó tras devolver a quien lo pidió).
+  winningOptionIndex  Int?
+  newGoalCents        Int?
+  /// Recuento al cerrar: `{ counts: number[], refundVotes: number, outcome }`. Se conserva aunque los votos se anonimicen.
+  resultJson          Json?
+  initiative          Initiative       @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  votes               ResizeVote[]
+
+  @@index([status, closesAt])
 }
 
+/// Un voto por persona (email canónico) y votación, emitido desde el enlace personal de una de sus donaciones. O elige una opción de proyecto
+/// (`optionIndex`) o pide que le devuelvan su aportación (`wantsRefund`, se devuelve el 100 % en el acto). No cambia ni se borra; su email canónico se
+/// anonimiza al suprimir la cuenta o un año después de cerrarse la votación (CUMPLIMIENTO §6).
 model ResizeVote {
-  id             Int        @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   pollId         Int
   canonicalEmail String
-  optionIndex    Int
-  createdAt      DateTime   @default(now())
-  poll           ResizePoll @relation(fields: [pollId], references: [id], onDelete: Restrict)
+  /// Donación desde la que se votó; se suelta (`null`) al anonimizar el voto, para que no siga ligado a nadie.
+  contributionId Int?
+  optionIndex    Int?
+  wantsRefund    Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  poll           ResizePoll    @relation(fields: [pollId], references: [id], onDelete: Restrict)
+  contribution   Contribution? @relation(fields: [contributionId], references: [id], onDelete: Restrict)
 
   @@unique([pollId, canonicalEmail])
+  @@index([contributionId])
 }
 
 /// Factura emitida por KORUM (a comercios o centros). Se registra en Veri*factu a través del proveedor de facturación.

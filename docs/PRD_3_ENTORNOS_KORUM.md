@@ -112,6 +112,7 @@ GOAL_REACHED ──contracargo baja de la meta, sin liquidar───► FUNDRAI
 
 - `stepIndex` de la línea de 6 estados del panel: idea (1) → quórum (2) → `BUDGETING` (3) → `FUNDRAISING` (4) → `GOAL_REACHED` / `CLOSED` (5–6).
 - Al entrar en `REFUNDED` o `CANCELLED` se liberan los cupos reservados.
+- **Sprint 4.4b:** una campaña vencida se decide en `/panel/{slug}/vencidas` (una persona firmante: reembolsar o lanzar la votación de 7 días, solo campañas de presupuesto con donaciones y margen en la ventana de 90 días). Votan quienes donaron, una persona un voto, con «Prefiero que me devolváis mi aportación» siempre disponible (devolución del 100 % en el acto). Gana la opción de proyecto más votada y se hace solo con lo que aportaron quienes votaron un proyecto: **a quien no vota se le devuelve el 100 %** (`GOAL_REACHED` con meta = lo que queda y comisiones proporcionales); sin votos o con empate, `REFUNDING`. Una campaña redimensionada no vuelve a recaudar por un contracargo.
 - **Sprint 4.4a:** la liquidación de una campaña conseguida se pide en `/panel/{slug}/liquidaciones` (destino y factura del proveedor) y se puede cambiar mientras espera la doble firma (las firmas se vuelven a pedir). Con las dos firmas se aprueba y se envía en el acto; al terminar el envío, la campaña pasa a `CLOSED` y las fotos Antes/Después que suba la entidad se ven en *Logros conseguidos*.
 
 ### 4.2 Idea (`IdeaPhase`)

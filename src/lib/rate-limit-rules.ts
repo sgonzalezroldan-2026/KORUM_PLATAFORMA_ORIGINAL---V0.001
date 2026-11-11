@@ -18,6 +18,15 @@ export const ACTIVITY_FUND_RULE: RateLimitRule & PurgeRule = { prefix: 'activity
 /** Pedir (o cambiar) la liquidación de una campaña, subir su factura y reintentar su envío, por entidad (Sprint 4.4a). */
 export const CAMPAIGN_PAYOUT_RULE: RateLimitRule & PurgeRule = { prefix: 'campaign-payout:', limit: 20, windowMs: 60 * 60_000 };
 
+/** Decidir qué hacer con una campaña vencida (reembolsar o lanzar la votación), por persona y entidad (Sprint 4.4b). */
+export const EXPIRED_DECISION_RULE: RateLimitRule & PurgeRule = { prefix: 'expired-decision:', limit: 10, windowMs: 60 * 60_000 };
+
+/**
+ * Votos de redimensionamiento por red (Sprint 4.4b): cada enlace ya es personal y vota una vez, pero sin tope se podrían probar enlaces sin fin. Es
+ * generoso porque un colegio entero puede votar desde el mismo wifi.
+ */
+export const RESIZE_VOTE_RULE: RateLimitRule & PurgeRule = { prefix: 'resize-vote:ip:', limit: 60, windowMs: 15 * 60_000 };
+
 /** Emails de acceso (enlace, código, invitación) por destinatario: nadie puede llenar la bandeja de otra persona pidiendo enlaces. */
 export const AUTH_EMAIL_RULE: RateLimitRule & PurgeRule = { prefix: 'auth:mail:', limit: 5, windowMs: 15 * 60_000 };
 

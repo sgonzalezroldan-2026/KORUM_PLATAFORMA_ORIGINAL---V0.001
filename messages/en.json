@@ -735,6 +735,62 @@
         "thanks": "Thank you for helping make it happen.",
         "cta": "See how it turned out"
       }
+    },
+    "resize": {
+      "decided": {
+        "refundSubject": "100% of “{initiative}” is being refunded",
+        "refundPreheader": "A signatory has decided to refund what was raised.",
+        "refundTitle": "Decided: 100% is being refunded",
+        "refundBody": "It has been decided to refund 100% of what was raised for “{initiative}”. Each contribution goes back to its original payment method, in batches; you can follow progress in the dashboard.",
+        "voteSubject": "Vote open: “{initiative}”",
+        "votePreheader": "The people who donated decide what happens to what was raised.",
+        "voteTitle": "Decided: we are asking the people who donated",
+        "voteBody": "The vote on “{initiative}” has been launched. Donors can vote until {date}; anyone who asks for a refund has it under way as soon as they vote, and anyone who does not vote will be refunded when it closes.",
+        "cta": "See expired campaigns"
+      },
+      "closed": {
+        "wonSubject": "“{initiative}” goes ahead, resized",
+        "wonPreheader": "The vote has chosen a project. Time to pay out.",
+        "wonTitle": "The vote has chosen a project",
+        "wonBody": "In “{initiative}”, “{option}” won. The new goal is {amount}: what those who voted for a project option contributed (those who did not vote or asked for a refund have been refunded).",
+        "wonNext": "KORUM’s fee goes down in the same proportion. To pay out you need, as always, the invoice and both signatures.",
+        "newGoal": "New goal",
+        "settleCta": "Go to Payouts",
+        "refundSubject": "The vote on “{initiative}” ends without a project",
+        "refundPreheader": "Everyone gets 100% back.",
+        "refundTitle": "100% is being refunded",
+        "reasonNO_VOTES": "The vote on “{initiative}” has ended with no votes for any project option.",
+        "reasonTIE": "The vote on “{initiative}” has ended in a tie.",
+        "reasonNOTHING_LEFT": "After the refunds requested, nothing is left in “{initiative}” to carry out the project.",
+        "refundNext": "As planned, everyone who contributed gets 100% back, to their original payment method."
+      },
+      "poll": {
+        "subject": "You decide: what should we do with “{initiative}”?",
+        "preheader": "Vote until {date}. You can also ask for your contribution back.",
+        "title": "Your vote decides",
+        "body": "“{initiative}” from {organization} did not reach its goal. Before refunding the money, {organization} wants to know whether you would rather carry out a smaller version of the project with what was raised.",
+        "rules": "One vote per person, until {date}. The most voted option wins and is carried out with what those who vote for a project contributed. If you do not vote, we refund 100%. This link is only yours: please don’t forward it.",
+        "refund": "If you would rather get your contribution back, choose “I’d rather have my contribution back”: we refund it in full, whatever happens.",
+        "until": "You can vote until",
+        "cta": "Vote now"
+      },
+      "result": {
+        "subject": "“{initiative}” is going ahead",
+        "preheader": "Thanks to the families at {organization} who voted.",
+        "title": "It’s going ahead!",
+        "body": "The vote on “{initiative}” has chosen: “{option}”. It will be carried out with what those of you who voted contributed, including your contribution.",
+        "next": "The money stays in the initiative’s money box at PAYCOMET until two people from {organization} sign the payout. When it is done, we will show you the Before and After.",
+        "cta": "See the achievements"
+      },
+      "refunding": {
+        "subject": "We are refunding your contribution to “{initiative}”",
+        "preheader": "It goes back in full to your original payment method.",
+        "title": "We are refunding 100%",
+        "body": "“{initiative}” from {organization} did not reach its goal, so we are refunding everything you contributed, including the voluntary contribution to KORUM if you made one.",
+        "how": "It goes back to your original payment method (card or Bizum) without you having to do anything. We will let you know when it is done; it may take a few days to show on your card or in Bizum.",
+        "thanks": "Thank you for supporting {organization}.",
+        "cta": "See other initiatives"
+      }
     }
   },
   "nav": {
@@ -1655,7 +1711,8 @@
       "settings": "Settings",
       "fund": "Activity Fund",
       "studio": "Studio",
-      "payouts": "Payouts"
+      "payouts": "Payouts",
+      "expired": "Expired campaigns"
     },
     "header": {
       "label": "Organisation management",
@@ -1728,7 +1785,10 @@
         "viewPublic": "View the public page of “{title}”",
         "editInStudio": "Edit in Studio: {title}",
         "poster": "A4 poster with QR: {title}",
-        "settle": "Pay out “{title}”"
+        "settle": "Pay out “{title}”",
+        "decideExpired": "Decide what to do with “{title}”",
+        "followVote": "See the vote on “{title}”",
+        "followRefund": "See the refund for “{title}”"
       },
       "steps": {
         "moderation": "1. Moderation",
@@ -3115,6 +3175,94 @@
         "underReview": "Part of the transfer is under review: the KORUM team is sorting it out with PAYCOMET. You don’t need to do anything.",
         "photosCta": "Upload the Before and After photos"
       }
+    },
+    "expired": {
+      "metaTitle": "Expired campaigns",
+      "title": "Campaigns that ended without reaching their goal",
+      "intro": "When a campaign ends without reaching its goal, the money stays held by PAYCOMET. You decide: ask the people who donated whether to carry out a smaller version of the project with what was raised, or refund 100% to everyone.",
+      "empty": {
+        "title": "No campaign has ended short of its goal",
+        "text": "If one ends without reaching its goal, it will appear here so you can decide what to do.",
+        "cta": "Back to the dashboard"
+      },
+      "historyTitle": "Already resolved",
+      "status": {
+        "EXPIRED": "Expired · waiting for your decision",
+        "RESIZE_VOTING": "Vote open",
+        "REFUNDING": "Refunding",
+        "REFUNDED": "Refunded in full",
+        "GOAL_REACHED": "Resized · to be paid out",
+        "CLOSED": "Resized and paid out"
+      },
+      "closedOn": "Ended on {date}",
+      "raised": "Raised {raised} of {goal} ({percent}%)",
+      "decideIntro": "One signatory decides and the other is notified. Neither option sends money to the organisation: that will still need both signatures on the payout.",
+      "readOnly": "Only the organisation’s signatories can decide what to do with this campaign.",
+      "poll": {
+        "open": "Vote open until {date}",
+        "turnout": "{votes, plural, =0 {Nobody has voted yet} one {1 person has voted} other {# people have voted}} · {refunds, plural, =0 {nobody has asked for a refund} one {1 has asked for a refund} other {# have asked for a refund}}",
+        "hidden": "The count for each option will be shown when the vote closes. Anyone who asks for a refund has it under way as soon as they vote (it may take a few days to show on their card or in Bizum) and their contribution stops counting.",
+        "won": "The vote chose: “{option}”",
+        "noWinner": "The vote ended without a winning option (no votes or a tie): everyone gets 100% back.",
+        "count": "{option}: {votes, plural, one {1 vote} other {# votes}}",
+        "refundCount": "Asked for a refund: {votes}",
+        "newGoal": "New goal (what those who voted for a project contributed):",
+        "settle": "Pay out the campaign",
+        "refundingNonVoters": "We are refunding the contributions of those who did not vote for a project option. Once that is done, the campaign will move to Payouts with the new goal."
+      },
+      "refund": {
+        "progress": "{done} of {total} contributions refunded ({amount} of {totalAmount})",
+        "done": "100% refunded: {count, plural, one {1 contribution} other {# contributions}} ({amount})",
+        "howItWorks": "Each contribution goes back to its original payment method (card or Bizum), in batches. Partner businesses are not refunded: their sponsorship moves to another campaign under your rule, or to their pool. When it finishes, the campaign’s allowances go back to the organisation.",
+        "quotasBack": "The allowances the campaign used (exempt amount, medal grant and maintenance) are back with the organisation.",
+        "closed": "The campaign is closed. Its allowances belonged to a school year that has ended, so they are not added to this year’s."
+      },
+      "decide": {
+        "voteTitle": "Ask the people who donated",
+        "voteRules": "For {days} days, everyone who donated votes once among your options; propose something that can be done with what was raised. The most voted option wins and is carried out with what those who voted for a project option contributed. Anyone who does not vote, or chooses “I’d rather have my contribution back”, gets 100% back; with no votes or a tie, everything is refunded. KORUM’s fee goes down in proportion to what is left. {donors, plural, one {There is 1 donation that can vote.} other {There are # donations that can vote.}}",
+        "optionsLegend": "Project options ({min} to {max})",
+        "optionLabel": "Option {letter}",
+        "optionPlaceholderA": "For example: buy 14 tablets with what was raised",
+        "optionPlaceholderB": "For example: 10 tablets and a charging cabinet",
+        "optionLength": "Write between {min} and {max} characters.",
+        "removeOption": "Remove option {letter}",
+        "addOption": "Add another option",
+        "refundOptionAlways": "The ballot also always includes “I’d rather have my contribution back”.",
+        "launchVote": "Launch the vote",
+        "voteBlockedLabel": "Why a vote is not possible",
+        "voteBlocked": {
+          "NOT_BUDGET": "An event or a raffle has no smaller version: the money can only be refunded.",
+          "NO_DONATIONS": "There are no family donations that could vote: it can only be refunded.",
+          "WINDOW_TOO_SHORT": "Little is left of the 90 days in which PAYCOMET can send the money: there is no time to vote and pay out. It can only be refunded.",
+          "POLL_EXISTS": "This campaign has already had its vote."
+        },
+        "refundTitle": "Refund 100% to everyone",
+        "refundText": "Everyone gets back everything they paid, to their original payment method, without having to ask. Business sponsorships move to another campaign or to their pool, and the allowances go back to the organisation.",
+        "refundButton": "Refund 100%",
+        "confirmVoteTitle": "Launch the vote on “{title}”?",
+        "confirmVoteText": "We will send the ballot to the people who donated. It will last {days} days and the options cannot be changed. Anyone who asks for a refund will have it under way as soon as they vote, and anyone who does not vote will be refunded when it closes.",
+        "confirmRefundTitle": "Refund 100% of “{title}”?",
+        "confirmRefundText": "We will start returning each contribution to its original payment method. Business sponsorships will move to another campaign or to their pool. This cannot be undone.",
+        "confirmVote": "Yes, launch the vote",
+        "confirmRefund": "Yes, refund 100%",
+        "cancel": "No, go back",
+        "sending": "Sending…",
+        "voteLaunched": "Vote launched. The people who donated receive their ballot by email; it closes on {date}.",
+        "refundStarted": "Refund under way. Contributors are notified and the money goes back to their payment method over the next few days."
+      },
+      "errors": {
+        "INVALID_INPUT": "Please check the options.",
+        "NOT_FOUND": "We could not find that campaign in your organisation.",
+        "WRONG_STATUS": "This campaign is no longer waiting for a decision: someone made it in the meantime.",
+        "NOT_BUDGET": "An event or a raffle has no smaller version: the money can only be refunded.",
+        "NO_DONATIONS": "There are no family donations that could vote: it can only be refunded.",
+        "WINDOW_TOO_SHORT": "Little is left of the 90 days in which PAYCOMET can send the money: it can only be refunded.",
+        "POLL_EXISTS": "This campaign has already had its vote.",
+        "DUPLICATE_OPTIONS": "Two options are the same. Please change one of them.",
+        "RATE_LIMITED": "You have made many requests in a row. Please wait a few minutes.",
+        "FORBIDDEN": "You do not have permission to do this.",
+        "failed": "We could not complete the operation. Please try again in a few seconds."
+      }
     }
   },
   "gate": {
@@ -4035,6 +4183,58 @@
         "directory": "See the friendly businesses",
         "duplicateTitle": "You had already renewed",
         "duplicate": "This second payment was not needed: we are refunding it in full to your original payment method and will email you when it is done."
+      }
+    },
+    "resizeVote": {
+      "metaTitle": "Your vote",
+      "title": "What should we do with “{initiative}”?",
+      "intro": "{organization} raised {raised} of the {goal} it needed ({percent}%). It did not reach its goal, so those of you who donated decide what happens to the money.",
+      "rules": {
+        "oneVote": "One vote per person, even if you donated more than once. It cannot be changed.",
+        "refund": "If you would rather have your contribution back, we refund it in full, whatever happens.",
+        "result": "The most voted option wins and is carried out with what those who vote for a project option contributed. If you do not vote, we refund 100%; with no votes or a tie, everyone gets their money back.",
+        "until": "You can vote until {date}."
+      },
+      "legend": "Choose an option",
+      "refundOption": "I’d rather have my contribution back",
+      "refundAmount": "We will refund 100% of what you contributed to your original payment method (card or Bizum).",
+      "submit": "Vote",
+      "confirmTitle": "Your vote: “{choice}”",
+      "confirmRefund": "{amount} Your contribution will stop counting towards the campaign. This cannot be undone.",
+      "confirmOption": "Your contribution will stay in the project that wins the vote. There is only one vote per person and it cannot be changed.",
+      "confirm": "Confirm my vote",
+      "back": "Change option",
+      "sending": "Sending your vote…",
+      "legal": "The money stays held by PAYCOMET, in the initiative’s money box {wallet}, until a decision is made.",
+      "backToPortal": "Go to the organisation’s page",
+      "invalid": {
+        "title": "This voting link is not valid",
+        "description": "Use the link in the email we sent you. If you copied it, check that it is complete."
+      },
+      "voted": {
+        "title": "Your vote has been recorded",
+        "option": "You voted “{option}”.",
+        "refund": "You asked for your contribution back: we are refunding it in full to your original payment method over the next few days.",
+        "until": "The vote closes on {date}; we will email you the result.",
+        "refundNotice": "We will let you know when the refund is done."
+      },
+      "closed": {
+        "title": "The vote has closed",
+        "won": "“{option}” won: the project goes ahead with what those who voted contributed, and those who did not vote get their contribution back.",
+        "refund": "It ended without a winning option: everyone gets 100% back."
+      },
+      "noDonation": {
+        "title": "We could not find your donation",
+        "description": "Your donation is no longer in this campaign (for example, because it has already been refunded). If you think this is a mistake, write to the organisation from its help page."
+      },
+      "errors": {
+        "INVALID_LINK": "This voting link is not valid.",
+        "CLOSED": "The vote has closed.",
+        "NOT_A_DONOR": "We could not find a donation of yours in this campaign.",
+        "ALREADY_VOTED": "You had already voted: there is only one vote per person.",
+        "INVALID_CHOICE": "Choose an option before voting.",
+        "RATE_LIMITED": "There are many votes from your network right now. Please try again in a few minutes.",
+        "FAILED": "We could not record your vote. Please try again in a few seconds."
       }
     }
   },

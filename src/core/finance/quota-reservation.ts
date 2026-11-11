@@ -194,6 +194,30 @@ export async function releaseInitiativeQuotas(db: Db, initiativeId: number): Pro
 }
 
 /**
+ * Una campaña redimensionada por votación (Sprint 4.4b) cobra un mantenimiento proporcional, menor que el reservado al publicarla: la diferencia vuelve
+ * al acumulado del curso de la entidad (deja hueco hasta su tope anual) y la reserva pasa a ser la nueva, así que si la campaña se reembolsara después se
+ * devolvería solo lo que queda reservado. Sin reserva abierta, o con los cupos ya de otro curso, solo se ajusta la instantánea. El exento y la beca de
+ * medalla no cambian: la campaña se hace y ya los usó. Quien llama tiene bloqueada la fila de la iniciativa.
+ */
+export async function shrinkReservedMaintenance(db: Db, initiativeId: number, newMaintCents: number): Promise<{ releasedCents: number }> {
+  assertAmount(initiativeId, 'mantenimiento nuevo', newMaintCents);
+  return inTransaction(db, async (tx) => {
+    const before = await tx.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: QUOTA_FIELDS });
+    if (!before.quotaReservedAt || before.quotaReleasedAt || newMaintCents >= before.quotaReservedMaintCents) return { releasedCents: 0 };
+    const releasedCents = before.quotaReservedMaintCents - newMaintCents;
+    const marked = await tx.initiative.updateMany({ where: { id: initiativeId, quotaReleasedAt: null, quotaReservedMaintCents: before.quotaReservedMaintCents }, data: { quotaReservedMaintCents: newMaintCents } });
+    if (marked.count === 0) return { releasedCents: 0 };
+    let credited = false;
+    await updateOrganizationQuotas(tx, before.organizationId, (current) => {
+      credited = (current.quotaPeriod ?? null) === (before.quotaReservedPeriod ?? null);
+      const maintPaidCents = credited ? Math.max(0, current.maintPaidCents - releasedCents) : current.maintPaidCents;
+      return { exemptRemainingCents: current.exemptRemainingCents, medalGrantAvailableCents: current.medalGrantAvailableCents, maintPaidCents };
+    });
+    return { releasedCents: credited ? releasedCents : 0 };
+  });
+}
+
+/**
  * Renovación anual de cupos (tarea `QUOTA_RENEWAL`): al empezar un curso nuevo, el exento vuelve a su límite, la beca de la medalla
  * actual se repone, el mantenimiento pagado y las campañas cerradas del año vuelven a 0. Solo avanza (`newPeriod` debe ser posterior al curso
  * actual) y la escritura es condicional al curso leído, así que dos ejecuciones simultáneas renuevan una sola vez. Las reservas del curso anterior

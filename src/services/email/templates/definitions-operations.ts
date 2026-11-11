@@ -131,7 +131,7 @@ export const initiativeExpired: TemplateDefinition<z.infer<typeof expiredPayload
       title: t('expired.title'),
       paragraphs: [t('expired.body', { initiative: initiative.title, raised: context.formatMoney(payload.raisedCents), goal: context.formatMoney(payload.goalCents) })],
       facts: [],
-      button: { label: t('expired.cta'), url: context.url(`/panel/${organization.slug}`) },
+      button: { label: t('expired.cta'), url: context.url(`/panel/${organization.slug}/vencidas`) },
       footer: 'organization'
     };
   }

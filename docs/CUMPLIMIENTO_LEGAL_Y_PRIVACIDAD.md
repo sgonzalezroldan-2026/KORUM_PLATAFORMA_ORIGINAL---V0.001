@@ -129,6 +129,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Historial de relevos de firmantes (`SignerHandover`: quién propuso, quién salió y quién entró, por identificador de cuenta) | Como el registro de auditoría (6 años) | El nombre escrito de la persona invitada se anonimiza si suprime su cuenta |
 | Fondo de actividades (`ActivityFundDeposit`, `ActivityFundPayout` con su destino escrito, `ActivityFundSplit`) y su justificante en PDF (Sprint 4.2f) | 6 años (art. 30 del Código de Comercio), como el libro mayor | No se suprime (RGPD art. 17.3.b y e); el destino escrito no debe llevar datos personales (lo dice el formulario) |
 | Liquidación de una campaña (`EscrowPayout`): titular, IBAN y CIF/NIF del proveedor (cifrados), y su factura (`PROVIDER_INVOICE`) (Sprint 4.4a) | 6 años (art. 30 del Código de Comercio), como el libro mayor | No se suprime (RGPD art. 17.3.b y e): es el justificante de un pago con doble firma. El IBAN y el CIF solo se descifran en el servidor al pagar |
+| Votos de redimensionamiento (`ResizeVote`: email canónico de quien votó, la donación desde la que votó y su elección) (Sprint 4.4b) | 1 año desde que se cerró la votación | Se anonimiza el email (el voto y el recuento se conservan); al suprimir la cuenta, en el acto. La devolución de quien la pidió sigue en su aportación, su asiento y la auditoría |
 | Tarjeta guardada de Mi Hucha (token de Paycomet, cifrado) | Mientras la aportación mensual esté activa o en pausa (pausa máxima: 6 meses) | Se revoca al momento y se pide a Paycomet que la borre al cancelar, terminar, pasar 6 meses en pausa, haber un contracargo o suprimir la cuenta; la purga semanal reintenta el borrado |
 | Errores en Sentry | 90 días | Automático |
 
@@ -297,6 +298,20 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 - [ ] **Pago a un tercero y verificación del beneficiario:** ¿debe Paycomet dar de alta y verificar (KYC / prevención del blanqueo) al proveedor como beneficiario? ¿Hace falta la verificación del nombre del titular frente al IBAN (*Verification of Payee*, Reglamento UE 2024/886)? ¿Hay riesgo de que KORUM parezca ordenar envíos de dinero a terceros?
 - [ ] **Qué ve quien firma del IBAN del proveedor:** hoy, el código del banco y los 4 últimos dígitos, quién pidió o cambió la liquidación y cuándo, y un email a la otra persona si cambia (auditoría de seguridad del 4.4a). ¿Sería compatible con la minimización enseñar el IBAN completo a las dos personas firmantes (con segundo factor y registro)?
 - [ ] **Facturas subidas y no adjuntadas:** se borran a los 30 días; las adjuntadas a una liquidación (también las de una liquidación que se cambió después) se conservan 6 años. Confirmar plazos.
+
+**Abogado (Sprint 4.4b · campañas vencidas y votación de redimensionamiento):**
+
+- [x] ~~**Votación vinculante para quien no vota**~~ **Resuelto por el promotor (2026-11-11):** a quien no vota se le devuelve el 100 %; la propuesta ganadora se hace solo con lo de quienes votaron una opción de proyecto. Queda por confirmar que basta con explicarlo en la papeleta y en la FAQ (el checkout promete «la devolución automática si no se alcanza la meta»: se cumple para quien no acepta la propuesta) y que quien votó una opción que perdió acepta el proyecto ganador.
+- [ ] **Mayoría simple sin quórum, una persona un voto sea cual sea el importe:** un solo voto puede decidir por todas las personas, y quien tenga varias direcciones de email podría votar más de una vez. ¿Hace falta un quórum mínimo (por personas o por importe)? Solo cuentan los votos de quien conserva su donación al cerrar.
+- [ ] **Derecho de devolución:** el voto no se cambia (¿votar un proyecto es renunciar a la devolución?); ¿bastan 7 días?; ¿puede pedirla después quien votó un proyecto o no recibió el email?
+- [ ] **El enlace del email como única identificación:** quien tenga un enlace reenviado puede votar o pedir la devolución en nombre de quien donó (el email pide no reenviarlo y la página ya no enseña el importe). ¿Basta, o hace falta un código enviado al email antes de votar?
+- [ ] **Avisos sin consentimiento de comunicaciones** (papeleta, resultado y aviso de reembolso, `initiative.resizePoll`, `initiative.resizeResult`, `initiative.refundingSupporter`): se tratan como información sobre la propia donación, también el resultado a quien no votó. Mismo punto que los avisos del 4.4a. El proveedor de email no debe reescribir los enlaces de la papeleta con seguimiento de clics (el enlace pasaría por un tercero): confirmarlo al contratarlo (6.1).
+- [ ] **Conservación de los votos:** el email canónico, 1 año desde el cierre; después el voto queda sin persona ni donación (§6). ¿Plazo correcto?
+- [ ] **Una campaña vencida sin decidir** no tiene plazo: el dinero sigue retenido en PAYCOMET hasta que la entidad decide (el cron no reembolsa por su cuenta, heredado del 2.4). ¿Hace falta un plazo tras el cual se devuelva sola?
+
+**Asesoría fiscal (Sprint 4.4b):**
+
+- [ ] **Finalidad que cambia al redimensionar:** la donación se hizo para el proyecto original y se aplica a la opción votada. ¿Sigue valiendo el certificado de la Ley 49/2002 y su inclusión en el Modelo 182? Las donaciones devueltas a quien lo pidió no entran (ya excluidas).
 
 **Asesoría fiscal (Sprint 4.2f):**
 

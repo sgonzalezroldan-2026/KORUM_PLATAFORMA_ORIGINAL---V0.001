@@ -125,7 +125,7 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   if (user.emailVerified) await tx.ideaMessage.deleteMany({ where: { senderRole: 'FAMILY', idea: { authorCanonicalEmail: user.canonicalEmail } } });
   if (user.emailVerified) await tx.idea.updateMany({ where: { authorCanonicalEmail: user.canonicalEmail }, data: { authorCanonicalEmail: signerMarker } });
   const votes = user.emailVerified ? await tx.resizeVote.findMany({ where: { canonicalEmail: user.canonicalEmail }, select: { id: true } }) : [];
-  for (const vote of votes) await tx.resizeVote.update({ where: { id: vote.id }, data: { canonicalEmail: anonymizedMarker('voto', vote.id) } });
+  for (const vote of votes) await tx.resizeVote.update({ where: { id: vote.id }, data: { canonicalEmail: anonymizedMarker('voto', vote.id), contributionId: null } });
 
   const messages = { OR: [{ userId: user.id }, ...(user.emailVerified ? [{ toAddress: user.email }] : [])] };
   await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });

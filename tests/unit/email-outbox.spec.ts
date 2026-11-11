@@ -82,7 +82,13 @@ const SAMPLES: Record<string, unknown> = {
   'payout.executed': { initiativeId: 7, payoutId: 12, amountCents: 561_000, destinationType: 'PROVIDER' },
   'payout.changed': { initiativeId: 7, payoutId: 12 },
   'initiative.goalReachedSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
-  'initiative.achievementPhotos': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' }
+  'initiative.achievementPhotos': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
+  // Campañas vencidas: decisión, votación de redimensionamiento, resultado y aviso de reembolso (Sprint 4.4b).
+  'initiative.expiredDecided': { initiativeId: 7, decision: 'RESIZE_VOTE', closesAt: IN_3_DAYS },
+  'initiative.resizeClosed': { initiativeId: 7, outcome: 'PROJECT', newGoalCents: 210_000, option: 'Comprar 14 tablets con lo recaudado' },
+  'initiative.resizePoll': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', pollId: 3, closesAt: IN_3_DAYS, voteToken: '3.41.' + 'a'.repeat(64) },
+  'initiative.resizeResult': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', option: 'Comprar 14 tablets con lo recaudado', newGoalCents: 210_000 },
+  'initiative.refundingSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

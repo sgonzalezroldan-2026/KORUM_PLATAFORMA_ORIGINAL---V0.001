@@ -5,6 +5,7 @@ import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
 import { queueRefundIssued } from '@/services/email/outbox-writers';
+import { rescaleResizedAfterLoss } from '@/services/resize/resized-loss';
 import { applyMovedUndo, movedPayinLines } from './moved-sponsor-reversals';
 import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 import { retireMatchingPool, splitReleasedPool, type PayinToUndo } from './sponsor-reversals';
@@ -38,7 +39,7 @@ export const isSettled = (payoutStatus: string | undefined): boolean => payoutSt
 export type ContributionRow = NonNullable<Awaited<ReturnType<typeof loadContribution>>>;
 
 function loadContribution(db: Db, where: { id: number } | { paycometOrder: string }) {
-  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, closesAt: true, payout: { select: { status: true } } } } } });
+  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, closesAt: true, payout: { select: { status: true } }, resizePoll: { select: { status: true } } } } } });
 }
 
 /** Bloquea la iniciativa del cobro y lo lee después: lo que se lea ya no puede cambiar hasta confirmar la transacción. */
@@ -118,7 +119,8 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
  * Quita el cobro de los contadores de la iniciativa, en la misma transacción que su asiento. Si baja de la meta antes de liquidar,
  * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. Una rifa ya sorteada no se reabre: no puede volver a vender
  * y se quedaría sin salida; se liquida lo que queda. Tampoco se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
- * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026).
+ * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026). Ni una campaña
+ * redimensionada por votación (Sprint 4.4b): su fecha ya pasó y la votación ya decidió; se liquida lo que queda.
  */
 export async function removeFromInitiative(tx: Db, contribution: ContributionRow, at: Date, payin: Pick<PayinToUndo, 'poolReleasedCents' | 'moved'> = { poolReleasedCents: 0 }): Promise<void> {
   const bonusCents = await undoMatchingBonus(tx, contribution);
@@ -143,15 +145,18 @@ export async function removeFromInitiative(tx: Db, contribution: ContributionRow
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
     data: { raisedCents: { decrement: leavesRaised }, totalContributions: { decrement: leavesCount }, ticketsSold: { decrement: releasedTickets } },
-    select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } } }
+    select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } }, resizePoll: { select: { status: true } } }
   });
   if (contribution.groupName) {
     await tx.initiativeCourseProgress.updateMany({ where: { initiativeId: contribution.initiativeId, groupName: contribution.groupName, familiesCount: { gt: 0 } }, data: { familiesCount: { decrement: 1 } } });
   }
   const eventAlreadyHeld = initiative.format === 'TICKETING' && initiative.closesAt <= at;
-  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0 && !eventAlreadyHeld) {
+  const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
+  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0 && !eventAlreadyHeld && !resized) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
   }
+  // Redimensionada y sin liquidar: la meta y las comisiones bajan con lo que se pierde (auditoría financiera del 4.4b, H1).
+  if (resized && initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)) await rescaleResizedAfterLoss(tx, contribution.initiativeId);
 }
 
 /**

@@ -1,6 +1,8 @@
+import { parsePollOptions, signResizeVoteToken } from '@/core/resize/resize-rules';
 import { dataHmac } from '@/core/security/data-hmac';
-import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
+import type { Prisma } from '@/generated/prisma/client';
 import { inTransaction, type Db } from '@/lib/db';
+import { DONOR_RECIPIENT_SELECT, donorRecipient } from './donor-recipient';
 
 /**
  * Avisos a quienes aportaron a una iniciativa (Sprint 4.4a, heredado del 3.6): «¡Lo hemos conseguido!» al llegar al 100 % y «Mirad cómo ha quedado» con
@@ -12,10 +14,26 @@ import { inTransaction, type Db } from '@/lib/db';
  * - Al email de su cuenta (si no está anonimizada) o al de invitado, en el idioma con el que aportó.
  * - Son avisos sobre el destino de su propia donación (la garantía «todo o nada»), no publicidad: no piden `MARKETING_EMAILS` (punto para el abogado,
  *   CUMPLIMIENTO §9).
+ *
+ * Sprint 4.4b, campañas vencidas: la **votación** (`initiative.resizePoll`, con el enlace personal de voto de cada persona, que es un campo secreto del
+ * mensaje), su **resultado** cuando gana un proyecto (`initiative.resizeResult`, solo a quien no pidió que le devolvieran lo suyo) y el **aviso de
+ * reembolso** (`initiative.refundingSupporter`, también a quien ya tiene la devolución en marcha). Cada una solo sale mientras la campaña sigue en el
+ * estado que la justifica; si no, se descarta.
  */
 
-export const SUPPORTER_TEMPLATES = ['initiative.goalReachedSupporter', 'initiative.achievementPhotos'] as const;
+export const SUPPORTER_TEMPLATES = ['initiative.goalReachedSupporter', 'initiative.achievementPhotos', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter'] as const;
 export type SupporterTemplate = (typeof SUPPORTER_TEMPLATES)[number];
+
+/** A qué donaciones llega cada aviso: el de reembolso, también a las que ya se están devolviendo (el dinero aún no ha llegado). */
+const RECIPIENT_STATUSES: Record<SupporterTemplate, Array<'COMPLETED' | 'REFUND_PENDING' | 'REFUNDED'>> = {
+  'initiative.goalReachedSupporter': ['COMPLETED'],
+  'initiative.achievementPhotos': ['COMPLETED'],
+  'initiative.resizePoll': ['COMPLETED'],
+  'initiative.resizeResult': ['COMPLETED'],
+  'initiative.refundingSupporter': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED']
+};
+
+const isSupporterTemplate = (key: string): key is SupporterTemplate => (SUPPORTER_TEMPLATES as readonly string[]).includes(key);
 
 /** Deja el aviso pendiente (en la transacción de quien llama). Repetirlo no hace nada: hay uno por iniciativa y plantilla. */
 export async function queueSupporterBroadcast(tx: Db, initiativeId: number, templateKey: SupporterTemplate, now: Date): Promise<void> {
@@ -30,21 +48,46 @@ export async function queuePhotosBroadcastIfReady(tx: Db, initiativeId: number, 
   return true;
 }
 
-/** Email canónico (sin alias `+` ni puntos de Gmail) de una fila antigua que no lo guardó; uno que no se puede normalizar no recibe aviso. */
-function canonicalOf(address: string | null): string | null {
-  if (!address) return null;
-  try {
-    return normalizeCanonicalEmail(address);
-  } catch {
-    return null;
-  }
-}
-
 interface BroadcastRun {
   now: Date;
   batchSize: number;
   deadline?: number;
   hmacSecret: string;
+}
+
+type PollForBroadcast = { id: number; status: string; closesAt: Date; optionsJson: unknown; winningOptionIndex: number | null; newGoalCents: number | null } | null;
+
+/**
+ * ¿Sigue teniendo sentido el aviso? `WAIT`: aún no (la campaña volvió a recaudar); `DROP`: ya no (se descarta). La votación solo se reparte mientras está
+ * abierta: un enlace que llega cerrado no sirve.
+ */
+function readiness(templateKey: SupporterTemplate, status: string, poll: PollForBroadcast, now: Date): 'SEND' | 'WAIT' | 'DROP' {
+  switch (templateKey) {
+    case 'initiative.goalReachedSupporter':
+      // «¡Lo hemos conseguido!» solo con la meta conseguida: si un contracargo la devolvió a recaudar, espera; si acabó sin lograrla, se descarta (M3 del 4.4a).
+      // Una campaña redimensionada tiene su propio aviso (el resultado de la votación).
+      if ((status === 'GOAL_REACHED' || status === 'CLOSED') && !poll) return 'SEND';
+      return poll || ['EXPIRED', 'RESIZE_VOTING', 'REFUNDING', 'REFUNDED', 'CANCELLED'].includes(status) ? 'DROP' : 'WAIT';
+    case 'initiative.achievementPhotos':
+      return 'SEND';
+    case 'initiative.resizePoll':
+      return status === 'RESIZE_VOTING' && poll?.status === 'OPEN' && poll.closesAt > now ? 'SEND' : 'DROP';
+    case 'initiative.resizeResult':
+      return (status === 'GOAL_REACHED' || status === 'CLOSED') && poll?.status === 'CLOSED_APPROVED' ? 'SEND' : 'DROP';
+    case 'initiative.refundingSupporter':
+      return status === 'REFUNDING' || status === 'REFUNDED' ? 'SEND' : 'DROP';
+  }
+}
+
+/** Lo que añade cada aviso a su mensaje: la votación lleva el enlace personal (firmado con la donación desde la que se vota); el resultado, lo que ganó. */
+function extraPayload(templateKey: SupporterTemplate, poll: PollForBroadcast, contributionId: number, secret: string): Prisma.InputJsonObject {
+  if (!poll) return {};
+  // El enlace es un secreto de la bandeja: vale hasta el cierre de la votación (sin `expiresAt`, la bandeja lo daría por caducado a la hora).
+  if (templateKey === 'initiative.resizePoll') return { pollId: poll.id, closesAt: poll.closesAt.toISOString(), expiresAt: poll.closesAt.toISOString(), voteToken: signResizeVoteToken(secret, poll.id, contributionId) };
+  if (templateKey === 'initiative.resizeResult' && poll.winningOptionIndex !== null && poll.newGoalCents !== null) {
+    return { option: parsePollOptions(poll.optionsJson)[poll.winningOptionIndex] ?? '', newGoalCents: poll.newGoalCents };
+  }
+  return {};
 }
 
 /** Trata un lote de una difusión pendiente: escribe sus mensajes en la bandeja y avanza el cursor en la misma transacción. */
@@ -53,33 +96,33 @@ async function advance(db: Db, broadcastId: number, run: BroadcastRun): Promise<
     // Bloquea la fila: dos ejecuciones a la vez no tratan el mismo lote (y aunque lo hicieran, la clave de la bandeja no lo duplicaría).
     const broadcast = await tx.supporterBroadcast.update({ where: { id: broadcastId }, data: { cursorId: { increment: 0 } }, select: { id: true, initiativeId: true, templateKey: true, cursorId: true, completedAt: true } });
     if (broadcast.completedAt) return { queued: 0, done: true };
-    const initiative = await tx.initiative.findUniqueOrThrow({ where: { id: broadcast.initiativeId }, select: { id: true, organizationId: true, walletEscrowId: true, status: true } });
-    // «¡Lo hemos conseguido!» solo con la meta conseguida: si un contracargo la devolvió a recaudar, espera; si la campaña acabó sin lograrla, se descarta
-    // (auditoría financiera del 4.4a, M3).
-    if (broadcast.templateKey === 'initiative.goalReachedSupporter' && initiative.status !== 'GOAL_REACHED' && initiative.status !== 'CLOSED') {
-      const lost = ['EXPIRED', 'RESIZE_VOTING', 'REFUNDING', 'REFUNDED', 'CANCELLED'].includes(initiative.status);
-      if (lost) await tx.supporterBroadcast.update({ where: { id: broadcast.id }, data: { completedAt: run.now } });
+    const initiative = await tx.initiative.findUniqueOrThrow({
+      where: { id: broadcast.initiativeId },
+      select: { id: true, organizationId: true, walletEscrowId: true, status: true, resizePoll: { select: { id: true, status: true, closesAt: true, optionsJson: true, winningOptionIndex: true, newGoalCents: true } } }
+    });
+    const templateKey = broadcast.templateKey;
+    const state = isSupporterTemplate(templateKey) ? readiness(templateKey, initiative.status, initiative.resizePoll, run.now) : 'DROP';
+    if (state !== 'SEND' || !isSupporterTemplate(templateKey)) {
+      if (state === 'DROP') await tx.supporterBroadcast.update({ where: { id: broadcast.id }, data: { completedAt: run.now } });
       return { queued: 0, done: true };
     }
     const rows = await tx.contribution.findMany({
-      where: { initiativeId: broadcast.initiativeId, type: 'DONATION', status: 'COMPLETED', id: { gt: broadcast.cursorId } },
+      where: { initiativeId: broadcast.initiativeId, type: 'DONATION', status: { in: RECIPIENT_STATUSES[templateKey] }, id: { gt: broadcast.cursorId } },
       orderBy: { id: 'asc' },
       take: run.batchSize,
-      select: { id: true, guestEmail: true, canonicalEmail: true, locale: true, user: { select: { email: true, canonicalEmail: true, gdprAnonymizedAt: true } } }
+      select: { id: true, locale: true, ...DONOR_RECIPIENT_SELECT }
     });
     const data = rows.flatMap((row) => {
-      const account = row.user && !row.user.gdprAnonymizedAt ? row.user : null;
-      const toAddress = row.guestEmail ?? account?.email ?? null;
-      const canonical = row.canonicalEmail ?? account?.canonicalEmail ?? canonicalOf(toAddress);
-      if (!toAddress || !canonical || canonical.startsWith('anonimizado:')) return [];
+      const recipient = donorRecipient(row);
+      if (!recipient) return [];
       return [
         {
-          idempotencyKey: `${broadcast.templateKey}:${initiative.id}:${dataHmac(run.hmacSecret, 'supporter-notice', canonical)}`,
-          templateKey: broadcast.templateKey,
+          idempotencyKey: `${templateKey}:${initiative.id}:${dataHmac(run.hmacSecret, 'supporter-notice', recipient.canonical)}`,
+          templateKey,
           locale: row.locale,
-          toAddress,
+          toAddress: recipient.toAddress,
           organizationId: initiative.organizationId,
-          payloadJson: { initiativeId: initiative.id, walletEscrowId: initiative.walletEscrowId }
+          payloadJson: { initiativeId: initiative.id, walletEscrowId: initiative.walletEscrowId, ...extraPayload(templateKey, initiative.resizePoll, row.id, run.hmacSecret) }
         }
       ];
     });
@@ -118,5 +161,21 @@ export async function runSupporterBroadcasts(db: Db, run: BroadcastRun): Promise
     const last = page[page.length - 1];
     if (!last || page.length < 50) return { processed, queued, hasMore: false };
     cursor = last.id;
+  }
+}
+
+/**
+ * Reparte ya, sin esperar a la tarea, la difusión de una iniciativa y plantilla (Sprint 4.4b: la votación dura 7 días y en el plan gratuito la tarea corre
+ * una vez al día). Hasta el límite de tiempo; lo que falte sigue en la tarea desde su cursor, sin repetir a nadie.
+ */
+export async function advanceSupporterBroadcastNow(db: Db, initiativeId: number, templateKey: SupporterTemplate, run: BroadcastRun): Promise<number> {
+  const broadcast = await db.supporterBroadcast.findUnique({ where: { initiativeId_templateKey: { initiativeId, templateKey } }, select: { id: true, completedAt: true } });
+  if (!broadcast || broadcast.completedAt) return 0;
+  let queued = 0;
+  for (;;) {
+    if (run.deadline !== undefined && Date.now() > run.deadline) return queued;
+    const step = await advance(db, broadcast.id, run);
+    queued += step.queued;
+    if (step.done) return queued;
   }
 }

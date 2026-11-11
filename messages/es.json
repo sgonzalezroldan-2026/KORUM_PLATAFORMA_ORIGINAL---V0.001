@@ -735,6 +735,62 @@
         "thanks": "Gracias por ayudar a que fuera posible.",
         "cta": "Ver cómo ha quedado"
       }
+    },
+    "resize": {
+      "decided": {
+        "refundSubject": "Se devuelve el 100 % de «{initiative}»",
+        "refundPreheader": "Una persona firmante ha decidido devolver lo recaudado.",
+        "refundTitle": "Decidido: se devuelve el 100 %",
+        "refundBody": "Se ha decidido devolver el 100 % de lo recaudado en «{initiative}». Cada aportación vuelve a su medio de pago original, por lotes; podéis seguir el progreso en el panel.",
+        "voteSubject": "Votación abierta: «{initiative}»",
+        "votePreheader": "Quienes donaron deciden qué se hace con lo recaudado.",
+        "voteTitle": "Decidido: preguntamos a quienes donaron",
+        "voteBody": "Se ha lanzado la votación de «{initiative}». Quienes donaron votan hasta el {date}; quien pida su devolución la tiene en marcha en cuanto vota, y a quien no vote se le devolverá al cerrarse.",
+        "cta": "Ver las campañas vencidas"
+      },
+      "closed": {
+        "wonSubject": "«{initiative}» sigue adelante redimensionada",
+        "wonPreheader": "La votación ha elegido un proyecto. Toca liquidar.",
+        "wonTitle": "La votación ha elegido un proyecto",
+        "wonBody": "En «{initiative}» ha ganado «{option}». La meta nueva es {amount}: lo que aportaron quienes votaron una opción de proyecto (a quien no votó o pidió su devolución se le ha devuelto).",
+        "wonNext": "La comisión de KORUM baja en la misma proporción. Para liquidar hacen falta, como siempre, la factura y las dos firmas.",
+        "newGoal": "Meta nueva",
+        "settleCta": "Ir a Liquidaciones",
+        "refundSubject": "La votación de «{initiative}» termina sin proyecto",
+        "refundPreheader": "Se devuelve el 100 % a todas las personas.",
+        "refundTitle": "Se devuelve el 100 %",
+        "reasonNO_VOTES": "La votación de «{initiative}» ha terminado sin votos a ninguna opción de proyecto.",
+        "reasonTIE": "La votación de «{initiative}» ha terminado en empate.",
+        "reasonNOTHING_LEFT": "Tras las devoluciones pedidas, en «{initiative}» no queda nada con lo que hacer el proyecto.",
+        "refundNext": "Como estaba previsto, se devuelve el 100 % a todas las personas que aportaron, a su medio de pago original."
+      },
+      "poll": {
+        "subject": "Tú decides: ¿qué hacemos con «{initiative}»?",
+        "preheader": "Vota hasta el {date}. También puedes pedir que te devolvamos tu aportación.",
+        "title": "Tu voto decide",
+        "body": "«{initiative}» de {organization} no llegó a su meta. Antes de devolver el dinero, {organization} quiere saber si prefieres que se haga una versión más pequeña del proyecto con lo recaudado.",
+        "rules": "Un voto por persona, hasta el {date}. Gana la opción más votada y se hace con lo que aporten quienes votan un proyecto. Si no votas, te devolvemos el 100 %. Este enlace es solo tuyo: no lo reenvíes.",
+        "refund": "Si prefieres recuperar tu aportación, elige «Prefiero que me devolváis mi aportación»: te la devolvemos entera, pase lo que pase.",
+        "until": "Puedes votar hasta",
+        "cta": "Votar ahora"
+      },
+      "result": {
+        "subject": "«{initiative}» sale adelante",
+        "preheader": "Gracias a las familias de {organization} que han votado.",
+        "title": "¡Sale adelante!",
+        "body": "La votación de «{initiative}» ha elegido: «{option}». Se hará con lo que aportasteis quienes votasteis, incluida tu aportación.",
+        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas de {organization} firmen su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
+        "cta": "Ver los logros"
+      },
+      "refunding": {
+        "subject": "Te devolvemos tu aportación a «{initiative}»",
+        "preheader": "Vuelve entera a tu medio de pago original.",
+        "title": "Te devolvemos el 100 %",
+        "body": "«{initiative}» de {organization} no llegó a su meta, así que te devolvemos todo lo que aportaste, también la aportación voluntaria a KORUM si la hiciste.",
+        "how": "Vuelve a tu medio de pago original (tarjeta o Bizum) sin que tengas que hacer nada. Te avisaremos cuando esté hecho; puede tardar unos días en aparecer en tu tarjeta o en Bizum.",
+        "thanks": "Gracias por apoyar a {organization}.",
+        "cta": "Ver otras iniciativas"
+      }
     }
   },
   "nav": {
@@ -1655,7 +1711,8 @@
       "settings": "Ajustes",
       "fund": "Fondo de actividades",
       "studio": "Estudio",
-      "payouts": "Liquidaciones"
+      "payouts": "Liquidaciones",
+      "expired": "Campañas vencidas"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1728,7 +1785,10 @@
         "viewPublic": "Ver la ficha pública de «{title}»",
         "editInStudio": "Editar en Estudio: {title}",
         "poster": "Cartel A4 con QR: {title}",
-        "settle": "Liquidar «{title}»"
+        "settle": "Liquidar «{title}»",
+        "decideExpired": "Decidir qué hacer con «{title}»",
+        "followVote": "Ver la votación de «{title}»",
+        "followRefund": "Ver la devolución de «{title}»"
       },
       "steps": {
         "moderation": "1. Moderación",
@@ -3115,6 +3175,94 @@
         "underReview": "Una parte del envío está en revisión: el equipo de KORUM lo resuelve con PAYCOMET. No tenéis que hacer nada.",
         "photosCta": "Subir las fotos del Antes y el Después"
       }
+    },
+    "expired": {
+      "metaTitle": "Campañas vencidas",
+      "title": "Campañas que vencieron sin llegar a la meta",
+      "intro": "Cuando una campaña termina sin llegar a su meta, el dinero sigue retenido en PAYCOMET. Decidís vosotros: preguntar a quienes donaron si se hace una versión más pequeña del proyecto con lo recaudado, o devolver el 100 % a cada persona.",
+      "empty": {
+        "title": "Ninguna campaña ha vencido sin llegar",
+        "text": "Si alguna termina sin alcanzar su meta, aparecerá aquí para que decidáis qué hacer.",
+        "cta": "Volver al cuadro de mandos"
+      },
+      "historyTitle": "Ya resueltas",
+      "status": {
+        "EXPIRED": "Vencida · falta vuestra decisión",
+        "RESIZE_VOTING": "Votación abierta",
+        "REFUNDING": "Devolviendo",
+        "REFUNDED": "Devuelta al 100 %",
+        "GOAL_REACHED": "Redimensionada · por liquidar",
+        "CLOSED": "Redimensionada y liquidada"
+      },
+      "closedOn": "Venció el {date}",
+      "raised": "Recaudado {raised} de {goal} ({percent} %)",
+      "decideIntro": "Decide una persona firmante y la otra recibe un aviso. Ninguna de las dos opciones envía dinero a la entidad: para eso seguirá haciendo falta la doble firma de la liquidación.",
+      "readOnly": "Solo las personas que firman en la entidad pueden decidir qué hacer con esta campaña.",
+      "poll": {
+        "open": "Votación abierta hasta el {date}",
+        "turnout": "{votes, plural, =0 {Aún no ha votado nadie} one {Ha votado 1 persona} other {Han votado # personas}} · {refunds, plural, =0 {nadie ha pedido su devolución} one {1 ha pedido su devolución} other {# han pedido su devolución}}",
+        "hidden": "El recuento de cada opción se verá al cerrarse la votación. Quien pide su devolución la tiene en marcha en cuanto vota (puede tardar unos días en verse en su tarjeta o en Bizum) y su aportación deja de contar.",
+        "won": "La votación eligió: «{option}»",
+        "noWinner": "La votación terminó sin una opción ganadora (sin votos o con empate): se devuelve el 100 % a todas las personas.",
+        "count": "{option}: {votes, plural, one {1 voto} other {# votos}}",
+        "refundCount": "Pidieron su devolución: {votes}",
+        "newGoal": "Meta nueva (lo que aportaron quienes votaron un proyecto):",
+        "settle": "Liquidar la campaña",
+        "refundingNonVoters": "Estamos devolviendo su aportación a quien no votó una opción de proyecto. En cuanto termine, la campaña pasará a Liquidaciones con la meta nueva."
+      },
+      "refund": {
+        "progress": "Devueltas {done} de {total} aportaciones ({amount} de {totalAmount})",
+        "done": "Devuelto el 100 %: {count, plural, one {1 aportación} other {# aportaciones}} ({amount})",
+        "howItWorks": "Cada aportación vuelve a su medio de pago original (tarjeta o Bizum), por lotes. A los comercios amigos no se les devuelve: su patrocinio pasa a otra campaña según vuestra regla, o a su bolsa. Al terminar, los cupos de la campaña vuelven a la entidad.",
+        "quotasBack": "Los cupos que usaba la campaña (exento, beca de medalla y mantenimiento) han vuelto a la entidad.",
+        "closed": "La campaña está cerrada. Sus cupos eran de un curso ya terminado, así que no se suman a los de este curso."
+      },
+      "decide": {
+        "voteTitle": "Preguntar a quienes donaron",
+        "voteRules": "Durante {days} días, cada persona que donó vota una sola vez entre vuestras opciones; proponed algo que se pueda hacer con lo recaudado. Gana la opción más votada y se hace con lo que aportaron quienes votaron una opción de proyecto. A quien no vote o elija «Prefiero que me devolváis mi aportación» se le devuelve el 100 %; sin votos o con empate, se devuelve todo. La comisión de KORUM baja en proporción a lo que quede. {donors, plural, one {Hay 1 donación que puede votar.} other {Hay # donaciones que pueden votar.}}",
+        "optionsLegend": "Opciones de proyecto (de {min} a {max})",
+        "optionLabel": "Opción {letter}",
+        "optionPlaceholderA": "Por ejemplo: comprar 14 tablets con lo recaudado",
+        "optionPlaceholderB": "Por ejemplo: 10 tablets y un armario cargador",
+        "optionLength": "Escribid entre {min} y {max} caracteres.",
+        "removeOption": "Quitar la opción {letter}",
+        "addOption": "Añadir otra opción",
+        "refundOptionAlways": "Además, la papeleta incluye siempre «Prefiero que me devolváis mi aportación».",
+        "launchVote": "Lanzar la votación",
+        "voteBlockedLabel": "Por qué no se puede votar",
+        "voteBlocked": {
+          "NOT_BUDGET": "Un evento o una rifa no tienen una versión más pequeña: solo se puede devolver el dinero.",
+          "NO_DONATIONS": "No hay donaciones de familias que puedan votar: solo se puede devolver.",
+          "WINDOW_TOO_SHORT": "Queda poco de los 90 días en que PAYCOMET puede enviar el dinero: no da tiempo a votar y a liquidar. Solo se puede devolver.",
+          "POLL_EXISTS": "Esta campaña ya tuvo su votación."
+        },
+        "refundTitle": "Devolver el 100 % a todas las personas",
+        "refundText": "Cada persona recupera todo lo que pagó, en su medio de pago original y sin tener que pedirlo. Los patrocinios de comercios pasan a otra campaña o a su bolsa, y los cupos vuelven a la entidad.",
+        "refundButton": "Devolver el 100 %",
+        "confirmVoteTitle": "¿Lanzar la votación de «{title}»?",
+        "confirmVoteText": "Enviaremos la papeleta a quienes donaron. Durará {days} días y las opciones no se podrán cambiar. Quien pida su devolución la tendrá en marcha en cuanto vote, y a quien no vote se le devolverá al cerrarse.",
+        "confirmRefundTitle": "¿Devolver el 100 % de «{title}»?",
+        "confirmRefundText": "Empezaremos a devolver cada aportación a su medio de pago original. Los patrocinios de comercios pasarán a otra campaña o a su bolsa. No se puede deshacer.",
+        "confirmVote": "Sí, lanzar la votación",
+        "confirmRefund": "Sí, devolver el 100 %",
+        "cancel": "No, volver",
+        "sending": "Enviando…",
+        "voteLaunched": "Votación lanzada. Quienes donaron reciben su papeleta por email; se cierra el {date}.",
+        "refundStarted": "Devolución en marcha. Quienes aportaron reciben un aviso y el dinero vuelve a su medio de pago en los próximos días."
+      },
+      "errors": {
+        "INVALID_INPUT": "Revisad las opciones.",
+        "NOT_FOUND": "No encontramos esa campaña en vuestra entidad.",
+        "WRONG_STATUS": "Esta campaña ya no espera una decisión: alguien la ha tomado mientras tanto.",
+        "NOT_BUDGET": "Un evento o una rifa no tienen una versión más pequeña: solo se puede devolver el dinero.",
+        "NO_DONATIONS": "No hay donaciones de familias que puedan votar: solo se puede devolver.",
+        "WINDOW_TOO_SHORT": "Queda poco de los 90 días en que PAYCOMET puede enviar el dinero: solo se puede devolver.",
+        "POLL_EXISTS": "Esta campaña ya tuvo su votación.",
+        "DUPLICATE_OPTIONS": "Hay dos opciones iguales. Cambiad una de ellas.",
+        "RATE_LIMITED": "Habéis hecho muchas peticiones seguidas. Esperad unos minutos.",
+        "FORBIDDEN": "No tenéis permiso para hacer esto.",
+        "failed": "No hemos podido completar la operación. Probad de nuevo en unos segundos."
+      }
     }
   },
   "gate": {
@@ -4035,6 +4183,58 @@
         "directory": "Ver los comercios amigos",
         "duplicateTitle": "Ya habías renovado",
         "duplicate": "Este segundo pago no hacía falta: te lo devolvemos entero a tu medio de pago y te avisaremos por email cuando esté hecho."
+      }
+    },
+    "resizeVote": {
+      "metaTitle": "Tu voto",
+      "title": "¿Qué hacemos con «{initiative}»?",
+      "intro": "{organization} recaudó {raised} de los {goal} que necesitaba ({percent} %). No llegó a la meta, así que quienes donaron deciden qué se hace con el dinero.",
+      "rules": {
+        "oneVote": "Un voto por persona, aunque donaras más de una vez. No se puede cambiar.",
+        "refund": "Si prefieres que te devolvamos tu aportación, te la devolvemos entera, pase lo que pase.",
+        "result": "Gana la opción más votada y se hace con lo que aporten quienes votan una opción de proyecto. Si no votas, te devolvemos el 100 %; sin votos o con empate, se devuelve a todas las personas.",
+        "until": "Puedes votar hasta el {date}."
+      },
+      "legend": "Elige una opción",
+      "refundOption": "Prefiero que me devolváis mi aportación",
+      "refundAmount": "Te devolvemos el 100 % de lo que aportaste a tu medio de pago original (tarjeta o Bizum).",
+      "submit": "Votar",
+      "confirmTitle": "Tu voto: «{choice}»",
+      "confirmRefund": "{amount} Tu aportación dejará de contar para la campaña. No se puede deshacer.",
+      "confirmOption": "Tu aportación se quedará en el proyecto que gane la votación. Hay un solo voto por persona y no se puede cambiar.",
+      "confirm": "Confirmar mi voto",
+      "back": "Cambiar de opción",
+      "sending": "Enviando tu voto…",
+      "legal": "El dinero sigue retenido en PAYCOMET, en la hucha de la iniciativa {wallet}, hasta que se decida.",
+      "backToPortal": "Ir a la página de la entidad",
+      "invalid": {
+        "title": "Este enlace de votación no es válido",
+        "description": "Usa el enlace del email que te enviamos. Si lo copiaste, comprueba que esté completo."
+      },
+      "voted": {
+        "title": "Tu voto está registrado",
+        "option": "Votaste «{option}».",
+        "refund": "Pediste que te devolviéramos tu aportación: te la devolvemos entera a tu medio de pago original en los próximos días.",
+        "until": "La votación se cierra el {date}; te escribiremos con el resultado.",
+        "refundNotice": "Te avisaremos cuando la devolución esté hecha."
+      },
+      "closed": {
+        "title": "La votación ya está cerrada",
+        "won": "Ganó «{option}»: el proyecto se hace con lo que aportaron quienes votaron, y a quien no votó se le devuelve su aportación.",
+        "refund": "Terminó sin una opción ganadora: se devuelve el 100 % a todas las personas."
+      },
+      "noDonation": {
+        "title": "No encontramos tu donación",
+        "description": "Tu donación ya no está en esta campaña (por ejemplo, porque ya se te devolvió). Si crees que es un error, escribe a la entidad desde su página de ayuda."
+      },
+      "errors": {
+        "INVALID_LINK": "Este enlace de votación no es válido.",
+        "CLOSED": "La votación ya está cerrada.",
+        "NOT_A_DONOR": "No encontramos una donación tuya en esta campaña.",
+        "ALREADY_VOTED": "Ya habías votado: hay un solo voto por persona.",
+        "INVALID_CHOICE": "Elige una opción antes de votar.",
+        "RATE_LIMITED": "Hay muchos votos desde tu red ahora mismo. Prueba de nuevo en unos minutos.",
+        "FAILED": "No hemos podido registrar tu voto. Prueba de nuevo en unos segundos."
       }
     }
   },

@@ -20,6 +20,7 @@ import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAw
 import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { signerHandover } from './definitions-team';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
+import { initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
 
 /**
  * Catálogo de plantillas (`templateKey` → definición). Las claves son las de EXPERIENCIA_DE_PRODUCTO §4. Una clave que no está aquí no
@@ -96,7 +97,12 @@ const ENTRIES = [
   register('payout.executed', payoutExecuted),
   register('payout.changed', payoutChanged),
   register('initiative.goalReachedSupporter', initiativeGoalReachedSupporter),
-  register('initiative.achievementPhotos', initiativeAchievementPhotos)
+  register('initiative.achievementPhotos', initiativeAchievementPhotos),
+  register('initiative.expiredDecided', initiativeExpiredDecided),
+  register('initiative.resizeClosed', initiativeResizeClosed),
+  register('initiative.resizePoll', initiativeResizePoll),
+  register('initiative.resizeResult', initiativeResizeResult),
+  register('initiative.refundingSupporter', initiativeRefundingSupporter)
 ];
 
 export const TEMPLATE_CATALOG: ReadonlyMap<string, RegisteredTemplate> = new Map(ENTRIES);

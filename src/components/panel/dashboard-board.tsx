@@ -257,6 +257,12 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                       {t('card.settle', { title: item.title })}
                     </Link>
                   ) : null}
+                  {item.status === 'EXPIRED' || item.status === 'RESIZE_VOTING' || item.status === 'REFUNDING' ? (
+                    <Link href={`/panel/${orgSlug}/vencidas`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4" data-testid={`expired-${item.id}`}>
+                      <span aria-hidden="true">{item.status === 'EXPIRED' ? '⏳ ' : item.status === 'RESIZE_VOTING' ? '🗳️ ' : '↩️ '}</span>
+                      {t(item.status === 'EXPIRED' ? 'card.decideExpired' : item.status === 'RESIZE_VOTING' ? 'card.followVote' : 'card.followRefund', { title: item.title })}
+                    </Link>
+                  ) : null}
                   {hasPublicPage(item.status) ? (
                     <Link href={`/${orgSlug}/iniciativas/${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">
                       {t('card.viewPublic', { title: item.title })}

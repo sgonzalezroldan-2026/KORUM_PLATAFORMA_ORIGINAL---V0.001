@@ -47,6 +47,17 @@ export async function anonymizeOldIdeaSignatures(db: Db, now: Date, limit: numbe
   return rows.length + ideas.length;
 }
 
+/** Votos de redimensionamiento de votaciones cerradas hace más de un año: el voto se queda, sin la persona detrás (CUMPLIMIENTO §6). */
+export async function anonymizeOldResizeVotes(db: Db, now: Date, limit: number): Promise<number> {
+  const rows = await db.resizeVote.findMany({
+    where: { poll: { closedAt: { lt: daysBefore(now, RETENTION.resizeVoteDaysAfterClose) } }, NOT: { canonicalEmail: { startsWith: ANONYMIZED_PREFIX } } },
+    take: limit,
+    select: { id: true }
+  });
+  for (const row of rows) await db.resizeVote.update({ where: { id: row.id }, data: { canonicalEmail: anonymizedMarker('voto', row.id), contributionId: null } });
+  return rows.length;
+}
+
 /** Mensajes de la familia en el chat de ideas cerradas hace más de un año: texto libre que ya no hace falta. Las respuestas del centro se conservan. */
 export async function purgeOldIdeaChats(db: Db, now: Date, limit: number): Promise<number> {
   const rows = await db.ideaMessage.findMany({ where: { senderRole: 'FAMILY', idea: { expiresAt: { lt: daysBefore(now, RETENTION.ideaChatDaysAfterIdea) } } }, take: limit, select: { id: true } });

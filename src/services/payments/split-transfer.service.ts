@@ -92,7 +92,7 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
   return inTransaction(db, async (tx) => {
     const { initiativeId } = await tx.escrowPayout.findUniqueOrThrow({ where: { id: payoutId }, select: { initiativeId: true } });
     // Se bloquea la iniciativa antes de leer nada: un contracargo simultáneo espera, y después ya la verá liquidada.
-    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now }, include: { _count: { select: { raffleDraws: true } } } });
+    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now }, include: { _count: { select: { raffleDraws: true } }, resizePoll: { select: { status: true } } } });
     const payout = await tx.escrowPayout.findUniqueOrThrow({
       where: { id: payoutId },
       include: {
@@ -123,7 +123,9 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     // Una rifa sorteada y un evento cuya fecha ya pasó se liquidan aunque un contracargo los baje de la meta: ya no pueden vender más.
     // Y una rifa sin sorteo completo no se liquida (comprobación siguiente).
     const eventHeld = initiative.format === 'TICKETING' && initiative.closesAt <= now;
-    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn || eventHeld)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta', 'NOT_GOAL');
+    // Una campaña redimensionada por votación (Sprint 4.4b) tampoco vuelve a recaudar: un contracargo posterior solo baja lo que se liquida.
+    const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
+    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn || eventHeld || resized)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta', 'NOT_GOAL');
     if (initiative.ticketSubtype === 'RAFFLE' && (!drawn || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiativeId, initiative.rafflePrizeCount)))) {
       throw new PayoutNotAllowedError(payoutId, 'la rifa aún no se ha sorteado por completo', 'RAFFLE_NOT_DRAWN');
     }

@@ -293,7 +293,7 @@ describe('QA-REG03 · derecho de supresión', () => {
     const organization = await createOrganization(db, { ley49: true, ley49VerifiedAt: new Date() });
     const initiative = await createInitiative(db, organization.id);
     const plainOrganization = await createOrganization(db);
-    const plainInitiative = await createInitiative(db, plainOrganization.id);
+    const plainInitiative = await createInitiative(db, plainOrganization.id, { status: 'EXPIRED' });
     // Sin Ley 49/2002 verificada no hay Modelo 182: su NIF no se conserva.
     const notDeclarable = await contribution(plainOrganization.id, plainInitiative.id, { userId: person.id, donorFullName: 'Jordi Vila', ...sealDonorTaxId('12345678Z', { keyring: TEST_KEYRING, hmacSecret: TEST_HMAC_SECRET }) });
     const fiscal = await contribution(organization.id, initiative.id, { userId: person.id, canonicalEmail: person.canonicalEmail, donorFullName: 'Jordi Vila', donorProvinceCode: '08', ...sealDonorTaxId('12345678Z', { keyring: TEST_KEYRING, hmacSecret: TEST_HMAC_SECRET }) });
@@ -309,8 +309,8 @@ describe('QA-REG03 · derecho de supresión', () => {
     await db.deviceAccount.create({ data: { deviceId: device.id, userId: sibling.id, canonicalEmail: sibling.canonicalEmail, accountOrder: 2 } });
     const idea = await db.idea.create({ data: { organizationId: organization.id, alias: 'FAM-1', authorCanonicalEmail: person.canonicalEmail, title: 'Fuente', category: 'Patio', description: 'x', expiresAt: new Date(Date.now() + 30 * DAY) } });
     const otherIdea = await db.idea.create({ data: { organizationId: organization.id, alias: 'FAM-2', authorCanonicalEmail: sibling.canonicalEmail, title: 'Toldo', category: 'Patio', description: 'x', phase: 'PUBLIC_VOTING', expiresAt: new Date(Date.now() + 30 * DAY) } });
-    const poll = await db.resizePoll.create({ data: { initiativeId: plainInitiative.id, optionsJson: [], closesAt: new Date(Date.now() + DAY) } });
-    const vote = await db.resizeVote.create({ data: { pollId: poll.id, canonicalEmail: person.canonicalEmail, optionIndex: 0 } });
+    const poll = await db.resizePoll.create({ data: { initiativeId: plainInitiative.id, optionsJson: [], closesAt: new Date(Date.now() + DAY), originalGoalCents: 10_000, raisedAtLaunchCents: 2_500 } });
+    const vote = await db.resizeVote.create({ data: { pollId: poll.id, canonicalEmail: person.canonicalEmail, contributionId: notDeclarable.id, optionIndex: 0 } });
     await db.ideaSignatureAudit.create({ data: { ideaId: otherIdea.id, userId: person.id, canonicalEmail: person.canonicalEmail, deviceId: device.id, ipSubnetHash: 'red', reason: 'ideas.audit.firstAccount' } });
     await db.outboxMessage.create({ data: { idempotencyKey: uniqueId('msg'), templateKey: 'ticket.pass', toAddress: person.email, userId: person.id, payloadJson: { name: 'Jordi' } } });
     await db.session.create({ data: { id: uniqueId('ses'), token: uniqueId('tok'), userId: person.id, expiresAt: new Date(Date.now() + DAY) } });

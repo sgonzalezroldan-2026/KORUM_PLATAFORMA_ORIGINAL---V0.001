@@ -1,6 +1,7 @@
 import { alertOverduePrivacyRequests, eraseUnresponsiveAccounts, noticeInactiveAccounts, purgeExpiredFiles, retryCardDeletions } from '@/core/privacy/retention-accounts';
 import {
   anonymizeOldIdeaSignatures,
+  anonymizeOldResizeVotes,
   purgeExpiredDonorData,
   purgeExpiredSessions,
   purgeExpiredWebhooks,
@@ -47,6 +48,7 @@ export const dataRetentionPurgeHandler: JobHandler = async ({ db, now, batchSize
   await step('donorData', () => purgeExpiredDonorData(db, now, batchSize));
   await step('ideaSignatures', () => anonymizeOldIdeaSignatures(db, now, batchSize));
   await step('ideaChats', () => purgeOldIdeaChats(db, now, batchSize));
+  await step('resizeVotes', () => anonymizeOldResizeVotes(db, now, batchSize));
   await step('supportTickets', () => purgeResolvedSupportTickets(db, now, batchSize));
   await step('devices', () => purgeStaleDevices(db, now, batchSize));
   await step('networkHashes', () => purgeNetworkHashes(db, now, batchSize));

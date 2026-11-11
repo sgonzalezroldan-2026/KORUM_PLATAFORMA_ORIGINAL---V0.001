@@ -4,7 +4,7 @@
 
 ## 1. Céntimos enteros y cuadre exacto de la meta (4 líneas públicas = meta)
 
-Todo cálculo se hace en **céntimos enteros**. La meta pública se redondea al euro superior (`Math.ceil` a múltiplo de `100`) y los `0–99` céntimos de redondeo (`roundingBufferCents`) se suman a `gatewayFeeCents`, de modo que **nunca hay descuadre** ni en la pizarra interna ni en la ficha pública.
+Todo cálculo se hace en **céntimos enteros**. La meta pública se redondea al euro superior (`Math.ceil` a múltiplo de `100`) y los `0–99` céntimos de redondeo (`roundingBufferCents`) se suman a `gatewayFeeCents`, de modo que **nunca hay descuadre** ni en la pizarra interna ni en la ficha pública. **Excepción (Sprint 4.4b):** la meta de una campaña redimensionada por votación es lo recaudado que queda (decisión del promotor del 2026-11-11), sin redondear al euro; sus 4 líneas siguen sumándola al céntimo y sus comisiones bajan en proporción, hacia abajo ([DECISIONES_TECNICAS.md](../../docs/DECISIONES_TECNICAS.md) §2.17).
 
 Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramos internos**, pero sus 4 líneas suman exactamente `goalCents`:
 

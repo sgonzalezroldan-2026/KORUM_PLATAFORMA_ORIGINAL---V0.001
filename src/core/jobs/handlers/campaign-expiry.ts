@@ -1,5 +1,6 @@
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { inTransaction, type Db } from '@/lib/db';
+import { closeDueResizePolls } from '@/services/resize/resize-close';
 import type { JobHandler } from '../job-types';
 import { notifySigners } from '../notify';
 
@@ -7,11 +8,17 @@ import { notifySigners } from '../notify';
  * `CAMPAIGN_EXPIRY` (PRD §4.1): una iniciativa `FUNDRAISING` cuya fecha límite ha pasado sin llegar a la meta pasa a `EXPIRED`, una
  * sola vez, y se avisa a quienes firman. Desde ahí decide la entidad (votación de redimensionamiento o reembolso): el cron no
  * reembolsa por su cuenta. Un evento ya celebrado que logró su meta está en `GOAL_REACHED` y nunca entra aquí.
+ *
+ * Desde el Sprint 4.4b cierra además las votaciones de redimensionamiento cuyos 7 días han pasado (`closeDueResizePolls`): corre antes que `MASS_REFUND`,
+ * así que una votación sin proyecto empieza a devolverse el mismo día.
  */
 export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, deadline }) => {
   let expired = 0;
   let examined = 0;
   let cursor = 0;
+  const polls = await closeDueResizePolls(db, now, batchSize, deadline);
+  const pollDetail = { pollsClosed: polls.closed, resized: polls.resized, pollsRefunding: polls.refunding, pollsFailed: polls.failed };
+  // Una votación que no terminó sus devoluciones (o más votaciones de las que caben) no retrasa el vencimiento de las campañas del día (reauditoría, L2).
   // Recorre las candidatas por identificador: las que no pueden caducar (p. ej. una rifa ya sorteada) no se quedan al principio de la cola y no dejan sin atender a las demás.
   for (;;) {
     const page = await db.initiative.findMany({ where: { status: 'FUNDRAISING', closesAt: { lte: now }, id: { gt: cursor } }, orderBy: { id: 'asc' }, take: batchSize, select: { id: true } });
@@ -20,8 +27,12 @@ export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, de
     }
     examined += page.length;
     const last = page[page.length - 1];
-    if (!last || page.length < batchSize) return { processed: examined, hasMore: false, detail: { expired } };
-    if (deadline !== undefined && Date.now() > deadline) return { processed: examined, hasMore: true, detail: { expired } };
+    if (!last || page.length < batchSize) {
+      // Las campañas ya han vencido: ahora sí, la tarea falla por la votación que no se pudo cerrar (reintento con espera y alerta JOB_FAILED).
+      if (polls.failure !== null) throw polls.failure;
+      return { processed: examined + polls.closed, hasMore: polls.hasMore, detail: { expired, ...pollDetail } };
+    }
+    if (deadline !== undefined && Date.now() > deadline) return { processed: examined + polls.closed, hasMore: true, detail: { expired, ...pollDetail } };
     cursor = last.id;
   }
 };

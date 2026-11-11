@@ -17,6 +17,7 @@ export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; p
     { key: 'studio', href: `${base}/estudio`, active: pathname.startsWith(`${base}/estudio`) },
     { key: 'approvals', href: `${base}/aprobaciones`, active: pathname.startsWith(`${base}/aprobaciones`) },
     { key: 'payouts', href: `${base}/liquidaciones`, active: pathname.startsWith(`${base}/liquidaciones`) },
+    { key: 'expired', href: `${base}/vencidas`, active: pathname.startsWith(`${base}/vencidas`) },
     { key: 'achievements', href: `${base}/logros`, active: pathname.startsWith(`${base}/logros`) },
     { key: 'fund', href: `${base}/fondo`, active: pathname.startsWith(`${base}/fondo`) },
     { key: 'settings', href: `${base}/ajustes`, active: pathname.startsWith(`${base}/ajustes`) }

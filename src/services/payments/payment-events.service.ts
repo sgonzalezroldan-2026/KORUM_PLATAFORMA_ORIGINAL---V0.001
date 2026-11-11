@@ -158,7 +158,9 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   // Después ya no cabe en ninguna liquidación: el dinero entró, así que se devuelve entero. Un pago **iniciado** después de la fecha límite
   // tampoco cuenta aunque la tarea de vencimiento aún no haya pasado (corre una vez al día): el checkout ya lo rechaza, y esto cubre la carrera.
   const startedAfterDeadline = initiative.status === 'FUNDRAISING' && contribution.createdAt >= contribution.initiative.closesAt;
-  const accepting = !startedAfterDeadline && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
+  // Una campaña redimensionada por votación ya está decidida: un cobro que llega después no la engorda (no votó el proyecto), se devuelve (4.4b, H2).
+  const resized = contribution.initiative.resizePoll?.status === 'CLOSED_APPROVED';
+  const accepting = !startedAfterDeadline && !resized && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
   if (!accepting) {
     if (contribution.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
     await approveRefundInTx(tx, contribution.id, { lateCharge: true });
