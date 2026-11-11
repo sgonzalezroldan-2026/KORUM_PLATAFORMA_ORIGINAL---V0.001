@@ -110,9 +110,9 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     expect(result.sourcesCents).toEqual({ bracketFeeCents: 14_440, supportGuaranteeCents: 8_356, sponsorFeeCents: 12_750, digitalTicketFeeCents: 0, maintFeeCents: 0, huchaTopupFeeCents: 0 });
     expect(result.netRevenueCents).toBe(35_546);
     expect(result.missingTo100Cents).toBe(15_000);
-    // Solo lo cobrado: sin los 2,56 € proyectados.
-    expect(result.collectedNetRevenueCents).toBe(35_290);
-    expect(result.netProfitAfterBoostCents).toBe(20_290);
+    // Solo lo cobrado: sin los 2,56 € proyectados y sin los 127,50 € de fee de patrocinio, que KORUM conserva aporte o no.
+    expect(result.collectedNetRevenueCents).toBe(22_540);
+    expect(result.netProfitAfterBoostCents).toBe(7_540);
     expect(result.isProfitableSelfBoost).toBe(true);
     expect(result.isNegativeReturnAlert).toBe(false);
   });
@@ -131,7 +131,7 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     expect(alerts.filter((row) => row.isNegativeReturnAlert).map((row) => row.id)).toEqual([8]);
     expect(alerts.filter((row) => row.isProfitableSelfBoost).map((row) => row.id)).toEqual([1, 2, 5, 7]);
     expect(alerts.find((row) => row.id === 2)).toMatchObject({ netRevenueCents: 8_000, netProfitAfterBoostCents: 5_840 });
-    expect(alerts.find((row) => row.id === 5)).toMatchObject({ netRevenueCents: 61_907, netProfitAfterBoostCents: 16_513 });
+    expect(alerts.find((row) => row.id === 5)).toMatchObject({ netRevenueCents: 61_907, netProfitAfterBoostCents: 9_013 });
     expect(alerts.find((row) => row.id === 7)).toMatchObject({ netRevenueCents: 46_104, netProfitAfterBoostCents: 23_700 });
   });
 
@@ -148,6 +148,14 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     // Con esos mismos 17 € ya cobrados, sí compensa.
     const realized = analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, bracketFeeCents: 3_500, realizedGuaranteeContributionsCents: 1_700 });
     expect(realized).toMatchObject({ netProfitAfterBoostCents: 200, isProfitableSelfBoost: true });
+  });
+
+  it('💎 no cuenta el fee de patrocinio ya cobrado: KORUM lo conserva aporte o no (ejemplo del promotor)', () => {
+    // Faltan 100 €, 20 € de comisión por tramos y 100 € de fee de comercios: aportar da 20 − 100 = −80 €, no «+20 €».
+    const boost = { ...baseInput, status: 'FUNDRAISING', goalCents: 10_000, raisedCents: 0, netDigitalTicketMarginRealizedCents: 0, bracketFeeCents: 2_000, approvedSponsorsFeeCents: 10_000 } as const;
+    expect(analyzeInitiativeProfitabilityAndSelfBoost(boost)).toMatchObject({ netRevenueCents: 12_000, collectedNetRevenueCents: 2_000, netProfitAfterBoostCents: -8_000, isProfitableSelfBoost: false });
+    // Sin comercios, la misma campaña sí compensa si la comisión supera lo que falta.
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, approvedSponsorsFeeCents: 0, bracketFeeCents: 10_100 })).toMatchObject({ netProfitAfterBoostCents: 100, isProfitableSelfBoost: true });
   });
 
   it('💎 en taquilla cuenta el margen de las entradas vendidas, no el del aforo completo', () => {

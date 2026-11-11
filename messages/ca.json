@@ -3687,9 +3687,9 @@
     "title": "Resum de la plataforma",
     "organizations": "Entitats actives",
     "pendingKyb": "Entitats amb documents pendents",
-    "alertsTitle": "{count, plural, =0 {Sense alertes obertes} one {# alerta oberta} other {# alertes obertes}}",
+    "alertsTitle": "{count, plural, =0 {Alertes obertes} one {# alerta oberta} other {# alertes obertes}}",
     "noAlertsTitle": "Tot en ordre",
-    "noAlertsText": "No hi ha alertes obertes en aquest moment.",
+    "noAlertsText": "Cap alerta pendent.",
     "alertMeta": "{count, plural, one {# vegada} other {# vegades}} · última: {date}",
     "severity": {
       "INFO": "Avís",
@@ -3727,7 +3727,279 @@
       "APPROVED": "Liquidació signada, enviant",
       "PROCESSING": "Liquidació signada, enviant",
       "FAILED": "Liquidació signada, enviament pendent"
-    }
+    },
+    "nav": {
+      "label": "Seccions de la consola",
+      "negocio": "Negoci",
+      "avisos": "Alertes",
+      "salud-de-precios": "Salut de preus",
+      "procesos": "Tasques programades",
+      "fondos": "Fons d’activitats"
+    },
+    "sections": {
+      "business": "Negoci: ingressos reals i projectats"
+    },
+    "filters": {
+      "title": "Filtres globals de negoci",
+      "active": "{count, plural, one {# filtre actiu} other {# filtres actius}}",
+      "province": "Província",
+      "allProvinces": "Totes les províncies",
+      "organization": "Entitat",
+      "allOrganizations": "Totes les entitats",
+      "health": "Estat d’acompanyament",
+      "allHealth": "Tots els estats",
+      "health_OK": "Sense incidències",
+      "health_CALL": "Necessiten una trucada d’acompanyament",
+      "quarter": "Trimestre de tancament",
+      "allQuarters": "Tots els trimestres",
+      "apply": "Aplica els filtres",
+      "clear": "Treu els filtres"
+    },
+    "kpi": {
+      "realTitle": "Ingressos reals (el que ja s’ha cobrat)",
+      "realHelp": "Surten del llibre major: només compten els cobraments fets, sense projeccions. No depenen del trimestre triat. Els costos assumits són la passarel·la que paga KORUM, l’Autoimpuls i els contracàrrecs.",
+      "realSources": "Ingressos de les 6 fonts",
+      "realCosts": "Costos assumits per KORUM",
+      "realNet": "Ingrés net real",
+      "projectionTitle": "Projecció al 100 % de les campanyes obertes",
+      "projectionHelp": "És una estimació: suma les campanyes que estan recaptant o que ja han arribat a la meta, com si totes es completessin. Inclou el que ja s’ha cobrat d’aquestes campanyes, així que no sumis la xifra real i la projectada. «Ponderat» compta cada campanya segons el que ja du recaptat (una al 50 % compta la meitat).",
+      "potentialGoal": "Meta potencial (100 %)",
+      "raised": "Recaptat ara",
+      "expectedNet": "Ingrés net esperat (100 %)",
+      "weightedNet": "Ingrés net ponderat",
+      "averageProgress": "Progrés mitjà de la xarxa",
+      "percent": "{value} %"
+    },
+    "sources": {
+      "title": "Procedència dels ingressos per font",
+      "intro": "Les 6 vies d’ingrés de KORUM. «Real» és el que ja s’ha cobrat (llibre major); «Projectat» és el que s’espera de les campanyes obertes quan es completin i inclou el que ja han cobrat: no sumis les dues columnes. A cada columna, les fonts menys els costos sumen exactament el net.",
+      "regionLabel": "Taula de fonts d’ingressos, desplaçable",
+      "caption": "Ingressos de KORUM per font: reals i projectats",
+      "source": "Font",
+      "real": "Real (cobrat)",
+      "projected": "Projectat (al 100 %)",
+      "label": {
+        "supportGuaranteeCents": "Aportacions voluntàries de garantia KORUM",
+        "bracketFeeCents": "Comissions per trams (obres i equipament)",
+        "sponsorFeeCents": "Fee de comerços patrocinadors",
+        "digitalTicketFeeCents": "Despeses de gestió digital (taquilla i rifes QR)",
+        "maintFeeCents": "Quotes de manteniment de la plataforma",
+        "huchaTopupFeeCents": "Gestió de les aportacions de la Guardiola"
+      },
+      "sourcesTotal": "Total de les 6 fonts",
+      "cost": {
+        "gateway": "Cost de passarel·la assumit",
+        "autoBoost": "Autoimpuls aportat per KORUM",
+        "chargebacks": "Contracàrrecs assumits"
+      },
+      "notProjected": "No es projecta",
+      "net": "Ingrés net"
+    },
+    "orgs": {
+      "title": "Rendiment per entitat, històric d’iniciatives i comerços",
+      "hint": "Prem el títol de qualsevol columna (↕) per ordenar la taula de més a menys i, en prémer una altra vegada, a l’inrevés. «Tancades» i «Comerços» són històrics de l’entitat: no depenen del trimestre triat.",
+      "none": "Cap entitat compleix els filtres triats.",
+      "regionLabel": "Taula de rendiment per entitat, desplaçable",
+      "caption": "Rendiment per entitat",
+      "col": {
+        "name": "Entitat / província",
+        "medal": "Medalla",
+        "open": "Actives",
+        "closed": "Tancades (Any / Hist.)",
+        "sponsors": "Comerços (Act. / Hist.)",
+        "goal": "Meta activa",
+        "raised": "Recaptat",
+        "expectedNet": "Net esperat",
+        "weightedNet": "Net ponderat"
+      },
+      "medal": {
+        "0": "Sense medalla",
+        "1": "Bronze",
+        "2": "Plata",
+        "3": "Or"
+      },
+      "closedValue": "{year} aquest curs / {historical} hist.",
+      "sponsorsValue": "{active} act. / {historical} hist.",
+      "total": "Total ({count, plural, one {# entitat} other {# entitats}})",
+      "noValue": "—"
+    },
+    "forecast": {
+      "title": "Previsió agregada de tancaments per trimestre",
+      "none": "Cap campanya oberta tanca en el període triat.",
+      "quarterTitle": "Tancaments: {quarter}",
+      "count": "{count, plural, =0 {Cap iniciativa} one {# iniciativa} other {# iniciatives}} en aquest trimestre",
+      "goal": "Meta potencial de tancament",
+      "unweighted": "Net total (sense ponderar, al 100 %)",
+      "weighted": "Net ponderat (per progrés)",
+      "totalTitle": "Consolidat de la selecció",
+      "totalUnweighted": "Net total sense ponderar (100 %):",
+      "totalWeighted": "Net ponderat:"
+    },
+    "initiatives": {
+      "top10Title": "Top 10 d’iniciatives",
+      "top10Hint": "Ordena per qualsevol columna: el top 10 es recalcula amb totes les iniciatives filtrades. Mostra 💎 quan a KORUM li compensa completar el que falta i 🚨 si les tarifes fan perdre diners.",
+      "top10Region": "Taula del top 10 d’iniciatives, desplaçable",
+      "top10Caption": "Top 10 d’iniciatives",
+      "globalTitle": "Llistat global d’iniciatives",
+      "globalHint": "Totes les iniciatives de la plataforma, actives i acabades. Prem el títol d’una columna per ordenar.",
+      "globalRegion": "Taula del llistat global d’iniciatives, desplaçable",
+      "globalCaption": "Llistat global d’iniciatives",
+      "statusFilter": "Mostra",
+      "statusAll": "Totes (actives i acabades)",
+      "statusActive": "Només actives (recaptant)",
+      "statusFinished": "Només acabades (fita assolida i tancades)",
+      "none": "No hi ha iniciatives amb els filtres triats.",
+      "truncated": "Hi ha més iniciatives de les que caben en aquesta vista: només es mostren les més recents. Acota amb els filtres per veure la resta.",
+      "percent": "{value} %",
+      "col": {
+        "position": "Núm.",
+        "title": "Iniciativa",
+        "organization": "Entitat",
+        "closesAt": "Tancament",
+        "goal": "Meta",
+        "raised": "Recaptat",
+        "contributions": "💛 Aportacions",
+        "contributionsName": "Aportacions",
+        "progress": "Progrés",
+        "net": "Net KORUM",
+        "weightedNet": "Ponderat",
+        "diagnosis": "Diagnòstic de rendibilitat i Autoimpuls",
+        "wallet": "Guardiola de la iniciativa",
+        "status": "Estat"
+      }
+    },
+    "diagnosis": {
+      "negative": "🚨 Perill de retorn negatiu! ({net}) · Ajustar preus",
+      "boost": "💎 Autoimpuls rendible! Aportar {missing} ➔ Retorn +{profit}",
+      "complete": "✅ 100 % assolida",
+      "missing": "Falten {missing}: completar-los {sign, select, gain {deixaria a KORUM +{profit}} loss {costaria a KORUM {profit} més del que guanya} other {no canviaria res per a KORUM}}"
+    },
+    "alerts": {
+      "resolve": "Marca com a resolta",
+      "resolving": "Resolent…",
+      "reauthLink": "Tornar a verificar la meva identitat",
+      "outcome": {
+        "NOT_OPEN": "Aquesta alerta ja no estava oberta.",
+        "FORBIDDEN": "No tens permís per fer això.",
+        "INVALID": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar.",
+        "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació.",
+        "NOT_ALLOWED": "Aquest cas ja no està pendent de resoldre. Recarrega la pàgina per veure’n l’estat actual.",
+        "USE_RESOLVER": "Aquesta alerta es tanca resolent el cas amb el seu formulari, després de comprovar què ha passat."
+      },
+      "kind": {
+        "MISSING_LOCALLY": "Paycomet té un cobrament que KORUM no té",
+        "MISSING_AT_PSP": "KORUM té un cobrament que Paycomet no té",
+        "AMOUNT_MISMATCH": "L’import d’un cobrament no coincideix amb el de Paycomet",
+        "AUTHCODE_MISMATCH": "El codi d’autorització d’un cobrament no coincideix amb el de Paycomet",
+        "CLEARING_NEGATIVE": "El saldo en trànsit de Paycomet és negatiu",
+        "RAISED_MISMATCH": "El que ha recaptat una iniciativa no coincideix amb el llibre major"
+      },
+      "stuck": {
+        "saving": "Desant…",
+        "save": "Desa la resolució",
+        "refund": {
+          "summary": "Resol aquesta devolució a mà",
+          "legend": "Mira a Paycomet què ha passat amb aquesta devolució i explica-ho aquí.",
+          "done": "Paycomet sí que ha retornat els diners",
+          "notDone": "Paycomet no ha retornat els diners (es podrà tornar a provar)",
+          "warning": "Si marques que sí que s’ha retornat, KORUM ho dona per retornat sense més comprovació que la teva. Queda registrat."
+        },
+        "invoice": {
+          "summary": "Resol aquesta factura a mà",
+          "legend": "Pregunta al proveïdor de Veri*factu què ha passat amb aquesta factura i explica-ho aquí.",
+          "retry": "El proveïdor no la té: tornar-la a enviar",
+          "accepted": "El proveïdor la té i l’ha acceptada",
+          "acceptedWithErrors": "El proveïdor la té i l’ha acceptada amb errors",
+          "rejected": "El proveïdor la té i l’ha rebutjada",
+          "reference": "Referència del proveïdor (opcional)"
+        }
+      },
+      "resolved": "Alerta marcada com a resolta.",
+      "failed": "No s’ha pogut desar. Torna-ho a provar."
+    },
+    "jobs": {
+      "title": "Tasques programades",
+      "none": "Encara no s’ha executat cap tasca.",
+      "region": "Taula de tasques programades, desplaçable",
+      "caption": "Darrera execució de cada tasca programada",
+      "task": "Tasca",
+      "status": "Estat",
+      "lastRun": "Darrera execució",
+      "attempts": "Intents",
+      "state": {
+        "PENDING": "Pendent",
+        "RUNNING": "En marxa",
+        "DONE": "Feta",
+        "FAILED": "Amb error",
+        "CANCELLED": "Cancel·lada"
+      },
+      "type": {
+        "CAMPAIGN_EXPIRY": "Venciment de campanyes",
+        "MASS_REFUND": "Reemborsament massiu",
+        "MONTHLY_TOPUP": "Aportacions mensuals de la Guardiola",
+        "SPONSOR_RENEWAL_NOTICE": "Preavís de renovació de comerços",
+        "SPONSOR_RENEWAL_CHARGE": "Cobrament de renovació de comerços",
+        "CREDIT_POOL_EXPIRY": "Bosses de comerços vençudes",
+        "SPLIT_WINDOW_GUARD": "Vigilància de la finestra de 90 dies",
+        "PSP_RECONCILIATION": "Conciliació amb Paycomet",
+        "MODEL182_REMINDER": "Recordatori del Model 182",
+        "DATA_RETENTION_PURGE": "Depuració per terminis de conservació",
+        "OUTBOX_DISPATCH": "Enviament de correus",
+        "QUOTA_RENEWAL": "Renovació anual de quotes",
+        "TICKET_HOLD_RELEASE": "Alliberament de places reservades",
+        "INVOICE_SUBMIT": "Enviament de factures a Veri*factu",
+        "OPS_HOUSEKEEPING": "Neteja interna",
+        "SUPPORTER_BROADCAST": "Avisos a qui ha aportat"
+      }
+    },
+    "pricingHealth": {
+      "title": "Salut de preus",
+      "intro": "Avisos quan una regla de preus perd diners o és incoherent. Cap impedeix desar res: hi són perquè decideixis amb la xifra al davant. Aquí es veuen els avisos; les regles de preus s’editen al motor de regles.",
+      "none": "No hi ha avisos: cap regla de preus perd diners ni és incoherent.",
+      "badge": "{count, plural, one {# avís de preus} other {# avisos de preus}}",
+      "bannerTitle": "{count, plural, one {Hi ha # avís crític de preus sense acceptar} other {Hi ha # avisos crítics de preus sense acceptar}}",
+      "bannerText": "Amb les regles actuals, KORUM pot perdre diners en algun cobrament.",
+      "bannerLink": "Mostra els avisos",
+      "severity": {
+        "CRITICAL": "Crític",
+        "WARNING": "Avís"
+      },
+      "open": "Encara sense acceptar.",
+      "accepted": "Acceptat el {date}: {note}",
+      "noNote": "sense nota",
+      "sourceLabel": "Font afectada: {source}",
+      "source": {
+        "supportGuaranteeCents": "Aportacions voluntàries de garantia",
+        "bracketFeeCents": "Comissions per trams",
+        "sponsorFeeCents": "Fee de comerços patrocinadors",
+        "digitalTicketFeeCents": "Despeses de gestió digital",
+        "maintFeeCents": "Quotes de manteniment",
+        "huchaTopupFeeCents": "Gestió de la Guardiola"
+      },
+      "message": {
+        "HUCHA_FEE_BELOW_GATEWAY_COST": "Un càrrec de {amountCents} a la Guardiola costa {gatewayCostCents} de passarel·la i cobres {feeCents}: perds {lossCents} per càrrec.{profitableUpToCentsRaw, plural, =0 {} other { És rendible fins a {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { És rendible a partir de {profitableFromCents}.}}",
+        "TICKET_FEE_BELOW_GATEWAY_COST": "Amb una entrada de {priceCents}, les despeses de gestió digital ({feeCents}) {lossCentsRaw, plural, =0 {no deixen marge sobre la passarel·la ({gatewayCostCents}): KORUM no guanya res amb aquesta entrada.} other {no cobreixen la passarel·la ({gatewayCostCents}): perds {lossCents} per entrada.}}",
+        "SPONSOR_FEE_BELOW_GATEWAY_COST": "Amb un patrocini de {tierCents}, el fee ({feeCents}) no cobreix la passarel·la ({gatewayCostCents}): perds {lossCents} per patrocini.",
+        "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hi ha # valor buit, negatiu o amb decimals a les regles de preus.} other {Hi ha # valors buits, negatius o amb decimals a les regles de preus.}} Mentre no es corregeixi, no es poden calcular els altres avisos.",
+        "BRACKET_THRESHOLDS_INVALID": "El límit del tram 1 ({t1MaxCents}) supera el del tram 2 ({t2MaxCents}): el tram 2 queda buit.",
+        "BRACKET_CLIFF": "Amb {exemptCents} exempts, un net de {thresholdCents} paga {feeAtCents} de comissió i un d’1 cèntim més paga {feeAboveCents}: pujar el pressupost abaixa la comissió.{cliffCount, plural, one {} other { Hi ha # salts així; el més gran baixa {worstDropCents}.}} Considera el mode marginal.",
+        "BRACKET_RATES_NOT_DECREASING": "Les tarifes per trams no baixen en pujar de tram ({t1Bps} · {t2Bps} · {t3Bps}): és el contrari d’un descompte per volum.",
+        "SOURCE_NEGATIVE_MARGIN": "Aquesta font acumula un marge de {marginCents} (ingrés menys la passarel·la dels seus cobraments)."
+      }
+    },
+    "alertsCapped": "Es mostren les {shown} més greus i recents de {total}.",
+    "metaTitle": "Consola",
+    "scrollHint": "Llisca la taula per veure més columnes →",
+    "summary": {
+      "title": "D’un cop d’ull",
+      "alerts": "Alertes obertes",
+      "alertsCritical": "{count, plural, =0 {cap crítica} one {# crítica} other {# crítiques}}",
+      "boost": "Campanyes amb 💎 Autoimpuls rendible",
+      "negative": "Campanyes amb 🚨 retorn negatiu",
+      "pricing": "Avisos de preus sense acceptar",
+      "filtered": "Les xifres de campanyes amb 💎 i 🚨 segueixen els filtres de negoci que has triat."
+    },
+    "quarterLabel": "{quarter, select, 1 {1r trimestre} 2 {2n trimestre} 3 {3r trimestre} other {4t trimestre}} de {year}"
   },
   "forbidden": {
     "title": "No tens accés a aquesta pàgina",

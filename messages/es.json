@@ -3687,9 +3687,9 @@
     "title": "Resumen de la plataforma",
     "organizations": "Entidades activas",
     "pendingKyb": "Entidades con documentos pendientes",
-    "alertsTitle": "{count, plural, =0 {Sin alertas abiertas} one {# alerta abierta} other {# alertas abiertas}}",
+    "alertsTitle": "{count, plural, =0 {Alertas abiertas} one {# alerta abierta} other {# alertas abiertas}}",
     "noAlertsTitle": "Todo en orden",
-    "noAlertsText": "No hay alertas abiertas en este momento.",
+    "noAlertsText": "Ninguna alerta pendiente.",
     "alertMeta": "{count, plural, one {# vez} other {# veces}} · última: {date}",
     "severity": {
       "INFO": "Aviso",
@@ -3727,7 +3727,279 @@
       "APPROVED": "Liquidación firmada, enviando",
       "PROCESSING": "Liquidación firmada, enviando",
       "FAILED": "Liquidación firmada, envío pendiente"
-    }
+    },
+    "nav": {
+      "label": "Secciones de la consola",
+      "negocio": "Negocio",
+      "avisos": "Alertas",
+      "salud-de-precios": "Salud de precios",
+      "procesos": "Tareas programadas",
+      "fondos": "Fondos de actividades"
+    },
+    "sections": {
+      "business": "Negocio: ingresos reales y proyectados"
+    },
+    "filters": {
+      "title": "Filtros globales de negocio",
+      "active": "{count, plural, one {# filtro activo} other {# filtros activos}}",
+      "province": "Provincia",
+      "allProvinces": "Todas las provincias",
+      "organization": "Entidad",
+      "allOrganizations": "Todas las entidades",
+      "health": "Estado de acompañamiento",
+      "allHealth": "Todos los estados",
+      "health_OK": "Sin incidencias",
+      "health_CALL": "Necesitan una llamada de acompañamiento",
+      "quarter": "Trimestre de cierre",
+      "allQuarters": "Todos los trimestres",
+      "apply": "Aplicar filtros",
+      "clear": "Quitar filtros"
+    },
+    "kpi": {
+      "realTitle": "Ingresos reales (lo ya cobrado)",
+      "realHelp": "Salen del libro mayor: solo cuentan los cobros realizados, sin proyecciones. No dependen del trimestre elegido. Los costes asumidos son la pasarela que paga KORUM, el Auto-Impulso y los contracargos.",
+      "realSources": "Ingresos de las 6 fuentes",
+      "realCosts": "Costes asumidos por KORUM",
+      "realNet": "Ingreso neto real",
+      "projectionTitle": "Proyección al 100 % de las campañas abiertas",
+      "projectionHelp": "Es una estimación: suma las campañas que están recaudando o ya han llegado a su meta, como si todas se completaran. Incluye lo que ya se ha cobrado de ellas, así que no sumes la cifra real y la proyectada. «Ponderado» cuenta cada campaña según lo que ya lleva recaudado (una al 50 % cuenta la mitad).",
+      "potentialGoal": "Meta potencial (100 %)",
+      "raised": "Recaudado ahora",
+      "expectedNet": "Ingreso neto esperado (100 %)",
+      "weightedNet": "Ingreso neto ponderado",
+      "averageProgress": "Avance medio de la red",
+      "percent": "{value} %"
+    },
+    "sources": {
+      "title": "Procedencia de los ingresos por fuente",
+      "intro": "Las 6 vías de ingreso de KORUM. «Real» es lo ya cobrado (libro mayor); «Proyectado» es lo que se espera de las campañas abiertas al completarse e incluye lo que ya han cobrado: no sumes las dos columnas. En cada columna, las fuentes menos los costes suman exactamente el neto.",
+      "regionLabel": "Tabla de fuentes de ingresos, desplazable",
+      "caption": "Ingresos de KORUM por fuente: reales y proyectados",
+      "source": "Fuente",
+      "real": "Real (cobrado)",
+      "projected": "Proyectado (al 100 %)",
+      "label": {
+        "supportGuaranteeCents": "Aportaciones voluntarias de garantía KORUM",
+        "bracketFeeCents": "Comisiones por tramos (obras y equipamiento)",
+        "sponsorFeeCents": "Fee de comercios patrocinadores",
+        "digitalTicketFeeCents": "Gastos de gestión digital (taquilla y rifas QR)",
+        "maintFeeCents": "Cuotas de mantenimiento de la plataforma",
+        "huchaTopupFeeCents": "Gestión de las aportaciones de Mi Hucha"
+      },
+      "sourcesTotal": "Total de las 6 fuentes",
+      "cost": {
+        "gateway": "Coste de pasarela asumido",
+        "autoBoost": "Auto-Impulso aportado por KORUM",
+        "chargebacks": "Contracargos asumidos"
+      },
+      "notProjected": "No se proyecta",
+      "net": "Ingreso neto"
+    },
+    "orgs": {
+      "title": "Rendimiento por entidad, histórico de iniciativas y comercios",
+      "hint": "Pulsa el título de cualquier columna (↕) para ordenar la tabla de mayor a menor y, al pulsar otra vez, al revés. «Cerradas» y «Comercios» son históricos de la entidad: no dependen del trimestre elegido.",
+      "none": "Ninguna entidad cumple los filtros elegidos.",
+      "regionLabel": "Tabla de rendimiento por entidad, desplazable",
+      "caption": "Rendimiento por entidad",
+      "col": {
+        "name": "Entidad / provincia",
+        "medal": "Medalla",
+        "open": "Activas",
+        "closed": "Cerradas (Año / Hist.)",
+        "sponsors": "Comercios (Act. / Hist.)",
+        "goal": "Meta activa",
+        "raised": "Recaudado",
+        "expectedNet": "Neto esperado",
+        "weightedNet": "Neto ponderado"
+      },
+      "medal": {
+        "0": "Sin medalla",
+        "1": "Bronce",
+        "2": "Plata",
+        "3": "Oro"
+      },
+      "closedValue": "{year} este curso / {historical} hist.",
+      "sponsorsValue": "{active} act. / {historical} hist.",
+      "total": "Total ({count, plural, one {# entidad} other {# entidades}})",
+      "noValue": "—"
+    },
+    "forecast": {
+      "title": "Previsión agregada de cierres por trimestre",
+      "none": "Ninguna campaña abierta cierra en el periodo elegido.",
+      "quarterTitle": "Cierres: {quarter}",
+      "count": "{count, plural, =0 {Ninguna iniciativa} one {# iniciativa} other {# iniciativas}} en este trimestre",
+      "goal": "Meta potencial de cierre",
+      "unweighted": "Neto total (sin ponderar, al 100 %)",
+      "weighted": "Neto ponderado (por avance)",
+      "totalTitle": "Consolidado de la selección",
+      "totalUnweighted": "Neto total sin ponderar (100 %):",
+      "totalWeighted": "Neto ponderado:"
+    },
+    "initiatives": {
+      "top10Title": "Top 10 de iniciativas",
+      "top10Hint": "Ordena por cualquier columna: el top 10 se recalcula con todas las iniciativas filtradas. Muestra 💎 cuando a KORUM le compensa completar lo que falta y 🚨 si las tarifas hacen perder dinero.",
+      "top10Region": "Tabla del top 10 de iniciativas, desplazable",
+      "top10Caption": "Top 10 de iniciativas",
+      "globalTitle": "Listado global de iniciativas",
+      "globalHint": "Todas las iniciativas de la plataforma, activas y terminadas. Pulsa el título de una columna para ordenar.",
+      "globalRegion": "Tabla del listado global de iniciativas, desplazable",
+      "globalCaption": "Listado global de iniciativas",
+      "statusFilter": "Mostrar",
+      "statusAll": "Todas (activas y terminadas)",
+      "statusActive": "Solo activas (recaudando)",
+      "statusFinished": "Solo terminadas (logro conseguido y cerradas)",
+      "none": "No hay iniciativas con los filtros elegidos.",
+      "truncated": "Hay más iniciativas de las que caben en esta vista: se muestran solo las más recientes. Acota con los filtros para ver el resto.",
+      "percent": "{value} %",
+      "col": {
+        "position": "N.º",
+        "title": "Iniciativa",
+        "organization": "Entidad",
+        "closesAt": "Cierre",
+        "goal": "Meta",
+        "raised": "Recaudado",
+        "contributions": "💛 Aportaciones",
+        "contributionsName": "Aportaciones",
+        "progress": "Avance",
+        "net": "Neto KORUM",
+        "weightedNet": "Ponderado",
+        "diagnosis": "Diagnóstico de rentabilidad y Auto-Impulso",
+        "wallet": "Hucha de la iniciativa",
+        "status": "Estado"
+      }
+    },
+    "diagnosis": {
+      "negative": "🚨 ¡Peligro Retorno Negativo! ({net}) · Ajustar precios",
+      "boost": "💎 ¡Auto-Impulso Rentable! Aportar {missing} ➔ Retorno +{profit}",
+      "complete": "✅ 100 % completada",
+      "missing": "Faltan {missing}: completarlos {sign, select, gain {le dejaría a KORUM +{profit}} loss {le costaría a KORUM {profit} más de lo que gana} other {no cambiaría nada para KORUM}}"
+    },
+    "alerts": {
+      "resolve": "Marcar como resuelta",
+      "resolving": "Resolviendo…",
+      "reauthLink": "Volver a verificar mi identidad",
+      "outcome": {
+        "NOT_OPEN": "Esta alerta ya no estaba abierta.",
+        "FORBIDDEN": "No tienes permiso para hacer esto.",
+        "INVALID": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo.",
+        "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación.",
+        "NOT_ALLOWED": "Ese caso ya no está pendiente de resolver. Recarga la página para ver su estado actual.",
+        "USE_RESOLVER": "Esta alerta se cierra resolviendo el caso con su formulario, tras comprobar qué pasó."
+      },
+      "kind": {
+        "MISSING_LOCALLY": "Paycomet tiene un cobro que KORUM no tiene",
+        "MISSING_AT_PSP": "KORUM tiene un cobro que Paycomet no tiene",
+        "AMOUNT_MISMATCH": "El importe de un cobro no coincide con el de Paycomet",
+        "AUTHCODE_MISMATCH": "El código de autorización de un cobro no coincide con el de Paycomet",
+        "CLEARING_NEGATIVE": "El saldo en tránsito de Paycomet es negativo",
+        "RAISED_MISMATCH": "Lo recaudado por una iniciativa no coincide con el libro mayor"
+      },
+      "stuck": {
+        "saving": "Guardando…",
+        "save": "Guardar resolución",
+        "refund": {
+          "summary": "Resolver esta devolución a mano",
+          "legend": "Mira en Paycomet qué pasó con esta devolución y cuéntalo aquí.",
+          "done": "Paycomet sí devolvió el dinero",
+          "notDone": "Paycomet no devolvió el dinero (se podrá volver a intentar)",
+          "warning": "Si marcas que sí se devolvió, KORUM lo da por devuelto sin más comprobación que la tuya. Queda registrado."
+        },
+        "invoice": {
+          "summary": "Resolver esta factura a mano",
+          "legend": "Pregunta al proveedor de Veri*factu qué pasó con esta factura y cuéntalo aquí.",
+          "retry": "El proveedor no la tiene: volver a enviarla",
+          "accepted": "El proveedor la tiene y la aceptó",
+          "acceptedWithErrors": "El proveedor la tiene y la aceptó con errores",
+          "rejected": "El proveedor la tiene y la rechazó",
+          "reference": "Referencia del proveedor (opcional)"
+        }
+      },
+      "resolved": "Alerta marcada como resuelta.",
+      "failed": "No se ha podido guardar. Inténtalo de nuevo."
+    },
+    "jobs": {
+      "title": "Tareas programadas",
+      "none": "Todavía no se ha ejecutado ninguna tarea.",
+      "region": "Tabla de tareas programadas, desplazable",
+      "caption": "Última ejecución de cada tarea programada",
+      "task": "Tarea",
+      "status": "Estado",
+      "lastRun": "Última ejecución",
+      "attempts": "Intentos",
+      "state": {
+        "PENDING": "Pendiente",
+        "RUNNING": "En marcha",
+        "DONE": "Hecha",
+        "FAILED": "Con error",
+        "CANCELLED": "Cancelada"
+      },
+      "type": {
+        "CAMPAIGN_EXPIRY": "Vencimiento de campañas",
+        "MASS_REFUND": "Reembolso masivo",
+        "MONTHLY_TOPUP": "Aportaciones mensuales de Mi Hucha",
+        "SPONSOR_RENEWAL_NOTICE": "Preaviso de renovación de comercios",
+        "SPONSOR_RENEWAL_CHARGE": "Cobro de renovación de comercios",
+        "CREDIT_POOL_EXPIRY": "Bolsas de comercios vencidas",
+        "SPLIT_WINDOW_GUARD": "Vigilancia de la ventana de 90 días",
+        "PSP_RECONCILIATION": "Conciliación con Paycomet",
+        "MODEL182_REMINDER": "Recordatorio del Modelo 182",
+        "DATA_RETENTION_PURGE": "Purga por plazos de conservación",
+        "OUTBOX_DISPATCH": "Envío de emails",
+        "QUOTA_RENEWAL": "Renovación anual de cupos",
+        "TICKET_HOLD_RELEASE": "Liberación de plazas reservadas",
+        "INVOICE_SUBMIT": "Envío de facturas a Veri*factu",
+        "OPS_HOUSEKEEPING": "Limpieza interna",
+        "SUPPORTER_BROADCAST": "Avisos a quienes aportaron"
+      }
+    },
+    "pricingHealth": {
+      "title": "Salud de precios",
+      "intro": "Avisos cuando una regla de precios pierde dinero o es incoherente. Ninguno impide guardar nada: están para que decidas con la cifra delante. Aquí se ven los avisos; las reglas de precio se editan en el motor de reglas.",
+      "none": "No hay avisos: ninguna regla de precios pierde dinero ni es incoherente.",
+      "badge": "{count, plural, one {# aviso de precios} other {# avisos de precios}}",
+      "bannerTitle": "{count, plural, one {Hay # aviso crítico de precios sin aceptar} other {Hay # avisos críticos de precios sin aceptar}}",
+      "bannerText": "Con las reglas actuales, KORUM puede perder dinero en algún cobro.",
+      "bannerLink": "Ver los avisos",
+      "severity": {
+        "CRITICAL": "Crítico",
+        "WARNING": "Aviso"
+      },
+      "open": "Sin aceptar todavía.",
+      "accepted": "Aceptado el {date}: {note}",
+      "noNote": "sin nota",
+      "sourceLabel": "Fuente afectada: {source}",
+      "source": {
+        "supportGuaranteeCents": "Aportaciones voluntarias de garantía",
+        "bracketFeeCents": "Comisiones por tramos",
+        "sponsorFeeCents": "Fee de comercios patrocinadores",
+        "digitalTicketFeeCents": "Gastos de gestión digital",
+        "maintFeeCents": "Cuotas de mantenimiento",
+        "huchaTopupFeeCents": "Gestión de Mi Hucha"
+      },
+      "message": {
+        "HUCHA_FEE_BELOW_GATEWAY_COST": "Un cargo de {amountCents} en Mi Hucha cuesta {gatewayCostCents} de pasarela y cobras {feeCents}: pierdes {lossCents} por cargo.{profitableUpToCentsRaw, plural, =0 {} other { Es rentable hasta {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { Es rentable desde {profitableFromCents}.}}",
+        "TICKET_FEE_BELOW_GATEWAY_COST": "Con una entrada de {priceCents}, los gastos de gestión digital ({feeCents}) {lossCentsRaw, plural, =0 {no dejan margen sobre la pasarela ({gatewayCostCents}): KORUM no gana nada con esa entrada.} other {no cubren la pasarela ({gatewayCostCents}): pierdes {lossCents} por entrada.}}",
+        "SPONSOR_FEE_BELOW_GATEWAY_COST": "Con un patrocinio de {tierCents}, el fee ({feeCents}) no cubre la pasarela ({gatewayCostCents}): pierdes {lossCents} por patrocinio.",
+        "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hay # valor vacío, negativo o con decimales en las reglas de precios.} other {Hay # valores vacíos, negativos o con decimales en las reglas de precios.}} Mientras no se corrija, no se pueden calcular los demás avisos.",
+        "BRACKET_THRESHOLDS_INVALID": "El límite del tramo 1 ({t1MaxCents}) supera al del tramo 2 ({t2MaxCents}): el tramo 2 queda vacío.",
+        "BRACKET_CLIFF": "Con {exemptCents} exentos, un neto de {thresholdCents} paga {feeAtCents} de comisión y uno 1 céntimo mayor paga {feeAboveCents}: subir el presupuesto baja la comisión.{cliffCount, plural, one {} other { Hay # saltos así; el mayor baja {worstDropCents}.}} Considera el modo marginal.",
+        "BRACKET_RATES_NOT_DECREASING": "Las tarifas por tramos no bajan al subir de tramo ({t1Bps} · {t2Bps} · {t3Bps}): es lo contrario de un descuento por volumen.",
+        "SOURCE_NEGATIVE_MARGIN": "Esta fuente acumula un margen de {marginCents} (ingreso menos la pasarela de sus cobros)."
+      }
+    },
+    "alertsCapped": "Se muestran las {shown} más graves y recientes de {total}.",
+    "metaTitle": "Consola",
+    "scrollHint": "Desliza la tabla para ver más columnas →",
+    "summary": {
+      "title": "De un vistazo",
+      "alerts": "Alertas abiertas",
+      "alertsCritical": "{count, plural, =0 {ninguna crítica} one {# crítica} other {# críticas}}",
+      "boost": "Campañas con 💎 Auto-Impulso rentable",
+      "negative": "Campañas con 🚨 retorno negativo",
+      "pricing": "Avisos de precios sin aceptar",
+      "filtered": "Las cifras de campañas con 💎 y 🚨 siguen los filtros de negocio que has elegido."
+    },
+    "quarterLabel": "{quarter, select, 1 {1.er trimestre} 2 {2.º trimestre} 3 {3.er trimestre} other {4.º trimestre}} de {year}"
   },
   "forbidden": {
     "title": "No tienes acceso a esta página",

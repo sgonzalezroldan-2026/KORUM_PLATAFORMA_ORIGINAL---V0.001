@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { KorumLogo } from '@/components/brand/korum-logo';
 import { SignOutButton } from '@/components/auth/sign-out-button';
 import { Link } from '@/i18n/navigation';
 
 /** Cabecera de los entornos privados (panel de la entidad y consola): marca colegial, a quién pertenece la vista y cerrar sesión. */
-export function ConsoleHeader({ title, subtitle }: { title: string; subtitle: string }) {
+export function ConsoleHeader({ title, subtitle, badge }: { title: string; subtitle: string; badge?: ReactNode }) {
   return (
     <header className="bg-varsity-navy text-varsity-ivory">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
@@ -16,7 +17,10 @@ export function ConsoleHeader({ title, subtitle }: { title: string; subtitle: st
             <p className="truncate text-sm text-varsity-ivory/80">{subtitle}</p>
           </div>
         </div>
-        <SignOutButton />
+        <div className="flex flex-wrap items-center gap-3">
+          {badge}
+          <SignOutButton />
+        </div>
       </div>
     </header>
   );

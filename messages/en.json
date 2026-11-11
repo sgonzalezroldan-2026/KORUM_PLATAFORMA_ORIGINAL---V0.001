@@ -3687,9 +3687,9 @@
     "title": "Platform overview",
     "organizations": "Active organisations",
     "pendingKyb": "Organisations with pending documents",
-    "alertsTitle": "{count, plural, =0 {No open alerts} one {# open alert} other {# open alerts}}",
+    "alertsTitle": "{count, plural, =0 {Open alerts} one {# open alert} other {# open alerts}}",
     "noAlertsTitle": "All good",
-    "noAlertsText": "There are no open alerts right now.",
+    "noAlertsText": "No alerts pending.",
     "alertMeta": "{count, plural, one {# time} other {# times}} · last: {date}",
     "severity": {
       "INFO": "Notice",
@@ -3727,7 +3727,279 @@
       "APPROVED": "Payout signed, sending",
       "PROCESSING": "Payout signed, sending",
       "FAILED": "Payout signed, transfer pending"
-    }
+    },
+    "nav": {
+      "label": "Console sections",
+      "negocio": "Business",
+      "avisos": "Alerts",
+      "salud-de-precios": "Pricing health",
+      "procesos": "Scheduled tasks",
+      "fondos": "Activity funds"
+    },
+    "sections": {
+      "business": "Business: actual and projected revenue"
+    },
+    "filters": {
+      "title": "Global business filters",
+      "active": "{count, plural, one {# filter active} other {# filters active}}",
+      "province": "Province",
+      "allProvinces": "All provinces",
+      "organization": "Organisation",
+      "allOrganizations": "All organisations",
+      "health": "Support status",
+      "allHealth": "All statuses",
+      "health_OK": "No issues",
+      "health_CALL": "Need a support call",
+      "quarter": "Closing quarter",
+      "allQuarters": "All quarters",
+      "apply": "Apply filters",
+      "clear": "Clear filters"
+    },
+    "kpi": {
+      "realTitle": "Actual revenue (already collected)",
+      "realHelp": "Taken from the ledger: only payments that have actually been made count, with no projections. It does not depend on the quarter you pick. Costs borne are the gateway fees KORUM pays, Auto-Boost and chargebacks.",
+      "realSources": "Revenue from the 6 sources",
+      "realCosts": "Costs borne by KORUM",
+      "realNet": "Actual net revenue",
+      "projectionTitle": "Projection at 100% of open campaigns",
+      "projectionHelp": "This is an estimate: it adds up the campaigns that are raising money or have reached their goal, as if they all completed. It includes what has already been collected from them, so do not add the actual and projected figures together. “Weighted” counts each campaign according to how much it has already raised (one at 50% counts half).",
+      "potentialGoal": "Potential goal (100%)",
+      "raised": "Raised so far",
+      "expectedNet": "Expected net revenue (100%)",
+      "weightedNet": "Weighted net revenue",
+      "averageProgress": "Average network progress",
+      "percent": "{value}%"
+    },
+    "sources": {
+      "title": "Where revenue comes from, by source",
+      "intro": "KORUM’s 6 revenue streams. “Actual” is what has already been collected (ledger); “Projected” is what open campaigns are expected to bring in once completed and includes what they have already collected: do not add the two columns together. In each column, the sources minus the costs add up exactly to the net.",
+      "regionLabel": "Revenue sources table, scrollable",
+      "caption": "KORUM revenue by source: actual and projected",
+      "source": "Source",
+      "real": "Actual (collected)",
+      "projected": "Projected (at 100%)",
+      "label": {
+        "supportGuaranteeCents": "Voluntary KORUM guarantee contributions",
+        "bracketFeeCents": "Tiered commissions (works and equipment)",
+        "sponsorFeeCents": "Sponsor shop fees",
+        "digitalTicketFeeCents": "Digital handling fees (box office and QR raffles)",
+        "maintFeeCents": "Platform maintenance fees",
+        "huchaTopupFeeCents": "Handling of Piggy Bank contributions"
+      },
+      "sourcesTotal": "Total of the 6 sources",
+      "cost": {
+        "gateway": "Payment gateway cost absorbed",
+        "autoBoost": "Auto-Boost contributed by KORUM",
+        "chargebacks": "Chargebacks absorbed"
+      },
+      "notProjected": "Not projected",
+      "net": "Net revenue"
+    },
+    "orgs": {
+      "title": "Performance by organisation, initiative history and shops",
+      "hint": "Press any column title (↕) to sort the table from highest to lowest and, pressing again, the other way round. “Closed” and “Shops” are the organisation’s history: they do not depend on the quarter you pick.",
+      "none": "No organisation matches the chosen filters.",
+      "regionLabel": "Performance by organisation table, scrollable",
+      "caption": "Performance by organisation",
+      "col": {
+        "name": "Organisation / province",
+        "medal": "Medal",
+        "open": "Open",
+        "closed": "Closed (Year / All-time)",
+        "sponsors": "Shops (Active / All-time)",
+        "goal": "Open goal",
+        "raised": "Raised",
+        "expectedNet": "Expected net",
+        "weightedNet": "Weighted net"
+      },
+      "medal": {
+        "0": "No medal",
+        "1": "Bronze",
+        "2": "Silver",
+        "3": "Gold"
+      },
+      "closedValue": "{year} this school year / {historical} all time",
+      "sponsorsValue": "{active} active / {historical} all time",
+      "total": "Total ({count, plural, one {# organisation} other {# organisations}})",
+      "noValue": "—"
+    },
+    "forecast": {
+      "title": "Combined closing forecast by quarter",
+      "none": "No open campaign closes in the chosen period.",
+      "quarterTitle": "Closings: {quarter}",
+      "count": "{count, plural, =0 {No initiatives} one {# initiative} other {# initiatives}} in this quarter",
+      "goal": "Potential goal at closing",
+      "unweighted": "Total net (unweighted, at 100%)",
+      "weighted": "Weighted net (by progress)",
+      "totalTitle": "Selection total",
+      "totalUnweighted": "Total net, unweighted (100%):",
+      "totalWeighted": "Weighted net:"
+    },
+    "initiatives": {
+      "top10Title": "Top 10 initiatives",
+      "top10Hint": "Sort by any column: the top 10 is recalculated from all the filtered initiatives. It shows 💎 when it pays off for KORUM to complete what is missing and 🚨 if the pricing loses money.",
+      "top10Region": "Top 10 initiatives table, scrollable",
+      "top10Caption": "Top 10 initiatives",
+      "globalTitle": "All initiatives",
+      "globalHint": "Every initiative on the platform, open and finished. Press a column title to sort.",
+      "globalRegion": "All initiatives table, scrollable",
+      "globalCaption": "All initiatives",
+      "statusFilter": "Show",
+      "statusAll": "All (open and finished)",
+      "statusActive": "Open only (raising money)",
+      "statusFinished": "Finished only (goal reached and closed)",
+      "none": "There are no initiatives with the chosen filters.",
+      "truncated": "There are more initiatives than fit in this view: only the most recent ones are shown. Narrow it down with the filters to see the rest.",
+      "percent": "{value}%",
+      "col": {
+        "position": "No.",
+        "title": "Initiative",
+        "organization": "Organisation",
+        "closesAt": "Closes",
+        "goal": "Goal",
+        "raised": "Raised",
+        "contributions": "💛 Contributions",
+        "contributionsName": "Contributions",
+        "progress": "Progress",
+        "net": "KORUM net",
+        "weightedNet": "Weighted",
+        "diagnosis": "Profitability and Auto-Boost diagnosis",
+        "wallet": "Initiative piggy bank",
+        "status": "Status"
+      }
+    },
+    "diagnosis": {
+      "negative": "🚨 Negative return warning! ({net}) · Adjust pricing",
+      "boost": "💎 Profitable Auto-Boost! Contribute {missing} ➔ Return +{profit}",
+      "complete": "✅ 100% complete",
+      "missing": "{missing} to go: completing it {sign, select, gain {would leave KORUM +{profit}} loss {would cost KORUM {profit} more than it earns} other {would change nothing for KORUM}}"
+    },
+    "alerts": {
+      "resolve": "Mark as resolved",
+      "resolving": "Resolving…",
+      "reauthLink": "Verify my identity again",
+      "outcome": {
+        "NOT_OPEN": "This alert was no longer open.",
+        "FORBIDDEN": "You do not have permission to do this.",
+        "INVALID": "The request could not be read. Reload the page and try again.",
+        "REAUTH_REQUIRED": "For this you need to enter your verification code again.",
+        "NOT_ALLOWED": "That case is no longer waiting to be resolved. Reload the page to see its current status.",
+        "USE_RESOLVER": "This alert is closed by resolving the case with its form, after checking what happened."
+      },
+      "kind": {
+        "MISSING_LOCALLY": "Paycomet has a payment that KORUM does not have",
+        "MISSING_AT_PSP": "KORUM has a payment that Paycomet does not have",
+        "AMOUNT_MISMATCH": "The amount of a payment does not match Paycomet’s",
+        "AUTHCODE_MISMATCH": "The authorisation code of a payment does not match Paycomet’s",
+        "CLEARING_NEGATIVE": "Paycomet’s in-transit balance is negative",
+        "RAISED_MISMATCH": "The amount raised by an initiative does not match the ledger"
+      },
+      "stuck": {
+        "saving": "Saving…",
+        "save": "Save resolution",
+        "refund": {
+          "summary": "Resolve this refund by hand",
+          "legend": "Check in Paycomet what happened to this refund and tell us here.",
+          "done": "Paycomet did refund the money",
+          "notDone": "Paycomet did not refund the money (it can be tried again)",
+          "warning": "If you mark it as refunded, KORUM treats it as refunded with no check other than yours. It is recorded."
+        },
+        "invoice": {
+          "summary": "Resolve this invoice by hand",
+          "legend": "Ask the Veri*factu provider what happened to this invoice and tell us here.",
+          "retry": "The provider does not have it: send it again",
+          "accepted": "The provider has it and accepted it",
+          "acceptedWithErrors": "The provider has it and accepted it with errors",
+          "rejected": "The provider has it and rejected it",
+          "reference": "Provider reference (optional)"
+        }
+      },
+      "resolved": "Alert marked as resolved.",
+      "failed": "It could not be saved. Please try again."
+    },
+    "jobs": {
+      "title": "Scheduled tasks",
+      "none": "No task has run yet.",
+      "region": "Scheduled tasks table, scrollable",
+      "caption": "Last run of each scheduled task",
+      "task": "Task",
+      "status": "Status",
+      "lastRun": "Last run",
+      "attempts": "Attempts",
+      "state": {
+        "PENDING": "Pending",
+        "RUNNING": "Running",
+        "DONE": "Done",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
+      },
+      "type": {
+        "CAMPAIGN_EXPIRY": "Campaign expiry",
+        "MASS_REFUND": "Mass refund",
+        "MONTHLY_TOPUP": "Monthly Piggy Bank contributions",
+        "SPONSOR_RENEWAL_NOTICE": "Shop renewal notice",
+        "SPONSOR_RENEWAL_CHARGE": "Shop renewal payment",
+        "CREDIT_POOL_EXPIRY": "Expired shop credit pools",
+        "SPLIT_WINDOW_GUARD": "90-day window watch",
+        "PSP_RECONCILIATION": "Reconciliation with Paycomet",
+        "MODEL182_REMINDER": "Model 182 reminder",
+        "DATA_RETENTION_PURGE": "Retention-period purge",
+        "OUTBOX_DISPATCH": "Email sending",
+        "QUOTA_RENEWAL": "Yearly allowance renewal",
+        "TICKET_HOLD_RELEASE": "Release of held seats",
+        "INVOICE_SUBMIT": "Invoices sent to Veri*factu",
+        "OPS_HOUSEKEEPING": "Internal housekeeping",
+        "SUPPORTER_BROADCAST": "Notices to contributors"
+      }
+    },
+    "pricingHealth": {
+      "title": "Pricing health",
+      "intro": "Warnings when a pricing rule loses money or is inconsistent. None of them stops you from saving anything: they are there so you decide with the figure in front of you. The warnings are shown here; the pricing rules are edited in the rules engine.",
+      "none": "No warnings: no pricing rule loses money or is inconsistent.",
+      "badge": "{count, plural, one {# pricing warning} other {# pricing warnings}}",
+      "bannerTitle": "{count, plural, one {There is # critical pricing warning not yet accepted} other {There are # critical pricing warnings not yet accepted}}",
+      "bannerText": "With the current rules, KORUM may lose money on some payments.",
+      "bannerLink": "See the warnings",
+      "severity": {
+        "CRITICAL": "Critical",
+        "WARNING": "Warning"
+      },
+      "open": "Not accepted yet.",
+      "accepted": "Accepted on {date}: {note}",
+      "noNote": "no note",
+      "sourceLabel": "Source affected: {source}",
+      "source": {
+        "supportGuaranteeCents": "Voluntary guarantee contributions",
+        "bracketFeeCents": "Tiered commissions",
+        "sponsorFeeCents": "Sponsor shop fees",
+        "digitalTicketFeeCents": "Digital handling fees",
+        "maintFeeCents": "Maintenance fees",
+        "huchaTopupFeeCents": "Piggy Bank handling"
+      },
+      "message": {
+        "HUCHA_FEE_BELOW_GATEWAY_COST": "A Piggy Bank charge of {amountCents} costs {gatewayCostCents} in gateway fees and you collect {feeCents}: you lose {lossCents} per charge.{profitableUpToCentsRaw, plural, =0 {} other { It is profitable up to {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { It is profitable from {profitableFromCents}.}}",
+        "TICKET_FEE_BELOW_GATEWAY_COST": "With a {priceCents} ticket, the digital handling fees ({feeCents}) {lossCentsRaw, plural, =0 {leave no margin over the gateway cost ({gatewayCostCents}): KORUM earns nothing on that ticket.} other {do not cover the gateway cost ({gatewayCostCents}): you lose {lossCents} per ticket.}}",
+        "SPONSOR_FEE_BELOW_GATEWAY_COST": "With a {tierCents} sponsorship, the fee ({feeCents}) does not cover the gateway cost ({gatewayCostCents}): you lose {lossCents} per sponsorship.",
+        "RULE_VALUE_INVALID": "{invalidCount, plural, one {There is # empty, negative or decimal value in the pricing rules.} other {There are # empty, negative or decimal values in the pricing rules.}} Until it is fixed, the other warnings cannot be calculated.",
+        "BRACKET_THRESHOLDS_INVALID": "The tier 1 limit ({t1MaxCents}) is higher than the tier 2 limit ({t2MaxCents}): tier 2 is left empty.",
+        "BRACKET_CLIFF": "With {exemptCents} exempt, a net of {thresholdCents} pays {feeAtCents} commission and one 1 cent higher pays {feeAboveCents}: raising the budget lowers the commission.{cliffCount, plural, one {} other { There are # such jumps; the largest drops by {worstDropCents}.}} Consider marginal mode.",
+        "BRACKET_RATES_NOT_DECREASING": "The tier rates do not go down as the tier goes up ({t1Bps} · {t2Bps} · {t3Bps}): the opposite of a volume discount.",
+        "SOURCE_NEGATIVE_MARGIN": "This source has accumulated a margin of {marginCents} (revenue minus the gateway cost of its payments)."
+      }
+    },
+    "alertsCapped": "Showing the {shown} most serious and recent of {total}.",
+    "metaTitle": "Console",
+    "scrollHint": "Swipe the table to see more columns →",
+    "summary": {
+      "title": "At a glance",
+      "alerts": "Open alerts",
+      "alertsCritical": "{count, plural, =0 {none critical} one {# critical} other {# critical}}",
+      "boost": "Campaigns with 💎 profitable Auto-Boost",
+      "negative": "Campaigns with 🚨 negative return",
+      "pricing": "Pricing warnings not yet accepted",
+      "filtered": "The 💎 and 🚨 campaign figures follow the business filters you chose."
+    },
+    "quarterLabel": "Q{quarter} {year}"
   },
   "forbidden": {
     "title": "You don't have access to this page",

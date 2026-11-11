@@ -51,6 +51,35 @@ export async function getBalancesByAccount(db: Db, dimensions: LedgerDimensions 
   }));
 }
 
+/**
+ * Saldos de las cuentas indicadas de **todas** las entidades en una sola consulta (la consola del Super-Admin, Sprint 5.1). Las entidades sin
+ * movimientos en esas cuentas no aparecen. El resultado de cada una es el mismo que daría `getBalancesByAccount(db, { organizationId })`.
+ */
+export async function getBalancesByOrganization(db: Db, accounts: readonly LedgerAccount[]): Promise<Map<string, AccountBalance[]>> {
+  const rows = await db.escrowLedgerEntry.groupBy({
+    by: ['organizationId', 'account', 'direction'],
+    where: { organizationId: { not: null }, account: { in: [...accounts] } },
+    _sum: { amountCents: true },
+    orderBy: [{ organizationId: 'asc' }, { account: 'asc' }, { direction: 'asc' }]
+  });
+  const totals = new Map<string, Map<LedgerAccount, { debit: number; credit: number }>>();
+  for (const row of rows) {
+    if (row.organizationId === null) continue;
+    const byAccount = totals.get(row.organizationId) ?? new Map<LedgerAccount, { debit: number; credit: number }>();
+    const entry = byAccount.get(row.account) ?? { debit: 0, credit: 0 };
+    if (row.direction === 'DEBIT') entry.debit += toSafeNumber(row._sum.amountCents);
+    else entry.credit += toSafeNumber(row._sum.amountCents);
+    byAccount.set(row.account, entry);
+    totals.set(row.organizationId, byAccount);
+  }
+  return new Map(
+    [...totals].map(([organizationId, byAccount]) => [
+      organizationId,
+      [...byAccount].map(([account, { debit, credit }]) => ({ account, debitCents: debit, creditCents: credit, balanceCents: naturalBalance(account, debit, credit) }))
+    ])
+  );
+}
+
 /** Saldo de una cuenta concreta (0 si no tiene movimientos). Ej.: hucha de una iniciativa = `INITIATIVE_ESCROW` + `initiativeId`. */
 export async function getAccountBalance(db: Db, account: LedgerAccount, dimensions: LedgerDimensions = {}): Promise<AccountBalance> {
   const rows = await db.escrowLedgerEntry.groupBy({ by: ['direction'], where: { account, ...dimensions }, _sum: { amountCents: true } });

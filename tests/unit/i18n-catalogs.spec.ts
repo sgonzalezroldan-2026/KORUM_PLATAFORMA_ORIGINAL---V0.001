@@ -105,8 +105,12 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Portería móvil (Sprint 4.5): «Pantalla completa», «Entra» y «Rifa» se escriben igual en catalán; los dos patrones no tienen texto traducible.
       'gate.raffle.fullscreen', 'gate.raffle.roundButton', 'gate.scanner.result.accepted', 'panel.gate.kind.raffle', 'panel.gate.pin.digits',
       // Ronda extra del sorteo (Sprint 4.6): «ronda» se escribe igual en catalán.
-      'panel.gate.raffle.extraTitle', 'panel.gate.raffle.prepare', 'panel.gate.raffle.round', 'panel.gate.raffle.roundExtra']);
+      'panel.gate.raffle.extraTitle', 'panel.gate.raffle.prepare', 'panel.gate.raffle.round', 'panel.gate.raffle.roundExtra',
+      // BI de la consola (Sprint 5.1): «Meta», «Iniciativa», «Medalla» y «Plata» se escriben igual en catalán; los porcentajes y los patrones no tienen texto traducible.
+      'admin.metaTitle', 'admin.kpi.potentialGoal', 'admin.kpi.percent', 'admin.orgs.col.medal', 'admin.orgs.col.goal', 'admin.orgs.medal.2', 'admin.orgs.sponsorsValue', 'admin.orgs.noValue', 'admin.initiatives.percent', 'admin.initiatives.col.title', 'admin.initiatives.col.goal']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
+      // BI de la consola (Sprint 5.1): el guion de «sin valor» es igual en inglés.
+      'admin.orgs.noValue',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.
       'panel.settings.team.form.seatOther', 'panel.settings.brand.accent.names.coral',
       // Portal público (Sprint 3.3): nombres propios y patrones sin texto traducible.
