@@ -64,12 +64,13 @@ export const FILE_RULES: Record<FilePurpose, FileRule> = {
   // 4 MB: tope de 4,5 MB del cuerpo en Vercel (como el KYB); una portada se comprime antes.
   ORG_BANNER: { ...PUBLIC_RULE, maxBytes: 4 * MB },
   INITIATIVE_COVER: { ...PUBLIC_RULE, maxBytes: 5 * MB },
-  INITIATIVE_BEFORE: { ...PUBLIC_RULE, maxBytes: 8 * MB },
-  INITIATIVE_AFTER: { ...PUBLIC_RULE, maxBytes: 8 * MB },
+  // 4 MB, como el KYB: el cuerpo de una petición a una función de Vercel no pasa de 4,5 MB (heredado del 4.2c, Sprint 4.4a). La subida directa al almacén es del 6.1.
+  INITIATIVE_BEFORE: { ...PUBLIC_RULE, maxBytes: 4 * MB },
+  INITIATIVE_AFTER: { ...PUBLIC_RULE, maxBytes: 4 * MB },
   SPONSOR_LOGO: { ...PUBLIC_RULE, maxBytes: 2 * MB },
   // 4 MB: el cuerpo de una petición a una función de Vercel no puede pasar de 4,5 MB (auditoría del 4.2c); un PDF escaneado se comprime antes.
   KYB_DOCUMENT: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 4 * MB, retentionRequired: true, readRoles: SIGNERS },
-  PROVIDER_INVOICE: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 10 * MB, retentionRequired: true, readRoles: SIGNERS },
+  PROVIDER_INVOICE: { visibility: 'PRIVATE', types: ['application/pdf', ...IMAGES], maxBytes: 4 * MB, retentionRequired: true, readRoles: SIGNERS },
   KORUM_INVOICE_PDF: { visibility: 'PRIVATE', types: ['application/pdf'], maxBytes: 5 * MB, retentionRequired: true, readRoles: SIGNERS },
   // El donante abrirá su propio certificado por una ruta propia (Sprint 3.7), con su sesión; aquí solo quienes firman en la entidad.
   TAX_CERTIFICATE: { visibility: 'PRIVATE', types: ['application/pdf'], maxBytes: 5 * MB, retentionRequired: true, readRoles: SIGNERS },

@@ -335,7 +335,7 @@
       "bracketRateAppliedBps": 0,
       "bracketFeeCents": 0,
       "maintFeeCents": 0,
-      "gatewayFeeCents": 2910,
+      "gatewayFeeCents": 0,
       "absorbsGatewayCostByKorum": false,
       "plaqueEnabled": false,
       "rewardEnabled": true,

@@ -1,6 +1,7 @@
 import { ImageMetadataError, stripImageMetadata } from '@/core/media/strip-image-metadata';
 import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { queuePhotosBroadcastIfReady } from '@/services/notifications/supporter-broadcast';
 import { requireOwnedResource } from '@/repositories/ownership';
 import { authorizeTenant, recordAudit, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { FileRejectedError, uploadFile } from './file-asset.service';
@@ -11,6 +12,7 @@ import type { StorageProvider } from './storage-provider';
  * identificables). Solo quienes firman en la entidad (`DIRECTOR`, `COSIGNER`), con la confirmación expresa de que **no aparecen menores
  * identificables** (queda en `AuditLog` con quién, cuándo y qué foto). La imagen se reescribe sin metadatos (EXIF con la ubicación del móvil, XMP,
  * comentarios) **antes** de ir al cubo público; el original no se guarda. Subir otra foto sustituye a la anterior, que se retira del cubo público.
+ * Las familias las ven cuando la iniciativa está cerrada (liquidación hecha con doble firma, Sprint 4.4a).
  */
 
 export type AchievementSlot = 'BEFORE' | 'AFTER';
@@ -97,6 +99,8 @@ export async function publishAchievementPhoto(db: KorumPrismaClient, storage: St
       const current = await tx.initiative.update({ where: { id: input.initiativeId }, data: { updatedAt: new Date() }, select: { beforeFileId: true, afterFileId: true } });
       const previousId = input.slot === 'BEFORE' ? current.beforeFileId : current.afterFileId;
       await tx.initiative.update({ where: { id: input.initiativeId }, data: input.slot === 'BEFORE' ? { beforeFileId: asset.id } : { afterFileId: asset.id } });
+      // Con la iniciativa ya cerrada y las dos fotos, «Mirad cómo ha quedado» a quienes donaron (una vez; Sprint 4.4a).
+      await queuePhotosBroadcastIfReady(tx, input.initiativeId, new Date());
       await recordAudit(
         tx,
         actor,

@@ -45,7 +45,9 @@ export const JOB_SPECS: Record<JobType, JobSpec> = {
   QUOTA_RENEWAL: { slug: 'quota-renewal', slotMs: DAY_MS, cron: '30 4 * * *', proCron: '30 4 * * *', batchSize: 100 },
   MODEL182_REMINDER: { slug: 'model182-reminder', slotMs: DAY_MS, cron: '0 8 2 1 *', proCron: '0 8 2 1 *', batchSize: 200 },
   DATA_RETENTION_PURGE: { slug: 'data-retention-purge', slotMs: 7 * DAY_MS, cron: '0 4 * * 0', proCron: '0 4 * * 0', batchSize: 1000 },
-  OPS_HOUSEKEEPING: { slug: 'ops-housekeeping', slotMs: DAY_MS, cron: '15 3 * * *', proCron: '15 3 * * *', batchSize: 1000 }
+  OPS_HOUSEKEEPING: { slug: 'ops-housekeeping', slotMs: DAY_MS, cron: '15 3 * * *', proCron: '15 3 * * *', batchSize: 1000 },
+  // Antes que la bandeja de salida del día (2:00 UTC) en el plan gratuito; cada minuto en Pro, para el aviso en ≤ 1 min de EXPERIENCIA §3.
+  SUPPORTER_BROADCAST: { slug: 'supporter-broadcast', slotMs: MINUTE_MS, cron: '45 1 * * *', proCron: '* * * * *', batchSize: 500 }
 };
 
 export function jobTypeFromSlug(slug: string): JobType | null {

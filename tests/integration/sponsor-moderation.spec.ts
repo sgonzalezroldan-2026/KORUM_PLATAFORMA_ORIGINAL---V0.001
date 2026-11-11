@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { verifyCheckoutResult } from '@/core/checkout/checkout-rules';
 import { getAccountBalance, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { purgeUnpaidSponsors } from '@/core/privacy/retention-purge';
-import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import { SponsorModerationError } from '@/core/sponsors/sponsor-moderation-rules';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -266,11 +266,11 @@ describe('Liquidación con comercios sin revisar (heredado del Sprint 3.5, punto
     const { organization, init, directorActor } = await team({ goalCents: 25_000, bracketFeeCents: 0, maintFeeCents: 0, gatewayFeeCents: 0 });
     const { sponsor } = await paidSponsor(organization.slug, init.id);
     expect(await initiativeOf(init.id)).toMatchObject({ status: 'GOAL_REACHED', raisedCents: 25_000 });
-    const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: init.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 25_000, korumFeeSettledCents: 0 } });
+    const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: init.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents: 25_000, korumFeeSettledCents: 0 } });
     const members = await db.organizationMember.findMany({ where: { organizationId: organization.id } });
     for (const member of members) {
       const signedAt = new Date(Date.now() - HOUR);
-      const signatureHash = computeSignatureHash(TEST_HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutTargetDigest(TEST_HMAC_SECRET, payout, organization.paycometSplitId), signerUserId: member.userId, signerRole: member.role, membershipId: member.id, signedAt, otpVerifiedAt: signedAt });
+      const signatureHash = computeSignatureHash(TEST_HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutDigestFor(TEST_HMAC_SECRET, { ...payout, providerInvoiceFile: null }, organization.paycometSplitId), signerUserId: member.userId, signerRole: member.role, membershipId: member.id, signedAt, otpVerifiedAt: signedAt });
       await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: member.userId, signerRole: member.role, signatureHash, otpVerifiedAt: signedAt, signedAt } });
     }
     await expect(approvePayout(db, payout.id, TEST_HMAC_SECRET)).rejects.toThrow(PayoutNotAllowedError);
@@ -334,7 +334,7 @@ describe('Más caminos de devolución de un comercio (auditoría financiera del 
     await approveSponsor(db, directorActor, organization.id, { sponsorId: sponsor.id }, options);
     await paidDonation(organization.id, init.id, 5_000);
     // Liquidada (aprobada): basta con que exista una liquidación aprobada para que el dinero ya no esté en la hucha.
-    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: init.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 10_000, korumFeeSettledCents: 0, status: 'APPROVED' } });
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: init.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents: 10_000, korumFeeSettledCents: 0, status: 'APPROVED' } });
     expect(await deliver('CHARGEBACK', order, contribution.totalChargedCents)).toMatchObject({ status: 200 });
     const journal = await db.ledgerJournal.findFirstOrThrow({ where: { contributionId: contribution.id, kind: 'CHARGEBACK' }, include: { entries: true } });
     const amounts = Object.fromEntries(journal.entries.map((entry) => [`${entry.direction}:${entry.account}`, entry.amountCents]));

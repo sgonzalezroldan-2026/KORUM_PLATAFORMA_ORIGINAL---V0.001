@@ -77,7 +77,12 @@ const SAMPLES: Record<string, unknown> = {
   'sponsor.lateReceived': { sponsorId: 3, amountCents: 25_000 },
   'activityFund.received': { amountCents: 25_000, deadline: IN_3_DAYS },
   'activityFund.reminder': { amountCents: 25_000, deadline: IN_3_DAYS },
-  'activityFund.paid': { payoutId: 4, amountCents: 25_000 }
+  'activityFund.paid': { payoutId: 4, amountCents: 25_000 },
+  // Liquidación de campañas y avisos a quienes aportaron (Sprint 4.4a).
+  'payout.executed': { initiativeId: 7, payoutId: 12, amountCents: 561_000, destinationType: 'PROVIDER' },
+  'payout.changed': { initiativeId: 7, payoutId: 12 },
+  'initiative.goalReachedSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
+  'initiative.achievementPhotos': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { approveRefundInTx } from '@/services/payments/payment-reversals';
 import { DoubleCheckNotAllowedError, requestSignature } from '@/core/security/double-check.service';
-import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import { invoiceSubmitHandler } from '@/core/jobs/handlers/ticketing-invoicing';
 import { massRefundHandler, MAX_REFUND_ATTEMPTS, reactivateRejectedRefund } from '@/core/jobs/handlers/mass-refund';
 import { LAST_RECONCILED_KEY, pspReconciliationHandler } from '@/core/jobs/handlers/psp-reconciliation';
@@ -327,13 +327,13 @@ describe('decisión del 01-11-2026 · un evento ya celebrado no se reabre por un
     for (let i = 0; i < 3; i += 1) await paidDonation(organization.id, initiative.id, 1_000, { createdAt: new Date(Math.min(Date.now(), closesAt.getTime()) - HOUR) });
     await db.initiative.update({ where: { id: initiative.id }, data: { goalCents: 5_000 } });
     const payout = await db.escrowPayout.create({
-      data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 2_700, korumFeeSettledCents: 200 }
+      data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 2_700, korumFeeSettledCents: 200 }
     });
     for (const role of ['DIRECTOR', 'COSIGNER'] as const) {
       const user = await createUser(db);
       const membership = await db.organizationMember.create({ data: { organizationId: organization.id, userId: user.id, role } });
       const signedAt = new Date(Date.now() - HOUR);
-      const signatureHash = computeSignatureHash(HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutTargetDigest(HMAC_SECRET, payout, organization.paycometSplitId), signerUserId: user.id, signerRole: role, membershipId: membership.id, signedAt, otpVerifiedAt: signedAt });
+      const signatureHash = computeSignatureHash(HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutDigestFor(HMAC_SECRET, { ...payout, providerInvoiceFile: null }, organization.paycometSplitId), signerUserId: user.id, signerRole: role, membershipId: membership.id, signedAt, otpVerifiedAt: signedAt });
       await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: user.id, signerRole: role, signatureHash, otpVerifiedAt: signedAt, signedAt } });
     }
     return payout;

@@ -1,5 +1,5 @@
 import { evaluateDoubleCheck } from '@/core/security/double-check-evaluation';
-import { ideaTargetDigest, payoutTargetDigest } from '@/core/security/signature-hash';
+import { ideaTargetDigest, payoutDigestFor } from '@/core/security/signature-hash';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.service';
 import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
@@ -95,7 +95,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(orgBalances.KORUM_REVENUE_BRACKET!.balanceCents).toBe(19_200);
     expect(orgBalances.GATEWAY_FEES_RECOVERED!.balanceCents).toBe(6_500);
     const payout = await db.escrowPayout.findUniqueOrThrow({ where: { initiativeId: 4 }, include: { signatures: true } });
-    expect(payout).toMatchObject({ status: 'EXECUTED', netPaidCents: 484_000, korumFeeSettledCents: 19_200, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA CEIP Cervantes', beneficiaryIban: 'ES44 2100 0815 4202 0019 8891' });
+    expect(payout).toMatchObject({ status: 'EXECUTED', netPaidCents: 484_000, korumFeeSettledCents: 19_200, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA CEIP Cervantes', beneficiaryIbanEnc: null, beneficiaryDigest: null });
     expect(payout.signatures.map((signature) => signature.signerRole).sort()).toEqual(['COSIGNER', 'DIRECTOR']);
     expect(new Set(payout.signatures.map((signature) => signature.signerUserId)).size).toBe(2);
     const transfer = await db.ledgerJournal.findUniqueOrThrow({ where: { idempotencyKey: 'seed:payout-4:split' } });
@@ -277,7 +277,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     const payouts = await db.escrowPayout.findMany({ where: seedOrganizations, include: { signatures: true, organization: { select: { paycometSplitId: true } } } });
     expect(payouts.length).toBeGreaterThan(0);
     for (const payout of payouts) {
-      const context = { organizationId: payout.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutTargetDigest(SECRETS.hmacSecret, payout, payout.organization.paycometSplitId) };
+      const context = { organizationId: payout.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutDigestFor(SECRETS.hmacSecret, { ...payout, providerInvoiceFile: null }, payout.organization.paycometSplitId) };
       const evaluation = await evaluateDoubleCheck(db, SECRETS.hmacSecret, context, payout.signatures);
       expect(evaluation.invalid).toEqual([]);
       expect(evaluation.complete).toBe(payout.status === 'EXECUTED');

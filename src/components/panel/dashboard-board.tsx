@@ -251,6 +251,12 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                       {t('card.poster', { title: item.title })}
                     </Link>
                   ) : null}
+                  {item.status === 'GOAL_REACHED' ? (
+                    <Link href={`/panel/${orgSlug}/liquidaciones`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4" data-testid={`settle-${item.id}`}>
+                      <span aria-hidden="true">{'🏆 '}</span>
+                      {t('card.settle', { title: item.title })}
+                    </Link>
+                  ) : null}
                   {hasPublicPage(item.status) ? (
                     <Link href={`/${orgSlug}/iniciativas/${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">
                       {t('card.viewPublic', { title: item.title })}

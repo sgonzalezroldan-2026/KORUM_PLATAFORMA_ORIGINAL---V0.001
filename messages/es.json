@@ -691,6 +691,50 @@
         "reference": "Referencia",
         "cta": "Abrir el Fondo de actividades"
       }
+    },
+    "payout": {
+      "executed": {
+        "subject": "Liquidación hecha: {amount} de «{initiative}»",
+        "preheader": "Las dos firmas están y el dinero ya va de camino.",
+        "title": "¡Liquidación hecha!",
+        "bodyORGANIZATION": "PAYCOMET ha enviado {amount} de la hucha de «{initiative}» a la cuenta de la entidad. Ya podéis pagar al proveedor con su factura.",
+        "bodyPROVIDER": "PAYCOMET ha enviado {amount} de la hucha de «{initiative}» directamente al proveedor que elegisteis.",
+        "next": "El último paso: subid las fotos del Antes y el Después y un mensaje de agradecimiento. Cuando estén las dos fotos, las familias que aportaron recibirán un aviso para verlas.",
+        "reference": "Referencia",
+        "amount": "Importe",
+        "destination": "Destino",
+        "destinations": {
+          "ORGANIZATION": "Cuenta de la entidad",
+          "PROVIDER": "Proveedor elegido por la entidad"
+        },
+        "cta": "Subir las fotos del Después"
+      },
+      "changed": {
+        "subject": "La liquidación {reference} de «{initiative}» ha cambiado",
+        "preheader": "Tu firma anterior ya no vale: revisa los datos antes de volver a firmar.",
+        "title": "La liquidación ha cambiado",
+        "body": "La otra persona firmante ha cambiado el destino, la factura o las cifras de la liquidación de «{initiative}». Las firmas anteriores ya no valen.",
+        "check": "Revisa en Liquidaciones a quién va el dinero y la factura antes de firmar de nuevo. Si no reconoces el cambio, no firmes y escribe a soporte.",
+        "cta": "Revisar la liquidación"
+      }
+    },
+    "supporter": {
+      "goalReached": {
+        "subject": "¡Lo hemos conseguido! «{initiative}»",
+        "preheader": "{organization} ha llegado al 100 % gracias a ti y a las demás familias.",
+        "title": "¡Lo hemos conseguido!",
+        "body": "«{initiative}» de {organization} ha llegado a su meta gracias a {count, plural, one {una aportación: la tuya} other {# aportaciones, y una de ellas es la tuya}}. ¡Gracias!",
+        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas de {organization} firmen su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
+        "cta": "Compartir el logro"
+      },
+      "photos": {
+        "subject": "Mirad cómo ha quedado: «{initiative}»",
+        "preheader": "Ya están las fotos del Antes y el Después.",
+        "title": "Mirad cómo ha quedado",
+        "body": "{organization} ha publicado las fotos del Antes y el Después de «{initiative}», la iniciativa a la que aportaste.",
+        "thanks": "Gracias por ayudar a que fuera posible.",
+        "cta": "Ver cómo ha quedado"
+      }
     }
   },
   "nav": {
@@ -1556,16 +1600,16 @@
       "cardText": "Subid las fotos de cada mejora terminada y escribid el agradecimiento que verán las familias.",
       "cardLink": "Ir a logros",
       "title": "Logros de la entidad",
-      "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal. Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
+      "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal en cuanto la liquidación de la campaña está hecha (con las dos firmas). Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
       "viewPublic": "Ver cómo lo ven las familias",
       "listLabel": "Iniciativas con logro",
       "empty": {
         "title": "Todavía no hay iniciativas con logro",
         "description": "Cuando una campaña esté abierta o conseguida, podréis subir aquí sus fotos y su agradecimiento."
       },
-      "beforeDone": "Foto del antes publicada",
+      "beforeDone": "Foto del antes guardada",
       "beforeMissing": "Falta la foto del antes",
-      "afterDone": "Foto del después publicada",
+      "afterDone": "Foto del después guardada",
       "afterMissing": "Falta la foto del después",
       "slotLabel": "Qué foto subes",
       "slotBefore": "Antes de la mejora",
@@ -1576,7 +1620,7 @@
       "minorsHelp": "Confirmas que no se reconoce el rostro de ningún menor y que tenéis los permisos de imagen necesarios. La entidad es responsable de las imágenes que publica.",
       "upload": "Publicar foto",
       "uploading": "Subiendo…",
-      "photoSaved": "Foto publicada. Ya la ven las familias en Logros conseguidos.",
+      "photoSaved": "Foto guardada. Las familias la verán en Logros conseguidos cuando la liquidación de la campaña esté hecha (o ya, si lo está).",
       "thanksLabel": "Mensaje de agradecimiento del centro",
       "thanksPlaceholder": "Gracias a todas las familias por hacerlo posible…",
       "thanksHelp": "Máximo {max} caracteres. Es público: no pongas nombres de personas ni de menores. Déjalo vacío para quitarlo.",
@@ -1598,7 +1642,9 @@
         "FILE_TOO_LARGE": "La foto pesa demasiado. Reduce su tamaño e inténtalo de nuevo.",
         "generic": "No hemos podido guardarlo. Probad de nuevo en unos segundos."
       },
-      "required": "obligatorio"
+      "required": "obligatorio",
+      "statusVisible": "Visible para las familias",
+      "statusLater": "Las familias la verán al terminar la liquidación"
     },
     "nav": {
       "label": "Secciones del panel",
@@ -1608,7 +1654,8 @@
       "pending": "{count, plural, one {# decisión pendiente} other {# decisiones pendientes}}",
       "settings": "Ajustes",
       "fund": "Fondo de actividades",
-      "studio": "Estudio"
+      "studio": "Estudio",
+      "payouts": "Liquidaciones"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -1680,7 +1727,8 @@
         "closes": "Cierra el {date}",
         "viewPublic": "Ver la ficha pública de «{title}»",
         "editInStudio": "Editar en Estudio: {title}",
-        "poster": "Cartel A4 con QR: {title}"
+        "poster": "Cartel A4 con QR: {title}",
+        "settle": "Liquidar «{title}»"
       },
       "steps": {
         "moderation": "1. Moderación",
@@ -1970,7 +2018,26 @@
           "expiredTitle": "La liquidación se ha anulado",
           "expired": "Algún cobro de la liquidación ha pasado el plazo de 90 días en que PAYCOMET puede enviarlo. La hemos anulado: pedidla de nuevo con lo que se pueda liquidar y el equipo de KORUM revisará el resto."
         },
-        "ctaDocuments": "Ir a los documentos del titular"
+        "ctaDocuments": "Ir a los documentos del titular",
+        "ctaPayouts": "Volver a Liquidaciones",
+        "payout": {
+          "celebrate": "¡Logro conseguido! El dinero ya va de camino.",
+          "photosCta": "Subir las fotos del Antes y el Después",
+          "executed": "Las dos firmas están registradas y PAYCOMET ya ha enviado el dinero. El último paso: subid las fotos y el agradecimiento para las familias.",
+          "pending": "Las dos firmas están registradas. El envío aún no ha terminado: lo reintentamos solos y veréis cómo va en Liquidaciones.",
+          "changedTitle": "Las cifras han cambiado",
+          "changed": "Lo recaudado ha cambiado desde que se pidió la liquidación (un contracargo). Pedidla de nuevo en Liquidaciones: se volverá a firmar.",
+          "blockedTitle": "Firmada, pero aún no se puede enviar",
+          "blocked": "Las dos firmas están registradas, pero faltan los documentos del titular verificados o la cuenta en PAYCOMET. Se enviará en cuanto estén.",
+          "notReadyTitle": "Firmada, pero la campaña aún no se puede liquidar",
+          "notReady": "Las dos firmas están registradas, pero falta algo antes de liquidar (el sorteo de la rifa o decidir sobre un comercio). Lo veréis en Liquidaciones.",
+          "invoiceTitle": "Falta una factura válida",
+          "invoice": "La factura adjunta ya no es válida. Subid otra en Liquidaciones y volved a pedir la liquidación.",
+          "providerTitle": "El pago al proveedor aún no está disponible",
+          "provider": "PAYCOMET aún no ha confirmado el pago directo a proveedores. Cambiad el destino a la cuenta de la entidad en Liquidaciones.",
+          "expiredTitle": "Hay cobros fuera de plazo",
+          "expired": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros."
+        }
       },
       "what": "Lo que vas a firmar",
       "ideaMeta": "{alias} · {category} · {votes} firmas verificadas",
@@ -2011,7 +2078,12 @@
       "fundMeta": "{amount} · {count, plural, one {de # comercio} other {de # comercios}}",
       "fundPurpose": "Para qué se usará (lo escribió la entidad):",
       "fundEffect": "Con las dos firmas, el dinero se envía a la cuenta de la entidad. No se puede deshacer.",
-      "fundTitle": "Liquidación {reference} del Fondo de actividades"
+      "fundTitle": "Liquidación {reference} del Fondo de actividades",
+      "payoutBeneficiary": "Para: {name}",
+      "payoutBeneficiaryIban": "Para: {name} · IBAN con código de entidad {bank}, acabado en {last4}",
+      "payoutInvoice": "Ver la factura del proveedor",
+      "payoutEffect": "Con las dos firmas, el dinero sale de la hucha de la iniciativa hacia este destino. No se puede deshacer.",
+      "payoutRequestedBy": "Pedida o cambiada por última vez por {name} el {date}. Si no esperabas este destino, no firmes."
     },
     "sponsors": {
       "title": "{count, plural, =0 {Comercios amigos} one {Comercios amigos · # por revisar} other {Comercios amigos · # por revisar}}",
@@ -2894,6 +2966,155 @@
         "yes": "Sí, descartar",
         "no": "No, conservarlo"
       }
+    },
+    "payouts": {
+      "metaTitle": "Liquidaciones",
+      "title": "Liquidaciones de las campañas conseguidas",
+      "intro": "Cuando una campaña llega a su meta, el dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas distintas de la entidad firman su liquidación. Elegid el destino, adjuntad la factura del proveedor y firmad las dos con vuestro código.",
+      "badge": "100 % conseguido · liquidación",
+      "figures": {
+        "raised": "Recaudado",
+        "korumFee": "Comisión de KORUM",
+        "gateway": "Pasarela de pago",
+        "net": "Para el proyecto"
+      },
+      "window": "Liquidadla antes del {date} ({days, plural, one {queda # día} other {quedan # días}}): PAYCOMET solo puede enviar el dinero durante los 90 días siguientes al primer cobro.",
+      "blockersLabel": "Lo que falta antes de liquidar",
+      "blockers": {
+        "NOT_READY": "Esta campaña no está lista para liquidar.",
+        "RAFFLE_NOT_DRAWN": "Falta hacer el sorteo de la rifa ante el público: no se puede liquidar antes.",
+        "SPONSORS_PENDING": "Hay comercios cobrados que aún no habéis admitido ni rechazado.",
+        "KYB_NOT_VERIFIED": "Faltan los documentos del titular verificados.",
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET.",
+        "NOTHING_TO_PAY": "No queda nada que liquidar en esta campaña.",
+        "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros."
+      },
+      "blockerCta": {
+        "SPONSORS_PENDING": "Revisar los comercios",
+        "KYB_NOT_VERIFIED": "Ir a los documentos del titular"
+      },
+      "readOnly": "Solo las dos personas firmantes de la entidad pueden pedir y firmar la liquidación.",
+      "photosHint": "Fotos Antes y Después y agradecimiento (las familias las verán al terminar la liquidación)",
+      "empty": {
+        "title": "Aún no hay campañas por liquidar",
+        "text": "Cuando una campaña llegue al 100 %, aparecerá aquí para enviar el dinero al proyecto con la doble firma.",
+        "cta": "Ir al cuadro de mandos"
+      },
+      "form": {
+        "destinationLegend": "¿Adónde va el dinero?",
+        "toOrganization": "A la cuenta de la entidad",
+        "toOrganizationHelp": "PAYCOMET lo envía a vuestra cuenta y vosotros pagáis al proveedor con su factura.",
+        "toOrganizationMissing": "La entidad aún no tiene su cuenta en PAYCOMET.",
+        "toProvider": "Directamente al proveedor que habéis elegido",
+        "toProviderHelp": "Con su nombre, su CIF o NIF y su IBAN. KORUM no elige ni cobra nada al proveedor.",
+        "providerSimulated": "En pruebas: pendiente de confirmar con PAYCOMET",
+        "providerName": "Nombre o razón social del proveedor",
+        "providerTaxId": "CIF o NIF del proveedor",
+        "iban": "IBAN del proveedor",
+        "ibanHelp": "Lo guardamos cifrado; quien firma solo verá los 4 últimos dígitos.",
+        "providerNameError": "Escribid el nombre del proveedor (entre {min} y {max} caracteres).",
+        "invoiceLabel": "Factura (o proforma) del proveedor",
+        "invoiceOptional": "Factura del proveedor (opcional)",
+        "invoiceHelp": "PDF o foto, hasta {size} MB. La verán las dos personas que firman; las familias no.",
+        "invoiceReady": "Factura adjunta: {name}",
+        "invoiceKept": "la que ya subisteis",
+        "uploading": "Subiendo la factura…",
+        "effect": "Al pedirla te enviamos por email tu enlace de firma con un código. Después firmará la otra persona.",
+        "effectUpdate": "Al cambiarla, las firmas que hubiera dejan de valer y se piden de nuevo.",
+        "submit": "Pedir la liquidación y firmar",
+        "submitUpdate": "Guardar los cambios y volver a firmar",
+        "sending": "Enviando…",
+        "requested": "Liquidación pedida. Te hemos enviado tu enlace de firma; vale hasta el {date}.",
+        "updated": "Liquidación cambiada. Las firmas se piden de nuevo: te hemos enviado tu enlace, que vale hasta el {date}.",
+        "orgAccountMissing": "Aún no tenéis la cuenta de la entidad en PAYCOMET: el equipo de KORUM os avisará cuando esté lista. Podréis pedir la liquidación entonces."
+      },
+      "errors": {
+        "INVALID_INPUT": "Revisa los datos del formulario.",
+        "INVALID_IBAN": "El IBAN no es válido. Revisad que esté completo (en España, 24 caracteres empezando por ES).",
+        "INVALID_TAX_ID": "El CIF o NIF del proveedor no es válido.",
+        "NOT_FOUND": "No encontramos esa campaña en vuestra entidad.",
+        "NOT_READY": "Esta campaña ya no está lista para liquidar (puede que un contracargo la haya devuelto a recaudar).",
+        "RAFFLE_NOT_DRAWN": "Falta hacer el sorteo de la rifa: no se puede liquidar antes.",
+        "SPONSORS_PENDING": "Hay comercios cobrados que aún no habéis admitido ni rechazado.",
+        "KYB_NOT_VERIFIED": "Faltan los documentos del titular verificados.",
+        "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET para recibir el dinero.",
+        "INVOICE_REQUIRED": "Adjuntad la factura (o proforma) del proveedor.",
+        "INVOICE_INVALID": "Esa factura ya no está disponible. Subidla de nuevo.",
+        "PROVIDER_PAYOUT_UNAVAILABLE": "El pago directo al proveedor aún no está disponible. Elegid la cuenta de la entidad.",
+        "NOTHING_TO_PAY": "No queda nada que liquidar en esta campaña.",
+        "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros.",
+        "WRONG_STATUS": "La liquidación ya no espera las firmas: ha cambiado mientras tanto.",
+        "RATE_LIMITED": "Habéis hecho muchas peticiones seguidas. Esperad unos minutos.",
+        "NOT_A_SIGNER": "Tu cuenta no tiene un cargo de firma en esta entidad.",
+        "HOLDS_BOTH_ROLES": "Una misma persona no puede ocupar los dos cargos de firma.",
+        "TWO_FACTOR_REQUIRED": "Para firmar necesitas la verificación en dos pasos activada y superada en esta sesión.",
+        "TARGET_CLOSED": "Esta liquidación ya no espera firmas.",
+        "ALREADY_SIGNED": "Tu firma ya consta (o tu cargo ya ha firmado).",
+        "SAME_PERSON": "Las dos firmas tienen que ser de personas distintas, con correos distintos.",
+        "PROVIDER_INVOICE_MISSING": "Falta una factura válida del proveedor para firmar.",
+        "FORBIDDEN": "No tienes permiso para hacer esto.",
+        "LINK_NOT_SENT": "La liquidación está pedida, pero no hemos podido enviarte el enlace de firma. Pídelo de nuevo desde aquí en unos minutos.",
+        "failed": "No hemos podido completar la operación. Probad de nuevo en unos segundos.",
+        "TOO_LARGE": "El fichero pesa demasiado (máximo 4 MB). Comprimidlo o haced la foto con menos resolución.",
+        "LENGTH_REQUIRED": "No hemos podido leer el fichero. Probad de nuevo.",
+        "FILE_EMPTY": "El fichero está vacío.",
+        "FILE_TOO_LARGE": "El fichero pesa demasiado (máximo 4 MB). Comprimidlo o haced la foto con menos resolución.",
+        "FILE_UNRECOGNIZED_TYPE": "No reconocemos el fichero. Subid un PDF o una foto (JPG, PNG o WEBP).",
+        "FILE_TYPE_NOT_ALLOWED": "Subid un PDF o una foto (JPG, PNG o WEBP).",
+        "FILE_MIME_MISMATCH": "El tipo del fichero no coincide con su contenido. Guardadlo de nuevo como PDF o JPG.",
+        "FILE_EXTENSION_MISMATCH": "La extensión del fichero no coincide con su contenido. Cambiadle el nombre o guardadlo de nuevo.",
+        "FILE_RETENTION_REQUIRED": "No hemos podido guardar el fichero. Probad de nuevo."
+      },
+      "pending": {
+        "title": "Liquidación {reference} · esperando las dos firmas",
+        "toProvider": "Para el proveedor {name} · IBAN con código de entidad {bank}, acabado en {last4}",
+        "toOrganization": "Para la cuenta de {name}",
+        "openInvoice": "Ver la factura del proveedor",
+        "stale": "Lo recaudado ha cambiado desde que se pidió (un contracargo). Pedidla de nuevo con las cifras actuales: se volverá a firmar.",
+        "invoiceInvalid": "La factura ya no es válida. Subid otra para poder firmar.",
+        "noInvoice": "Sin factura adjunta (no hace falta en una taquilla).",
+        "retry": "Reintentar el envío ahora",
+        "retrying": "Reintentando…",
+        "retryDone": "¡Hecho! PAYCOMET ya ha enviado el dinero.",
+        "retryPending": "El envío aún no ha terminado. Lo reintentamos solos cada día; aquí verás cómo va.",
+        "requestLink": "Pedir mi enlace de firma",
+        "waitingOther": "Falta la firma de la otra persona. Ella puede pedir su enlace desde esta página.",
+        "editIntro": "Cambiar el destino o la factura. Las firmas que hubiera se piden de nuevo.",
+        "edit": "Cambiar el destino o la factura",
+        "editCancel": "No cambiar nada",
+        "notApproved": {
+          "NOT_GOAL": "No se ha podido aprobar: la campaña ya no tiene la meta conseguida (un contracargo).",
+          "RAFFLE_NOT_DRAWN": "No se ha podido aprobar: falta el sorteo completo de la rifa.",
+          "SPONSORS_PENDING": "No se ha podido aprobar: hay comercios cobrados sin admitir ni rechazar.",
+          "FIGURES_CHANGED": "Las cifras han cambiado desde que se firmó (un contracargo). Pedid la liquidación de nuevo: se volverá a firmar.",
+          "ESCROW_MISMATCH": "La hucha no cuadra con lo recaudado. El equipo de KORUM lo está revisando.",
+          "KYB_NOT_VERIFIED": "Las dos firmas cuentan, pero faltan los documentos del titular verificados. Se enviará en cuanto estén.",
+          "DESTINATION_ACCOUNT_MISSING": "Las dos firmas cuentan, pero la entidad aún no tiene su cuenta en PAYCOMET.",
+          "INVOICE_INVALID": "La factura adjunta ya no es válida. Subid otra y volved a pedir la liquidación.",
+          "PROVIDER_UNAVAILABLE": "El pago directo al proveedor aún no está disponible. Cambiad el destino a la cuenta de la entidad.",
+          "SIGNATURES": "Las firmas no son válidas para lo que hay ahora (algo ha cambiado o alguien ha dejado su cargo). Volved a firmar.",
+          "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días de PAYCOMET. El equipo de KORUM lo revisará con vosotros.",
+          "WRONG_STATUS": "La liquidación ha cambiado mientras tanto. Recarga la página."
+        },
+        "invoiceMissing": "Falta la factura (o proforma) del proveedor: adjuntadla para poder firmar.",
+        "blockedNote": "Se podrá firmar cuando resolváis lo que falta (arriba).",
+        "requestedBy": "Pedida o cambiada por última vez por {name} el {date}."
+      },
+      "history": {
+        "title": "Liquidaciones enviadas",
+        "status": {
+          "APPROVED": "Aprobada",
+          "PROCESSING": "Enviándose",
+          "EXECUTED": "Enviada",
+          "FAILED": "Sin terminar"
+        },
+        "toProvider": "al proveedor {name} (IBAN con código de entidad {bank}, acabado en {last4})",
+        "toOrganization": "a la cuenta de {name}",
+        "executed": "Enviada el {date}",
+        "progress": "Enviado {done} de {total}",
+        "underReview": "Una parte del envío está en revisión: el equipo de KORUM lo resuelve con PAYCOMET. No tenéis que hacer nada.",
+        "photosCta": "Subir las fotos del Antes y el Después"
+      }
     }
   },
   "gate": {
@@ -2947,7 +3168,8 @@
       "TRUSTED_IP_MISSING": "No llega la IP de las familias al firmar ideas: todas quedarían en el mismo grupo",
       "INVOICE_RECTIFY_PENDING": "Factura del fee de un comercio devuelto o con contracargo, pendiente de rectificar",
       "ACTIVITY_FUND_WINDOW": "Fondo de actividades cerca del plazo de 90 días (o pasado)",
-      "SPONSOR_MONEY_BLOCKED": "Dinero de un comercio bloqueado con su plazo corriendo"
+      "SPONSOR_MONEY_BLOCKED": "Dinero de un comercio bloqueado con su plazo corriendo",
+      "PAYOUT_BLOCKED": "Liquidación de campaña bloqueada: hay repartos que no se pueden enviar ni replanificar"
     },
     "fundsTitle": "{count, plural, =0 {Fondos de actividades} one {Fondos de actividades · # entidad} other {Fondos de actividades · # entidades}}",
     "fundsNone": "Ninguna entidad tiene dinero en su Fondo de actividades.",

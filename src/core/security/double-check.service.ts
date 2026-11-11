@@ -9,7 +9,7 @@ import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingRe
 import { dataHmac, safeEqual } from './data-hmac';
 import { evaluateDoubleCheck, loadSignerMemberships, SIGNER_ROLES, type DoubleCheckContext, type DoubleCheckEvaluation, type SignerMembership, type SignerRole, type StoredSignature } from './double-check-evaluation';
 import { queueChallengeEmail, revokeOpenChallenges, targetColumns, targetIdOf, type SignatureTarget } from './double-check-email';
-import { activityFundTargetDigest, computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from './signature-hash';
+import { activityFundTargetDigest, computeSignatureHash, ideaTargetDigest, payoutDigestFor } from './signature-hash';
 
 /**
  * Doble firma mancomunada (skill korum-quorum-antifraud §3): `DIRECTOR` + `COSIGNER`, dos personas distintas, para aprobar una idea,
@@ -62,10 +62,24 @@ async function lockTarget(tx: Db, secret: string, target: SignatureTarget, now: 
     const context = { organizationId: fund.organizationId, targetType: target.targetType, targetId: fund.id, targetDigest: activityFundTargetDigest(secret, fund, account) };
     return { context, open: fund.status === 'PENDING_DOUBLE_CHECK', block: account ? null : 'DESTINATION_ACCOUNT_MISSING', signatures: fund.signatures };
   }
-  const payout = await tx.escrowPayout.update({ where: { id: target.payoutId }, data: { netPaidCents: { increment: 0 } }, include: { signatures: true, organization: { select: { paycometSplitId: true } } } });
+  const payout = await tx.escrowPayout.update({
+    where: { id: target.payoutId },
+    data: { netPaidCents: { increment: 0 } },
+    include: {
+      signatures: true,
+      organization: { select: { paycometSplitId: true } },
+      providerInvoiceFile: { select: { sha256: true, organizationId: true, purpose: true, deletedAt: true } }
+    }
+  });
   const account = payout.organization.paycometSplitId;
-  const context = { organizationId: payout.organizationId, targetType: target.targetType, targetId: payout.id, targetDigest: payoutTargetDigest(secret, payout, account) };
-  const block = payout.destinationType === 'PROVIDER' ? (payout.providerInvoiceFileId ? null : 'PROVIDER_INVOICE_MISSING') : account ? null : 'DESTINATION_ACCOUNT_MISSING';
+  const context = { organizationId: payout.organizationId, targetType: target.targetType, targetId: payout.id, targetDigest: payoutDigestFor(secret, payout, account) };
+  // La factura vale si es de esta entidad, es una factura de proveedor y sigue guardada (heredado del Sprint 2.2): no basta con que haya un id.
+  const invoice = payout.providerInvoiceFile;
+  const invoiceValid = invoice !== null && invoice.organizationId === payout.organizationId && invoice.purpose === 'PROVIDER_INVOICE' && invoice.deletedAt === null;
+  // Un pago al proveedor la lleva siempre; una adjunta, aunque el destino sea la entidad, tiene que valer. Que una campaña de presupuesto la adjunte lo
+  // exige quien pide la liquidación (`requestCampaignPayout`, QA-S03).
+  const invoiceNeeded = payout.destinationType === 'PROVIDER' || payout.providerInvoiceFileId !== null;
+  const block = invoiceNeeded && !invoiceValid ? 'PROVIDER_INVOICE_MISSING' : payout.destinationType === 'ORGANIZATION' && !account ? 'DESTINATION_ACCOUNT_MISSING' : null;
   return { context, open: payout.status === 'PENDING_DOUBLE_CHECK', block, signatures: payout.signatures };
 }
 

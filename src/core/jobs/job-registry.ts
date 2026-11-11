@@ -9,6 +9,7 @@ import { pspReconciliationHandler } from './handlers/psp-reconciliation';
 import { quotaRenewalHandler } from './handlers/quota-renewal';
 import { creditPoolExpiryHandler, monthlyTopupHandler, sponsorRenewalChargeHandler, sponsorRenewalNoticeHandler } from './handlers/recurring-billing';
 import { splitWindowGuardHandler } from './handlers/split-window-guard';
+import { supporterBroadcastHandler } from './handlers/supporter-broadcast';
 import { invoiceSubmitHandler, ticketHoldReleaseHandler } from './handlers/ticketing-invoicing';
 import type { JobHandler } from './job-types';
 
@@ -31,5 +32,6 @@ export const JOB_HANDLERS: Partial<Record<JobType, JobHandler>> = {
   TICKET_HOLD_RELEASE: ticketHoldReleaseHandler,
   INVOICE_SUBMIT: invoiceSubmitHandler,
   OPS_HOUSEKEEPING: housekeepingHandler,
-  DATA_RETENTION_PURGE: dataRetentionPurgeHandler
+  DATA_RETENTION_PURGE: dataRetentionPurgeHandler,
+  SUPPORTER_BROADCAST: supporterBroadcastHandler
 };

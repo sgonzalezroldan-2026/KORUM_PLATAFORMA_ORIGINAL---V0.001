@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CampaignDurationError, publishInitiative } from '@/core/finance/campaign-window';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger, getTrialBalance } from '@/core/finance/ledger.service';
-import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadCardToken, tokenizeAndStoreCard } from '@/services/payments/card-tokens';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
@@ -233,7 +233,7 @@ describe('cobros confirmados', () => {
   it('un cobro tardío tras liquidar se asienta y queda para devolver: ni se pierde ni se queda atrapado en la hucha', async () => {
     for (const status of ['CLOSED', 'GOAL_REACHED'] as const) {
       const { organization, initiative } = await setup({ status, goalCents: 2_500, raisedCents: 0 });
-      const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 2_500, korumFeeSettledCents: 0, status: 'EXECUTED' } });
+      const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 2_500, korumFeeSettledCents: 0, status: 'EXECUTED' } });
       const late = await paidDonation(organization.id, initiative.id, 500);
       expect(await statusOf(late.id), status).toBe('REFUND_PENDING');
       expect((await getAccountBalance(db, 'INITIATIVE_ESCROW', { initiativeId: initiative.id })).balanceCents).toBe(0);
@@ -418,7 +418,7 @@ describe('QA-P02 · reembolso al medio de pago original', () => {
   it('un reembolso desde el panel de Paycomet tras liquidar lo asume KORUM y se refleja', async () => {
     const { organization, initiative } = await setup({ goalCents: 2_500 });
     const contribution = await paidDonation(organization.id, initiative.id);
-    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 2_500, korumFeeSettledCents: 0, status: 'EXECUTED' } });
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 2_500, korumFeeSettledCents: 0, status: 'EXECUTED' } });
     expect((await deliver('REFUND', contribution.paycometOrder!, 2_500)).status).toBe(200);
     expect(await statusOf(contribution.id)).toBe('REFUNDED');
     expect((await getAccountBalance(db, 'CHARGEBACK_LOSSES', { organizationId: organization.id })).balanceCents).toBe(2_500);
@@ -494,15 +494,21 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
     const createdAt = options.chargedAt ?? new Date('2026-11-01T00:00:00Z');
     const charges = [];
     for (let i = 0; i < 3; i += 1) charges.push(await paidDonation(organization.id, initiative.id, 1_000, 0, { createdAt }));
+    // Un pago al proveedor lleva sus datos cifrados (Sprint 4.4a) y su factura válida: así lo que falla es solo que Paycomet aún no lo ofrece.
+    const invoice =
+      options.destinationType === 'PROVIDER'
+        ? await db.fileAsset.create({ data: { bucket: 'korum-private', objectKey: `tests/${organization.id}/factura-${initiative.id}.pdf`, visibility: 'PRIVATE', purpose: 'PROVIDER_INVOICE', mimeType: 'application/pdf', sizeBytes: 1_000, sha256: 'f'.repeat(64), organizationId: organization.id } })
+        : null;
+    const provider = invoice ? { beneficiaryIbanEnc: 'cifrado', providerCifEnc: 'cifrado', beneficiaryKeyVersion: 1, beneficiaryDigest: 'huella-del-proveedor', providerInvoiceFileId: invoice.id } : {};
     const payout = await db.escrowPayout.create({
-      data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: options.destinationType ?? 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 2_700, korumFeeSettledCents: 200 }
+      data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: options.destinationType ?? 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 2_700, korumFeeSettledCents: 200, ...provider }
     });
     const signer = await createUser(db);
     for (const role of options.sign ?? ['DIRECTOR', 'COSIGNER']) {
       const user = options.sameSigner ? signer : await createUser(db);
       const membership = await db.organizationMember.create({ data: { organizationId: organization.id, userId: user.id, role } });
       const signedAt = new Date('2026-11-09T10:00:00.000Z');
-      const signatureHash = computeSignatureHash(HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutTargetDigest(HMAC_SECRET, payout, organization.paycometSplitId), signerUserId: user.id, signerRole: role, membershipId: membership.id, signedAt, otpVerifiedAt: signedAt });
+      const signatureHash = computeSignatureHash(HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutDigestFor(HMAC_SECRET, { ...payout, providerInvoiceFile: invoice }, organization.paycometSplitId), signerUserId: user.id, signerRole: role, membershipId: membership.id, signedAt, otpVerifiedAt: signedAt });
       await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: user.id, signerRole: role, signatureHash, otpVerifiedAt: signedAt, signedAt } });
     }
     return { organization, initiative, payout, charges };

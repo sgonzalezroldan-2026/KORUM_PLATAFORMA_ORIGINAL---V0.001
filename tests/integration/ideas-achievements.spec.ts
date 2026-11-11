@@ -391,7 +391,11 @@ describe('fotos Antes / Después y agradecimiento', () => {
     expect(storage.has(firstAsset.bucket, firstAsset.objectKey)).toBe(false);
     expect((await db.initiative.findUniqueOrThrow({ where: { id: reached.id } })).afterFileId).toBe(second.fileId);
     expect(await getPublicImageFile(db, first.fileId)).toBeNull();
+    // Sprint 4.4a: con la campaña aún sin liquidar (GOAL_REACHED) la foto no se sirve a nadie; al cerrarse, sí.
+    expect(await getPublicImageFile(db, second.fileId)).toBeNull();
+    await db.initiative.update({ where: { id: reached.id }, data: { status: 'CLOSED' } });
     expect(await getPublicImageFile(db, second.fileId)).toMatchObject({ id: second.fileId, mimeType: 'image/jpeg' });
+    await db.initiative.update({ where: { id: reached.id }, data: { status: 'GOAL_REACHED' } });
   });
 
   it('rechaza lo que no es una imagen, una imagen corrupta, un tipo que no coincide y una iniciativa que no admite fotos', async () => {

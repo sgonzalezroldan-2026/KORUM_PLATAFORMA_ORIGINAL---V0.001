@@ -13,6 +13,8 @@ export interface AchievementPhotoFormProps {
   thanksMessage: string;
   maxBytes: number;
   thanksMax: number;
+  /** La iniciativa ya está cerrada (liquidación hecha): sus fotos ya las ven las familias (Sprint 4.4a). */
+  visibleToFamilies: boolean;
 }
 
 type Feedback = { tone: 'ok' | 'error'; text: string } | null;
@@ -24,7 +26,7 @@ const field = 'min-h-11 w-full rounded-xl border-2 border-patio-rule-strong bg-w
  * obligatoria y el servidor la vuelve a exigir; la imagen se reescribe sin metadatos antes de publicarse. Los errores se anuncian junto al
  * formulario y el foco se queda donde estaba.
  */
-export function AchievementPhotoForm({ orgSlug, initiativeId, title, hasBefore, hasAfter, thanksMessage, maxBytes, thanksMax }: AchievementPhotoFormProps) {
+export function AchievementPhotoForm({ orgSlug, initiativeId, title, hasBefore, hasAfter, thanksMessage, maxBytes, thanksMax, visibleToFamilies }: AchievementPhotoFormProps) {
   const t = useTranslations('panel.achievements');
   const router = useRouter();
   const ids = { slot: useId(), file: useId(), minors: useId(), thanks: useId(), minorsHelp: useId() };
@@ -70,6 +72,7 @@ export function AchievementPhotoForm({ orgSlug, initiativeId, title, hasBefore, 
     <article className="korum-trust-vault space-y-5 p-5" data-testid="achievement-workbench-item">
       <header className="space-y-1">
         <h2 className="font-corp text-lg font-extrabold text-varsity-navy wrap-anywhere">{title}</h2>
+        <p className="text-sm font-semibold text-ink-soft" data-testid={`achievement-visibility-${initiativeId}`}>{`${visibleToFamilies ? '👀' : '⏳'} ${t(visibleToFamilies ? 'statusVisible' : 'statusLater')}`}</p>
         <p className="text-sm font-semibold text-ink-soft">
           <span aria-hidden="true">{hasBefore ? '✅ ' : '⏳ '}</span>
           {t(hasBefore ? 'beforeDone' : 'beforeMissing')}

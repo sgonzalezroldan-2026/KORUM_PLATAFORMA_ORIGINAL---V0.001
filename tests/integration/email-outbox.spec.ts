@@ -163,7 +163,8 @@ describe('QA-NOT01 · la bandeja de salida envía, reintenta y deja constancia',
   it('sin proveedor configurado los mensajes esperan sin gastar intentos, y se avisa al Super-Admin', async () => {
     const { organization, initiative } = await scenario();
     const messages = await Promise.all([queue(organization.id, initiative.id), queue(organization.id, initiative.id)]);
-    const ids = messages.map((message) => message.id);
+    // En orden de id, que es el de la bandeja: los dos se crean a la vez y la promesa no garantiza cuál llega antes (intermitente visto en el 4.4a).
+    const ids = messages.map((message) => message.id).sort((a, b) => a - b);
 
     const result = await dispatchOutbox(db, depsFor(async () => Promise.reject(new EmailConfigurationError(['email.apiKey']))), { now: NOW, limit: 10, ids });
 

@@ -2,7 +2,6 @@ import { spanishFiscalYear } from '@/core/checkout/checkout-rules';
 import { postJournal } from '@/core/finance/ledger.service';
 import { bpsOf } from '@/core/finance/money';
 import { donationOrTicketPayinLines, gatewayFeeLines, matchingReleaseLines } from '@/core/finance/payment-journals';
-import { notifySigners } from '@/core/jobs/notify';
 import type { Keyring } from '@/core/security/crypto';
 import { settleTicketSeatInTx } from '@/core/ticketing/ticket-issuance';
 import { releaseTicketHoldInTx } from '@/core/ticketing/ticket-reservation.service';
@@ -12,6 +11,7 @@ import { pledgeChargedBackInTx, pledgeChargeFailedInTx, settlePledgePaymentInTx 
 import { applyChargebackInTx, applyConfirmedRefundInTx } from './payment-provider-reversals';
 import { approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
 import type { PaymentNotification } from './payment-provider';
+import { markGoalReached } from './goal-reached';
 import { completeSponsorshipInTx, type InvoicingContext } from './sponsorship-events';
 
 /**
@@ -177,9 +177,8 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   }
   const bonusCents = contribution.type === 'DONATION' ? await releaseMatching(tx, { ...contribution, fiscalYear }, order, occurredAt) : 0;
   if (initiative.status === 'FUNDRAISING' && (capacityFull || initiative.raisedCents + bonusCents >= initiative.goalCents)) {
-    await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'GOAL_REACHED', stepIndex: 5 } });
-    // Quienes firman saben al instante que toca liquidar; el aviso sale en el propio flujo del cobro (Sprint 2.6).
-    await notifySigners(tx, contribution.organizationId, 'initiative.goalReached', String(contribution.initiativeId), { initiativeId: contribution.initiativeId });
+    // Quienes firman saben al instante que toca liquidar; el aviso sale en el propio flujo del cobro (Sprint 2.6). Quienes donaron, por lotes (Sprint 4.4a).
+    await markGoalReached(tx, contribution.organizationId, contribution.initiativeId, occurredAt);
   }
   // El recibo se escribe en la misma transacción que el asiento: o existen los dos o ninguno.
   await queueContributionReceipt(tx, contribution.id);

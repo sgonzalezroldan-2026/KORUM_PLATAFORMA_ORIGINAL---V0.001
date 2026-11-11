@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getAccountBalance, getRaisedFromLedger, getTrialBalance } from '@/core/finance/ledger.service';
 import type { JobDeps } from '@/core/jobs/job-types';
 import { massRefundHandler } from '@/core/jobs/handlers/mass-refund';
-import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import { ACTIVITY_FUND_DAY, SponsorReassignmentError } from '@/core/sponsors/sponsor-reassignment-rules';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -103,10 +103,10 @@ const inTransactionRelocate = (sponsorId: number, now: Date) => inTransaction(db
 const fail = (initiativeId: number) => db.initiative.update({ where: { id: initiativeId }, data: { status: 'REFUNDING' } });
 
 async function signedPayout(organization: { id: string; paycometSplitId: string | null }, initiativeId: number, netPaidCents: number) {
-  const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents, korumFeeSettledCents: 0 } });
+  const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents, korumFeeSettledCents: 0 } });
   for (const member of await db.organizationMember.findMany({ where: { organizationId: organization.id } })) {
     const signedAt = new Date(Date.now() - HOUR);
-    const signatureHash = computeSignatureHash(TEST_HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutTargetDigest(TEST_HMAC_SECRET, payout, organization.paycometSplitId), signerUserId: member.userId, signerRole: member.role, membershipId: member.id, signedAt, otpVerifiedAt: signedAt });
+    const signatureHash = computeSignatureHash(TEST_HMAC_SECRET, { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', targetId: payout.id, targetDigest: payoutDigestFor(TEST_HMAC_SECRET, { ...payout, providerInvoiceFile: null }, organization.paycometSplitId), signerUserId: member.userId, signerRole: member.role, membershipId: member.id, signedAt, otpVerifiedAt: signedAt });
     await db.doubleCheckSignature.create({ data: { organizationId: organization.id, targetType: 'ESCROW_PAYOUT', payoutId: payout.id, signerUserId: member.userId, signerRole: member.role, signatureHash, otpVerifiedAt: signedAt, signedAt } });
   }
   return payout;
@@ -360,7 +360,7 @@ describe('Bolsa Matching 2x en una campaña que ya no recauda (heredado del 4.2b
     expect(await initiativeOf(origin.id)).toMatchObject({ raisedCents: 20_000, matchingPoolRemainingCents: 15_000 });
 
     await db.initiative.update({ where: { id: origin.id }, data: { status: 'GOAL_REACHED' } });
-    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: origin.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 20_000, korumFeeSettledCents: 0, status: 'APPROVED' } });
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: origin.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents: 20_000, korumFeeSettledCents: 0, status: 'APPROVED' } });
     await sweepSponsorMoney(db, new Date(), 50);
     expect(await initiativeOf(target.id)).toMatchObject({ raisedCents: 15_000 });
     expect(await initiativeOf(origin.id)).toMatchObject({ matchingPoolRemainingCents: 0, raisedCents: 20_000 });

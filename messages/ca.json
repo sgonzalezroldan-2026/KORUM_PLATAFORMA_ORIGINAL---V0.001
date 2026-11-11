@@ -691,6 +691,50 @@
         "reference": "Referència",
         "cta": "Obrir el Fons d’activitats"
       }
+    },
+    "payout": {
+      "executed": {
+        "subject": "Liquidació feta: {amount} de «{initiative}»",
+        "preheader": "Les dues signatures hi són i els diners ja són de camí.",
+        "title": "Liquidació feta!",
+        "bodyORGANIZATION": "PAYCOMET ha enviat {amount} de la guardiola de «{initiative}» al compte de l’entitat. Ja podeu pagar el proveïdor amb la seva factura.",
+        "bodyPROVIDER": "PAYCOMET ha enviat {amount} de la guardiola de «{initiative}» directament al proveïdor que vau triar.",
+        "next": "L’últim pas: pugeu les fotos de l’Abans i el Després i un missatge d’agraïment. Quan hi hagi les dues fotos, les famílies que hi van contribuir rebran un avís per veure-les.",
+        "reference": "Referència",
+        "amount": "Import",
+        "destination": "Destinació",
+        "destinations": {
+          "ORGANIZATION": "Compte de l’entitat",
+          "PROVIDER": "Proveïdor triat per l’entitat"
+        },
+        "cta": "Pujar les fotos del Després"
+      },
+      "changed": {
+        "subject": "La liquidació {reference} de «{initiative}» ha canviat",
+        "preheader": "La teva signatura anterior ja no val: revisa les dades abans de tornar a signar.",
+        "title": "La liquidació ha canviat",
+        "body": "L’altra persona signant ha canviat la destinació, la factura o les xifres de la liquidació de «{initiative}». Les signatures anteriors ja no valen.",
+        "check": "Revisa a Liquidacions a qui van els diners i la factura abans de tornar a signar. Si no reconeixes el canvi, no signis i escriu a suport.",
+        "cta": "Revisar la liquidació"
+      }
+    },
+    "supporter": {
+      "goalReached": {
+        "subject": "Ho hem aconseguit! «{initiative}»",
+        "preheader": "{organization} ha arribat al 100 % gràcies a tu i a les altres famílies.",
+        "title": "Ho hem aconseguit!",
+        "body": "«{initiative}» de {organization} ha arribat a la seva meta gràcies a {count, plural, one {una aportació: la teva} other {# aportacions, i una és la teva}}. Gràcies!",
+        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones de {organization} signin la liquidació. Quan estigui feta, t’ensenyarem l’Abans i el Després.",
+        "cta": "Compartir la fita"
+      },
+      "photos": {
+        "subject": "Mireu com ha quedat: «{initiative}»",
+        "preheader": "Ja hi ha les fotos de l’Abans i el Després.",
+        "title": "Mireu com ha quedat",
+        "body": "{organization} ha publicat les fotos de l’Abans i el Després de «{initiative}», la iniciativa a la qual vas contribuir.",
+        "thanks": "Gràcies per ajudar a fer-ho possible.",
+        "cta": "Veure com ha quedat"
+      }
     }
   },
   "nav": {
@@ -1556,16 +1600,16 @@
       "cardText": "Pugeu les fotos de cada millora acabada i escriviu l’agraïment que veuran les famílies.",
       "cardLink": "Anar a èxits",
       "title": "Èxits de l’entitat",
-      "intro": "Les fotos d’Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal. Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
+      "intro": "Les fotos Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal tan aviat com la liquidació de la campanya està feta (amb les dues signatures). Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
       "viewPublic": "Veure com ho veuen les famílies",
       "listLabel": "Iniciatives amb èxit",
       "empty": {
         "title": "Encara no hi ha iniciatives amb èxit",
         "description": "Quan una campanya estigui oberta o aconseguida, podreu pujar aquí les seves fotos i el seu agraïment."
       },
-      "beforeDone": "Foto de l’abans publicada",
+      "beforeDone": "Foto de l’abans desada",
       "beforeMissing": "Falta la foto de l’abans",
-      "afterDone": "Foto del després publicada",
+      "afterDone": "Foto del després desada",
       "afterMissing": "Falta la foto del després",
       "slotLabel": "Quina foto puges",
       "slotBefore": "Abans de la millora",
@@ -1576,7 +1620,7 @@
       "minorsHelp": "Confirmes que no es reconeix el rostre de cap menor i que teniu els permisos d’imatge necessaris. L’entitat és responsable de les imatges que publica.",
       "upload": "Publicar foto",
       "uploading": "Pujant…",
-      "photoSaved": "Foto publicada. Ja la veuen les famílies a Èxits aconseguits.",
+      "photoSaved": "Foto desada. Les famílies la veuran a Èxits aconseguits quan la liquidació de la campanya estigui feta (o ja, si ho està).",
       "thanksLabel": "Missatge d’agraïment del centre",
       "thanksPlaceholder": "Gràcies a totes les famílies per fer-ho possible…",
       "thanksHelp": "Màxim {max} caràcters. És públic: no posis noms de persones ni de menors. Deixa-ho buit per treure’l.",
@@ -1598,7 +1642,9 @@
         "FILE_TOO_LARGE": "La foto pesa massa. Redueix-ne la mida i torna-ho a provar.",
         "generic": "No ho hem pogut guardar. Torneu-ho a provar d’aquí a uns segons."
       },
-      "required": "obligatori"
+      "required": "obligatori",
+      "statusVisible": "Visible per a les famílies",
+      "statusLater": "Les famílies la veuran quan acabi la liquidació"
     },
     "nav": {
       "label": "Seccions del panell",
@@ -1608,7 +1654,8 @@
       "pending": "{count, plural, one {# decisió pendent} other {# decisions pendents}}",
       "settings": "Configuració",
       "fund": "Fons d’activitats",
-      "studio": "Estudi"
+      "studio": "Estudi",
+      "payouts": "Liquidacions"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -1680,7 +1727,8 @@
         "closes": "Tanca el {date}",
         "viewPublic": "Veure la fitxa pública de «{title}»",
         "editInStudio": "Editar a l’Estudi: {title}",
-        "poster": "Cartell A4 amb QR: {title}"
+        "poster": "Cartell A4 amb QR: {title}",
+        "settle": "Liquidar «{title}»"
       },
       "steps": {
         "moderation": "1. Moderació",
@@ -1970,7 +2018,26 @@
           "expiredTitle": "La liquidació s’ha anul·lat",
           "expired": "Algun cobrament de la liquidació ha passat el termini de 90 dies en què PAYCOMET el pot enviar. L’hem anul·lada: demaneu-la de nou amb el que es pugui liquidar i l’equip de KORUM revisarà la resta."
         },
-        "ctaDocuments": "Anar als documents del titular"
+        "ctaDocuments": "Anar als documents del titular",
+        "ctaPayouts": "Tornar a Liquidacions",
+        "payout": {
+          "celebrate": "Èxit aconseguit! Els diners ja són de camí.",
+          "photosCta": "Pujar les fotos de l’Abans i el Després",
+          "executed": "Les dues signatures estan registrades i PAYCOMET ja ha enviat els diners. L’últim pas: pugeu les fotos i l’agraïment per a les famílies.",
+          "pending": "Les dues signatures estan registrades. L’enviament encara no ha acabat: el reintentem nosaltres i veureu com va a Liquidacions.",
+          "changedTitle": "Les xifres han canviat",
+          "changed": "El que s’ha recaptat ha canviat des que es va demanar la liquidació (una retrocessió). Torneu-la a demanar a Liquidacions: es tornarà a signar.",
+          "blockedTitle": "Signada, però encara no es pot enviar",
+          "blocked": "Les dues signatures estan registrades, però falten els documents del titular verificats o el compte a PAYCOMET. S’enviarà tan aviat com hi siguin.",
+          "notReadyTitle": "Signada, però la campanya encara no es pot liquidar",
+          "notReady": "Les dues signatures estan registrades, però falta alguna cosa abans de liquidar (el sorteig de la rifa o decidir sobre un comerç). Ho veureu a Liquidacions.",
+          "invoiceTitle": "Falta una factura vàlida",
+          "invoice": "La factura adjunta ja no és vàlida. Pugeu-ne una altra a Liquidacions i torneu a demanar la liquidació.",
+          "providerTitle": "El pagament al proveïdor encara no està disponible",
+          "provider": "PAYCOMET encara no ha confirmat el pagament directe a proveïdors. Canvieu la destinació al compte de l’entitat a Liquidacions.",
+          "expiredTitle": "Hi ha cobraments fora de termini",
+          "expired": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres."
+        }
       },
       "what": "El que signaràs",
       "ideaMeta": "{alias} · {category} · {votes} signatures verificades",
@@ -2011,7 +2078,12 @@
       "fundMeta": "{amount} · {count, plural, one {de # comerç} other {de # comerços}}",
       "fundPurpose": "Per a què es farà servir (ho va escriure l’entitat):",
       "fundEffect": "Amb les dues signatures, els diners s’envien al compte de l’entitat. No es pot desfer.",
-      "fundTitle": "Liquidació {reference} del Fons d’activitats"
+      "fundTitle": "Liquidació {reference} del Fons d’activitats",
+      "payoutBeneficiary": "Per a: {name}",
+      "payoutBeneficiaryIban": "Per a: {name} · IBAN amb codi d’entitat {bank}, acabat en {last4}",
+      "payoutInvoice": "Veure la factura del proveïdor",
+      "payoutEffect": "Amb les dues signatures, els diners surten de la guardiola de la iniciativa cap a aquesta destinació. No es pot desfer.",
+      "payoutRequestedBy": "Demanada o canviada per última vegada per {name} el {date}. Si no esperaves aquesta destinació, no signis."
     },
     "sponsors": {
       "title": "{count, plural, =0 {Comerços amics} one {Comerços amics · # per revisar} other {Comerços amics · # per revisar}}",
@@ -2894,6 +2966,155 @@
         "yes": "Sí, descartar",
         "no": "No, conservar-lo"
       }
+    },
+    "payouts": {
+      "metaTitle": "Liquidacions",
+      "title": "Liquidacions de les campanyes aconseguides",
+      "intro": "Quan una campanya arriba a la seva meta, els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones diferents de l’entitat signen la liquidació. Trieu la destinació, adjunteu la factura del proveïdor i signeu totes dues amb el vostre codi.",
+      "badge": "100 % aconseguit · liquidació",
+      "figures": {
+        "raised": "Recaptat",
+        "korumFee": "Comissió de KORUM",
+        "gateway": "Passarel·la de pagament",
+        "net": "Per al projecte"
+      },
+      "window": "Liquideu-la abans del {date} ({days, plural, one {queda # dia} other {queden # dies}}): PAYCOMET només pot enviar els diners durant els 90 dies següents al primer cobrament.",
+      "blockersLabel": "El que falta abans de liquidar",
+      "blockers": {
+        "NOT_READY": "Aquesta campanya no està a punt per liquidar.",
+        "RAFFLE_NOT_DRAWN": "Falta fer el sorteig de la rifa davant del públic: no es pot liquidar abans.",
+        "SPONSORS_PENDING": "Hi ha comerços cobrats que encara no heu admès ni rebutjat.",
+        "KYB_NOT_VERIFIED": "Falten els documents del titular verificats.",
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET.",
+        "NOTHING_TO_PAY": "No queda res per liquidar en aquesta campanya.",
+        "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres."
+      },
+      "blockerCta": {
+        "SPONSORS_PENDING": "Revisar els comerços",
+        "KYB_NOT_VERIFIED": "Anar als documents del titular"
+      },
+      "readOnly": "Només les dues persones signants de l’entitat poden demanar i signar la liquidació.",
+      "photosHint": "Fotos Abans i Després i agraïment (les famílies les veuran quan acabi la liquidació)",
+      "empty": {
+        "title": "Encara no hi ha campanyes per liquidar",
+        "text": "Quan una campanya arribi al 100 %, apareixerà aquí per enviar els diners al projecte amb la doble signatura.",
+        "cta": "Anar al quadre de comandament"
+      },
+      "form": {
+        "destinationLegend": "On van els diners?",
+        "toOrganization": "Al compte de l’entitat",
+        "toOrganizationHelp": "PAYCOMET els envia al vostre compte i vosaltres pagueu el proveïdor amb la seva factura.",
+        "toOrganizationMissing": "L’entitat encara no té el seu compte a PAYCOMET.",
+        "toProvider": "Directament al proveïdor que heu triat",
+        "toProviderHelp": "Amb el seu nom, el seu CIF o NIF i el seu IBAN. KORUM no tria ni cobra res al proveïdor.",
+        "providerSimulated": "En proves: pendent de confirmar amb PAYCOMET",
+        "providerName": "Nom o raó social del proveïdor",
+        "providerTaxId": "CIF o NIF del proveïdor",
+        "iban": "IBAN del proveïdor",
+        "ibanHelp": "El desem xifrat; qui signa només en veurà els 4 últims dígits.",
+        "providerNameError": "Escriviu el nom del proveïdor (entre {min} i {max} caràcters).",
+        "invoiceLabel": "Factura (o proforma) del proveïdor",
+        "invoiceOptional": "Factura del proveïdor (opcional)",
+        "invoiceHelp": "PDF o foto, fins a {size} MB. La veuran les dues persones que signen; les famílies, no.",
+        "invoiceReady": "Factura adjunta: {name}",
+        "invoiceKept": "la que ja vau pujar",
+        "uploading": "Pujant la factura…",
+        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura amb un codi. Després signarà l’altra persona.",
+        "effectUpdate": "En canviar-la, les signatures que hi hagués deixen de valer i es tornen a demanar.",
+        "submit": "Demanar la liquidació i signar",
+        "submitUpdate": "Desar els canvis i tornar a signar",
+        "sending": "Enviant…",
+        "requested": "Liquidació demanada. T’hem enviat el teu enllaç de signatura; val fins al {date}.",
+        "updated": "Liquidació canviada. Les signatures es tornen a demanar: t’hem enviat el teu enllaç, que val fins al {date}.",
+        "orgAccountMissing": "Encara no teniu el compte de l’entitat a PAYCOMET: l’equip de KORUM us avisarà quan estigui a punt. Llavors podreu demanar la liquidació."
+      },
+      "errors": {
+        "INVALID_INPUT": "Revisa les dades del formulari.",
+        "INVALID_IBAN": "L’IBAN no és vàlid. Reviseu que sigui complet (a Espanya, 24 caràcters començant per ES).",
+        "INVALID_TAX_ID": "El CIF o NIF del proveïdor no és vàlid.",
+        "NOT_FOUND": "No trobem aquesta campanya a la vostra entitat.",
+        "NOT_READY": "Aquesta campanya ja no està a punt per liquidar (potser una retrocessió l’ha tornat a recaptar).",
+        "RAFFLE_NOT_DRAWN": "Falta fer el sorteig de la rifa: no es pot liquidar abans.",
+        "SPONSORS_PENDING": "Hi ha comerços cobrats que encara no heu admès ni rebutjat.",
+        "KYB_NOT_VERIFIED": "Falten els documents del titular verificats.",
+        "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET per rebre els diners.",
+        "INVOICE_REQUIRED": "Adjunteu la factura (o proforma) del proveïdor.",
+        "INVOICE_INVALID": "Aquesta factura ja no està disponible. Torneu-la a pujar.",
+        "PROVIDER_PAYOUT_UNAVAILABLE": "El pagament directe al proveïdor encara no està disponible. Trieu el compte de l’entitat.",
+        "NOTHING_TO_PAY": "No queda res per liquidar en aquesta campanya.",
+        "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres.",
+        "WRONG_STATUS": "La liquidació ja no espera les signatures: ha canviat mentrestant.",
+        "RATE_LIMITED": "Heu fet moltes peticions seguides. Espereu uns minuts.",
+        "NOT_A_SIGNER": "El teu compte no té cap càrrec de signatura en aquesta entitat.",
+        "HOLDS_BOTH_ROLES": "Una mateixa persona no pot ocupar els dos càrrecs de signatura.",
+        "TWO_FACTOR_REQUIRED": "Per signar necessites la verificació en dos passos activada i superada en aquesta sessió.",
+        "TARGET_CLOSED": "Aquesta liquidació ja no espera signatures.",
+        "ALREADY_SIGNED": "La teva signatura ja hi consta (o el teu càrrec ja ha signat).",
+        "SAME_PERSON": "Les dues signatures han de ser de persones diferents, amb correus diferents.",
+        "PROVIDER_INVOICE_MISSING": "Falta una factura vàlida del proveïdor per signar.",
+        "FORBIDDEN": "No tens permís per fer això.",
+        "LINK_NOT_SENT": "La liquidació està demanada, però no t’hem pogut enviar l’enllaç de signatura. Torna-ho a demanar d’aquí a uns minuts, des d’aquesta pàgina.",
+        "failed": "No hem pogut completar l’operació. Torna-ho a provar d’aquí a uns segons.",
+        "TOO_LARGE": "El fitxer pesa massa (màxim 4 MB). Comprimeix-lo o fes la foto amb menys resolució.",
+        "LENGTH_REQUIRED": "No hem pogut llegir el fitxer. Torna-ho a provar.",
+        "FILE_EMPTY": "El fitxer és buit.",
+        "FILE_TOO_LARGE": "El fitxer pesa massa (màxim 4 MB). Comprimeix-lo o fes la foto amb menys resolució.",
+        "FILE_UNRECOGNIZED_TYPE": "No reconeixem el fitxer. Puja un PDF o una foto (JPG, PNG o WEBP).",
+        "FILE_TYPE_NOT_ALLOWED": "Puja un PDF o una foto (JPG, PNG o WEBP).",
+        "FILE_MIME_MISMATCH": "El tipus del fitxer no coincideix amb el contingut. Torna’l a desar com a PDF o JPG.",
+        "FILE_EXTENSION_MISMATCH": "L’extensió del fitxer no coincideix amb el contingut. Canvia-li el nom o torna’l a desar.",
+        "FILE_RETENTION_REQUIRED": "No hem pogut desar el fitxer. Torna-ho a provar."
+      },
+      "pending": {
+        "title": "Liquidació {reference} · esperant les dues signatures",
+        "toProvider": "Per al proveïdor {name} · IBAN amb codi d’entitat {bank}, acabat en {last4}",
+        "toOrganization": "Per al compte de {name}",
+        "openInvoice": "Veure la factura del proveïdor",
+        "stale": "El que s’ha recaptat ha canviat des que es va demanar (una retrocessió). Torneu-la a demanar amb les xifres actuals: es tornarà a signar.",
+        "invoiceInvalid": "La factura ja no és vàlida. Pugeu-ne una altra per poder signar.",
+        "noInvoice": "Sense factura adjunta (no cal en una taquilla).",
+        "retry": "Reintentar l’enviament ara",
+        "retrying": "Reintentant…",
+        "retryDone": "Fet! PAYCOMET ja ha enviat els diners.",
+        "retryPending": "L’enviament encara no ha acabat. El reintentem nosaltres cada dia; aquí veureu com va.",
+        "requestLink": "Demanar el meu enllaç de signatura",
+        "waitingOther": "Falta la signatura de l’altra persona. Pot demanar el seu enllaç des d’aquesta pàgina.",
+        "editIntro": "Canviar la destinació o la factura. Les signatures que hi hagués es tornen a demanar.",
+        "edit": "Canviar la destinació o la factura",
+        "editCancel": "No canviar res",
+        "notApproved": {
+          "NOT_GOAL": "No s’ha pogut aprovar: la campanya ja no té la meta assolida (una retrocessió).",
+          "RAFFLE_NOT_DRAWN": "No s’ha pogut aprovar: falta el sorteig complet de la rifa.",
+          "SPONSORS_PENDING": "No s’ha pogut aprovar: hi ha comerços cobrats sense admetre ni rebutjar.",
+          "FIGURES_CHANGED": "Les xifres han canviat des que es va signar (una retrocessió). Torneu a demanar la liquidació: es tornarà a signar.",
+          "ESCROW_MISMATCH": "La guardiola no quadra amb el que s’ha recaptat. L’equip de KORUM ho està revisant.",
+          "KYB_NOT_VERIFIED": "Les dues signatures compten, però falten els documents del titular verificats. S’enviarà tan aviat com hi siguin.",
+          "DESTINATION_ACCOUNT_MISSING": "Les dues signatures compten, però l’entitat encara no té el seu compte a PAYCOMET.",
+          "INVOICE_INVALID": "La factura adjunta ja no és vàlida. Pugeu-ne una altra i torneu a demanar la liquidació.",
+          "PROVIDER_UNAVAILABLE": "El pagament directe al proveïdor encara no està disponible. Canvieu la destinació al compte de l’entitat.",
+          "SIGNATURES": "Les signatures no són vàlides per al que hi ha ara (alguna cosa ha canviat o algú ha deixat el càrrec). Torneu a signar.",
+          "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies de PAYCOMET. L’equip de KORUM ho revisarà amb vosaltres.",
+          "WRONG_STATUS": "La liquidació ha canviat mentrestant. Torna a carregar la pàgina."
+        },
+        "invoiceMissing": "Falta la factura (o proforma) del proveïdor: adjunteu-la per poder signar.",
+        "blockedNote": "Es podrà signar quan resolgueu el que falta (a dalt).",
+        "requestedBy": "Demanada o canviada per última vegada per {name} el {date}."
+      },
+      "history": {
+        "title": "Liquidacions enviades",
+        "status": {
+          "APPROVED": "Aprovada",
+          "PROCESSING": "S’està enviant",
+          "EXECUTED": "Enviada",
+          "FAILED": "Sense acabar"
+        },
+        "toProvider": "al proveïdor {name} (IBAN amb codi d’entitat {bank}, acabat en {last4})",
+        "toOrganization": "al compte de {name}",
+        "executed": "Enviada el {date}",
+        "progress": "Enviat {done} de {total}",
+        "underReview": "Una part de l’enviament està en revisió: l’equip de KORUM ho resol amb PAYCOMET. No heu de fer res.",
+        "photosCta": "Pujar les fotos de l’Abans i el Després"
+      }
     }
   },
   "gate": {
@@ -2947,7 +3168,8 @@
       "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup",
       "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar",
       "ACTIVITY_FUND_WINDOW": "Fons d’activitats a prop del termini de 90 dies (o passat)",
-      "SPONSOR_MONEY_BLOCKED": "Diners d’un comerç bloquejats amb el termini corrent"
+      "SPONSOR_MONEY_BLOCKED": "Diners d’un comerç bloquejats amb el termini corrent",
+      "PAYOUT_BLOCKED": "Liquidació de campanya bloquejada: hi ha repartiments que no es poden enviar ni replanificar"
     },
     "fundsTitle": "{count, plural, =0 {Fons d’activitats} one {Fons d’activitats · # entitat} other {Fons d’activitats · # entitats}}",
     "fundsNone": "Cap entitat no té diners al seu Fons d’activitats.",

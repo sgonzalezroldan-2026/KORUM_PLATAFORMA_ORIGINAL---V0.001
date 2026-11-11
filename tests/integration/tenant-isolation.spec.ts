@@ -5,6 +5,8 @@ import { assignPooledSponsor, saveSponsorRenewalRule, sendRenewalLink } from '@/
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadUserActor } from '@/repositories/actor';
 import { loadActivityFundRows, loadFundReceiptRows } from '@/repositories/activity-fund.repository';
+import { loadCampaignPayoutRows } from '@/repositories/campaign-payout.repository';
+import { requestCampaignPayout } from '@/services/payouts/campaign-payout.service';
 import { requestFundPayout } from '@/services/sponsors/activity-fund.service';
 import { listContributions } from '@/repositories/contribution.repository';
 import { getInitiative, listInitiatives } from '@/repositories/initiative.repository';
@@ -13,7 +15,7 @@ import { getPublicInitiative, getPublicOrganization, listPublicInitiatives } fro
 import { listIdeas, listSponsors } from '@/repositories/sponsor-idea.repository';
 import { authorizeTenant, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { EntityBrandingError, saveEntityAccent } from '@/services/panel/entity-branding.service';
-import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, uniqueId } from './test-database';
 
 /** QA-SEC01 · aislamiento entre entidades (anti-IDOR): dos colegios, sus personas y sus datos. */
 
@@ -312,5 +314,16 @@ describe('Fondo de actividades (Sprint 4.2f)', () => {
     expect(await db.auditLog.count({ where: { action: 'superadmin.access', actorUserId: superadminId, organizationId: sanJose.orgId } })).toBeGreaterThanOrEqual(1);
     // Pedir o retirar una liquidación del Fondo lo hace la entidad: el Super-Admin no.
     await expect(requestFundPayout(db, TEST_HMAC_SECRET, withSecondFactor(superadmin), sanJose.orgId, { purpose: 'Material para las colonias de primavera' })).rejects.toBeInstanceOf(TenantAccessError);
+  });
+});
+
+describe('Liquidaciones de campañas (Sprint 4.4a)', () => {
+  it('el director de Cervantes no lee las liquidaciones de San José; el Super-Admin las lee con registro pero no pide ninguna; la portería no entra', async () => {
+    await expect(loadCampaignPayoutRows(db, cervantes.director, sanJose.orgId)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(loadCampaignPayoutRows(db, sanJose.gatekeeper, sanJose.orgId)).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await denied(sanJose.orgId, cervantes.directorId)).some((row) => (row.metadataJson as { attempted?: string } | null)?.attempted === 'payout.read')).toBe(true);
+    await expect(loadCampaignPayoutRows(db, superadmin, sanJose.orgId)).resolves.toMatchObject({ ready: [], history: [] });
+    const deps = { secret: TEST_HMAC_SECRET, keyring: TEST_KEYRING, providerPayoutAvailable: true };
+    await expect(requestCampaignPayout(db, deps, withSecondFactor(superadmin), sanJose.orgId, { destination: 'ORGANIZATION', initiativeId: 1, invoiceFileId: null })).rejects.toBeInstanceOf(TenantAccessError);
   });
 });

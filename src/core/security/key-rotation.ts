@@ -105,6 +105,21 @@ const TABLES: RotationTable[] = [
       const sealed = sealValue(keyring, openValue(keyring, row.cifEnc, row.cifKeyVersion, context), context);
       await db.sponsor.updateMany({ where: { id: row.id, cifEnc: row.cifEnc }, data: { cifEnc: sealed.sealed, cifKeyVersion: sealed.keyVersion } });
     }
+  },
+  {
+    // IBAN y CIF del proveedor de una liquidación (Sprint 4.4a): se cifran juntos y comparten versión. Su huella (`beneficiaryDigest`) no cambia.
+    name: 'EscrowPayout',
+    pending: (db, keyring, afterId, take) => db.escrowPayout.findMany({ where: { beneficiaryIbanEnc: { not: null }, ...staleVersion('beneficiaryKeyVersion', keyring), id: { gt: Number(afterId ?? 0) } }, orderBy: { id: 'asc' }, take, select: { id: true } }),
+    count: (db, keyring) => db.escrowPayout.count({ where: { beneficiaryIbanEnc: { not: null }, ...staleVersion('beneficiaryKeyVersion', keyring) } }),
+    rotate: async (db, keyring, id) => {
+      const row = await db.escrowPayout.findUniqueOrThrow({ where: { id: Number(id) }, select: { id: true, initiativeId: true, beneficiaryIbanEnc: true, providerCifEnc: true, beneficiaryKeyVersion: true } });
+      if (!row.beneficiaryIbanEnc || !row.providerCifEnc) return;
+      const ibanContext = CRYPTO_CONTEXT.payoutIban(row.initiativeId);
+      const taxContext = CRYPTO_CONTEXT.payoutTaxId(row.initiativeId);
+      const iban = sealValue(keyring, openValue(keyring, row.beneficiaryIbanEnc, row.beneficiaryKeyVersion, ibanContext), ibanContext);
+      const taxId = sealValue(keyring, openValue(keyring, row.providerCifEnc, row.beneficiaryKeyVersion, taxContext), taxContext);
+      await db.escrowPayout.updateMany({ where: { id: row.id, beneficiaryIbanEnc: row.beneficiaryIbanEnc }, data: { beneficiaryIbanEnc: iban.sealed, providerCifEnc: taxId.sealed, beneficiaryKeyVersion: iban.keyVersion } });
+    }
   }
 ];
 

@@ -55,7 +55,8 @@ export async function uploadFile(db: Db, storage: StorageProvider, input: Upload
   // Toda imagen que va al cubo público sale sin metadatos, la suba quien la suba (heredado del Sprint 2.4): quien llama no puede olvidarlo. También
   // la foto de un documento del titular (auditoría del 4.2c): la del DNI hecha con el móvil llevaría la ubicación, que suele ser el domicilio.
   let body = input.bytes;
-  if (rule.visibility === 'PUBLIC' || (input.purpose === 'KYB_DOCUMENT' && detected.startsWith('image/'))) {
+  // Y la foto de una factura de proveedor (Sprint 4.4a): hecha con el móvil en la obra, llevaría su ubicación.
+  if (rule.visibility === 'PUBLIC' || ((input.purpose === 'KYB_DOCUMENT' || input.purpose === 'PROVIDER_INVOICE') && detected.startsWith('image/'))) {
     try {
       body = stripImageMetadata(input.bytes).bytes;
     } catch (error) {

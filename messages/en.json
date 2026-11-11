@@ -691,6 +691,50 @@
         "reference": "Reference",
         "cta": "Open the Activity Fund"
       }
+    },
+    "payout": {
+      "executed": {
+        "subject": "Payout done: {amount} from “{initiative}”",
+        "preheader": "Both signatures are in and the money is on its way.",
+        "title": "Payout done!",
+        "bodyORGANIZATION": "PAYCOMET has sent {amount} from the piggy bank of “{initiative}” to the organisation’s account. You can now pay the supplier with their invoice.",
+        "bodyPROVIDER": "PAYCOMET has sent {amount} from the piggy bank of “{initiative}” directly to the supplier you chose.",
+        "next": "The last step: upload the Before and After photos and a thank-you message. Once both photos are there, the families who contributed will get a notice to see them.",
+        "reference": "Reference",
+        "amount": "Amount",
+        "destination": "Destination",
+        "destinations": {
+          "ORGANIZATION": "Organisation’s account",
+          "PROVIDER": "Supplier chosen by the organisation"
+        },
+        "cta": "Upload the After photos"
+      },
+      "changed": {
+        "subject": "Payout {reference} for “{initiative}” has changed",
+        "preheader": "Your previous signature is no longer valid: check the details before signing again.",
+        "title": "The payout has changed",
+        "body": "The other signatory has changed the destination, the invoice or the figures of the payout for “{initiative}”. Previous signatures are no longer valid.",
+        "check": "Check in Payouts where the money goes and the invoice before signing again. If you don’t recognise the change, don’t sign and contact support.",
+        "cta": "Review the payout"
+      }
+    },
+    "supporter": {
+      "goalReached": {
+        "subject": "We did it! “{initiative}”",
+        "preheader": "{organization} has reached 100% thanks to you and the other families.",
+        "title": "We did it!",
+        "body": "“{initiative}” by {organization} has reached its goal thanks to {count, plural, one {one contribution: yours} other {# contributions, and one of them is yours}}. Thank you!",
+        "next": "The money stays in the initiative’s piggy bank at PAYCOMET until two people from {organization} sign its payout. Once it’s done, we’ll show you the Before and After.",
+        "cta": "Share the achievement"
+      },
+      "photos": {
+        "subject": "See how it turned out: “{initiative}”",
+        "preheader": "The Before and After photos are here.",
+        "title": "See how it turned out",
+        "body": "{organization} has published the Before and After photos of “{initiative}”, the initiative you contributed to.",
+        "thanks": "Thank you for helping make it happen.",
+        "cta": "See how it turned out"
+      }
     }
   },
   "nav": {
@@ -1556,16 +1600,16 @@
       "cardText": "Upload the photos of each finished improvement and write the thank-you message families will see.",
       "cardLink": "Go to achievements",
       "title": "Organization achievements",
-      "intro": "The Before and After photos and the thank-you message appear in the “Achievements” section of the portal. We rewrite each photo without its location or phone details before publishing it.",
+      "intro": "The Before and After photos and the thank-you message appear in the “Achievements” section of the portal as soon as the campaign payout is done (with both signatures). We rewrite each photo without its location or phone data before publishing it.",
       "viewPublic": "See how families see it",
       "listLabel": "Initiatives with an achievement",
       "empty": {
         "title": "No initiatives with an achievement yet",
         "description": "Once a campaign is open or achieved, you can upload its photos and thank-you message here."
       },
-      "beforeDone": "Before photo published",
+      "beforeDone": "Before photo saved",
       "beforeMissing": "Before photo missing",
-      "afterDone": "After photo published",
+      "afterDone": "After photo saved",
       "afterMissing": "After photo missing",
       "slotLabel": "Which photo are you uploading",
       "slotBefore": "Before the improvement",
@@ -1576,7 +1620,7 @@
       "minorsHelp": "You confirm that no minor’s face can be recognised and that you hold the necessary image permissions. The organization is responsible for the images it publishes.",
       "upload": "Publish photo",
       "uploading": "Uploading…",
-      "photoSaved": "Photo published. Families can now see it under Achievements.",
+      "photoSaved": "Photo saved. Families will see it under Achievements once the campaign payout is done (or now, if it already is).",
       "thanksLabel": "Thank-you message from the school",
       "thanksPlaceholder": "Thank you to all the families for making it possible…",
       "thanksHelp": "Up to {max} characters. It is public: do not write names of people or minors. Leave empty to remove it.",
@@ -1598,7 +1642,9 @@
         "FILE_TOO_LARGE": "The photo is too large. Reduce its size and try again.",
         "generic": "We could not save it. Please try again in a few seconds."
       },
-      "required": "required"
+      "required": "required",
+      "statusVisible": "Visible to families",
+      "statusLater": "Families will see it once the payout is done"
     },
     "nav": {
       "label": "Panel sections",
@@ -1608,7 +1654,8 @@
       "pending": "{count, plural, one {# decision waiting} other {# decisions waiting}}",
       "settings": "Settings",
       "fund": "Activity Fund",
-      "studio": "Studio"
+      "studio": "Studio",
+      "payouts": "Payouts"
     },
     "header": {
       "label": "Organisation management",
@@ -1680,7 +1727,8 @@
         "closes": "Closes on {date}",
         "viewPublic": "View the public page of “{title}”",
         "editInStudio": "Edit in Studio: {title}",
-        "poster": "A4 poster with QR: {title}"
+        "poster": "A4 poster with QR: {title}",
+        "settle": "Pay out “{title}”"
       },
       "steps": {
         "moderation": "1. Moderation",
@@ -1970,13 +2018,32 @@
           "expiredTitle": "The payout has been cancelled",
           "expired": "A charge in the payout has passed the 90-day period in which PAYCOMET can send it. We have cancelled it: request it again with what can be paid out and the KORUM team will review the rest."
         },
-        "ctaDocuments": "Go to the holder’s documents"
+        "ctaDocuments": "Go to the holder’s documents",
+        "ctaPayouts": "Back to Payouts",
+        "payout": {
+          "celebrate": "Goal achieved! The money is on its way.",
+          "photosCta": "Upload the Before and After photos",
+          "executed": "Both signatures are recorded and PAYCOMET has sent the money. The last step: upload the photos and the thank-you message for the families.",
+          "pending": "Both signatures are recorded. Sending hasn’t finished yet: we retry it automatically and you’ll see how it goes in Payouts.",
+          "changedTitle": "The figures have changed",
+          "changed": "The amount raised has changed since the payout was requested (a chargeback). Request it again in Payouts: it will be signed again.",
+          "blockedTitle": "Signed, but it can’t be sent yet",
+          "blocked": "Both signatures are recorded, but the account holder’s documents are not verified or the PAYCOMET account is missing. It will be sent as soon as they are ready.",
+          "notReadyTitle": "Signed, but the campaign can’t be paid out yet",
+          "notReady": "Both signatures are recorded, but something is missing before the payout (the raffle draw or a decision on a local business). You’ll see it in Payouts.",
+          "invoiceTitle": "A valid invoice is missing",
+          "invoice": "The attached invoice is no longer valid. Upload another one in Payouts and request the payout again.",
+          "providerTitle": "Paying the supplier is not available yet",
+          "provider": "PAYCOMET hasn’t confirmed direct payments to suppliers yet. Change the destination to the organisation’s account in Payouts.",
+          "expiredTitle": "Some payments are out of time",
+          "expired": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you."
+        }
       },
       "what": "What you are signing",
       "ideaMeta": "{alias} · {category} · {votes} verified signatures",
       "ideaRevalidated": "{count, plural, one {Includes # signature the organisation accepted by hand (it was suspicious).} other {Includes # signatures the organisation accepted by hand (they were suspicious).}}",
       "ideaEffect": "Once both signatures are in, the idea moves to budgeting as an initiative of the organisation.",
-      "payoutMeta": "Wallet {wallet} · {amount} · to: {destination}",
+      "payoutMeta": "Piggy bank {wallet} · {amount} · to: {destination}",
       "destinations": {
         "ORGANIZATION": "the organisation’s account",
         "PROVIDER": "the supplier chosen by the organisation"
@@ -2011,7 +2078,12 @@
       "fundMeta": "{amount} · {count, plural, one {from # business} other {from # businesses}}",
       "fundPurpose": "What it will be used for (written by the organisation):",
       "fundEffect": "With both signatures, the money is sent to the organisation’s account. This cannot be undone.",
-      "fundTitle": "Payout {reference} from the Activity Fund"
+      "fundTitle": "Payout {reference} from the Activity Fund",
+      "payoutBeneficiary": "To: {name}",
+      "payoutBeneficiaryIban": "To: {name} · IBAN with bank code {bank}, ending in {last4}",
+      "payoutInvoice": "View the supplier’s invoice",
+      "payoutEffect": "With both signatures, the money leaves the initiative’s piggy bank for this destination. It cannot be undone.",
+      "payoutRequestedBy": "Last requested or changed by {name} on {date}. If you did not expect this destination, do not sign."
     },
     "sponsors": {
       "title": "{count, plural, =0 {Friendly businesses} one {Friendly businesses · # to review} other {Friendly businesses · # to review}}",
@@ -2894,6 +2966,155 @@
         "yes": "Yes, discard",
         "no": "No, keep it"
       }
+    },
+    "payouts": {
+      "metaTitle": "Payouts",
+      "title": "Payouts of completed campaigns",
+      "intro": "When a campaign reaches its goal, the money stays in the initiative’s piggy bank at PAYCOMET until two different people from the organisation sign its payout. Choose the destination, attach the supplier’s invoice and both sign with your code.",
+      "badge": "100% reached · payout",
+      "figures": {
+        "raised": "Raised",
+        "korumFee": "KORUM fee",
+        "gateway": "Payment gateway",
+        "net": "For the project"
+      },
+      "window": "Pay it out before {date} ({days, plural, one {# day left} other {# days left}}): PAYCOMET can only send the money out within 90 days of the first payment received.",
+      "blockersLabel": "What is missing before the payout",
+      "blockers": {
+        "NOT_READY": "This campaign is not ready to be paid out.",
+        "RAFFLE_NOT_DRAWN": "The public raffle draw is still pending: it cannot be paid out before.",
+        "SPONSORS_PENDING": "Some local businesses have paid and you have not accepted or declined them yet.",
+        "KYB_NOT_VERIFIED": "The account holder’s documents are not verified yet.",
+        "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet.",
+        "NOTHING_TO_PAY": "There is nothing left to pay out for this campaign.",
+        "WINDOW_EXPIRED": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you."
+      },
+      "blockerCta": {
+        "SPONSORS_PENDING": "Review the local businesses",
+        "KYB_NOT_VERIFIED": "Go to the account holder’s documents"
+      },
+      "readOnly": "Only the organisation’s two signatories can request and sign the payout.",
+      "photosHint": "Before and After photos and thank-you message (families will see them once the payout is done)",
+      "empty": {
+        "title": "No campaigns to pay out yet",
+        "text": "When a campaign reaches 100%, it will appear here so you can send the money to the project with the double signature.",
+        "cta": "Go to the dashboard"
+      },
+      "form": {
+        "destinationLegend": "Where does the money go?",
+        "toOrganization": "To the organisation’s account",
+        "toOrganizationHelp": "PAYCOMET sends it to your account and you pay the supplier with their invoice.",
+        "toOrganizationMissing": "Your organisation does not have its PAYCOMET account yet.",
+        "toProvider": "Directly to the supplier you chose",
+        "toProviderHelp": "With their name, tax ID and IBAN. KORUM does not choose or charge the supplier anything.",
+        "providerSimulated": "Test mode: pending confirmation with PAYCOMET",
+        "providerName": "Supplier’s name or company name",
+        "providerTaxId": "Supplier’s tax ID (CIF or NIF)",
+        "iban": "Supplier’s IBAN",
+        "ibanHelp": "We store it encrypted; signatories will only see the last 4 digits.",
+        "providerNameError": "Write the supplier’s name (between {min} and {max} characters).",
+        "invoiceLabel": "Supplier’s invoice (or pro forma)",
+        "invoiceOptional": "Supplier’s invoice (optional)",
+        "invoiceHelp": "PDF or photo, up to {size} MB. The two signatories will see it; families will not.",
+        "invoiceReady": "Invoice attached: {name}",
+        "invoiceKept": "the one you already uploaded",
+        "uploading": "Uploading the invoice…",
+        "effect": "When you request it, we email you your signing link with a code. Then the other person signs.",
+        "effectUpdate": "If you change it, any existing signatures stop being valid and are requested again.",
+        "submit": "Request the payout and sign",
+        "submitUpdate": "Save the changes and sign again",
+        "sending": "Sending…",
+        "requested": "Payout requested. We have sent you your signing link; it is valid until {date}.",
+        "updated": "Payout changed. Signatures are requested again: we have sent you your link, valid until {date}.",
+        "orgAccountMissing": "Your organisation’s PAYCOMET account is not ready yet: the KORUM team will let you know when it is. You can request the payout then."
+      },
+      "errors": {
+        "INVALID_INPUT": "Please check the form.",
+        "INVALID_IBAN": "The IBAN is not valid. Check that it is complete (in Spain, 24 characters starting with ES).",
+        "INVALID_TAX_ID": "The supplier’s tax ID (CIF or NIF) is not valid.",
+        "NOT_FOUND": "We can’t find that campaign in your organisation.",
+        "NOT_READY": "This campaign is no longer ready to be paid out (a chargeback may have sent it back to fundraising).",
+        "RAFFLE_NOT_DRAWN": "The raffle draw is still pending: it cannot be paid out before.",
+        "SPONSORS_PENDING": "Some local businesses have paid and you have not accepted or declined them yet.",
+        "KYB_NOT_VERIFIED": "The account holder’s documents are not verified yet.",
+        "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet to receive the money.",
+        "INVOICE_REQUIRED": "Attach the supplier’s invoice (or pro forma).",
+        "INVOICE_INVALID": "That invoice is no longer available. Please upload it again.",
+        "PROVIDER_PAYOUT_UNAVAILABLE": "Paying the supplier directly is not available yet. Choose the organisation’s account.",
+        "NOTHING_TO_PAY": "There is nothing left to pay out for this campaign.",
+        "WINDOW_EXPIRED": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you.",
+        "WRONG_STATUS": "The payout is no longer waiting for signatures: it changed in the meantime.",
+        "RATE_LIMITED": "Too many requests in a row. Please wait a few minutes.",
+        "NOT_A_SIGNER": "Your account does not hold a signing role in this organisation.",
+        "HOLDS_BOTH_ROLES": "The same person cannot hold both signing roles.",
+        "TWO_FACTOR_REQUIRED": "To sign you need two-step verification switched on and passed in this session.",
+        "TARGET_CLOSED": "This payout is no longer waiting for signatures.",
+        "ALREADY_SIGNED": "Your signature is already recorded (or your role has already signed).",
+        "SAME_PERSON": "The two signatures must come from different people, with different email addresses.",
+        "PROVIDER_INVOICE_MISSING": "A valid supplier’s invoice is needed to sign.",
+        "FORBIDDEN": "You don’t have permission to do this.",
+        "LINK_NOT_SENT": "The payout has been requested, but we couldn’t send you the signing link. Ask for it again here in a few minutes.",
+        "failed": "We couldn’t complete this. Please try again in a few seconds.",
+        "TOO_LARGE": "The file is too large (4 MB maximum). Compress it or take the photo at a lower resolution.",
+        "LENGTH_REQUIRED": "We couldn’t read the file. Please try again.",
+        "FILE_EMPTY": "The file is empty.",
+        "FILE_TOO_LARGE": "The file is too large (4 MB maximum). Compress it or take the photo at a lower resolution.",
+        "FILE_UNRECOGNIZED_TYPE": "We don’t recognise the file. Upload a PDF or a photo (JPG, PNG or WEBP).",
+        "FILE_TYPE_NOT_ALLOWED": "Upload a PDF or a photo (JPG, PNG or WEBP).",
+        "FILE_MIME_MISMATCH": "The file type doesn’t match its content. Save it again as PDF or JPG.",
+        "FILE_EXTENSION_MISMATCH": "The file extension doesn’t match its content. Rename it or save it again.",
+        "FILE_RETENTION_REQUIRED": "We couldn’t save the file. Please try again."
+      },
+      "pending": {
+        "title": "Payout {reference} · waiting for both signatures",
+        "toProvider": "To the supplier {name} · IBAN with bank code {bank}, ending in {last4}",
+        "toOrganization": "To {name}’s account",
+        "openInvoice": "View the supplier’s invoice",
+        "stale": "The amount raised has changed since it was requested (a chargeback). Request it again with the current figures: it will be signed again.",
+        "invoiceInvalid": "The invoice is no longer valid. Upload another one to be able to sign.",
+        "noInvoice": "No invoice attached (not needed for ticket sales).",
+        "retry": "Retry sending now",
+        "retrying": "Retrying…",
+        "retryDone": "Done! PAYCOMET has sent the money.",
+        "retryPending": "Sending hasn’t finished yet. We retry it automatically every day; you’ll see how it goes here.",
+        "requestLink": "Request my signing link",
+        "waitingOther": "The other person’s signature is missing. They can request their link from this page.",
+        "editIntro": "Change the destination or the invoice. Any existing signatures are requested again.",
+        "edit": "Change the destination or the invoice",
+        "editCancel": "Don’t change anything",
+        "notApproved": {
+          "NOT_GOAL": "It could not be approved: the campaign no longer has its goal reached (a chargeback).",
+          "RAFFLE_NOT_DRAWN": "It could not be approved: the full raffle draw is still pending.",
+          "SPONSORS_PENDING": "It could not be approved: some paid local businesses have not been accepted or declined.",
+          "FIGURES_CHANGED": "The figures have changed since it was signed (a chargeback). Request the payout again: it will be signed again.",
+          "ESCROW_MISMATCH": "The initiative’s piggy bank doesn’t match the amount raised. The KORUM team is looking into it.",
+          "KYB_NOT_VERIFIED": "Both signatures count, but the account holder’s documents are not verified yet. It will be sent as soon as they are.",
+          "DESTINATION_ACCOUNT_MISSING": "Both signatures count, but your organisation does not have its PAYCOMET account yet.",
+          "INVOICE_INVALID": "The attached invoice is no longer valid. Upload another one and request the payout again.",
+          "PROVIDER_UNAVAILABLE": "Paying the supplier directly is not available yet. Change the destination to the organisation’s account.",
+          "SIGNATURES": "The signatures are not valid for what is there now (something changed or someone left their role). Please sign again.",
+          "WINDOW_EXPIRED": "Some payments are past PAYCOMET’s 90 days. The KORUM team will look into it with you.",
+          "WRONG_STATUS": "The payout changed in the meantime. Reload the page."
+        },
+        "invoiceMissing": "The supplier’s invoice (or pro forma) is missing: attach it to be able to sign.",
+        "blockedNote": "You will be able to sign once you sort out what is missing (above).",
+        "requestedBy": "Last requested or changed by {name} on {date}."
+      },
+      "history": {
+        "title": "Payouts sent",
+        "status": {
+          "APPROVED": "Approved",
+          "PROCESSING": "Sending",
+          "EXECUTED": "Sent",
+          "FAILED": "Not finished"
+        },
+        "toProvider": "to the supplier {name} (IBAN with bank code {bank}, ending in {last4})",
+        "toOrganization": "to {name}’s account",
+        "executed": "Sent on {date}",
+        "progress": "Sent {done} of {total}",
+        "underReview": "Part of the transfer is under review: the KORUM team is sorting it out with PAYCOMET. You don’t need to do anything.",
+        "photosCta": "Upload the Before and After photos"
+      }
     }
   },
   "gate": {
@@ -2947,7 +3168,8 @@
       "TRUSTED_IP_MISSING": "Families’ IP addresses are not reaching the idea box: everyone would fall in the same group",
       "INVOICE_RECTIFY_PENDING": "Fee invoice of a refunded or charged-back business, pending correction",
       "ACTIVITY_FUND_WINDOW": "Activity Fund close to (or past) the 90-day deadline",
-      "SPONSOR_MONEY_BLOCKED": "A business’s money is blocked while its deadline runs"
+      "SPONSOR_MONEY_BLOCKED": "A business’s money is blocked while its deadline runs",
+      "PAYOUT_BLOCKED": "Campaign payout blocked: some splits cannot be sent or re-planned"
     },
     "fundsTitle": "{count, plural, =0 {Activity Funds} one {Activity Funds · # organisation} other {Activity Funds · # organisations}}",
     "fundsNone": "No organisation has money in its Activity Fund.",

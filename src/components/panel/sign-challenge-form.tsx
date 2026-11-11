@@ -3,9 +3,9 @@
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from 'react';
 import { completeSignatureAction, previewSignatureAction, type PreviewResult, type SignResult } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/firmar/actions';
-import { Confetti } from '@/components/checkout/checkout-celebration';
 import { CodeField, FormAlert, primaryButton } from '@/components/auth/auth-ui';
 import { useHydrated } from '@/components/ui/use-hydrated';
+import { SignChallengeResult } from './sign-challenge-result';
 import { formatCents } from '@/core/finance/money';
 import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
@@ -45,20 +45,6 @@ function forgetToken(orgSlug: string): void {
 type Preview = Extract<PreviewResult, { status: 'READY' }>;
 type Done = Extract<SignResult, { status: 'SIGNED' }>;
 const subscribeNever = () => () => undefined;
-
-/** Qué ha pasado con una liquidación del Fondo al completarse las dos firmas (Sprint 4.2f), como clave de `panel.sign.done.fund`. */
-function fundOutcome(done: Done): string | null {
-  if (!done.fund || !done.complete) return null;
-  const settlement = done.fund.settlement;
-  if (!settlement) return 'pending';
-  if (settlement.status === 'EXECUTED') return 'executed';
-  if (settlement.status === 'NOT_APPROVED') {
-    if (settlement.reason === 'FUND_CHANGED') return 'changed';
-    if (settlement.reason === 'WINDOW_EXPIRED') return 'expired';
-    return settlement.reason === 'KYB_NOT_VERIFIED' || settlement.reason === 'DESTINATION_ACCOUNT_MISSING' ? 'blocked' : 'pending';
-  }
-  return 'pending';
-}
 
 export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: string; session: SignSessionState; nextPath: string }) {
   const t = useTranslations('panel.sign');
@@ -159,41 +145,7 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
     );
   }
 
-  if (done) {
-    const fundKey = fundOutcome(done);
-    const backHref = done.fund ? (fundKey === 'blocked' ? `/panel/${orgSlug}/ajustes#documentos` : `/panel/${orgSlug}/fondo`) : `/panel/${orgSlug}/aprobaciones`;
-    // Las dos firmas cuentan, pero la liquidación no sale: título propio y tono de atención, no de éxito.
-    const warning = fundKey === 'changed' || fundKey === 'blocked' || fundKey === 'expired';
-    return (
-      <section className={warning ? 'flex flex-col gap-3 rounded-2xl border-2 border-amber-400 bg-amber-50 p-5' : 'korum-trust-vault flex flex-col gap-3 rounded-2xl border-2 border-varsity-emerald bg-emerald-50 p-5'} data-testid="sign-done">
-        {/* Una idea de las familias se convierte en iniciativa: momento de celebración (revisión de experiencia del 4.2a). El confeti solo se pinta con movimiento permitido. */}
-        {done.complete && done.initiativeId !== null ? <Confetti /> : null}
-        <h1 ref={resultRef} tabIndex={-1} className={warning ? 'font-corp text-2xl font-extrabold text-amber-950' : 'font-corp text-2xl font-extrabold text-emerald-950'}>
-          {warning ? t(`done.fund.${fundKey}Title`) : done.complete ? t('done.completeTitle') : t('done.partialTitle')}
-        </h1>
-        {done.complete && done.initiativeId !== null ? (
-          <p className="die-cut-sticker self-start font-joy text-lg font-bold text-varsity-navy">
-            <span aria-hidden="true">{'🎉 '}</span>
-            {t('done.celebrate')}
-          </p>
-        ) : null}
-        <p>
-          {done.complete
-            ? done.initiativeId !== null
-              ? t('done.completeIdea')
-              : fundKey
-                ? t(`done.fund.${fundKey}`)
-                : t('done.completePayout')
-            : done.otherSignerNotified
-              ? t('done.partialNotified')
-              : t('done.partialWaiting')}
-        </p>
-        <Link href={backHref} className="tactile-btn justify-center">
-          {t(done.fund ? (fundKey === 'blocked' ? 'done.ctaDocuments' : 'done.ctaFund') : 'done.cta')}
-        </Link>
-      </section>
-    );
-  }
+  if (done) return <SignChallengeResult orgSlug={orgSlug} done={done} resultRef={resultRef} />;
 
   if (preview === null || preview === 'INVALID') return null;
   const money = (cents: number) => formatCents(cents, isLocale(locale) ? locale : 'es');
@@ -261,6 +213,9 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
         ) : (
           <>
             <p className="wrap-break-word font-corp text-lg font-extrabold text-varsity-navy">{preview.payout.initiativeTitle}</p>
+            <p className="font-corp text-2xl font-extrabold tabular-nums text-varsity-navy" data-testid="sign-payout-amount">
+              {money(preview.payout.netPaidCents)}
+            </p>
             <p className="font-corp tabular-nums">
               {t('payoutMeta', {
                 wallet: preview.payout.walletEscrowId,
@@ -268,6 +223,30 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
                 destination: t(`destinations.${preview.payout.destinationType}`)
               })}
             </p>
+            <p className="wrap-break-word text-sm" data-testid="sign-payout-beneficiary">
+              {preview.payout.ibanLast4
+                ? t('payoutBeneficiaryIban', { name: preview.payout.beneficiaryName, bank: preview.payout.ibanBank ?? '····', last4: preview.payout.ibanLast4 })
+                : t('payoutBeneficiary', { name: preview.payout.beneficiaryName })}
+            </p>
+            {preview.payout.requestedBy ? (
+              <p className="text-sm text-ink-soft" data-testid="sign-payout-requested">
+                {t('payoutRequestedBy', {
+                  name: preview.payout.requestedBy.name,
+                  date: format.dateTime(new Date(preview.payout.requestedBy.at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' })
+                })}
+              </p>
+            ) : null}
+            {preview.payout.invoiceFileId ? (
+              <a
+                href={`/api/panel/liquidaciones/factura/${preview.payout.invoiceFileId}?orgSlug=${encodeURIComponent(orgSlug)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4"
+              >
+                {t('payoutInvoice')}
+              </a>
+            ) : null}
+            <p className="text-sm font-semibold text-varsity-navy">{t('payoutEffect')}</p>
           </>
         )}
         <p className="text-sm text-ink-soft">

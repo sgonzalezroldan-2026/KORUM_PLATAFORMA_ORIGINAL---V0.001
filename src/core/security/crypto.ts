@@ -54,7 +54,10 @@ export const CRYPTO_CONTEXT = {
   donorTaxId: 'contribution:donorTaxId',
   userTaxId: (userId: string) => `user:nif:${userId}`,
   invoiceRecipientTaxId: (invoiceNumber: string) => `invoice:recipientTaxId:${invoiceNumber}`,
-  sponsorTaxId: (organizationId: string) => `sponsor:cif:${organizationId}`
+  sponsorTaxId: (organizationId: string) => `sponsor:cif:${organizationId}`,
+  /** IBAN y CIF/NIF del proveedor de una liquidación de campaña (Sprint 4.4a), atados a su iniciativa: una liquidación por iniciativa. */
+  payoutIban: (initiativeId: number) => `payout:iban:${initiativeId}`,
+  payoutTaxId: (initiativeId: number) => `payout:cif:${initiativeId}`
 } as const;
 
 /** Propósitos de HMAC de datos personales que comparten varios módulos. */

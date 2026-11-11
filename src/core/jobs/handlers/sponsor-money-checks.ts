@@ -78,7 +78,7 @@ export async function checkSponsorMoney(db: Db, now: Date): Promise<number> {
   }
 
   const [escrowSplits, fundSplits] = await Promise.all([
-    db.escrowPayoutSplit.groupBy({ by: ['contributionId'], _sum: { amountCents: true } }),
+    db.escrowPayoutSplit.groupBy({ by: ['contributionId'], where: { status: { not: 'CANCELLED' } }, _sum: { amountCents: true } }),
     db.activityFundSplit.groupBy({ by: ['contributionId'], where: { payout: { status: { not: 'CANCELLED' } } }, _sum: { amountCents: true } })
   ]);
   const splitByCharge = new Map<number, number>();

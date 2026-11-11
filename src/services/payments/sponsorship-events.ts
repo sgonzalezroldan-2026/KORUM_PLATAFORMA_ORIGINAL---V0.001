@@ -11,6 +11,7 @@ import { openSponsorTaxId } from '@/core/tax/tax-id-vault';
 import type { Db } from '@/lib/db';
 import { issueInvoice } from '@/services/invoicing/invoice.service';
 import { relocateSponsor } from '@/services/sponsors/sponsor-reassignment.service';
+import { markGoalReached } from './goal-reached';
 import { approveRefundInTx, isSettled, PaymentReconciliationError, type ContributionRow } from './payment-reversals';
 
 /**
@@ -106,8 +107,7 @@ export async function completeSponsorshipInTx(
   if (!initiative.firstPayinAt) await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { firstPayinAt: occurredAt } });
 
   if (initiative.status === 'FUNDRAISING' && !sponsor.isMatchingPool && initiative.raisedCents >= initiative.goalCents) {
-    await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'GOAL_REACHED', stepIndex: 5 } });
-    await notifySigners(tx, contribution.organizationId, 'initiative.goalReached', String(contribution.initiativeId), { initiativeId: contribution.initiativeId });
+    await markGoalReached(tx, contribution.organizationId, contribution.initiativeId, occurredAt);
   }
 
   // Sin el NIF emisor se deshace todo y se reintenta: no se asienta un fee que no se pueda facturar.

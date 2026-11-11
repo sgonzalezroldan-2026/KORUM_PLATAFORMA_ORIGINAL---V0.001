@@ -23,7 +23,19 @@ export type ChallengePreview =
       targetType: 'ESCROW_PAYOUT';
       signerRole: SignerRole;
       expiresAt: Date;
-      payout: { initiativeTitle: string; walletEscrowId: string; netPaidCents: number; destinationType: 'ORGANIZATION' | 'PROVIDER' };
+      /** Liquidación de campaña (Sprint 4.4a): a quién va, los 4 últimos dígitos del IBAN del proveedor (nunca entero) y la factura que se firma. */
+      payout: {
+        initiativeTitle: string;
+        walletEscrowId: string;
+        netPaidCents: number;
+        destinationType: 'ORGANIZATION' | 'PROVIDER';
+        beneficiaryName: string;
+        ibanBank: string | null;
+        ibanLast4: string | null;
+        invoiceFileId: string | null;
+        /** Quién la pidió o la cambió por última vez y cuándo: un cambio de destino no pasa desapercibido (auditoría de seguridad del 4.4a, I1). */
+        requestedBy: { name: string; at: Date } | null;
+      };
     }
   | {
       status: 'READY';
@@ -60,13 +72,38 @@ export async function previewChallenge(db: Db, secret: string, actor: SessionAct
     return { status: 'READY', targetType: 'ACTIVITY_FUND_PAYOUT', signerRole, expiresAt: challenge.expiresAt, fund: { reference: `FA-${challenge.fundPayoutId}`, amountCents: fund.amountCents, purpose: fund.purpose, sponsors: fund._count.splits } };
   }
   if (challenge.payoutId === null) return INVALID;
-  const payout = await db.escrowPayout.findUnique({ where: { id: challenge.payoutId }, select: { netPaidCents: true, destinationType: true, initiative: { select: { title: true, walletEscrowId: true } } } });
+  const payout = await db.escrowPayout.findUnique({
+    where: { id: challenge.payoutId },
+    select: {
+      netPaidCents: true,
+      destinationType: true,
+      beneficiaryName: true,
+      beneficiaryIbanBank: true,
+      beneficiaryIbanLast4: true,
+      providerInvoiceFileId: true,
+      requestedById: true,
+      createdAt: true,
+      updatedAt: true,
+      initiative: { select: { title: true, walletEscrowId: true } }
+    }
+  });
   if (!payout) return INVALID;
+  const requester = payout.requestedById ? await db.user.findUnique({ where: { id: payout.requestedById }, select: { name: true } }) : null;
   return {
     status: 'READY',
     targetType: 'ESCROW_PAYOUT',
     signerRole,
     expiresAt: challenge.expiresAt,
-    payout: { initiativeTitle: payout.initiative.title, walletEscrowId: payout.initiative.walletEscrowId, netPaidCents: payout.netPaidCents, destinationType: payout.destinationType }
+    payout: {
+      initiativeTitle: payout.initiative.title,
+      walletEscrowId: payout.initiative.walletEscrowId,
+      netPaidCents: payout.netPaidCents,
+      destinationType: payout.destinationType,
+      beneficiaryName: payout.beneficiaryName,
+      ibanBank: payout.beneficiaryIbanBank,
+      ibanLast4: payout.beneficiaryIbanLast4,
+      invoiceFileId: payout.providerInvoiceFileId,
+      requestedBy: requester ? { name: requester.name, at: payout.updatedAt ?? payout.createdAt } : null
+    }
   };
 }

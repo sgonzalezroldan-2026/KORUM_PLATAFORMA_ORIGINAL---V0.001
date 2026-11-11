@@ -124,6 +124,10 @@ if (fs.existsSync(seedPath)) {
         if (gross !== init.goalCents) {
           errors.push(`[SEED-TICKET-DRIFT] Initiative #${init.id}: ticketPriceCents*ticketMax ${gross} !== goalCents ${init.goalCents}`);
         }
+        // La pasarela de una entrada la cubren los gastos de gestión digital: la taquilla no la descuenta de la hucha (Sprint 4.3, alineado en el 4.4a).
+        if (init.gatewayFeeCents !== 0) {
+          errors.push(`[SEED-TICKET-GATEWAY] Initiative #${init.id}: gatewayFeeCents must be 0 for TICKETING (got ${init.gatewayFeeCents})`);
+        }
       }
     }
     const rules = seed.globalRules ?? {};

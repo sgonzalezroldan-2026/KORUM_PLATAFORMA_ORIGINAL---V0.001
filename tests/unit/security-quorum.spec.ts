@@ -117,7 +117,7 @@ describe('QA-SEC04 · candado semántico', () => {
 });
 
 describe('QA-SEC03 · huella de la firma', () => {
-  const payout = { organizationId: 'ORG', netPaidCents: 2_700, korumFeeSettledCents: 200, destinationType: 'ORGANIZATION' as const, beneficiaryName: 'AFA', beneficiaryIban: 'ES00', providerCif: null, providerInvoiceFileId: null };
+  const payout = { organizationId: 'ORG', netPaidCents: 2_700, korumFeeSettledCents: 200, destinationType: 'ORGANIZATION' as const, beneficiaryName: 'AFA', beneficiaryDigest: null, providerInvoiceFileId: null, providerInvoiceSha256: null };
   const signedAt = new Date('2026-11-01T10:00:00.000Z');
   const input = { organizationId: 'ORG', targetType: 'ESCROW_PAYOUT' as const, targetId: 1, targetDigest: payoutTargetDigest(SECRET, payout, 'split-a'), signerUserId: 'u1', signerRole: 'DIRECTOR' as const, membershipId: 7, signedAt, otpVerifiedAt: signedAt };
 
@@ -128,7 +128,9 @@ describe('QA-SEC03 · huella de la firma', () => {
   it('cambiar el importe o la cuenta destino cambia lo firmado', () => {
     expect(payoutTargetDigest(SECRET, { ...payout, netPaidCents: 2_701 }, 'split-a')).not.toBe(input.targetDigest);
     expect(payoutTargetDigest(SECRET, payout, 'split-b')).not.toBe(input.targetDigest);
-    expect(payoutTargetDigest(SECRET, { ...payout, beneficiaryIban: 'ES01' }, 'split-a')).not.toBe(input.targetDigest);
+    expect(payoutTargetDigest(SECRET, { ...payout, beneficiaryDigest: 'otro-iban' }, 'split-a')).not.toBe(input.targetDigest);
+    // El contenido de la factura entra en lo firmado (Sprint 4.4a): otro fichero con el mismo id no vale.
+    expect(payoutTargetDigest(SECRET, { ...payout, providerInvoiceFileId: 'f1', providerInvoiceSha256: 'a' }, 'split-a')).not.toBe(payoutTargetDigest(SECRET, { ...payout, providerInvoiceFileId: 'f1', providerInvoiceSha256: 'b' }, 'split-a'));
   });
 
   it('cualquier campo alterado invalida la firma', () => {

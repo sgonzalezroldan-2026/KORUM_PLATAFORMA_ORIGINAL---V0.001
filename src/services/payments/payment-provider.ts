@@ -1,3 +1,4 @@
+import type { ProviderPayoutBeneficiary } from '@/core/payouts/provider-fields';
 /**
  * Contrato con la entidad de pago (Regla 01 §3). El resto de la aplicación solo conoce esta interfaz, así que se puede cambiar de
  * proveedor sin tocar nada más. Todos los importes van en céntimos enteros.
@@ -130,6 +131,11 @@ export interface PaymentProvider {
   deleteCard(card: TokenizeResult): Promise<void>;
   refund(request: RefundRequest): Promise<RefundResult>;
   splitTransfer(request: SplitTransferRequest): Promise<SplitTransferResult>;
+  /**
+   * Cuenta de Paycomet a la que repartir para pagar directamente al proveedor que eligió la entidad (Sprint 4.4a). **Pendiente de Paycomet** (tarea
+   * aplazada): solo el simulador lo ofrece, con una cuenta simulada y no verificada; sin este método, el pago al proveedor no aparece en el panel.
+   */
+  providerPayoutAccount?(beneficiary: ProviderPayoutBeneficiary): Promise<string>;
   /** Cobros confirmados con `occurredAt` en `[from, to]`. Lanza si el proveedor no puede devolverlos todos: una lista recortada falsearía la conciliación. */
   listCharges(range: { from: Date; to: Date }): Promise<PspCharge[]>;
   verifyNotification(rawBody: string, contentType: string | null): NotificationCheck;

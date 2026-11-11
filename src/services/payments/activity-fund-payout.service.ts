@@ -24,7 +24,7 @@ import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 /** Lo repartido de un cobro en otras liquidaciones (de campaña o del Fondo, sin las retiradas): un cobro nunca se reparte por encima de lo cobrado. */
 export async function splitUsageOf(tx: Db, contributionIds: readonly number[], excludeFundPayoutId?: number): Promise<Map<number, number>> {
   // Una detrás de otra: dentro de una transacción solo hay una conexión.
-  const escrow = await tx.escrowPayoutSplit.groupBy({ by: ['contributionId'], where: { contributionId: { in: [...contributionIds] } }, _sum: { amountCents: true } });
+  const escrow = await tx.escrowPayoutSplit.groupBy({ by: ['contributionId'], where: { contributionId: { in: [...contributionIds] }, status: { not: 'CANCELLED' } }, _sum: { amountCents: true } });
   const fund = await tx.activityFundSplit.groupBy({
     by: ['contributionId'],
     where: { contributionId: { in: [...contributionIds] }, payout: { status: { not: 'CANCELLED' } }, ...(excludeFundPayoutId === undefined ? {} : { payoutId: { not: excludeFundPayoutId } }) },

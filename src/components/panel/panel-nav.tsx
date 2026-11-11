@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 
 /**
- * Secciones del panel de la entidad. Solo aparecen las que ya existen; las demás (liquidaciones, portería) se añaden aquí al llegar su sprint. La sección activa se marca con `aria-current` y con estilo, nunca solo con color. «Aprobaciones» lleva cuántas decisiones esperan, con
+ * Secciones del panel de la entidad. Solo aparecen las que ya existen; las demás (portería) se añaden aquí al llegar su sprint. La sección activa se marca con `aria-current` y con estilo, nunca solo con color. «Aprobaciones» lleva cuántas decisiones esperan, con
  * texto para el lector de pantalla (no solo el número).
  */
 export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; pendingApprovals?: number }) {
@@ -16,6 +16,7 @@ export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; p
     { key: 'dashboard', href: base, active: pathname === base },
     { key: 'studio', href: `${base}/estudio`, active: pathname.startsWith(`${base}/estudio`) },
     { key: 'approvals', href: `${base}/aprobaciones`, active: pathname.startsWith(`${base}/aprobaciones`) },
+    { key: 'payouts', href: `${base}/liquidaciones`, active: pathname.startsWith(`${base}/liquidaciones`) },
     { key: 'achievements', href: `${base}/logros`, active: pathname.startsWith(`${base}/logros`) },
     { key: 'fund', href: `${base}/fondo`, active: pathname.startsWith(`${base}/fondo`) },
     { key: 'settings', href: `${base}/ajustes`, active: pathname.startsWith(`${base}/ajustes`) }

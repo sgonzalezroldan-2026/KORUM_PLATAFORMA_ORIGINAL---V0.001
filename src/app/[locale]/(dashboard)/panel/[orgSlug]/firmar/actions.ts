@@ -9,7 +9,10 @@ import { previewChallenge } from '@/core/security/double-check-preview';
 import { getSessionActor } from '@/lib/auth/session';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
+import { getKeyring } from '@/config/keyring';
+import { dispatchPayoutExecutedSoon } from '@/lib/panel/outbox-soon';
 import { settleSignedFundPayout, type FundSettlement } from '@/services/payments/activity-fund-payout.service';
+import { settleSignedCampaignPayout, type PayoutSettlement } from '@/services/payments/campaign-payout-settlement';
 import type { SessionActor } from '@/repositories/tenant-guard';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
@@ -25,7 +28,22 @@ const signSchema = z.object({ token: tokenSchema, otp: z.string().regex(/^\d{6}$
 
 export type PreviewResult =
   | { status: 'READY'; targetType: 'IDEA_APPROVAL'; expiresAt: string; idea: { alias: string; title: string; category: string; description: string; verifiedVotes: number; revalidatedVotes: number } }
-  | { status: 'READY'; targetType: 'ESCROW_PAYOUT'; expiresAt: string; payout: { initiativeTitle: string; walletEscrowId: string; netPaidCents: number; destinationType: 'ORGANIZATION' | 'PROVIDER' } }
+  | {
+      status: 'READY';
+      targetType: 'ESCROW_PAYOUT';
+      expiresAt: string;
+      payout: {
+        initiativeTitle: string;
+        walletEscrowId: string;
+        netPaidCents: number;
+        destinationType: 'ORGANIZATION' | 'PROVIDER';
+        beneficiaryName: string;
+        ibanBank: string | null;
+        ibanLast4: string | null;
+        invoiceFileId: string | null;
+        requestedBy: { name: string; at: string } | null;
+      };
+    }
   | { status: 'READY'; targetType: 'ACTIVITY_FUND_PAYOUT'; expiresAt: string; fund: { reference: string; amountCents: number; purpose: string; sponsors: number } }
   | { status: 'INVALID_LINK' | 'LOGIN_REQUIRED' | 'TWO_FACTOR_REQUIRED' };
 
@@ -37,6 +55,8 @@ export type SignResult =
       otherSignerNotified: boolean;
       /** Liquidación del Fondo de actividades: a dónde vuelve quien firma y, con las dos firmas, qué ha pasado con el envío a la entidad. */
       fund: { settlement: FundSettlement | null } | null;
+      /** Liquidación de una campaña (Sprint 4.4a): con las dos firmas, qué ha pasado con el envío (`null` si no se pudo saber: la tarea lo reanuda). */
+      payout: { settlement: PayoutSettlement | null } | null;
     }
   | { status: 'INVALID_OTP'; attemptsLeft: number }
   | { status: 'INVALID_LINK' | 'INVALID_INPUT' | 'TARGET_CHANGED' | 'LOGIN_REQUIRED' | 'TWO_FACTOR_REQUIRED' }
@@ -61,7 +81,8 @@ export async function previewSignatureAction(orgSlug: string, token: unknown): P
   const expiresAt = preview.expiresAt.toISOString();
   if (preview.targetType === 'IDEA_APPROVAL') return { status: 'READY', targetType: 'IDEA_APPROVAL', expiresAt, idea: preview.idea };
   if (preview.targetType === 'ACTIVITY_FUND_PAYOUT') return { status: 'READY', targetType: 'ACTIVITY_FUND_PAYOUT', expiresAt, fund: preview.fund };
-  return { status: 'READY', targetType: 'ESCROW_PAYOUT', expiresAt, payout: preview.payout };
+  const { requestedBy, ...payout } = preview.payout;
+  return { status: 'READY', targetType: 'ESCROW_PAYOUT', expiresAt, payout: { ...payout, requestedBy: requestedBy ? { name: requestedBy.name, at: requestedBy.at.toISOString() } : null } };
 }
 
 export async function completeSignatureAction(payload: unknown): Promise<SignResult> {
@@ -94,7 +115,22 @@ export async function completeSignatureAction(payload: unknown): Promise<SignRes
       );
     }
   }
-  return { status: 'SIGNED', complete: result.complete, initiativeId: result.initiativeId, otherSignerNotified: ids.length > 0, fund };
+  const payout = result.target.targetType === 'ESCROW_PAYOUT' ? { settlement: result.complete ? await settleCampaign(db, result.target.payoutId) : null } : null;
+  if (result.target.targetType === 'ESCROW_PAYOUT' && payout?.settlement?.status === 'EXECUTED') await dispatchPayoutExecutedSoon(db, result.target.payoutId);
+  return { status: 'SIGNED', complete: result.complete, initiativeId: result.initiativeId, otherSignerNotified: ids.length > 0, fund, payout };
+}
+
+/**
+ * Segunda firma de la liquidación de una campaña (Sprint 4.4a, heredado de los 2.2 y 4.2a): se aprueba y se envía en el acto. Si Paycomet falla, la firma ya
+ * cuenta y la tarea diaria lo reanuda: quien firma ve el estado, no un error.
+ */
+async function settleCampaign(db: ReturnType<typeof getPrisma>, payoutId: number): Promise<PayoutSettlement | null> {
+  try {
+    return await settleSignedCampaignPayout(db, buildJobDeps(db).paymentProvider, payoutId, { secret: getEnv().DATA_HMAC_SECRET, keyring: getKeyring() });
+  } catch (error) {
+    reportError(error, { stage: 'campaign-payout-settle', payoutId });
+    return null;
+  }
 }
 
 /**

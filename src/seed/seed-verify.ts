@@ -98,6 +98,7 @@ async function verifyInitiative(db: KorumPrismaClient, seed: KorumSeedData, init
     check(initiative.goalCents % 100 === 0, `${label}: goalCents no es un euro entero`);
   } else {
     check((initiative.ticketPriceCents ?? 0) * (initiative.ticketMax ?? 0) === initiative.goalCents, `${label}: precio × aforo no suma goalCents`);
+    check(initiative.gatewayFeeCents === 0, `${label}: una taquilla no descuenta pasarela de la hucha (gatewayFeeCents = 0)`);
     const passes = await db.ticketPass.aggregate({ where: { initiativeId: id }, _sum: { quantity: true }, _count: true });
     check(passes._sum.quantity === initiative.ticketsSold, `${label}: los pases suman ${passes._sum.quantity} entradas y ticketsSold es ${initiative.ticketsSold}`);
     check(passes._count === initiative.totalContributions, `${label}: ${passes._count} pases y ${initiative.totalContributions} compras`);
@@ -121,7 +122,7 @@ async function verifyInitiative(db: KorumPrismaClient, seed: KorumSeedData, init
     const roles = payout.signatures.map((signature) => signature.signerRole).sort();
     const distinctSigners = new Set(payout.signatures.map((signature) => signature.signerUserId)).size;
     check(settled ? roles.join() === 'COSIGNER,DIRECTOR' && distinctSigners === 2 : roles.join() === 'DIRECTOR', `${label}: firmas de la liquidación ${roles.join('+') || 'ninguna'}`);
-    check(seed.schools.some((school) => school.id === payout.organizationId && school.iban === payout.beneficiaryIban), `${label}: el IBAN de la liquidación no es el de la entidad`);
+    check(seed.schools.some((school) => school.id === payout.organizationId && school.legalName === payout.beneficiaryName) && payout.beneficiaryIbanEnc === null, `${label}: la liquidación no va al titular de la entidad`);
   }
 
   return { id, status: initiative.status, raisedCents: stored.raisedCents, ledgerRaisedCents: ledgerRaised, escrowBalanceCents: escrow, contributions };

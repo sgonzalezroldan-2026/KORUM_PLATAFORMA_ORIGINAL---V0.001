@@ -282,6 +282,8 @@ enum PayoutSplitStatus {
   SENDING
   DONE
   FAILED
+  /// Reparto que ya no se puede enviar (cobro contracargado, devuelto o fuera de los 90 días): se replanifica desde otros cobros (Sprint 4.4a) y no cuenta como usado.
+  CANCELLED
 }
 
 enum PayoutStatus {
@@ -422,6 +424,7 @@ enum JobType {
   TICKET_HOLD_RELEASE // Libera las plazas reservadas cuyo pago no llegó
   INVOICE_SUBMIT // Envía al proveedor Veri*factu las facturas pendientes
   OPS_HOUSEKEEPING // Purga de límites de intentos, notificaciones rechazadas y desafíos de firma caducados
+  SUPPORTER_BROADCAST // Avisos a quienes aportaron a una iniciativa (meta lograda, fotos Antes/Después), por lotes (Sprint 4.4a)
 }
 
 enum OpsAlertType {
@@ -455,6 +458,8 @@ enum OpsAlertType {
   ACTIVITY_FUND_WINDOW
   /// El dinero de un comercio no se puede mover y su plazo corre: la entidad no lo ha admitido ni rechazado, o quedan devoluciones sin terminar (Sprint 4.2f).
   SPONSOR_MONEY_BLOCKED
+  /// Una liquidación de campaña aprobada tiene repartos que no se pueden enviar y no hay otros cobros desde los que replanificarlos (Sprint 4.4a): la revisa el Super-Admin con Paycomet.
+  PAYOUT_BLOCKED
 }
 
 enum OpsAlertSeverity {
@@ -1000,6 +1005,8 @@ model Initiative {
   sourceIdeaId               Int?             @unique
   beforeFileId               String?
   afterFileId                String?
+  /// Momento en que la liquidación terminó de enviarse (GOAL_REACHED → CLOSED, Sprint 4.4a).
+  closedAt                   DateTime?
   createdAt                  DateTime         @default(now())
   updatedAt                  DateTime         @updatedAt
 
@@ -1021,6 +1028,7 @@ model Initiative {
   payout              EscrowPayout?
   resizePoll          ResizePoll?
   escrowLedgerEntries EscrowLedgerEntry[]
+  supporterBroadcasts SupporterBroadcast[]
 
   @@index([organizationId, status])
   @@index([status, closesAt])
@@ -1647,19 +1655,32 @@ model EscrowPayout {
   id                    Int                    @id @default(autoincrement())
   organizationId        String
   initiativeId          Int                    @unique
-  destinationType       PayoutDestination      @default(PROVIDER)
+  destinationType       PayoutDestination      @default(ORGANIZATION)
+  /// Titular que recibe: la razón social de la entidad o la del proveedor que eligió libremente.
   beneficiaryName       String
-  beneficiaryIban       String
-  providerCif           String?
+  /// IBAN y CIF/NIF del proveedor (un autónomo factura con su DNI), cifrados con el contexto de su iniciativa (CUMPLIMIENTO §5.2). Vacíos si el destino es la entidad.
+  beneficiaryIbanEnc    String?
+  providerCifEnc        String?
+  beneficiaryKeyVersion Int?
+  /// HMAC del IBAN y del CIF en claro: entra en la huella de las firmas sin descifrar nada, y al aprobar se comprueba contra lo descifrado.
+  beneficiaryDigest     String?
+  /// Últimos 4 dígitos del IBAN del proveedor, para que quien firma reconozca la cuenta sin verla entera.
+  beneficiaryIbanLast4  String?
+  /// Código del banco del IBAN del proveedor (dígitos 5 a 8): con los 4 últimos, para que quien firma note un cambio de cuenta.
+  beneficiaryIbanBank   String?
   providerInvoiceFileId String?
+  /// Persona firmante que pidió (o cambió por última vez) la liquidación.
+  requestedById         String?
   netPaidCents          Int
   korumFeeSettledCents  Int
   /// Cuenta destino fijada al aprobar: las firmas valen para esa cuenta, aunque la entidad cambie la suya después.
   destinationSplitId    String?
   paycometTransferId    String?
   status                PayoutStatus           @default(PENDING_DOUBLE_CHECK)
+  approvedAt            DateTime?
   executedAt            DateTime?
   createdAt             DateTime               @default(now())
+  updatedAt             DateTime?
   organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   initiative            Initiative             @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
   providerInvoiceFile   FileAsset?             @relation("PayoutProviderInvoice", fields: [providerInvoiceFileId], references: [id], onDelete: Restrict)
@@ -1686,8 +1707,26 @@ model EscrowPayoutSplit {
   payout         EscrowPayout      @relation(fields: [payoutId], references: [id], onDelete: Restrict)
   contribution   Contribution      @relation(fields: [contributionId], references: [id], onDelete: Restrict)
 
-  @@unique([payoutId, contributionId])
+  /// Unicidad parcial en la migración `20261118090100_campaign_payout_split_index`: un reparto vivo (no `CANCELLED`) por cobro y liquidación.
+  @@index([payoutId, contributionId])
   @@index([payoutId, status])
+}
+
+/// Aviso por email a quienes aportaron a una iniciativa (donaciones completadas, sin repetir persona), enviado por lotes desde la tarea
+/// SUPPORTER_BROADCAST (Sprint 4.4a): un reparto a miles de familias nunca va en la transacción del cobro. Uno por iniciativa y plantilla.
+model SupporterBroadcast {
+  id           Int        @id @default(autoincrement())
+  initiativeId Int
+  templateKey  String
+  /// Última aportación tratada: la siguiente ejecución sigue desde aquí.
+  cursorId     Int        @default(0)
+  queuedCount  Int        @default(0)
+  createdAt    DateTime   @default(now())
+  completedAt  DateTime?
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+
+  @@unique([initiativeId, templateKey])
+  @@index([completedAt, id])
 }
 
 model ResizePoll {

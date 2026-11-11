@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { SPLIT_WINDOW_DAYS } from '@/core/finance/campaign-window';
+import type { ProviderPayoutBeneficiary } from '@/core/payouts/provider-fields';
 import { notificationHash, verifyPaycometNotification, type NotificationSecrets } from './paycomet-notification';
 import {
   PaymentProviderError,
@@ -127,6 +128,11 @@ export class MockPaycometProvider implements PaymentProvider {
     }
     this.calls.push({ operation: 'split', order: request.order, amountCents: request.amountCents, authCode: request.authCode, splitId: request.splitId });
     return { splitAuthCode: stableCode('S', `${request.order}:${request.splitId}`) };
+  }
+
+  /** Cuenta simulada del proveedor: estable para un mismo IBAN y CIF, y marcada como no verificada ('MOCK-PRV-'). */
+  async providerPayoutAccount(beneficiary: ProviderPayoutBeneficiary): Promise<string> {
+    return stableCode('MOCK-PRV-', JSON.stringify(beneficiary));
   }
 
   verifyNotification(rawBody: string, contentType: string | null): NotificationCheck {

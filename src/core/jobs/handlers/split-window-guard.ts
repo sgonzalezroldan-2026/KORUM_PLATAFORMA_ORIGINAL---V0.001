@@ -1,4 +1,6 @@
 import { evaluateSplitWindow, SPLIT_WINDOW_DAYS, SPLIT_WINDOW_WARNING_DAYS } from '@/core/finance/campaign-window';
+import { reportError } from '@/lib/error-reporting';
+import { resumeCampaignPayouts } from '@/services/payments/campaign-payout-settlement';
 import type { JobHandler } from '../job-types';
 import { notifySigners } from '../notify';
 import { raiseAlert, resolveAlertsNotIn } from '../ops-alerts';
@@ -11,8 +13,21 @@ const AT_RISK_STATUSES = ['FUNDRAISING', 'GOAL_REACHED', 'EXPIRED', 'RESIZE_VOTI
  * `SPLIT_WINDOW_GUARD` (QA-P04): Paycomet solo reparte fondos durante 90 días desde cada cobro. Cuando faltan 15 o menos para que venza la
  * del primer cobro de una iniciativa sin liquidar, se avisa a la entidad (una vez) y se abre una alerta para el Super-Admin; si ya venció,
  * la alerta es crítica. La alerta se cierra sola cuando la iniciativa se liquida, se devuelve o se cancela.
+ *
+ * Antes, reanuda las liquidaciones de campaña pendientes (Sprint 4.4a): aprueba las que tienen dos firmas, replanifica los repartos bloqueados y reenvía.
  */
-export const splitWindowGuardHandler: JobHandler = async ({ db, now, batchSize }) => {
+export const splitWindowGuardHandler: JobHandler = async ({ db, now, batchSize, deps }) => {
+  const pendingPayouts = await db.escrowPayout.count({ where: { OR: [{ status: { in: ['APPROVED', 'PROCESSING', 'FAILED'] } }, { status: 'PENDING_DOUBLE_CHECK', signatures: { some: {} } }] } });
+  let resumed = { executed: 0, pending: 0, errors: 0 };
+  // Un fallo al reanudar (Paycomet sin configurar, un error inesperado) se informa y no impide los avisos de la ventana, que son lo urgente.
+  if (pendingPayouts > 0) {
+    try {
+      resumed = await resumeCampaignPayouts(db, await deps.paymentProvider(), { secret: deps.hmacSecret(), keyring: deps.keyring() }, now, batchSize);
+    } catch (error) {
+      reportError(error, { stage: 'split-window-guard-resume' });
+      resumed.errors += 1;
+    }
+  }
   const threshold = new Date(now.getTime() - (SPLIT_WINDOW_DAYS - SPLIT_WINDOW_WARNING_DAYS) * DAY_MS);
   const initiatives = await db.initiative.findMany({
     where: { status: { in: [...AT_RISK_STATUSES] }, firstPayinAt: { not: null, lte: threshold }, NOT: { payout: { is: { status: 'EXECUTED' } } } },
@@ -41,5 +56,5 @@ export const splitWindowGuardHandler: JobHandler = async ({ db, now, batchSize }
     });
   }
   await resolveAlertsNotIn(db, 'SPLIT_WINDOW_EXPIRING', activeKeys, now);
-  return { processed: Math.min(activeKeys.length, batchSize), hasMore: false, detail: { warned: activeKeys.length, expired } };
+  return { processed: Math.min(activeKeys.length, batchSize), hasMore: false, detail: { warned: activeKeys.length, expired, payoutsExecuted: resumed.executed, payoutsPending: resumed.pending, payoutErrors: resumed.errors } };
 };

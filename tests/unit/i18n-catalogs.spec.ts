@@ -98,6 +98,8 @@ describe('QA-C05 · catálogos de traducción', () => {
       'panel.fund.history.cancelReason.WITHDRAWN', 'panel.fund.history.executedOn', 'panel.fund.history.status.CANCELLED', 'panel.fund.receipt.executedAt', 'panel.fund.receipt.signatureLine',
       // Invitación a renovar (Sprint 4.2f): «caduca» se escribe igual en catalán.
       'email.sponsor.renewalInvite.verbFuture',
+      // Liquidaciones (Sprint 4.4a): «Liquidar», «Factura adjunta», «Enviada» y «Enviada el…» se escriben igual en catalán.
+      'panel.dashboard.card.settle', 'panel.payouts.form.invoiceReady', 'panel.payouts.history.executed', 'panel.payouts.history.status.EXECUTED',
       // Estudio de edición (Sprint 4.3): «Infantil», «ESO», «Plata», «Sí, publicar», «Taquilla o rifa», «Meta pública final exacta» y los patrones sin texto traducible se escriben igual en catalán.
       'panel.studio.board.atZero', 'panel.studio.board.goalLabel', 'panel.studio.board.medal.2', 'panel.studio.confirm.yes', 'panel.studio.format.TICKETING', 'panel.studio.poster.withKorum', 'panel.studio.stages.eso', 'panel.studio.stages.infantil', 'panel.studio.discard.yes']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',

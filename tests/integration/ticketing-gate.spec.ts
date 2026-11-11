@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { publishInitiative } from '@/core/finance/campaign-window';
 import { getRaisedFromLedger } from '@/core/finance/ledger.service';
-import { computeSignatureHash, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import { checkInPass, getGateSummary } from '@/core/ticketing/check-in.service';
 import { MAX_FAILURES_PER_EVENT, openGateSession, resolveGateSession, revokeGateSession, setGatePin } from '@/core/ticketing/gate-session.service';
 import { buildPassQrPayload } from '@/core/ticketing/qr-signature';
@@ -234,7 +234,7 @@ describe('Webhook de una entrada (deuda del Sprint 2.1)', () => {
     expect((await db.ticketPass.findUniqueOrThrow({ where: { id: inEscrow.pass.id } })).revokedAt).not.toBeNull();
 
     const settled = await buy(initiative.id, 2);
-    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, status: 'EXECUTED', beneficiaryName: 'Entidad', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: 1_000, korumFeeSettledCents: 0 } });
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, status: 'EXECUTED', beneficiaryName: 'Entidad', netPaidCents: 1_000, korumFeeSettledCents: 0 } });
     await deliver('CHARGEBACK', settled.reservation.paycometOrder, settled.reservation.totalChargedCents);
     expect((await db.ticketPass.findUniqueOrThrow({ where: { id: settled.pass.id } })).revokedAt).not.toBeNull();
     expect(await counters(initiative.id)).toMatchObject({ ticketsSold: 2 });
@@ -642,9 +642,9 @@ describe('Liquidar lo vendido', () => {
   /** Prepara una liquidación firmada por dos personas de lo que haya recaudado la iniciativa. */
   async function signedPayout(organizationId: string, initiativeId: number) {
     const { raisedCents } = await counters(initiativeId);
-    const payout = await db.escrowPayout.create({ data: { organizationId, initiativeId, destinationType: 'ORGANIZATION', beneficiaryName: 'Entidad', beneficiaryIban: 'ES0000000000000000000000', netPaidCents: raisedCents, korumFeeSettledCents: 0 } });
+    const payout = await db.escrowPayout.create({ data: { organizationId, initiativeId, destinationType: 'ORGANIZATION', beneficiaryName: 'Entidad', netPaidCents: raisedCents, korumFeeSettledCents: 0 } });
     const { paycometSplitId } = await db.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { paycometSplitId: true } });
-    const digest = payoutTargetDigest(SIGNATURE_SECRET, payout, paycometSplitId);
+    const digest = payoutDigestFor(SIGNATURE_SECRET, { ...payout, providerInvoiceFile: null }, paycometSplitId);
     for (const role of ['DIRECTOR', 'COSIGNER'] as const) {
       const signer = await createUser(db, { twoFactorEnabled: true });
       const membership = await db.organizationMember.create({ data: { userId: signer.id, organizationId, role } });

@@ -1,8 +1,8 @@
 import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
-import { notifySigners } from '@/core/jobs/notify';
 import type { Placement } from '@/core/sponsors/sponsor-reassignment-rules';
 import type { Db } from '@/lib/db';
+import { markGoalReached } from '@/services/payments/goal-reached';
 import { PaymentReconciliationError } from '@/services/payments/payment-reversals';
 
 /**
@@ -158,8 +158,7 @@ export async function placeFromPool(tx: Db, sponsor: MovableSponsor, placements:
     // La ventana de 90 días de esta campaña empieza en su cobro más antiguo, y este lo es si el patrocinio se cobró antes (aviso `SPLIT_WINDOW_GUARD`).
     if (!initiative.firstPayinAt || initiative.firstPayinAt > sponsor.chargedAt) await tx.initiative.update({ where: { id: placement.initiativeId }, data: { firstPayinAt: sponsor.chargedAt } });
     if (initiative.status === 'FUNDRAISING' && initiative.goalCents > 0 && initiative.raisedCents >= initiative.goalCents) {
-      await tx.initiative.update({ where: { id: placement.initiativeId }, data: { status: 'GOAL_REACHED', stepIndex: 5 } });
-      await notifySigners(tx, sponsor.organizationId, 'initiative.goalReached', String(placement.initiativeId), { initiativeId: placement.initiativeId });
+      await markGoalReached(tx, sponsor.organizationId, placement.initiativeId, now);
     }
     titles.push(initiative.title);
   }

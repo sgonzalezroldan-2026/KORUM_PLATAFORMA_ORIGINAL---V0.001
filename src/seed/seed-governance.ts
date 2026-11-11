@@ -2,7 +2,7 @@ import { postJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
 import type { Keyring } from '@/core/security/crypto';
 import type { SignatureReasonKey } from '@/core/security/device-quorum.service';
-import { computeSignatureHash, ideaTargetDigest, payoutTargetDigest } from '@/core/security/signature-hash';
+import { computeSignatureHash, ideaTargetDigest, payoutDigestFor } from '@/core/security/signature-hash';
 import { sealInvoiceRecipientTaxId } from '@/core/tax/tax-id-vault';
 import type { DoubleCheckTargetType, MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -51,9 +51,10 @@ async function sign(db: KorumPrismaClient, secrets: SeedSecrets, input: Signatur
 
 /**
  * Liquidaciones de las campañas que alcanzaron la meta: la cerrada (ejecutada) y la que espera la 2ª firma. El destino es la
- * ENTIDAD (su titular legal y su IBAN) y no un proveedor: pagar directamente al IBAN de un tercero está pendiente de confirmar
+ * ENTIDAD (su titular legal y su cuenta en Paycomet) y no un proveedor: pagar directamente al IBAN de un tercero está pendiente de confirmar
  * con Paycomet (tarea aplazada) y el importe neto incluye la contingencia, que es de la entidad. La factura del proveedor
- * (PROVIDER_INVOICE) no se adjunta en la semilla: los ficheros llegan con el Sprint 2.4.
+ * (PROVIDER_INVOICE) no se adjunta en la semilla (no sube ficheros al almacén): en la que espera la 2ª firma, la entidad la adjunta desde
+ * Liquidaciones (Sprint 4.4a) antes de que pueda firmar la segunda persona, y las firmas se vuelven a pedir.
  */
 export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets): Promise<Map<number, number>> {
   const payoutIds = new Map<number, number>();
@@ -73,7 +74,6 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         initiativeId: initiative.id,
         destinationType: 'ORGANIZATION',
         beneficiaryName: org.legalName,
-        beneficiaryIban: org.iban,
         netPaidCents: netPaid,
         korumFeeSettledCents: korumFee,
         status: closed ? 'EXECUTED' : 'PENDING_DOUBLE_CHECK',
@@ -86,7 +86,7 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
     payoutIds.set(initiative.id, payout.id);
 
     const { paycometSplitId } = await db.organization.findUniqueOrThrow({ where: { id: initiative.organizationId }, select: { paycometSplitId: true } });
-    const target = { organizationId: initiative.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutTargetDigest(secrets.hmacSecret, payout, paycometSplitId) };
+    const target = { organizationId: initiative.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutDigestFor(secrets.hmacSecret, { ...payout, providerInvoiceFile: null }, paycometSplitId) };
     await sign(db, secrets, { ...target, role: 'DIRECTOR', signedAt: new Date(closesAt.getTime() + DAY_MS + 9 * 3_600_000) });
     if (closed) await sign(db, secrets, { ...target, role: 'COSIGNER', signedAt: new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000) });
 

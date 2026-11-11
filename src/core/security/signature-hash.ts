@@ -9,16 +9,49 @@ import { dataHmac, safeEqual } from './data-hmac';
 
 const toText = (parts: ReadonlyArray<string | number | null>) => JSON.stringify(parts);
 
-export function payoutTargetDigest(
-  secret: string,
-  payout: { organizationId: string; netPaidCents: number; korumFeeSettledCents: number; destinationType: PayoutDestination; beneficiaryName: string; beneficiaryIban: string; providerCif: string | null; providerInvoiceFileId: string | null },
-  destinationAccount: string | null
-): string {
+/** Lo que se firma de una liquidación de campaña (Sprint 4.4a): sin el IBAN ni el CIF en claro, que van cifrados; su HMAC y el contenido de la factura. */
+export interface PayoutDigestInput {
+  organizationId: string;
+  netPaidCents: number;
+  korumFeeSettledCents: number;
+  destinationType: PayoutDestination;
+  beneficiaryName: string;
+  /** HMAC del IBAN y el CIF del proveedor (`beneficiaryDigest`); nulo si el destino es la entidad. */
+  beneficiaryDigest: string | null;
+  providerInvoiceFileId: string | null;
+  /** Huella SHA-256 del contenido de la factura adjunta: cambiar el fichero (aunque conserve su id) invalida las firmas (heredado del Sprint 2.2). */
+  providerInvoiceSha256: string | null;
+}
+
+export function payoutTargetDigest(secret: string, payout: PayoutDigestInput, destinationAccount: string | null): string {
   return dataHmac(
     secret,
-    'double-check-target-payout-v1',
-    toText([payout.organizationId, payout.netPaidCents, payout.korumFeeSettledCents, payout.destinationType, destinationAccount, payout.beneficiaryName, payout.beneficiaryIban, payout.providerCif, payout.providerInvoiceFileId])
+    'double-check-target-payout-v2',
+    toText([
+      payout.organizationId,
+      payout.netPaidCents,
+      payout.korumFeeSettledCents,
+      payout.destinationType,
+      destinationAccount,
+      payout.beneficiaryName,
+      payout.beneficiaryDigest,
+      payout.providerInvoiceFileId,
+      payout.providerInvoiceSha256
+    ])
   );
+}
+
+/**
+ * Huella de una liquidación tal como está guardada. La cuenta destino que se firma es la de la entidad en Paycomet si el dinero va a ella; si va a un
+ * proveedor, su cuenta la fija el IBAN (ya dentro de `beneficiaryDigest`) y un cambio de la cuenta de la entidad no invalida esas firmas.
+ */
+export function payoutDigestFor(
+  secret: string,
+  payout: Omit<PayoutDigestInput, 'providerInvoiceSha256'> & { providerInvoiceFile: { sha256: string } | null },
+  organizationSplitId: string | null
+): string {
+  const { providerInvoiceFile, ...rest } = payout;
+  return payoutTargetDigest(secret, { ...rest, providerInvoiceSha256: providerInvoiceFile?.sha256 ?? null }, payout.destinationType === 'PROVIDER' ? null : organizationSplitId);
 }
 
 /**

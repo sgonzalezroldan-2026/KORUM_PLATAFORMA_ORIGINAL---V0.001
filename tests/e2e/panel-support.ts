@@ -78,7 +78,10 @@ export async function activateCosigner(browser: Browser, entity: RegisteredEntit
   const invitation = await emailTo(entity.cosigner, entity.registeredAt);
   const link = /https?:\/\/\S+\/invitacion#t=\S+/.exec(invitation)?.[0];
   expect(link).toBeTruthy();
-  const context = await browser.newContext({ viewport: viewport ?? undefined });
+  // Cada cofirma desde su propia red de prueba, como el alta: los límites de Better Auth del código TOTP van por IP (15 cada 15 min) y la E2E completa
+  // activa muchas cofirmas a la vez (Sprint 4.4a: con una prueba más se pasaba del tope).
+  const octet = () => 1 + Math.floor(Math.random() * 250);
+  const context = await browser.newContext({ viewport: viewport ?? undefined, extraHTTPHeaders: { 'x-forwarded-for': `10.${octet()}.${octet()}.${octet()}` } });
   const page = await context.newPage();
   await page.goto(new URL(link!).pathname + new URL(link!).hash);
   await page.getByLabel('Crea tu contraseña').fill(entity.password);

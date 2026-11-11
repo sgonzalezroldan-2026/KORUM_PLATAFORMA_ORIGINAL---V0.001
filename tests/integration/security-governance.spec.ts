@@ -314,7 +314,9 @@ describe('QA-SEC03 · doble firma', () => {
 
   async function payoutTarget(organizationId: string, overrides: { destinationType?: 'ORGANIZATION' | 'PROVIDER' } = {}) {
     const initiative = await createInitiative(db, organizationId, { status: 'GOAL_REACHED', goalCents: 3_000 });
-    const payout = await db.escrowPayout.create({ data: { organizationId, initiativeId: initiative.id, destinationType: overrides.destinationType ?? 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES00', netPaidCents: 2_700, korumFeeSettledCents: 200 } });
+    // Un pago al proveedor lleva sus datos cifrados (Sprint 4.4a); aquí sin factura, que es lo que se comprueba.
+    const provider = overrides.destinationType === 'PROVIDER' ? { beneficiaryIbanEnc: 'cifrado', providerCifEnc: 'cifrado', beneficiaryKeyVersion: 1, beneficiaryDigest: 'huella-del-proveedor' } : {};
+    const payout = await db.escrowPayout.create({ data: { organizationId, initiativeId: initiative.id, destinationType: overrides.destinationType ?? 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 2_700, korumFeeSettledCents: 200, ...provider } });
     return { payout, target: { targetType: 'ESCROW_PAYOUT', payoutId: payout.id } as SignatureTarget };
   }
 
@@ -502,7 +504,7 @@ describe('QA-SEC03 · doble firma', () => {
     expect((await db.contribution.findUniqueOrThrow({ where: { id: contribution.id } })).status).toBe('COMPLETED');
     expect((await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } })).status).toBe('GOAL_REACHED');
 
-    const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', beneficiaryIban: 'ES00', netPaidCents: 900, korumFeeSettledCents: 100 } });
+    const payout = await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: initiative.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AFA', netPaidCents: 900, korumFeeSettledCents: 100 } });
     const target = { targetType: 'ESCROW_PAYOUT', payoutId: payout.id } as SignatureTarget;
     const first = await requestSignature(db, SECRET, directorActor, organization.id, target, NOW);
     const signed = await completeSignature(db, SECRET, directorActor, { token: first.token, otp: first.otp }, NOW);

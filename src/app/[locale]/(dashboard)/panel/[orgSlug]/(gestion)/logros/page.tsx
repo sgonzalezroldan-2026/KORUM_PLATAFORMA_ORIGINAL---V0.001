@@ -44,6 +44,7 @@ export default async function AchievementsWorkbenchPage({ params }: { params: Pr
                 thanksMessage={item.thanksMessage ?? ''}
                 maxBytes={MAX_UPLOAD_BYTES}
                 thanksMax={THANKS_MESSAGE_MAX}
+                visibleToFamilies={item.status === 'CLOSED'}
               />
             </li>
           ))}

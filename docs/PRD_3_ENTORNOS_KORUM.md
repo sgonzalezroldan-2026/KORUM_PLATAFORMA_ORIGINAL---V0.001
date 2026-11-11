@@ -106,12 +106,13 @@ EXPIRED ──la entidad elige reembolsar─────────────
 RESIZE_VOTING ──aprobada (nueva meta ≤ lo recaudado)───────► GOAL_REACHED
 RESIZE_VOTING ──rechazada──────────────────────────────────► REFUNDING
 REFUNDING ──todas las devoluciones ejecutadas──────────────► REFUNDED
-GOAL_REACHED ──doble firma + split transfer + fotos────────► CLOSED
+GOAL_REACHED ──doble firma + split transfer hecho──────────► CLOSED (las fotos se publican desde ahí)
 GOAL_REACHED ──contracargo baja de la meta, sin liquidar───► FUNDRAISING
 ```
 
 - `stepIndex` de la línea de 6 estados del panel: idea (1) → quórum (2) → `BUDGETING` (3) → `FUNDRAISING` (4) → `GOAL_REACHED` / `CLOSED` (5–6).
 - Al entrar en `REFUNDED` o `CANCELLED` se liberan los cupos reservados.
+- **Sprint 4.4a:** la liquidación de una campaña conseguida se pide en `/panel/{slug}/liquidaciones` (destino y factura del proveedor) y se puede cambiar mientras espera la doble firma (las firmas se vuelven a pedir). Con las dos firmas se aprueba y se envía en el acto; al terminar el envío, la campaña pasa a `CLOSED` y las fotos Antes/Después que suba la entidad se ven en *Logros conseguidos*.
 
 ### 4.2 Idea (`IdeaPhase`)
 
