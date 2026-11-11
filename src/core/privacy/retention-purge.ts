@@ -67,14 +67,14 @@ export async function purgeOldIdeaChats(db: Db, now: Date, limit: number): Promi
 }
 
 /**
- * Consultas de soporte resueltas hace más de dos años, o abiertas hace más de dos años sin resolverse nunca: dejan de tener email y texto. Queda la
+ * Consultas de soporte resueltas hace más de dos años (desde `resolvedAt`, el cierre; Sprint 4.4c), o abiertas hace más de dos años sin resolverse nunca: dejan de tener email y texto. Queda la
  * fila (código, tema y fechas) para las estadísticas.
  */
 export async function purgeResolvedSupportTickets(db: Db, now: Date, limit: number): Promise<number> {
   const rows = await db.supportTicket.findMany({
     where: {
       AND: [
-        { OR: [{ status: 'RESOLVED', updatedAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }, { status: { not: 'RESOLVED' }, createdAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }] },
+        { OR: [{ status: 'RESOLVED', resolvedAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }, { status: { not: 'RESOLVED' }, createdAt: { lt: daysBefore(now, RETENTION.supportTicketDaysAfterResolved) } }] },
         { OR: [{ senderEmail: { not: null } }, { NOT: { message: '' } }, { replyMessage: { not: null } }] }
       ]
     },

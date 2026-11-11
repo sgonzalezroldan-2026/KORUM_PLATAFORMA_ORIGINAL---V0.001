@@ -1,11 +1,13 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { InitiativeCoverForm } from '@/components/panel/initiative-cover-form';
 import { StudioPicker } from '@/components/panel/studio-picker';
 import { StudioWorkbench, type StoredPricing } from '@/components/panel/studio-workbench';
 import { findTemplate, draftFromTemplate } from '@/core/studio/campaign-templates';
 import { effectiveMaxCampaignDays, latestCloseOn } from '@/core/studio/studio-board';
 import { REWARD_PRESETS, blankStudioDraft, defaultCloseOn, madridIsoDate, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
 import { Link } from '@/i18n/navigation';
+import { FILE_RULES } from '@/services/storage/file-rules';
 import type { Locale } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
 import { getPrisma } from '@/lib/prisma';
@@ -103,7 +105,14 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       gatewayFeeCents: initiative.gatewayFeeCents
     };
     heading = initiative.title;
-    workbench = <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock} stored={stored} justPublished={first('publicada') === '1'} />;
+    // Quien firma con el segundo factor puede cambiar la imagen; el Super-Admin la ve sin poder tocarla. Una campaña cancelada, vencida o reembolsada ya no se enseña.
+    const canEditCover = !actor.isSuperadmin && ['BUDGETING', 'FUNDRAISING', 'GOAL_REACHED', 'CLOSED'].includes(initiative.status);
+    workbench = (
+      <>
+        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock} stored={stored} justPublished={first('publicada') === '1'} />
+        <InitiativeCoverForm orgSlug={orgSlug} initiativeId={initiative.id} coverFileId={initiative.coverFileId} maxBytes={FILE_RULES.INITIATIVE_COVER.maxBytes} canEdit={canEditCover} canRemove={!actor.isSuperadmin && initiative.coverFileId !== null} />
+      </>
+    );
   } else if (newParam === 'presupuesto' || newParam === 'taquilla') {
     if (!canCreate) {
       return <StudioShell title={t('title')} back={t('back')} orgSlug={orgSlug}><StudioPicker locale={locale} orgSlug={orgSlug} vertical={context.vertical} canCreate={false} initiatives={initiatives} maxDrafts={MAX_OPEN_DRAFTS} /></StudioShell>;
@@ -119,7 +128,14 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       );
     }
     heading = template ? t(`templates.${template.key}.name`) : t(format === 'TICKETING' ? 'picker.newTicketing' : 'picker.newBudget');
-    workbench = <StudioWorkbench key={`${newParam}:${template?.key ?? ''}`} {...common} initialDraft={{ ...draft, rewardText: draft.rewardText ?? firstReward }} lock="NONE" stored={null} justPublished={false} />;
+    workbench = (
+      <>
+        <StudioWorkbench key={`${newParam}:${template?.key ?? ''}`} {...common} initialDraft={{ ...draft, rewardText: draft.rewardText ?? firstReward }} lock="NONE" stored={null} justPublished={false} />
+        <p className="text-sm font-semibold text-ink-soft" data-testid="cover-after-save">
+          {t('cover.afterSave')}
+        </p>
+      </>
+    );
   }
 
   return (

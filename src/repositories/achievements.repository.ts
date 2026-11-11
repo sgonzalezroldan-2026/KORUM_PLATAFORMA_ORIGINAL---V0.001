@@ -47,7 +47,10 @@ export async function getPublicImageFile(db: KorumPrismaClient, fileId: string) 
       deletedAt: null,
       // Una foto Antes / Después solo sale si su iniciativa ya está cerrada (liquidación con doble firma hecha, Sprint 4.4a).
       OR: [
-        { purpose: { in: ['INITIATIVE_COVER', 'ORG_LOGO', 'ORG_BANNER', 'SPONSOR_LOGO'] } },
+        { purpose: { in: ['ORG_LOGO', 'ORG_BANNER', 'SPONSOR_LOGO'] } },
+        // La imagen de una campaña cancelada, vencida, en votación o devuelta ya no se sirve (Sprint 4.4c, auditoría de seguridad); la de un borrador sí, para
+        // la vista previa del Estudio (su identificador no aparece en el portal).
+        { purpose: 'INITIATIVE_COVER', initiativeCovers: { some: { status: { in: ['BUDGETING', 'FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] } } } },
         { purpose: 'INITIATIVE_BEFORE', initiativeBefores: { some: { status: 'CLOSED' } } },
         { purpose: 'INITIATIVE_AFTER', initiativeAfters: { some: { status: 'CLOSED' } } }
       ]

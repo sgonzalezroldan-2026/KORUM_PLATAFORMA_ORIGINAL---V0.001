@@ -50,6 +50,7 @@ const card = (overrides: Partial<InitiativeCardData> = {}): InitiativeCardData =
   closed: false,
   matching: false,
   zeroCommission: false,
+  coverFileId: null,
   ...overrides
 });
 

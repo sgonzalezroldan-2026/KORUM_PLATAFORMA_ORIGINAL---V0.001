@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { accentById, ENTITY_ACCENT_IDS } from '@/core/brand/entity-palette';
 import { ImageMetadataError, stripImageMetadata } from '@/core/media/strip-image-metadata';
+import { assertPixelLimit, ImageResizeError, prepareWebImage } from '@/services/media/resize-image';
 import { inTransaction } from '@/lib/db';
 import { reserveAttempt } from '@/lib/rate-limit';
 import { ENTITY_IMAGE_UPLOAD_RULE } from '@/lib/rate-limit-rules';
@@ -17,7 +18,8 @@ import { requireSigner } from './kyb.service';
  * (decisión del promotor del 2026-11-09), con el segundo factor y la auditoría en la misma transacción que lo cambia.
  *
  * - **Color:** solo de la paleta cerrada (`ENTITY_ACCENTS`), que mantiene el contraste del portal.
- * - **Imágenes:** se reescriben sin metadatos (una foto de móvil lleva la ubicación) y quedan públicas (`ORG_LOGO`, `ORG_BANNER`). La anterior se
+ * - **Imágenes:** se reescriben sin metadatos (una foto de móvil lleva la ubicación) y quedan públicas (`ORG_LOGO`, `ORG_BANNER`); la portada,
+ *   además, se reduce a 1.600 px y se recodifica. La anterior se
  *   retira del almacén al publicar la nueva; quitarla deja el escudo con las iniciales (logotipo) o el fondo azul marino (portada).
  */
 
@@ -83,8 +85,8 @@ export interface PublishEntityImageInput {
  * Antes de leer el cuerpo de la subida: cargo en la entidad con segundo factor y tope de subidas por entidad (auditoría del 4.2e, M5). La ruta lo llama
  * sin haber leído nada.
  */
-export async function authorizeEntityImageUpload(db: KorumPrismaClient, actor: SessionActor, organizationId: string, now: Date = new Date()): Promise<void> {
-  await requireSigner(db, actor, organizationId, 'organization.image_upload');
+export async function authorizeEntityImageUpload(db: KorumPrismaClient, actor: SessionActor, organizationId: string, now: Date = new Date(), action = 'organization.image_upload'): Promise<void> {
+  await requireSigner(db, actor, organizationId, action);
   if (!(await reserveAttempt(db, `${ENTITY_IMAGE_UPLOAD_RULE.prefix}${organizationId}`, ENTITY_IMAGE_UPLOAD_RULE, now))) throw new EntityBrandingError('RATE_LIMITED');
 }
 
@@ -92,11 +94,13 @@ export async function publishEntityImage(db: KorumPrismaClient, storage: Storage
   const signer = await requireSigner(db, actor, input.organizationId, 'organization.image_upload');
   // La portada es una foto pública y grande: sin la confirmación de que no salen menores reconocibles no se publica (auditoría del 4.2e, I7).
   if (input.kind === 'banner' && input.noMinorsConfirmed !== true) throw new EntityBrandingError('MINORS_NOT_CONFIRMED');
-  let clean;
+  // La portada se reduce a 1.600 px y se recodifica (Sprint 4.4c, heredado del 4.2e); el logotipo, pequeño y con su transparencia, solo se limpia.
+  let clean: { bytes: Uint8Array; removed: string[] };
   try {
-    clean = stripImageMetadata(input.bytes);
+    if (input.kind === 'logo') await assertPixelLimit(input.bytes);
+    clean = input.kind === 'banner' ? await prepareWebImage(input.bytes) : stripImageMetadata(input.bytes);
   } catch (error) {
-    if (error instanceof ImageMetadataError) throw new EntityBrandingError('UNREADABLE_IMAGE');
+    if (error instanceof ImageMetadataError || error instanceof ImageResizeError) throw new EntityBrandingError('UNREADABLE_IMAGE');
     throw error;
   }
   const asset = await uploadFile(db, storage, {

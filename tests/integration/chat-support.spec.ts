@@ -297,6 +297,8 @@ describe('privacidad del chat y de las consultas', () => {
     await centerSays(idea.id);
     await submitSupportTicket({ db, hmacSecret: TEST_HMAC_SECRET }, { userId: person.id, payload: { orgSlug: organization.slug, topic: 'OTHER', subject: 'Una sugerencia', message: 'Estaría bien poder ver las fotos de las obras.' }, actor: null, locale: 'es' }, NOW);
 
+    // Sprint 4.4c: lo que la persona escribió en nombre de su entidad hacia KORUM es de la entidad: al suprimir la cuenta solo se suelta su email.
+    await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-ORG'), organizationId: organization.id, originLabel: organization.name, senderEmail: person.email, target: 'SUPERADMIN', fromOrganization: true, subject: 'Pregunta de la entidad', message: 'Texto que pertenece a la entidad.' } });
     const deps = { paymentProvider: async () => new MockPaycometProvider({ secrets: mockSecrets }), keyring: TEST_KEYRING, hmacSecret: TEST_HMAC_SECRET };
     expect((await eraseOwnAccount(db, deps, { actor: await verifiedFor(person.id) })).status).toBe('ERASED');
     const messages = await db.ideaMessage.findMany({ where: { ideaId: idea.id } });
@@ -305,6 +307,7 @@ describe('privacidad del chat y de las consultas', () => {
     // Y el texto de la consulta se va con el email (las de «Corregir mis datos» son las que más datos personales llevan).
     expect(await db.supportTicket.count({ where: { organizationId: organization.id, subject: 'Una sugerencia' } })).toBe(0);
     expect(await db.supportTicket.count({ where: { organizationId: organization.id, message: { contains: 'fotos de las obras' } } })).toBe(0);
+    expect(await db.supportTicket.findFirstOrThrow({ where: { organizationId: organization.id, fromOrganization: true } })).toMatchObject({ senderEmail: null, subject: 'Pregunta de la entidad', message: 'Texto que pertenece a la entidad.' });
   });
 
   it('la conservación borra el chat de la familia de ideas cerradas hace más de un año y vacía las consultas resueltas hace más de dos', async () => {
@@ -317,8 +320,8 @@ describe('privacidad del chat y de las consultas', () => {
     expect((await db.ideaMessage.findMany({ where: { ideaId: old.idea.id } })).map((message) => message.senderRole)).toEqual(['ORGANIZATION']);
     expect(await db.ideaMessage.count({ where: { ideaId: recent.idea.id } })).toBe(1);
 
-    const resolved = await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-OLD'), originLabel: 'Centro', senderEmail: 'vieja@pruebas.example', subject: 'Antigua', message: 'Consulta antigua resuelta', replyMessage: 'Hecho', status: 'RESOLVED' } });
-    await db.supportTicket.update({ where: { id: resolved.id }, data: { updatedAt: new Date(NOW.getTime() - 800 * DAY) } });
+    const resolved = await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-OLD'), originLabel: 'Centro', senderEmail: 'vieja@pruebas.example', subject: 'Antigua', message: 'Consulta antigua resuelta', replyMessage: 'Hecho', status: 'RESOLVED', resolvedAt: new Date(NOW.getTime() - 800 * DAY) } });
+    // Sprint 4.4c: el plazo cuenta desde el cierre (`resolvedAt`), no desde el último cambio de la fila (`updatedAt`, que aquí es reciente).
     const open = await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-OPEN'), originLabel: 'Centro', senderEmail: 'abierta@pruebas.example', subject: 'Abierta', message: 'Consulta abierta sin resolver' } });
     await purgeResolvedSupportTickets(db, NOW, 500);
     expect(await db.supportTicket.findUniqueOrThrow({ where: { id: resolved.id } })).toMatchObject({ senderEmail: null, message: '', subject: '', replyMessage: null, status: 'RESOLVED' });

@@ -364,7 +364,7 @@ describe('fotos Antes / Después y agradecimiento', () => {
     expect((await db.initiative.findUniqueOrThrow({ where: { id: reached.id } })).beforeFileId).toBeNull();
   });
 
-  it('la foto se publica sin ubicación, modelo ni autor (queda solo la orientación), en el cubo público, y la auditoría guarda la confirmación sin los metadatos', async () => {
+  it('la foto se reduce, se recodifica sin ubicación, modelo ni autor y se publica en el cubo público, y la auditoría guarda la confirmación sin los metadatos', async () => {
     const original = jpegWithExif(6);
     for (const marker of SECRET_MARKERS) expect(containsText(original, marker)).toBe(true);
     const result = await publishAchievementPhoto(db, storage, asDirector(), photo());

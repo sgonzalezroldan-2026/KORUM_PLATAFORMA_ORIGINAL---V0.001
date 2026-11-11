@@ -169,7 +169,7 @@ export async function seedInvoices(db: KorumPrismaClient, seed: KorumSeedData, p
   for (const ticket of seed.supportTickets) {
     await db.supportTicket.upsert({
       where: { ticketCode: ticket.ticketCode },
-      create: { ...ticket, organizationId: ticket.organizationId ?? null, createdAt: new Date(ticket.createdAt) },
+      create: { ...ticket, organizationId: ticket.organizationId ?? null, createdAt: new Date(ticket.createdAt), ...(ticket.status === 'RESOLVED' ? { resolvedAt: new Date(ticket.createdAt) } : {}) },
       update: {}
     });
   }

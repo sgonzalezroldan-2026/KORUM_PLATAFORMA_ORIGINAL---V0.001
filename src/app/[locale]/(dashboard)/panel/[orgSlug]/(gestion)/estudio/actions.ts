@@ -5,6 +5,8 @@ import { revalidatePortal } from '@/lib/portal/revalidate-portal';
 import { getPrisma } from '@/lib/prisma';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import { InitiativeCoverError, removeInitiativeCover } from '@/services/panel/initiative-cover.service';
+import { getStorageProvider } from '@/services/storage/provider-factory';
 import { discardStudioDraft, publishStudioInitiative, saveStudioDraft, StudioError, type StudioErrorReason } from '@/services/panel/studio.service';
 
 /**
@@ -46,6 +48,26 @@ export async function publishStudioAction(orgSlug: string, payload: unknown): Pr
     revalidatePortal(slug);
     return { status: 'PUBLISHED', initiativeId: result.initiativeId };
   });
+}
+
+export type CoverActionResult = { status: 'OK' } | { status: 'ERROR'; reason: 'FORBIDDEN' | 'NOTHING_TO_REMOVE' | 'NOT_EDITABLE' };
+
+/** Quita la imagen de una campaña (subirla es la ruta `/api/panel/campana-imagen`: una acción tiene un tope de 1 MB). */
+export async function removeInitiativeCoverAction(orgSlug: string, initiativeId: number): Promise<CoverActionResult> {
+  if (typeof orgSlug !== 'string') return { status: 'ERROR', reason: 'FORBIDDEN' };
+  const slug = orgSlug.slice(0, 64);
+  const organizationId = await findOrganizationIdBySlug(getPrisma(), slug);
+  if (!organizationId || !Number.isSafeInteger(initiativeId) || initiativeId < 1 || initiativeId > 2_147_483_647) return { status: 'ERROR', reason: 'FORBIDDEN' };
+  try {
+    const removed = await removeInitiativeCover(getPrisma(), getStorageProvider(), await getSessionActor(), organizationId, initiativeId);
+    if (!removed) return { status: 'ERROR', reason: 'NOTHING_TO_REMOVE' };
+    revalidatePortal(slug);
+    return { status: 'OK' };
+  } catch (error) {
+    if (error instanceof InitiativeCoverError) return { status: 'ERROR', reason: 'NOT_EDITABLE' };
+    if (error instanceof TenantAccessError || error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'FORBIDDEN' };
+    throw error;
+  }
 }
 
 export async function discardStudioAction(orgSlug: string, initiativeId: number): Promise<StudioActionResult> {

@@ -5,35 +5,41 @@ import { MemoryStorage } from '@/services/storage/memory-storage';
 import { getStorageProvider } from '@/services/storage/provider-factory';
 
 /**
- * Logotipo de la entidad para su tarjeta de WhatsApp y redes (Sprint 4.2e, heredado del 3.3). La tarjeta se dibuja en el servidor (`next/og`), que solo
- * sabe pintar PNG y JPEG: un WebP o un fichero retirado se queda en `null` y la tarjeta sale como antes, con el nombre de la entidad. Siempre como `data:`:
- * con Supabase se descarga del cubo público (3 s como mucho); sin almacén real (demostración y pruebas), del almacén en memoria. Nunca lanza: una
- * tarjeta sin logo es mejor que ninguna tarjeta.
+ * Imágenes públicas de una entidad para su tarjeta de WhatsApp y redes (Sprint 4.2e, heredado del 3.3; la imagen de la campaña, Sprint 4.4c). La
+ * tarjeta se dibuja en el servidor (`next/og`). Siempre como bytes que luego se pasan como `data:`: con Supabase se descargan del cubo público
+ * (3 s como mucho); sin almacén real (demostración y pruebas), del almacén en memoria. Nunca lanzan: una tarjeta sin imagen es mejor que ninguna
+ * tarjeta.
  */
 const DRAWABLE = new Set(['image/png', 'image/jpeg']);
-const LOGO_TIMEOUT_MS = 3_000;
-const MAX_LOGO_BYTES = FILE_RULES.ORG_LOGO.maxBytes;
+const IMAGE_TIMEOUT_MS = 3_000;
 
-export async function ogEntityLogo(db: KorumPrismaClient, fileId: string | null): Promise<string | null> {
+/** Bytes de un fichero público de imagen de los tipos indicados y de tamaño acotado, o `null` si no hay forma de leerlos. */
+export async function readPublicImage(db: KorumPrismaClient, fileId: string | null, maxBytes: number, allowed: ReadonlySet<string>): Promise<{ bytes: Uint8Array; mimeType: string } | null> {
   if (!fileId) return null;
   try {
     const file = await getPublicImageFile(db, fileId);
-    if (!file || !DRAWABLE.has(file.mimeType)) return null;
+    if (!file || !allowed.has(file.mimeType)) return null;
     const storage = getStorageProvider();
     const url = storage.publicUrl(file.bucket, file.objectKey);
     // Se descarga aquí, con tiempo máximo, y se pasa como `data:`: si satori tuviera que bajarlo y fallara, rompería la tarjeta entera (auditoría M6).
     if (/^https:\/\//.test(url)) {
-      const response = await fetch(url, { signal: AbortSignal.timeout(LOGO_TIMEOUT_MS) });
+      const response = await fetch(url, { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) });
       if (!response.ok) return null;
       const body = new Uint8Array(await response.arrayBuffer());
-      return body.byteLength > 0 && body.byteLength <= MAX_LOGO_BYTES ? `data:${file.mimeType};base64,${Buffer.from(body).toString('base64')}` : null;
+      return body.byteLength > 0 && body.byteLength <= maxBytes ? { bytes: body, mimeType: file.mimeType } : null;
     }
     if (storage instanceof MemoryStorage) {
       const object = storage.readPublic(file.bucket, file.objectKey);
-      return object ? `data:${file.mimeType};base64,${Buffer.from(object.body).toString('base64')}` : null;
+      return object && object.body.byteLength <= maxBytes ? { bytes: new Uint8Array(object.body), mimeType: file.mimeType } : null;
     }
     return null;
   } catch {
     return null;
   }
+}
+
+/** Logotipo de la entidad: solo PNG y JPEG (satori no pinta WebP); un WebP o un fichero retirado se queda en `null` y la tarjeta sale con el nombre. */
+export async function ogEntityLogo(db: KorumPrismaClient, fileId: string | null): Promise<string | null> {
+  const image = await readPublicImage(db, fileId, FILE_RULES.ORG_LOGO.maxBytes, DRAWABLE);
+  return image ? `data:${image.mimeType};base64,${Buffer.from(image.bytes).toString('base64')}` : null;
 }

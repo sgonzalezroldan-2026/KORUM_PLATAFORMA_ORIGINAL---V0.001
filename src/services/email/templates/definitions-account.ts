@@ -40,3 +40,22 @@ export const supportReceived: TemplateDefinition<z.infer<typeof supportReceivedP
     footer: 'account'
   })
 };
+
+/**
+ * Aviso de que el centro ha contestado una consulta (Sprint 4.4c). Como el aviso de una idea contestada, **no copia la respuesta**: un email puede
+ * reenviarse o leerse en una pantalla ajena, y la respuesta puede aludir a la situación de una familia; se lee en *Mi cuenta*.
+ */
+const supportRepliedPayload = z.object({ ticketCode: z.string().regex(/^TCK-[A-HJKMNP-Z2-9]{6}$/), organization: z.string().min(1).max(200) });
+
+export const supportReplied: TemplateDefinition<z.infer<typeof supportRepliedPayload>> = {
+  schema: supportRepliedPayload,
+  build: (payload, { t, url }): EmailContent => ({
+    subject: t('support.replied.subject', { organization: payload.organization, code: payload.ticketCode }),
+    preheader: t('support.replied.preheader'),
+    title: t('support.replied.title'),
+    paragraphs: [t('support.replied.body', { organization: payload.organization })],
+    facts: [{ label: t('support.received.code'), value: payload.ticketCode }],
+    button: { label: t('support.replied.cta'), url: url('/mi-cuenta#support') },
+    footer: 'account'
+  })
+};

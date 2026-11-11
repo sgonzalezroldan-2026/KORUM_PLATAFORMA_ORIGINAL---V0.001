@@ -9,6 +9,7 @@ import { routing } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
 import { loadPanelOverview } from '@/lib/panel/overview';
 import { getPrisma } from '@/lib/prisma';
+import { countWaitingFamilyTickets } from '@/repositories/support-inbox.repository';
 import { countPendingApprovals } from '@/repositories/sponsor-moderation.repository';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -23,7 +24,7 @@ export default async function PanelLayout({ children, params }: { children: Reac
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const { actor, organization } = await requirePanelAccess(locale, orgSlug);
-  const [t, overview, pendingApprovals] = await Promise.all([getTranslations({ locale, namespace: 'panel' }), loadPanelOverview(actor, organization.id), countPendingApprovals(getPrisma(), actor, organization.id)]);
+  const [t, overview, pendingApprovals, pendingSupport] = await Promise.all([getTranslations({ locale, namespace: 'panel' }), loadPanelOverview(actor, organization.id), countPendingApprovals(getPrisma(), actor, organization.id), countWaitingFamilyTickets(getPrisma(), actor, organization.id)]);
   const isDirector = actor.memberships.some((membership) => membership.organizationId === organization.id && membership.role === 'DIRECTOR');
 
   return (
@@ -31,7 +32,7 @@ export default async function PanelLayout({ children, params }: { children: Reac
       {/* Al imprimir (el cartel del Estudio) solo sale la hoja: las cabeceras no. */}
       <div className="print:hidden">
         <ConsoleHeader title={organization.name} subtitle={t('headerSubtitle')} />
-        <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} pendingApprovals={pendingApprovals} />
+        <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} pendingApprovals={pendingApprovals} pendingSupport={pendingSupport} />
       </div>
       <main id="contenido" className="korum-paper-dots flex-1">
         {children}

@@ -131,7 +131,11 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   await tx.outboxMessage.updateMany({ where: { ...messages, status: { in: ['PENDING', 'SENDING', 'FAILED'] } }, data: { status: 'CANCELLED' } });
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
   // Las consultas de soporte (sobre todo las de «Corregir mis datos») llevan datos personales en texto libre: se vacían con el email, no solo el email.
-  if (user.emailVerified) await tx.supportTicket.updateMany({ where: { senderEmail: user.email }, data: { senderEmail: null, subject: '', message: '', replyMessage: null } });
+  // Las que la persona escribió en nombre de su entidad hacia KORUM (`fromOrganization`) son de la entidad: solo se suelta su email (Sprint 4.4c).
+  if (user.emailVerified) {
+    await tx.supportTicket.updateMany({ where: { senderEmail: user.email, fromOrganization: false }, data: { senderEmail: null, subject: '', message: '', replyMessage: null } });
+    await tx.supportTicket.updateMany({ where: { senderEmail: user.email, fromOrganization: true }, data: { senderEmail: null } });
+  }
   await tx.consentRecord.updateMany({ where: { userId: user.id }, data: { subjectEmailHmac: null } });
   await tx.walletSubscription.updateMany({ where: { userId: user.id, status: { in: ['PENDING', 'ACTIVE', 'PAUSED'] } }, data: { status: 'CANCELLED', statusReason: 'ACCOUNT_ERASED', statusChangedAt: now } });
   await clearFingerprintsOf(tx, user.id);

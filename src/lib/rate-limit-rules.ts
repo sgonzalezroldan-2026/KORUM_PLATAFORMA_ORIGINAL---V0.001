@@ -93,6 +93,10 @@ export const SUPPORT_TICKET_RULE: RateLimitRule & PurgeRule = { prefix: 'support
 /** Y un tope diario, para que no se pueda repartir un guion en una consulta cada 12 minutos. */
 export const SUPPORT_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 'support:day:user:', limit: 12, windowMs: 24 * 3_600_000 };
 
+/** Consultas que la entidad escribe a KORUM desde su panel (Sprint 4.4c), por entidad: son prioritarias y alguien las tiene que leer, así que el tope es propio. */
+export const SUPPORT_ORG_TICKET_RULE: RateLimitRule & PurgeRule = { prefix: 'support:org:', limit: 5, windowMs: 60 * 60_000 };
+export const SUPPORT_ORG_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 'support:day:org:', limit: 12, windowMs: 24 * 3_600_000 };
+
 /**
  * Subidas de documentos del titular por entidad (Sprint 4.2c): cada sustitución se conserva 6 años, así que una cuenta firmante robada o un guion no
  * puede llenar el almacén. Treinta a la hora cubren de sobra subir y corregir los cinco documentos varias veces.

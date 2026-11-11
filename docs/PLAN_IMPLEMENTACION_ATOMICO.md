@@ -373,7 +373,7 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Gate QA:** `QA-S03` (la parte de la campaña que vence sin llegar).
   - **Hecho (2026-11-11):** ver la bitácora y [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §2.17. Queda para el 5.1 la pizarra de solo lectura del Estudio de una campaña redimensionada; para el 5.3, lo que ofrece al reparto un patrocinio movido a medias; para el 5.5, el recordatorio de una campaña vencida sin decidir y «reenviarme mi enlace de voto»; y los puntos legales de CUMPLIMIENTO §9 (Sprint 4.4b).
 
-- [ ] **SPRINT 4.4c — Buzón de soporte del centro, imagen representativa de la campaña y fotos redimensionadas:**
+- [x] **SPRINT 4.4c — Buzón de soporte del centro, imagen representativa de la campaña y fotos redimensionadas:**
   - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` y `ux-school-director-reviewer` en **Claude Opus 5.5 · alto**.
   - **Heredado del Sprint 3.9 (soporte):** las consultas de las familias ya se guardan en `SupportTicket` (`topic`, `target`, `senderEmail`, código `TCK-XXXXXX`). La pestaña de soporte del centro lista solo las de `target = ORGANIZATION` de **su** entidad (`organizationId`) y **nunca enseña `senderEmail`**: el centro contesta desde la plataforma (`replyMessage`, visible para la familia en *Mi cuenta*) y cambia el estado (`OPEN → IN_PROGRESS → RESOLVED`). Las de KORUM (`target = SUPERADMIN`, incluida `RECTIFICATION`) no son de la entidad aunque guarden su `organizationId`. Falta una columna `resolvedAt` si se quiere contar el plazo de conservación desde el cierre y no desde `updatedAt`.
   - **Heredado del Sprint 4.3:** la **imagen representativa de la campaña** (`handleInitiativeCoverUpload`, `coverFileId`: subir, quitar sin metadatos, tope de 4 MB por Vercel, casilla de menores como la portada de la entidad) **y que el portal y la tarjeta de WhatsApp la pinten** (hoy `coverFileId` no se muestra en ningún sitio).
@@ -382,6 +382,7 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-brand-design-system`, `korum-seo-discoverability`, `korum-qa-harness-gatekeeper`.
   - **Constructor / auditores:** `korum-backoffice-bi-builder` + `korum-family-viral-builder` ➔ `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - **Gate QA:** `QA-F09` (logros con imagen) y `QA-S03` (fotos).
+  - **Hecho (2026-11-11):** ver la bitácora y [DECISIONES_TECNICAS.md](DECISIONES_TECNICAS.md) §2.18. Queda para el 5.3 la bandeja de la consola con la que KORUM contesta lo que escribe la entidad; para el 6.1, la subida directa al almacén con URL firmada (fotos mayores de 4 MB); y los puntos legales de CUMPLIMIENTO §9 (Sprint 4.4c).
 
 - [ ] **SPRINT 4.5 — Modo portería móvil y sorteador certificado de rifas:**
   - 🤖 **IA recomendada:** constructor **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Gemini Flash 3.8 · alto) · auditoría `antifraud-legal-guardian` en **Claude Opus 5.5 · alto**.

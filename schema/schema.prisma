@@ -1834,11 +1834,19 @@ model SupportTicket {
   message        String
   status         SupportTicketStatus @default(OPEN)
   replyMessage   String?
+  /// La escribe la propia entidad desde su panel (buzón prioritario hacia KORUM, Sprint 4.4c): no es de la entidad aunque guarde su `organizationId`.
+  /// Las de las familias (`false`) con `target = ORGANIZATION` son las que la entidad contesta.
+  fromOrganization Boolean           @default(false)
+  /// Cuándo contestó el centro (una sola respuesta por consulta: otra se pide con una consulta nueva) y cuándo se cerró; el plazo de conservación
+  /// (CUMPLIMIENTO §6) cuenta desde el cierre, no desde el último cambio de la fila. `RESOLVED` ⇔ `resolvedAt` con valor (`CHECK` en la migración).
+  repliedAt      DateTime?
+  resolvedAt     DateTime?
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
   organization   Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 
   @@index([senderEmail, createdAt])
+  @@index([organizationId, target, fromOrganization, status])
 }
 
 // -----------------------------------------------------------------------------

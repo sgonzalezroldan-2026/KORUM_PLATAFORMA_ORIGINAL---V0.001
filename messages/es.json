@@ -599,6 +599,13 @@
         "rectification": "Además hemos abierto tu solicitud de rectificación de datos personales: la atenderemos en un plazo máximo de un mes.",
         "code": "Código de la consulta",
         "cta": "Ver mis consultas"
+      },
+      "replied": {
+        "subject": "{organization} ha contestado tu consulta {code}",
+        "preheader": "Tienes una respuesta nueva.",
+        "title": "Tienes una respuesta",
+        "body": "{organization} ha contestado tu consulta. Por privacidad no copiamos el mensaje aquí: léelo en tu cuenta.",
+        "cta": "Ver la respuesta"
       }
     },
     "idea": {
@@ -1712,7 +1719,9 @@
       "fund": "Fondo de actividades",
       "studio": "Estudio",
       "payouts": "Liquidaciones",
-      "expired": "Campañas vencidas"
+      "expired": "Campañas vencidas",
+      "support": "Soporte",
+      "supportPending": "{count, plural, one {# consulta espera respuesta} other {# consultas esperan respuesta}}"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -3025,6 +3034,40 @@
         "body": "Se quita de vuestra lista y no se puede recuperar. No se ha cobrado ni reservado nada, así que no hay nada que devolver.",
         "yes": "Sí, descartar",
         "no": "No, conservarlo"
+      },
+      "cover": {
+        "title": "Imagen de la campaña",
+        "intro": "Es la foto que se ve en la ficha y en la tarjeta de la campaña de vuestro portal y en la tarjeta que se comparte por WhatsApp. Podéis cambiarla o quitarla cuando queráis.",
+        "currentAlt": "Imagen actual de la campaña",
+        "currentCaption": "Así se ve ahora en el portal. La reducimos a 1.600 píxeles y le quitamos los datos ocultos de la foto, como la ubicación.",
+        "none": "Todavía no tiene imagen: la tarjeta lleva su fondo de colores de siempre.",
+        "label": "Imagen de la campaña",
+        "replaceLabel": "Nueva imagen de la campaña",
+        "help": "JPG, PNG o WebP de hasta {max} MB, mejor apaisada. La reducimos a 1.600 píxeles de ancho, así que no hace falta que la comprimáis antes.",
+        "upload": "Subir imagen",
+        "uploading": "Subiendo…",
+        "saved": "Imagen de la campaña publicada: ya se ve en el portal.",
+        "remove": "Quitar la imagen",
+        "removed": "Imagen retirada.",
+        "noMinors": "Confirmo que en la imagen no aparece ningún menor reconocible (obligatorio).",
+        "readOnly": "Solo quienes firman por la entidad pueden cambiar la imagen.",
+        "errors": {
+          "noFile": "Elegid primero una imagen.",
+          "TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "UNREADABLE_IMAGE": "No hemos podido leer la imagen. Probad con otra.",
+          "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+          "NOT_FOUND": "No encontramos esta campaña. Recargad la página.",
+          "NOT_EDITABLE": "Esta campaña ya no admite cambiar su imagen.",
+          "RATE_LIMITED": "Habéis subido muchas imágenes en poco tiempo. Probad dentro de una hora.",
+          "MINORS_NOT_CONFIRMED": "Confirma que en la imagen no aparece ningún menor reconocible.",
+          "FILE_TYPE_NOT_ALLOWED": "Solo se admiten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconocemos este archivo como imagen.",
+          "FILE_MIME_MISMATCH": "El archivo no es la imagen que parece. Probad con otra.",
+          "FILE_EXTENSION_MISMATCH": "El nombre del archivo no corresponde a su tipo. Probad con otra imagen.",
+          "FILE_TOO_LARGE": "La imagen pesa más de {max} MB.",
+          "generic": "No hemos podido hacerlo. Probad de nuevo en unos segundos."
+        },
+        "afterSave": "Podréis añadir la imagen de la campaña en cuanto guardéis el borrador."
       }
     },
     "payouts": {
@@ -3263,6 +3306,96 @@
         "FORBIDDEN": "No tenéis permiso para hacer esto.",
         "failed": "No hemos podido completar la operación. Probad de nuevo en unos segundos."
       }
+    },
+    "support": {
+      "metaTitle": "Soporte",
+      "title": "Soporte",
+      "intro": "Aquí contestáis a las consultas que las familias dirigen a vuestra entidad y escribís a KORUM cuando necesitéis ayuda. Las consultas llegan sin el email de la familia: contestáis desde la plataforma y la familia lee la respuesta en Mi cuenta.",
+      "families": {
+        "title": "Consultas de las familias",
+        "intro": "Contestad con claridad y sin datos personales de otras familias. Cada consulta se contesta una vez; si la familia necesita algo más, escribirá de nuevo.",
+        "waiting": "{count, plural, one {# consulta espera respuesta} other {# consultas esperan respuesta}}",
+        "resolved": "{count, plural, one {Última consulta resuelta (#)} other {Últimas consultas resueltas (#)}}",
+        "empty": {
+          "title": "No hay consultas pendientes",
+          "text": "Cuando una familia os escriba desde vuestro portal, la consulta aparecerá aquí."
+        },
+        "waitingMore": "Se muestran las {shown} más antiguas; cuando contestéis algunas, aparecerán las siguientes."
+      },
+      "status": {
+        "OPEN": "Abierta",
+        "IN_PROGRESS": "En curso",
+        "RESOLVED": "Resuelta"
+      },
+      "topics": {
+        "INITIATIVE": "Una iniciativa o un evento",
+        "PAYMENT": "Un pago",
+        "ACCOUNT": "Su cuenta",
+        "RECTIFICATION": "Corregir datos personales",
+        "OTHER": "Otra cosa"
+      },
+      "line": "Tema: {topic} · el {date}",
+      "purged": "El texto de esta consulta ya se ha borrado por el plazo de conservación.",
+      "yourReply": "Vuestra respuesta ({date}):",
+      "replyLabel": "Vuestra respuesta",
+      "replyHelp": "Entre {min} y {max} caracteres. La familia recibe un aviso (sin el texto) y la lee en su cuenta.",
+      "alsoResolve": "Marcar la consulta como resuelta al enviar",
+      "send": "Enviar respuesta",
+      "sending": "Enviando…",
+      "sent": "Respuesta enviada a la consulta {code}. La familia ha recibido un aviso.",
+      "sentAndResolved": "Respuesta enviada y consulta {code} resuelta.",
+      "markInProgress": "Marcar en curso",
+      "markResolved": "Marcar como resuelta",
+      "markResolvedNoReply": "Resolver sin responder",
+      "markedInProgress": "La consulta {code} está en curso.",
+      "markedResolved": "La consulta {code} está resuelta.",
+      "errors": {
+        "generic": "No hemos podido hacerlo. Probad de nuevo en unos segundos.",
+        "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+        "INVALID_INPUT": "Revisad el texto: no se ha podido enviar.",
+        "NOT_FOUND": "No encontramos esta consulta entre las de vuestra entidad. Recargad la página.",
+        "ALREADY_RESOLVED": "Esta consulta ya está resuelta y no se puede cambiar.",
+        "ALREADY_REPLIED": "Esta consulta ya tiene respuesta. Si la familia necesita algo más, escribirá de nuevo.",
+        "NOTHING_TO_CHANGE": "La consulta ya estaba en ese estado.",
+        "CONFLICT": "La otra persona firmante la ha cambiado a la vez. Recargad la página y probad de nuevo.",
+        "RATE_LIMITED": "Habéis escrito muchas veces en poco tiempo. Probad dentro de un rato.",
+        "CODE_EXHAUSTED": "No hemos podido registrar el mensaje. Probad de nuevo en unos segundos.",
+        "REPLY_TOO_SHORT": "La respuesta necesita al menos {min} caracteres.",
+        "PURGED": "El texto de esta consulta ya se ha borrado y no se puede contestar."
+      },
+      "korum": {
+        "title": "Escribir a KORUM",
+        "intro": "Vuestras consultas a KORUM tienen prioridad: contadnos qué necesitáis (una liquidación, una campaña, vuestro equipo). Os contestaremos al correo de quien escribe y el acuse llega al momento.",
+        "topicLabel": "Sobre qué escribís",
+        "topics": {
+          "INITIATIVE": "Una campaña o un evento",
+          "PAYMENT": "Un pago o una liquidación",
+          "ACCOUNT": "La cuenta o el equipo de la entidad",
+          "OTHER": "Otra cosa"
+        },
+        "subjectLabel": "Asunto",
+        "messageLabel": "Mensaje",
+        "counter": "{count} de {max} caracteres",
+        "limits": "El asunto necesita al menos {subjectMin} caracteres y el mensaje, al menos {messageMin}.",
+        "send": "Enviar mensaje a KORUM",
+        "sending": "Enviando…",
+        "sent": "Mensaje enviado a KORUM con el código {code}. Os hemos mandado el acuse por email.",
+        "readOnly": "Solo quienes firman por la entidad pueden escribir a KORUM.",
+        "errors": {
+          "subject": "El asunto necesita al menos {min} caracteres.",
+          "message": "El mensaje necesita al menos {min} caracteres."
+        },
+        "sentTitle": "Lo que habéis escrito a KORUM",
+        "sentEmpty": "Todavía no habéis escrito a KORUM.",
+        "replyFrom": "Respuesta de KORUM:"
+      },
+      "confirmResolve": {
+        "text": "¿Resolver sin responder? La familia no recibirá respuesta ni aviso y la consulta no se puede volver a abrir.",
+        "textWithDraft": "Tenéis una respuesta escrita sin enviar y se descartará. Si resolvéis sin responder, la familia no recibirá respuesta ni aviso y la consulta no se puede volver a abrir.",
+        "yes": "Sí, resolver sin responder",
+        "no": "Cancelar"
+      },
+      "sentNoNotice": "Respuesta enviada a la consulta {code}. La familia la verá en su cuenta, pero no tenemos su email para avisarla."
     }
   },
   "gate": {

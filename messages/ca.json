@@ -599,6 +599,13 @@
         "rectification": "A més, hem obert la teva sol·licitud de rectificació de dades personals: l’atendrem en un termini màxim d’un mes.",
         "code": "Codi de la consulta",
         "cta": "Veure les meves consultes"
+      },
+      "replied": {
+        "subject": "{organization} ha contestat la teva consulta {code}",
+        "preheader": "Tens una resposta nova.",
+        "title": "Tens una resposta",
+        "body": "{organization} ha contestat la teva consulta. Per privacitat no copiem el missatge aquí: llegeix-lo al teu compte.",
+        "cta": "Veure la resposta"
       }
     },
     "idea": {
@@ -1712,7 +1719,9 @@
       "fund": "Fons d’activitats",
       "studio": "Estudi",
       "payouts": "Liquidacions",
-      "expired": "Campanyes vençudes"
+      "expired": "Campanyes vençudes",
+      "support": "Suport",
+      "supportPending": "{count, plural, one {# consulta espera resposta} other {# consultes esperen resposta}}"
     },
     "header": {
       "label": "Gestió de l'entitat",
@@ -3025,6 +3034,40 @@
         "body": "Se suprimeix de la vostra llista i no es pot recuperar. No s’ha cobrat ni reservat res, així que no hi ha res a retornar.",
         "yes": "Sí, descartar",
         "no": "No, conservar-lo"
+      },
+      "cover": {
+        "title": "Imatge de la campanya",
+        "intro": "És la foto que es veu a la fitxa i a la targeta de la campanya del vostre portal i a la targeta que es comparteix per WhatsApp. Podeu canviar-la o treure-la quan vulgueu.",
+        "currentAlt": "Imatge actual de la campanya",
+        "currentCaption": "Així es veu ara al portal. La reduïm a 1.600 píxels i li traiem les dades amagades de la foto, com la ubicació.",
+        "none": "Encara no té imatge: la targeta porta el seu fons de colors de sempre.",
+        "label": "Imatge de la campanya",
+        "replaceLabel": "Nova imatge de la campanya",
+        "help": "JPG, PNG o WebP de fins a {max} MB, millor apaïsada. La reduïm a 1.600 píxels d’amplada, així que no cal que la comprimiu abans.",
+        "upload": "Pujar imatge",
+        "uploading": "Pujant…",
+        "saved": "Imatge de la campanya publicada: ja es veu al portal.",
+        "remove": "Treure la imatge",
+        "removed": "Imatge retirada.",
+        "noMinors": "Confirmo que a la imatge no hi apareix cap menor reconeixible (obligatori).",
+        "readOnly": "Només les persones que signen per l’entitat poden canviar la imatge.",
+        "errors": {
+          "noFile": "Trieu primer una imatge.",
+          "TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Proveu-ho amb una altra.",
+          "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb ell i prova-ho de nou.",
+          "NOT_FOUND": "No trobem aquesta campanya. Recarregueu la pàgina.",
+          "NOT_EDITABLE": "Aquesta campanya ja no admet canviar la imatge.",
+          "RATE_LIMITED": "Heu pujat moltes imatges en poc temps. Proveu-ho d’aquí a una hora.",
+          "MINORS_NOT_CONFIRMED": "Confirma que a la imatge no apareix cap menor reconeixible.",
+          "FILE_TYPE_NOT_ALLOWED": "Només s’admeten JPG, PNG o WebP.",
+          "FILE_UNRECOGNIZED_TYPE": "No reconeixem aquest fitxer com a imatge.",
+          "FILE_MIME_MISMATCH": "El fitxer no és la imatge que sembla. Proveu-ho amb una altra.",
+          "FILE_EXTENSION_MISMATCH": "El nom del fitxer no correspon al seu tipus. Proveu-ho amb una altra imatge.",
+          "FILE_TOO_LARGE": "La imatge pesa més de {max} MB.",
+          "generic": "No hem pogut fer-ho. Proveu-ho de nou d’aquí a uns segons."
+        },
+        "afterSave": "Podreu afegir la imatge de la campanya tan bon punt deseu l’esborrany."
       }
     },
     "payouts": {
@@ -3263,6 +3306,96 @@
         "FORBIDDEN": "No teniu permís per fer això.",
         "failed": "No hem pogut completar l’operació. Torneu-ho a provar d’aquí a uns segons."
       }
+    },
+    "support": {
+      "metaTitle": "Suport",
+      "title": "Suport",
+      "intro": "Aquí contesteu les consultes que les famílies adrecen a la vostra entitat i escriviu a KORUM quan necessiteu ajuda. Les consultes arriben sense l’email de la família: contesteu des de la plataforma i la família llegeix la resposta a El meu compte.",
+      "families": {
+        "title": "Consultes de les famílies",
+        "intro": "Contesteu amb claredat i sense dades personals d’altres famílies. Cada consulta es contesta una vegada; si la família necessita res més, tornarà a escriure.",
+        "waiting": "{count, plural, one {# consulta espera resposta} other {# consultes esperen resposta}}",
+        "resolved": "{count, plural, one {Darrera consulta resolta (#)} other {Darreres consultes resoltes (#)}}",
+        "empty": {
+          "title": "No hi ha consultes pendents",
+          "text": "Quan una família us escrigui des del vostre portal, la consulta apareixerà aquí."
+        },
+        "waitingMore": "Es mostren les {shown} més antigues; quan en contesteu algunes, apareixeran les següents."
+      },
+      "status": {
+        "OPEN": "Oberta",
+        "IN_PROGRESS": "En curs",
+        "RESOLVED": "Resolta"
+      },
+      "topics": {
+        "INITIATIVE": "Una iniciativa o un esdeveniment",
+        "PAYMENT": "Un pagament",
+        "ACCOUNT": "El seu compte",
+        "RECTIFICATION": "Corregir dades personals",
+        "OTHER": "Una altra cosa"
+      },
+      "line": "Tema: {topic} · {date}",
+      "purged": "El text d’aquesta consulta ja s’ha esborrat pel termini de conservació.",
+      "yourReply": "La vostra resposta ({date}):",
+      "replyLabel": "La vostra resposta",
+      "replyHelp": "Entre {min} i {max} caràcters. La família rep un avís (sense el text) i la llegeix al seu compte.",
+      "alsoResolve": "Marcar la consulta com a resolta en enviar",
+      "send": "Enviar resposta",
+      "sending": "Enviant…",
+      "sent": "Resposta enviada a la consulta {code}. La família ha rebut un avís.",
+      "sentAndResolved": "Resposta enviada i consulta {code} resolta.",
+      "markInProgress": "Marcar en curs",
+      "markResolved": "Marcar com a resolta",
+      "markResolvedNoReply": "Resoldre sense respondre",
+      "markedInProgress": "La consulta {code} és en curs.",
+      "markedResolved": "La consulta {code} és resolta.",
+      "errors": {
+        "generic": "No hem pogut fer-ho. Proveu-ho de nou d’aquí a uns segons.",
+        "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb ell i prova-ho de nou.",
+        "INVALID_INPUT": "Reviseu el text: no s’ha pogut enviar.",
+        "NOT_FOUND": "No trobem aquesta consulta entre les de la vostra entitat. Recarregueu la pàgina.",
+        "ALREADY_RESOLVED": "Aquesta consulta ja és resolta i no es pot canviar.",
+        "ALREADY_REPLIED": "Aquesta consulta ja té resposta. Si la família necessita res més, tornarà a escriure.",
+        "NOTHING_TO_CHANGE": "La consulta ja era en aquest estat.",
+        "CONFLICT": "L’altra persona signant ho ha canviat alhora. Recarregueu la pàgina i proveu-ho de nou.",
+        "RATE_LIMITED": "Heu escrit moltes vegades en poc temps. Proveu-ho d’aquí a una estona.",
+        "CODE_EXHAUSTED": "No hem pogut registrar el missatge. Proveu-ho de nou d’aquí a uns segons.",
+        "REPLY_TOO_SHORT": "La resposta necessita almenys {min} caràcters.",
+        "PURGED": "El text d’aquesta consulta ja s’ha esborrat i no es pot contestar."
+      },
+      "korum": {
+        "title": "Escriure a KORUM",
+        "intro": "Les vostres consultes a KORUM tenen prioritat: expliqueu-nos què necessiteu (una liquidació, una campanya, el vostre equip). Us contestarem al correu de qui escriu i l’avís de recepció arriba a l’instant.",
+        "topicLabel": "Sobre què escriviu",
+        "topics": {
+          "INITIATIVE": "Una campanya o un esdeveniment",
+          "PAYMENT": "Un pagament o una liquidació",
+          "ACCOUNT": "El compte o l’equip de l’entitat",
+          "OTHER": "Una altra cosa"
+        },
+        "subjectLabel": "Assumpte",
+        "messageLabel": "Missatge",
+        "counter": "{count} de {max} caràcters",
+        "limits": "L’assumpte necessita almenys {subjectMin} caràcters i el missatge, almenys {messageMin}.",
+        "send": "Enviar el missatge a KORUM",
+        "sending": "Enviant…",
+        "sent": "Missatge enviat a KORUM amb el codi {code}. Us hem enviat l’avís de recepció per email.",
+        "readOnly": "Només les persones que signen per l’entitat poden escriure a KORUM.",
+        "errors": {
+          "subject": "L’assumpte necessita almenys {min} caràcters.",
+          "message": "El missatge necessita almenys {min} caràcters."
+        },
+        "sentTitle": "El que heu escrit a KORUM",
+        "sentEmpty": "Encara no heu escrit a KORUM.",
+        "replyFrom": "Resposta de KORUM:"
+      },
+      "confirmResolve": {
+        "text": "Voleu resoldre-la sense respondre? La família no rebrà resposta ni avís i la consulta no es podrà tornar a obrir.",
+        "textWithDraft": "Teniu una resposta escrita sense enviar i es descartarà. Si la resoleu sense respondre, la família no rebrà resposta ni avís i la consulta no es podrà tornar a obrir.",
+        "yes": "Sí, resoldre sense respondre",
+        "no": "Cancel·lar"
+      },
+      "sentNoNotice": "Resposta enviada a la consulta {code}. La família la veurà al seu compte, però no tenim el seu email per avisar-la."
     }
   },
   "gate": {

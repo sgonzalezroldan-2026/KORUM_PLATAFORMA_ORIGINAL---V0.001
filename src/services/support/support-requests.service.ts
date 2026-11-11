@@ -1,7 +1,7 @@
 import { dataHmac } from '@/core/security/crypto';
 import { canonicalEmailOf, IdeaSignatureRejectedError } from '@/core/security/device-quorum.service';
 import { SuperadminRequiredError } from '@/core/security/superadmin-guard';
-import { generateTicketCode, supportTicketSchema, targetOfTopic } from '@/core/support/support-rules';
+import { supportTicketSchema, targetOfTopic } from '@/core/support/support-rules';
 import { openPrivacyRequest } from '@/core/privacy/privacy-requests';
 import type { VerifiedAccountActor } from '@/core/security/verified-actor';
 import { isLocale, routing, type Locale } from '@/i18n/routing';
@@ -9,6 +9,7 @@ import { inTransaction, type Db } from '@/lib/db';
 import { releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
 import { SUPPORT_TICKET_DAILY_RULE, SUPPORT_TICKET_RULE } from '@/lib/rate-limit-rules';
 import { writeAudit } from '@/services/audit/audit.service';
+import { allocateTicketCode } from './ticket-code';
 
 /**
  * Consultas de soporte de las familias (Sprint 3.9, `fview-faq`). Quien escribe sale de la sesión y su email, de su cuenta con el email
@@ -25,8 +26,6 @@ export interface SupportDeps {
   db: Db;
   hmacSecret: string;
 }
-
-const CODE_ATTEMPTS = 8;
 
 /**
  * @param actor Solo para `RECTIFICATION`: la persona reautenticada. Quien llama lo obtiene con `requireVerifiedAccount`; si no puede, pasa `null` y
@@ -65,11 +64,7 @@ export async function submitSupportTicket(deps: SupportDeps, input: { userId: st
     const organization = await tx.organization.findFirst({ where: { slug: ticket.orgSlug, archivedAt: null }, select: { id: true, name: true } });
     if (!organization) return { status: 'REJECTED', reason: 'ORGANIZATION_NOT_FOUND' };
 
-    let ticketCode: string | null = null;
-    for (let attempt = 0; attempt < CODE_ATTEMPTS && ticketCode === null; attempt += 1) {
-      const candidate = generateTicketCode();
-      if (!(await tx.supportTicket.findUnique({ where: { ticketCode: candidate }, select: { id: true } }))) ticketCode = candidate;
-    }
+    const ticketCode = await allocateTicketCode(tx);
     if (ticketCode === null) return { status: 'REJECTED', reason: 'CODE_EXHAUSTED' };
 
     const target = targetOfTopic(ticket.topic);
@@ -113,7 +108,8 @@ export async function submitSupportTicket(deps: SupportDeps, input: { userId: st
 export async function listSupportTicketsOf(db: Db, user: { email: string; emailVerified: boolean; gdprAnonymizedAt: Date | null }, limit = 20) {
   if (!user.emailVerified || user.gdprAnonymizedAt) return [];
   return db.supportTicket.findMany({
-    where: { senderEmail: user.email },
+    // Las que escribió en nombre de su entidad (`fromOrganization`) son de la entidad: se ven en su panel, no en la cuenta de quien las firmó.
+    where: { senderEmail: user.email, fromOrganization: false },
     orderBy: { id: 'desc' },
     take: limit,
     select: { ticketCode: true, topic: true, target: true, subject: true, message: true, status: true, replyMessage: true, createdAt: true, originLabel: true, organization: { select: { slug: true } } }

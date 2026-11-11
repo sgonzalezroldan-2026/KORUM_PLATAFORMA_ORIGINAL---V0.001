@@ -1,4 +1,11 @@
-/** Imágenes mínimas para las pruebas de fotos: un JPEG con EXIF (ubicación, modelo y autor reconocibles) y un PNG con texto. */
+/**
+ * Imágenes para las pruebas de fotos: un JPEG con EXIF (ubicación, modelo y autor reconocibles) y un comentario. Desde el Sprint 4.4c las fotos se
+ * recodifican con `sharp`, así que el JPEG ya no es un esqueleto: parte de uno real de 24×16 píxeles (el EXIF y el comentario se le añaden detrás de la
+ * marca de inicio, que es donde los pone una cámara).
+ */
+export const REAL_JPEG_BASE64 =
+  '/9j/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAAQABgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAT/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCYALE4AD//2Q==';
+export const REAL_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAIAAACDRijCAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAIElEQVQ4jWP4Oo+bKohh1KCvo2H0dTQdzRvNIvPITwcAXqZtH1gKEz4AAAAASUVORK5CYII=';
 
 const text = (value: string) => Uint8Array.from(Buffer.from(value, 'latin1'));
 const concat = (...parts: Uint8Array[]) => Uint8Array.from(Buffer.concat(parts));
@@ -18,8 +25,8 @@ export function jpegWithExif(orientation = 6): Uint8Array {
     segment(0xe0, text('JFIF\0\x01\x01\0\0\x01\0\x01\0\0')),
     segment(0xe1, concat(text('Exif\0\0'), tiff)),
     segment(0xfe, text('Hecha por Maria Lopez')),
-    segment(0xdb, Uint8Array.from([0, 1, 2, 3])),
-    Uint8Array.from([0xff, 0xda, 0x00, 0x08, 1, 1, 0, 0, 0x3f, 0, 0xaa, 0xbb, 0xcc, 0xff, 0xd9])
+    // El resto del JPEG real, sin su marca de inicio.
+    Uint8Array.from(Buffer.from(REAL_JPEG_BASE64, 'base64')).subarray(2)
   );
 }
 

@@ -118,7 +118,7 @@ Se recomienda una **evaluación de impacto (EIPD)** antes del lanzamiento: hay p
 | Cuenta de usuario sin actividad | 3 años | Aviso y anonimización a los 30 días |
 | Auditoría de firmas de ideas | Vida de la idea + 1 año | Anonimización |
 | Chat anónimo de una idea (mensajes de la familia) | Vida de la idea + 1 año; o al suprimir la cuenta | Borrado (las respuestas del centro se conservan, sin nadie detrás) |
-| Consultas de soporte (email, asunto, mensaje y respuesta) | 2 años desde que se resuelven (o desde que se abren, si nunca se resuelven); o el email y el texto, al suprimir la cuenta | Se vacían email y textos; queda la fila (código, tema y fechas) para las estadísticas |
+| Consultas de soporte (email, asunto, mensaje y respuesta) | 2 años desde que se resuelven (`resolvedAt`, la fecha de cierre; Sprint 4.4c) o desde que se abren, si nunca se resuelven; o el email y el texto, al suprimir la cuenta | Se vacían email y textos; queda la fila (código, tema y fechas) para las estadísticas |
 | Cookie de dispositivo | 13 meses | Caduca |
 | HMAC de IP y huella | 12 meses | Borrado |
 | Registro de auditoría | 6 años | Borrado |
@@ -312,6 +312,17 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 **Asesoría fiscal (Sprint 4.4b):**
 
 - [ ] **Finalidad que cambia al redimensionar:** la donación se hizo para el proyecto original y se aplica a la opción votada. ¿Sigue valiendo el certificado de la Ley 49/2002 y su inclusión en el Modelo 182? Las donaciones devueltas a quien lo pidió no entran (ya excluidas).
+
+**Abogado (Sprint 4.4c · soporte del centro e imágenes públicas):**
+
+- [ ] **El centro lee el texto libre de la familia sin conocer su identidad:** la consulta llega con código, tema y texto, sin email, y el centro contesta desde la plataforma. ¿Qué papel tiene KORUM (encargada del tratamiento de la entidad o responsable) y hay que informarlo en el formulario de soporte? El texto puede contener datos de la familia o de menores que la persona escribe por su cuenta.
+- [ ] **Aviso por email «tienes una respuesta» sin consentimiento de comunicaciones** (`support.replied`): es un mensaje del servicio que la persona pidió al escribir y no copia el texto. Mismo punto que los avisos de las ideas contestadas y de las votaciones.
+- [ ] **La respuesta del centro puede aludir a la situación de una familia:** se conserva 2 años desde que se resuelve la consulta y se borra con la cuenta (§6). ¿Plazo correcto? ¿El centro puede borrar una respuesta antes?
+- [ ] **Consultas de la entidad a KORUM** (`fromOrganization`): llevan el email de la persona que firma. ¿Hace falta aviso específico en el formulario?
+- [ ] **Imagen de la campaña y fotos con menores:** la casilla «no aparece ningún menor reconocible» queda en la auditoría (como la portada y las fotos de logros). Al reducir y recodificar la imagen **no se conserva el original** (ni su EXIF), así que no hay forma de comprobar después lo que subió la entidad más allá de la copia pública. ¿Basta? ¿Cómo se retira una imagen a petición de una familia (hoy, la entidad la quita con un clic **en cualquier estado de la campaña**, también cancelada o devuelta; la consola, en el 5.x)? Tras quitarla, la tarjeta de WhatsApp puede seguir en la caché de la CDN hasta unas 4 horas (1 hora de `s-maxage` más otra de `stale-while-revalidate` cuando lleva miniatura) y WhatsApp guarda su propia copia, que no podemos retirar: ¿basta?
+
+- [ ] **Lo que escribió una persona en nombre de su entidad a KORUM** (`fromOrganization`): pertenece a la entidad, así que ya no sale en *Mi cuenta* de quien lo firmó (deja de ser firmante) y, si esa persona suprime su cuenta, solo se suelta su email y el texto se conserva. ¿Es correcto o debe borrarse también el texto?
+- [ ] **Una respuesta abusiva del centro:** la familia la lee en *Mi cuenta* bajo el nombre del centro, y puede contener enlaces o un trato inadecuado. ¿Hace falta un canal para denunciarla o que KORUM pueda retirarla (consola, 5.x)?
 
 **Asesoría fiscal (Sprint 4.2f):**
 

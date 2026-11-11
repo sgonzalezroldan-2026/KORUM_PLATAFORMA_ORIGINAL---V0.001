@@ -49,7 +49,8 @@ export async function PanelManagementHeader({
   organization,
   signers,
   isDirector,
-  pendingApprovals = 0
+  pendingApprovals = 0,
+  pendingSupport = 0
 }: {
   locale: Locale;
   organization: PanelHeaderOrganization;
@@ -57,6 +58,7 @@ export async function PanelManagementHeader({
   isDirector: boolean;
   /** Decisiones que esperan en «Aprobaciones» (comercios cobrados, propuestas nuevas e ideas en la doble firma). */
   pendingApprovals?: number;
+  pendingSupport?: number;
 }) {
   const t = await getTranslations({ locale, namespace: 'panel' });
   const ready = signers.filter((signer) => signer.status === 'ACTIVE').length;
@@ -123,7 +125,7 @@ export async function PanelManagementHeader({
             {isDirector && signers.some((signer) => signer.role === 'COSIGNER' && signer.status === 'INVITED') ? <ResendInvitationButton orgSlug={organization.slug} /> : null}
           </div>
         </div>
-        <PanelNav orgSlug={organization.slug} pendingApprovals={pendingApprovals} />
+        <PanelNav orgSlug={organization.slug} pendingApprovals={pendingApprovals} pendingSupport={pendingSupport} />
       </div>
     </section>
   );

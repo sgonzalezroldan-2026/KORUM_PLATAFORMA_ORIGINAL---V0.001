@@ -1,6 +1,6 @@
-import { ImageMetadataError, stripImageMetadata } from '@/core/media/strip-image-metadata';
 import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { ImageResizeError, prepareWebImage } from '@/services/media/resize-image';
 import { queuePhotosBroadcastIfReady } from '@/services/notifications/supporter-broadcast';
 import { requireOwnedResource } from '@/repositories/ownership';
 import { authorizeTenant, recordAudit, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -10,8 +10,8 @@ import type { StorageProvider } from './storage-provider';
 /**
  * Fotos Antes / Después de un logro y mensaje de agradecimiento del centro (Sprint 3.6, QA-F09; Cumplimiento legal: fotos sin menores
  * identificables). Solo quienes firman en la entidad (`DIRECTOR`, `COSIGNER`), con la confirmación expresa de que **no aparecen menores
- * identificables** (queda en `AuditLog` con quién, cuándo y qué foto). La imagen se reescribe sin metadatos (EXIF con la ubicación del móvil, XMP,
- * comentarios) **antes** de ir al cubo público; el original no se guarda. Subir otra foto sustituye a la anterior, que se retira del cubo público.
+ * identificables** (queda en `AuditLog` con quién, cuándo y qué foto). La imagen se reduce a 1.600 px y se recodifica (sin EXIF con la ubicación del
+ * móvil, XMP ni comentarios) **antes** de ir al cubo público; el original no se guarda. Subir otra foto sustituye a la anterior, que se retira del cubo público.
  * Las familias las ven cuando la iniciativa está cerrada (liquidación hecha con doble firma, Sprint 4.4a).
  */
 
@@ -72,11 +72,12 @@ export async function publishAchievementPhoto(db: KorumPrismaClient, storage: St
   await authorizeTenant(db, actor, input.organizationId, { roles: STAFF, ...target, allowSuperadmin: false });
   await loadEditableInitiative(db, actor, input.organizationId, input.initiativeId);
 
+  // Se reduce a 1.600 px y se recodifica: la foto pública pesa una décima parte y no lleva metadatos (ubicación del móvil) ni el original se guarda.
   let clean;
   try {
-    clean = stripImageMetadata(input.bytes);
+    clean = await prepareWebImage(input.bytes);
   } catch (error) {
-    if (error instanceof ImageMetadataError) throw new AchievementPhotoRejectedError('UNREADABLE_IMAGE');
+    if (error instanceof ImageResizeError) throw new AchievementPhotoRejectedError('UNREADABLE_IMAGE');
     throw error;
   }
   // `uploadFile` valida el tipo real, el tamaño y la extensión, y no admite nada que no sea imagen en este uso.
@@ -110,7 +111,7 @@ export async function publishAchievementPhoto(db: KorumPrismaClient, storage: St
           targetType: 'Initiative',
           targetId: String(input.initiativeId),
           // Nunca el contenido de los metadatos (podría llevar una ubicación): solo qué tipos de bloque se retiraron.
-          metadata: { slot: input.slot, fileId: asset.id, noIdentifiableMinorsConfirmed: true, removedMetadata: clean.removed }
+          metadata: { slot: input.slot, fileId: asset.id, noIdentifiableMinorsConfirmed: true, removedMetadata: clean.removed, width: clean.width, height: clean.height }
         },
         { required: true }
       );

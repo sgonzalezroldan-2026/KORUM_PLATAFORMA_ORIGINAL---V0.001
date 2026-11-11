@@ -599,6 +599,13 @@
         "rectification": "We have also opened your personal data rectification request: we will deal with it within one month at most.",
         "code": "Question code",
         "cta": "See my questions"
+      },
+      "replied": {
+        "subject": "{organization} has replied to your question {code}",
+        "preheader": "You have a new reply.",
+        "title": "You have a reply",
+        "body": "{organization} has replied to your question. For privacy we do not copy the message here: read it in your account.",
+        "cta": "See the reply"
       }
     },
     "idea": {
@@ -1712,7 +1719,9 @@
       "fund": "Activity Fund",
       "studio": "Studio",
       "payouts": "Payouts",
-      "expired": "Expired campaigns"
+      "expired": "Expired campaigns",
+      "support": "Support",
+      "supportPending": "{count, plural, one {# enquiry waiting} other {# enquiries waiting}}"
     },
     "header": {
       "label": "Organisation management",
@@ -3025,6 +3034,40 @@
         "body": "It is removed from your list and cannot be recovered. Nothing has been charged or reserved, so there is nothing to refund.",
         "yes": "Yes, discard",
         "no": "No, keep it"
+      },
+      "cover": {
+        "title": "Campaign image",
+        "intro": "This is the photo shown on the campaign page and card in your portal and on the card shared on WhatsApp. You can change or remove it whenever you like.",
+        "currentAlt": "Current campaign image",
+        "currentCaption": "This is how it looks on the portal now. We shrink it to 1,600 pixels and strip the hidden data in the photo, such as the location.",
+        "none": "It has no image yet: the card uses its usual coloured background.",
+        "label": "Campaign image",
+        "replaceLabel": "New campaign image",
+        "help": "JPG, PNG or WebP up to {max} MB, ideally landscape. We shrink it to 1,600 pixels wide, so there is no need to compress it first.",
+        "upload": "Upload image",
+        "uploading": "Uploading…",
+        "saved": "Campaign image published: it now shows on the portal.",
+        "remove": "Remove the image",
+        "removed": "Image removed.",
+        "noMinors": "I confirm that no recognisable child appears in the image (required).",
+        "readOnly": "Only the people who sign for the organisation can change the image.",
+        "errors": {
+          "noFile": "Please choose an image first.",
+          "TOO_LARGE": "The image is larger than {max} MB.",
+          "UNREADABLE_IMAGE": "We could not read the image. Please try another one.",
+          "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+          "NOT_FOUND": "We cannot find this campaign. Please reload the page.",
+          "NOT_EDITABLE": "This campaign no longer allows changing its image.",
+          "RATE_LIMITED": "You have uploaded many images in a short time. Please try again in an hour.",
+          "MINORS_NOT_CONFIRMED": "Please confirm that no recognisable child appears in the image.",
+          "FILE_TYPE_NOT_ALLOWED": "Only JPG, PNG or WebP are accepted.",
+          "FILE_UNRECOGNIZED_TYPE": "We do not recognise this file as an image.",
+          "FILE_MIME_MISMATCH": "The file is not the image it appears to be. Please try another one.",
+          "FILE_EXTENSION_MISMATCH": "The file name does not match its type. Please try another image.",
+          "FILE_TOO_LARGE": "The image is larger than {max} MB.",
+          "generic": "We could not do it. Please try again in a few seconds."
+        },
+        "afterSave": "You can add the campaign image as soon as you save the draft."
       }
     },
     "payouts": {
@@ -3263,6 +3306,96 @@
         "FORBIDDEN": "You do not have permission to do this.",
         "failed": "We could not complete the operation. Please try again in a few seconds."
       }
+    },
+    "support": {
+      "metaTitle": "Support",
+      "title": "Support",
+      "intro": "Here you answer the enquiries families send to your organisation and write to KORUM when you need help. Enquiries arrive without the family’s email: you reply from the platform and they read it in My account.",
+      "families": {
+        "title": "Families’ enquiries",
+        "intro": "Reply clearly and without personal details of other families. Each enquiry is answered once; if the family needs anything else they will write again.",
+        "waiting": "{count, plural, one {# enquiry is waiting for a reply} other {# enquiries are waiting for a reply}}",
+        "resolved": "{count, plural, one {Latest resolved enquiry (#)} other {Latest resolved enquiries (#)}}",
+        "empty": {
+          "title": "No pending enquiries",
+          "text": "When a family writes to you from your portal, the enquiry will appear here."
+        },
+        "waitingMore": "The {shown} oldest are shown; as you answer some, the next ones will appear."
+      },
+      "status": {
+        "OPEN": "Open",
+        "IN_PROGRESS": "In progress",
+        "RESOLVED": "Resolved"
+      },
+      "topics": {
+        "INITIATIVE": "A campaign or an event",
+        "PAYMENT": "A payment",
+        "ACCOUNT": "Their account",
+        "RECTIFICATION": "Correct personal data",
+        "OTHER": "Something else"
+      },
+      "line": "Topic: {topic} · {date}",
+      "purged": "The text of this enquiry has already been deleted after its retention period.",
+      "yourReply": "Your reply ({date}):",
+      "replyLabel": "Your reply",
+      "replyHelp": "Between {min} and {max} characters. The family gets a notice (without the text) and reads it in their account.",
+      "alsoResolve": "Mark the enquiry as resolved when sending",
+      "send": "Send reply",
+      "sending": "Sending…",
+      "sent": "Reply sent to enquiry {code}. The family has received a notice.",
+      "sentAndResolved": "Reply sent and enquiry {code} resolved.",
+      "markInProgress": "Mark in progress",
+      "markResolved": "Mark as resolved",
+      "markResolvedNoReply": "Resolve without replying",
+      "markedInProgress": "Enquiry {code} is in progress.",
+      "markedResolved": "Enquiry {code} is resolved.",
+      "errors": {
+        "generic": "We could not do it. Please try again in a few seconds.",
+        "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
+        "INVALID_INPUT": "Please check the text: it could not be sent.",
+        "NOT_FOUND": "We cannot find this enquiry among your organisation’s. Please reload the page.",
+        "ALREADY_RESOLVED": "This enquiry is already resolved and cannot be changed.",
+        "ALREADY_REPLIED": "This enquiry already has a reply. If the family needs anything else they will write again.",
+        "NOTHING_TO_CHANGE": "The enquiry was already in that state.",
+        "CONFLICT": "The other signer changed it at the same time. Please reload the page and try again.",
+        "RATE_LIMITED": "You have written many times in a short time. Please try again in a while.",
+        "CODE_EXHAUSTED": "We could not register the message. Please try again in a few seconds.",
+        "REPLY_TOO_SHORT": "The reply needs at least {min} characters.",
+        "PURGED": "The text of this enquiry has already been deleted and it cannot be answered."
+      },
+      "korum": {
+        "title": "Write to KORUM",
+        "intro": "Your enquiries to KORUM take priority: tell us what you need (a payout, a campaign, your team). We will reply to the email of the person writing and the acknowledgement arrives straight away.",
+        "topicLabel": "What you are writing about",
+        "topics": {
+          "INITIATIVE": "A campaign or an event",
+          "PAYMENT": "A payment or a payout",
+          "ACCOUNT": "The organisation’s account or team",
+          "OTHER": "Something else"
+        },
+        "subjectLabel": "Subject",
+        "messageLabel": "Message",
+        "counter": "{count} of {max} characters",
+        "limits": "The subject needs at least {subjectMin} characters and the message at least {messageMin}.",
+        "send": "Send message to KORUM",
+        "sending": "Sending…",
+        "sent": "Message sent to KORUM with code {code}. We have emailed you an acknowledgement.",
+        "readOnly": "Only the people who sign for the organisation can write to KORUM.",
+        "errors": {
+          "subject": "The subject needs at least {min} characters.",
+          "message": "The message needs at least {min} characters."
+        },
+        "sentTitle": "What you have written to KORUM",
+        "sentEmpty": "You have not written to KORUM yet.",
+        "replyFrom": "Reply from KORUM:"
+      },
+      "confirmResolve": {
+        "text": "Resolve without replying? The family will get no reply or notice, and the enquiry cannot be reopened.",
+        "textWithDraft": "You have a written reply that has not been sent and it will be discarded. If you resolve without replying, the family will get no reply or notice, and the enquiry cannot be reopened.",
+        "yes": "Yes, resolve without replying",
+        "no": "Cancel"
+      },
+      "sentNoNotice": "Reply sent to enquiry {code}. The family will see it in their account, but we have no email to notify them."
     }
   },
   "gate": {

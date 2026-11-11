@@ -850,6 +850,7 @@
       "subject": "Pago mancomunado directo a instalador local de toldos",
       "message": "Vamos a firmar el Doble Check de liquidación de la campaña de toldos de Infantil adjuntando la factura del instalador local para transferencia directa desde Escrow.",
       "status": "OPEN",
+      "fromOrganization": true,
       "createdAt": "2026-10-27T21:00:00.000Z"
     }
   ]

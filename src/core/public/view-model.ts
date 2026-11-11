@@ -46,6 +46,8 @@ export interface InitiativeRow {
   courses: CourseProgressRow[];
   /** Traducciones opcionales del contenido: `{ ca: { title, description }, en: { … } }`. */
   translationsJson?: unknown;
+  /** Imagen representativa pública de la campaña (`/api/files/public/{id}`), si la entidad la ha subido (Sprint 4.4c). */
+  coverFileId?: string | null;
 }
 
 export interface InitiativeCardData {
@@ -73,6 +75,8 @@ export interface InitiativeCardData {
   closed: boolean;
   matching: boolean;
   zeroCommission: boolean;
+  /** Imagen representativa pública (`/api/files/public/{id}`) o `null`: sin ella, la tarjeta lleva su degradado de siempre. */
+  coverFileId: string | null;
 }
 
 /** Gastos de gestión digital de la entidad (tarifa pública de taquilla). */
@@ -105,6 +109,7 @@ export function toCardData(row: InitiativeRow, now: Date, fees: TicketFees = NO_
     achieved: isAchieved(base) || row.status === 'GOAL_REACHED',
     closed: row.status !== 'FUNDRAISING',
     matching: row.matchingPoolRemainingCents > 0,
+    coverFileId: row.coverFileId ?? null,
     // Solo si el precio ya está calculado (`quotaReservedAt`) y la plataforma no cobra ni comisión de tramos ni mantenimiento.
     zeroCommission: row.format === 'BUDGET' && row.quotaReservedAt !== null && row.bracketFeeCents === 0 && row.maintFeeCents === 0 && row.goalCents > 0
   };

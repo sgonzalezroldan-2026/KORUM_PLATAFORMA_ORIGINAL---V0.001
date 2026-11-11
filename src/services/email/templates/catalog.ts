@@ -13,7 +13,7 @@ import {
   taxCertificateReady
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
-import { accountPasskeyAdded, supportReceived } from './definitions-account';
+import { accountPasskeyAdded, supportReceived, supportReplied } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAwaitingDecision, sponsorLateReceived, sponsorToEntityFund } from './definitions-activity-fund';
@@ -88,6 +88,7 @@ const ENTRIES = [
   register('privacy.inactivityNotice', privacyInactivityNotice),
   register('account.passkeyAdded', accountPasskeyAdded),
   register('support.received', supportReceived),
+  register('support.replied', supportReplied),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed),

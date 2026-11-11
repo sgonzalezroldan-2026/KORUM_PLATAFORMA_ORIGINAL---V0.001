@@ -62,6 +62,7 @@ const SAMPLES: Record<string, unknown> = {
   'privacy.inactivityNotice': { eraseOn: IN_3_DAYS },
   'account.passkeyAdded': {},
   'support.received': { ticketCode: 'TCK-7K3M9Q', rectification: true, answeredBy: 'SUPERADMIN' },
+  'support.replied': { ticketCode: 'TCK-7K3M9Q', organization: 'CEIP Cervantes' },
   'pledge.charged': { initiativeId: 1, amountCents: 1_000, feeCents: 25, totalCents: 1_025, reference: 'KH0123456789ABCDEF', cycle: 2, totalMonths: 9, fiscalCertificate: true },
   'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },
   'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' },

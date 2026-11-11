@@ -351,6 +351,8 @@ export interface KorumSupportTicket {
   subject: string;
   message: string;
   status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+  /** La escribe la propia entidad desde su panel (buzón hacia KORUM, Sprint 4.4c). */
+  fromOrganization?: boolean;
   createdAt: string;
 }
 

@@ -36,6 +36,11 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
   return (
     <article className="relative flex flex-col justify-between overflow-hidden rounded-3xl border border-patio-rule-strong bg-white shadow-sm motion-safe:transition-shadow hover:shadow-md" data-testid="initiative-card" data-initiative-id={card.id}>
       <div>
+        {card.coverFileId ? (
+          // Imagen representativa de la campaña (Sprint 4.4c): decorativa (el título va justo debajo), reducida en el servidor y cargada al hacer scroll.
+          // eslint-disable-next-line @next/next/no-img-element -- imagen pública servida por /api/files/public, ya reducida a 1.600 px
+          <img src={`/api/files/public/${card.coverFileId}`} alt="" width={640} height={360} loading="lazy" decoding="async" className="h-32 w-full object-cover" data-testid="initiative-card-cover" />
+        ) : null}
         <div
           className={clsx(
             'flex min-h-36 flex-col justify-between gap-4 p-5',

@@ -66,7 +66,13 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
 
       <div className="mobile-stack grid gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-7">
-          <div className="space-y-4 rounded-3xl border border-patio-rule-strong bg-white p-6">
+          <div className="overflow-hidden rounded-3xl border border-patio-rule-strong bg-white">
+            {card.coverFileId ? (
+              // Imagen representativa de la campaña (Sprint 4.4c): decorativa, el título va justo debajo; es la primera imagen de la página (carga con prioridad).
+              // eslint-disable-next-line @next/next/no-img-element -- imagen pública servida por /api/files/public, ya reducida a 1.600 px
+              <img src={`/api/files/public/${card.coverFileId}`} alt="" width={1200} height={675} fetchPriority="high" decoding="async" className="aspect-video max-h-80 w-full object-cover" data-testid="initiative-detail-cover" />
+            ) : null}
+          <div className="space-y-4 p-6">
             <div className="flex flex-wrap gap-2">
               <span lang={contentLang} className="rounded-full bg-amber-100 px-3 py-0.5 text-sm font-bold text-amber-950">
                 {card.category}
@@ -86,6 +92,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
                 {detail.matchingSponsorName ? t('detail.matchingBy', { sponsor: detail.matchingSponsorName }) : t('detail.matching')}
               </p>
             ) : null}
+            </div>
           </div>
 
           {detail.challenge.enabled ? <CourseChallenge lines={detail.challenge.lines} rewardText={detail.challenge.rewardText} target={detail.challenge.target} vertical={vertical} /> : null}

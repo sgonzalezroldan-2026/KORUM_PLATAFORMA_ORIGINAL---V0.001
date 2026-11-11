@@ -8,6 +8,10 @@ import { ResourceNotFoundError } from './tenant-guard';
  * Se identifican por `orgSlug` (público) y solo ven entidades no archivadas.
  */
 
+/** Un fichero solo se enseña si es público y no se ha retirado: del resto ni el identificador sale (Sprint 4.2e). */
+const PUBLIC_FILE = { select: { id: true, visibility: true, deletedAt: true } } as const;
+export const publicFileId = (file: { id: string; visibility: string; deletedAt: Date | null } | null): string | null => (file && file.visibility === 'PUBLIC' && file.deletedAt === null ? file.id : null);
+
 const PUBLIC_ORGANIZATION_VIEW = {
   id: true,
   slug: true,
@@ -64,14 +68,12 @@ const PUBLIC_INITIATIVE_VIEW = {
   /** Versiona la tarjeta para WhatsApp: cambia con cada aportación. */
   updatedAt: true,
   translationsJson: true,
+  /** Imagen representativa de la campaña (Sprint 4.4c): solo su identificador público, nunca el fichero ni su dueño. */
+  coverFile: PUBLIC_FILE,
   courses: { select: { groupName: true, familiesCount: true } }
 } as const;
 
 const PUBLIC_STATUSES = ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] as const;
-
-/** Un fichero solo se enseña si es público y no se ha retirado: del resto ni el identificador sale (Sprint 4.2e). */
-const PUBLIC_FILE = { select: { id: true, visibility: true, deletedAt: true } } as const;
-export const publicFileId = (file: { id: string; visibility: string; deletedAt: Date | null } | null): string | null => (file && file.visibility === 'PUBLIC' && file.deletedAt === null ? file.id : null);
 
 export async function getPublicOrganization(db: KorumPrismaClient, slug: string) {
   const organization = await db.organization.findFirst({ where: { slug, archivedAt: null }, select: { ...PUBLIC_ORGANIZATION_VIEW, logoFile: PUBLIC_FILE, bannerFile: PUBLIC_FILE } });
@@ -82,11 +84,12 @@ export async function getPublicOrganization(db: KorumPrismaClient, slug: string)
 
 /** Campañas abiertas (`FUNDRAISING`) de la entidad: lo que ven las familias en «Iniciativas y taquilla». */
 export async function listPublicInitiatives(db: KorumPrismaClient, slug: string) {
-  return db.initiative.findMany({
+  const rows = await db.initiative.findMany({
     where: { status: 'FUNDRAISING', organization: { slug, archivedAt: null } },
     select: PUBLIC_INITIATIVE_VIEW,
     orderBy: [{ closesAt: 'asc' }, { id: 'asc' }]
   });
+  return rows.map(({ coverFile, ...row }) => ({ ...row, coverFileId: publicFileId(coverFile) }));
 }
 
 /**
@@ -103,7 +106,8 @@ export async function getPublicInitiative(db: KorumPrismaClient, slug: string, i
     }
   });
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
-  return initiative;
+  const { coverFile, ...rest } = initiative;
+  return { ...rest, coverFileId: publicFileId(coverFile) };
 }
 
 /**
@@ -129,12 +133,14 @@ export async function getPublicInitiativeCard(db: KorumPrismaClient, initiativeI
       targetFamiliesPerCourse: true,
       updatedAt: true,
       courses: { select: { groupName: true, familiesCount: true } },
+      coverFile: PUBLIC_FILE,
       organization: { select: { name: true, brandPrimary: true, brandSecondary: true, logoFile: PUBLIC_FILE } }
     }
   });
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
   const { logoFile, ...organization } = initiative.organization;
-  return { ...initiative, organization: { ...organization, logoFileId: publicFileId(logoFile) } };
+  const { coverFile, ...rest } = initiative;
+  return { ...rest, coverFileId: publicFileId(coverFile), organization: { ...organization, logoFileId: publicFileId(logoFile) } };
 }
 
 /**

@@ -8,7 +8,7 @@ import { Link, usePathname } from '@/i18n/navigation';
  * Secciones del panel de la entidad. Solo aparecen las que ya existen; las demás (portería) se añaden aquí al llegar su sprint. La sección activa se marca con `aria-current` y con estilo, nunca solo con color. «Aprobaciones» lleva cuántas decisiones esperan, con
  * texto para el lector de pantalla (no solo el número).
  */
-export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; pendingApprovals?: number }) {
+export function PanelNav({ orgSlug, pendingApprovals = 0, pendingSupport = 0 }: { orgSlug: string; pendingApprovals?: number; pendingSupport?: number }) {
   const t = useTranslations('panel.nav');
   const pathname = usePathname();
   const base = `/panel/${orgSlug}`;
@@ -19,6 +19,7 @@ export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; p
     { key: 'payouts', href: `${base}/liquidaciones`, active: pathname.startsWith(`${base}/liquidaciones`) },
     { key: 'expired', href: `${base}/vencidas`, active: pathname.startsWith(`${base}/vencidas`) },
     { key: 'achievements', href: `${base}/logros`, active: pathname.startsWith(`${base}/logros`) },
+    { key: 'support', href: `${base}/soporte`, active: pathname.startsWith(`${base}/soporte`) },
     { key: 'fund', href: `${base}/fondo`, active: pathname.startsWith(`${base}/fondo`) },
     { key: 'settings', href: `${base}/ajustes`, active: pathname.startsWith(`${base}/ajustes`) }
   ] as const;
@@ -41,6 +42,12 @@ export function PanelNav({ orgSlug, pendingApprovals = 0 }: { orgSlug: string; p
                 <span className="ms-2 inline-flex min-w-6 items-center justify-center rounded-full bg-varsity-gold px-1.5 text-xs font-extrabold tabular-nums text-varsity-navy" data-testid="approvals-pending">
                   <span aria-hidden="true">{pendingApprovals}</span>
                   <span className="sr-only">{t('pending', { count: pendingApprovals })}</span>
+                </span>
+              ) : null}
+              {item.key === 'support' && pendingSupport > 0 ? (
+                <span className="ms-2 inline-flex min-w-6 items-center justify-center rounded-full bg-varsity-gold px-1.5 text-xs font-extrabold tabular-nums text-varsity-navy" data-testid="support-pending">
+                  <span aria-hidden="true">{pendingSupport}</span>
+                  <span className="sr-only">{t('supportPending', { count: pendingSupport })}</span>
                 </span>
               ) : null}
             </Link>
