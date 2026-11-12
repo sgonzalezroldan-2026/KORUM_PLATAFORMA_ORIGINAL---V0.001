@@ -44,8 +44,8 @@
           "text": "Cualquier familia propone una mejora y la comunidad la respalda con su firma."
         },
         {
-          "title": "Doble firma de la entidad",
-          "text": "Dos personas de la entidad la aprueban y elegís libremente a vuestro proveedor."
+          "title": "Firma de la entidad",
+          "text": "Por defecto la aprueban dos personas distintas de la entidad (la entidad puede decidir que firme solo la dirección) y elegís libremente a vuestro proveedor."
         },
         {
           "title": "Aportan en 10 segundos",
@@ -68,7 +68,7 @@
           "title": "Entidades",
           "bullets": [
             "Sin efectivo y sin hojas de cálculo",
-            "Doble firma mancomunada de dos personas",
+            "Doble firma mancomunada de dos personas (por defecto)",
             "Cobro directo a la entidad o a su proveedor",
             "Modelo 182 listo en un clic si la entidad se acoge a la Ley 49/2002",
             "Modo portería con QR y medallas anuales"
@@ -313,7 +313,7 @@
         "preheader": "Crea tu contraseña y activa la verificación en dos pasos.",
         "title": "{organization} cuenta contigo",
         "titlePlatform": "Activa tu cuenta de KORUM",
-        "body": "Te han nombrado {role} de {organization}. Tu firma, junto a la de la persona que dirige la entidad, es necesaria para aprobar las ideas y liberar los fondos: ninguna persona puede hacerlo sola.",
+        "body": "Te han nombrado {role} de {organization}. Tu firma sirve para aprobar las ideas y liberar los fondos con las firmas que haya decidido la entidad (por defecto, dos personas distintas).",
         "bodyPlatform": "Se ha creado la cuenta de Super-Admin de KORUM con este email. Crea tu contraseña para entrar en la consola.",
         "security": "El enlace caduca en {hours} horas y solo sirve una vez. Al entrar te pediremos activar la verificación en dos pasos con una app del móvil.",
         "cta": "Crear mi contraseña",
@@ -357,7 +357,7 @@
         "subject": "Hemos anulado el PIN de portería de «{initiative}»",
         "preheader": "Por seguridad. La puerta no se detiene.",
         "title": "PIN de portería anulado",
-        "body": "Tras demasiados intentos fallidos, hemos anulado el PIN de portería de «{initiative}». 1) Las sesiones que ya estaban abiertas siguen funcionando: la puerta no se detiene. 2) Para que entren más voluntarios, crea un PIN nuevo en «Taquilla y portería». 3) Al crearlo se cerrarán las sesiones abiertas y habrá que volver a entrar con el nuevo: hazlo cuando la cola lo permita. Puede hacerlo cualquiera de las dos personas firmantes.",
+        "body": "Tras demasiados intentos fallidos, hemos anulado el PIN de portería de «{initiative}». 1) Las sesiones que ya estaban abiertas siguen funcionando: la puerta no se detiene. 2) Para que entren más voluntarios, crea un PIN nuevo en «Taquilla y portería». 3) Al crearlo se cerrarán las sesiones abiertas y habrá que volver a entrar con el nuevo: hazlo cuando la cola lo permita. Puede hacerlo cualquiera de las personas firmantes.",
         "cta": "Crear un PIN nuevo"
       }
     },
@@ -366,7 +366,7 @@
       "preheader": "Celebradlo: ya está.",
       "title": "¡Meta conseguida!",
       "body": "«{initiative}» ha llegado a los {goal} que necesitaba gracias a {count, plural, one {# aportación} other {# aportaciones}}.",
-      "next": "El siguiente paso es la liquidación: hace falta la firma de dos personas distintas de la entidad.",
+      "next": "El siguiente paso es la liquidación: la firman las personas firmantes de la entidad.",
       "cta": "Ir al panel"
     },
     "expired": {
@@ -389,13 +389,13 @@
       "subject": "Falta tu firma en {organization}",
       "preheader": "Enlace de un solo uso y código de 6 dígitos.",
       "title": "Necesitamos tu firma",
-      "body": "Para completar esta operación hacen falta dos firmas de personas distintas de la entidad. Abre el enlace con tu sesión iniciada e introduce el código de 6 dígitos. Caduca el {expires}.",
+      "body": "Para completar esta operación hace falta tu firma. Abre el enlace con tu sesión iniciada e introduce el código de 6 dígitos. Caduca el {expires}.",
       "what": "Qué se firma",
       "ideaApproval": "Aprobar la idea «{title}»",
       "payout": "Liberar los fondos de «{title}»",
       "codeLabel": "Tu código de 6 dígitos",
       "cta": "Firmar ahora",
-      "footnote": "El enlace sirve una sola vez. Si no esperabas esta firma, no la completes y avisa a la otra persona firmante.",
+      "footnote": "El enlace sirve una sola vez. Si no esperabas esta firma, no la completes y avisa a la entidad.",
       "activityFund": "Liquidar el Fondo de actividades: «{title}»"
     },
     "split": {
@@ -505,7 +505,7 @@
         "subject": "Tu aportación pasa a {organization} para sus actividades",
         "preheader": "No había ninguna campaña a la que llevarla a tiempo.",
         "title": "Tu aportación sigue sumando",
-        "body": "{organization} no ha tenido ninguna campaña a la que llevar tus {amount} antes de que venciera su plazo. Por eso pasan a su Fondo de actividades: la entidad los usará para sus actividades del curso, con la firma de sus dos responsables.",
+        "body": "{organization} no ha tenido ninguna campaña a la que llevar tus {amount} antes de que venciera su plazo. Por eso pasan a su Fondo de actividades: la entidad los usará para sus actividades del curso, con las firmas que exige la entidad.",
         "why": "Así lo prevén las condiciones del patrocinio: tu aportación es para la entidad y no se devuelve una vez admitido el comercio. Tu publicidad sigue igual."
       },
       "awaitingDecision": {
@@ -610,11 +610,11 @@
     },
     "idea": {
       "quorumReached": {
-        "subject": "Quórum logrado: «{title}» espera vuestra doble firma",
+        "subject": "Quórum logrado: «{title}» espera vuestra firma",
         "preheader": "Una idea del buzón ya tiene las firmas necesarias.",
         "title": "¡Una idea ha logrado el quórum!",
         "body": "La propuesta «{title}» ({alias}) ya tiene las firmas verificadas que pide vuestra entidad.",
-        "next": "Para convertirla en iniciativa hacen falta dos firmas: la de la dirección y la de la cofirma. Entrad en Aprobaciones y pedid vuestro enlace de firma.",
+        "next": "Para convertirla en iniciativa hace falta la firma de la dirección y, si la entidad firma con dos personas, también la de la cofirma. Entrad en Aprobaciones y pedid vuestro enlace de firma.",
         "cta": "Ir a Aprobaciones"
       },
       "centerReplied": {
@@ -644,16 +644,10 @@
     "signer": {
       "handover": {
         "requested": {
-          "subject": "{organization}: te proponen un relevo en tu puesto de firma",
-          "preheader": "Necesitamos tu visto bueno antes de invitar a nadie.",
+          "subject": "{organization}: han propuesto sustituirte en tu puesto de firma",
+          "preheader": "El cambio se hará cuando la persona nueva acepte su invitación.",
           "title": "Proponen quién te sustituye",
-          "body": "La otra persona que firma por {organization} propone que otra persona ocupe tu puesto. Entra en el panel para ver a quién y dar tu visto bueno con tu código, o rechazarlo. Si no haces nada, la propuesta caduca en 7 días y sigues firmando."
-        },
-        "declined": {
-          "subject": "{organization}: el relevo no ha recibido el visto bueno",
-          "preheader": "Todo sigue como estaba.",
-          "title": "Relevo rechazado",
-          "body": "La persona cuyo puesto propusiste relevar en {organization} no ha dado su visto bueno. Seguís firmando las mismas dos personas."
+          "body": "La otra persona que firma por {organization} ha invitado a otra persona a ocupar tu puesto ({role}). No necesita tu visto bueno: cuando la persona nueva acepte, el cambio será inmediato y dejarás de firmar por la entidad. Si no estás de acuerdo, habla con la otra persona que firma. El cambio queda registrado."
         },
         "completedLeaving": {
           "subject": "{organization}: ya no firmas por la entidad",
@@ -668,13 +662,41 @@
           "body": "Se ha completado un relevo en {organization}: la persona nueva ya ocupa su puesto ({role}). Las firmas pendientes de quien ha salido han dejado de valer: si había algo a medias, pide de nuevo la firma."
         },
         "why": "Si no reconoces este cambio, escribe a soporte cuanto antes.",
-        "cta": "Ver el equipo que firma"
+        "cta": "Ver el equipo que firma",
+        "modeSingle": {
+          "subject": "{organization}: la entidad pasa a firma única",
+          "preheader": "Tu puesto de cofirma ya no existe.",
+          "title": "La entidad pasa a firma única",
+          "body": "La dirección de {organization} ha decidido que la entidad firme con una sola persona. Tu puesto ({role}) ya no existe: no puedes firmar ni entrar al panel de la entidad, y los códigos de portería que tuvieras han dejado de valer. Tu cuenta sigue existiendo. El cambio queda registrado."
+        },
+        "seat": {
+          "DIRECTOR": "Dirección",
+          "COSIGNER": "Cofirma"
+        },
+        "modeChangedSingle": {
+          "subject": "{organization}: la entidad firma ahora con una sola firma",
+          "preheader": "Aprobar y liberar dinero exige solo la firma de Dirección.",
+          "title": "Cambio en la forma de firmar",
+          "body": "Se ha cambiado la forma de firmar de {organization}: ahora basta la firma de Dirección para aprobar ideas y liberar dinero, y el puesto de Cofirma ha desaparecido. Si este cambio no lo has hecho tú, escribe a soporte cuanto antes."
+        },
+        "modeChangedDouble": {
+          "subject": "{organization}: la entidad vuelve a doble firma",
+          "preheader": "Hay que invitar a la cofirma para poder aprobar.",
+          "title": "Cambio en la forma de firmar",
+          "body": "{organization} vuelve a firmar con dos personas (Dirección y Cofirma). Hasta que la cofirma acepte su invitación no se podrá aprobar nada. Si este cambio no lo has hecho tú, escribe a soporte cuanto antes."
+        },
+        "expired": {
+          "subject": "{organization}: la invitación para el relevo ha caducado",
+          "preheader": "Nadie la aceptó a tiempo y todo sigue como estaba.",
+          "title": "Invitación caducada",
+          "body": "La invitación que enviaste para el puesto de {role} de {organization} ha caducado sin que nadie la aceptara. Todo sigue como estaba. Si quieres, propón el relevo de nuevo desde el equipo que firma."
+        }
       }
     },
     "activityFund": {
       "amount": "Importe",
       "deadline": "Liquidar antes del",
-      "how": "Para recibirlo en vuestra cuenta, una de las dos personas firmantes pide la liquidación en el panel indicando para qué se usará el dinero, y las dos firmáis con vuestro código.",
+      "how": "Para recibirlo en vuestra cuenta, una de las personas firmantes pide la liquidación en el panel indicando para qué se usará el dinero, y se firma con vuestro código.",
       "cta": "Abrir el Fondo de actividades",
       "received": {
         "subject": "{amount} han pasado al Fondo de actividades de {organization}",
@@ -687,7 +709,7 @@
         "preheader": "El plazo de PAYCOMET para enviar el dinero se acaba.",
         "title": "El plazo para liquidar el Fondo se acaba",
         "body": "En vuestro Fondo de actividades hay {amount} sin liquidar. PAYCOMET solo puede enviarlos a vuestra cuenta hasta el {deadline}.",
-        "footnote": "Si ya habéis pedido la liquidación, falta completar la doble firma."
+        "footnote": "Si ya habéis pedido la liquidación, falta completar la firma."
       },
       "paid": {
         "subject": "{amount} del Fondo de actividades enviados a {organization}",
@@ -702,7 +724,7 @@
     "payout": {
       "executed": {
         "subject": "Liquidación hecha: {amount} de «{initiative}»",
-        "preheader": "Las dos firmas están y el dinero ya va de camino.",
+        "preheader": "Las firmas están y el dinero ya va de camino.",
         "title": "¡Liquidación hecha!",
         "bodyORGANIZATION": "PAYCOMET ha enviado {amount} de la hucha de «{initiative}» a la cuenta de la entidad. Ya podéis pagar al proveedor con su factura.",
         "bodyPROVIDER": "PAYCOMET ha enviado {amount} de la hucha de «{initiative}» directamente al proveedor que elegisteis.",
@@ -731,7 +753,7 @@
         "preheader": "{organization} ha llegado al 100 % gracias a ti y a las demás familias.",
         "title": "¡Lo hemos conseguido!",
         "body": "«{initiative}» de {organization} ha llegado a su meta gracias a {count, plural, one {una aportación: la tuya} other {# aportaciones, y una de ellas es la tuya}}. ¡Gracias!",
-        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas de {organization} firmen su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
+        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que {organization} firme su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
         "cta": "Compartir el logro"
       },
       "photos": {
@@ -760,7 +782,7 @@
         "wonPreheader": "La votación ha elegido un proyecto. Toca liquidar.",
         "wonTitle": "La votación ha elegido un proyecto",
         "wonBody": "En «{initiative}» ha ganado «{option}». La meta nueva es {amount}: lo que aportaron quienes votaron una opción de proyecto (a quien no votó o pidió su devolución se le ha devuelto).",
-        "wonNext": "La comisión de KORUM baja en la misma proporción. Para liquidar hacen falta, como siempre, la factura y las dos firmas.",
+        "wonNext": "La comisión de KORUM baja en la misma proporción. Para liquidar hacen falta, como siempre, la factura y las firmas de la entidad.",
         "newGoal": "Meta nueva",
         "settleCta": "Ir a Liquidaciones",
         "refundSubject": "La votación de «{initiative}» termina sin proyecto",
@@ -786,7 +808,7 @@
         "preheader": "Gracias a las familias de {organization} que han votado.",
         "title": "¡Sale adelante!",
         "body": "La votación de «{initiative}» ha elegido: «{option}». Se hará con lo que aportasteis quienes votasteis, incluida tu aportación.",
-        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas de {organization} firmen su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
+        "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que {organization} firme su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
         "cta": "Ver los logros"
       },
       "refunding": {
@@ -813,6 +835,30 @@
         "someone": "Una de las personas firmantes",
         "factNew": "Papeletas nuevas",
         "factReplaced": "Sustituyen a"
+      }
+    },
+    "org": {
+      "kybStatus": {
+        "verified": {
+          "subject": "{organization}: vuestros documentos están verificados",
+          "preheader": "Ya puedes publicar campañas.",
+          "title": "Documentos verificados",
+          "body": "KORUM ha revisado los documentos del titular de {organization} y están verificados. Ya podéis publicar campañas.",
+          "ley49": {
+            "VERIFIED": "También hemos verificado vuestro régimen de la Ley 49/2002: vuestras familias recibirán certificado fiscal de donación.",
+            "NOT_ACCREDITED": "El documento de la Ley 49/2002 no acredita el régimen: de momento las donaciones emiten justificante nominativo de aportación, no certificado fiscal. Podéis volver a enviarlo desde vuestros ajustes."
+          },
+          "cta": "Ir al panel"
+        },
+        "rejected": {
+          "subject": "{organization}: faltan o hay que corregir documentos",
+          "preheader": "Te contamos qué hay que cambiar.",
+          "title": "Hay que corregir unos documentos",
+          "body": "KORUM ha revisado los documentos del titular de {organization} y no puede verificarlos todavía.",
+          "note": "Qué hay que corregir: {note}",
+          "next": "Corregidlos en vuestros ajustes y volved a enviarlos a revisión. Si tenéis dudas, escribid a soporte desde el panel.",
+          "cta": "Corregir los documentos"
+        }
       }
     }
   },
@@ -972,9 +1018,9 @@
     "pages": {
       "colegios": {
         "title": "Recaudar fondos para colegios y AMPA/AFA",
-        "description": "Financia climatización, sombra o pizarras digitales con campañas todo o nada, doble firma y devolución del 100 % si no se llega a la meta.",
+        "description": "Financia climatización, sombra o pizarras digitales con campañas todo o nada, doble firma por defecto y devolución del 100 % si no se llega.",
         "h1": "Cómo financiar mejoras en tu colegio sin manejar efectivo",
-        "answer": "KORUM permite que un colegio o su AMPA/AFA proponga una mejora, la apruebe con doble firma y la financie con las aportaciones de las familias en una campaña «todo o nada»: si no se llega a la meta, se devuelve el 100 % a cada persona. Los primeros {exempt} de cada curso no pagan comisión.",
+        "answer": "KORUM permite que un colegio o su AMPA/AFA proponga una mejora, la apruebe con las firmas que decida la entidad (por defecto, doble firma) y la financie con las aportaciones de las familias en una campaña «todo o nada»: si no se llega a la meta, se devuelve el 100 % a cada persona. Los primeros {exempt} de cada curso no pagan comisión.",
         "sections": [
           {
             "title": "Qué puede hacer tu colegio",
@@ -990,7 +1036,7 @@
             "title": "Quién firma y quién cobra",
             "paragraphs": [
               "Un colegio público participa siempre a través de su AMPA/AFA, que es la entidad titular de los fondos. Los colegios concertados y privados se dan de alta a través de su titular.",
-              "Aprobar una idea y liberar fondos exige la firma de dos personas distintas: la dirección del centro y la presidencia del AMPA/AFA. El dinero se cobra con Paycomet, queda retenido hasta lograr la meta y se paga a la entidad o directamente a su proveedor con la factura delante."
+              "Por defecto, aprobar una idea y liberar fondos exige la firma de dos personas distintas: la dirección del centro y la presidencia del AMPA/AFA; la entidad puede decidir, bajo su responsabilidad, que firme solo la dirección. El dinero se cobra con Paycomet, queda retenido hasta lograr la meta y se paga a la entidad o directamente a su proveedor con la factura delante."
             ]
           },
           {
@@ -1025,7 +1071,7 @@
             "title": "Pensado para cómo funciona un club",
             "bullets": [
               "Equipos por categoría (Prebenjamín, Benjamín, Alevín, Infantil, Cadete, Juvenil, Sénior…) más la afición y los antiguos jugadores.",
-              "Doble firma entre la gestión principal del club y su tesorería o presidencia.",
+              "Por defecto, doble firma entre la gestión principal del club y su tesorería o presidencia.",
               "Campañas para equipaciones, material, desplazamientos o mejoras de las instalaciones.",
               "Modelo 182 en un clic si la entidad se acoge a la Ley 49/2002."
             ]
@@ -1079,7 +1125,7 @@
               "Financiar instrumentos, vestuario, escenografía, giras o reformas del local.",
               "Vender entradas con QR para conciertos y funciones, con el aforo controlado.",
               "Organizar a tu comunidad en grupos que configuras tú: alumnado o integrantes, familias, profesorado o monitores, socios y amigos, antiguos miembros.",
-              "Decidir con quórum y doble firma qué proyectos se hacen."
+              "Decidir con quórum y con la firma de la entidad (por defecto, doble) qué proyectos se hacen."
             ]
           },
           {
@@ -1146,9 +1192,9 @@
       },
       "comoFunciona": {
         "title": "Cómo funciona la plataforma",
-        "description": "De la idea a la mejora en 4 pasos: ideas con quórum, doble firma, aportaciones todo o nada con Paycomet y devolución del 100 % si no se llega.",
+        "description": "De la idea a la mejora en 4 pasos: ideas con quórum, firma de la entidad, aportaciones todo o nada con Paycomet y devolución del 100 % si no se llega.",
         "h1": "Cómo funciona KORUM, paso a paso",
-        "answer": "En KORUM una comunidad propone una mejora, la respalda con firmas, la aprueban dos personas de la entidad y las familias la financian con aportaciones «todo o nada»: el dinero se cobra con Paycomet y, si no se llega a la meta en plazo, se devuelve el 100 % a cada persona.",
+        "answer": "En KORUM una comunidad propone una mejora, la respalda con firmas, la aprueba la entidad con las firmas que decida (por defecto, doble firma) y las familias la financian con aportaciones «todo o nada»: el dinero se cobra con Paycomet y, si no se llega a la meta en plazo, se devuelve el 100 % a cada persona.",
         "sections": [
           {
             "title": "De la idea a la mejora",
@@ -1158,8 +1204,8 @@
                 "text": "Una familia propone una idea con un alias privado. Las demás la respaldan con su firma hasta alcanzar el quórum."
               },
               {
-                "title": "Doble firma de la entidad",
-                "text": "Dos personas distintas de la entidad aprueban la idea. La entidad elige libremente a su proveedor y la plataforma calcula la meta."
+                "title": "Firma de la entidad",
+                "text": "Por defecto, dos personas distintas de la entidad aprueban la idea (la entidad puede decidir que firme solo la dirección). La entidad elige libremente a su proveedor y la plataforma calcula la meta."
               },
               {
                 "title": "Las familias aportan en 10 segundos",
@@ -1187,7 +1233,7 @@
             "title": "Quién interviene",
             "bullets": [
               "Las familias y socios proponen, firman y aportan.",
-              "La entidad aprueba con doble firma, elige proveedor y recibe el dinero.",
+              "La entidad aprueba con las firmas que haya decidido (por defecto, doble firma), elige proveedor y recibe el dinero.",
               "Los comercios del barrio patrocinan y ganan visibilidad.",
               "Paycomet ejecuta los cobros, las retenciones y las devoluciones.",
               "KORUM pone la tecnología y no guarda el dinero."
@@ -1250,7 +1296,7 @@
           {
             "title": "Cómo se aprueban los gastos",
             "paragraphs": [
-              "Aprobar una idea y liberar fondos exige la firma de dos personas distintas de la entidad, ambas con verificación en dos pasos. El pago se hace con la factura del proveedor delante y queda registrado en un libro mayor que no se puede editar: los errores se corrigen con un contra-asiento."
+              "Por defecto, aprobar una idea y liberar fondos exige la firma de dos personas distintas de la entidad, ambas con verificación en dos pasos; la entidad puede elegir, bajo su responsabilidad, que firme solo la dirección (también con verificación en dos pasos). El pago se hace con la factura del proveedor delante y queda registrado en un libro mayor que no se puede editar: los errores se corrigen con un contra-asiento."
             ]
           },
           {
@@ -1275,7 +1321,7 @@
       },
       "faq": {
         "title": "Preguntas frecuentes",
-        "description": "Respuestas claras sobre dinero, devoluciones, doble firma, comisiones, rifas, certificados fiscales y datos personales en KORUM.",
+        "description": "Respuestas claras sobre dinero, devoluciones, firmas de la entidad, comisiones, rifas, certificados fiscales y datos personales en KORUM.",
         "h1": "Preguntas frecuentes sobre KORUM",
         "answer": "Aquí respondemos, en lenguaje llano, lo que más nos preguntan las entidades, las familias y los comercios.",
         "sections": [
@@ -1317,7 +1363,7 @@
               },
               {
                 "q": "¿Quién firma las decisiones de la entidad?",
-                "a": "Dos personas distintas: la gestión principal (dirección, presidencia del club…) y un cofirmante (presidencia del AMPA/AFA, tesorería del club…). Hacen falta las dos para aprobar una idea y para liberar fondos."
+                "a": "Por defecto, dos personas distintas: la gestión principal (dirección, presidencia del club…) y un cofirmante (presidencia del AMPA/AFA, tesorería del club…). Hacen falta las dos para aprobar una idea y para liberar fondos. La entidad puede decidir, bajo su responsabilidad, que firme solo la gestión principal."
               },
               {
                 "q": "¿Podemos hacer rifas?",
@@ -1554,7 +1600,7 @@
       "en": "Inglés"
     },
     "signers": {
-      "intro": "Para aprobar ideas y liberar fondos hacen falta dos firmas de dos personas distintas. Ninguna puede hacerlo sola.",
+      "intro": "Para aprobar ideas y liberar fondos hacen falta, de entrada, dos firmas de dos personas distintas. Más adelante, en Ajustes, la entidad puede elegir que firme solo Dirección.",
       "directorTitle": "Primera firma: tú",
       "directorIntro": "Gestionarás la entidad en KORUM. Entrarás con tu email y esta contraseña.",
       "cosignerTitle": "Segunda firma",
@@ -1640,7 +1686,7 @@
   "panel": {
     "headerSubtitle": "Panel de la entidad",
     "welcome": "Hola, {name}",
-    "intro": "Desde aquí gestionaréis las ideas, las campañas y los pagos, siempre con las dos firmas.",
+    "intro": "Desde aquí gestionaréis las ideas, las campañas y los pagos, siempre con las firmas que haya decidido la entidad.",
     "wallet": {
       "title": "Hucha de la entidad",
       "explain": "Es el identificador de vuestra hucha en KORUM. El dinero de cada campaña queda retenido en PAYCOMET hasta lograr la meta."
@@ -1648,8 +1694,8 @@
     "signers": {
       "title": "Doble firma ({ready} de {total} listas)",
       "role": {
-        "DIRECTOR": "Primera firma",
-        "COSIGNER": "Segunda firma"
+        "DIRECTOR": "Dirección",
+        "COSIGNER": "Cofirma"
       },
       "status": {
         "ACTIVE": "Lista para firmar (verificación en dos pasos activa)",
@@ -1660,9 +1706,10 @@
       "resendResult": {
         "SENT": "Invitación enviada de nuevo.",
         "NOT_NEEDED": "No hace falta: ya ha activado su cuenta, o se ha enviado hace muy poco.",
-        "FORBIDDEN": "Solo la primera firma puede reenviar la invitación.",
+        "FORBIDDEN": "Solo Dirección puede reenviar la invitación.",
         "ERROR": "No se ha podido enviar. Probad de nuevo en unos segundos."
-      }
+      },
+      "titleSingle": "Firma única ({ready} de 1 lista)"
     },
     "kyb": {
       "title": "Documentos del titular",
@@ -1679,7 +1726,7 @@
       "cardText": "Subid las fotos de cada mejora terminada y escribid el agradecimiento que verán las familias.",
       "cardLink": "Ir a logros",
       "title": "Logros de la entidad",
-      "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal en cuanto la liquidación de la campaña está hecha (con las dos firmas). Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
+      "intro": "Las fotos Antes y Después y el mensaje de agradecimiento aparecen en el apartado «Logros conseguidos» del portal en cuanto la liquidación de la campaña está hecha (con las firmas de la entidad). Reescribimos cada foto sin su ubicación ni los datos del móvil antes de publicarla.",
       "viewPublic": "Ver cómo lo ven las familias",
       "listLabel": "Iniciativas con logro",
       "empty": {
@@ -1819,7 +1866,7 @@
       "steps": {
         "moderation": "1. Moderación",
         "signatures": "2. Firmas",
-        "doubleCheck": "3. Doble firma",
+        "doubleCheck": "3. Firma de la entidad",
         "budget": "4. Presupuesto",
         "fundraising": "5. Recaudando",
         "achievement": "6. Logro"
@@ -1827,7 +1874,7 @@
       "stepTip": {
         "moderation": "Revisión inicial por parte de la entidad.",
         "signatures": "Recogida de firmas de la comunidad, con auditoría antifraude.",
-        "doubleCheck": "Validación conjunta de las dos personas firmantes.",
+        "doubleCheck": "La entidad aprueba con las firmas que haya decidido (por defecto, dos personas).",
         "budget": "Presupuesto del proveedor y meta de la campaña.",
         "fundraising": "Campaña abierta: el dinero queda retenido en PAYCOMET hasta lograr la meta.",
         "achievement": "Meta conseguida: liquidación y fotos de Antes y Después."
@@ -1843,13 +1890,14 @@
       },
       "empty": {
         "title": "Vuestra primera campaña empieza aquí",
-        "description": "Cuando las dos firmas y los documentos del titular estén listos, crearéis la primera campaña en el Estudio. Mientras tanto, esto es lo que falta.",
+        "description": "Cuando las firmas y los documentos del titular estén listos, crearéis la primera campaña en el Estudio. Mientras tanto, esto es lo que falta.",
         "stepsLabel": "Pasos hasta la primera campaña",
         "steps": {
           "signers": {
-            "title": "Las dos firmas",
-            "done": "Las dos personas firmantes están listas.",
-            "todo": "Falta que la otra persona firmante active su cuenta y la verificación en dos pasos."
+            "title": "Las personas firmantes",
+            "done": "Las personas firmantes están listas.",
+            "todo": "Falta que la otra persona firmante active su cuenta y la verificación en dos pasos.",
+            "todoSingle": "Falta activar tu verificación en dos pasos para poder firmar."
           },
           "documents": {
             "title": "Documentos del titular",
@@ -1956,8 +2004,8 @@
     },
     "approvals": {
       "metaTitle": "Aprobaciones",
-      "title": "Aprobaciones y doble firma",
-      "intro": "Revisad las propuestas de las familias y de los comercios amigos, conversad con las familias por su código anónimo y aprobad con doble firma las ideas que logran el quórum.",
+      "title": "Aprobaciones y firma",
+      "intro": "Revisad las propuestas de las familias y de los comercios amigos, conversad con las familias por su código anónimo y aprobad con las firmas de la entidad las ideas que logran el quórum.",
       "antifraud": "Cuentan hasta 2 cuentas familiares por dispositivo (padre y madre). La 3ª cuenta de un mismo dispositivo o una ráfaga de firmas desde la misma red quedan como sospechosas y no suman hasta que las reviséis.",
       "openTitle": "{count, plural, =0 {Ideas: nada pendiente} one {# idea en marcha} other {# ideas en marcha}}",
       "closedTitle": "{count, plural, one {Última idea cerrada} other {Últimas # ideas cerradas}}",
@@ -1969,13 +2017,13 @@
       "phases": {
         "PHASE0_MOD": "🛡️ Revisión inicial",
         "PUBLIC_VOTING": "🗳️ Recogiendo firmas",
-        "DOUBLE_CHECK": "✅ Quórum logrado · doble firma",
+        "DOUBLE_CHECK": "✅ Quórum logrado · pendiente de firma",
         "CONVERTED": "🚀 Convertida en iniciativa",
         "REJECTED": "❌ Desestimada"
       },
       "meta": "{category} · {votes} de {needed} firmas verificadas · propuesta el {date}.",
       "daysLeft": "{count, plural, =0 {Las firmas cierran hoy.} one {Queda # día de firmas.} other {Quedan # días de firmas.}}",
-      "signDaysLeft": "{count, plural, =0 {La doble firma vence hoy.} one {Queda # día para la doble firma.} other {Quedan # días para la doble firma.}}",
+      "signDaysLeft": "{count, plural, =0 {La firma vence hoy.} one {Queda # día para firmar.} other {Quedan # días para firmar.}}",
       "progressLabel": "Avance hacia el quórum",
       "edit": {
         "legend": "Revisad el texto antes de publicarlo",
@@ -1984,7 +2032,7 @@
         "description": "Descripción",
         "hint": "Título de 8 a 90 caracteres y descripción de 20 a 600. Puedes corregir erratas o aclarar la propuesta: la familia recibirá un aviso. El plazo de firmas empieza el día que la apruebas."
       },
-      "converted": "Doble firma completa: ya es una iniciativa en presupuestación (hucha {wallet}).",
+      "converted": "Firma completa: ya es una iniciativa en presupuestación (hucha {wallet}).",
       "convertedLink": "Editar en el Estudio",
       "actions": {
         "approve": "Aprobar y abrir a firmas",
@@ -1997,7 +2045,7 @@
       },
       "notices": {
         "approved": "Idea publicada: ya se pueden recoger firmas en el buzón.",
-        "approvedQuorum": "Idea publicada y con quórum: ya espera la doble firma.",
+        "approvedQuorum": "Idea publicada y con quórum: ya espera la firma.",
         "rejected": "Idea desestimada. El motivo está en su chat y la familia recibirá un aviso."
       },
       "errors": {
@@ -2028,11 +2076,11 @@
         "ALREADY_INVITED": "Ya le enviasteis la invitación a renovar de este año: solo se envía una vez."
       },
       "doubleCheck": {
-        "label": "Doble firma de la idea",
-        "progress": "Doble firma: {signed} de 2",
+        "label": "Firma de la idea",
+        "progress": "{total, plural, =1 {Firma única: {signed} de 1} other {Doble firma: {signed} de {total}}}",
         "roles": {
-          "DIRECTOR": "Primera firma",
-          "COSIGNER": "Segunda firma"
+          "DIRECTOR": "Dirección",
+          "COSIGNER": "Cofirma"
         },
         "signedBy": "Firmado por {name} el {date}",
         "pending": "Pendiente de firma",
@@ -2042,7 +2090,7 @@
         "resend": "No me ha llegado: enviar otro enlace",
         "notYours": "Tu firma ya consta o le toca a la otra persona firmante. Recibirá el enlace por email.",
         "revalidated": "{count, plural, one {Incluye # firma que la entidad validó a mano (era sospechosa).} other {Incluye # firmas que la entidad validó a mano (eran sospechosas).}}",
-        "readOnly": "Solo las dos personas firmantes de la entidad pueden firmar."
+        "readOnly": "Solo las personas firmantes de la entidad pueden firmar."
       },
       "audit": {
         "summary": "Auditoría de firmas ({total})",
@@ -2055,7 +2103,7 @@
         "statusRevalidated": "🟢 Validada por la entidad",
         "revalidate": "Dar por buena",
         "revalidated": "Firma validada: ya cuenta para el quórum.",
-        "revalidatedQuorum": "Firma validada: la idea ha alcanzado el quórum y espera la doble firma.",
+        "revalidatedQuorum": "Firma validada: la idea ha alcanzado el quórum y espera la firma.",
         "truncated": "{shown, plural, one {Se muestra # firma} other {Se muestran # firmas}}: primero las sospechosas, después las más recientes."
       },
       "chat": {
@@ -2073,7 +2121,7 @@
       "metaShort": "{category} · propuesta el {date}."
     },
     "sign": {
-      "title": "Doble firma",
+      "title": "Firma",
       "needsLogin": "Para firmar, entra con tu cuenta de la entidad. Guardamos el enlace en esta pestaña: al volver, seguirás aquí.",
       "needsSecondFactor": "Para firmar necesitas superar la verificación en dos pasos en esta sesión.",
       "loginCta": "Entrar para firmar",
@@ -2085,20 +2133,20 @@
         "cta": "Ir a Aprobaciones"
       },
       "done": {
-        "completeTitle": "¡Doble firma completa! 2 de 2",
+        "completeTitle": "¡Firma completa!",
         "partialTitle": "Tu firma está registrada: 1 de 2",
         "completeIdea": "La idea ya es una iniciativa en presupuestación. El siguiente paso es preparar su presupuesto.",
-        "completePayout": "Las dos firmas de la liquidación están registradas.",
+        "completePayout": "Las firmas que exige la entidad para la liquidación están registradas.",
         "partialNotified": "Hemos enviado el enlace a la otra persona firmante para completar la doble firma.",
         "partialWaiting": "Falta la firma de la otra persona. Cuando tenga activada la verificación en dos pasos, podrá pedir su enlace desde Aprobaciones.",
         "cta": "Volver a Aprobaciones",
         "celebrate": "¡Una idea de las familias empieza a hacerse realidad!",
         "ctaFund": "Volver al Fondo de actividades",
         "fund": {
-          "executed": "Las dos firmas están registradas y el dinero ya va de camino a la cuenta de la entidad. Tenéis el justificante en el Fondo de actividades.",
-          "pending": "Las dos firmas están registradas. El envío a la cuenta de la entidad aún no ha terminado: lo reintentamos y veréis cómo va en el Fondo de actividades.",
+          "executed": "Las firmas necesarias están registradas y el dinero ya va de camino a la cuenta de la entidad. Tenéis el justificante en el Fondo de actividades.",
+          "pending": "Las firmas necesarias están registradas. El envío a la cuenta de la entidad aún no ha terminado: lo reintentamos y veréis cómo va en el Fondo de actividades.",
           "changed": "El Fondo ha cambiado desde que se pidió la liquidación (un comercio ha anulado su pago). La hemos anulado: pedidla de nuevo con lo que hay ahora.",
-          "blocked": "Las dos firmas están registradas, pero aún no podemos enviar el dinero: faltan los documentos del titular verificados o la cuenta destino. Revisadlo en Ajustes.",
+          "blocked": "Las firmas necesarias están registradas, pero aún no podemos enviar el dinero: faltan los documentos del titular verificados o la cuenta destino. Revisadlo en Ajustes.",
           "changedTitle": "La liquidación se ha anulado",
           "blockedTitle": "Firmada, pero aún no se puede enviar",
           "expiredTitle": "La liquidación se ha anulado",
@@ -2109,14 +2157,14 @@
         "payout": {
           "celebrate": "¡Logro conseguido! El dinero ya va de camino.",
           "photosCta": "Subir las fotos del Antes y el Después",
-          "executed": "Las dos firmas están registradas y PAYCOMET ya ha enviado el dinero. El último paso: subid las fotos y el agradecimiento para las familias.",
-          "pending": "Las dos firmas están registradas. El envío aún no ha terminado: lo reintentamos solos y veréis cómo va en Liquidaciones.",
+          "executed": "Las firmas necesarias están registradas y PAYCOMET ya ha enviado el dinero. El último paso: subid las fotos y el agradecimiento para las familias.",
+          "pending": "Las firmas necesarias están registradas. El envío aún no ha terminado: lo reintentamos solos y veréis cómo va en Liquidaciones.",
           "changedTitle": "Las cifras han cambiado",
           "changed": "Lo recaudado ha cambiado desde que se pidió la liquidación (un contracargo). Pedidla de nuevo en Liquidaciones: se volverá a firmar.",
           "blockedTitle": "Firmada, pero aún no se puede enviar",
-          "blocked": "Las dos firmas están registradas, pero faltan los documentos del titular verificados o la cuenta en PAYCOMET. Se enviará en cuanto estén.",
+          "blocked": "Las firmas necesarias están registradas, pero faltan los documentos del titular verificados o la cuenta en PAYCOMET. Se enviará en cuanto estén.",
           "notReadyTitle": "Firmada, pero la campaña aún no se puede liquidar",
-          "notReady": "Las dos firmas están registradas, pero falta algo antes de liquidar (el sorteo de la rifa o decidir sobre un comercio). Lo veréis en Liquidaciones.",
+          "notReady": "Las firmas necesarias están registradas, pero falta algo antes de liquidar (el sorteo de la rifa o decidir sobre un comercio). Lo veréis en Liquidaciones.",
           "invoiceTitle": "Falta una factura válida",
           "invoice": "La factura adjunta ya no es válida. Subid otra en Liquidaciones y volved a pedir la liquidación.",
           "providerTitle": "El pago al proveedor aún no está disponible",
@@ -2128,7 +2176,7 @@
       "what": "Lo que vas a firmar",
       "ideaMeta": "{alias} · {category} · {votes} firmas verificadas",
       "ideaRevalidated": "{count, plural, one {Incluye # firma que la entidad validó a mano (era sospechosa).} other {Incluye # firmas que la entidad validó a mano (eran sospechosas).}}",
-      "ideaEffect": "Al completar las dos firmas, la idea pasa a presupuestación como iniciativa de la entidad.",
+      "ideaEffect": "Al completar las firmas que exige la entidad, la idea pasa a presupuestación como iniciativa de la entidad.",
       "payoutMeta": "Hucha {wallet} · {amount} · destino: {destination}",
       "destinations": {
         "ORGANIZATION": "cuenta de la entidad",
@@ -2163,12 +2211,12 @@
       "retry": "Volver a comprobar el enlace",
       "fundMeta": "{amount} · {count, plural, one {de # comercio} other {de # comercios}}",
       "fundPurpose": "Para qué se usará (lo escribió la entidad):",
-      "fundEffect": "Con las dos firmas, el dinero se envía a la cuenta de la entidad. No se puede deshacer.",
+      "fundEffect": "Con las firmas que exige la entidad, el dinero se envía a la cuenta de la entidad. No se puede deshacer.",
       "fundTitle": "Liquidación {reference} del Fondo de actividades",
       "payoutBeneficiary": "Para: {name}",
       "payoutBeneficiaryIban": "Para: {name} · IBAN con código de entidad {bank}, acabado en {last4}",
       "payoutInvoice": "Ver la factura del proveedor",
-      "payoutEffect": "Con las dos firmas, el dinero sale de la hucha de la iniciativa hacia este destino. No se puede deshacer.",
+      "payoutEffect": "Con las firmas que exige la entidad, el dinero sale de la hucha de la iniciativa hacia este destino. No se puede deshacer.",
       "payoutRequestedBy": "Pedida o cambiada por última vez por {name} el {date}. Si no esperabas este destino, no firmes."
     },
     "sponsors": {
@@ -2218,7 +2266,7 @@
         "cancel": "Cancelar",
         "tooShort": "Escribid el motivo: al menos {min} caracteres."
       },
-      "readOnly": "Solo las dos personas firmantes de la entidad pueden aprobar o no admitir comercios.",
+      "readOnly": "Solo las personas firmantes de la entidad pueden aprobar o no admitir comercios.",
       "notices": {
         "approved": "{name} ya es comercio amigo: sale en vuestra página durante 12 meses y le hemos enviado su bienvenida.",
         "approvedMatching": "{name} ya es comercio amigo y su bolsa Matching 2x está activa: cada donación se duplica hasta agotarla.",
@@ -2264,7 +2312,7 @@
         "saving": "Guardando…",
         "saved": "Regla guardada: «{rule}».",
         "savedPlaced": "{count, plural, one {Regla guardada. Hemos llevado a una campaña el dinero de # comercio que esperaba en su bolsa.} other {Regla guardada. Hemos llevado a campañas el dinero de # comercios que esperaban en su bolsa.}}",
-        "readOnly": "Solo las dos personas firmantes de la entidad pueden cambiar la regla."
+        "readOnly": "Solo las personas firmantes de la entidad pueden cambiar la regla."
       },
       "detail": {
         "summary": "Ficha / Renovar",
@@ -2307,7 +2355,7 @@
       "readOnly": "Solo lectura: estos ajustes los cambian las personas que firman por la entidad.",
       "kyb": {
         "title": "Documentos del titular",
-        "intro": "Sirven para comprobar quién recibe el dinero antes de cobrar la primera campaña. Se guardan en privado: solo los veis las dos personas firmantes y el equipo de verificación.",
+        "intro": "Sirven para comprobar quién recibe el dinero antes de cobrar la primera campaña. Se guardan en privado: solo los veis las personas firmantes y el equipo de verificación.",
         "status": {
           "PENDING": "Aún no los habéis enviado. Podéis preparar campañas mientras tanto, pero no cobrar.",
           "SUBMITTED": "Enviados el {date}. Están en revisión y os avisaremos por email.",
@@ -2420,8 +2468,8 @@
         },
         "ideas": {
           "legend": "Buzón de ideas",
-          "minVotes": "Firmas mínimas para que una idea llegue a la doble firma",
-          "minVotesHint": "Entre {min} y {max}. Si lo bajáis, las ideas que ya lo alcanzan pasan a la doble firma al guardar.",
+          "minVotes": "Firmas mínimas para que una idea llegue a la firma de la entidad",
+          "minVotesHint": "Entre {min} y {max}. Si lo bajáis, las ideas que ya lo alcanzan pasan a la firma de la entidad al guardar.",
           "maxIdeaDays": "Días para recoger firmas",
           "maxIdeaDaysHint": "Entre {min} y {max}. Vale para las ideas que aprobéis desde ahora."
         },
@@ -2437,7 +2485,7 @@
         "contact": {
           "legend": "Contacto",
           "phone": "Teléfono de la entidad",
-          "phoneHint": "El de la entidad (secretaría, sede…), no el móvil de una persona. Lo veis las dos personas firmantes y se propone como contacto en el Modelo 182. Opcional."
+          "phoneHint": "El de la entidad (secretaría, sede…), no el móvil de una persona. Lo veis las personas firmantes y se propone como contacto en el Modelo 182. Opcional."
         },
         "portal": {
           "legend": "Portal público",
@@ -2454,7 +2502,7 @@
         "save": "Guardar los ajustes",
         "saving": "Guardando…",
         "saved": "Ajustes guardados.",
-        "savedQuorum": "Ajustes guardados: {count, plural, one {# idea pasa} other {# ideas pasan}} a la doble firma al alcanzar el nuevo mínimo de firmas.",
+        "savedQuorum": "Ajustes guardados: {count, plural, one {# idea pasa} other {# ideas pasan}} a la firma de la entidad al alcanzar el nuevo mínimo de firmas.",
         "errors": {
           "donationPresetsEuros": "Tres importes de {min} a {max} €, en euros enteros y de menor a mayor, sin repetir.",
           "defaultDonationIdx": "Elegid qué botón aparece preseleccionado.",
@@ -2469,7 +2517,7 @@
       },
       "team": {
         "title": "Equipo que firma",
-        "intro": "Las dos personas que firman juntas para aprobar ideas y liberar dinero. Si una deja su cargo, propone aquí quién la sustituye: nadie puede quitar a la otra firma sin su visto bueno.",
+        "intro": "Las personas que firman para aprobar ideas y liberar dinero. Cada entidad elige si hacen falta dos firmas (Dirección y Cofirma) o una sola (Dirección) y cambia a sus firmantes por sí misma: KORUM no interviene y cada cambio queda registrado.",
         "seatsLabel": "Puestos que firman",
         "seat": {
           "DIRECTOR": "Dirección",
@@ -2480,16 +2528,16 @@
         "ready": "Puede firmar (verificación en dos pasos activada).",
         "needsTwoFactor": "Aún no puede firmar: le falta activar la verificación en dos pasos.",
         "pending": "Invitación enviada a {email}, aún sin aceptar.",
-        "pendingExpired": "La invitación a {email} ha caducado sin aceptarse. Reenviadla o corregidla.",
+        "pendingExpired": "La invitación a {email} ha caducado sin aceptarse. Reenvíala o corrígela.",
         "correctTitle": "Corregir la invitación de la cofirma",
         "proposeTitle": "Proponer un relevo",
-        "rule": "Puedes ceder tu puesto (la invitación sale al momento) o proponer quién sustituye a la otra persona: en ese caso le pediremos su visto bueno. Hasta que quien entra acepta, firmáis las mismas dos personas. Lo confirmas con el código de tu app de verificación.",
+        "rule": "Puedes ceder tu puesto o proponer quién sustituye a la otra persona (por ejemplo, si la Dirección ya no está, la Cofirma propone a su sustituto). La invitación sale al momento y la otra persona recibe un aviso: no necesita su visto bueno. El cambio se hace cuando quien entra acepta. Lo confirmas con el código de tu app de verificación.",
         "form": {
           "seatLegend": "¿Qué puesto se releva?",
           "seatMine": "Mi puesto ({seat})",
           "seatOther": "{seat}: {name}",
           "selfHint": "Invitaremos a esta persona a ocupar tu puesto. Cuando acepte, firmará en tu lugar y tú dejarás de firmar por la entidad. Lo confirmas con el código de tu app de verificación.",
-          "otherHint": "Pediremos a la otra persona su visto bueno. Solo si lo da, invitaremos a quien propones.",
+          "otherHint": "Invitaremos a esta persona a ocupar el puesto de la otra. La otra persona recibirá un aviso por email y, cuando quien entra acepte, dejará de firmar. El cambio queda registrado.",
           "correctHint": "Si había una invitación, dejará de valer y enviaremos una nueva a este email. Lo confirmas con el código de tu app de verificación.",
           "name": "Nombre y apellidos de quien entra",
           "email": "Su email",
@@ -2497,10 +2545,10 @@
           "roleLabelHint": "Por ejemplo: Presidencia del AMPA, Tesorería del club. Sin enlaces ni direcciones.",
           "sending": "Enviando…",
           "submitSelf": "Invitar a quien me sustituye",
-          "submitOther": "Pedir su visto bueno",
+          "submitOther": "Invitar a quien la sustituye",
           "submitCorrect": "Enviar la invitación corregida",
           "savedSelf": "Invitación enviada. Seguirás firmando hasta que la persona nueva acepte.",
-          "savedOther": "Propuesta enviada. Avisaremos a la otra persona para que dé su visto bueno.",
+          "savedOther": "Invitación enviada. La otra persona ha recibido un aviso; el cambio se hará cuando la persona nueva acepte.",
           "savedCorrected": "Invitación corregida: la anterior ya no vale y hemos enviado la nueva.",
           "errors": {
             "form": "Revisa los campos marcados.",
@@ -2510,49 +2558,46 @@
             "REAUTH_REQUIRED": "Para hacer este cambio, confirma el código de tu app de verificación.",
             "ALREADY_OPEN": "Ya hay un relevo en curso. Termínalo o retíralo antes de proponer otro.",
             "SEAT_EMPTY": "Ese puesto está vacío: invita a la cofirma desde «Invitar a la cofirma».",
-            "SEAT_TAKEN": "La cofirma ya ha aceptado: para cambiarla hace falta un relevo con su visto bueno.",
+            "SEAT_TAKEN": "La cofirma ya ha aceptado: para cambiarla propón un relevo de su puesto.",
             "SAME_INBOX": "Ese email es de una persona que ya firma por la entidad. Las dos firmas deben ser personas distintas.",
             "DISPOSABLE_EMAIL": "Ese email es temporal. Usa una dirección permanente.",
             "UNAVAILABLE": "Ese email no puede recibir un cargo en una entidad. Usa otro.",
             "RATE_LIMITED": "Hemos enviado demasiados emails a esa dirección. Prueba dentro de un rato.",
             "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
             "generic": "No hemos podido guardarlo. Prueba de nuevo en unos segundos.",
-            "INVITEE_BUSY": "Esa persona ya tiene otra invitación pendiente en vuestra entidad. Espera a que la acepte o retírala antes."
+            "INVITEE_BUSY": "Esa persona ya tiene otra invitación pendiente en la entidad. Espera a que la acepte o retírala antes.",
+            "SINGLE_MODE": "La entidad firma con una sola firma. Para invitar a una cofirma, vuelve antes a doble firma."
           }
         },
         "handover": {
-          "titleAwaiting": "Relevo pendiente de visto bueno",
           "titleInvited": "Relevo en curso",
-          "askMe": "Se propone que {name} ({email}) ocupe tu puesto ({seat}) como «{role}». Si estás de acuerdo, le enviaremos la invitación; cuando la acepte, dejarás de firmar por la entidad. Tienes hasta el {date}.",
-          "waitingOther": "Has propuesto que {name} ({email}) ocupe el puesto de {seat} como «{role}». Esperamos el visto bueno de la persona que sale hasta el {date}.",
           "invitedSelf": "Invitación enviada a {name} ({email}) para ocupar el puesto de {seat} como «{role}». Quien sale sigue firmando hasta que la acepte (antes del {date}).",
-          "invitedOther": "La persona que sale ha dado su visto bueno. Invitación enviada a {name} ({email}) para el puesto de {seat} como «{role}», válida hasta el {date}.",
-          "expiredConsent": "La propuesta para que {name} ocupe el puesto de {seat} ha caducado sin visto bueno. Si la persona que sale ya no está, escribid a soporte. Retiradla para proponer otra.",
+          "invitedOther": "Has invitado a {name} ({email}) a ocupar el puesto de {seat} como «{role}». Su invitación vale hasta el {date}. Quien sale ha recibido un aviso; el cambio será inmediato cuando acepte.",
           "expiredInvitation": "La invitación a {name} ({email}) para el puesto de {seat} ha caducado sin aceptarse. Retírala y, si hace falta, propón el relevo de nuevo.",
-          "consentHint": "Dar el visto bueno se confirma con el código de tu app de verificación.",
           "actions": {
-            "consent": "Dar mi visto bueno",
-            "decline": "No estoy de acuerdo",
             "resend": "Reenviar la invitación",
             "cancel": "Retirar el relevo"
           },
           "done": {
-            "consent": "Visto bueno dado: hemos enviado la invitación a la persona nueva.",
-            "decline": "Has rechazado el relevo. Avisaremos a quien lo propuso.",
             "resend": "Invitación reenviada: la anterior ya no vale.",
             "cancel": "Relevo retirado: todo sigue como estaba."
           },
           "errors": {
-            "REAUTH_REQUIRED": "Para dar tu visto bueno, confirma el código de tu app de verificación.",
             "NOT_FOUND": "Este relevo ya no está abierto. Recarga la página.",
             "SAME_INBOX": "La persona propuesta ya firma por la entidad. Retira el relevo.",
             "UNAVAILABLE": "La persona propuesta ya no puede recibir el cargo. Retira el relevo.",
             "RATE_LIMITED": "Hemos enviado demasiados emails a esa dirección. Prueba dentro de un rato.",
             "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
             "generic": "No hemos podido hacerlo. Prueba de nuevo en unos segundos.",
-            "INVITEE_BUSY": "La persona propuesta ya tiene otra invitación pendiente en vuestra entidad. Retira el relevo o espera a que la acepte."
+            "INVITEE_BUSY": "La persona propuesta ya tiene otra invitación pendiente en la entidad. Retira el relevo o espera a que la acepte."
           },
-          "invitedMine": "Invitación enviada a {name} ({email}) para ocupar tu puesto ({seat}) como «{role}». Seguirás firmando hasta que la acepte (antes del {date})."
+          "invitedMine": "Invitación enviada a {name} ({email}) para ocupar tu puesto ({seat}) como «{role}». Seguirás firmando hasta que la acepte (antes del {date}).",
+          "invitedReplacingMe": "La otra persona que firma ha invitado a {name} ({email}) a ocupar tu puesto ({seat}) como «{role}». Seguirás firmando hasta que acepte (antes del {date}); entonces el cambio será inmediato.",
+          "busy": {
+            "resend": "Reenviando…",
+            "cancel": "Retirando…"
+          },
+          "expiredInvitationOther": "La invitación a {name} ({email}) para el puesto de {seat} ha caducado sin aceptarse. Quien la propuso puede retirarla; después la entidad podrá proponer el relevo de nuevo."
         },
         "roleLabel": {
           "open": "Cambiar mi cargo",
@@ -2567,7 +2612,50 @@
         },
         "needsTwoFactorMine": "Aún no puedes firmar: activa la verificación en dos pasos.",
         "inviteTitle": "Invitar a la cofirma",
-        "cosignerEmpty": "Sin cofirma: hasta que alguien acepte este puesto no se pueden aprobar ideas ni liberar fondos."
+        "cosignerEmpty": "Sin cofirma: hasta que alguien acepte este puesto no se pueden aprobar ideas ni liberar fondos.",
+        "mode": {
+          "title": "Cuántas firmas exige la entidad",
+          "current": {
+            "DOUBLE": "Doble firma: aprobar ideas y liberar dinero exige a Dirección y a Cofirma, dos personas distintas.",
+            "SINGLE": "Firma única: aprobar ideas y liberar dinero exige solo la firma de Dirección."
+          },
+          "help": {
+            "DOUBLE": "Es lo más seguro: ninguna persona puede mover dinero sola.",
+            "SINGLE": "Lo decide la propia entidad y es responsabilidad suya. KORUM no controla quién firma ni revisa los cambios; todo queda registrado y la entidad no puede borrarlo."
+          },
+          "change": {
+            "SINGLE": {
+              "open": "Pasar a firma única",
+              "intro": "Al pasar a firma única, el puesto de Cofirma desaparece al momento: esa persona deja de firmar y de entrar al panel (su cuenta no se borra) y recibe un aviso. A partir de ahora aprobar ideas y liberar dinero lo hace solo Dirección.",
+              "confirm": "Entiendo que la entidad asume la responsabilidad de que una sola persona apruebe y libere dinero, que nadie más lo revisará y que el cambio es inmediato.",
+              "submit": "Pasar a firma única",
+              "effects": {
+                "noReview": "Nadie más comprobará lo que firmes: KORUM no revisa los cambios y cualquier aprobación o pago dependerá solo de Dirección.",
+                "gate": "Se anulan los PIN y las sesiones de portería de todos los eventos, no solo los de la Cofirma: crea PIN nuevos si hay alguna puerta en marcha.",
+                "pending": "Lo que ya lleve tu firma y esté esperando a la Cofirma (ideas y liquidaciones) quedará aprobado sin otra firma: las ideas, al momento; las liquidaciones, al reintentarlas o con la revisión automática de mañana a primera hora."
+              }
+            },
+            "DOUBLE": {
+              "open": "Volver a doble firma",
+              "intro": "Al volver a doble firma, el puesto de Cofirma queda vacío hasta que invites a la persona. Mientras tanto no se podrá aprobar nada: faltará su firma.",
+              "confirm": "Entiendo que, hasta que la cofirma acepte, no se aprobarán ideas ni se liberará dinero.",
+              "submit": "Volver a doble firma"
+            }
+          },
+          "done": {
+            "SINGLE": "La entidad firma ahora con una sola firma (Dirección).",
+            "DOUBLE": "La entidad vuelve a doble firma. Invita a la cofirma para poder aprobar."
+          },
+          "saving": "Guardando…",
+          "cancel": "Cancelar",
+          "onlyDirector": "Solo Dirección puede cambiar esto.",
+          "errors": {
+            "REAUTH_REQUIRED": "Para hacer este cambio, confirma el código de tu app de verificación.",
+            "ALREADY_IN_MODE": "La entidad ya firma así: hemos actualizado la pantalla.",
+            "FORBIDDEN": "Para hacer este cambio tienes que haber entrado con tu código de verificación. Cierra la sesión, vuelve a entrar con él y prueba de nuevo.",
+            "generic": "No hemos podido guardarlo. Prueba de nuevo en unos segundos."
+          }
+        }
       },
       "groups": {
         "title": "Grupos de participación",
@@ -2660,7 +2748,7 @@
     "fund": {
       "metaTitle": "Fondo de actividades",
       "title": "Fondo de actividades",
-      "intro": "Aquí llega el dinero de los comercios amigos que habéis admitido cuando no se ha podido llevar a ninguna campaña antes de que venciera su plazo. No se devuelve al comercio: es para las actividades de la entidad. Para recibirlo en vuestra cuenta, una persona lo pide indicando para qué se usará y las dos firmáis.",
+      "intro": "Aquí llega el dinero de los comercios amigos que habéis admitido cuando no se ha podido llevar a ninguna campaña antes de que venciera su plazo. No se devuelve al comercio: es para las actividades de la entidad. Para recibirlo en vuestra cuenta, una persona lo pide indicando para qué se usará y se firma con las firmas que exige la entidad.",
       "summary": {
         "title": "Disponible para liquidar",
         "deadline": "Liquidadlo antes del {date}: después PAYCOMET ya no podría enviarlo.",
@@ -2668,7 +2756,7 @@
         "stuck": "{amount} ya no se pueden enviar porque ha pasado el plazo de PAYCOMET. El equipo de KORUM lo revisa con PAYCOMET y os escribirá.",
         "notPayable": "Para recibir el Fondo necesitáis los documentos del titular verificados y la cuenta destino.",
         "notPayableCta": "Ir a los documentos",
-        "inPayout": "En liquidación, esperando la doble firma: {amount}"
+        "inPayout": "En liquidación: {amount}"
       },
       "empty": {
         "title": "Vuestro Fondo está vacío",
@@ -2687,18 +2775,18 @@
       },
       "request": {
         "title": "Pedir la liquidación a vuestra cuenta",
-        "lead": "Hoy podéis liquidar <amount></amount>. Contad para qué lo usará la entidad: lo firmaréis las dos personas y saldrá en el justificante.",
+        "lead": "Hoy podéis liquidar <amount></amount>. Contad para qué lo usará la entidad: lo firmará la entidad y saldrá en el justificante.",
         "purposeLabel": "Para qué se usará el dinero",
         "purposeHelp": "Por ejemplo: «Material para las colonias de primavera y la fiesta de fin de curso». Entre {min} y {max} caracteres, sin enlaces. No escribáis nombres de alumnos ni otros datos personales: el texto sale en el justificante y no se puede cambiar.",
         "purposeLength": "Escribid entre {min} y {max} caracteres, sin enlaces.",
-        "effect": "Al pedirla te enviamos por email tu enlace de firma y tu código. Cuando firméis las dos personas, el dinero se envía a la cuenta de la entidad.",
+        "effect": "Al pedirla te enviamos por email tu enlace de firma y tu código. Cuando se completen las firmas de la entidad, el dinero se envía a la cuenta de la entidad.",
         "submit": "Pedir la liquidación y mi enlace de firma",
         "sending": "Pidiendo…",
         "requested": "Liquidación pedida. Te hemos enviado tu enlace de firma y tu código; valen hasta el {date}.",
         "requestedNoLink": "Liquidación pedida. Pide tu enlace de firma desde la propia liquidación."
       },
       "pending": {
-        "title": "Liquidación {reference} · esperando la doble firma",
+        "title": "Liquidación {reference} · esperando la firma",
         "purpose": "La pidió {name} el {date}. Para qué se usará:",
         "someone": "una persona firmante",
         "splits": "{count, plural, one {De qué comercio sale (# comercio)} other {De qué comercios sale (# comercios)}}",
@@ -2709,13 +2797,15 @@
         "cancelConfirm": "Al retirarla, los enlaces de firma dejan de valer y el dinero vuelve a estar disponible para pedirla de nuevo (por ejemplo, con otro uso).",
         "cancelYes": "Sí, retirarla",
         "cancelNo": "No, mantenerla",
-        "cancelled": "Liquidación retirada. Podéis pedirla de nuevo cuando queráis."
+        "cancelled": "Liquidación retirada. Podéis pedirla de nuevo cuando queráis.",
+        "allSigned": "Ya están las firmas que exige la entidad: falta enviar el dinero.",
+        "titleSigned": "Liquidación {reference} · firmada, falta enviarla"
       },
       "history": {
         "title": "Liquidaciones",
         "none": "Aún no habéis liquidado el Fondo.",
         "status": {
-          "PENDING_DOUBLE_CHECK": "Esperando la doble firma",
+          "PENDING_DOUBLE_CHECK": "Esperando la firma",
           "APPROVED": "Firmada · enviando",
           "PROCESSING": "Firmada · enviando",
           "EXECUTED": "Enviada a vuestra cuenta",
@@ -2734,13 +2824,15 @@
         "retry": "Reintentar el envío ahora",
         "retrying": "Reintentando…",
         "retryDone": "Listo: el dinero ya va de camino a vuestra cuenta.",
-        "retryPending": "Aún no ha terminado. Lo seguimos intentando cada día; si no se resuelve, el equipo de KORUM os escribirá."
+        "retryPending": "Aún no ha terminado. Lo seguimos intentando cada día; si no se resuelve, el equipo de KORUM os escribirá.",
+        "send": "Enviar el dinero ahora",
+        "sending": "Enviando…"
       },
       "errors": {
         "INVALID_INPUT": "Escribid para qué se usará el dinero: entre 10 y 500 caracteres, sin enlaces.",
         "NOT_FOUND": "No encontramos esta liquidación en vuestra entidad. Recargad la página.",
         "NOTHING_TO_PAY": "Ahora no hay nada que se pueda liquidar del Fondo.",
-        "PAYOUT_PENDING": "Ya hay una liquidación esperando la doble firma: firmadla o retiradla antes de pedir otra.",
+        "PAYOUT_PENDING": "Ya hay una liquidación esperando la firma: firmadla o retiradla antes de pedir otra.",
         "KYB_NOT_VERIFIED": "Para liquidar el Fondo necesitáis los documentos del titular verificados.",
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene cuenta destino en PAYCOMET.",
         "WRONG_STATUS": "Esta liquidación ya ha cambiado: otra persona la ha firmado o retirado. Recargad la página.",
@@ -2760,12 +2852,12 @@
       },
       "receipt": {
         "title": "Justificante de liquidación del Fondo de actividades",
-        "intro": "KORUM deja constancia de que {entity} ({legalName}) ha liquidado a su cuenta el dinero de su Fondo de actividades que se detalla, con la doble firma de sus dos responsables.",
+        "intro": "KORUM deja constancia de que {entity} ({legalName}) ha liquidado a su cuenta el dinero de su Fondo de actividades que se detalla, con las firmas que exige la entidad.",
         "sections": {
           "payout": "Liquidación",
           "purpose": "Para qué se usará (destino firmado por la entidad)",
           "origin": "De dónde procede el dinero",
-          "signatures": "Doble firma",
+          "signatures": "Firmas",
           "notes": "Notas"
         },
         "reference": "Referencia",
@@ -2989,6 +3081,7 @@
         "publish": "Guardar y publicar en KORUM",
         "publishing": "Publicando…",
         "publishHint": "El botón se activa cuando no falte nada de la lista.",
+        "syncing": "Abriendo el borrador guardado…",
         "saveDraft": "Guardar borrador",
         "saving": "Guardando…",
         "saveChanges": "Guardar cambios",
@@ -3090,7 +3183,7 @@
     "payouts": {
       "metaTitle": "Liquidaciones",
       "title": "Liquidaciones de las campañas conseguidas",
-      "intro": "Cuando una campaña llega a su meta, el dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que dos personas distintas de la entidad firman su liquidación. Elegid el destino, adjuntad la factura del proveedor y firmad las dos con vuestro código.",
+      "intro": "Cuando una campaña llega a su meta, el dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que la entidad firma su liquidación (dos personas distintas, o solo Dirección si la entidad eligió firma única). Elegid el destino, adjuntad la factura del proveedor y firmad con vuestro código.",
       "badge": "100 % conseguido · liquidación",
       "figures": {
         "raised": "Recaudado",
@@ -3113,11 +3206,11 @@
         "SPONSORS_PENDING": "Revisar los comercios",
         "KYB_NOT_VERIFIED": "Ir a los documentos del titular"
       },
-      "readOnly": "Solo las dos personas firmantes de la entidad pueden pedir y firmar la liquidación.",
+      "readOnly": "Solo las personas firmantes de la entidad pueden pedir y firmar la liquidación.",
       "photosHint": "Fotos Antes y Después y agradecimiento (las familias las verán al terminar la liquidación)",
       "empty": {
         "title": "Aún no hay campañas por liquidar",
-        "text": "Cuando una campaña llegue al 100 %, aparecerá aquí para enviar el dinero al proyecto con la doble firma.",
+        "text": "Cuando una campaña llegue al 100 %, aparecerá aquí para enviar el dinero al proyecto con las firmas de la entidad.",
         "cta": "Ir al cuadro de mandos"
       },
       "form": {
@@ -3135,11 +3228,11 @@
         "providerNameError": "Escribid el nombre del proveedor (entre {min} y {max} caracteres).",
         "invoiceLabel": "Factura (o proforma) del proveedor",
         "invoiceOptional": "Factura del proveedor (opcional)",
-        "invoiceHelp": "PDF o foto, hasta {size} MB. La verán las dos personas que firman; las familias no.",
+        "invoiceHelp": "PDF o foto, hasta {size} MB. La verán las personas que firman; las familias no.",
         "invoiceReady": "Factura adjunta: {name}",
         "invoiceKept": "la que ya subisteis",
         "uploading": "Subiendo la factura…",
-        "effect": "Al pedirla te enviamos por email tu enlace de firma con un código. Después firmará la otra persona.",
+        "effect": "Al pedirla te enviamos por email tu enlace de firma con un código. Si la entidad tiene otra persona firmante, firmará después.",
         "effectUpdate": "Al cambiarla, las firmas que hubiera dejan de valer y se piden de nuevo.",
         "submit": "Pedir la liquidación y firmar",
         "submitUpdate": "Guardar los cambios y volver a firmar",
@@ -3186,7 +3279,7 @@
         "FILE_RETENTION_REQUIRED": "No hemos podido guardar el fichero. Probad de nuevo."
       },
       "pending": {
-        "title": "Liquidación {reference} · esperando las dos firmas",
+        "title": "Liquidación {reference} · esperando las firmas",
         "toProvider": "Para el proveedor {name} · IBAN con código de entidad {bank}, acabado en {last4}",
         "toOrganization": "Para la cuenta de {name}",
         "openInvoice": "Ver la factura del proveedor",
@@ -3208,8 +3301,8 @@
           "SPONSORS_PENDING": "No se ha podido aprobar: hay comercios cobrados sin admitir ni rechazar.",
           "FIGURES_CHANGED": "Las cifras han cambiado desde que se firmó (un contracargo). Pedid la liquidación de nuevo: se volverá a firmar.",
           "ESCROW_MISMATCH": "La hucha no cuadra con lo recaudado. El equipo de KORUM lo está revisando.",
-          "KYB_NOT_VERIFIED": "Las dos firmas cuentan, pero faltan los documentos del titular verificados. Se enviará en cuanto estén.",
-          "DESTINATION_ACCOUNT_MISSING": "Las dos firmas cuentan, pero la entidad aún no tiene su cuenta en PAYCOMET.",
+          "KYB_NOT_VERIFIED": "Las firmas ya cuentan, pero faltan los documentos del titular verificados. Se enviará en cuanto estén.",
+          "DESTINATION_ACCOUNT_MISSING": "Las firmas ya cuentan, pero la entidad aún no tiene su cuenta en PAYCOMET.",
           "INVOICE_INVALID": "La factura adjunta ya no es válida. Subid otra y volved a pedir la liquidación.",
           "PROVIDER_UNAVAILABLE": "El pago directo al proveedor aún no está disponible. Cambiad el destino a la cuenta de la entidad.",
           "SIGNATURES": "Las firmas no son válidas para lo que hay ahora (algo ha cambiado o alguien ha dejado su cargo). Volved a firmar.",
@@ -3218,7 +3311,11 @@
         },
         "invoiceMissing": "Falta la factura (o proforma) del proveedor: adjuntadla para poder firmar.",
         "blockedNote": "Se podrá firmar cuando resolváis lo que falta (arriba).",
-        "requestedBy": "Pedida o cambiada por última vez por {name} el {date}."
+        "requestedBy": "Pedida o cambiada por última vez por {name} el {date}.",
+        "titleSigned": "Liquidación {reference} · firmada, falta enviarla",
+        "allSigned": "Ya están las firmas que exige la entidad: falta enviar el dinero.",
+        "send": "Enviar el dinero ahora",
+        "sending": "Enviando…"
       },
       "history": {
         "title": "Liquidaciones enviadas",
@@ -3256,7 +3353,7 @@
       },
       "closedOn": "Venció el {date}",
       "raised": "Recaudado {raised} de {goal} ({percent} %)",
-      "decideIntro": "Decide una persona firmante y la otra recibe un aviso. Ninguna de las dos opciones envía dinero a la entidad: para eso seguirá haciendo falta la doble firma de la liquidación.",
+      "decideIntro": "Decide una persona firmante y, si hay otra, recibe un aviso. Ninguna de las dos opciones envía dinero a la entidad: para eso seguirá haciendo falta la firma de la liquidación.",
       "readOnly": "Solo las personas que firman en la entidad pueden decidir qué hacer con esta campaña.",
       "poll": {
         "open": "Votación abierta hasta el {date}",
@@ -3483,7 +3580,7 @@
         "download": "Descargar acta",
         "downloadLabel": "Descargar acta de la ronda {round}",
         "extraTitle": "Ronda extra",
-        "extraIntro": "Si nadie reclama el premio de una papeleta, o quien la compró ha pedido el reembolso, puedes sortear otra papeleta para sustituirlo. Basta con una de las dos personas firmantes: la otra recibirá un aviso y la ronda queda en el acta. Solo se puede hacer antes de liquidar la rifa.",
+        "extraIntro": "Si nadie reclama el premio de una papeleta, o quien la compró ha pedido el reembolso, puedes sortear otra papeleta para sustituirlo. Basta con una persona firmante: si hay otra, recibirá un aviso, y la ronda queda en el acta. Solo se puede hacer antes de liquidar la rifa.",
         "reasonLabel": "Motivo",
         "reasonOption": "{reason} (hasta {max, plural, one {# premio} other {# premios}})",
         "prepare": "Preparar la ronda extra",
@@ -3717,13 +3814,14 @@
       "INVOICE_RECTIFY_PENDING": "Factura del fee de un comercio devuelto o con contracargo, pendiente de rectificar",
       "ACTIVITY_FUND_WINDOW": "Fondo de actividades cerca del plazo de 90 días (o pasado)",
       "SPONSOR_MONEY_BLOCKED": "Dinero de un comercio bloqueado con su plazo corriendo",
-      "PAYOUT_BLOCKED": "Liquidación de campaña bloqueada: hay repartos que no se pueden enviar ni replanificar"
+      "PAYOUT_BLOCKED": "Liquidación de campaña bloqueada: hay repartos que no se pueden enviar ni replanificar",
+      "SIGNER_HANDOVER_EXPIRED": "Un relevo de firmante caducó sin cerrarse (alerta antigua: ya no se abre; la tarea diaria cierra los relevos caducados)"
     },
     "fundsTitle": "{count, plural, =0 {Fondos de actividades} one {Fondos de actividades · # entidad} other {Fondos de actividades · # entidades}}",
     "fundsNone": "Ninguna entidad tiene dinero en su Fondo de actividades.",
     "fundPayout": {
       "NONE": "Sin liquidación pedida",
-      "PENDING_DOUBLE_CHECK": "Liquidación esperando la doble firma",
+      "PENDING_DOUBLE_CHECK": "Liquidación esperando la firma",
       "APPROVED": "Liquidación firmada, enviando",
       "PROCESSING": "Liquidación firmada, enviando",
       "FAILED": "Liquidación firmada, envío pendiente"
@@ -3734,7 +3832,8 @@
       "avisos": "Alertas",
       "salud-de-precios": "Salud de precios",
       "procesos": "Tareas programadas",
-      "fondos": "Fondos de actividades"
+      "fondos": "Fondos de actividades",
+      "entities": "Entidades y KYB ({count, plural, =0 {nada por revisar} one {# por revisar} other {# por revisar}})"
     },
     "sections": {
       "business": "Negocio: ingresos reales y proyectados"
@@ -3790,10 +3889,12 @@
       "cost": {
         "gateway": "Coste de pasarela asumido",
         "autoBoost": "Auto-Impulso aportado por KORUM",
-        "chargebacks": "Contracargos asumidos"
+        "chargebacks": "Contracargos asumidos",
+        "sunk": "Auto-Impulso y contracargos ya asentados en campañas abiertas"
       },
       "notProjected": "No se proyecta",
-      "net": "Ingreso neto"
+      "net": "Ingreso neto",
+      "includedAbove": "Ya incluido arriba"
     },
     "orgs": {
       "title": "Rendimiento por entidad, histórico de iniciativas y comercios",
@@ -3810,7 +3911,8 @@
         "goal": "Meta activa",
         "raised": "Recaudado",
         "expectedNet": "Neto esperado",
-        "weightedNet": "Neto ponderado"
+        "weightedNet": "Neto ponderado",
+        "manage": "Gestión"
       },
       "medal": {
         "0": "Sin medalla",
@@ -3821,7 +3923,8 @@
       "closedValue": "{year} este curso / {historical} hist.",
       "sponsorsValue": "{active} act. / {historical} hist.",
       "total": "Total ({count, plural, one {# entidad} other {# entidades}})",
-      "noValue": "—"
+      "noValue": "—",
+      "open360": "Abrir ficha 360º"
     },
     "forecast": {
       "title": "Previsión agregada de cierres por trimestre",
@@ -3866,7 +3969,8 @@
         "diagnosis": "Diagnóstico de rentabilidad y Auto-Impulso",
         "wallet": "Hucha de la iniciativa",
         "status": "Estado"
-      }
+      },
+      "openPopup": "(abre la ficha ejecutiva)"
     },
     "diagnosis": {
       "negative": "🚨 ¡Peligro Retorno Negativo! ({net}) · Ajustar precios",
@@ -3915,7 +4019,21 @@
         }
       },
       "resolved": "Alerta marcada como resuelta.",
-      "failed": "No se ha podido guardar. Inténtalo de nuevo."
+      "failed": "No se ha podido guardar. Inténtalo de nuevo.",
+      "requeue": {
+        "button": "Volver a poner en cola",
+        "running": "Poniendo en cola…",
+        "hint": "Úsalo cuando ya hayas arreglado la causa. Los emails de acceso o invitación no se reactivan: su código era de un solo uso.",
+        "done": "{count, plural, =0 {No había emails que reactivar} one {Se ha vuelto a poner en cola 1 email} other {Se han vuelto a poner en cola # emails}}",
+        "skipped": "{count, plural, one {1 email no se puede reactivar} other {# emails no se pueden reactivar}}: llevaban un código o enlace de un solo uso que ya se borró.",
+        "failed": "No se ha podido poner en cola. Inténtalo de nuevo.",
+        "outcome": {
+          "NOT_OPEN": "Esta alerta ya no estaba abierta.",
+          "NOT_REQUEUEABLE": "Esta alerta no es de emails fallidos de una plantilla: se arregla cambiando el ajuste del email.",
+          "FORBIDDEN": "No tienes permiso para hacer esto.",
+          "INVALID": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo."
+        }
+      }
     },
     "jobs": {
       "title": "Tareas programadas",
@@ -3999,7 +4117,385 @@
       "pricing": "Avisos de precios sin aceptar",
       "filtered": "Las cifras de campañas con 💎 y 🚨 siguen los filtros de negocio que has elegido."
     },
-    "quarterLabel": "{quarter, select, 1 {1.er trimestre} 2 {2.º trimestre} 3 {3.er trimestre} other {4.º trimestre}} de {year}"
+    "quarterLabel": "{quarter, select, 1 {1.er trimestre} 2 {2.º trimestre} 3 {3.er trimestre} other {4.º trimestre}} de {year}",
+    "open360": "Abrir ficha 360º",
+    "popup": {
+      "badge": "Ficha ejecutiva del Super-Admin",
+      "loading": "Cargando la ficha…",
+      "close": "Cerrar la ficha",
+      "error": {
+        "NOT_FOUND": "Esta iniciativa ya no está en el listado. Recarga la página.",
+        "FORBIDDEN": "No tienes permiso para ver esta ficha.",
+        "FAILED": "No se ha podido cargar la ficha. Cierra y vuelve a abrirla."
+      },
+      "organization": "Entidad",
+      "format": "Formato",
+      "formats": {
+        "BUDGET": "Presupuesto",
+        "TICKETING": "Taquilla y rifas con QR"
+      },
+      "wallet": "Hucha y estado",
+      "progress": "Progreso",
+      "percent": "{value} %",
+      "contributions": "Aportaciones",
+      "contributionsCount": "{count, plural, one {# aportación} other {# aportaciones}}",
+      "closesAt": "Fecha límite",
+      "publicLink": "Enlace público de la iniciativa",
+      "copy": "Copiar enlace",
+      "copied": "Enlace copiado.",
+      "copyFailed": "No se ha podido copiar. Selecciónalo y cópialo a mano.",
+      "openPublic": "Abrir la ficha pública",
+      "newTab": "(se abre en una pestaña nueva)",
+      "sponsorsTitle": "Comercios que participan en esta iniciativa ({count})",
+      "sponsorsNone": "Ningún comercio ha aportado a esta iniciativa todavía.",
+      "level": {
+        "ORO": "Categoría ORO",
+        "PLATA": "Categoría PLATA",
+        "BRONCE": "Categoría BRONCE"
+      },
+      "sponsorStatus": {
+        "PENDING": "Pendiente de la entidad",
+        "APPROVED": "Admitido",
+        "REJECTED": "No admitido",
+        "CREDIT_POOL": "En la bolsa del comercio",
+        "REFUNDED": "Devuelto"
+      },
+      "matching": "bolsa Matching 2x",
+      "sponsorAmount": "{amount} íntegros (+{fee} de gestión de KORUM)",
+      "negativeTitle": "¡Peligro de retorno negativo para KORUM! ({net})",
+      "negativeText": "Esta iniciativa no deja ingresos a KORUM y KORUM está asumiendo {loss} de coste de pasarela de pago.",
+      "analysisTitle": "Rentabilidad y Auto-Impulso de KORUM",
+      "analysisProfitable": "¡Auto-Impulso rentable!",
+      "missing": "Falta para llegar al 100 %",
+      "netAt100": "Neto de KORUM al completarse la meta",
+      "returnAfterBoost": "Retorno tras aportar lo que falta",
+      "returnHint": "El retorno cuenta lo ya cobrado más la comisión de tramos y el mantenimiento que se liquidan al completar la meta. No cuenta nada proyectado ni el fee de patrocinio ya cobrado, que KORUM conserva aporte o no.",
+      "recoverableNote": "Ya hay un Auto-Impulso anterior de {amount} en esta campaña. Si la campaña no se consigue, vuelve a KORUM; si aportas ahora y la completas, ya no vuelve. Por eso se resta del retorno.",
+      "previousTitle": "Auto-Impulsos ya aportados",
+      "previousItem": "{amount} el {date} · {visibility}",
+      "visibilityShort": {
+        "SHOW": "mostrado en público",
+        "HIDE": "no mostrado en público"
+      },
+      "reauthLink": "Volver a verificar mi identidad",
+      "boost": {
+        "title": "Auto-Impulso de KORUM",
+        "titleProfitable": "Auto-Impulso rentable: completar la meta con dinero de KORUM",
+        "visibilityLegend": "¿Se muestra este Auto-Impulso en público?",
+        "visibility": {
+          "SHOW": "Mostrar en público: la ficha dirá, sin importe, que la plataforma KORUM ayudó a conseguir el reto",
+          "HIDE": "No mostrar en público: la ficha solo dirá que se ha logrado la meta"
+        },
+        "visibilityHint": "Se decide en cada ejecución. Preseleccionado: el valor que fijan los ajustes de la plataforma. Si se muestra, la ficha dice, sin importe, que la plataforma KORUM también aportó. En los dos casos el Auto-Impulso queda asentado en el libro mayor y suma como cualquier aportación (también +1 al contador 💛), pero no cuenta para el reto de ningún curso.",
+        "start": "Aportar {amount} desde KORUM y completar la meta",
+        "confirmTitle": "Confirma el Auto-Impulso",
+        "confirmText": "KORUM aportará {amount} de su dinero y la iniciativa pasará a «meta lograda». Quedará {visibility}. No se puede deshacer.",
+        "confirm": "Sí, aportar {amount}",
+        "running": "Aportando…",
+        "cancel": "Cancelar",
+        "done": "Auto-Impulso aportado: {amount}. La iniciativa ha llegado al 100 %.",
+        "problem": {
+          "FAILED": "No se ha podido aportar. Revisa la ficha y vuelve a intentarlo.",
+          "AMOUNT_CHANGED": "Lo que falta ha cambiado mientras mirabas la ficha (llegó otra aportación). No se ha gastado nada: revisa la cifra nueva.",
+          "NOT_ALLOWED": "Esta iniciativa ya no puede recibir un Auto-Impulso (ya no está recaudando, pasó su fecha límite o ya está completa).",
+          "REAUTH_REQUIRED": "Para gastar dinero de KORUM hace falta que vuelvas a poner tu código de verificación.",
+          "FORBIDDEN": "No tienes permiso para hacer esto.",
+          "INVALID": "No se ha podido leer la petición. Cierra la ficha y vuelve a abrirla.",
+          "NOT_PROFITABLE": "A KORUM no le compensa aportar a esta iniciativa y no has aceptado la pérdida. Revisa la ficha y marca la casilla si quieres aportar igualmente."
+        },
+        "acceptLoss": "A KORUM no le compensa aportar: el retorno tras aportar es de {profit}. Entiendo que perderá ese dinero y quiero aportar igualmente.",
+        "lossTitle": "Última comprobación: esta aportación no compensa a KORUM",
+        "lossText": "Vas a gastar {amount} de KORUM y, aun así, esta iniciativa dejará una pérdida de {loss}. Ese dinero no se recupera. No se puede deshacer.",
+        "lossTextZero": "Vas a gastar {amount} de KORUM y esta iniciativa no dejará ningún beneficio. Ese dinero no se recupera. No se puede deshacer.",
+        "lossConfirm": "Sí, aportar {amount} aunque no compense",
+        "lossBack": "No, volver"
+      },
+      "fix": {
+        "button": "Corregir tarifas en 1 clic",
+        "running": "Corrigiendo…",
+        "done": "Tarifas corregidas.",
+        "explainAvailable": "Sube a los valores globales las tarifas propias de la entidad que están por debajo (para sus próximas campañas).",
+        "explainPublished": "Esta campaña ya está publicada: su pizarra no se toca, para que la entidad reciba lo que se le enseñó (y, si tiene una taquilla a la venta, tampoco los gastos de gestión de sus entradas). El aviso seguirá hasta que termine.",
+        "explainNothing": "No hay tarifas que corregir sin cambiar lo ya prometido a la entidad.",
+        "problem": {
+          "FAILED": "No se ha podido corregir. Inténtalo de nuevo.",
+          "NOTHING_TO_FIX": "Ya no hay tarifas que corregir. Recarga la ficha.",
+          "REAUTH_REQUIRED": "Para cambiar tarifas hace falta que vuelvas a poner tu código de verificación.",
+          "INVALID": "No se ha podido leer la petición. Cierra la ficha y vuelve a abrirla."
+        }
+      },
+      "genericTitle": "Ficha de la iniciativa",
+      "retry": "Reintentar",
+      "negativeTextSunk": "Esta iniciativa no deja ingresos a KORUM porque KORUM ya ha asumido {sunk} entre Auto-Impulso y contracargos de esta campaña. No es un problema de tarifas: es un coste ya gastado.",
+      "negativeTextBoth": "Esta iniciativa no deja ingresos a KORUM: KORUM asume {loss} de coste de pasarela de pago y ya ha gastado {sunk} entre Auto-Impulso y contracargos de esta campaña."
+    },
+    "entities": {
+      "metaTitle": "Entidades · Consola KORUM",
+      "back": "← Volver a la consola",
+      "title": "Entidades",
+      "waitingTitle": "{count, plural, =0 {Documentos esperando revisión} one {1 entidad espera revisión de sus documentos} other {# entidades esperan revisión de sus documentos}}",
+      "waitingNone": "No hay documentos pendientes de revisar.",
+      "waitingSince": "Esperando desde el {date}",
+      "review": "Revisar documentos",
+      "allTitle": "Todas las entidades ({count})",
+      "none": "Todavía no hay entidades.",
+      "region": "Todas las entidades",
+      "caption": "Entidades de la plataforma con el estado de sus documentos del titular",
+      "col": {
+        "name": "Entidad",
+        "province": "Provincia",
+        "kyb": "Documentos del titular",
+        "submitted": "Enviados el",
+        "medal": "Medalla",
+        "manage": "Gestión"
+      },
+      "archived": "Archivada",
+      "kyb": {
+        "PENDING": "Sin enviar",
+        "SUBMITTED": "Esperando revisión",
+        "VERIFIED": "Verificados",
+        "REJECTED": "Devueltos"
+      },
+      "noValue": "—",
+      "medal": {
+        "0": "Sin medalla",
+        "1": "Bronce",
+        "2": "Plata",
+        "3": "Oro"
+      },
+      "open360": "Abrir ficha 360º"
+    },
+    "org360": {
+      "metaTitle": "Ficha 360º · Consola KORUM",
+      "back": "← Todas las entidades",
+      "archived": "Archivada",
+      "medal": {
+        "0": "Sin medalla",
+        "1": "Medalla de Bronce",
+        "2": "Medalla de Plata",
+        "3": "Medalla de Oro"
+      },
+      "nav": {
+        "label": "Secciones de la ficha",
+        "titular": "Titular",
+        "kyb": "Documentos (KYB)",
+        "firmas": "Firmas",
+        "tarifas": "Tarifas",
+        "categorias": "Categorías",
+        "facturas": "Facturas",
+        "negocio": "Negocio"
+      },
+      "reauthLink": "Volver a verificar mi identidad",
+      "outcome": {
+        "FAILED": "No se ha podido completar. Inténtalo de nuevo.",
+        "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación.",
+        "INVALID_INPUT": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo."
+      },
+      "reason": {
+        "NOT_FOUND": "Esta entidad ya no existe.",
+        "ARCHIVED": "La entidad está archivada: su ficha es solo de lectura.",
+        "INVALID": "Revisa los campos marcados: algún valor no es válido.",
+        "CATEGORY_EXISTS": "Ya existe una categoría con ese nombre.",
+        "CATEGORY_NOT_FOUND": "Esa categoría ya no existe.",
+        "NOT_SUBMITTED": "Esta entidad no está esperando revisión. Recarga la página para ver su estado actual.",
+        "INCOMPLETE": "Faltan documentos o el CIF del titular: no se puede verificar.",
+        "LEY49_NOT_DECLARED": "La entidad no ha declarado el régimen de la Ley 49/2002: no se puede acreditar.",
+        "SPLIT_ID_IN_USE": "Ese identificador de cuenta destino ya lo usa otra entidad.",
+        "PUBLISHED_TICKETING": "La entidad tiene una taquilla o rifa a la venta: sus gastos de gestión de entradas no se cambian mientras tanto, porque cambiarían lo ya prometido. Inténtalo cuando termine.",
+        "LIMIT_BELOW_USED": "El importe exento anual no puede ser menor que lo que la entidad ya ha gastado este curso."
+      },
+      "holder": {
+        "title": "Titular legal",
+        "hint": "Quién cobra y firma por esta entidad.",
+        "none": "Sin indicar",
+        "legalName": "Razón social del titular",
+        "legalForm": "Forma jurídica",
+        "vertical": "Tipo de entidad",
+        "cif": "CIF",
+        "iban": "IBAN conectado",
+        "destination": "Cuenta destino en Paycomet",
+        "destinationYes": "Configurada",
+        "destinationNo": "Sin configurar: no se le puede liquidar",
+        "ley49": "Ley 49/2002",
+        "ley49No": "No declarada",
+        "ley49Verified": "Verificada el {date}",
+        "ley49Pending": "Declarada, sin verificar (emite justificante nominativo)",
+        "closed": "Iniciativas cerradas",
+        "closedValue": "{year} este año · {historical} históricas",
+        "sponsors": "Comercios patrocinadores",
+        "sponsorsValue": "{active} activos · {historical} históricos",
+        "raised": "Recaudado en total"
+      },
+      "legalForm": {
+        "PARENTS_ASSOCIATION": "AMPA / AFA",
+        "SCHOOL_OWNER": "Titular del colegio",
+        "FOUNDATION": "Fundación",
+        "SPORTS_ENTITY": "Entidad deportiva",
+        "CULTURAL_ASSOCIATION": "Asociación cultural",
+        "OTHER_NONPROFIT": "Otra entidad sin ánimo de lucro"
+      },
+      "vertical": {
+        "SCHOOL": "Centro escolar",
+        "SPORTS_CLUB": "Club deportivo",
+        "CULTURAL": "Entidad cultural"
+      },
+      "kyb": {
+        "title": "Documentos del titular (KYB)",
+        "hint": "Revisa los documentos, verifícalos o devuélvelos con una nota. Cada apertura de un documento queda registrada.",
+        "status": {
+          "PENDING": "Sin enviar",
+          "SUBMITTED": "Esperando tu revisión",
+          "VERIFIED": "Documentos verificados",
+          "REJECTED": "Devueltos a la entidad"
+        },
+        "submittedAt": "Enviados el {date}",
+        "reviewedAt": "Revisados el {date}",
+        "lastNote": "Nota enviada a la entidad:",
+        "documents": "Documentos vigentes",
+        "kind": {
+          "TAX_ID_CARD": "Tarjeta de identificación fiscal (CIF)",
+          "STATUTES": "Estatutos, acta fundacional o escrituras",
+          "REPRESENTATIVE_ID": "DNI o NIE de quien representa a la entidad",
+          "ACCOUNT_OWNERSHIP": "Certificado de titularidad de la cuenta de la entidad",
+          "LEY49_ACCREDITATION": "Acreditación de la Ley 49/2002"
+        },
+        "open": "Abrir documento",
+        "newTab": "(se abre en una pestaña nueva)",
+        "missing": "Falta",
+        "cif": "CIF del titular",
+        "openHint": "El documento se abre con un enlace que caduca a los 5 minutos. Contiene datos personales: no lo descargues sin necesidad.",
+        "reviewTitle": "Tu decisión",
+        "incomplete": "Faltan documentos o el CIF: puedes devolverlos con una nota, pero no verificarlos.",
+        "decision": {
+          "VERIFIED": "Verificar los documentos",
+          "REJECTED": "Devolver los documentos con una nota"
+        },
+        "ley49Accredited": "El documento acredita el régimen de la Ley 49/2002",
+        "ley49Hint": "Sin acreditar, la entidad seguirá emitiendo justificante nominativo en lugar de certificado fiscal.",
+        "splitId": "Identificador de la cuenta destino en Paycomet (opcional)",
+        "splitIdSet": "Ya tiene una cuenta destino: si escribes otra, la sustituye.",
+        "splitIdHint": "Cuando Paycomet cree la cuenta del titular, escribe aquí su identificador. Sin él no se le puede liquidar.",
+        "note": "Qué falta o qué hay que corregir",
+        "noteHint": "Entre 10 y {max} caracteres. Sin datos personales: ni emails, ni IBAN, ni DNI. La leen las personas que firman.",
+        "noteError": {
+          "short": "Escribe al menos 10 caracteres para que la entidad sepa qué corregir.",
+          "personal": "La nota parece llevar un dato personal (email, IBAN, DNI o una serie larga de cifras). Quítalo y describe el problema sin él."
+        },
+        "releaseCifWithReject": "Liberar también el CIF que escribieron (por si es de otra entidad)",
+        "submit": {
+          "VERIFIED": "Verificar documentos",
+          "REJECTED": "Devolver documentos"
+        },
+        "saving": "Guardando…",
+        "releaseCifText": "Si alguien escribió el CIF de otra entidad que aún no está en KORUM y le bloquea el alta, puedes liberarlo. La entidad tendrá que escribir el suyo para volver a enviar.",
+        "releaseCif": "Quitar el CIF escrito por esta entidad",
+        "doneVerified": "Documentos verificados. Se ha avisado a quienes firman.",
+        "doneRejected": "Documentos devueltos. Se ha avisado a quienes firman.",
+        "doneCifReleased": "CIF liberado.",
+        "releaseCifConfirmTitle": "Confirma quitar el CIF",
+        "releaseCifConfirmText": "Se borrará el CIF {cif} de esta entidad y tendrá que escribir el suyo para volver a enviar. Confírmalo solo si no es el suyo.",
+        "releaseCifConfirm": "Sí, quitar el CIF",
+        "releaseCifCancel": "Cancelar"
+      },
+      "seats": {
+        "title": "Quién firma",
+        "role": {
+          "DIRECTOR": "Dirección",
+          "COSIGNER": "Cofirma"
+        },
+        "twoFactorOn": "con verificación en dos pasos",
+        "twoFactorOff": "sin verificación en dos pasos",
+        "none": "Nadie firma todavía por esta entidad.",
+        "handover": {
+          "INVITED": "Relevo de {role}: la persona nueva tiene su invitación pendiente.",
+          "EXPIRED": "Relevo de {role}: la invitación caducó sin aceptarse."
+        },
+        "handoverUntil": "Vale hasta el {date}.",
+        "noHandover": "No hay ningún relevo abierto.",
+        "hint": "Cuántas firmas exige la entidad y quién firma, solo para consultarlo. Lo decide y lo gestiona la propia entidad.",
+        "mode": {
+          "DOUBLE": "Doble firma: Dirección y Cofirma.",
+          "SINGLE": "Firma única: solo Dirección (decisión de la entidad)."
+        },
+        "handoverExpired": "Caducó el {date}: la entidad puede proponerlo de nuevo desde su panel.",
+        "since": "En el cargo desde el {date}",
+        "entityRegulates": "La entidad regula a sus firmantes por sus propios procedimientos: KORUM no da de baja ni confirma puestos. Cada cambio queda anotado en un registro de auditoría que la entidad no puede borrar."
+      },
+      "tariffs": {
+        "title": "Condiciones económicas individuales",
+        "hint": "Solo afectan a las campañas nuevas de esta entidad: las ya calculadas conservan su pizarra.",
+        "custom": "Aplicar una tarifa personalizada",
+        "modeCustom": "Se aplican las tarifas propias de esta entidad.",
+        "modeGlobal": "Se aplican automáticamente los valores globales por defecto (se ven abajo, sin poder editarse).",
+        "unitEur": "€",
+        "unitPct": "%",
+        "field": {
+          "exemptLimitCents": "Importe exento anual",
+          "t1Bps": "Tramo 1",
+          "t2Bps": "Tramo 2",
+          "t3Bps": "Tramo 3",
+          "sponsorFeeBps": "Fee de comercios",
+          "fullIntegrityCheckCents": "Aportación voluntaria sugerida (garantía KORUM)",
+          "ticketFeeFixedCents": "Gastos de gestión digital fijos por entrada",
+          "ticketFeeBps": "Gastos de gestión digital variables sobre el precio",
+          "maintPerInitCents": "Cargo de mantenimiento por iniciativa",
+          "maintAnnualCapCents": "Tope anual de mantenimiento"
+        },
+        "fieldError": "Escribe un número positivo, con 2 decimales como máximo y dentro del rango permitido.",
+        "maintActive": "Cobrar mantenimiento a esta entidad",
+        "futureOnly": "Si cambias el importe exento anual, lo que queda por usar sube o baja lo mismo; lo ya gastado este curso no cambia.",
+        "saving": "Guardando…",
+        "saveCustom": "Guardar la tarifa personalizada",
+        "saveGlobal": "Volver a los valores globales",
+        "doneCustom": "Tarifa personalizada guardada.",
+        "doneGlobal": "La entidad vuelve a los valores globales."
+      },
+      "categories": {
+        "title": "Categorías de la entidad",
+        "hint": "Exentas (0 %) o por tramos. Una categoría global con otra regla aquí solo cambia para esta entidad.",
+        "source": {
+          "OVERRIDE": "regla propia",
+          "CUSTOM": "propia"
+        },
+        "rule": {
+          "EXEMPT": "💚 0 % exenta",
+          "BRACKETS": "🏗️ Por tramos"
+        },
+        "doneRule": "Regla de la categoría guardada.",
+        "confirmTitle": "Confirma el cambio de regla",
+        "confirmText": "«{name}» pasará a {rule} en las campañas nuevas de esta entidad. Las que ya están publicadas no cambian.",
+        "confirmYes": "Sí, cambiar la regla",
+        "confirmNo": "No, dejarla como está",
+        "doneAdd": "Categoría creada.",
+        "newName": "Nueva categoría de la entidad",
+        "newRule": "Regla de la nueva categoría",
+        "add": "Crear categoría"
+      },
+      "invoices": {
+        "title": "Facturas Veri*factu de la entidad",
+        "hint": "Las 100 más recientes. Solo lectura.",
+        "none": "Todavía no hay facturas de esta entidad.",
+        "region": "Facturas de la entidad",
+        "caption": "Facturas de la entidad con su importe y su estado ante el proveedor de Veri*factu",
+        "number": "Número",
+        "date": "Fecha",
+        "concept": "Concepto",
+        "total": "Total",
+        "status": "Estado",
+        "rectification": "Rectificativa",
+        "state": {
+          "PENDING": "Pendiente de envío",
+          "SENT": "Enviada, sin respuesta",
+          "ACCEPTED": "Aceptada",
+          "ACCEPTED_WITH_ERRORS": "Aceptada con errores",
+          "REJECTED": "Rechazada"
+        }
+      },
+      "business": {
+        "title": "Lo que {name} aporta a KORUM",
+        "hint": "Las 6 fuentes de ingresos de esta entidad y sus iniciativas. Pulsa el título de una para abrir su ficha ejecutiva."
+      }
+    }
   },
   "forbidden": {
     "title": "No tienes acceso a esta página",
@@ -4175,7 +4671,8 @@
         "buyTickets": "Comprar entradas",
         "buyRaffle": "Comprar papeletas"
       },
-      "contributionsClosed": "Esta iniciativa ya no admite aportaciones"
+      "contributionsClosed": "Esta iniciativa ya no admite aportaciones",
+      "selfBoost": "La plataforma KORUM también aportó y ayudó a conseguir el reto."
     },
     "share": {
       "title": "Compartir en KORUM",
@@ -5141,7 +5638,7 @@
       "phases": {
         "PHASE0_MOD": "En revisión previa",
         "PUBLIC_VOTING": "Abierta a firmas",
-        "DOUBLE_CHECK": "Con quórum, pendiente de la doble firma",
+        "DOUBLE_CHECK": "Con quórum, pendiente de la firma de la entidad",
         "CONVERTED": "Convertida en iniciativa",
         "REJECTED": "No se ha podido aprobar"
       },

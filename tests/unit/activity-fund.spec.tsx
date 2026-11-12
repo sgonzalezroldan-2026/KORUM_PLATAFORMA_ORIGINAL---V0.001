@@ -195,9 +195,25 @@ describe('Sprint 4.2f · pedir y firmar la liquidación desde el panel', () => {
     expect(actions.cancelFundPayoutAction).toHaveBeenCalledWith('colegio-sol', { payoutId: 4 });
   });
 
+  it('con firma única, una liquidación que ya tiene la firma que exige la entidad pero no se aprobó ofrece aprobar y enviar ya; con una firma aún pendiente, no (auditoría financiera del 5.2, H3)', async () => {
+    actions.retryFundPayoutAction.mockResolvedValue({ status: 'OK', executed: true });
+    const complete = pendingPayout({ signed: 1, slots: [{ role: 'DIRECTOR', holderLabel: 'Dirección', signedBy: { name: 'Laura Pérez', roleLabel: 'Dirección', signedAt: NOW.toISOString() } }], mySlotOpen: false });
+    const { unmount } = withNotice(<ActivityFundPending orgSlug="colegio-sol" payout={complete} canAct />);
+    expect(screen.getByTestId('fund-pending')).toHaveTextContent('Ya están las firmas que exige la entidad');
+    expect(screen.getByTestId('fund-pending')).not.toHaveTextContent('Falta la de la otra persona firmante');
+    // El título y el botón cuentan lo que pasa de verdad: ya está firmada y falta el primer envío (no es un «reintento»).
+    expect(screen.getByRole('heading', { name: /firmada, falta enviarla/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Reintentar/ })).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar el dinero ahora' }));
+    expect(actions.retryFundPayoutAction).toHaveBeenCalledWith('colegio-sol', { payoutId: 4 });
+    unmount();
+    withNotice(<ActivityFundPending orgSlug="colegio-sol" payout={pendingPayout({ mySlotOpen: false })} canAct />);
+    expect(screen.queryByRole('button', { name: 'Enviar el dinero ahora' })).toBeNull();
+  });
+
   it('en solo lectura (Super-Admin) no hay botones', () => {
     withNotice(<ActivityFundPending orgSlug="colegio-sol" payout={pendingPayout()} canAct={false} />);
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.getByTestId('fund-pending')).toHaveTextContent('Solo las dos personas firmantes');
+    expect(screen.getByTestId('fund-pending')).toHaveTextContent('Solo las personas firmantes');
   });
 });

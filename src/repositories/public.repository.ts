@@ -154,7 +154,18 @@ export async function getPublicImpact(db: KorumPrismaClient, slug: string, now: 
     db.initiative.aggregate({ where: { ...where, academicYear }, _sum: { raisedCents: true } }),
     db.initiative.count({ where: { organization: where.organization, status: { in: ['GOAL_REACHED', 'CLOSED'] } } })
   ]);
+  // La barra de impacto suma lo mismo que las fichas (decisión del promotor, 2026-11-12): el Auto-Impulso cuenta como cualquier otra aportación. Lo único que
+  // se decide aparte es si la ficha dice que la plataforma ayudó (`isSelfBoostShown`), nunca el importe.
   return { academicYear, raisedCents: raised._sum.raisedCents ?? 0, achievementsCount: achievements };
+}
+
+/**
+ * ¿La ficha dice que la plataforma KORUM ayudó a conseguir la meta? Solo si el Super-Admin decidió mostrarlo (`publiclyDisclosed`, Regla 02 §7). Es solo un
+ * sí o un no sobre la iniciativa: el importe ya está en la barra como el de cualquier aportación, anónima, y nunca se enseña aparte.
+ */
+export async function isSelfBoostShown(db: KorumPrismaClient, initiativeId: number): Promise<boolean> {
+  const disclosed = await db.contribution.count({ where: { initiativeId, type: 'SELF_BOOST', status: 'COMPLETED', publiclyDisclosed: true } });
+  return disclosed > 0;
 }
 
 /**

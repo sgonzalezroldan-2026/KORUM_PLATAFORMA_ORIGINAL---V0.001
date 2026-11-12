@@ -53,7 +53,7 @@ function useFundAction() {
   return { error, pending, run };
 }
 
-/** Pedir la liquidación: para qué usará la entidad el dinero (lo firman las dos personas y sale en el justificante). */
+/** Pedir la liquidación: para qué usará la entidad el dinero (lo firman las personas que exige la entidad y sale en el justificante). */
 export function ActivityFundRequestForm({ orgSlug, availableCents }: { orgSlug: string; availableCents: number }) {
   const t = useTranslations('panel.fund.request');
   const announce = useApprovalsNotice();
@@ -153,7 +153,7 @@ export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: stri
   return (
     <section aria-labelledby="fund-pending" className="korum-trust-vault flex flex-col gap-3 rounded-2xl border-2 border-varsity-navy bg-white p-5" data-testid="fund-pending">
       <h2 id="fund-pending" className="font-corp text-xl font-extrabold text-varsity-navy">
-        {t('title', { reference: payout.reference })}
+        {t(payout.slots.length > 0 && payout.signed === payout.slots.length ? 'titleSigned' : 'title', { reference: payout.reference })}
       </h2>
       <p className="font-corp text-2xl font-extrabold tabular-nums text-varsity-navy">
         <CurrencyText cents={payout.amountCents} />
@@ -176,7 +176,7 @@ export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: stri
           ))}
         </ul>
       </details>
-      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{tSlots('progress', { signed: payout.signed })}</p>
+      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{tSlots('progress', { signed: payout.signed, total: payout.slots.length })}</p>
       <ul className="mobile-stack grid gap-2 sm:grid-cols-2">
         {payout.slots.map((slot) => (
           <li key={slot.role} className={clsx('flex flex-col gap-0.5 rounded-lg border-2 p-3', slot.signedBy ? 'border-varsity-emerald bg-emerald-50' : 'border-dashed border-stone-300 bg-stone-50')}>
@@ -189,7 +189,13 @@ export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: stri
           </li>
         ))}
       </ul>
-      {canAct && payout.mySlotOpen ? (
+      {/* Ya tiene las firmas que exige la entidad pero no se aprobó (p. ej. pasó a firma única con la firma de Dirección puesta): se puede aprobar y enviar ya. */}
+      {canAct && payout.slots.length > 0 && payout.signed === payout.slots.length ? (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-ink-soft">{t('allSigned')}</p>
+          <FundRetryButton orgSlug={orgSlug} payoutId={payout.id} primary />
+        </div>
+      ) : canAct && payout.mySlotOpen ? (
         <div className="flex flex-col gap-2">
           {payout.myChallengeExpiresAt ? <FormAlert tone="success">{tSlots('sent', { date: date(payout.myChallengeExpiresAt) })}</FormAlert> : null}
           <button
@@ -252,7 +258,7 @@ export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: stri
 }
 
 /** Reintentar ya el envío de una liquidación firmada que Paycomet no terminó. */
-export function FundRetryButton({ orgSlug, payoutId }: { orgSlug: string; payoutId: number }) {
+export function FundRetryButton({ orgSlug, payoutId, primary = false }: { orgSlug: string; payoutId: number; primary?: boolean }) {
   const t = useTranslations('panel.fund.history');
   const announce = useApprovalsNotice();
   const { error, pending, run } = useFundAction();
@@ -267,9 +273,9 @@ export function FundRetryButton({ orgSlug, payoutId }: { orgSlug: string; payout
             (result) => announce(t(result.executed ? 'retryDone' : 'retryPending'))
           )
         }
-        className="min-h-11 self-start font-semibold text-varsity-navy underline underline-offset-4 disabled:opacity-60"
+        className={primary ? 'tactile-btn self-start disabled:opacity-60' : 'min-h-11 self-start font-semibold text-varsity-navy underline underline-offset-4 disabled:opacity-60'}
       >
-        {pending ? t('retrying') : t('retry')}
+        {pending ? t(primary ? 'sending' : 'retrying') : t(primary ? 'send' : 'retry')}
       </button>
       {error ? <FormAlert>{error}</FormAlert> : null}
     </div>

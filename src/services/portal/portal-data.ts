@@ -5,7 +5,7 @@ import { findGroupBySlug, orderedGroupNames, groupSlug } from '@/core/public/cou
 import { localizeRow, toCardData, toDetailData, type InitiativeCardData, type InitiativeDetailData, type InitiativeRow } from '@/core/public/view-model';
 import { getPrisma } from '@/lib/prisma';
 import { isIndexable } from '@/lib/seo/indexing';
-import { getIndexingFacts, getPublicImpact, getPublicInitiative, getPublicOrganization, listPricingFacts, listPublicInitiatives } from '@/repositories/public.repository';
+import { getIndexingFacts, getPublicImpact, getPublicInitiative, isSelfBoostShown, getPublicOrganization, listPricingFacts, listPublicInitiatives } from '@/repositories/public.repository';
 import { findSponsorableInitiative, listFriendlySponsors } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { getSetting } from '@/services/settings/settings.service';
@@ -85,6 +85,8 @@ export interface InitiativePageData {
   groupSlug: string | null;
   rawDescription: string;
   title: string;
+  /** ¿La ficha dice que la plataforma KORUM ayudó a conseguir la meta? Solo si se decidió mostrarlo; nunca lleva importe. */
+  selfBoostShown: boolean;
 }
 
 /** Una lectura por petición: `generateMetadata` y la página comparten el resultado. `requestedGroup` es `''` si no se pidió ninguno. */
@@ -94,7 +96,7 @@ export const loadInitiativePage = cache(async (slug: string, initiativeId: numbe
   const organization = await loadPortalOrganization(slug);
   const row = await getPublicInitiative(db, slug, initiativeId);
   const { organization: context, ...publicFields } = row;
-  const [fact] = await listPricingFacts(db, slug, [initiativeId]);
+  const [[fact], selfBoostShown] = await Promise.all([listPricingFacts(db, slug, [initiativeId]), isSelfBoostShown(db, initiativeId)]);
   const rest = withPricingFacts(publicFields, fact);
   const localized = localizeRow(rest, locale, organization.contentLocale);
   const detail = toDetailData(localized.row, { vertical: context.vertical, participationGroupsJson: context.participationGroupsJson, ticketFeeFixedCents: context.ticketFeeFixedCents, ticketFeeBps: context.ticketFeeBps }, now);
@@ -107,7 +109,8 @@ export const loadInitiativePage = cache(async (slug: string, initiativeId: numbe
     updatedAt: row.updatedAt,
     groupSlug: match ? groupSlug(match.groupName) : null,
     rawDescription: localized.row.description,
-    title: localized.row.title
+    title: localized.row.title,
+    selfBoostShown
   };
 });
 

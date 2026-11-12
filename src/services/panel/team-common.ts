@@ -10,7 +10,7 @@ import type { Locale } from '@/generated/prisma/enums';
  * invitación. Las usan el relevo (`signer-handover.service.ts`) y la corrección de la invitación de la cofirma (`signer-team.service.ts`).
  */
 
-export type TeamRejection = 'REAUTH_REQUIRED' | 'INVALID' | 'ALREADY_OPEN' | 'SEAT_EMPTY' | 'SEAT_TAKEN' | 'SAME_INBOX' | 'DISPOSABLE_EMAIL' | 'UNAVAILABLE' | 'NOT_FOUND' | 'INVITEE_BUSY' | 'RATE_LIMITED';
+export type TeamRejection = 'REAUTH_REQUIRED' | 'INVALID' | 'ALREADY_OPEN' | 'SEAT_EMPTY' | 'SEAT_TAKEN' | 'SAME_INBOX' | 'DISPOSABLE_EMAIL' | 'UNAVAILABLE' | 'NOT_FOUND' | 'INVITEE_BUSY' | 'RATE_LIMITED' | 'SINGLE_MODE' | 'ALREADY_IN_MODE';
 
 export class TeamRejectedError extends Error {
   constructor(
@@ -146,9 +146,12 @@ export async function queueHandoverNotice(
     handoverId: string;
     organizationId: string;
     recipientUserId: string;
-    stage: 'REQUESTED' | 'DECLINED';
+    /** `MODE_SINGLE`: a la Cofirma que deja el puesto. `MODE_CHANGED`: a Dirección, para que se entere si el cambio no lo hizo ella. */
+    stage: 'REQUESTED' | 'MODE_SINGLE' | 'MODE_CHANGED' | 'EXPIRED';
     role: string;
+    /** Vacío si la persona no tiene cargo escrito: el email usa «Dirección» o «Cofirma» en su idioma. */
     roleLabel: string;
+    mode?: 'DOUBLE' | 'SINGLE';
   }
 ): Promise<number | null> {
   const recipient = await tx.user.findFirst({
@@ -168,7 +171,8 @@ export async function queueHandoverNotice(
         stage: input.stage,
         role: input.role,
         roleLabel: input.roleLabel,
-        leaving: input.stage === 'REQUESTED'
+        leaving: input.stage === 'REQUESTED' || input.stage === 'MODE_SINGLE',
+        ...(input.mode ? { mode: input.mode } : {})
       }
     },
     select: { id: true }

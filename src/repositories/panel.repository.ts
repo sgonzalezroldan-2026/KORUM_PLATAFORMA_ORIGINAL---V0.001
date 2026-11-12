@@ -13,6 +13,7 @@ const STAFF = ['DIRECTOR', 'COSIGNER'] as const;
 
 const OVERVIEW_VIEW = {
   id: true,
+  signatureMode: true,
   slug: true,
   name: true,
   vertical: true,

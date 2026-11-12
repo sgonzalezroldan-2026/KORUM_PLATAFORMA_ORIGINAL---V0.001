@@ -114,6 +114,10 @@ describe('línea de 6 estados', () => {
       { key: 'studio', done: false }
     ]);
     expect(firstCampaignSteps({ readySigners: 2, kybStatus: 'VERIFIED' }).filter((step) => step.done).map((step) => step.key)).toEqual(['signers', 'documents']);
+    // Con firma única basta la firma de Dirección: la primera tarjeta no espera a una persona que ya no existe (revisión de experiencia del 5.2).
+    expect(firstCampaignSteps({ readySigners: 1, kybStatus: 'PENDING', signatureMode: 'SINGLE' })[0]).toEqual({ key: 'signers', done: true });
+    expect(firstCampaignSteps({ readySigners: 0, kybStatus: 'PENDING', signatureMode: 'SINGLE' })[0]).toEqual({ key: 'signers', done: false });
+    expect(firstCampaignSteps({ readySigners: 1, kybStatus: 'PENDING', signatureMode: 'DOUBLE' })[0]).toEqual({ key: 'signers', done: false });
   });
 });
 

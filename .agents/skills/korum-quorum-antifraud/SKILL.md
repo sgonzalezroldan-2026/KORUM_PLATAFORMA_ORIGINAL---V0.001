@@ -55,7 +55,9 @@ Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde
 
 - **Interfaz y petición (Sprint 3.6):** `signIdeaForRequest` y `proposeIdeaForRequest` (`src/services/ideas/idea-requests.service.ts`) las llama la Server Action del buzón, que entrega la IP de `trustedClientIp` y la cookie `korum_device`; sin IP válida se abre la alerta `TRUSTED_IP_MISSING`. La firma y la supresión usan el **mismo** `DATA_HMAC_SECRET`. El alias de una idea es siempre `#FAM-NNNN` y lo genera el servidor (`generateIdeaAlias`). La huella solo se calcula y envía tras el consentimiento y se retira con un clic en el propio buzón.
 
-## 3. Doble firma mancomunada (`DIRECTOR` + `COSIGNER`)
+## 3. Doble firma mancomunada (`DIRECTOR` + `COSIGNER`), o firma única si la entidad la elige
+
+> **Modo de firma (decisión del promotor, 2026-11-12):** `Organization.signatureMode` es `DOUBLE` (por defecto) o `SINGLE`. Lo cambia `DIRECTOR` desde los ajustes, con el código reciente y una confirmación expresa, **al instante y sin el Super-Admin** (`changeSignatureMode`). Con `SINGLE` el puesto de `COSIGNER` desaparece (su cuenta no se borra), basta la firma de `DIRECTOR` (`evaluateDoubleCheck` lee el modo cada vez y devuelve `mode`; `requiredRolesFor`) y la entidad asume la responsabilidad. Los relevos de firmantes no esperan ningún visto bueno: la invitación sale al momento, quien sale recibe un aviso (sin veto; solo quien propuso el relevo lo retira) y todo queda en `AuditLog`. El Super-Admin no da de baja ni confirma puestos.
 
 - La doble firma exige **dos registros en `DoubleCheckSignature` de dos personas distintas**, una con rol `DIRECTOR` y otra con rol `COSIGNER`, para:
   1. Pasar una idea con quórum (`DOUBLE_CHECK`) a `BUDGETING`.

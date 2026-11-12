@@ -6,8 +6,9 @@ import { activateCosigner, registerEntityAndEnterPanel } from './panel-support';
 
 /**
  * QA-S02 (relevo de firmantes sin vaciar la doble firma) · Equipo, grupos y marca de la entidad (Sprint 4.2e), en escritorio (1440) y móvil (430), con
- * axe y sin errores de consola. Quien dirige corrige la invitación de la cofirma (email mal escrito); la cofirma entra y propone relevar a quien dirige;
- * quien dirige da su visto bueno con el código de su app; la persona nueva acepta y pasa a dirigir, y quien sale deja de firmar. Después, los grupos
+ * axe y sin errores de consola. Quien dirige corrige la invitación de la cofirma (email mal escrito); la cofirma entra y propone relevar a quien dirige
+ * (sin esperas ni visto bueno: la invitación sale al momento y quien dirige recibe un aviso); la persona nueva acepta y pasa a dirigir, y quien sale deja
+ * de firmar. Dirección también pasa a firma única y vuelve a doble firma desde sus ajustes, al instante (2026-11-12). Después, los grupos
  * (un nombre repetido se rechaza) y la identidad visual (color de la paleta, logotipo y portada) se ven en el portal, y la página se ve en catalán.
  */
 
@@ -40,7 +41,7 @@ async function confirmCode(page: Page, secret: string) {
 }
 
 test.describe('Panel de la entidad: equipo que firma, grupos y marca', () => {
-  test('corregir la cofirma, relevo con visto bueno, grupos, color, logotipo y portada; catalán', async ({ page, browser, isMobile }) => {
+  test('corregir la cofirma, relevo sin esperas, grupos, color, logotipo y portada; catalán', async ({ page, browser, isMobile }) => {
     const errors = trackConsoleErrors(page);
     // Cada sección tiene su propio aviso de éxito: se busca el del equipo, no el de los documentos de más arriba.
     const teamNotice = (target: Page) => target.getByRole('region', { name: 'Equipo que firma' }).getByTestId('approvals-notice');
@@ -82,7 +83,7 @@ test.describe('Panel de la entidad: equipo que firma, grupos y marca', () => {
     const cosignerErrors = trackConsoleErrors(cosigner.page);
     await ageSecondFactor([entity.director, cosignerEmail]);
 
-    // --- La cofirma propone relevar a quien dirige: se confirma con el código de su app y queda pendiente del visto bueno ---
+    // --- La cofirma propone relevar a quien dirige: se confirma con el código de su app y la invitación sale al momento, sin visto bueno ---
     await cosigner.page.goto(`/panel/${slug}/ajustes#equipo`);
     const propose = cosigner.page.getByRole('region', { name: 'Proponer un relevo' });
     await propose.getByLabel('Dirección: Carla Puig').check();
@@ -91,24 +92,23 @@ test.describe('Panel de la entidad: equipo que firma, grupos y marca', () => {
     await propose.getByLabel('Su email').fill(incoming);
     await propose.getByLabel('Su cargo').fill('Dirección del centro');
     const proposedAt = Date.now();
-    await propose.getByRole('button', { name: 'Pedir su visto bueno' }).click();
+    await propose.getByRole('button', { name: 'Invitar a quien la sustituye' }).click();
     await confirmCode(cosigner.page, cosigner.totpSecret);
-    await server(teamNotice(cosigner.page)).toContainText('Propuesta enviada');
-    await expect(cosigner.page.getByTestId('handover-status')).toContainText('Relevo pendiente de visto bueno');
-    await expect(cosigner.page.getByTestId('handover-status')).toContainText('Esperamos el visto bueno');
+    await server(teamNotice(cosigner.page)).toContainText('Invitación enviada');
+    await expect(cosigner.page.getByTestId('handover-status')).toContainText('Relevo en curso');
+    await expect(cosigner.page.getByTestId('handover-status')).toContainText('Has invitado a Pau Ferrer');
+    await expect(cosigner.page.getByTestId('handover-status').getByRole('button', { name: 'Retirar el relevo' })).toBeVisible();
     await checkPage(cosigner.page, cosignerErrors, isMobile);
 
-    // --- Quien dirige recibe el aviso (sin nombres) y da su visto bueno con su código ---
-    expect(await emailTo(entity.director, proposedAt, (text) => text.includes('relevo'))).not.toContain(incoming);
+    // --- Quien dirige recibe un aviso (sin nombres) que no le pide visto bueno; no puede vetar el relevo, solo reenviar la invitación ---
+    expect(await emailTo(entity.director, proposedAt, (text) => text.includes('No necesita tu visto bueno'))).not.toContain(incoming);
     await page.reload();
     const status = page.getByTestId('handover-status');
     await expect(status).toContainText('Pau Ferrer');
-    await expect(status).toContainText('ocupe tu puesto');
+    await expect(status).toContainText('ocupar tu puesto');
+    await expect(status.getByRole('button', { name: 'Retirar el relevo' })).toHaveCount(0);
+    await expect(status.getByRole('button', { name: 'Dar mi visto bueno' })).toHaveCount(0);
     await checkPage(page, errors, isMobile);
-    await status.getByRole('button', { name: 'Dar mi visto bueno' }).click();
-    await confirmCode(page, entity.totpSecret);
-    await server(teamNotice(page)).toContainText('Visto bueno dado');
-    await server(page.getByTestId('handover-status')).toContainText('Relevo en curso');
 
     // --- La persona nueva acepta: pasa a dirigir y quien sale deja de firmar ---
     const invitation = await emailTo(incoming, proposedAt, (text) => text.includes('/invitacion#t='));
@@ -204,5 +204,49 @@ test.describe('Panel de la entidad: equipo que firma, grupos y marca', () => {
     await expect(cosigner.page.getByRole('heading', { level: 2, name: 'Identitat visual' })).toBeVisible();
     await checkPage(cosigner.page, cosignerErrors, isMobile);
     await cosigner.context.close();
+  });
+
+  test('Dirección pasa a firma única y vuelve a doble firma desde sus ajustes, al instante y sin el Super-Admin', async ({ page, isMobile }) => {
+    const errors = trackConsoleErrors(page);
+    const teamNotice = page.getByRole('region', { name: 'Equipo que firma' }).getByTestId('approvals-notice');
+    const entity = await registerEntityAndEnterPanel(page, isMobile);
+    const slug = entity.slug;
+    await page.goto(`/panel/${slug}/ajustes#equipo`);
+    const mode = page.getByTestId('signature-mode');
+    await expect(mode).toHaveAttribute('data-mode', 'DOUBLE');
+    await expect(page.getByTestId('signature-mode-current')).toContainText('Doble firma');
+    await expect(page.getByTestId('seat-COSIGNER-pending')).toBeVisible();
+
+    // Pasar a firma única exige el código reciente y marcar que se entiende lo que cambia.
+    await mode.getByTestId('signature-mode-open').click();
+    const submit = mode.getByTestId('signature-mode-submit');
+    await expect(submit).toBeDisabled();
+    await mode.getByTestId('signature-mode-confirm').check();
+    await ageSecondFactor([entity.director]);
+    await submit.click();
+    await confirmCode(page, entity.totpSecret);
+    await server(teamNotice).toContainText('una sola firma');
+    await server(mode).toHaveAttribute('data-mode', 'SINGLE');
+    await expect(page.getByTestId('signature-mode-current')).toContainText('Firma única');
+    // Con firma única no hay puesto de cofirma ni invitación pendiente.
+    await expect(page.getByTestId('seat-COSIGNER-pending')).toHaveCount(0);
+    await expect(page.getByTestId('seat-COSIGNER-empty')).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Invitar a la cofirma' })).toHaveCount(0);
+    await withE2eDb(async (db) => {
+      const { rows } = await db.query(`SELECT o."signatureMode"::text AS mode, (SELECT count(*)::int FROM "AuditLog" a WHERE a."organizationId" = o.id AND a.action = 'signer.signature_mode_changed') AS audited FROM "Organization" o WHERE o.slug = $1`, [slug]);
+      expect(rows[0]).toEqual({ mode: 'SINGLE', audited: 1 });
+    });
+    await checkPage(page, errors, isMobile);
+
+    // Volver a doble firma: el puesto de cofirma queda vacío hasta que se invite.
+    await page.getByTestId('signature-mode-open').click();
+    await page.getByTestId('signature-mode-confirm').check();
+    await ageSecondFactor([entity.director]);
+    await page.getByTestId('signature-mode-submit').click();
+    await confirmCode(page, entity.totpSecret);
+    await server(teamNotice).toContainText('vuelve a doble firma');
+    await server(page.getByTestId('signature-mode')).toHaveAttribute('data-mode', 'DOUBLE');
+    await expect(page.getByTestId('seat-COSIGNER-empty')).toBeVisible();
+    await checkPage(page, errors, isMobile);
   });
 });

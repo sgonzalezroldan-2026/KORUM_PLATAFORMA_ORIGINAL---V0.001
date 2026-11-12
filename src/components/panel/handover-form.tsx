@@ -10,7 +10,7 @@ import { useApprovalsNotice } from './approvals-notice';
 import { useFreshCode } from './use-fresh-code';
 
 /** Motivos con texto propio junto al formulario; el resto se dice de forma genérica. */
-const KNOWN = ['REAUTH_REQUIRED', 'ALREADY_OPEN', 'SEAT_EMPTY', 'SEAT_TAKEN', 'SAME_INBOX', 'DISPOSABLE_EMAIL', 'UNAVAILABLE', 'INVITEE_BUSY', 'RATE_LIMITED', 'FORBIDDEN'];
+const KNOWN = ['REAUTH_REQUIRED', 'ALREADY_OPEN', 'SEAT_EMPTY', 'SEAT_TAKEN', 'SINGLE_MODE', 'SAME_INBOX', 'DISPOSABLE_EMAIL', 'UNAVAILABLE', 'INVITEE_BUSY', 'RATE_LIMITED', 'FORBIDDEN'];
 /** Motivos que son del email: se dicen junto al campo, no arriba (revisión de experiencia del 4.2e). */
 const EMAIL_REASONS = ['SAME_INBOX', 'DISPOSABLE_EMAIL', 'UNAVAILABLE', 'INVITEE_BUSY'];
 
@@ -24,7 +24,7 @@ export interface HandoverFormProps {
 }
 
 /**
- * Proponer quién ocupa un puesto que firma (Sprint 4.2e): el propio (sale la invitación) o el de la otra persona (le pide su visto bueno). Se confirma
+ * Proponer quién ocupa un puesto que firma (Sprint 4.2e): el propio o el de la otra persona; la invitación sale al momento y la otra persona recibe un aviso, sin visto bueno. Se confirma
  * con el código de la app de verificación. Los errores se dicen junto a cada campo y el foco va al primero; el éxito, en el aviso de la sección.
  */
 export function HandoverForm({ orgSlug, mode, seats, email }: HandoverFormProps) {

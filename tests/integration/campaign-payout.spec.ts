@@ -211,6 +211,51 @@ describe('QA-S03 · de extremo a extremo: firman las dos personas, PAYCOMET repa
   });
 });
 
+describe('Sprint 5.2 · firma única (decisión de la propia entidad)', () => {
+  it('con doble firma una sola no basta; con firma única basta la de Dirección y el panel pide solo esa', async () => {
+    const context = await team();
+    const { organization, director } = context;
+    const { initiative } = await reached(organization.id);
+    const invoice = await invoiceOf(organization.id);
+    const { payoutId } = await requestCampaignPayout(db, deps(), director, organization.id, organizationRequest(initiative.id, invoice.id));
+    await completeSignature(db, SECRET, director, await linkFor(director.userId));
+    let view = await loadCampaignPayouts(db, SECRET, director, organization.id, { providerPayoutAvailable: true });
+    expect(view.ready[0]?.pending?.slots.map((slot) => slot.role)).toEqual(['DIRECTOR', 'COSIGNER']);
+    // Con doble firma falta la de la cofirma: no se aprueba.
+    expect(await settleSignedCampaignPayout(db, asProvider(mock), payoutId, settleDeps)).toEqual({ status: 'NOT_APPROVED', reason: 'SIGNATURES' });
+    expect((await db.escrowPayout.findUniqueOrThrow({ where: { id: payoutId } })).status).toBe('PENDING_DOUBLE_CHECK');
+
+    // La entidad pasa a firma única: la firma de Dirección que ya estaba vale y no hace falta ninguna más.
+    await db.organization.update({ where: { id: organization.id }, data: { signatureMode: 'SINGLE' } });
+    view = await loadCampaignPayouts(db, SECRET, director, organization.id, { providerPayoutAvailable: true });
+    expect(view.ready[0]?.pending).toMatchObject({ signed: 1 });
+    expect(view.ready[0]?.pending?.slots.map((slot) => slot.role)).toEqual(['DIRECTOR']);
+    expect(await settleSignedCampaignPayout(db, asProvider(mock), payoutId, settleDeps)).toEqual({ status: 'EXECUTED' });
+  });
+
+  it('con firma única la tarea diaria también reanuda la liquidación con solo la firma de Dirección; con doble firma no', async () => {
+    const context = await team();
+    const { organization, director } = context;
+    const { initiative } = await reached(organization.id);
+    const { payoutId } = await requestCampaignPayout(db, deps(), director, organization.id, organizationRequest(initiative.id, (await invoiceOf(organization.id)).id));
+    await completeSignature(db, SECRET, director, await linkFor(director.userId));
+    await resumeCampaignPayouts(db, mock, settleDeps, new Date(), 50);
+    expect((await db.escrowPayout.findUniqueOrThrow({ where: { id: payoutId } })).status).toBe('PENDING_DOUBLE_CHECK');
+    await db.organization.update({ where: { id: organization.id }, data: { signatureMode: 'SINGLE' } });
+    await resumeCampaignPayouts(db, mock, settleDeps, new Date(), 50);
+    expect((await db.escrowPayout.findUniqueOrThrow({ where: { id: payoutId } })).status).not.toBe('PENDING_DOUBLE_CHECK');
+  });
+
+  it('con firma única la cofirma que quedara de antes no puede firmar', async () => {
+    const context = await team();
+    const { organization, cosigner } = context;
+    const { initiative } = await reached(organization.id);
+    await requestCampaignPayout(db, deps(), context.director, organization.id, organizationRequest(initiative.id, (await invoiceOf(organization.id)).id));
+    await db.organization.update({ where: { id: organization.id }, data: { signatureMode: 'SINGLE' } });
+    await expect(requestPayoutSignature(db, SECRET, cosigner, organization.id, { initiativeId: initiative.id })).rejects.toMatchObject({ reason: 'NOT_A_SIGNER' });
+  });
+});
+
 describe('Cambiar la liquidación y cifras que dejan de cuadrar', () => {
   it('cambiarla mientras espera: la firma que había deja de valer y los enlaces abiertos se anulan', async () => {
     const context = await team();

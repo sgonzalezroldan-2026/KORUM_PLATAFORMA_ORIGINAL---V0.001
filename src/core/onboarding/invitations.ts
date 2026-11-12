@@ -1,6 +1,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { hashPassword } from 'better-auth/crypto';
 import { safeEqual } from '@/core/security/data-hmac';
+import { lockGatePinInitiatives } from '@/core/ticketing/gate-revoke';
 import { inTransaction, type Db } from '@/lib/db';
 import { completeHandoverInTx, handoverStillValid, HandoverCompletionError } from './signer-handover-completion';
 
@@ -152,6 +153,13 @@ export class InvitationError extends Error {
 
 /** Dentro de la transacción: consume el enlace, crea el cargo si es de una entidad y lo deja en la auditoría. */
 async function consume(tx: Db, invitation: StoredInvitation & { id: string }, now: Date): Promise<void> {
+  // Primero la entidad y después el enlace, en el mismo orden que el cambio de modo de firma y los relevos: así dos operaciones cruzadas se ordenan en
+  // lugar de bloquearse entre sí (auditoría de seguridad del 5.2, B6).
+  if (invitation.organizationId && (invitation.purpose === 'COSIGNER' || invitation.purpose === 'HANDOVER')) {
+    // Un relevo completado revoca la portería de la entidad: sus iniciativas con PIN se bloquean antes que la entidad (mismo orden que el resto).
+    if (invitation.purpose === 'HANDOVER') await lockGatePinInitiatives(tx, invitation.organizationId, now);
+    await tx.organization.updateMany({ where: { id: invitation.organizationId }, data: { updatedAt: now } });
+  }
   // Consumir antes de escribir nada: dos envíos simultáneos del mismo enlace no hacen dos veces el trabajo.
   const consumed = await tx.verification.deleteMany({ where: { id: invitation.id, expiresAt: { gt: now } } });
   if (consumed.count !== 1) throw new InvitationError('INVALID_LINK');
@@ -164,6 +172,9 @@ async function consume(tx: Db, invitation: StoredInvitation & { id: string }, no
       throw error;
     }
   } else if (invitation.purpose === 'COSIGNER' && invitation.organizationId) {
+    // Con la entidad bloqueada: si mientras tanto pasó a firma única o el puesto ya lo ocupa alguien, la invitación ya no vale (auditoría de seguridad, M3).
+    const { signatureMode } = await tx.organization.findUniqueOrThrow({ where: { id: invitation.organizationId }, select: { signatureMode: true } });
+    if (signatureMode === 'SINGLE' || (await tx.organizationMember.count({ where: { organizationId: invitation.organizationId, role: 'COSIGNER' } })) > 0) throw new InvitationError('INVALID_LINK');
     await tx.organizationMember.createMany({ data: [{ organizationId: invitation.organizationId, userId: invitation.userId, role: 'COSIGNER', roleLabel: invitation.roleLabel }], skipDuplicates: true });
   }
   await tx.auditLog.create({

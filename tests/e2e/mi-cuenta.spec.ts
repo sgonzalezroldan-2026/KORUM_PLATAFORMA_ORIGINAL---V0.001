@@ -136,9 +136,12 @@ test.describe('Mi cuenta', () => {
     const since = Date.now();
     await dialog.getByRole('button', { name: 'Enviar código' }).click();
     await dialog.getByLabel('Código de 6 dígitos').fill(await codeTo(email, since));
-    const pdf = page.waitForEvent('download');
+    // Si la descarga no llega, la prueba falla en 30 s diciendo qué enseña la pantalla (en el CI de GitHub fallaba esperando 4 minutos sin más pistas).
+    const pdf = page.waitForEvent('download', { timeout: 30_000 }).catch(() => null);
     await dialog.getByRole('button', { name: 'Confirmar' }).click();
-    expect((await pdf).suggestedFilename()).toMatch(/\.pdf$/);
+    const file = await pdf;
+    expect(file, `sin descarga del PDF; diálogo: «${await dialog.innerText({ timeout: 2_000 }).catch(() => '(cerrado)')}»; aviso: «${await page.locator('[role="alert"], [role="status"]').allInnerTexts().catch(() => [])}»`).not.toBeNull();
+    expect(file!.suggestedFilename()).toMatch(/\.pdf$/);
     await expect(dialog).toBeHidden();
     await page.reload();
     await expect(page.locator('#privacy')).toContainText('Descarga de datos');
@@ -173,7 +176,8 @@ test.describe('Mi cuenta', () => {
     await page.getByRole('button', { name: 'Añadir una llave en este dispositivo' }).click();
     await firstAction(page.getByText('Llave añadida.', { exact: false })).toBeVisible();
     // Aviso de seguridad por email y rastro en la auditoría (auditoría del 3.7, I3).
-    expect(await emailTo(email, added)).toContain('Se ha añadido una llave de acceso a tu cuenta');
+    // El código de acceso de la sesión llega justo antes: se espera el aviso de la llave, no el primer email que haya.
+    expect(await emailTo(email, added, (text) => text.includes('Se ha añadido una llave de acceso a tu cuenta'))).toContain('Se ha añadido una llave de acceso a tu cuenta');
     const audited = await withE2eDb(async (db) => (await db.query(`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'account.passkey_added' AND "actorUserId" = (SELECT id FROM "User" WHERE email = $1)`, [email])).rows[0].n as number);
     expect(audited).toBe(1);
     await expect(page.locator('#security')).toContainText('Ordenador de pruebas');

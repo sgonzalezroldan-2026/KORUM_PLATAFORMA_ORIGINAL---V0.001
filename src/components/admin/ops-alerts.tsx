@@ -1,7 +1,7 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { EmptyState } from '@/components/ui/empty-state';
 import type { ConsoleAlert, ConsoleJobRun } from '@/repositories/console.repository';
-import { ResolveAlertButton, StuckResolver } from './alert-actions';
+import { RequeueEmailsButton, ResolveAlertButton, StuckResolver } from './alert-actions';
 
 /** Tipos de descuadre que la conciliación puede registrar (`detailJson.kind`): cualquier otro valor no se pinta (no tiene texto). */
 const RECONCILIATION_KINDS = new Set(['MISSING_LOCALLY', 'MISSING_AT_PSP', 'AMOUNT_MISMATCH', 'AUTHCODE_MISMATCH', 'CLEARING_NEGATIVE', 'RAISED_MISMATCH']);
@@ -37,7 +37,10 @@ export async function OpsAlerts({ alerts, openTotal, locale }: { alerts: Console
             {(alert.type === 'REFUND_STUCK' || alert.type === 'INVOICE_STUCK') && alert.resolvableId !== null ? (
               <StuckResolver alertType={alert.type} id={alert.resolvableId} />
             ) : (
-              <ResolveAlertButton alertId={alert.id} describedBy={`alert-title-${alert.id}`} />
+              <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-start">
+                {alert.requeueTemplate !== null ? <RequeueEmailsButton alertId={alert.id} describedBy={`alert-title-${alert.id}`} /> : null}
+                <ResolveAlertButton alertId={alert.id} describedBy={`alert-title-${alert.id}`} />
+              </div>
             )}
           </li>
         ))}

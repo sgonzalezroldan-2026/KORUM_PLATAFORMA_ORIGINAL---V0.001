@@ -158,6 +158,19 @@ describe('QA-FIN05 · BI cuadrado y alertas con las 8 iniciativas de la semilla'
     expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, approvedSponsorsFeeCents: 0, bracketFeeCents: 10_100 })).toMatchObject({ netProfitAfterBoostCents: 100, isProfitableSelfBoost: true });
   });
 
+  it('💎 descuenta el Auto-Impulso anterior de una campaña reabierta, que volvería a KORUM si la campaña fracasa (ejemplo del promotor, 2026-11-12)', () => {
+    // Meta 1.000 €, 880 € recaudados tras un contracargo de 120 €, comisión por tramos de 200 € y un primer Auto-Impulso de 150 € todavía puesto.
+    const reopened = { ...baseInput, status: 'FUNDRAISING', goalCents: 100_000, raisedCents: 88_000, bracketFeeCents: 20_000, netDigitalTicketMarginRealizedCents: 0 } as const;
+    // Sin descontarlo, la pantalla decía «Aportar 120 € ➔ Retorno +80 €».
+    expect(analyzeInitiativeProfitabilityAndSelfBoost(reopened)).toMatchObject({ missingTo100Cents: 12_000, netProfitAfterBoostCents: 8_000, recoverableSelfBoostCents: 0, isProfitableSelfBoost: true });
+    // Si KORUM aporta queda en 200 − 120 − 150 = −70 €; si no aporta, recupera los 150 € y queda en 0: no compensa.
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...reopened, recoverableSelfBoostCents: 15_000 })).toMatchObject({ netProfitAfterBoostCents: -7_000, recoverableSelfBoostCents: 15_000, isProfitableSelfBoost: false });
+    // Con un Auto-Impulso anterior pequeño sigue compensando, y la cifra lo refleja.
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...reopened, recoverableSelfBoostCents: 5_000 })).toMatchObject({ netProfitAfterBoostCents: 3_000, isProfitableSelfBoost: true });
+    // Una campaña que ya no recauda no lo resta (no hay nada que decidir).
+    expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...reopened, status: 'GOAL_REACHED', recoverableSelfBoostCents: 15_000 })).toMatchObject({ recoverableSelfBoostCents: 0 });
+  });
+
   it('💎 en taquilla cuenta el margen de las entradas vendidas, no el del aforo completo', () => {
     const boost = { ...baseInput, format: 'TICKETING', status: 'FUNDRAISING', goalCents: 10_000, raisedCents: 9_000, netDigitalTicketMarginAt100Cents: 2_000 } as const;
     expect(analyzeInitiativeProfitabilityAndSelfBoost({ ...boost, netDigitalTicketMarginRealizedCents: 800 })).toMatchObject({ netRevenueCents: 2_000, netProfitAfterBoostCents: -200, isProfitableSelfBoost: false });

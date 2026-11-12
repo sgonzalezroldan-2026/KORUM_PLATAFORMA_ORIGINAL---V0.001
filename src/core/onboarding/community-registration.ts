@@ -179,17 +179,26 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
   return result;
 }
 
-/** Reenvía la invitación pendiente de la persona cofirmante (aún sin aceptar). Lo decide quien llama tras `authorizeTenant` (DIRECTOR). */
+/**
+ * Reenvía la invitación pendiente de la persona cofirmante (aún sin aceptar). Lo decide quien llama tras `authorizeTenant` (DIRECTOR). Se comprueba y se crea
+ * con la entidad bloqueada, en el mismo orden que el cambio de modo de firma: con firma única o con la Cofirma ya aceptada no se crea ninguna invitación nueva
+ * (auditoría de seguridad del 5.2, N3). El email sale después de confirmar.
+ */
 export async function resendCosignerInvitation(db: Db, organizationId: string, context: Omit<RegistrationContext, 'sessionUserId' | 'locale'>): Promise<boolean> {
   const now = context.now ?? new Date();
-  const pending = (await listPendingCosignerInvitations(db, organizationId)).at(-1);
-  if (!pending) return false;
-  const [user, organization] = await Promise.all([
-    db.user.findUnique({ where: { id: pending.userId }, select: { id: true, email: true, locale: true, gdprAnonymizedAt: true } }),
-    db.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { name: true } })
-  ]);
-  if (!user || user.gdprAnonymizedAt) return false;
-  const { token } = await createInvitation(db, { userId: user.id, organizationId, purpose: 'COSIGNER', roleLabel: pending.roleLabel, displayName: pending.displayName }, now);
+  const created = await inTransaction(db, async (tx) => {
+    await tx.organization.updateMany({ where: { id: organizationId }, data: { updatedAt: now } });
+    const organization = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { name: true, signatureMode: true } });
+    if (organization.signatureMode === 'SINGLE' || (await tx.organizationMember.count({ where: { organizationId, role: 'COSIGNER' } })) > 0) return null;
+    const pending = (await listPendingCosignerInvitations(tx, organizationId)).at(-1);
+    if (!pending) return null;
+    const user = await tx.user.findUnique({ where: { id: pending.userId }, select: { id: true, email: true, locale: true, gdprAnonymizedAt: true } });
+    if (!user || user.gdprAnonymizedAt) return null;
+    const { token } = await createInvitation(tx, { userId: user.id, organizationId, purpose: 'COSIGNER', roleLabel: pending.roleLabel, displayName: pending.displayName }, now);
+    return { user, organization, pending, token };
+  });
+  if (!created) return false;
+  const { user, organization, pending, token } = created;
   return queueAuthEmail(
     { db, hmacSecret: context.hmacSecret, dispatch: context.dispatch },
     {

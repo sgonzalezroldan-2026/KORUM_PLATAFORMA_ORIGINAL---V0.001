@@ -66,6 +66,7 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
         activeSponsors={data.activeSponsors}
         readySigners={signers.filter((signer) => signer.status === 'ACTIVE').length}
         kybStatus={org.kybStatus}
+        signatureMode={org.signatureMode}
       />
 
       {isSigner ? <Model182Card orgSlug={org.slug} verified={org.ley49 && org.ley49VerifiedAt !== null} years={years} defaultYear={defaultYear} defaultPhone={defaultPhone} /> : null}

@@ -1,4 +1,4 @@
-import { evaluateDoubleCheck, type SignerRole } from '@/core/security/double-check-evaluation';
+import { evaluateDoubleCheck, requiredRolesFor, type SignerRole } from '@/core/security/double-check-evaluation';
 import { activityFundTargetDigest } from '@/core/security/signature-hash';
 import { planFundPayout } from '@/core/sponsors/activity-fund-rules';
 import type { SponsorLevel } from '@/core/sponsors/sponsorship-rules';
@@ -76,7 +76,8 @@ export async function loadActivityFund(db: KorumPrismaClient, secret: string, ac
     const evaluation = await evaluateDoubleCheck(db, secret, context, rows.pending.signatures);
     const invalid = new Set(evaluation.invalid.map((entry) => entry.signatureId));
     const valid = rows.pending.signatures.filter((signature) => !invalid.has(signature.id) && evaluation.validRoles.includes(signature.signerRole as SignerRole));
-    const slots = (['DIRECTOR', 'COSIGNER'] as const).map((role): DoubleCheckSlot => {
+    const requiredRoles = requiredRolesFor(evaluation.mode);
+    const slots = requiredRoles.map((role): DoubleCheckSlot => {
       const signature = valid.find((entry) => entry.signerRole === role);
       const signer = signature ? signers.find((entry) => entry.userId === signature.signerUserId && entry.role === role) : undefined;
       const holder = signers.find((entry) => entry.role === role && entry.status !== 'INVITED') ?? signers.find((entry) => entry.role === role);
@@ -90,7 +91,7 @@ export async function loadActivityFund(db: KorumPrismaClient, secret: string, ac
       ...payoutView(rows.pending),
       signed: valid.length,
       slots,
-      mySlotOpen: myRole !== null && !iSigned && !evaluation.validRoles.includes(myRole),
+      mySlotOpen: myRole !== null && requiredRoles.includes(myRole) && !iSigned && !evaluation.validRoles.includes(myRole),
       myChallengeExpiresAt: challenge ? challenge.expiresAt.toISOString() : null
     };
   }

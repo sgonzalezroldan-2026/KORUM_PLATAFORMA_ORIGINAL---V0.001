@@ -86,7 +86,8 @@ export async function cancelFundPayoutAction(orgSlug: string, payload: unknown):
 /** Reintenta ya el envío de una liquidación firmada que Paycomet no terminó (si no, la tarea diaria lo reintenta sola). */
 export async function retryFundPayoutAction(orgSlug: string, payload: unknown): Promise<FundActionResult> {
   return run(orgSlug, async ({ actor, organizationId }, db) => {
-    const { status } = await retryFundPayout(db, buildJobDeps(db).paymentProvider, actor, organizationId, payload);
+    const deps = buildJobDeps(db);
+    const { status } = await retryFundPayout(db, deps.paymentProvider, actor, organizationId, payload, new Date(), deps.hmacSecret());
     return { status: 'OK', executed: status === 'EXECUTED' };
   });
 }

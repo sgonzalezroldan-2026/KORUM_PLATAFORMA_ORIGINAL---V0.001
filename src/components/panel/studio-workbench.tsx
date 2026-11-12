@@ -67,6 +67,12 @@ const FIELD_FOR: Partial<Record<PublishBlocker, keyof StudioFieldErrors>> = {
 
 const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STALE_BOARD', 'QUOTA', 'NOT_PUBLISHABLE', 'TOO_MANY_DRAFTS', 'SEMANTIC_LOCK', 'FORBIDDEN'];
 
+/**
+ * Aviso de «borrador guardado» de una campaña recién creada. Si Next vuelve a montar el Estudio con la campaña ya en la dirección, el aviso no puede perderse: el
+ * nuevo montaje lo recoge si es de su misma campaña. Se descarta en cuanto la persona vuelve a actuar.
+ */
+let carriedSavedNotice: { initiativeId: number; message: Exclude<Message, null> } | null = null;
+
 export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished }: StudioWorkbenchProps) {
   const t = useTranslations('panel.studio');
   const current = useLocale();
@@ -77,13 +83,23 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
   const [busy, setBusy] = useState<'save' | 'publish' | 'discard' | null>(null);
   const [confirming, setConfirming] = useState<'publish' | 'discard' | null>(null);
   const [attempted, setAttempted] = useState(false);
-  const [message, setMessage] = useState<Message>(null);
+  const [message, setMessage] = useState<Message>(() => (carriedSavedNotice !== null && carriedSavedNotice.initiativeId === initialDraft.initiativeId ? carriedSavedNotice.message : null));
   const confirmRef = useRef<HTMLDivElement>(null);
   const publishedRef = useRef<HTMLDivElement>(null);
   const publishButton = useRef<HTMLButtonElement>(null);
   const discardButton = useRef<HTMLButtonElement>(null);
   const editable = lock === 'NONE';
+  // Al guardar por primera vez, la dirección pasa a apuntar a la campaña y Next vuelve a pedir la página al servidor: el Estudio se monta de nuevo con otra clave
+  // y lo que estuviera abierto (una confirmación) desaparece. Hasta que llegue, descartar y publicar esperan; pasados 8 segundos sin que llegue, se liberan.
+  const pendingSync = initialDraft.initiativeId === null && draft.initiativeId !== null;
+  const [syncGaveUp, setSyncGaveUp] = useState(false);
+  const syncing = pendingSync && !syncGaveUp;
 
+  useEffect(() => {
+    if (!pendingSync) return undefined;
+    const timer = setTimeout(() => setSyncGaveUp(true), 8_000);
+    return () => clearTimeout(timer);
+  }, [pendingSync]);
   useEffect(() => {
     if (confirming) confirmRef.current?.focus();
   }, [confirming]);
@@ -111,6 +127,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
 
   function change(patch: Partial<StudioDraft>) {
     setDraft((previous) => ({ ...previous, ...patch }));
+    carriedSavedNotice = null;
     setMessage(null);
     setConfirming(null);
   }
@@ -131,12 +148,15 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
 
   async function save() {
     setBusy('save');
+    carriedSavedNotice = null;
     setMessage(null);
     try {
       const result = await saveStudioAction(orgSlug, draft);
       if (result.status === 'SAVED') {
         rememberInitiative(result.initiativeId);
-        setMessage({ tone: 'success', text: t(lock === 'SOFT' ? 'saved.soft' : 'saved.draft', { goal: formatCents(result.goalCents, locale) }) });
+        const saved: Exclude<Message, null> = { tone: 'success', text: t(lock === 'SOFT' ? 'saved.soft' : 'saved.draft', { goal: formatCents(result.goalCents, locale) }) };
+        if (result.created) carriedSavedNotice = { initiativeId: result.initiativeId, message: saved };
+        setMessage(saved);
         // Una campaña recién creada cambia la dirección con `replaceState`: refrescar la página entonces la vuelve a montar con otra clave y se perdería el aviso.
         if (!result.created) router.refresh();
       } else if (result.status === 'ERROR') {
@@ -151,6 +171,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
   async function publish() {
     setBusy('publish');
     setConfirming(null);
+    carriedSavedNotice = null;
     setMessage(null);
     const wasNew = draft.initiativeId === null;
     try {
@@ -201,7 +222,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
     }
   }
 
-  const canPublish = editable && blockers.length === 0 && busy === null;
+  const canPublish = editable && blockers.length === 0 && busy === null && !syncing;
   const goal = formatCents(board.goalCents, locale);
   const fundraising = stored?.status === 'FUNDRAISING' && draft.initiativeId !== null;
   const publicHref = fundraising ? `/${orgSlug}/iniciativas/${draft.initiativeId}` : null;
@@ -253,7 +274,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
               </div>
             </div>
           ) : (
-            <button ref={publishButton} type="button" className={primaryButton} disabled={!canPublish} aria-describedby={blockers.length > 0 ? 'studio-publish-hint' : undefined} onClick={() => setConfirming('publish')} data-testid="studio-publish">
+            <button ref={publishButton} type="button" className={primaryButton} disabled={!canPublish} aria-describedby={syncing ? 'studio-syncing' : blockers.length > 0 ? 'studio-publish-hint' : undefined} onClick={() => setConfirming('publish')} data-testid="studio-publish">
               <span aria-hidden="true">{'🚀 '}</span>
               {busy === 'publish' ? t('actions.publishing') : t('actions.publish')}
             </button>
@@ -284,11 +305,15 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
                 </div>
               </div>
             ) : (
-              <button ref={discardButton} type="button" className="inline-flex min-h-11 items-center justify-center font-semibold text-slate-200 underline underline-offset-4 disabled:opacity-60" disabled={busy !== null} onClick={() => setConfirming('discard')} data-testid="studio-discard">
+              <button ref={discardButton} type="button" className="inline-flex min-h-11 items-center justify-center font-semibold text-slate-200 underline underline-offset-4 disabled:opacity-60" disabled={busy !== null || syncing} aria-describedby={syncing ? 'studio-syncing' : undefined} onClick={() => setConfirming('discard')} data-testid="studio-discard">
                 {busy === 'discard' ? t('actions.discarding') : t('actions.discard')}
               </button>
             )
           ) : null}
+          {/* Siempre en la página (vacío fuera de la espera): los lectores de pantalla solo anuncian una región viva que ya existía. */}
+          <p id="studio-syncing" role="status" className="text-xs text-slate-300" data-testid={syncing ? 'studio-syncing' : undefined}>
+            {syncing ? t('actions.syncing') : ''}
+          </p>
         </>
       ) : null}
       {lock === 'SOFT' ? (

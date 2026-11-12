@@ -7,12 +7,12 @@ import { reserveAttempt } from '@/lib/rate-limit';
 import { SIGNATURE_REQUEST_RULE } from '@/lib/rate-limit-rules';
 import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, ResourceNotFoundError, type SessionActor } from '@/repositories/tenant-guard';
 import { dataHmac, safeEqual } from './data-hmac';
-import { evaluateDoubleCheck, loadSignerMemberships, SIGNER_ROLES, type DoubleCheckContext, type DoubleCheckEvaluation, type SignerMembership, type SignerRole, type StoredSignature } from './double-check-evaluation';
+import { evaluateDoubleCheck, loadSignerMemberships, requiredRolesFor, SIGNER_ROLES, type DoubleCheckContext, type DoubleCheckEvaluation, type SignerMembership, type SignerRole, type StoredSignature } from './double-check-evaluation';
 import { queueChallengeEmail, revokeOpenChallenges, targetColumns, targetIdOf, type SignatureTarget } from './double-check-email';
 import { activityFundTargetDigest, computeSignatureHash, ideaTargetDigest, payoutDigestFor } from './signature-hash';
 
 /**
- * Doble firma mancomunada (skill korum-quorum-antifraud §3): `DIRECTOR` + `COSIGNER`, dos personas distintas, para aprobar una idea,
+ * Doble firma mancomunada (skill korum-quorum-antifraud §3): `DIRECTOR` + `COSIGNER`, dos personas distintas (o, si la entidad eligió la firma única, solo `DIRECTOR`), para aprobar una idea,
  * liberar una liquidación o liquidar el Fondo de actividades (Sprint 4.2f). Toda firma se hace con un enlace de un solo uso y un OTP, y además con la sesión de esa misma persona: el enlace
  * y el código van al mismo correo, y una bandeja de entrada comprometida no debe bastar para mover dinero.
  *
@@ -131,6 +131,8 @@ async function signerBlock(tx: Db, locked: LockedTarget, evaluation: DoubleCheck
   if (memberships.length > 1) return { block: 'HOLDS_BOTH_ROLES' };
   const membership = memberships[0];
   if (!membership) return { block: 'NOT_A_SIGNER' };
+  // Con firma única solo firma Dirección: la Cofirma que hubiera quedado de antes no firma nada.
+  if (!requiredRolesFor(evaluation.mode).includes(membership.role)) return { block: 'NOT_A_SIGNER' };
   const { twoFactorEnabled } = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { twoFactorEnabled: true } });
   // La cuenta tiene 2FA y, además, ESTA sesión lo superó: quien solo controla el correo (enlace mágico) no puede firmar.
   if (!twoFactorEnabled || !sessionSecondFactor) return { block: 'TWO_FACTOR_REQUIRED' };
@@ -203,6 +205,29 @@ export type CompleteSignatureResult =
   /** Lo que se pidió firmar ha cambiado: hay que volver a revisarlo y pedir un enlace nuevo. */
   | { status: 'TARGET_CHANGED' }
   | { status: 'NOT_ALLOWED'; reason: DoubleCheckBlock };
+
+/**
+ * Convierte las ideas que ya esperaban solo la firma de Dirección cuando la entidad pasa a firma única (auditoría de seguridad del 5.2, M2): su firma
+ * ya era válida, pero la conversión solo ocurre al firmar y Dirección ya no puede volver a firmar. Dentro de la transacción del cambio de modo, con la
+ * entidad bloqueada; vuelve a evaluarlo todo con el modo vigente. Devuelve las iniciativas creadas.
+ */
+export async function convertReadyIdeas(tx: Db, secret: string, organizationId: string, now: Date): Promise<number[]> {
+  // Se bloquean antes las ideas candidatas: una firma que se esté completando a la vez termina primero y la consulta siguiente ya la ve (auditoría de seguridad, H2).
+  await tx.idea.updateMany({ where: { organizationId, phase: 'DOUBLE_CHECK' }, data: { votes: { increment: 0 } } });
+  const ideas = await tx.idea.findMany({ where: { organizationId, phase: 'DOUBLE_CHECK', expiresAt: { gt: now }, doubleCheckSignatures: { some: { signerRole: 'DIRECTOR' } } }, orderBy: { id: 'asc' }, select: { id: true } });
+  const created: number[] = [];
+  for (const { id } of ideas) {
+    const target: SignatureTarget = { targetType: 'IDEA_APPROVAL', ideaId: id };
+    const locked = await lockTarget(tx, secret, target, now);
+    if (!locked.open) continue;
+    if (!(await evaluateDoubleCheck(tx, secret, locked.context, locked.signatures)).complete) continue;
+    await tx.idea.update({ where: { id }, data: { phase: 'CONVERTED' } });
+    const { initiativeId } = await createInitiativeFromIdea(tx, id, now);
+    await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId, action: 'idea.converted', targetType: 'IDEA_APPROVAL', targetId: String(id), metadataJson: { initiativeId, reason: 'SIGNATURE_MODE_SINGLE' } } });
+    created.push(initiativeId);
+  }
+  return created;
+}
 
 function challengeTarget(challenge: { targetType: DoubleCheckTargetType; ideaId: number | null; payoutId: number | null; fundPayoutId: number | null }): SignatureTarget {
   if (challenge.targetType === 'IDEA_APPROVAL') return { targetType: 'IDEA_APPROVAL', ideaId: challenge.ideaId! };
@@ -294,12 +319,13 @@ export async function completeSignature(db: KorumPrismaClient, secret: string, a
     const remaining = locked.signatures.filter((existing) => existing.id !== stale?.id);
     const after = await evaluateDoubleCheck(tx, secret, locked.context, [...remaining, signature]);
     if (after.complete) {
-      if (target.targetType !== 'IDEA_APPROVAL') return { status: 'SIGNED', target, signatures: 2, complete: true, ideaConverted: false, initiativeId: null, nextChallenges: [] };
+      const signatures = after.validRoles.length;
+      if (target.targetType !== 'IDEA_APPROVAL') return { status: 'SIGNED', target, signatures, complete: true, ideaConverted: false, initiativeId: null, nextChallenges: [] };
       // La idea pasa a `CONVERTED` y crea su iniciativa en presupuestación en la misma transacción: o las dos cosas o ninguna (PRD §4.2).
       await tx.idea.update({ where: { id: target.ideaId }, data: { phase: 'CONVERTED' } });
       const { initiativeId } = await createInitiativeFromIdea(tx, target.ideaId, now);
       await audit('idea.converted', { initiativeId });
-      return { status: 'SIGNED', target, signatures: 2, complete: true, ideaConverted: true, initiativeId, nextChallenges: [] };
+      return { status: 'SIGNED', target, signatures, complete: true, ideaConverted: true, initiativeId, nextChallenges: [] };
     }
     const missingRole: SignerRole = signerRole === 'DIRECTOR' ? 'COSIGNER' : 'DIRECTOR';
     const candidates = await tx.organizationMember.findMany({ where: { organizationId: challenge.organizationId, role: missingRole, userId: { not: actor.userId }, user: { twoFactorEnabled: true } }, select: { userId: true } });

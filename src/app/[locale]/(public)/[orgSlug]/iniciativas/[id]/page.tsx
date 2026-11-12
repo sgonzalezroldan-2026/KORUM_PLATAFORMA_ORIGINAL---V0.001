@@ -101,6 +101,7 @@ export default async function InitiativePage({ params, searchParams }: PageProps
         shareUrl={absoluteUrl(locale, initiativePath(orgSlug, card.id))}
         groups={page.groups}
         contentLang={page.contentLang}
+        selfBoostShown={page.selfBoostShown}
       />
     </>
   );

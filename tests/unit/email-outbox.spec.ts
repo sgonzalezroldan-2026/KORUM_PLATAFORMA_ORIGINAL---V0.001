@@ -72,6 +72,8 @@ const SAMPLES: Record<string, unknown> = {
   'sponsor.welcome': { sponsorId: 3, level: 'ORO', matching: true, expiresAt: IN_3_DAYS, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
   'sponsor.rejected': { sponsorId: 3, reason: 'Ya tenemos una panadería patrocinando esta campaña.', refundCents: 29_538, rectified: true, order: 'KS0123456789ABCDEF', sig: 'a'.repeat(64) },
   'signer.handover': { stage: 'REQUESTED', role: 'COSIGNER', roleLabel: 'Tesorería del AMPA', leaving: true },
+  // Resultado de la revisión del KYB (Sprint 5.2).
+  'org.kybStatus': { stage: 'REJECTED', note: 'Falta la página con la firma del acta fundacional.' },
   // Fondo de actividades e invitación a renovar (Sprint 4.2f).
   'sponsor.renewalInvite': { sponsorId: 3, amountCents: 25_000, badgeExpiresAt: IN_3_DAYS, expiresAt: IN_3_DAYS, token: `3.1798761600000.${'b'.repeat(64)}` },
   'sponsor.toEntityFund': { sponsorId: 3, amountCents: 25_000 },
@@ -173,9 +175,10 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
     expect(secretFieldsOf('sponsor.rejected')).toEqual(['sig']);
   });
 
-  it('signer.handover pide el visto bueno sin nombres ni emails de nadie y lleva al equipo que firma; al completarse distingue a quien sale (Sprint 4.2e)', async () => {
+  it('signer.handover avisa a quien sale (sin pedirle visto bueno) sin nombres ni emails de nadie y lleva al equipo que firma; al completarse distingue a quien sale (Sprint 4.2e)', async () => {
     const requested = await render('signer.handover', 'es');
-    expect(requested.subject).toBe('AMPA Colegio Sol: te proponen un relevo en tu puesto de firma');
+    expect(requested.subject).toBe('AMPA Colegio Sol: han propuesto sustituirte en tu puesto de firma');
+    expect(requested.text).toContain('No necesita tu visto bueno');
     expect(requested.text).toContain('https://korum.test/panel/colegio-sol/ajustes#equipo');
     expect(requested.text).not.toMatch(/@/);
     const leaving = await render('signer.handover', 'ca', { payload: { stage: 'COMPLETED', role: 'DIRECTOR', roleLabel: 'Direcció del centre', leaving: true } });
@@ -183,7 +186,52 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
     expect(leaving.text).toContain('Direcció del centre');
     const staying = await render('signer.handover', 'en', { payload: { stage: 'COMPLETED', role: 'COSIGNER', roleLabel: 'Treasurer', leaving: false } });
     expect(staying.subject).toContain('new person on the signing team');
-    expect((await render('signer.handover', 'es', { payload: { stage: 'DECLINED', role: 'COSIGNER', roleLabel: 'Tesorería', leaving: false } })).text).toContain('Relevo rechazado');
+  });
+
+  it('signer.handover: el paso a firma única avisa a la cofirma que deja el puesto, en los tres idiomas y sin nombres ni emails (Sprint 5.2)', async () => {
+    const es = await render('signer.handover', 'es', { payload: { stage: 'MODE_SINGLE', role: 'COSIGNER', roleLabel: 'Tesorería', leaving: true } });
+    expect(es.subject).toBe('AMPA Colegio Sol: la entidad pasa a firma única');
+    expect(es.text).toContain('Tesorería');
+    expect(es.text).toContain('códigos de portería');
+    const ca = await render('signer.handover', 'ca', { payload: { stage: 'MODE_SINGLE', role: 'COSIGNER', roleLabel: 'Tresoreria', leaving: true } });
+    expect(ca.subject).toContain('signatura única');
+    const en = await render('signer.handover', 'en', { payload: { stage: 'MODE_SINGLE', role: 'COSIGNER', roleLabel: 'Treasurer', leaving: true } });
+    expect(en.subject).toContain('single signature');
+    for (const mail of [es, ca, en]) {
+      expect(mail.text).not.toMatch(/@\w/);
+      // Quien deja el puesto ya no puede entrar al panel: el aviso no le ofrece un enlace a una pantalla prohibida.
+      expect(mail.text).not.toContain('/panel/');
+    }
+  });
+
+  it('signer.handover: sin cargo escrito el email dice «Cofirma» en su idioma, y avisa de los cambios de modo a Dirección y de un relevo caducado a quien lo propuso (auditoría del 5.2)', async () => {
+    const noLabel = await render('signer.handover', 'es', { payload: { stage: 'MODE_SINGLE', role: 'COSIGNER', roleLabel: '', leaving: true } });
+    expect(noLabel.text).toContain('Cofirma');
+    expect(noLabel.text).not.toContain('COSIGNER');
+    const toSingle = await render('signer.handover', 'es', { payload: { stage: 'MODE_CHANGED', role: 'DIRECTOR', roleLabel: '', leaving: false, mode: 'SINGLE' } });
+    expect(toSingle.subject).toBe('AMPA Colegio Sol: la entidad firma ahora con una sola firma');
+    expect(toSingle.text).toContain('Si este cambio no lo has hecho tú');
+    expect(toSingle.text).toContain('/panel/colegio-sol/ajustes#equipo');
+    const toDouble = await render('signer.handover', 'ca', { payload: { stage: 'MODE_CHANGED', role: 'DIRECTOR', roleLabel: '', leaving: false, mode: 'DOUBLE' } });
+    expect(toDouble.subject).toContain('doble signatura');
+    const expired = await render('signer.handover', 'en', { payload: { stage: 'EXPIRED', role: 'COSIGNER', roleLabel: 'Treasurer', leaving: false } });
+    expect(expired.subject).toContain('expired');
+    expect(expired.text).toContain('Treasurer');
+  });
+
+  it('org.kybStatus: verificada con o sin Ley 49/2002 y devuelta con la nota, en los tres idiomas y sin datos personales (Sprint 5.2)', async () => {
+    const rejected = await render('org.kybStatus', 'es');
+    expect(rejected.subject).toBe('AMPA Colegio Sol: faltan o hay que corregir documentos');
+    expect(rejected.text).toContain('Falta la página con la firma del acta fundacional.');
+    expect(rejected.text).toContain('https://korum.test/panel/colegio-sol/ajustes#documentos');
+    const verified = await render('org.kybStatus', 'es', { payload: { stage: 'VERIFIED', ley49: 'VERIFIED' } });
+    expect(verified.subject).toBe('AMPA Colegio Sol: vuestros documentos están verificados');
+    expect(verified.text).toContain('certificado fiscal de donación');
+    const notAccredited = await render('org.kybStatus', 'ca', { payload: { stage: 'VERIFIED', ley49: 'NOT_ACCREDITED' } });
+    expect(notAccredited.text).toContain('justificant nominatiu');
+    const plain = await render('org.kybStatus', 'en', { payload: { stage: 'VERIFIED', ley49: 'NOT_DECLARED' } });
+    expect(plain.text).not.toContain('Law 49/2002');
+    expect(rejected.text).not.toMatch(/@/);
   });
 
   it('la aportación voluntaria a KORUM solo aparece en el recibo si se marcó', async () => {

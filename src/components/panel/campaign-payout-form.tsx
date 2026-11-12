@@ -68,7 +68,7 @@ export function CampaignPayoutForm({
   const base = useId();
   const id = (key: string) => `${base}-${key}`;
   const current = initiative.pending;
-  const [destination, setDestination] = useState<Destination>(current?.destinationType ?? (organizationAccount || !providerPayoutAvailable ? 'ORGANIZATION' : 'PROVIDER'));
+  const [destination, setDestination] = useState<Destination>(current && (current.destinationType === 'ORGANIZATION' || providerPayoutAvailable) ? current.destinationType : organizationAccount || !providerPayoutAvailable ? 'ORGANIZATION' : 'PROVIDER');
   const [fields, setFields] = useState({ providerName: current?.destinationType === 'PROVIDER' ? current.beneficiaryName : '', providerTaxId: '', iban: '' });
   const [invoice, setInvoice] = useState<{ fileId: string; name: string } | null>(current?.invoice && current.invoiceValid ? { fileId: current.invoice.fileId, name: t('invoiceKept') } : null);
   const [uploading, setUploading] = useState(false);

@@ -151,7 +151,7 @@ describe('Sprint 4.2b · tarjeta del comercio en la bandeja', () => {
 
     renderCard(sponsor(), false);
     expect(screen.queryByRole('button', { name: /Aprobar comercio/ })).not.toBeInTheDocument();
-    expect(screen.getByText(/Solo las dos personas firmantes/)).toBeInTheDocument();
+    expect(screen.getByText(/Solo las personas firmantes/)).toBeInTheDocument();
     expect(screen.queryByText('Subir su logotipo')).not.toBeInTheDocument();
   });
 

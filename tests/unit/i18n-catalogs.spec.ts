@@ -57,6 +57,8 @@ describe('QA-C05 · catálogos de traducción', () => {
     // «Avisos» se escribe igual en castellano y en catalán; los nombres de idioma y de marca no se traducen.
     // En la exportación de datos (Sprint 2.5): «Sí», «No», «Idea», «Iniciativa», «NIF», «Completada» y «Fallida» son iguales en catalán.
     const SAME_IN_CATALAN = new Set([
+      // Equipo que firma (Sprint 5.2): «Cofirma» se escribe igual en catalán (el término que usa la propia sección).
+      'admin.org360.seats.role.COSIGNER', 'email.signer.handover.seat.COSIGNER', 'panel.approvals.doubleCheck.roles.COSIGNER', 'panel.settings.team.seat.COSIGNER', 'panel.signers.role.COSIGNER',
       // Buzón de ideas y logros (Sprint 3.6): «Compartir», «Foto» y «Publicar foto» se escriben igual en catalán.
       'portal.ideas.card.share', 'portal.ideas.card.shareAria', 'panel.achievements.fileLabel', 'panel.achievements.upload',
       // Comercios amigos (Sprint 4.2b): «Plata», «Factura rectificativa» y «Rectifica la factura» se escriben igual en catalán.
@@ -107,8 +109,12 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Ronda extra del sorteo (Sprint 4.6): «ronda» se escribe igual en catalán.
       'panel.gate.raffle.extraTitle', 'panel.gate.raffle.prepare', 'panel.gate.raffle.round', 'panel.gate.raffle.roundExtra',
       // BI de la consola (Sprint 5.1): «Meta», «Iniciativa», «Medalla» y «Plata» se escriben igual en catalán; los porcentajes y los patrones no tienen texto traducible.
-      'admin.metaTitle', 'admin.kpi.potentialGoal', 'admin.kpi.percent', 'admin.orgs.col.medal', 'admin.orgs.col.goal', 'admin.orgs.medal.2', 'admin.orgs.sponsorsValue', 'admin.orgs.noValue', 'admin.initiatives.percent', 'admin.initiatives.col.title', 'admin.initiatives.col.goal']);
-    const SAME_IN_ENGLISH = new Set(['privacy.export.no', 'privacy.export.fields.idea', 'registration.fields.email',
+      'admin.metaTitle', 'admin.kpi.potentialGoal', 'admin.kpi.percent', 'admin.orgs.col.medal', 'admin.orgs.col.goal', 'admin.orgs.medal.2', 'admin.orgs.sponsorsValue', 'admin.orgs.noValue', 'admin.initiatives.percent', 'admin.initiatives.col.title', 'admin.initiatives.col.goal',
+      // Consola (Sprint 5.2): «Medalla», «Plata», «CIF», «Forma jurídica», «Titular legal», «Número», «Rectificativa», «Total», «Falta» y las unidades se escriben igual en catalán.
+      'admin.entities.col.medal', 'admin.entities.medal.2', 'admin.entities.noValue', 'admin.org360.holder.cif', 'admin.org360.holder.legalForm', 'admin.org360.holder.ley49No', 'admin.org360.holder.ley49Verified', 'admin.org360.holder.title', 'admin.org360.invoices.number', 'admin.org360.invoices.rectification', 'admin.org360.invoices.total', 'admin.org360.kyb.cif', 'admin.org360.kyb.missing', 'admin.org360.legalForm.PARENTS_ASSOCIATION', 'admin.org360.medal.2', 'admin.org360.nav.titular', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'admin.popup.percent', 'admin.popup.previousItem']);
+    const SAME_IN_ENGLISH = new Set(['privacy.export.no',
+      // Consola (Sprint 5.2): el guion, «Total» y las unidades son iguales en inglés.
+      'admin.entities.noValue', 'admin.org360.invoices.total', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'privacy.export.fields.idea', 'registration.fields.email',
       // BI de la consola (Sprint 5.1): el guion de «sin valor» es igual en inglés.
       'admin.orgs.noValue',
       // Equipo y marca (Sprint 4.2e): un patrón sin texto traducible y «Coral», igual en inglés.

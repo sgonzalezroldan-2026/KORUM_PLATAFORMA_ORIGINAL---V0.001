@@ -3,19 +3,20 @@ import type { SeatRole } from '@/core/panel/team-rules';
 import type { SignerTeamData } from '@/services/panel/signer-team.service';
 import { HandoverForm } from './handover-form';
 import { HandoverStatus } from './handover-status';
+import { SignatureModeForm } from './signature-mode-form';
 import { ResendInvitationButton } from './resend-invitation-button';
 import { RoleLabelForm } from './role-label-form';
 
 /**
- * «Equipo que firma» en los ajustes de la entidad (Sprint 4.2e): los dos puestos (dirección y cofirma) con su nombre y su cargo, la invitación de
- * la cofirma si aún no la ha aceptado, el relevo abierto y el formulario para proponer uno. Capa Varsity: es gobierno del dinero. Del resto de
- * personas solo el nombre, el cargo y si ya puede firmar; de quien se invita, el nombre escrito y el email a medias (completo solo para quien da su
- * visto bueno mientras decide).
+ * «Equipo que firma» en los ajustes de la entidad (Sprint 4.2e): cuántas firmas exige (la entidad lo elige), los puestos (dirección y, con doble firma,
+ * cofirma) con su nombre y su cargo, la invitación de la cofirma si aún no la ha aceptado, el relevo abierto y el formulario para proponer uno. Capa
+ * Varsity: es gobierno del dinero. Del resto de personas solo el nombre, el cargo y si ya puede firmar; de quien se invita, el nombre escrito y el email a medias.
  */
 export function SignerTeamSection({ orgSlug, team, canEdit, email }: { orgSlug: string; team: SignerTeamData; canEdit: boolean; email: string }) {
   const t = useTranslations('panel.settings.team');
   const seatName = (role: SeatRole) => t(`seat.${role}`);
   const isDirector = team.myRole === 'DIRECTOR';
+  const single = team.signatureMode === 'SINGLE';
   const cosignerSeat = team.seats.find((seat) => seat.role === 'COSIGNER');
   // El propio puesto primero; el de la otra persona solo si está ocupado (un puesto vacío se invita, no se releva).
   const relayable = team.seats
@@ -29,6 +30,7 @@ export function SignerTeamSection({ orgSlug, team, canEdit, email }: { orgSlug: 
 
   return (
     <div className="korum-trust-vault flex flex-col gap-4 p-4 sm:p-5">
+      <SignatureModeForm orgSlug={orgSlug} mode={team.signatureMode} canChange={canEdit && isDirector} email={email} />
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2" aria-label={t('seatsLabel')}>
         {team.seats.map((seat) => (
           <li key={seat.role} className="flex flex-col gap-2 rounded-2xl border-2 border-varsity-navy/20 bg-white p-4" data-testid={`seat-${seat.role}`}>
@@ -42,7 +44,7 @@ export function SignerTeamSection({ orgSlug, team, canEdit, email }: { orgSlug: 
             {seat.isMe && canEdit ? <RoleLabelForm orgSlug={orgSlug} current={seat.roleLabel} /> : null}
           </li>
         ))}
-        {!cosignerSeat && team.pendingCosigner ? (
+        {!single && !cosignerSeat && team.pendingCosigner ? (
           <li className="flex flex-col gap-2 rounded-2xl border-2 border-dashed border-varsity-navy/40 bg-varsity-ivory p-4" data-testid="seat-COSIGNER-pending">
             <p className="text-sm font-bold uppercase tracking-wide text-varsity-emerald">{seatName('COSIGNER')}</p>
             <p className="font-corp text-lg font-extrabold text-varsity-navy wrap-anywhere">{team.pendingCosigner.displayName}</p>
@@ -54,7 +56,7 @@ export function SignerTeamSection({ orgSlug, team, canEdit, email }: { orgSlug: 
             </p>
           </li>
         ) : null}
-        {!cosignerSeat && !team.pendingCosigner ? (
+        {!single && !cosignerSeat && !team.pendingCosigner ? (
           <li className="flex flex-col gap-2 rounded-2xl border-2 border-dashed border-red-700/60 bg-red-50 p-4" data-testid="seat-COSIGNER-empty">
             <p className="text-sm font-bold uppercase tracking-wide text-varsity-emerald">{seatName('COSIGNER')}</p>
             <p className="font-semibold text-red-900">{t('cosignerEmpty')}</p>
@@ -62,10 +64,10 @@ export function SignerTeamSection({ orgSlug, team, canEdit, email }: { orgSlug: 
         ) : null}
       </ul>
 
-      {team.handover ? <HandoverStatus orgSlug={orgSlug} handover={team.handover} seatLabel={seatName(team.handover.role)} canEdit={canEdit} email={email} /> : null}
+      {team.handover ? <HandoverStatus orgSlug={orgSlug} handover={team.handover} seatLabel={seatName(team.handover.role)} canEdit={canEdit} /> : null}
 
       {/* Con la cofirma sin aceptar (o sin invitación: caducó y se purgó), quien dirige la invita o corrige a quién se invita. */}
-      {canEdit && isDirector && !cosignerSeat ? (
+      {canEdit && isDirector && !single && !cosignerSeat ? (
         <section aria-labelledby="team-correct" className="flex flex-col gap-3 rounded-2xl border-2 border-varsity-navy/15 bg-white p-4">
           <h3 id="team-correct" className="font-corp text-lg font-extrabold text-varsity-navy">
             {t(team.pendingCosigner ? 'correctTitle' : 'inviteTitle')}

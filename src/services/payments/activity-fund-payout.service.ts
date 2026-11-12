@@ -215,12 +215,21 @@ export async function settleSignedFundPayout(db: Db, provider: () => Promise<Pay
   return { status };
 }
 
-/** Una persona firmante reintenta ya el envío de su liquidación firmada que Paycomet no terminó (la tarea diaria también lo hace). */
-export async function retryFundPayout(db: KorumPrismaClient, provider: () => Promise<PaymentProvider>, actor: SessionActor, organizationId: string, payload: unknown, now: Date = new Date()): Promise<{ status: FundExecutionStatus }> {
+/**
+ * Una persona firmante reintenta ya el envío de su liquidación firmada que Paycomet no terminó (la tarea diaria también lo hace). Con `signatureSecret` también
+ * sirve para una liquidación que ya tiene las firmas que exige la entidad pero no llegó a aprobarse (por ejemplo, la entidad pasó a firma única con la firma de
+ * Dirección puesta): se vuelve a evaluar todo, igual que en la tarea diaria, y se aprueba y envía en el acto.
+ */
+export async function retryFundPayout(db: KorumPrismaClient, provider: () => Promise<PaymentProvider>, actor: SessionActor, organizationId: string, payload: unknown, now: Date = new Date(), signatureSecret?: string): Promise<{ status: FundExecutionStatus }> {
   const { payoutId } = parseFundPayload(fundPayoutIdSchema, payload);
   await authorizeFundAction(db, actor, organizationId, 'activity_fund.retry', payoutId);
   await reserveFundAttempt(db, actor, organizationId, 'retry', now);
   const { status } = await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId }, select: { status: true } });
+  if (status === 'PENDING_DOUBLE_CHECK' && signatureSecret) {
+    const settled = await settleSignedFundPayout(db, provider, payoutId, signatureSecret, now);
+    if (settled.status === 'NOT_APPROVED') throw new ActivityFundError(settled.reason);
+    return { status: settled.status };
+  }
   if (status !== 'APPROVED' && status !== 'PROCESSING' && status !== 'FAILED') throw new ActivityFundError('WRONG_STATUS');
   return { status: (await executeFundPayout(db, await provider(), payoutId, now)).status };
 }
@@ -239,9 +248,18 @@ const blockedSplit = { status: 'FAILED' as const, OR: BLOCKED_SPLIT_MESSAGES.map
 export async function resumeFundPayouts(db: Db, provider: PaymentProvider, now: Date, limit: number, signatureSecret?: string): Promise<{ executed: number; pending: number; approved: number; errors: number }> {
   const result = { executed: 0, pending: 0, approved: 0, errors: 0 };
   if (signatureSecret) {
-    const waiting = await db.activityFundPayout.findMany({ where: { status: 'PENDING_DOUBLE_CHECK', signatures: { some: {} } }, orderBy: { id: 'asc' }, take: limit, select: { id: true, _count: { select: { signatures: true } } } });
-    for (const { id, _count } of waiting) {
-      if (_count.signatures < 2) continue;
+    // Las firmas que exige cada entidad (Sprint 5.2): con firma única basta la de Dirección; con doble firma, las dos. `approveFundPayout` lo vuelve a evaluar.
+    const waiting = await db.activityFundPayout.findMany({
+      where: {
+        status: 'PENDING_DOUBLE_CHECK',
+        signatures: { some: { signerRole: 'DIRECTOR' } },
+        OR: [{ organization: { signatureMode: 'SINGLE' } }, { signatures: { some: { signerRole: 'COSIGNER' } } }]
+      },
+      orderBy: { id: 'asc' },
+      take: limit,
+      select: { id: true }
+    });
+    for (const { id } of waiting) {
       try {
         if ((await approveFundPayout(db, id, signatureSecret, now)).approved) result.approved += 1;
       } catch (error) {

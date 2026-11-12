@@ -103,12 +103,12 @@ export interface FirstCampaignStep {
 }
 
 /**
- * Pasos del estado vacío guiado: lo que falta antes de publicar la primera campaña. Las dos firmas listas, los documentos del titular
+ * Pasos del estado vacío guiado: lo que falta antes de publicar la primera campaña. Las firmas listas (las dos, o solo la de Dirección con firma única), los documentos del titular
  * verificados y, por último, crear la campaña en el Estudio (siempre pendiente mientras no haya ninguna iniciativa).
  */
-export function firstCampaignSteps(input: { readySigners: number; kybStatus: string }): FirstCampaignStep[] {
+export function firstCampaignSteps(input: { readySigners: number; kybStatus: string; signatureMode?: 'DOUBLE' | 'SINGLE' }): FirstCampaignStep[] {
   return [
-    { key: 'signers', done: input.readySigners >= 2 },
+    { key: 'signers', done: input.readySigners >= (input.signatureMode === 'SINGLE' ? 1 : 2) },
     { key: 'documents', done: input.kybStatus === 'VERIFIED' },
     { key: 'studio', done: false }
   ];

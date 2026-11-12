@@ -87,7 +87,7 @@ describe('QA-A02 · 6 fuentes y alertas con la semilla, leídas de la base de da
     expect(rows.map((row) => row.id).sort()).toEqual(SEED_INITIATIVE_IDS);
     for (const row of rows) {
       const total = REVENUE_SOURCE_KEYS.reduce((sum, key) => sum + row.sourcesCents[key], 0);
-      expect(total - row.gatewayLossCents, `iniciativa ${row.id}`).toBe(row.netRevenueCents);
+      expect(total - row.gatewayLossCents - row.sunkCostsCents, `iniciativa ${row.id}`).toBe(row.netRevenueCents);
     }
   });
 
@@ -123,7 +123,7 @@ describe('QA-A02 · 6 fuentes y alertas con la semilla, leídas de la base de da
     expect(snapshot.organizations.reduce((sum, row) => sum + row.expectedNetCents, 0)).toBe(snapshot.projection.kpis.expectedNetCents);
     expect(snapshot.organizations.reduce((sum, row) => sum + row.weightedNetCents, 0)).toBe(snapshot.projection.kpis.weightedNetCents);
     expect(snapshot.forecast.reduce((sum, quarter) => sum + quarter.unweightedNetCents, 0)).toBe(snapshot.projection.kpis.expectedNetCents);
-    expect(snapshot.projection.sourcesTotalCents - snapshot.projection.gatewayLossCents).toBe(snapshot.projection.netRevenueCents);
+    expect(snapshot.projection.sourcesTotalCents - snapshot.projection.gatewayLossCents - snapshot.projection.sunkCostsCents).toBe(snapshot.projection.netRevenueCents);
   });
 });
 

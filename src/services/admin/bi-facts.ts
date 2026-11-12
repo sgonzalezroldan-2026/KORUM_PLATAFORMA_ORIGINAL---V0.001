@@ -281,8 +281,11 @@ export async function loadBiFacts(db: Db, rules: KorumGlobalRulesCents): Promise
           maintFeeCents: money.maintFee,
           huchaTopupFeeCents: money.topupFee
         },
-        costsCents: money.gatewayExpense - money.gatewayRecovered + money.autoBoost + money.chargebacks
-      }
+        costsCents: money.gatewayExpense - money.gatewayRecovered,
+        sunkCostsCents: money.autoBoost + money.chargebacks
+      },
+      sunkCostsCents: money.autoBoost + money.chargebacks,
+      selfBoostStandingCents: money.autoBoost
     });
   }
 

@@ -59,6 +59,17 @@ export function gatewayFeeLines(organizationId: string, feeCents: number): Journ
   ];
 }
 
+/**
+ * Auto-Impulso: KORUM completa la meta con dinero propio (skill korum-escrow-payments §2). El gasto sale de KORUM y la hucha de la iniciativa lo
+ * recibe entero; no hay cobro, así que no toca `PSP_CLEARING` ni lleva pasarela.
+ */
+export function selfBoostLines(scope: Scope, amountCents: number): JournalLine[] {
+  return [
+    { account: 'AUTO_BOOST_EXPENSE', direction: 'DEBIT', amountCents, organizationId: scope.organizationId },
+    { account: 'INITIATIVE_ESCROW', direction: 'CREDIT', amountCents, ...scope }
+  ];
+}
+
 export function matchingReleaseLines(scope: Scope, sponsorId: number, amountCents: number): JournalLine[] {
   return [
     { account: 'MATCHING_POOL', direction: 'DEBIT', amountCents, ...scope, sponsorId },

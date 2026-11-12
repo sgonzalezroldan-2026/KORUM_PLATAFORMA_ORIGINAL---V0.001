@@ -19,13 +19,15 @@ export interface InitiativeDetailProps {
   shareUrl: string;
   groups: ShareGroup[];
   contentLang?: string;
+  /** Si el Super-Admin decidió mostrar que la plataforma KORUM ayudó a conseguir la meta (Sprint 5.2); sin importe. */
+  selfBoostShown?: boolean;
 }
 
 /**
  * Ficha de una iniciativa (`id="fview-detail"`). Dos columnas en escritorio y **una sola en móvil** (`.mobile-stack`, QA-F06). Sin la barra de 6
  * estados de la entidad: solo la hucha de la iniciativa y la fecha límite (QA-F03). El reto por curso y la placa son bloques independientes.
  */
-export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareUrl, groups, contentLang }: InitiativeDetailProps) {
+export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareUrl, groups, contentLang, selfBoostShown = false }: InitiativeDetailProps) {
   const t = useTranslations('portal');
   const format = useFormatter();
   const money = useMoney();
@@ -119,6 +121,12 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
               </div>
             )}
             <ProgressBar pct={card.pct} label={t('card.progress', { title: card.title })} size="lg" tone={card.achieved ? 'emerald' : 'brand'} />
+            {selfBoostShown ? (
+              <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-950" data-testid="self-boost-note">
+                <span aria-hidden="true">{'💎 '}</span>
+                {t('detail.selfBoost')}
+              </p>
+            ) : null}
             <div className="flex flex-wrap justify-between gap-2 text-sm text-ink-soft">
               <span>
                 <span aria-hidden="true">{'💛 '}</span>

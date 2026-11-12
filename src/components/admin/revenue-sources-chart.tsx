@@ -116,6 +116,15 @@ export function RevenueSourcesChart({ real, projection }: { real: BiRealRevenue;
               </td>
               <td className="px-2 py-1 text-end text-ink-soft">{t('notProjected')}</td>
             </tr>
+            <tr data-row="sunk">
+              <th scope="row" className="px-2 py-1 text-start font-semibold text-ink-soft">
+                {t('cost.sunk')}
+              </th>
+              <td className="px-2 py-1 text-end text-ink-soft">{t('includedAbove')}</td>
+              <td className="px-2 py-1 text-end text-ink-soft" data-testid="sources-sunk-projected">
+                <CurrencyText cents={-projection.sunkCostsCents} />
+              </td>
+            </tr>
             <tr data-row="net" className="border-t border-varsity-navy/20">
               <th scope="row" className="px-2 py-2 text-start font-corp font-extrabold text-varsity-navy">
                 {t('net')}

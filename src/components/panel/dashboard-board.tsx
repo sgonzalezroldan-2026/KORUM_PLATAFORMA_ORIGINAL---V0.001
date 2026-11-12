@@ -38,11 +38,13 @@ export interface DashboardBoardProps {
   activeSponsors: number;
   readySigners: number;
   kybStatus: string;
+  /** Cuántas firmas exige la entidad (por defecto, dos). */
+  signatureMode?: 'DOUBLE' | 'SINGLE';
 }
 
 const selectClass = 'min-h-11 rounded-xl border-2 border-varsity-navy bg-white px-3 text-base text-ink';
 
-export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySigners, kybStatus }: DashboardBoardProps) {
+export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySigners, kybStatus, signatureMode = 'DOUBLE' }: DashboardBoardProps) {
   const t = useTranslations('panel.dashboard');
   const format = useFormatter();
   const current = useLocale();
@@ -56,7 +58,7 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
   const count = activeFilterCount(filters);
 
   if (initiatives.length === 0) {
-    const steps = firstCampaignSteps({ readySigners, kybStatus });
+    const steps = firstCampaignSteps({ readySigners, kybStatus, signatureMode });
     // Enviados y aún sin verificar: no «faltan», están en revisión (revisión de experiencia del 4.2c).
     const inReview = (key: string) => key === 'documents' && kybStatus === 'SUBMITTED';
     return (
@@ -69,7 +71,7 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                 <span aria-hidden="true">{step.done ? '✅ ' : inReview(step.key) ? '🔎 ' : '⏳ '}</span>
                 {t(`empty.steps.${step.key}.title`)}
               </p>
-              <p className="text-sm text-ink-soft">{inReview(step.key) ? t('empty.steps.documents.review') : t(`empty.steps.${step.key}.${step.done ? 'done' : 'todo'}`)}</p>
+              <p className="text-sm text-ink-soft">{inReview(step.key) ? t('empty.steps.documents.review') : t(`empty.steps.${step.key}.${step.done ? 'done' : step.key === 'signers' && signatureMode === 'SINGLE' ? 'todoSingle' : 'todo'}`)}</p>
               {step.key === 'documents' && !step.done && !inReview(step.key) ? (
                 <Link href={`/panel/${orgSlug}/ajustes#documentos`} className="inline-flex min-h-11 w-fit items-center text-sm font-bold text-varsity-navy underline underline-offset-4">
                   {t('empty.steps.documents.cta')}

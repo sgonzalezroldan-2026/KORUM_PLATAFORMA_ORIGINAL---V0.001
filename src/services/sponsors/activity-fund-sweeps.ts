@@ -64,14 +64,18 @@ export async function checkActivityFunds(db: Db, now: Date): Promise<{ funds: nu
       now
     );
   }
-  // Firmada por las dos personas pero sin aprobar (el KYB dejó de estar verificado, falta la cuenta destino): la tarea lo reintenta cada día, pero el
-  // día 90 se acerca. Con la misma antelación que el recordatorio, alerta en la consola (reauditoría financiera del 4.2f).
+  // Firmada con las firmas que exige la entidad (las dos, o solo la de Dirección con firma única) pero sin aprobar (el KYB dejó de estar verificado, falta
+  // la cuenta destino): la tarea lo reintenta cada día, pero el día 90 se acerca. Con la misma antelación que el recordatorio, alerta en la consola
+  // (reauditoría financiera del 4.2f). Mismo criterio que `resumeFundPayouts`.
   const signedWaiting = await db.activityFundPayout.findMany({
-    where: { status: 'PENDING_DOUBLE_CHECK', signatures: { some: {} } },
-    select: { id: true, organizationId: true, amountCents: true, _count: { select: { signatures: true } }, splits: { select: { contribution: { select: { createdAt: true } } } } }
+    where: {
+      status: 'PENDING_DOUBLE_CHECK',
+      signatures: { some: { signerRole: 'DIRECTOR' } },
+      OR: [{ organization: { signatureMode: 'SINGLE' } }, { signatures: { some: { signerRole: 'COSIGNER' } } }]
+    },
+    select: { id: true, organizationId: true, amountCents: true, splits: { select: { contribution: { select: { createdAt: true } } } } }
   });
   for (const payout of signedWaiting) {
-    if (payout._count.signatures < 2) continue;
     const first = Math.min(...payout.splits.map((split) => split.contribution.createdAt.getTime()));
     const deadline = Number.isFinite(first) ? splitDeadline(new Date(first)) : null;
     if (!fundNeedsReminder(deadline, now)) continue;

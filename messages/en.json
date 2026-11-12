@@ -44,8 +44,8 @@
           "text": "Any family proposes an improvement and the community backs it with a signature."
         },
         {
-          "title": "Double signature by the organisation",
-          "text": "Two people from the organisation approve it, and you freely choose your supplier."
+          "title": "Sign-off by the organisation",
+          "text": "By default two different people from the organisation approve it (the organisation can choose to have only the head sign) and you freely choose your supplier."
         },
         {
           "title": "Families contribute in 10 seconds",
@@ -68,7 +68,7 @@
           "title": "Organisations",
           "bullets": [
             "No cash and no spreadsheets",
-            "Joint double signature by two people",
+            "Joint double signature by two people (by default)",
             "Direct payment to the organisation or its supplier",
             "Model 182 ready in one click if the organisation falls under Law 49/2002",
             "Entry-check mode with QR codes and yearly medals"
@@ -308,16 +308,16 @@
         "footnote": "If you did not ask for it, ignore this message and do not share the code with anyone."
       },
       "invitation": {
-        "subject": "You're invited to co-sign for {organization} on KORUM",
+        "subject": "You’re invited to sign for {organization} on KORUM",
         "subjectPlatform": "Activate your KORUM Super-Admin account",
         "preheader": "Create your password and turn on two-step verification.",
         "title": "{organization} is counting on you",
         "titlePlatform": "Activate your KORUM account",
-        "body": "You have been appointed {role} of {organization}. Your signature, together with that of the person who runs the organisation, is needed to approve ideas and release funds: no single person can do it alone.",
+        "body": "You have been appointed {role} of {organization}. Your signature is used to approve ideas and release funds, with the signatures the organisation has chosen (by default, two different people).",
         "bodyPlatform": "A KORUM Super-Admin account has been created with this email. Create your password to access the console.",
         "security": "The link expires in {hours} hours and works only once. When you sign in we will ask you to turn on two-step verification with a phone app.",
         "cta": "Create my password",
-        "footnote": "Don't recognise this invitation or this organisation? Ignore this email: unless you accept it, you won't have any role and nothing will be activated."
+        "footnote": "Don’t recognise this invitation or this organisation? Ignore this email: unless you accept it, you won’t have any role and nothing will be activated."
       }
     },
     "receipt": {
@@ -357,7 +357,7 @@
         "subject": "We cancelled the door PIN for “{initiative}”",
         "preheader": "For security. The door keeps running.",
         "title": "Door PIN cancelled",
-        "body": "After too many failed attempts, we cancelled the door PIN for “{initiative}”. 1) Sessions that were already open keep working: the door does not stop. 2) For more volunteers to get in, create a new PIN in “Box office and door”. 3) Creating it closes the open sessions and everyone has to sign in again with the new one: do it when the queue allows. Either of the two signatories can do it.",
+        "body": "After too many failed attempts, we cancelled the door PIN for “{initiative}”. 1) Sessions that were already open keep working: the door does not stop. 2) For more volunteers to get in, create a new PIN in “Box office and door”. 3) Creating it closes the open sessions and everyone has to sign in again with the new one: do it when the queue allows. Any of the signatories can do it.",
         "cta": "Create a new PIN"
       }
     },
@@ -366,7 +366,7 @@
       "preheader": "Time to celebrate: it is done.",
       "title": "Goal reached!",
       "body": "“{initiative}” has reached the {goal} it needed thanks to {count, plural, one {# contribution} other {# contributions}}.",
-      "next": "The next step is settlement: it needs the signatures of two different people from the organisation.",
+      "next": "The next step is settlement: the organisation’s signatories sign it.",
       "cta": "Go to the dashboard"
     },
     "expired": {
@@ -389,13 +389,13 @@
       "subject": "Your signature is needed at {organization}",
       "preheader": "One-time link and a 6-digit code.",
       "title": "We need your signature",
-      "body": "To complete this operation, two signatures from different people of the organisation are needed. Open the link while signed in and enter the 6-digit code. It expires on {expires}.",
+      "body": "To complete this operation your signature is needed. Open the link while signed in and enter the 6-digit code. It expires on {expires}.",
       "what": "What is being signed",
       "ideaApproval": "Approve the idea “{title}”",
       "payout": "Release the funds for “{title}”",
       "codeLabel": "Your 6-digit code",
       "cta": "Sign now",
-      "footnote": "The link works once. If you were not expecting this signature, do not complete it and tell the other signer.",
+      "footnote": "The link works once. If you were not expecting this signature, do not complete it and tell the organisation.",
       "activityFund": "Pay out the Activity Fund: “{title}”"
     },
     "split": {
@@ -505,7 +505,7 @@
         "subject": "Your contribution goes to {organization} for its activities",
         "preheader": "There was no campaign to take it to in time.",
         "title": "Your contribution keeps adding up",
-        "body": "{organization} had no campaign to take your {amount} to before its deadline. That is why it goes to its Activity Fund: the organisation will use it for its activities this school year, with the signature of both of its officers.",
+        "body": "{organization} had no campaign to take your {amount} to before its deadline. That is why it goes to its Activity Fund: the organisation will use it for its activities this school year, with the signatures the organisation requires.",
         "why": "This is what the sponsorship terms provide: your contribution is for the organisation and is not returned once the business has been accepted. Your advertising stays the same."
       },
       "awaitingDecision": {
@@ -610,11 +610,11 @@
     },
     "idea": {
       "quorumReached": {
-        "subject": "Quorum reached: “{title}” is waiting for your dual sign-off",
+        "subject": "Quorum reached: “{title}” is waiting for your sign-off",
         "preheader": "An idea in the ideas box now has enough signatures.",
         "title": "An idea has reached the quorum!",
         "body": "The proposal “{title}” ({alias}) now has the verified signatures your organisation requires.",
-        "next": "To turn it into an initiative, two signatures are needed: the head’s and the co-signer’s. Go to Approvals and request your signing link.",
+        "next": "To turn it into an initiative the Director’s signature is needed and, if the organisation signs with two people, the Co-signer’s too. Go to Approvals and request your signing link.",
         "cta": "Go to Approvals"
       },
       "centerReplied": {
@@ -644,16 +644,10 @@
     "signer": {
       "handover": {
         "requested": {
-          "subject": "{organization}: a handover of your signing seat has been proposed",
-          "preheader": "We need your approval before inviting anyone.",
-          "title": "Your replacement has been proposed",
-          "body": "The other person who signs for {organization} proposes that someone else takes your seat. Open the dashboard to see who and give your approval with your code, or decline it. If you do nothing, the proposal expires in 7 days and you keep signing."
-        },
-        "declined": {
-          "subject": "{organization}: the handover was not approved",
-          "preheader": "Everything stays as it was.",
-          "title": "Handover declined",
-          "body": "The person whose seat you proposed to hand over at {organization} did not approve it. The same two people keep signing."
+          "subject": "{organization}: someone has proposed replacing you in your signing seat",
+          "preheader": "The change will happen when the new person accepts their invitation.",
+          "title": "A replacement has been proposed",
+          "body": "The other person who signs for {organization} has invited someone else to take your seat ({role}). It doesn’t need your approval: when the new person accepts, the change is immediate and you will stop signing for the organisation. If you disagree, talk to the other person who signs. The change is recorded."
         },
         "completedLeaving": {
           "subject": "{organization}: you no longer sign for the organisation",
@@ -665,16 +659,44 @@
           "subject": "{organization}: there is a new person on the signing team",
           "preheader": "The handover is complete.",
           "title": "New signer",
-          "body": "A handover has been completed at {organization}: the new person now holds their seat ({role}). The outgoing person's pending signatures are no longer valid: if anything was half-way, request the signature again."
+          "body": "A handover has been completed at {organization}: the new person now holds their seat ({role}). The outgoing person’s pending signatures are no longer valid: if anything was half-way, request the signature again."
         },
         "why": "If you do not recognise this change, contact support as soon as possible.",
-        "cta": "View the signing team"
+        "cta": "View the signing team",
+        "modeSingle": {
+          "subject": "{organization}: the organisation moves to a single signature",
+          "preheader": "Your co-signer seat no longer exists.",
+          "title": "The organisation moves to a single signature",
+          "body": "The director of {organization} has decided that the organisation signs with one person only. Your seat ({role}) no longer exists: you can no longer sign or open the organisation panel, and any gate codes you had have stopped working. Your account still exists. The change is recorded."
+        },
+        "seat": {
+          "DIRECTOR": "Director",
+          "COSIGNER": "Co-signer"
+        },
+        "modeChangedSingle": {
+          "subject": "{organization}: the organisation now signs with a single signature",
+          "preheader": "Approving and releasing money now needs only the Director’s signature.",
+          "title": "The way you sign has changed",
+          "body": "The way {organization} signs has changed: the Director’s signature alone is now enough to approve ideas and release money, and the Co-signer seat no longer exists. If you did not make this change, write to support as soon as possible."
+        },
+        "modeChangedDouble": {
+          "subject": "{organization}: the organisation is back to double signature",
+          "preheader": "The co-signer needs to be invited before anything can be approved.",
+          "title": "The way you sign has changed",
+          "body": "{organization} is back to signing with two people (Director and Co-signer). Nothing can be approved until the co-signer accepts the invitation. If you did not make this change, write to support as soon as possible."
+        },
+        "expired": {
+          "subject": "{organization}: the handover invitation has expired",
+          "preheader": "Nobody accepted it in time and everything stays as it was.",
+          "title": "Invitation expired",
+          "body": "The invitation you sent for the {role} seat of {organization} expired without anyone accepting it. Everything stays as it was. If you wish, propose the handover again from the signing team."
+        }
       }
     },
     "activityFund": {
       "amount": "Amount",
       "deadline": "Pay out before",
-      "how": "To receive it in your account, one of the two signers requests the payout in the panel, stating what the money will be used for, and you both sign with your code.",
+      "how": "To receive it in your account, one of the signers requests the payout in the panel, stating what the money will be used for, and it is signed with your code.",
       "cta": "Open the Activity Fund",
       "received": {
         "subject": "{amount} has gone to the Activity Fund of {organization}",
@@ -687,7 +709,7 @@
         "preheader": "PAYCOMET’s deadline to send the money is running out.",
         "title": "The deadline to pay out the Fund is running out",
         "body": "Your Activity Fund holds {amount} that has not been paid out. PAYCOMET can only send it to your account until {deadline}.",
-        "footnote": "If you have already requested the payout, both signatures still need to be completed."
+        "footnote": "If you have already requested the payout, the signature still needs to be completed."
       },
       "paid": {
         "subject": "{amount} from the Activity Fund sent to {organization}",
@@ -702,7 +724,7 @@
     "payout": {
       "executed": {
         "subject": "Payout done: {amount} from “{initiative}”",
-        "preheader": "Both signatures are in and the money is on its way.",
+        "preheader": "The signatures are in and the money is on its way.",
         "title": "Payout done!",
         "bodyORGANIZATION": "PAYCOMET has sent {amount} from the piggy bank of “{initiative}” to the organisation’s account. You can now pay the supplier with their invoice.",
         "bodyPROVIDER": "PAYCOMET has sent {amount} from the piggy bank of “{initiative}” directly to the supplier you chose.",
@@ -731,7 +753,7 @@
         "preheader": "{organization} has reached 100% thanks to you and the other families.",
         "title": "We did it!",
         "body": "“{initiative}” by {organization} has reached its goal thanks to {count, plural, one {one contribution: yours} other {# contributions, and one of them is yours}}. Thank you!",
-        "next": "The money stays in the initiative’s piggy bank at PAYCOMET until two people from {organization} sign its payout. Once it’s done, we’ll show you the Before and After.",
+        "next": "The money stays in the initiative’s piggy bank at PAYCOMET until {organization} signs its payout. Once it’s done, we’ll show you the Before and After.",
         "cta": "Share the achievement"
       },
       "photos": {
@@ -760,7 +782,7 @@
         "wonPreheader": "The vote has chosen a project. Time to pay out.",
         "wonTitle": "The vote has chosen a project",
         "wonBody": "In “{initiative}”, “{option}” won. The new goal is {amount}: what those who voted for a project option contributed (those who did not vote or asked for a refund have been refunded).",
-        "wonNext": "KORUM’s fee goes down in the same proportion. To pay out you need, as always, the invoice and both signatures.",
+        "wonNext": "KORUM’s fee goes down in the same proportion. To pay out you need, as always, the invoice and the organisation’s signatures.",
         "newGoal": "New goal",
         "settleCta": "Go to Payouts",
         "refundSubject": "The vote on “{initiative}” ends without a project",
@@ -786,7 +808,7 @@
         "preheader": "Thanks to the families at {organization} who voted.",
         "title": "It’s going ahead!",
         "body": "The vote on “{initiative}” has chosen: “{option}”. It will be carried out with what those of you who voted contributed, including your contribution.",
-        "next": "The money stays in the initiative’s money box at PAYCOMET until two people from {organization} sign the payout. When it is done, we will show you the Before and After.",
+        "next": "The money stays in the initiative’s money box at PAYCOMET until {organization} signs the payout. When it is done, we will show you the Before and After.",
         "cta": "See the achievements"
       },
       "refunding": {
@@ -813,6 +835,30 @@
         "someone": "One of the signatories",
         "factNew": "New tickets",
         "factReplaced": "Replacing"
+      }
+    },
+    "org": {
+      "kybStatus": {
+        "verified": {
+          "subject": "{organization}: your documents are verified",
+          "preheader": "You can now publish campaigns.",
+          "title": "Documents verified",
+          "body": "KORUM has reviewed the holder documents of {organization} and they are verified. You can now publish campaigns.",
+          "ley49": {
+            "VERIFIED": "We have also verified your Law 49/2002 regime: your families will receive a tax donation certificate.",
+            "NOT_ACCREDITED": "The Law 49/2002 document does not accredit the regime: for now donations issue a Named Contribution Receipt, not a tax certificate. You can send it again from your settings."
+          },
+          "cta": "Go to the dashboard"
+        },
+        "rejected": {
+          "subject": "{organization}: documents are missing or need correcting",
+          "preheader": "We tell you what needs to change.",
+          "title": "Some documents need correcting",
+          "body": "KORUM has reviewed the holder documents of {organization} and cannot verify them yet.",
+          "note": "What needs correcting: {note}",
+          "next": "Correct them in your settings and send them for review again. If you have doubts, write to support from the dashboard.",
+          "cta": "Correct the documents"
+        }
       }
     }
   },
@@ -972,9 +1018,9 @@
     "pages": {
       "colegios": {
         "title": "Fundraising for schools and parents’ groups",
-        "description": "Fund climate control, shade or digital whiteboards with all-or-nothing campaigns, double signatures and a 100% refund if the goal is not reached.",
+        "description": "Fund climate control, shade or digital whiteboards with all-or-nothing campaigns, double signature by default and a 100% refund if not reached.",
         "h1": "How to fund improvements at your school without handling cash",
-        "answer": "KORUM lets a school or its parents’ association propose an improvement, approve it with a double signature and fund it with families’ contributions in an all-or-nothing campaign: if the goal is not reached, 100% is refunded to each person. The first {exempt} of each school year pays no commission.",
+        "answer": "KORUM lets a school or its parents’ association propose an improvement, approve it with the signatures the organisation chooses (by default, a double signature) and fund it with families’ contributions in an all-or-nothing campaign: if the goal is not reached, 100% is refunded to each person. The first {exempt} of each school year pays no commission.",
         "sections": [
           {
             "title": "What your school can do",
@@ -990,7 +1036,7 @@
             "title": "Who signs and who gets paid",
             "paragraphs": [
               "A state school always takes part through its parents’ association, which is the organisation that owns the funds. Subsidised and private schools register through their owner.",
-              "Approving an idea and releasing funds requires the signatures of two different people: the head of the school and the chair of the parents’ association. Money is collected through Paycomet, held until the goal is reached, and paid to the organisation or directly to its supplier with the invoice in hand."
+              "By default, approving an idea and releasing funds requires the signatures of two different people: the head of the school and the chair of the parents’ association; the organisation can decide, at its own responsibility, that only the head signs. Money is collected through Paycomet, held until the goal is reached, and paid to the organisation or directly to its supplier with the invoice in hand."
             ]
           },
           {
@@ -1025,7 +1071,7 @@
             "title": "Built for how a club works",
             "bullets": [
               "Teams by category (from the youngest age groups to seniors) plus supporters and former players.",
-              "Double signature between the club’s main manager and its treasurer or chair.",
+              "By default, double signature between the club’s main manager and its treasurer or chair.",
               "Campaigns for kit, equipment, travel or facility improvements.",
               "Model 182 in one click if the organisation falls under Law 49/2002."
             ]
@@ -1079,7 +1125,7 @@
               "Fund instruments, costumes, scenery, tours or premises refurbishments.",
               "Sell QR tickets for concerts and performances, with capacity controlled.",
               "Organise your community into groups you configure: students or members, families, teachers or instructors, friends and supporters, former members.",
-              "Decide with a quorum and a double signature which projects go ahead."
+              "Decide with a quorum and the organisation’s sign-off (double by default) which projects go ahead."
             ]
           },
           {
@@ -1146,9 +1192,9 @@
       },
       "comoFunciona": {
         "title": "How the platform works",
-        "description": "From idea to improvement in 4 steps: ideas with a quorum, double signature, all-or-nothing contributions via Paycomet and a 100% refund if not reached.",
+        "description": "From idea to improvement in 4 steps: ideas with a quorum, the organisation’s sign-off, all-or-nothing contributions via Paycomet and a 100% refund.",
         "h1": "How KORUM works, step by step",
-        "answer": "On KORUM a community proposes an improvement, backs it with signatures, two people from the organisation approve it and families fund it with all-or-nothing contributions: the money is collected through Paycomet and, if the goal is not reached in time, 100% is refunded to each person.",
+        "answer": "On KORUM a community proposes an improvement, backs it with signatures, the organisation approves it with the signatures it chooses (by default, a double signature) and families fund it with all-or-nothing contributions: the money is collected through Paycomet and, if the goal is not reached in time, 100% is refunded to each person.",
         "sections": [
           {
             "title": "From idea to improvement",
@@ -1158,8 +1204,8 @@
                 "text": "A family proposes an idea under a private alias. Others back it with their signature until the quorum is reached."
               },
               {
-                "title": "Double signature by the organisation",
-                "text": "Two different people from the organisation approve the idea. The organisation freely chooses its supplier and the platform works out the goal."
+                "title": "Sign-off by the organisation",
+                "text": "By default, two different people from the organisation approve the idea (the organisation can choose to have only the head sign). The organisation freely chooses its supplier and the platform works out the goal."
               },
               {
                 "title": "Families contribute in 10 seconds",
@@ -1187,7 +1233,7 @@
             "title": "Who is involved",
             "bullets": [
               "Families and members propose, sign and contribute.",
-              "The organisation approves with a double signature, chooses its supplier and receives the money.",
+              "The organisation approves with the signatures it has chosen (by default, a double signature), chooses its supplier and receives the money.",
               "Neighbourhood businesses sponsor and gain visibility.",
               "Paycomet carries out the payments, the holding of funds and the refunds.",
               "KORUM provides the technology and does not hold the money."
@@ -1250,7 +1296,7 @@
           {
             "title": "How spending is approved",
             "paragraphs": [
-              "Approving an idea and releasing funds requires the signatures of two different people from the organisation, both with two-step verification. Payment is made with the supplier’s invoice in hand and recorded in a ledger that cannot be edited: mistakes are corrected with a reversing entry."
+              "By default, approving an idea and releasing funds requires the signatures of two different people from the organisation, both with two-step verification; the organisation can choose, at its own responsibility, to have only the head sign (also with two-step verification). Payment is made with the supplier’s invoice in hand and recorded in a ledger that cannot be edited: mistakes are corrected with a reversing entry."
             ]
           },
           {
@@ -1275,7 +1321,7 @@
       },
       "faq": {
         "title": "Frequently asked questions",
-        "description": "Clear answers on money, refunds, double signatures, commissions, raffles, tax certificates and personal data on KORUM.",
+        "description": "Clear answers on money, refunds, the organisation’s signatures, commissions, raffles, tax certificates and personal data on KORUM.",
         "h1": "Frequently asked questions about KORUM",
         "answer": "Here we answer, in plain language, what organisations, families and businesses ask us most.",
         "sections": [
@@ -1317,7 +1363,7 @@
               },
               {
                 "q": "Who signs the organisation’s decisions?",
-                "a": "Two different people: the main manager (head teacher, club chair…) and a co-signer (chair of the parents’ association, club treasurer…). Both are needed to approve an idea and to release funds."
+                "a": "By default, two different people: the main manager (head teacher, club chair…) and a co-signer (chair of the parents’ association, club treasurer…). Both are needed to approve an idea and to release funds. The organisation can decide, at its own responsibility, that only the main manager signs."
               },
               {
                 "q": "Can we hold raffles?",
@@ -1476,9 +1522,9 @@
   },
   "registration": {
     "metaTitle": "Register your school, PTA or club",
-    "metaDescription": "Free 3-step registration for schools (through their parents' association or owner), clubs and cultural organisations, with dual signature.",
+    "metaDescription": "Free 3-step registration for schools (through their parents’ association or owner), clubs and cultural organisations, with dual signature.",
     "title": "Register your community",
-    "intro": "Three steps and you're in, with no sign-up fee. The first {exempt} you raise each school year carry no platform commission.",
+    "intro": "Three steps and you’re in, with no sign-up fee. The first {exempt} you raise each school year carry no platform commission.",
     "haveAccount": "Already have an account?",
     "login": "Sign in",
     "formLabel": "Registration form",
@@ -1501,7 +1547,7 @@
       "CULTURAL": "Cultural organisation"
     },
     "legalTitle": "Holder of the funds",
-    "legalIntro": "This is the organisation with a tax ID that receives the money and signs. Before your first campaign with payments you'll upload its documents.",
+    "legalIntro": "This is the organisation with a tax ID that receives the money and signs. Before your first campaign with payments you’ll upload its documents.",
     "publicTitle": "Your page on KORUM",
     "fields": {
       "name": "Public name",
@@ -1513,7 +1559,7 @@
       "legalForm": "Legal form",
       "centerOwnership": "School ownership",
       "ley49": "We are covered by Law 49/2002 (tax certificates for donations)",
-      "contentLocale": "Language you'll write your campaigns in",
+      "contentLocale": "Language you’ll write your campaigns in",
       "publicIndexing": "Show our page in search engines",
       "roleLabel": "Role",
       "personName": "Full name",
@@ -1527,16 +1573,16 @@
       "name": "As families know you, e.g. “CEIP Cervantes”.",
       "slug": "It will look like this: {url}. Lowercase letters, numbers and hyphens only.",
       "legalName": "E.g. “AFA CEIP Cervantes” or “Club Bàsquet Vallès”.",
-      "publicSchool": "A state school registers through its parents' association (AMPA/AFA).",
+      "publicSchool": "A state school registers through its parents’ association (AMPA/AFA).",
       "ley49": "Only if the organisation can prove it. Otherwise families receive a named contribution receipt.",
       "ley49Owner": "The owner of a private or state-funded private school cannot issue donation certificates here.",
       "contentLocale": "The KORUM site is available in Spanish, Catalan and English; your texts, in this language.",
       "publicIndexing": "You can change it at any time from the panel.",
       "roleLabel": "How it will appear next to their signature.",
-      "password": "At least 12 characters. Next you'll turn on two-step verification."
+      "password": "At least 12 characters. Next you’ll turn on two-step verification."
     },
     "legalForm": {
-      "PARENTS_ASSOCIATION": "Parents' association (AMPA / AFA)",
+      "PARENTS_ASSOCIATION": "Parents’ association (AMPA / AFA)",
       "SCHOOL_OWNER": "Owner of a private or state-funded private school",
       "FOUNDATION": "Foundation",
       "SPORTS_ENTITY": "Sports club or organisation",
@@ -1554,16 +1600,16 @@
       "en": "English"
     },
     "signers": {
-      "intro": "Approving ideas and releasing funds takes two signatures from two different people. Neither can do it alone.",
+      "intro": "Approving ideas and releasing funds takes, to begin with, two signatures from two different people. Later, in Settings, the organisation can choose to have only the Director sign.",
       "directorTitle": "First signature: you",
-      "directorIntro": "You'll manage the organisation on KORUM. You'll sign in with your email and this password.",
+      "directorIntro": "You’ll manage the organisation on KORUM. You’ll sign in with your email and this password.",
       "cosignerTitle": "Second signature",
-      "cosignerIntro": "We'll send them an invitation to activate their account. It must be another person, with their own email."
+      "cosignerIntro": "We’ll send them an invitation to activate their account. It must be another person, with their own email."
     },
     "roles": {
       "SCHOOL": {
         "director": "Head of school",
-        "cosigner": "Chair of the parents' association"
+        "cosigner": "Chair of the parents’ association"
       },
       "SPORTS_CLUB": {
         "director": "Club president",
@@ -1575,12 +1621,12 @@
       }
     },
     "activation": {
-      "title": "Here's {name}",
+      "title": "Here’s {name}",
       "exempt": "The first <strong>{amount}</strong> this school year, with no platform commission.",
       "groups": "{count} groups for the challenges ({vertical}), which you can adjust.",
       "signers": "Dual signature: {director} and {cosigner}.",
-      "kyb": "Before the first campaign with payments you'll upload the holder's documents (tax ID, statutes or minutes, ID of the representative and account ownership).",
-      "money": "Families' money is held by PAYCOMET until each goal is reached. KORUM is the technology: it doesn't hold your money."
+      "kyb": "Before the first campaign with payments you’ll upload the holder’s documents (tax ID, statutes or minutes, ID of the representative and account ownership).",
+      "money": "Families’ money is held by PAYCOMET until each goal is reached. KORUM is the technology: it doesn’t hold your money."
     },
     "fieldErrors": {
       "vertical": "Choose the kind of organisation.",
@@ -1589,7 +1635,7 @@
       "provinceCode": "Choose the province.",
       "city": "Enter the town.",
       "postalCode": "The postcode has 5 digits.",
-      "legalName": "Enter the holder's legal name.",
+      "legalName": "Enter the holder’s legal name.",
       "legalForm": "Choose the legal form.",
       "centerOwnership": "Choose the school ownership.",
       "ley49": "Check this option.",
@@ -1599,32 +1645,32 @@
       "phone": "Enter a phone number with 9 to 15 digits.",
       "roleLabel": "Enter the role (3 to 60 characters).",
       "password": "The password must be at least 12 characters long.",
-      "passwordRepeat": "The two passwords don't match.",
+      "passwordRepeat": "The two passwords don’t match.",
       "representationDeclared": "Tick the box to continue."
     },
     "issues": {
-      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "A state school can only register through its parents' association.",
+      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "A state school can only register through its parents’ association.",
       "SCHOOL_OWNER_NO_LEY49": "The owner of a private or state-funded private school cannot tick Law 49/2002.",
-      "LEGAL_FORM_NOT_FOR_VERTICAL": "That legal form doesn't match this kind of organisation.",
+      "LEGAL_FORM_NOT_FOR_VERTICAL": "That legal form doesn’t match this kind of organisation.",
       "OWNERSHIP_REQUIRED": "Choose whether the school is state, state-funded private or private.",
       "UNKNOWN_PROVINCE": "Choose the province from the list.",
-      "POSTAL_CODE_PROVINCE_MISMATCH": "That postcode doesn't belong to the chosen province.",
+      "POSTAL_CODE_PROVINCE_MISMATCH": "That postcode doesn’t belong to the chosen province.",
       "SLUG_INVALID": "Use 3 to 40 lowercase letters, numbers or hyphens (not starting or ending with a hyphen).",
       "SLUG_RESERVED": "KORUM already uses that address. Try another one."
     },
     "failures": {
       "SLUG_TAKEN": "Another organisation already uses that address. Try another one.",
       "SAME_INBOX": "The two signatures must belong to two people with different emails.",
-      "COSIGNER_UNAVAILABLE": "That email can't sign for an organisation. Use another person's email.",
+      "COSIGNER_UNAVAILABLE": "That email can’t sign for an organisation. Use another person’s email.",
       "DIRECTOR_EMAIL_IN_USE": "That email already has a KORUM account. Sign in with it and come back to this form, or use another email.",
-      "DISPOSABLE_EMAIL": "We don't accept temporary email addresses. Use a usual email.",
+      "DISPOSABLE_EMAIL": "We don’t accept temporary email addresses. Use a usual email.",
       "RATE_LIMITED": "Too many registrations from this connection. Try again in an hour.",
-      "UNKNOWN": "We couldn't complete the registration. Try again in a few seconds."
+      "UNKNOWN": "We couldn’t complete the registration. Try again in a few seconds."
     },
     "verify": {
       "title": "{name} is now on KORUM!",
-      "created": "We've sent a code to {email} to verify your email, and the invitation to {cosigner}.",
-      "resent": "We've sent you a new code.",
+      "created": "We’ve sent a code to {email} to verify your email, and the invitation to {cosigner}.",
+      "resent": "We’ve sent you a new code.",
       "code": "6-digit code",
       "submit": "Verify and continue",
       "resend": "Send me another code"
@@ -1634,13 +1680,13 @@
       "OTP_EXPIRED": "The code has expired. Ask for another one.",
       "TOO_MANY_ATTEMPTS": "Too many attempts with this code. Ask for another one.",
       "RATE_LIMITED": "Too many attempts in a row. Wait a few minutes.",
-      "UNKNOWN": "That didn't work. Try again in a few seconds."
+      "UNKNOWN": "That didn’t work. Try again in a few seconds."
     }
   },
   "panel": {
     "headerSubtitle": "Organisation panel",
     "welcome": "Hello, {name}",
-    "intro": "From here you'll manage ideas, campaigns and payments, always with both signatures.",
+    "intro": "From here you’ll manage ideas, campaigns and payments, always with the signatures the organisation has chosen.",
     "wallet": {
       "title": "Organisation piggy bank",
       "explain": "This is the identifier of your piggy bank on KORUM. Each campaign's money is held by PAYCOMET until the goal is reached."
@@ -1648,8 +1694,8 @@
     "signers": {
       "title": "Dual signature ({ready} of {total} ready)",
       "role": {
-        "DIRECTOR": "First signature",
-        "COSIGNER": "Second signature"
+        "DIRECTOR": "Director",
+        "COSIGNER": "Co-signer"
       },
       "status": {
         "ACTIVE": "Ready to sign (two-step verification on)",
@@ -1660,9 +1706,10 @@
       "resendResult": {
         "SENT": "Invitation sent again.",
         "NOT_NEEDED": "Not needed: the account is already active, or it was sent very recently.",
-        "FORBIDDEN": "Only the first signatory can resend the invitation.",
+        "FORBIDDEN": "Only the Director can resend the invitation.",
         "ERROR": "It couldn't be sent. Try again in a few seconds."
-      }
+      },
+      "titleSingle": "Single signature ({ready} of 1 ready)"
     },
     "kyb": {
       "title": "Holder's documents",
@@ -1679,7 +1726,7 @@
       "cardText": "Upload the photos of each finished improvement and write the thank-you message families will see.",
       "cardLink": "Go to achievements",
       "title": "Organization achievements",
-      "intro": "The Before and After photos and the thank-you message appear in the “Achievements” section of the portal as soon as the campaign payout is done (with both signatures). We rewrite each photo without its location or phone data before publishing it.",
+      "intro": "The Before and After photos and the thank-you message appear in the “Achievements” section of the portal as soon as the campaign payout is done (with the organisation’s signatures). We rewrite each photo without its location or phone data before publishing it.",
       "viewPublic": "See how families see it",
       "listLabel": "Initiatives with an achievement",
       "empty": {
@@ -1819,7 +1866,7 @@
       "steps": {
         "moderation": "1. Moderation",
         "signatures": "2. Signatures",
-        "doubleCheck": "3. Dual signature",
+        "doubleCheck": "3. Organisation sign-off",
         "budget": "4. Budget",
         "fundraising": "5. Fundraising",
         "achievement": "6. Achievement"
@@ -1827,7 +1874,7 @@
       "stepTip": {
         "moderation": "First review by the organisation.",
         "signatures": "Signatures collected from the community, with anti-fraud auditing.",
-        "doubleCheck": "Joint validation by the two signatories.",
+        "doubleCheck": "The organisation approves with the signatures it has chosen (by default, two people).",
         "budget": "Supplier quote and campaign goal.",
         "fundraising": "Campaign open: the money is held by PAYCOMET until the goal is reached.",
         "achievement": "Goal reached: settlement and Before and After photos."
@@ -1843,20 +1890,21 @@
       },
       "empty": {
         "title": "Your first campaign starts here",
-        "description": "Once both signatures and the holder’s documents are ready, you’ll create your first campaign in the Studio. In the meantime, here’s what is missing.",
+        "description": "Once the signatures and the holder’s documents are ready, you’ll create your first campaign in the Studio. In the meantime, here’s what is missing.",
         "stepsLabel": "Steps to your first campaign",
         "steps": {
           "signers": {
-            "title": "Both signatures",
-            "done": "Both signatories are ready.",
-            "todo": "The other signatory still needs to activate their account and two-step verification."
+            "title": "The signatories",
+            "done": "The signatories are ready.",
+            "todo": "The other signatory still needs to activate their account and two-step verification.",
+            "todoSingle": "You still need to activate your two-step verification to be able to sign."
           },
           "documents": {
             "title": "Holder’s documents",
             "done": "Verified: you can publish campaigns with payments.",
             "todo": "The holder’s documents are still missing (tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate) before you can publish the first campaign with payments.",
             "cta": "Go to the documents",
-            "review": "Sent: they are under review and we'll let you know by email."
+            "review": "Sent: they are under review and we’ll let you know by email."
           },
           "studio": {
             "title": "Create the campaign",
@@ -1956,8 +2004,8 @@
     },
     "approvals": {
       "metaTitle": "Approvals",
-      "title": "Approvals and dual sign-off",
-      "intro": "Review proposals from families and friendly local businesses, talk to families through their anonymous code and approve, with two signatures, the ideas that reach the quorum.",
+      "title": "Approvals and sign-off",
+      "intro": "Review the proposals from families and local businesses, chat with families through their anonymous code and approve, with the organisation’s signatures, the ideas that reach the quorum.",
       "antifraud": "Up to 2 family accounts per device count (both parents). A 3rd account on the same device or a burst of signatures from the same network is marked as suspicious and does not count until you review it.",
       "openTitle": "{count, plural, =0 {Ideas: nothing pending} one {# idea in progress} other {# ideas in progress}}",
       "closedTitle": "{count, plural, one {Latest closed idea} other {Latest # closed ideas}}",
@@ -1969,13 +2017,13 @@
       "phases": {
         "PHASE0_MOD": "🛡️ Initial review",
         "PUBLIC_VOTING": "🗳️ Collecting signatures",
-        "DOUBLE_CHECK": "✅ Quorum reached · dual sign-off",
+        "DOUBLE_CHECK": "✅ Quorum reached · awaiting sign-off",
         "CONVERTED": "🚀 Turned into an initiative",
         "REJECTED": "❌ Declined"
       },
       "meta": "{category} · {votes} of {needed} verified signatures · proposed on {date}.",
       "daysLeft": "{count, plural, =0 {Signatures close today.} one {# day of signatures left.} other {# days of signatures left.}}",
-      "signDaysLeft": "{count, plural, =0 {The dual sign-off is due today.} one {# day left for the dual sign-off.} other {# days left for the dual sign-off.}}",
+      "signDaysLeft": "{count, plural, =0 {The sign-off is due today.} one {# day left to sign.} other {# days left to sign.}}",
       "progressLabel": "Progress towards the quorum",
       "edit": {
         "legend": "Review the text before publishing it",
@@ -1984,7 +2032,7 @@
         "description": "Description",
         "hint": "Title of 8 to 90 characters and description of 20 to 600. You can fix typos or clarify the proposal: the family will be notified. The signature period starts on the day you approve it."
       },
-      "converted": "Dual sign-off complete: it is now an initiative being budgeted (wallet {wallet}).",
+      "converted": "Sign-off complete: it is now an initiative being budgeted (wallet {wallet}).",
       "convertedLink": "Edit in the Studio",
       "actions": {
         "approve": "Approve and open for signatures",
@@ -1997,7 +2045,7 @@
       },
       "notices": {
         "approved": "Idea published: signatures can now be collected in the ideas box.",
-        "approvedQuorum": "Idea published with quorum already reached: it is now waiting for the dual sign-off.",
+        "approvedQuorum": "Idea published with quorum already reached: it is now waiting for the sign-off.",
         "rejected": "Idea declined. The reason is in its chat and the family will get a notice."
       },
       "errors": {
@@ -2028,11 +2076,11 @@
         "ALREADY_INVITED": "You already sent this year’s invitation to renew: it is only sent once."
       },
       "doubleCheck": {
-        "label": "Dual sign-off for the idea",
-        "progress": "Dual sign-off: {signed} of 2",
+        "label": "Sign-off for the idea",
+        "progress": "{total, plural, =1 {Single signature: {signed} of 1} other {Double signature: {signed} of {total}}}",
         "roles": {
-          "DIRECTOR": "First signature",
-          "COSIGNER": "Second signature"
+          "DIRECTOR": "Director",
+          "COSIGNER": "Co-signer"
         },
         "signedBy": "Signed by {name} on {date}",
         "pending": "Waiting for signature",
@@ -2042,7 +2090,7 @@
         "resend": "It has not arrived: send another link",
         "notYours": "Your signature is already recorded or it is the other signer’s turn. They will get the link by email.",
         "revalidated": "{count, plural, one {Includes # signature the organisation accepted by hand (it was suspicious).} other {Includes # signatures the organisation accepted by hand (they were suspicious).}}",
-        "readOnly": "Only the organisation’s two signers can sign."
+        "readOnly": "Only the organisation’s signatories can sign."
       },
       "audit": {
         "summary": "Signature audit ({total})",
@@ -2055,7 +2103,7 @@
         "statusRevalidated": "🟢 Accepted by the organisation",
         "revalidate": "Accept",
         "revalidated": "Signature accepted: it now counts towards the quorum.",
-        "revalidatedQuorum": "Signature accepted: the idea has reached the quorum and is waiting for the dual sign-off.",
+        "revalidatedQuorum": "Signature accepted: the idea has reached the quorum and is waiting for the sign-off.",
         "truncated": "{shown, plural, one {Showing # signature} other {Showing # signatures}}: suspicious ones first, then the most recent."
       },
       "chat": {
@@ -2073,7 +2121,7 @@
       "metaShort": "{category} · proposed on {date}."
     },
     "sign": {
-      "title": "Dual sign-off",
+      "title": "Sign-off",
       "needsLogin": "To sign, sign in with your organisation account. We keep the link in this tab: you will come back here afterwards.",
       "needsSecondFactor": "To sign you need to complete two-step verification in this session.",
       "loginCta": "Sign in to continue",
@@ -2085,20 +2133,20 @@
         "cta": "Go to Approvals"
       },
       "done": {
-        "completeTitle": "Dual sign-off complete! 2 of 2",
+        "completeTitle": "Sign-off complete!",
         "partialTitle": "Your signature is recorded: 1 of 2",
         "completeIdea": "The idea is now an initiative being budgeted. The next step is to prepare its budget.",
-        "completePayout": "Both payout signatures are recorded.",
+        "completePayout": "The signatures the organisation requires for the payout are recorded.",
         "partialNotified": "We have sent the link to the other signer to complete the dual sign-off.",
         "partialWaiting": "The other person still needs to sign. Once they have two-step verification turned on, they can request their link from Approvals.",
         "cta": "Back to Approvals",
         "celebrate": "An idea from the families is starting to come true!",
         "ctaFund": "Back to the Activity Fund",
         "fund": {
-          "executed": "Both signatures are recorded and the money is on its way to the organisation’s account. The receipt is in the Activity Fund.",
-          "pending": "Both signatures are recorded. Sending to the organisation’s account has not finished yet: we will retry and you can follow it in the Activity Fund.",
+          "executed": "The required signatures are recorded and the money is on its way to the organisation’s account. The receipt is in the Activity Fund.",
+          "pending": "The required signatures are recorded. Sending to the organisation’s account has not finished yet: we will retry and you can follow it in the Activity Fund.",
           "changed": "The Fund has changed since the payout was requested (a business reversed its payment). We have cancelled it: request it again with what there is now.",
-          "blocked": "Both signatures are recorded, but we cannot send the money yet: the verified holder’s documents or the destination account are missing. Check it in Settings.",
+          "blocked": "The required signatures are recorded, but we cannot send the money yet: the verified holder’s documents or the destination account are missing. Check it in Settings.",
           "changedTitle": "The payout has been cancelled",
           "blockedTitle": "Signed, but it cannot be sent yet",
           "expiredTitle": "The payout has been cancelled",
@@ -2109,14 +2157,14 @@
         "payout": {
           "celebrate": "Goal achieved! The money is on its way.",
           "photosCta": "Upload the Before and After photos",
-          "executed": "Both signatures are recorded and PAYCOMET has sent the money. The last step: upload the photos and the thank-you message for the families.",
-          "pending": "Both signatures are recorded. Sending hasn’t finished yet: we retry it automatically and you’ll see how it goes in Payouts.",
+          "executed": "The required signatures are recorded and PAYCOMET has sent the money. The last step: upload the photos and the thank-you message for the families.",
+          "pending": "The required signatures are recorded. Sending hasn’t finished yet: we retry it automatically and you’ll see how it goes in Payouts.",
           "changedTitle": "The figures have changed",
           "changed": "The amount raised has changed since the payout was requested (a chargeback). Request it again in Payouts: it will be signed again.",
           "blockedTitle": "Signed, but it can’t be sent yet",
-          "blocked": "Both signatures are recorded, but the account holder’s documents are not verified or the PAYCOMET account is missing. It will be sent as soon as they are ready.",
+          "blocked": "The required signatures are recorded, but the account holder’s documents are not verified or the PAYCOMET account is missing. It will be sent as soon as they are ready.",
           "notReadyTitle": "Signed, but the campaign can’t be paid out yet",
-          "notReady": "Both signatures are recorded, but something is missing before the payout (the raffle draw or a decision on a local business). You’ll see it in Payouts.",
+          "notReady": "The required signatures are recorded, but something is missing before the payout (the raffle draw or a decision on a local business). You’ll see it in Payouts.",
           "invoiceTitle": "A valid invoice is missing",
           "invoice": "The attached invoice is no longer valid. Upload another one in Payouts and request the payout again.",
           "providerTitle": "Paying the supplier is not available yet",
@@ -2128,7 +2176,7 @@
       "what": "What you are signing",
       "ideaMeta": "{alias} · {category} · {votes} verified signatures",
       "ideaRevalidated": "{count, plural, one {Includes # signature the organisation accepted by hand (it was suspicious).} other {Includes # signatures the organisation accepted by hand (they were suspicious).}}",
-      "ideaEffect": "Once both signatures are in, the idea moves to budgeting as an initiative of the organisation.",
+      "ideaEffect": "Once the signatures the organisation requires are in, the idea moves to budgeting as an initiative of the organisation.",
       "payoutMeta": "Piggy bank {wallet} · {amount} · to: {destination}",
       "destinations": {
         "ORGANIZATION": "the organisation’s account",
@@ -2163,12 +2211,12 @@
       "retry": "Check the link again",
       "fundMeta": "{amount} · {count, plural, one {from # business} other {from # businesses}}",
       "fundPurpose": "What it will be used for (written by the organisation):",
-      "fundEffect": "With both signatures, the money is sent to the organisation’s account. This cannot be undone.",
+      "fundEffect": "With the signatures the organisation requires, the money is sent to the organisation’s account. This cannot be undone.",
       "fundTitle": "Payout {reference} from the Activity Fund",
       "payoutBeneficiary": "To: {name}",
       "payoutBeneficiaryIban": "To: {name} · IBAN with bank code {bank}, ending in {last4}",
       "payoutInvoice": "View the supplier’s invoice",
-      "payoutEffect": "With both signatures, the money leaves the initiative’s piggy bank for this destination. It cannot be undone.",
+      "payoutEffect": "With the signatures the organisation requires, the money leaves the initiative’s piggy bank for this destination. It cannot be undone.",
       "payoutRequestedBy": "Last requested or changed by {name} on {date}. If you did not expect this destination, do not sign."
     },
     "sponsors": {
@@ -2218,7 +2266,7 @@
         "cancel": "Cancel",
         "tooShort": "Please write the reason: at least {min} characters."
       },
-      "readOnly": "Only the organisation’s two signatories can approve or decline businesses.",
+      "readOnly": "Only the organisation’s signatories can approve or decline businesses.",
       "notices": {
         "approved": "{name} is now a friendly business: it appears on your page for 12 months and we’ve sent its welcome email.",
         "approvedMatching": "{name} is now a friendly business and its Matching 2x pool is active: every donation is doubled until it runs out.",
@@ -2264,7 +2312,7 @@
         "saving": "Saving…",
         "saved": "Rule saved: “{rule}”.",
         "savedPlaced": "{count, plural, one {Rule saved. We have moved the money of # business waiting in its pool to a campaign.} other {Rule saved. We have moved the money of # businesses waiting in their pools to campaigns.}}",
-        "readOnly": "Only the organisation’s two signatories can change the rule."
+        "readOnly": "Only the organisation’s signatories can change the rule."
       },
       "detail": {
         "summary": "Details / Renew",
@@ -2306,18 +2354,18 @@
       "intro": "The holder's documents, the amounts families and businesses see, the entity's phone number and how your portal is shown.",
       "readOnly": "Read only: these settings are changed by the people who sign for the entity.",
       "kyb": {
-        "title": "Holder's documents",
-        "intro": "They are used to check who receives the money before the first campaign can take payments. They are stored privately: only the two signatories and the verification team can see them.",
+        "title": "Holder’s documents",
+        "intro": "They are used to check who receives the money before the first campaign can take payments. They are stored privately: only the signatories and the verification team can see them.",
         "status": {
-          "PENDING": "You haven't sent them yet. You can prepare campaigns in the meantime, but not take payments.",
-          "SUBMITTED": "Sent on {date}. They are under review and we'll let you know by email.",
+          "PENDING": "You haven’t sent them yet. You can prepare campaigns in the meantime, but not take payments.",
+          "SUBMITTED": "Sent on {date}. They are under review and we’ll let you know by email.",
           "VERIFIED": "Verified: you can publish campaigns that take payments.",
           "REJECTED": "KORUM has sent them back: fix what is indicated and send them again."
         },
         "reviewNote": "What needs fixing",
         "locked": {
-          "SUBMITTED": "They can't be changed while under review. If you uploaded the wrong document, contact support.",
-          "VERIFIED": "They are verified and can't be changed here: if anything about the holder changes (account, representative…), contact support."
+          "SUBMITTED": "They can’t be changed while under review. If you uploaded the wrong document, contact support.",
+          "VERIFIED": "They are verified and can’t be changed here: if anything about the holder changes (account, representative…), contact support."
         },
         "identity": {
           "legend": "Holder of the funds",
@@ -2325,21 +2373,21 @@
           "ley49Declared": "Law 49/2002 regime: declared",
           "ley49Verified": "Law 49/2002 regime: accredited",
           "ley49No": "Law 49/2002 regime: not declared",
-          "legalName": "Holder's registered name",
+          "legalName": "Holder’s registered name",
           "legalNameHint": "As it appears on its documents. No links or email addresses.",
-          "cif": "Holder's CIF",
+          "cif": "Holder’s CIF",
           "cifHint": "That of the entity taking payments: one letter, seven digits and a check character (e.g. G08451296).",
           "cifMissing": "No CIF",
-          "save": "Save the holder's details",
+          "save": "Save the holder’s details",
           "saving": "Saving…",
-          "saved": "Holder's details saved.",
+          "saved": "Holder’s details saved.",
           "errors": {
             "legalName": "Enter the full registered name (3 to 120 characters, no links).",
             "cif": "That CIF is not valid: check the first letter and the check character.",
             "CIF_IN_USE": "That CIF already belongs to another KORUM entity. If this is a mistake, contact support.",
-            "LOCKED": "The holder's details can no longer be changed here.",
-            "FORBIDDEN": "You don't have permission to change these details.",
-            "generic": "They couldn't be saved. Please try again in a few seconds."
+            "LOCKED": "The holder’s details can no longer be changed here.",
+            "FORBIDDEN": "You don’t have permission to change these details.",
+            "generic": "They couldn’t be saved. Please try again in a few seconds."
           },
           "required": "Both details are required to send the documents."
         },
@@ -2352,15 +2400,15 @@
             },
             "STATUTES": {
               "title": "Statutes, founding minutes or deeds",
-              "hint": "The association's or foundation's registered statutes, or the deeds if the holder is a company."
+              "hint": "The association’s or foundation’s registered statutes, or the deeds if the holder is a company."
             },
             "REPRESENTATIVE_ID": {
-              "title": "Legal representative's ID (DNI or NIE)",
+              "title": "Legal representative’s ID (DNI or NIE)",
               "hint": "Both sides. Of the person registered as representative (chair, owner or head)."
             },
             "ACCOUNT_OWNERSHIP": {
-              "title": "Certificate of ownership of the entity's account",
-              "hint": "Issued by your financial institution, stating that the account belongs to the holder. You don't type any account number here."
+              "title": "Certificate of ownership of the entity’s account",
+              "hint": "Issued by your financial institution, stating that the account belongs to the holder. You don’t type any account number here."
             },
             "LEY49_ACCREDITATION": {
               "title": "Law 49/2002 accreditation",
@@ -2383,28 +2431,28 @@
             "TOO_LARGE": "The file is over {max} MB. Try a lighter PDF or photo.",
             "FILE_TOO_LARGE": "The file is over {max} MB. Try a lighter PDF or photo.",
             "FILE_TYPE_NOT_ALLOWED": "Only PDF, JPG, PNG or WebP are accepted.",
-            "FILE_UNRECOGNIZED_TYPE": "That file can't be read: it must be a PDF, JPG, PNG or WebP.",
-            "FILE_MIME_MISMATCH": "The file isn't what its name says. Save it again as a PDF or image.",
-            "FILE_EXTENSION_MISMATCH": "The file isn't what its name says. Save it again as a PDF or image.",
+            "FILE_UNRECOGNIZED_TYPE": "That file can’t be read: it must be a PDF, JPG, PNG or WebP.",
+            "FILE_MIME_MISMATCH": "The file isn’t what its name says. Save it again as a PDF or image.",
+            "FILE_EXTENSION_MISMATCH": "The file isn’t what its name says. Save it again as a PDF or image.",
             "LOCKED": "The documents can no longer be changed here.",
-            "NOT_REQUIRED": "Your entity hasn't declared Law 49/2002: this document isn't needed.",
-            "FORBIDDEN": "You don't have permission to upload this entity's documents.",
-            "generic": "It couldn't be uploaded. Please try again in a few seconds.",
+            "NOT_REQUIRED": "Your entity hasn’t declared Law 49/2002: this document isn’t needed.",
+            "FORBIDDEN": "You don’t have permission to upload this entity’s documents.",
+            "generic": "It couldn’t be uploaded. Please try again in a few seconds.",
             "RATE_LIMITED": "Too many uploads in a row for this entity. Wait a while and try again."
           }
         },
         "submit": {
-          "ready": "Everything's here: you can now send them for review.",
+          "ready": "Everything’s here: you can now send them for review.",
           "missingTitle": "Still missing before you can send them:",
-          "missingCif": "the holder's CIF",
+          "missingCif": "the holder’s CIF",
           "button": "Send the documents for review",
           "sending": "Sending…",
-          "sent": "Documents sent. We'll let you know by email once they have been reviewed.",
+          "sent": "Documents sent. We’ll let you know by email once they have been reviewed.",
           "errors": {
-            "INCOMPLETE": "A document or the holder's CIF is still missing.",
+            "INCOMPLETE": "A document or the holder’s CIF is still missing.",
             "LOCKED": "They had already been sent: reload the page.",
-            "FORBIDDEN": "You don't have permission to send these documents.",
-            "generic": "They couldn't be sent. Please try again in a few seconds."
+            "FORBIDDEN": "You don’t have permission to send these documents.",
+            "generic": "They couldn’t be sent. Please try again in a few seconds."
           }
         }
       },
@@ -2420,8 +2468,8 @@
         },
         "ideas": {
           "legend": "Ideas box",
-          "minVotes": "Minimum signatures for an idea to reach the double signature",
-          "minVotesHint": "Between {min} and {max}. If you lower it, ideas that already reach it move to the double signature when you save.",
+          "minVotes": "Minimum signatures for an idea to reach the organisation’s sign-off",
+          "minVotesHint": "Between {min} and {max}. If you lower it, ideas that already reach it move to the organisation’s sign-off when you save.",
           "maxIdeaDays": "Days to collect signatures",
           "maxIdeaDaysHint": "Between {min} and {max}. Applies to ideas you approve from now on."
         },
@@ -2436,8 +2484,8 @@
         },
         "contact": {
           "legend": "Contact",
-          "phone": "Entity's phone number",
-          "phoneHint": "The entity's own (office, headquarters…), not a person's mobile. Both signatories can see it and it is suggested as the contact in Modelo 182 (Form 182). Optional."
+          "phone": "Entity’s phone number",
+          "phoneHint": "The entity’s own (office, headquarters…), not a person’s mobile. The signatories can see it and it is suggested as the contact in Modelo 182 (Form 182). Optional."
         },
         "portal": {
           "legend": "Public portal",
@@ -2454,7 +2502,7 @@
         "save": "Save settings",
         "saving": "Saving…",
         "saved": "Settings saved.",
-        "savedQuorum": "Settings saved: {count, plural, one {# idea moves} other {# ideas move}} to the double signature on reaching the new minimum of signatures.",
+        "savedQuorum": "Settings saved: {count, plural, one {# idea moves} other {# ideas move}} to the organisation’s sign-off on reaching the new minimum of signatures.",
         "errors": {
           "donationPresetsEuros": "Three amounts from €{min} to €{max}, in whole euros, lowest to highest, no repeats.",
           "defaultDonationIdx": "Choose which button is preselected.",
@@ -2469,10 +2517,10 @@
       },
       "team": {
         "title": "Signing team",
-        "intro": "The two people who sign together to approve ideas and release funds. If one of them steps down, propose their replacement here: nobody can remove the other signer without their approval.",
+        "intro": "The people who sign to approve ideas and release money. Each organisation chooses whether two signatures (Director and Co-signer) or just one (Director) are needed, and changes its signers by itself: KORUM does not step in, and every change is recorded.",
         "seatsLabel": "Signing seats",
         "seat": {
-          "DIRECTOR": "Management",
+          "DIRECTOR": "Director",
           "COSIGNER": "Co-signer"
         },
         "you": "You",
@@ -2481,78 +2529,75 @@
         "needsTwoFactor": "Cannot sign yet: two-step verification still needs to be turned on.",
         "pending": "Invitation sent to {email}, not accepted yet.",
         "pendingExpired": "The invitation to {email} expired without being accepted. Resend or correct it.",
-        "correctTitle": "Correct the co-signer's invitation",
+        "correctTitle": "Correct the co-signer’s invitation",
         "proposeTitle": "Propose a handover",
-        "rule": "You can hand over your own seat (the invitation goes out straight away) or propose who replaces the other person: in that case we will ask for their approval. The same two people keep signing until the new person accepts. You confirm it with the code from your authenticator app.",
+        "rule": "You can hand over your seat or propose who replaces the other person (for example, if the Director is gone, the Co-signer proposes the replacement). The invitation goes out immediately and the other person gets a notice: their approval is not needed. The change happens when the new person accepts. You confirm it with the code from your verification app.",
         "form": {
           "seatLegend": "Which seat is being handed over?",
           "seatMine": "My seat ({seat})",
           "seatOther": "{seat}: {name}",
           "selfHint": "We will invite this person to take your seat. Once they accept, they will sign in your place and you will stop signing for the organisation. You confirm it with the code from your authenticator app.",
-          "otherHint": "We will ask the other person for their approval. Only if they give it will we invite the person you propose.",
+          "otherHint": "We will invite this person to take the other person’s seat. The other person will get an email notice and will stop signing once the new person accepts. The change is recorded.",
           "correctHint": "If there was an invitation, it will stop working and we will send a new one to this email. You confirm it with the code from your authenticator app.",
           "name": "Full name of the new person",
           "email": "Their email",
           "roleLabel": "Their position",
-          "roleLabelHint": "For example: Chair of the Parents' Association, Club Treasurer. No links or addresses.",
+          "roleLabelHint": "For example: Chair of the Parents’ Association, Club Treasurer. No links or addresses.",
           "sending": "Sending…",
           "submitSelf": "Invite my replacement",
-          "submitOther": "Ask for their approval",
+          "submitOther": "Invite their replacement",
           "submitCorrect": "Send the corrected invitation",
           "savedSelf": "Invitation sent. You will keep signing until the new person accepts.",
-          "savedOther": "Proposal sent. We will let the other person know so they can approve it.",
+          "savedOther": "Invitation sent. The other person has been notified; the change happens when the new person accepts.",
           "savedCorrected": "Invitation corrected: the previous one no longer works and we have sent the new one.",
           "errors": {
             "form": "Please check the highlighted fields.",
             "name": "Enter their name (at least 2 letters, no links).",
             "email": "Please check the email.",
             "roleLabel": "Enter their position (at least 3 letters, no links or addresses).",
-            "REAUTH_REQUIRED": "To make this change, confirm the code from your authenticator app.",
+            "REAUTH_REQUIRED": "To make this change, confirm the code from your verification app.",
             "ALREADY_OPEN": "There is already a handover in progress. Finish or withdraw it before proposing another.",
             "SEAT_EMPTY": "That seat is empty: invite the co-signer from “Invite the co-signer”.",
-            "SEAT_TAKEN": "The co-signer has already accepted: changing them needs a handover with their approval.",
+            "SEAT_TAKEN": "The co-signer has already accepted: to change them, propose a handover of their seat.",
             "SAME_INBOX": "That email belongs to someone who already signs for the organisation. The two signers must be different people.",
             "DISPOSABLE_EMAIL": "That is a temporary email. Please use a permanent address.",
             "UNAVAILABLE": "That email cannot be given a position in an organisation. Please use another one.",
             "RATE_LIMITED": "We have sent too many emails to that address. Please try again later.",
             "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
             "generic": "We could not save it. Please try again in a few seconds.",
-            "INVITEE_BUSY": "That person already has another pending invitation to your organisation. Wait for them to accept it or withdraw it first."
+            "INVITEE_BUSY": "That person already has another pending invitation to the organisation. Wait for them to accept it or withdraw it first.",
+            "SINGLE_MODE": "The organisation signs with a single signature. To invite a co-signer, switch back to double signature first."
           }
         },
         "handover": {
-          "titleAwaiting": "Handover awaiting approval",
           "titleInvited": "Handover in progress",
-          "askMe": "It has been proposed that {name} ({email}) takes your seat ({seat}) as “{role}”. If you agree, we will send them the invitation; once they accept, you will stop signing for the organisation. You have until {date}.",
-          "waitingOther": "You proposed that {name} ({email}) takes the {seat} seat as “{role}”. We are waiting for the outgoing person's approval until {date}.",
-          "invitedSelf": "Invitation sent to {name} ({email}) to take the {seat} seat as “{role}”. The outgoing person keeps signing until they accept (before {date}).",
-          "invitedOther": "The outgoing person has approved. Invitation sent to {name} ({email}) for the {seat} seat as “{role}”, valid until {date}.",
-          "expiredConsent": "The proposal for {name} to take the {seat} seat expired without approval. If the outgoing person is no longer around, contact support. Withdraw it to propose another.",
+          "invitedSelf": "Invitation sent to {name} ({email}) to take the {seat} seat as “{role}”. The person leaving keeps signing until it is accepted (before {date}).",
+          "invitedOther": "You have invited {name} ({email}) to take the {seat} seat as “{role}”. Their invitation is valid until {date}. The person leaving has been notified; the change is immediate once they accept.",
           "expiredInvitation": "The invitation to {name} ({email}) for the {seat} seat expired without being accepted. Withdraw it and, if needed, propose the handover again.",
-          "consentHint": "Giving your approval is confirmed with the code from your authenticator app.",
           "actions": {
-            "consent": "Give my approval",
-            "decline": "I don't agree",
             "resend": "Resend the invitation",
             "cancel": "Withdraw the handover"
           },
           "done": {
-            "consent": "Approval given: we have sent the invitation to the new person.",
-            "decline": "You have declined the handover. We will let the person who proposed it know.",
             "resend": "Invitation resent: the previous one no longer works.",
             "cancel": "Handover withdrawn: everything stays as it was."
           },
           "errors": {
-            "REAUTH_REQUIRED": "To give your approval, confirm the code from your authenticator app.",
             "NOT_FOUND": "This handover is no longer open. Please reload the page.",
             "SAME_INBOX": "The proposed person already signs for the organisation. Please withdraw the handover.",
             "UNAVAILABLE": "The proposed person can no longer take the position. Please withdraw the handover.",
             "RATE_LIMITED": "We have sent too many emails to that address. Please try again later.",
             "FORBIDDEN": "To make this change you need to have signed in with your verification code. Sign out, sign in again with it and try once more.",
             "generic": "We could not do it. Please try again in a few seconds.",
-            "INVITEE_BUSY": "The proposed person already has another pending invitation to your organisation. Withdraw the handover or wait for them to accept it."
+            "INVITEE_BUSY": "The proposed person already has another pending invitation to the organisation. Withdraw the handover or wait for them to accept it."
           },
-          "invitedMine": "Invitation sent to {name} ({email}) to take your seat ({seat}) as “{role}”. You will keep signing until they accept (before {date})."
+          "invitedMine": "Invitation sent to {name} ({email}) to take your seat ({seat}) as “{role}”. You will keep signing until they accept (before {date}).",
+          "invitedReplacingMe": "The other signer has invited {name} ({email}) to take your seat ({seat}) as “{role}”. You keep signing until they accept (before {date}); then the change is immediate.",
+          "busy": {
+            "resend": "Resending…",
+            "cancel": "Withdrawing…"
+          },
+          "expiredInvitationOther": "The invitation to {name} ({email}) for the {seat} seat has expired without being accepted. Whoever proposed it can withdraw it; after that the organisation can propose the handover again."
         },
         "roleLabel": {
           "open": "Change my position",
@@ -2567,7 +2612,50 @@
         },
         "needsTwoFactorMine": "You cannot sign yet: turn on two-step verification.",
         "inviteTitle": "Invite the co-signer",
-        "cosignerEmpty": "No co-signer: until someone accepts this seat, ideas cannot be approved and funds cannot be released."
+        "cosignerEmpty": "No co-signer: until someone accepts this seat, ideas cannot be approved and funds cannot be released.",
+        "mode": {
+          "title": "How many signatures the organisation requires",
+          "current": {
+            "DOUBLE": "Double signature: approving ideas and releasing money requires the Director and the Co-signer, two different people.",
+            "SINGLE": "Single signature: approving ideas and releasing money requires only the Director’s signature."
+          },
+          "help": {
+            "DOUBLE": "This is the safest option: no one can move money alone.",
+            "SINGLE": "The organisation decides this and it is its own responsibility. KORUM does not control who signs or review the changes; everything is recorded and the organisation cannot delete it."
+          },
+          "change": {
+            "SINGLE": {
+              "open": "Switch to single signature",
+              "intro": "When you switch to single signature, the Co-signer seat disappears immediately: that person stops signing and can no longer open the panel (their account is not deleted) and is notified. From now on only the Director approves ideas and releases money.",
+              "confirm": "I understand that the organisation takes on the responsibility of a single person approving and releasing money, that nobody else will check it, and that the change is immediate.",
+              "submit": "Switch to single signature",
+              "effects": {
+                "noReview": "Nobody else will check what you sign: KORUM does not review changes and every approval or payment will depend on the Director alone.",
+                "gate": "The door PINs and sessions of all events are cancelled, not only the Co-signer’s: create new PINs if a door is running.",
+                "pending": "Anything that already carries your signature and is waiting for the Co-signer (ideas and payouts) will be approved without another signature: ideas immediately; payouts when retried or with tomorrow’s early-morning automatic check."
+              }
+            },
+            "DOUBLE": {
+              "open": "Go back to double signature",
+              "intro": "When you go back to double signature, the Co-signer seat stays empty until you invite someone. Until then nothing can be approved: their signature will be missing.",
+              "confirm": "I understand that, until the co-signer accepts, no ideas will be approved and no money will be released.",
+              "submit": "Go back to double signature"
+            }
+          },
+          "done": {
+            "SINGLE": "The organisation now signs with a single signature (Director).",
+            "DOUBLE": "The organisation is back to double signature. Invite the co-signer so you can approve."
+          },
+          "saving": "Saving…",
+          "cancel": "Cancel",
+          "onlyDirector": "Only the Director can change this.",
+          "errors": {
+            "REAUTH_REQUIRED": "To make this change, confirm the code from your verification app.",
+            "ALREADY_IN_MODE": "The organisation already signs this way: we have refreshed the page.",
+            "FORBIDDEN": "To make this change you must have signed in with your verification code. Sign out, sign back in with it and try again.",
+            "generic": "We could not save it. Try again in a few seconds."
+          }
+        }
       },
       "groups": {
         "title": "Participation groups",
@@ -2660,7 +2748,7 @@
     "fund": {
       "metaTitle": "Activity Fund",
       "title": "Activity Fund",
-      "intro": "This is where money from friendly businesses you have accepted arrives when it could not be taken to any campaign before its deadline. It is not returned to the business: it is for the organisation’s activities. To receive it in your account, one person requests it stating what it will be used for and you both sign.",
+      "intro": "This is where the money from the local businesses you have accepted arrives when it could not be taken to any campaign before its deadline ran out. It is not returned to the business: it is for the organisation’s activities. To receive it in your account, one person requests it, saying what it will be used for, and it is signed with the signatures the organisation requires.",
       "summary": {
         "title": "Available to pay out",
         "deadline": "Pay it out before {date}: after that PAYCOMET could no longer send it.",
@@ -2668,7 +2756,7 @@
         "stuck": "{amount} can no longer be sent because PAYCOMET’s deadline has passed. The KORUM team is reviewing it with PAYCOMET and will write to you.",
         "notPayable": "To receive the Fund you need verified holder’s documents and a destination account.",
         "notPayableCta": "Go to the documents",
-        "inPayout": "Being paid out, awaiting both signatures: {amount}"
+        "inPayout": "Being paid out: {amount}"
       },
       "empty": {
         "title": "Your Fund is empty",
@@ -2687,18 +2775,18 @@
       },
       "request": {
         "title": "Request the payout to your account",
-        "lead": "Today you can pay out <amount></amount>. Say what the organisation will use it for: both of you will sign it and it will appear on the receipt.",
+        "lead": "Today you can pay out <amount></amount>. Say what the organisation will use it for: the organisation will sign it and it will appear on the receipt.",
         "purposeLabel": "What the money will be used for",
         "purposeHelp": "For example: “Materials for the spring camp and the end-of-year party”. Between {min} and {max} characters, no links. Do not write pupils’ names or other personal data: the text appears on the receipt and cannot be changed.",
         "purposeLength": "Write between {min} and {max} characters, no links.",
-        "effect": "When you request it, we email you your signing link and your code. When both of you have signed, the money is sent to the organisation’s account.",
+        "effect": "When you request it, we email you your signing link and your code. When the organisation’s signatures are complete, the money is sent to the organisation’s account.",
         "submit": "Request the payout and my signing link",
         "sending": "Requesting…",
         "requested": "Payout requested. We have sent you your signing link and code; they are valid until {date}.",
         "requestedNoLink": "Payout requested. Request your signing link from the payout itself."
       },
       "pending": {
-        "title": "Payout {reference} · awaiting both signatures",
+        "title": "Payout {reference} · awaiting signature",
         "purpose": "Requested by {name} on {date}. What it will be used for:",
         "someone": "a signer",
         "splits": "{count, plural, one {Which business it comes from (# business)} other {Which businesses it comes from (# businesses)}}",
@@ -2709,13 +2797,15 @@
         "cancelConfirm": "Once withdrawn, the signing links stop working and the money becomes available again to request it anew (for example, with a different purpose).",
         "cancelYes": "Yes, withdraw it",
         "cancelNo": "No, keep it",
-        "cancelled": "Payout withdrawn. You can request it again whenever you want."
+        "cancelled": "Payout withdrawn. You can request it again whenever you want.",
+        "allSigned": "The signatures the organisation requires are all in: the money still has to be sent.",
+        "titleSigned": "Payout {reference} · signed, still to be sent"
       },
       "history": {
         "title": "Payouts",
         "none": "You have not paid out the Fund yet.",
         "status": {
-          "PENDING_DOUBLE_CHECK": "Awaiting both signatures",
+          "PENDING_DOUBLE_CHECK": "Awaiting signature",
           "APPROVED": "Signed · sending",
           "PROCESSING": "Signed · sending",
           "EXECUTED": "Sent to your account",
@@ -2734,13 +2824,15 @@
         "retry": "Retry sending now",
         "retrying": "Retrying…",
         "retryDone": "Done: the money is on its way to your account.",
-        "retryPending": "It has not finished yet. We keep trying every day; if it is not resolved, the KORUM team will write to you."
+        "retryPending": "It has not finished yet. We keep trying every day; if it is not resolved, the KORUM team will write to you.",
+        "send": "Send the money now",
+        "sending": "Sending…"
       },
       "errors": {
         "INVALID_INPUT": "Write what the money will be used for: between 10 and 500 characters, no links.",
         "NOT_FOUND": "We cannot find this payout in your organisation. Reload the page.",
         "NOTHING_TO_PAY": "There is nothing in the Fund that can be paid out right now.",
-        "PAYOUT_PENDING": "A payout is already awaiting both signatures: sign it or withdraw it before requesting another one.",
+        "PAYOUT_PENDING": "A payout is already awaiting signature: sign it or withdraw it before requesting another one.",
         "KYB_NOT_VERIFIED": "To pay out the Fund you need verified holder’s documents.",
         "DESTINATION_ACCOUNT_MISSING": "The organisation does not have a destination account in PAYCOMET yet.",
         "WRONG_STATUS": "This payout has already changed: someone else has signed or withdrawn it. Reload the page.",
@@ -2760,12 +2852,12 @@
       },
       "receipt": {
         "title": "Activity Fund payout receipt",
-        "intro": "KORUM records that {entity} ({legalName}) has paid out to its account the money from its Activity Fund detailed below, with the double signature of both of its officers.",
+        "intro": "KORUM records that {entity} ({legalName}) has paid out to its account the money from its Activity Fund detailed below, with the signatures the organisation requires.",
         "sections": {
           "payout": "Payout",
           "purpose": "What it will be used for (purpose signed by the organisation)",
           "origin": "Where the money comes from",
-          "signatures": "Double signature",
+          "signatures": "Signatures",
           "notes": "Notes"
         },
         "reference": "Reference",
@@ -2989,6 +3081,7 @@
         "publish": "Save and publish on KORUM",
         "publishing": "Publishing…",
         "publishHint": "The button turns on when nothing is left on the list.",
+        "syncing": "Opening the saved draft…",
         "saveDraft": "Save draft",
         "saving": "Saving…",
         "saveChanges": "Save changes",
@@ -3090,7 +3183,7 @@
     "payouts": {
       "metaTitle": "Payouts",
       "title": "Payouts of completed campaigns",
-      "intro": "When a campaign reaches its goal, the money stays in the initiative’s piggy bank at PAYCOMET until two different people from the organisation sign its payout. Choose the destination, attach the supplier’s invoice and both sign with your code.",
+      "intro": "When a campaign reaches its goal, the money stays in the initiative’s piggy bank at PAYCOMET until the organisation signs its payout (two different people, or only the Director if the organisation chose single signature). Choose the destination, attach the supplier’s invoice and sign with your code.",
       "badge": "100% reached · payout",
       "figures": {
         "raised": "Raised",
@@ -3113,11 +3206,11 @@
         "SPONSORS_PENDING": "Review the local businesses",
         "KYB_NOT_VERIFIED": "Go to the account holder’s documents"
       },
-      "readOnly": "Only the organisation’s two signatories can request and sign the payout.",
+      "readOnly": "Only the organisation’s signatories can request and sign the payout.",
       "photosHint": "Before and After photos and thank-you message (families will see them once the payout is done)",
       "empty": {
         "title": "No campaigns to pay out yet",
-        "text": "When a campaign reaches 100%, it will appear here so you can send the money to the project with the double signature.",
+        "text": "When a campaign reaches 100%, it will appear here so you can send the money to the project with the organisation’s signatures.",
         "cta": "Go to the dashboard"
       },
       "form": {
@@ -3135,11 +3228,11 @@
         "providerNameError": "Write the supplier’s name (between {min} and {max} characters).",
         "invoiceLabel": "Supplier’s invoice (or pro forma)",
         "invoiceOptional": "Supplier’s invoice (optional)",
-        "invoiceHelp": "PDF or photo, up to {size} MB. The two signatories will see it; families will not.",
+        "invoiceHelp": "PDF or photo, up to {size} MB. The signatories will see it; families will not.",
         "invoiceReady": "Invoice attached: {name}",
         "invoiceKept": "the one you already uploaded",
         "uploading": "Uploading the invoice…",
-        "effect": "When you request it, we email you your signing link with a code. Then the other person signs.",
+        "effect": "When you request it, we email you your signing link with a code. If the organisation has another signatory, they sign afterwards.",
         "effectUpdate": "If you change it, any existing signatures stop being valid and are requested again.",
         "submit": "Request the payout and sign",
         "submitUpdate": "Save the changes and sign again",
@@ -3186,7 +3279,7 @@
         "FILE_RETENTION_REQUIRED": "We couldn’t save the file. Please try again."
       },
       "pending": {
-        "title": "Payout {reference} · waiting for both signatures",
+        "title": "Payout {reference} · waiting for signatures",
         "toProvider": "To the supplier {name} · IBAN with bank code {bank}, ending in {last4}",
         "toOrganization": "To {name}’s account",
         "openInvoice": "View the supplier’s invoice",
@@ -3208,8 +3301,8 @@
           "SPONSORS_PENDING": "It could not be approved: some paid local businesses have not been accepted or declined.",
           "FIGURES_CHANGED": "The figures have changed since it was signed (a chargeback). Request the payout again: it will be signed again.",
           "ESCROW_MISMATCH": "The initiative’s piggy bank doesn’t match the amount raised. The KORUM team is looking into it.",
-          "KYB_NOT_VERIFIED": "Both signatures count, but the account holder’s documents are not verified yet. It will be sent as soon as they are.",
-          "DESTINATION_ACCOUNT_MISSING": "Both signatures count, but your organisation does not have its PAYCOMET account yet.",
+          "KYB_NOT_VERIFIED": "The signatures already count, but the account holder’s documents are not verified yet. It will be sent as soon as they are.",
+          "DESTINATION_ACCOUNT_MISSING": "The signatures already count, but your organisation does not have its PAYCOMET account yet.",
           "INVOICE_INVALID": "The attached invoice is no longer valid. Upload another one and request the payout again.",
           "PROVIDER_UNAVAILABLE": "Paying the supplier directly is not available yet. Change the destination to the organisation’s account.",
           "SIGNATURES": "The signatures are not valid for what is there now (something changed or someone left their role). Please sign again.",
@@ -3218,7 +3311,11 @@
         },
         "invoiceMissing": "The supplier’s invoice (or pro forma) is missing: attach it to be able to sign.",
         "blockedNote": "You will be able to sign once you sort out what is missing (above).",
-        "requestedBy": "Last requested or changed by {name} on {date}."
+        "requestedBy": "Last requested or changed by {name} on {date}.",
+        "titleSigned": "Payout {reference} · signed, still to be sent",
+        "allSigned": "The signatures the organisation requires are all in: the money still has to be sent.",
+        "send": "Send the money now",
+        "sending": "Sending…"
       },
       "history": {
         "title": "Payouts sent",
@@ -3256,7 +3353,7 @@
       },
       "closedOn": "Ended on {date}",
       "raised": "Raised {raised} of {goal} ({percent}%)",
-      "decideIntro": "One signatory decides and the other is notified. Neither option sends money to the organisation: that will still need both signatures on the payout.",
+      "decideIntro": "One signatory decides and, if there is another, they are notified. Neither option sends money to the organisation: that will still need the payout to be signed.",
       "readOnly": "Only the organisation’s signatories can decide what to do with this campaign.",
       "poll": {
         "open": "Vote open until {date}",
@@ -3483,7 +3580,7 @@
         "download": "Download record",
         "downloadLabel": "Download record of round {round}",
         "extraTitle": "Extra round",
-        "extraIntro": "If nobody claims the prize of a ticket, or the person who bought it asked for a refund, you can draw another ticket to replace it. One of the two signatories is enough: the other one gets a notice and the round is recorded. It can only be done before the raffle is settled.",
+        "extraIntro": "If nobody claims the prize of a ticket, or the person who bought it asked for a refund, you can draw another ticket to replace it. One signatory is enough: if there is another, they get a notice, and the round is recorded. It can only be done before the raffle is settled.",
         "reasonLabel": "Reason",
         "reasonOption": "{reason} (up to {max, plural, one {# prize} other {# prizes}})",
         "prepare": "Prepare the extra round",
@@ -3717,13 +3814,14 @@
       "INVOICE_RECTIFY_PENDING": "Fee invoice of a refunded or charged-back business, pending correction",
       "ACTIVITY_FUND_WINDOW": "Activity Fund close to (or past) the 90-day deadline",
       "SPONSOR_MONEY_BLOCKED": "A business’s money is blocked while its deadline runs",
-      "PAYOUT_BLOCKED": "Campaign payout blocked: some splits cannot be sent or re-planned"
+      "PAYOUT_BLOCKED": "Campaign payout blocked: some splits cannot be sent or re-planned",
+      "SIGNER_HANDOVER_EXPIRED": "A signer handover expired without closing (legacy alert: it is no longer raised; the daily task closes expired handovers)"
     },
     "fundsTitle": "{count, plural, =0 {Activity Funds} one {Activity Funds · # organisation} other {Activity Funds · # organisations}}",
     "fundsNone": "No organisation has money in its Activity Fund.",
     "fundPayout": {
       "NONE": "No payout requested",
-      "PENDING_DOUBLE_CHECK": "Payout awaiting both signatures",
+      "PENDING_DOUBLE_CHECK": "Payout awaiting signature",
       "APPROVED": "Payout signed, sending",
       "PROCESSING": "Payout signed, sending",
       "FAILED": "Payout signed, transfer pending"
@@ -3734,7 +3832,8 @@
       "avisos": "Alerts",
       "salud-de-precios": "Pricing health",
       "procesos": "Scheduled tasks",
-      "fondos": "Activity funds"
+      "fondos": "Activity funds",
+      "entities": "Entities and KYB ({count, plural, =0 {nothing to review} one {# to review} other {# to review}})"
     },
     "sections": {
       "business": "Business: actual and projected revenue"
@@ -3790,10 +3889,12 @@
       "cost": {
         "gateway": "Payment gateway cost absorbed",
         "autoBoost": "Auto-Boost contributed by KORUM",
-        "chargebacks": "Chargebacks absorbed"
+        "chargebacks": "Chargebacks absorbed",
+        "sunk": "Auto-Boost and chargebacks already booked on open campaigns"
       },
       "notProjected": "Not projected",
-      "net": "Net revenue"
+      "net": "Net revenue",
+      "includedAbove": "Already included above"
     },
     "orgs": {
       "title": "Performance by organisation, initiative history and shops",
@@ -3810,7 +3911,8 @@
         "goal": "Open goal",
         "raised": "Raised",
         "expectedNet": "Expected net",
-        "weightedNet": "Weighted net"
+        "weightedNet": "Weighted net",
+        "manage": "Manage"
       },
       "medal": {
         "0": "No medal",
@@ -3821,7 +3923,8 @@
       "closedValue": "{year} this school year / {historical} all time",
       "sponsorsValue": "{active} active / {historical} all time",
       "total": "Total ({count, plural, one {# organisation} other {# organisations}})",
-      "noValue": "—"
+      "noValue": "—",
+      "open360": "Open 360º file"
     },
     "forecast": {
       "title": "Combined closing forecast by quarter",
@@ -3866,7 +3969,8 @@
         "diagnosis": "Profitability and Auto-Boost diagnosis",
         "wallet": "Initiative piggy bank",
         "status": "Status"
-      }
+      },
+      "openPopup": "(opens the executive file)"
     },
     "diagnosis": {
       "negative": "🚨 Negative return warning! ({net}) · Adjust pricing",
@@ -3915,7 +4019,21 @@
         }
       },
       "resolved": "Alert marked as resolved.",
-      "failed": "It could not be saved. Please try again."
+      "failed": "It could not be saved. Please try again.",
+      "requeue": {
+        "button": "Put back in the queue",
+        "running": "Putting in the queue…",
+        "hint": "Use it once you have fixed the cause. Sign-in and invitation emails are not reactivated: their code was single-use.",
+        "done": "{count, plural, =0 {There were no emails to reactivate} one {1 email put back in the queue} other {# emails put back in the queue}}",
+        "skipped": "{count, plural, one {1 email cannot be reactivated} other {# emails cannot be reactivated}}: they carried a single-use code or link that was already deleted.",
+        "failed": "Could not put them in the queue. Please try again.",
+        "outcome": {
+          "NOT_OPEN": "This alert was no longer open.",
+          "NOT_REQUEUEABLE": "This alert is not about failed emails of one template: it is fixed by changing the email setting.",
+          "FORBIDDEN": "You do not have permission to do this.",
+          "INVALID": "The request could not be read. Reload the page and try again."
+        }
+      }
     },
     "jobs": {
       "title": "Scheduled tasks",
@@ -3999,7 +4117,385 @@
       "pricing": "Pricing warnings not yet accepted",
       "filtered": "The 💎 and 🚨 campaign figures follow the business filters you chose."
     },
-    "quarterLabel": "Q{quarter} {year}"
+    "quarterLabel": "Q{quarter} {year}",
+    "open360": "Open 360º file",
+    "popup": {
+      "badge": "Super-Admin executive file",
+      "loading": "Loading the file…",
+      "close": "Close the file",
+      "error": {
+        "NOT_FOUND": "This initiative is no longer in the list. Reload the page.",
+        "FORBIDDEN": "You do not have permission to see this file.",
+        "FAILED": "The file could not be loaded. Close it and open it again."
+      },
+      "organization": "Entity",
+      "format": "Format",
+      "formats": {
+        "BUDGET": "Budget",
+        "TICKETING": "Box office and QR raffles"
+      },
+      "wallet": "Piggy bank and status",
+      "progress": "Progress",
+      "percent": "{value}%",
+      "contributions": "Contributions",
+      "contributionsCount": "{count, plural, one {# contribution} other {# contributions}}",
+      "closesAt": "Deadline",
+      "publicLink": "Public link of the initiative",
+      "copy": "Copy link",
+      "copied": "Link copied.",
+      "copyFailed": "Could not copy. Select it and copy it by hand.",
+      "openPublic": "Open the public page",
+      "newTab": "(opens in a new tab)",
+      "sponsorsTitle": "Shops taking part in this initiative ({count})",
+      "sponsorsNone": "No shop has contributed to this initiative yet.",
+      "level": {
+        "ORO": "GOLD category",
+        "PLATA": "SILVER category",
+        "BRONCE": "BRONZE category"
+      },
+      "sponsorStatus": {
+        "PENDING": "Waiting for the entity",
+        "APPROVED": "Accepted",
+        "REJECTED": "Not accepted",
+        "CREDIT_POOL": "In the shop’s pool",
+        "REFUNDED": "Refunded"
+      },
+      "matching": "Matching 2x pool",
+      "sponsorAmount": "{amount} in full (+{fee} KORUM management)",
+      "negativeTitle": "Negative return danger for KORUM! ({net})",
+      "negativeText": "This initiative brings no income to KORUM and KORUM is absorbing {loss} of payment gateway cost.",
+      "analysisTitle": "KORUM profitability and Auto-Boost",
+      "analysisProfitable": "Profitable Auto-Boost!",
+      "missing": "Missing to reach 100%",
+      "netAt100": "KORUM net when the goal is completed",
+      "returnAfterBoost": "Return after contributing what is missing",
+      "returnHint": "The return counts what has already been collected plus the bracket fee and maintenance that are settled when the goal is completed. It counts nothing projected and not the sponsorship fee already collected, which KORUM keeps either way.",
+      "recoverableNote": "This campaign already has an earlier Self-Boost of {amount}. If the campaign does not succeed it goes back to KORUM; if you contribute now and complete it, it no longer does. That is why it is subtracted from the return.",
+      "previousTitle": "Auto-Boosts already contributed",
+      "previousItem": "{amount} on {date} · {visibility}",
+      "visibilityShort": {
+        "SHOW": "shown in public",
+        "HIDE": "not shown in public"
+      },
+      "reauthLink": "Verify my identity again",
+      "boost": {
+        "title": "KORUM Auto-Boost",
+        "titleProfitable": "Profitable Auto-Boost: complete the goal with KORUM’s money",
+        "visibilityLegend": "Is this Auto-Boost shown in public?",
+        "visibility": {
+          "SHOW": "Show in public: the page will say, with no amount, that the KORUM platform helped reach the goal",
+          "HIDE": "Do not show in public: the page will only say the goal was reached"
+        },
+        "visibilityHint": "Decided on each run. Preselected: the value set in the platform settings. If shown, the page says, without an amount, that the KORUM platform also contributed. In both cases the Auto-Boost is recorded in the ledger and counts like any contribution (also +1 on the 💛 counter), but it does not count towards any class challenge.",
+        "start": "Contribute {amount} from KORUM and complete the goal",
+        "confirmTitle": "Confirm the Auto-Boost",
+        "confirmText": "KORUM will contribute {amount} of its own money and the initiative will become “goal reached”. It will be {visibility}. This cannot be undone.",
+        "confirm": "Yes, contribute {amount}",
+        "running": "Contributing…",
+        "cancel": "Cancel",
+        "done": "Auto-Boost contributed: {amount}. The initiative has reached 100%.",
+        "problem": {
+          "FAILED": "Could not contribute. Check the file and try again.",
+          "AMOUNT_CHANGED": "What is missing changed while you were looking at the file (another contribution arrived). Nothing was spent: check the new figure.",
+          "NOT_ALLOWED": "This initiative can no longer receive an Auto-Boost (it is no longer collecting, its deadline passed or it is already complete).",
+          "REAUTH_REQUIRED": "To spend KORUM’s money you need to enter your verification code again.",
+          "FORBIDDEN": "You do not have permission to do this.",
+          "INVALID": "The request could not be read. Close the file and open it again.",
+          "NOT_PROFITABLE": "It does not pay off for KORUM to contribute to this initiative and you have not accepted the loss. Check the file and tick the box if you want to contribute anyway."
+        },
+        "acceptLoss": "It does not pay off for KORUM to contribute: the return after contributing is {profit}. I understand it will lose that money and I want to contribute anyway.",
+        "lossTitle": "Final check: this contribution does not pay off for KORUM",
+        "lossText": "You are about to spend {amount} of KORUM’s money and this initiative will still end with a loss of {loss}. That money is not recovered. This cannot be undone.",
+        "lossTextZero": "You are about to spend {amount} of KORUM’s money and this initiative will make no profit. That money is not recovered. This cannot be undone.",
+        "lossConfirm": "Yes, contribute {amount} even though it does not pay off",
+        "lossBack": "No, go back"
+      },
+      "fix": {
+        "button": "Fix tariffs in 1 click",
+        "running": "Fixing…",
+        "done": "Tariffs fixed.",
+        "explainAvailable": "Raises to the global values the entity’s own tariffs that are below them (for its next campaigns).",
+        "explainPublished": "This campaign is already published: its board is not touched, so the entity receives what it was shown (and, if it has a box office on sale, neither are the management fees of its tickets). The warning stays until it ends.",
+        "explainNothing": "There are no tariffs to fix without changing what was already promised to the entity.",
+        "problem": {
+          "FAILED": "Could not fix it. Please try again.",
+          "NOTHING_TO_FIX": "There are no tariffs left to fix. Reload the file.",
+          "REAUTH_REQUIRED": "To change tariffs you need to enter your verification code again.",
+          "INVALID": "The request could not be read. Close the file and open it again."
+        }
+      },
+      "genericTitle": "Initiative file",
+      "retry": "Try again",
+      "negativeTextSunk": "This initiative leaves no revenue for KORUM because KORUM has already taken on {sunk} between Auto-Boost and chargebacks on this campaign. It is not a pricing problem: it is a cost already spent.",
+      "negativeTextBoth": "This initiative leaves no revenue for KORUM: KORUM takes on {loss} of payment gateway cost and has already spent {sunk} between Auto-Boost and chargebacks on this campaign."
+    },
+    "entities": {
+      "metaTitle": "Entities · KORUM console",
+      "back": "← Back to the console",
+      "title": "Entities",
+      "waitingTitle": "{count, plural, =0 {Documents waiting for review} one {1 entity is waiting for its documents to be reviewed} other {# entities are waiting for their documents to be reviewed}}",
+      "waitingNone": "There are no documents waiting for review.",
+      "waitingSince": "Waiting since {date}",
+      "review": "Review documents",
+      "allTitle": "All entities ({count})",
+      "none": "There are no entities yet.",
+      "region": "All entities",
+      "caption": "Platform entities with the status of their holder documents",
+      "col": {
+        "name": "Entity",
+        "province": "Province",
+        "kyb": "Holder documents",
+        "submitted": "Sent on",
+        "medal": "Medal",
+        "manage": "Manage"
+      },
+      "archived": "Archived",
+      "kyb": {
+        "PENDING": "Not sent",
+        "SUBMITTED": "Waiting for review",
+        "VERIFIED": "Verified",
+        "REJECTED": "Returned"
+      },
+      "noValue": "—",
+      "medal": {
+        "0": "No medal",
+        "1": "Bronze",
+        "2": "Silver",
+        "3": "Gold"
+      },
+      "open360": "Open 360º file"
+    },
+    "org360": {
+      "metaTitle": "360º file · KORUM console",
+      "back": "← All entities",
+      "archived": "Archived",
+      "medal": {
+        "0": "No medal",
+        "1": "Bronze medal",
+        "2": "Silver medal",
+        "3": "Gold medal"
+      },
+      "nav": {
+        "label": "File sections",
+        "titular": "Holder",
+        "kyb": "Documents (KYB)",
+        "firmas": "Signers",
+        "tarifas": "Tariffs",
+        "categorias": "Categories",
+        "facturas": "Invoices",
+        "negocio": "Business"
+      },
+      "reauthLink": "Verify my identity again",
+      "outcome": {
+        "FAILED": "Could not complete it. Please try again.",
+        "REAUTH_REQUIRED": "For this you need to enter your verification code again.",
+        "INVALID_INPUT": "The request could not be read. Reload the page and try again."
+      },
+      "reason": {
+        "NOT_FOUND": "This entity no longer exists.",
+        "ARCHIVED": "The entity is archived: its file is read-only.",
+        "INVALID": "Check the marked fields: a value is not valid.",
+        "CATEGORY_EXISTS": "A category with that name already exists.",
+        "CATEGORY_NOT_FOUND": "That category no longer exists.",
+        "NOT_SUBMITTED": "This entity is not waiting for review. Reload the page to see its current status.",
+        "INCOMPLETE": "Documents or the holder’s tax ID are missing: it cannot be verified.",
+        "LEY49_NOT_DECLARED": "The entity has not declared the Law 49/2002 regime: it cannot be accredited.",
+        "SPLIT_ID_IN_USE": "That destination account identifier is already used by another entity.",
+        "PUBLISHED_TICKETING": "The entity has a box office or raffle on sale: its ticket management fees are not changed in the meantime, because they would change what was already promised. Try again when it ends.",
+        "LIMIT_BELOW_USED": "The annual exempt amount cannot be lower than what the entity has already spent this school year."
+      },
+      "holder": {
+        "title": "Legal holder",
+        "hint": "Who collects and signs for this entity.",
+        "none": "Not given",
+        "legalName": "Holder’s legal name",
+        "legalForm": "Legal form",
+        "vertical": "Type of entity",
+        "cif": "Tax ID (CIF)",
+        "iban": "Connected IBAN",
+        "destination": "Destination account at Paycomet",
+        "destinationYes": "Set up",
+        "destinationNo": "Not set up: it cannot be paid out",
+        "ley49": "Law 49/2002",
+        "ley49No": "Not declared",
+        "ley49Verified": "Verified on {date}",
+        "ley49Pending": "Declared, not verified (issues a named receipt)",
+        "closed": "Closed initiatives",
+        "closedValue": "{year} this year · {historical} all-time",
+        "sponsors": "Sponsoring shops",
+        "sponsorsValue": "{active} active · {historical} all-time",
+        "raised": "Total raised"
+      },
+      "legalForm": {
+        "PARENTS_ASSOCIATION": "Parents’ association (AMPA / AFA)",
+        "SCHOOL_OWNER": "School owner",
+        "FOUNDATION": "Foundation",
+        "SPORTS_ENTITY": "Sports entity",
+        "CULTURAL_ASSOCIATION": "Cultural association",
+        "OTHER_NONPROFIT": "Other non-profit entity"
+      },
+      "vertical": {
+        "SCHOOL": "School",
+        "SPORTS_CLUB": "Sports club",
+        "CULTURAL": "Cultural entity"
+      },
+      "kyb": {
+        "title": "Holder documents (KYB)",
+        "hint": "Review the documents, verify them or return them with a note. Every time a document is opened it is logged.",
+        "status": {
+          "PENDING": "Not sent",
+          "SUBMITTED": "Waiting for your review",
+          "VERIFIED": "Documents verified",
+          "REJECTED": "Returned to the entity"
+        },
+        "submittedAt": "Sent on {date}",
+        "reviewedAt": "Reviewed on {date}",
+        "lastNote": "Note sent to the entity:",
+        "documents": "Current documents",
+        "kind": {
+          "TAX_ID_CARD": "Tax identification card (CIF)",
+          "STATUTES": "Statutes, founding minutes or deeds",
+          "REPRESENTATIVE_ID": "ID of the person who represents the entity",
+          "ACCOUNT_OWNERSHIP": "Certificate of ownership of the entity’s account",
+          "LEY49_ACCREDITATION": "Law 49/2002 accreditation"
+        },
+        "open": "Open document",
+        "newTab": "(opens in a new tab)",
+        "missing": "Missing",
+        "cif": "Holder’s tax ID",
+        "openHint": "The document opens with a link that expires after 5 minutes. It contains personal data: do not download it unless you need to.",
+        "reviewTitle": "Your decision",
+        "incomplete": "Documents or the tax ID are missing: you can return them with a note, but not verify them.",
+        "decision": {
+          "VERIFIED": "Verify the documents",
+          "REJECTED": "Return the documents with a note"
+        },
+        "ley49Accredited": "The document accredits the Law 49/2002 regime",
+        "ley49Hint": "Without accreditation the entity keeps issuing a named receipt instead of a tax certificate.",
+        "splitId": "Destination account identifier at Paycomet (optional)",
+        "splitIdSet": "It already has a destination account: if you type another one, it replaces it.",
+        "splitIdHint": "When Paycomet creates the holder’s account, type its identifier here. Without it the entity cannot be paid out.",
+        "note": "What is missing or must be corrected",
+        "noteHint": "Between 10 and {max} characters. No personal data: no emails, IBANs or ID numbers. The people who sign read it.",
+        "noteError": {
+          "short": "Write at least 10 characters so the entity knows what to correct.",
+          "personal": "The note seems to contain personal data (an email, IBAN, ID number or a long series of digits). Remove it and describe the problem without it."
+        },
+        "releaseCifWithReject": "Also release the tax ID they typed (in case it belongs to another entity)",
+        "submit": {
+          "VERIFIED": "Verify documents",
+          "REJECTED": "Return documents"
+        },
+        "saving": "Saving…",
+        "releaseCifText": "If someone typed the tax ID of another entity that is not yet in KORUM and it blocks its sign-up, you can release it. The entity will have to type its own to submit again.",
+        "releaseCif": "Remove the tax ID this entity typed",
+        "doneVerified": "Documents verified. The people who sign have been notified.",
+        "doneRejected": "Documents returned. The people who sign have been notified.",
+        "doneCifReleased": "Tax ID released.",
+        "releaseCifConfirmTitle": "Confirm removing the tax ID",
+        "releaseCifConfirmText": "The tax ID {cif} will be deleted from this entity and it will have to type its own to submit again. Confirm only if it is not theirs.",
+        "releaseCifConfirm": "Yes, remove the tax ID",
+        "releaseCifCancel": "Cancel"
+      },
+      "seats": {
+        "title": "Who signs",
+        "role": {
+          "DIRECTOR": "Director",
+          "COSIGNER": "Co-signer"
+        },
+        "twoFactorOn": "with two-step verification",
+        "twoFactorOff": "without two-step verification",
+        "none": "Nobody signs for this entity yet.",
+        "handover": {
+          "INVITED": "Handover of the {role} seat: the new person has a pending invitation.",
+          "EXPIRED": "Handover of {role}: the invitation expired without being accepted."
+        },
+        "handoverUntil": "Valid until {date}.",
+        "noHandover": "There is no open handover.",
+        "hint": "How many signatures the organisation requires and who signs, for reference only. The organisation decides and manages this itself.",
+        "mode": {
+          "DOUBLE": "Double signature: Director and Co-signer.",
+          "SINGLE": "Single signature: Director only (the organisation’s decision)."
+        },
+        "handoverExpired": "It expired on {date}: the organisation can propose it again from its panel.",
+        "since": "In the role since {date}",
+        "entityRegulates": "The organisation regulates its signers through its own procedures: KORUM neither removes nor confirms seats. Every change is noted in an audit log that the organisation cannot delete."
+      },
+      "tariffs": {
+        "title": "Individual economic conditions",
+        "hint": "They only affect this entity’s new campaigns: those already calculated keep their board.",
+        "custom": "Apply a custom tariff",
+        "modeCustom": "This entity’s own tariffs apply.",
+        "modeGlobal": "The default global values apply automatically (shown below, not editable).",
+        "unitEur": "€",
+        "unitPct": "%",
+        "field": {
+          "exemptLimitCents": "Annual exempt amount",
+          "t1Bps": "Bracket 1",
+          "t2Bps": "Bracket 2",
+          "t3Bps": "Bracket 3",
+          "sponsorFeeBps": "Shop fee",
+          "fullIntegrityCheckCents": "Suggested voluntary contribution (KORUM guarantee)",
+          "ticketFeeFixedCents": "Fixed digital management fees per ticket",
+          "ticketFeeBps": "Variable digital management fees on the price",
+          "maintPerInitCents": "Maintenance charge per initiative",
+          "maintAnnualCapCents": "Annual maintenance cap"
+        },
+        "fieldError": "Enter a positive number with at most 2 decimals and within the allowed range.",
+        "maintActive": "Charge maintenance to this entity",
+        "futureOnly": "If you change the annual exempt amount, what is left to use goes up or down by the same amount; what was already spent this school year does not change.",
+        "saving": "Saving…",
+        "saveCustom": "Save the custom tariff",
+        "saveGlobal": "Go back to the global values",
+        "doneCustom": "Custom tariff saved.",
+        "doneGlobal": "The entity is back on the global values."
+      },
+      "categories": {
+        "title": "Entity categories",
+        "hint": "Exempt (0%) or by brackets. A global category with another rule here only changes for this entity.",
+        "source": {
+          "OVERRIDE": "own rule",
+          "CUSTOM": "own"
+        },
+        "rule": {
+          "EXEMPT": "💚 0% exempt",
+          "BRACKETS": "🏗️ By brackets"
+        },
+        "doneRule": "Category rule saved.",
+        "confirmTitle": "Confirm the rule change",
+        "confirmText": "“{name}” will become {rule} in this entity’s new campaigns. Campaigns already published do not change.",
+        "confirmYes": "Yes, change the rule",
+        "confirmNo": "No, leave it as it is",
+        "doneAdd": "Category created.",
+        "newName": "New entity category",
+        "newRule": "Rule of the new category",
+        "add": "Create category"
+      },
+      "invoices": {
+        "title": "The entity’s Veri*factu invoices",
+        "hint": "The 100 most recent. Read-only.",
+        "none": "There are no invoices for this entity yet.",
+        "region": "Entity invoices",
+        "caption": "Entity invoices with their amount and their status with the Veri*factu provider",
+        "number": "Number",
+        "date": "Date",
+        "concept": "Concept",
+        "total": "Total",
+        "status": "Status",
+        "rectification": "Corrective",
+        "state": {
+          "PENDING": "Waiting to be sent",
+          "SENT": "Sent, no reply",
+          "ACCEPTED": "Accepted",
+          "ACCEPTED_WITH_ERRORS": "Accepted with errors",
+          "REJECTED": "Rejected"
+        }
+      },
+      "business": {
+        "title": "What {name} brings to KORUM",
+        "hint": "This entity’s 6 income sources and its initiatives. Press the title of one to open its executive file."
+      }
+    }
   },
   "forbidden": {
     "title": "You don't have access to this page",
@@ -4175,7 +4671,8 @@
         "buyTickets": "Buy tickets",
         "buyRaffle": "Buy raffle tickets"
       },
-      "contributionsClosed": "This initiative is no longer taking contributions"
+      "contributionsClosed": "This initiative is no longer taking contributions",
+      "selfBoost": "The KORUM platform also chipped in and helped reach the goal."
     },
     "share": {
       "title": "Share on KORUM",
@@ -5141,7 +5638,7 @@
       "phases": {
         "PHASE0_MOD": "Under initial review",
         "PUBLIC_VOTING": "Open for signatures",
-        "DOUBLE_CHECK": "Quorum reached, awaiting the double signature",
+        "DOUBLE_CHECK": "Quorum reached, awaiting the organisation’s sign-off",
         "CONVERTED": "Turned into an initiative",
         "REJECTED": "Could not be approved"
       },

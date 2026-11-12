@@ -75,6 +75,33 @@ describe('QA-A01 · fila del BI de una iniciativa', () => {
     expect(row.isProfitableSelfBoost).toBe(false);
   });
 
+  it('una campaña cerrada separa la pasarela de lo ya gastado en Auto-Impulso y contracargos: el neto no cambia, pero la causa se ve (auditoría financiera del 5.2, H2)', () => {
+    const closed = buildBiInitiativeRow(facts({ status: 'CLOSED', raisedCents: 100_000, settled: { sourcesCents: { bracketFeeCents: 35_000, supportGuaranteeCents: 0, sponsorFeeCents: 0, digitalTicketFeeCents: 0, maintFeeCents: 0, huchaTopupFeeCents: 0 }, costsCents: 0, sunkCostsCents: 60_000 } }));
+    expect(closed).toMatchObject({ gatewayLossCents: 0, sunkCostsCents: 60_000, netRevenueCents: -25_000, isNegativeReturnAlert: true });
+    const withGateway = buildBiInitiativeRow(facts({ status: 'REFUNDED', settled: { sourcesCents: { bracketFeeCents: 0, supportGuaranteeCents: 0, sponsorFeeCents: 0, digitalTicketFeeCents: 0, maintFeeCents: 0, huchaTopupFeeCents: 0 }, costsCents: 31, sunkCostsCents: 100 } }));
+    expect(withGateway).toMatchObject({ gatewayLossCents: 31, sunkCostsCents: 100, netRevenueCents: -131 });
+  });
+
+  it('el Auto-Impulso anterior de una campaña reabierta se descuenta del retorno del 💎, todos los que siguen puestos, y con retorno exactamente 0 no hay 💎 (auditoría financiera, H2)', () => {
+    const reopened = { goalCents: 100_000, raisedCents: 88_000, bracketFeeCents: 20_000, realizedGuaranteeCents: 0, projectedGuaranteeAt100Cents: 0, approvedSponsorsFeeCents: 0 };
+    const one = buildBiInitiativeRow(facts({ ...reopened, selfBoostStandingCents: 15_000, sunkCostsCents: 15_000 }));
+    expect(one).toMatchObject({ recoverableSelfBoostCents: 15_000, netProfitAfterBoostCents: -7_000, isProfitableSelfBoost: false });
+    // El neto proyectado resta lo ya gastado una sola vez; el 💎 lo resta aparte, sin tocar las 6 fuentes.
+    expect(one.netRevenueCents).toBe(buildBiInitiativeRow(facts({ ...reopened })).netRevenueCents - 15_000);
+    // Lo ya gastado en Auto-Impulso va en su propio campo: no se disfraza de coste de pasarela (auditoría financiera del 5.2).
+    const without = buildBiInitiativeRow(facts({ ...reopened }));
+    expect(one.sunkCostsCents).toBe(15_000);
+    expect(one.gatewayLossCents).toBe(without.gatewayLossCents);
+    expect(REVENUE_SOURCE_KEYS.reduce((sum, key) => sum + one.sourcesCents[key], 0) - one.gatewayLossCents - one.sunkCostsCents).toBe(one.netRevenueCents);
+    expect(summarizeProjection([one])).toMatchObject({ gatewayLossCents: without.gatewayLossCents, sunkCostsCents: 15_000, netRevenueCents: one.netRevenueCents });
+    // Dos Auto-Impulsos todavía puestos se restan los dos.
+    expect(buildBiInitiativeRow(facts({ ...reopened, selfBoostStandingCents: 27_000, sunkCostsCents: 27_000 }))).toMatchObject({ recoverableSelfBoostCents: 27_000, netProfitAfterBoostCents: -19_000 });
+    // Justo en cero (200 − 120 − 80): no compensa.
+    expect(buildBiInitiativeRow(facts({ ...reopened, selfBoostStandingCents: 8_000 }))).toMatchObject({ netProfitAfterBoostCents: 0, isProfitableSelfBoost: false });
+    // Sin Auto-Impulso anterior, la misma campaña sí compensa.
+    expect(buildBiInitiativeRow(facts({ ...reopened }))).toMatchObject({ recoverableSelfBoostCents: 0, netProfitAfterBoostCents: 8_000, isProfitableSelfBoost: true });
+  });
+
   it('el diagnóstico «Faltan X» solo se enseña en las campañas que recaudan (ver InitiativeDiagnosis)', () => {
     const expired = buildBiInitiativeRow(facts({ status: 'EXPIRED', raisedCents: 50_000, settled: { sourcesCents: { ...settledSources, sponsorFeeCents: 10_000 }, costsCents: 0 } }));
     expect(expired.missingTo100Cents).toBe(50_000);
@@ -184,7 +211,7 @@ describe('QA-A02 · las 6 fuentes cuadran al céntimo en todas las vistas', () =
   it('en cada fila, Σ 6 fuentes − pérdida de pasarela === neto, y el neto ponderado nunca pasa del neto', () => {
     for (const row of rows) {
       const total = REVENUE_SOURCE_KEYS.reduce((sum, key) => sum + row.sourcesCents[key], 0);
-      expect(total - row.gatewayLossCents, `iniciativa ${row.id}`).toBe(row.netRevenueCents);
+      expect(total - row.gatewayLossCents - row.sunkCostsCents, `iniciativa ${row.id}`).toBe(row.netRevenueCents);
       expect(Math.abs(row.weightedNetCents), `ponderado ${row.id}`).toBeLessThanOrEqual(Math.abs(row.netRevenueCents));
       expect(Number.isSafeInteger(row.weightedNetCents)).toBe(true);
     }
@@ -197,7 +224,7 @@ describe('QA-A02 · las 6 fuentes cuadran al céntimo en todas las vistas', () =
     expect(projection.netRevenueCents).toBe(projection.kpis.expectedNetCents);
     expect(projection.kpis.weightedNetCents).toBe(open.reduce((sum, row) => sum + row.weightedNetCents, 0));
     expect(projection.kpis.potentialGoalCents).toBe(open.reduce((sum, row) => sum + row.goalCents, 0));
-    expect(projection.sourcesTotalCents - projection.gatewayLossCents).toBe(projection.netRevenueCents);
+    expect(projection.sourcesTotalCents - projection.gatewayLossCents - projection.sunkCostsCents).toBe(projection.netRevenueCents);
     for (const key of REVENUE_SOURCE_KEYS) expect(projection.sourcesCents[key]).toBe(open.reduce((sum, row) => sum + row.sourcesCents[key], 0));
   });
 

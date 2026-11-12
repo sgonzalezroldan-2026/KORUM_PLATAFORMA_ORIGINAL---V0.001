@@ -51,7 +51,7 @@ export function DoubleCheckBox({
 
   return (
     <section aria-label={t('label')} className="korum-trust-vault flex flex-col gap-3 rounded-xl border-2 border-varsity-navy bg-white p-4" data-testid="double-check-box">
-      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{t('progress', { signed: doubleCheck.signed })}</p>
+      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{t('progress', { signed: doubleCheck.signed, total: doubleCheck.slots.length })}</p>
       {doubleCheck.revalidatedVotes > 0 ? <p className="text-sm font-semibold text-amber-950">{`⚠️ ${t('revalidated', { count: doubleCheck.revalidatedVotes })}`}</p> : null}
       <ul className="mobile-stack grid gap-2 sm:grid-cols-2">
         {doubleCheck.slots.map((slot) => (

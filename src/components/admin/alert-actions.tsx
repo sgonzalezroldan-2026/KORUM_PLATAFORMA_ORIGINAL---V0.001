@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState, useTransition } from 'react';
-import { resolveAlertAction, resolveStuckAction, type AlertActionResult } from '@/app/[locale]/(superadmin)/admin/actions';
+import { requeueEmailsAction, resolveAlertAction, resolveStuckAction, type AlertActionResult, type RequeueActionResult } from '@/app/[locale]/(superadmin)/admin/actions';
 import { useToast } from '@/components/ui/toast-provider';
 import { Link, useRouter } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
@@ -72,6 +72,59 @@ export function ResolveAlertButton({ alertId, describedBy }: { alertId: string; 
         {pending ? t('resolving') : t('resolve')}
       </button>
       <Outcome result={result} failed={failed} />
+    </div>
+  );
+}
+
+/**
+ * «Volver a poner en cola» los mensajes de una plantilla que fallaron (Sprint 5.2): para cuando ya se arregló la causa. Dice cuántos volvieron a la
+ * cola y cuántos no se pueden reactivar (los de acceso o invitación llevan un código de un solo uso que ya se borró).
+ */
+export function RequeueEmailsButton({ alertId, describedBy }: { alertId: string; describedBy?: string }) {
+  const t = useTranslations('admin.alerts.requeue');
+  const router = useRouter();
+  const { toast } = useToast();
+  const [pending, startTransition] = useTransition();
+  const [result, setResult] = useState<RequeueActionResult | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  const requeue = () =>
+    startTransition(async () => {
+      setFailed(false);
+      try {
+        const outcome = await requeueEmailsAction({ alertId });
+        setResult(outcome);
+        if (outcome.status === 'REQUEUED') {
+          toast({ tone: 'success', title: t('done', { count: outcome.requeued }) });
+          router.refresh();
+          focusAlertsHeading();
+        }
+      } catch {
+        setFailed(true);
+      }
+    });
+
+  return (
+    <div className="flex flex-col gap-1">
+      <button type="button" onClick={requeue} disabled={pending} aria-describedby={describedBy} className={BUTTON} data-testid="requeue-emails">
+        {pending ? t('running') : t('button')}
+      </button>
+      <p className="text-xs text-ink-soft">{t('hint')}</p>
+      {failed ? (
+        <p role="alert" className="text-sm font-semibold text-red-900">
+          {t('failed')}
+        </p>
+      ) : null}
+      {result && result.status !== 'REQUEUED' ? (
+        <p role="alert" className="text-sm font-semibold text-red-900">
+          {t(`outcome.${result.status}`)}
+        </p>
+      ) : null}
+      {result?.status === 'REQUEUED' && result.skipped > 0 ? (
+        <p role="status" className="text-sm font-semibold text-amber-950">
+          {t('skipped', { count: result.skipped })}
+        </p>
+      ) : null}
     </div>
   );
 }

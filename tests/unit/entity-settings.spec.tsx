@@ -246,7 +246,7 @@ describe('Sprint 4.2c · ajustes generales en el panel', () => {
     expect(actions.saveEntitySettingsAction).not.toHaveBeenCalled();
   });
 
-  it('guarda y anuncia cuántas ideas pasan a la doble firma', async () => {
+  it('guarda y anuncia cuántas ideas pasan a la firma de la entidad', async () => {
     actions.saveEntitySettingsAction.mockResolvedValue({ status: 'OK', ideasToDoubleCheck: 2 });
     renderWithIntl(
       <ApprovalsNoticeProvider>
@@ -259,7 +259,7 @@ describe('Sprint 4.2c · ajustes generales en el panel', () => {
     await userEvent.type(screen.getByLabelText('Teléfono de la entidad'), '93 123 45 67');
     await userEvent.click(screen.getByLabelText(/Mostrar el portal en buscadores/));
     await userEvent.click(screen.getByRole('button', { name: /Guardar los ajustes/ }));
-    await waitFor(() => expect(screen.getByTestId('approvals-notice')).toHaveTextContent('Ajustes guardados: 2 ideas pasan a la doble firma al alcanzar el nuevo mínimo de firmas.'));
+    await waitFor(() => expect(screen.getByTestId('approvals-notice')).toHaveTextContent('Ajustes guardados: 2 ideas pasan a la firma de la entidad al alcanzar el nuevo mínimo de firmas.'));
     expect(actions.saveEntitySettingsAction).toHaveBeenCalledWith('colegio-sol', { ...SETTINGS, minVotes: 20, phone: '93 123 45 67', publicIndexing: false });
   });
 

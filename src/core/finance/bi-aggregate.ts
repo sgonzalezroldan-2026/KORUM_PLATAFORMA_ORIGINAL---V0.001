@@ -52,9 +52,16 @@ export interface BiInitiativeFacts {
   /**
    * Lo realmente asentado en el libro mayor para esta iniciativa (fuentes brutas y costes asumidos: pasarela neta de lo recuperado, Auto-Impulso y
    * contracargos). Es la fila de una campaña que ya no está abierta: no proyecta nada y lleva todos sus costes, también la pasarela de los cobros
-   * devueltos, que KORUM no recupera.
+   * devueltos, que KORUM no recupera. `costsCents` es solo la pasarela neta de lo recuperado; el Auto-Impulso y los contracargos van aparte en `sunkCostsCents`.
    */
-  settled: { sourcesCents: RevenueSources; costsCents: number };
+  settled: { sourcesCents: RevenueSources; costsCents: number; sunkCostsCents?: number };
+  /**
+   * Auto-Impulso y contracargos ya asentados en el libro de esta iniciativa. En una fila abierta son un coste **ya gastado**: baja el neto proyectado (no el 💎, que
+   * es el margen de aportar lo que falta). Sin él, la pérdida no aparecería hasta el cierre (auditoría financiera del 5.2, I2).
+   */
+  sunkCostsCents?: number;
+  /** Auto-Impulso anterior que sigue puesto en la campaña (neto de lo devuelto): vuelve a KORUM si vence sin meta, así que el 💎 lo descuenta. */
+  selfBoostStandingCents?: number;
 }
 
 export interface BiInitiativeRow {
@@ -75,7 +82,13 @@ export interface BiInitiativeRow {
   /** Avance en % entero (0–100). */
   progressPct: number;
   sourcesCents: RevenueSources;
+  /** Coste de pasarela (o margen de taquilla negativo) que KORUM absorbe; nunca incluye el Auto-Impulso ni los contracargos de una campaña abierta. */
   gatewayLossCents: number;
+  /**
+   * Auto-Impulso y contracargos ya asentados en la campaña: un coste ya gastado, aparte de la pasarela (también en las filas que no están abiertas, donde es
+   * lo asentado en el libro). Identidad de toda fila: `Σ 6 fuentes − gatewayLossCents − sunkCostsCents = netRevenueCents`.
+   */
+  sunkCostsCents: number;
   /** Neto de KORUM al llegar al 100 % (lo ya cobrado en las campañas que no están abiertas). */
   netRevenueCents: number;
   /** El neto proyectado multiplicado por el avance. */
@@ -87,6 +100,8 @@ export interface BiInitiativeRow {
    * ya cobrado (KORUM lo conserva aporte o no), menos lo que falta. Solo tiene sentido en campañas abiertas: la pantalla no lo muestra en el resto.
    */
   netProfitAfterBoostCents: number;
+  /** De ese retorno, lo que KORUM dejaría de recuperar de un Auto-Impulso anterior si aporta de nuevo (0 si no hay). */
+  recoverableSelfBoostCents: number;
   isNegativeReturnAlert: boolean;
   isProfitableSelfBoost: boolean;
 }
@@ -135,18 +150,21 @@ function rowIdentity(facts: BiInitiativeFacts) {
  */
 function buildSettledRow(facts: BiInitiativeFacts): BiInitiativeRow {
   const { sourcesCents, costsCents } = facts.settled;
+  const sunkCents = facts.settled.sunkCostsCents ?? 0;
   const sourcesTotalCents = REVENUE_SOURCE_KEYS.reduce((total, key) => total + sourcesCents[key], 0);
-  const netRevenueCents = assertSafeCents(sourcesTotalCents - costsCents, 'ingreso neto asentado');
+  const netRevenueCents = assertSafeCents(sourcesTotalCents - costsCents - sunkCents, 'ingreso neto asentado');
   const missingTo100Cents = Math.max(0, facts.goalCents - facts.raisedCents);
   return {
     ...rowIdentity(facts),
     sourcesCents,
     gatewayLossCents: costsCents,
+    sunkCostsCents: sunkCents,
     netRevenueCents,
     weightedNetCents: proportionalCents(netRevenueCents, facts.raisedCents, facts.goalCents),
     collectedNetRevenueCents: netRevenueCents,
     missingTo100Cents,
     netProfitAfterBoostCents: netRevenueCents - missingTo100Cents,
+    recoverableSelfBoostCents: 0,
     isNegativeReturnAlert: netRevenueCents < 0,
     isProfitableSelfBoost: false
   };
@@ -172,18 +190,23 @@ export function buildBiInitiativeRow(facts: BiInitiativeFacts): BiInitiativeRow 
     approvedSponsorsFeeCents: facts.approvedSponsorsFeeCents,
     netDigitalTicketMarginAt100Cents: facts.ticketMarginAt100Cents,
     netDigitalTicketMarginRealizedCents: facts.ticketMarginRealizedCents,
-    allocatedHuchaTopupNetCents: facts.huchaTopupNetCents
+    allocatedHuchaTopupNetCents: facts.huchaTopupNetCents,
+    recoverableSelfBoostCents: Math.max(0, facts.selfBoostStandingCents ?? 0)
   });
+  const sunkCents = facts.sunkCostsCents ?? 0;
+  const netRevenueCents = assertSafeCents(analysis.netRevenueCents - sunkCents, 'ingreso neto');
   return {
     ...rowIdentity(facts),
     sourcesCents: analysis.sourcesCents,
     gatewayLossCents: analysis.gatewayLossCents,
-    netRevenueCents: analysis.netRevenueCents,
-    weightedNetCents: proportionalCents(analysis.netRevenueCents, facts.raisedCents, facts.goalCents),
+    sunkCostsCents: sunkCents,
+    netRevenueCents,
+    weightedNetCents: proportionalCents(netRevenueCents, facts.raisedCents, facts.goalCents),
     collectedNetRevenueCents: analysis.collectedNetRevenueCents,
     missingTo100Cents: analysis.missingTo100Cents,
     netProfitAfterBoostCents: analysis.netProfitAfterBoostCents,
-    isNegativeReturnAlert: analysis.isNegativeReturnAlert,
+    recoverableSelfBoostCents: analysis.recoverableSelfBoostCents,
+    isNegativeReturnAlert: netRevenueCents < 0,
     isProfitableSelfBoost: analysis.isProfitableSelfBoost
   };
 }

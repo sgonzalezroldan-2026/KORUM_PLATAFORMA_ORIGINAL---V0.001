@@ -161,10 +161,18 @@ export function analyzeInitiativeProfitabilityAndSelfBoost(
     raisedCents: number;
     /** Margen de las entradas ya vendidas: margen por entrada × vendidas. */
     netDigitalTicketMarginRealizedCents: number;
+    /**
+     * Auto-Impulso anterior que sigue puesto en esta campaña (una que un contracargo reabrió). Si la campaña vence sin meta, vuelve a KORUM con un
+     * contra-asiento; si KORUM aporta lo que falta y la completa, ya no vuelve. Por eso es lo que KORUM deja de recuperar al aportar de nuevo: resta del
+     * retorno del 💎 (decisión del promotor, 2026-11-12). Sin él, el 💎 prometía un retorno que la devolución deshacía.
+     */
+    recoverableSelfBoostCents?: number;
   }
 ) {
   assertAmount(input.goalCents, 'meta');
   assertAmount(input.raisedCents, 'recaudado');
+  const recoverableCents = input.status === 'FUNDRAISING' ? (input.recoverableSelfBoostCents ?? 0) : 0;
+  assertAmount(recoverableCents, 'Auto-Impulso recuperable');
   const breakdown = calculateRevenueBreakdown6Sources(input);
   const missingTo100Cents = Math.max(0, input.goalCents - input.raisedCents);
   // El fee de patrocinio ya cobrado tampoco cuenta (decisión del promotor, 2026-11-11): KORUM lo conserva aporte o no, así que no es ganancia del Auto-Impulso.
@@ -174,11 +182,12 @@ export function analyzeInitiativeProfitabilityAndSelfBoost(
     netDigitalTicketMarginAt100Cents: input.netDigitalTicketMarginRealizedCents,
     approvedSponsorsFeeCents: 0
   });
-  const netProfitAfterBoostCents = collected.netRevenueCents - missingTo100Cents;
+  const netProfitAfterBoostCents = assertSafeCents(collected.netRevenueCents - missingTo100Cents - recoverableCents, 'retorno tras el Auto-Impulso');
   return {
     ...breakdown,
     collectedNetRevenueCents: collected.netRevenueCents,
     missingTo100Cents,
+    recoverableSelfBoostCents: recoverableCents,
     netProfitAfterBoostCents,
     isNegativeReturnAlert: breakdown.netRevenueCents < 0,
     isProfitableSelfBoost: input.status === 'FUNDRAISING' && missingTo100Cents > 0 && netProfitAfterBoostCents > 0

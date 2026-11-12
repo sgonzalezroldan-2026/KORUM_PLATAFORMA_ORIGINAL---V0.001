@@ -11,7 +11,7 @@ import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guar
 import { loadRenewalOffer, startSponsorRenewal } from '@/services/checkout/sponsor-renewal.service';
 import { startSponsorship } from '@/services/checkout/sponsorship.service';
 import { loadActivityFund } from '@/services/panel/activity-fund-data';
-import { resolveUnknownFundSplit, resumeFundPayouts, settleSignedFundPayout, splitUsageOf } from '@/services/payments/activity-fund-payout.service';
+import { resolveUnknownFundSplit, resumeFundPayouts, retryFundPayout, settleSignedFundPayout, splitUsageOf } from '@/services/payments/activity-fund-payout.service';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
 import { cancelFundPayout, requestFundPayout } from '@/services/sponsors/activity-fund.service';
@@ -275,6 +275,53 @@ describe('Ventana de 90 días, recordatorios y reintentos de Paycomet', () => {
     expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: hanging } })).toMatchObject({ status: 'EXECUTED' });
     await expect(resolveUnknownFundSplit(db, actor, split.id, { splitAuthCode: null })).rejects.toMatchObject({ reason: 'WRONG_STATUS' });
     expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+});
+
+describe('Firma única (decisión de la entidad, Sprint 5.2) en el Fondo de actividades', () => {
+  async function onlyDirectorSigned() {
+    const context = await team();
+    const { contribution, later } = await toFund(context);
+    const { payoutId } = await requestFundPayout(db, TEST_HMAC_SECRET, context.director, context.organization.id, { purpose: PURPOSE }, later);
+    expect(await completeSignature(db, TEST_HMAC_SECRET, context.director, await linkFor(context.director.userId), later)).toMatchObject({ status: 'SIGNED', complete: false });
+    return { context, contribution, later, payoutId };
+  }
+
+  it('si la entidad pasa a firma única con la liquidación firmada solo por Dirección, la tarea diaria la aprueba y el dinero sale (no se queda esperando para siempre)', async () => {
+    const { context, later, payoutId } = await onlyDirectorSigned();
+    // Con dos firmas exigidas, una sola no basta: la tarea no la toca.
+    expect((await resumeFundPayouts(db, mock, later, 500, TEST_HMAC_SECRET)).approved).toBe(0);
+    expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'PENDING_DOUBLE_CHECK' });
+
+    await db.organization.update({ where: { id: context.organization.id }, data: { signatureMode: 'SINGLE' } });
+    expect((await resumeFundPayouts(db, mock, later, 500, TEST_HMAC_SECRET)).approved).toBe(1);
+    expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'EXECUTED' });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+
+  it('una persona firmante aprueba y envía ya la liquidación firmada solo por Dirección con «Reintentar», y con doble firma exigida no se salta la segunda firma (auditoría financiera del 5.2, H3)', async () => {
+    const { context, later, payoutId } = await onlyDirectorSigned();
+    // Con dos firmas exigidas, una sola no basta: se rechaza y no se mueve nada.
+    await expect(retryFundPayout(db, async () => mock, context.director, context.organization.id, { payoutId }, later, TEST_HMAC_SECRET)).rejects.toMatchObject({ reason: 'WRONG_STATUS' });
+    expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'PENDING_DOUBLE_CHECK' });
+    expect(await db.ledgerJournal.count({ where: { idempotencyKey: `fund:payout-approval:${payoutId}` } })).toBe(0);
+    // Sin el secreto de firmas (llamada antigua) el estado sigue sin valer, como antes.
+    await db.organization.update({ where: { id: context.organization.id }, data: { signatureMode: 'SINGLE' } });
+    await expect(retryFundPayout(db, async () => mock, context.director, context.organization.id, { payoutId }, later)).rejects.toMatchObject({ reason: 'WRONG_STATUS' });
+    expect(await retryFundPayout(db, async () => mock, context.director, context.organization.id, { payoutId }, later, TEST_HMAC_SECRET)).toEqual({ status: 'EXECUTED' });
+    expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'EXECUTED' });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+
+  it('la alerta crítica de «firmada y sin aprobar» también salta con una sola firma cuando la entidad firma así, y no salta con dos firmas exigidas y una sola puesta', async () => {
+    const { context, contribution, payoutId } = await onlyDirectorSigned();
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '85 days' WHERE id = ${contribution.id}`);
+    const now = new Date();
+    await checkActivityFunds(db, now);
+    expect(await db.opsAlert.findUnique({ where: { dedupeKey: `ACTIVITY_FUND_WINDOW:payout:${payoutId}` } })).toBeNull();
+    await db.organization.update({ where: { id: context.organization.id }, data: { signatureMode: 'SINGLE' } });
+    await checkActivityFunds(db, now);
+    expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `ACTIVITY_FUND_WINDOW:payout:${payoutId}` } })).toMatchObject({ status: 'OPEN', severity: 'CRITICAL', detailJson: { reason: 'SIGNED_NOT_APPROVED' } });
   });
 });
 

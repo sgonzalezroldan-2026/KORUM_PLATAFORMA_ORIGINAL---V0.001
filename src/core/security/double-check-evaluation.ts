@@ -1,4 +1,4 @@
-import type { DoubleCheckTargetType, MemberRole } from '@/generated/prisma/enums';
+import type { DoubleCheckTargetType, MemberRole, SignatureMode } from '@/generated/prisma/enums';
 import type { Db } from '@/lib/db';
 import { InvalidEmailError, normalizeCanonicalEmail } from './email-normalizer';
 import { verifySignatureHash } from './signature-hash';
@@ -35,6 +35,17 @@ export interface DoubleCheckEvaluation {
   complete: boolean;
   validRoles: SignerRole[];
   invalid: Array<{ signatureId: number; reason: SignatureInvalidReason }>;
+  /** Cómo firma la entidad ahora: `SINGLE` solo exige la firma de Dirección (decisión de la propia entidad, 2026-11-12). */
+  mode: SignatureMode;
+}
+
+/** Cargos cuya firma hace falta en cada modo. */
+export const requiredRolesFor = (mode: SignatureMode): readonly SignerRole[] => (mode === 'SINGLE' ? ['DIRECTOR'] : SIGNER_ROLES);
+
+/** El modo de firma de la entidad, leído de la base cada vez: cambiarlo vale al instante para las firmas pendientes. */
+export async function loadSignatureMode(db: Db, organizationId: string): Promise<SignatureMode> {
+  const organization = await db.organization.findUnique({ where: { id: organizationId }, select: { signatureMode: true } });
+  return organization?.signatureMode ?? 'DOUBLE';
 }
 
 export interface SignerMembership {
@@ -88,11 +99,14 @@ export async function evaluateDoubleCheck(db: Db, secret: string, context: Doubl
     if (reason) invalid.push({ signatureId: signature.id, reason });
     else valid.set(signature.signerRole as SignerRole, signature);
   }
+  const mode = await loadSignatureMode(db, context.organizationId);
   const director = valid.get('DIRECTOR');
+  // Firma única: basta la de Dirección, siempre que siga vigente (huella, código y cargo comprobados arriba). Una firma de Cofirma que quedara de antes no cuenta.
+  if (mode === 'SINGLE') return { complete: director !== undefined, validRoles: director ? ['DIRECTOR'] : [], invalid, mode };
   const cosigner = valid.get('COSIGNER');
-  if (!director || !cosigner) return { complete: false, validRoles: [...valid.keys()], invalid };
+  if (!director || !cosigner) return { complete: false, validRoles: [...valid.keys()], invalid, mode };
   // Enlace y OTP llegan al correo: dos cuentas que dan a la misma bandeja son una sola persona, aunque sean dos usuarios.
   const inboxes = [director, cosigner].map((signature) => memberships.get(signature.signerUserId)?.[0]?.canonicalEmail);
-  if (inboxes[0] !== inboxes[1]) return { complete: true, validRoles: [...valid.keys()], invalid };
-  return { complete: false, validRoles: [], invalid: [...invalid, { signatureId: director.id, reason: 'SAME_INBOX' }, { signatureId: cosigner.id, reason: 'SAME_INBOX' }] };
+  if (inboxes[0] !== inboxes[1]) return { complete: true, validRoles: [...valid.keys()], invalid, mode };
+  return { complete: false, validRoles: [], invalid: [...invalid, { signatureId: director.id, reason: 'SAME_INBOX' }, { signatureId: cosigner.id, reason: 'SAME_INBOX' }], mode };
 }

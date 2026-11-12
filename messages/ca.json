@@ -44,8 +44,8 @@
           "text": "Qualsevol família proposa una millora i la comunitat la recolza amb la seva signatura."
         },
         {
-          "title": "Doble signatura de l’entitat",
-          "text": "Dues persones de l’entitat l’aproven i trieu lliurement el vostre proveïdor."
+          "title": "Signatura de l’entitat",
+          "text": "Per defecte l’aproven dues persones diferents de l’entitat (l’entitat pot decidir que signi només la direcció) i trieu lliurement el vostre proveïdor."
         },
         {
           "title": "Aporten en 10 segons",
@@ -68,7 +68,7 @@
           "title": "Entitats",
           "bullets": [
             "Sense efectiu i sense fulls de càlcul",
-            "Doble signatura mancomunada de dues persones",
+            "Doble signatura mancomunada de dues persones (per defecte)",
             "Cobrament directe a l’entitat o al seu proveïdor",
             "Model 182 a punt amb un clic si l’entitat s’acull a la Llei 49/2002",
             "Mode porteria amb QR i medalles anuals"
@@ -313,11 +313,11 @@
         "preheader": "Crea la teva contrasenya i activa la verificació en dos passos.",
         "title": "{organization} compta amb tu",
         "titlePlatform": "Activa el teu compte de KORUM",
-        "body": "T'han nomenat {role} de {organization}. La teva signatura, juntament amb la de la persona que dirigeix l'entitat, és necessària per aprovar les idees i alliberar els fons: cap persona no ho pot fer sola.",
-        "bodyPlatform": "S'ha creat el compte de Super-Admin de KORUM amb aquest correu. Crea la teva contrasenya per entrar a la consola.",
-        "security": "L'enllaç caduca d'aquí a {hours} hores i només serveix una vegada. En entrar et demanarem que activis la verificació en dos passos amb una app del mòbil.",
+        "body": "T’han nomenat {role} de {organization}. La teva signatura serveix per aprovar les idees i alliberar els fons amb les signatures que hagi decidit l’entitat (per defecte, dues persones diferents).",
+        "bodyPlatform": "S’ha creat el compte de Super-Admin de KORUM amb aquest correu. Crea la teva contrasenya per entrar a la consola.",
+        "security": "L’enllaç caduca d’aquí a {hours} hores i només serveix una vegada. En entrar et demanarem que activis la verificació en dos passos amb una app del mòbil.",
         "cta": "Crear la meva contrasenya",
-        "footnote": "No reconeixes aquesta invitació o aquesta entitat? Ignora aquest correu: si no l'acceptes, no tindràs cap càrrec ni s'activarà res."
+        "footnote": "No reconeixes aquesta invitació o aquesta entitat? Ignora aquest correu: si no l’acceptes, no tindràs cap càrrec ni s’activarà res."
       }
     },
     "receipt": {
@@ -357,7 +357,7 @@
         "subject": "Hem anul·lat el PIN de porteria de «{initiative}»",
         "preheader": "Per seguretat. La porta no s’atura.",
         "title": "PIN de porteria anul·lat",
-        "body": "Després de massa intents fallits, hem anul·lat el PIN de porteria de «{initiative}». 1) Les sessions que ja eren obertes continuen funcionant: la porta no s’atura. 2) Perquè entrin més voluntaris, crea un PIN nou a «Taquilla i porteria». 3) En crear-lo es tancaran les sessions obertes i caldrà tornar a entrar amb el nou: fes-ho quan la cua ho permeti. Ho pot fer qualsevol de les dues persones signants.",
+        "body": "Després de massa intents fallits, hem anul·lat el PIN de porteria de «{initiative}». 1) Les sessions que ja eren obertes continuen funcionant: la porta no s’atura. 2) Perquè entrin més voluntaris, crea un PIN nou a «Taquilla i porteria». 3) En crear-lo es tancaran les sessions obertes i caldrà tornar a entrar amb el nou: fes-ho quan la cua ho permeti. Ho pot fer qualsevol de les persones signants.",
         "cta": "Crear un PIN nou"
       }
     },
@@ -366,7 +366,7 @@
       "preheader": "Celebreu-ho: ja està.",
       "title": "Meta aconseguida!",
       "body": "«{initiative}» ha arribat als {goal} que necessitava gràcies a {count, plural, one {# aportació} other {# aportacions}}.",
-      "next": "El pas següent és la liquidació: calen les signatures de dues persones diferents de l’entitat.",
+      "next": "El pas següent és la liquidació: la signen les persones signants de l’entitat.",
       "cta": "Anar al tauler de l’entitat"
     },
     "expired": {
@@ -389,13 +389,13 @@
       "subject": "Falta la teva signatura a {organization}",
       "preheader": "Enllaç d’un sol ús i codi de 6 xifres.",
       "title": "Necessitem la teva signatura",
-      "body": "Per completar aquesta operació calen dues signatures de persones diferents de l’entitat. Obre l’enllaç amb la sessió iniciada i introdueix el codi de 6 xifres. Caduca el {expires}.",
+      "body": "Per completar aquesta operació cal la teva signatura. Obre l’enllaç amb la sessió iniciada i introdueix el codi de 6 xifres. Caduca el {expires}.",
       "what": "Què signes",
       "ideaApproval": "Aprovar la idea «{title}»",
       "payout": "Alliberar els fons de «{title}»",
       "codeLabel": "El teu codi de 6 xifres",
       "cta": "Signar ara",
-      "footnote": "L’enllaç serveix una sola vegada. Si no esperaves aquesta signatura, no la completis i avisa l’altra persona signatària.",
+      "footnote": "L’enllaç serveix una sola vegada. Si no esperaves aquesta signatura, no la completis i avisa l’entitat.",
       "activityFund": "Liquidar el Fons d’activitats: «{title}»"
     },
     "split": {
@@ -505,7 +505,7 @@
         "subject": "La teva aportació passa a {organization} per a les seves activitats",
         "preheader": "No hi havia cap campanya on portar-la a temps.",
         "title": "La teva aportació continua sumant",
-        "body": "{organization} no ha tingut cap campanya on portar els teus {amount} abans que vencés el seu termini. Per això passen al seu Fons d’activitats: l’entitat els farà servir per a les seves activitats del curs, amb la signatura dels seus dos responsables.",
+        "body": "{organization} no ha tingut cap campanya on portar els teus {amount} abans que vencés el seu termini. Per això passen al seu Fons d’activitats: l’entitat els farà servir per a les seves activitats del curs, amb les signatures que exigeix l’entitat.",
         "why": "Així ho preveuen les condicions del patrocini: la teva aportació és per a l’entitat i no es retorna un cop admès el comerç. La teva publicitat continua igual."
       },
       "awaitingDecision": {
@@ -610,11 +610,11 @@
     },
     "idea": {
       "quorumReached": {
-        "subject": "Quòrum assolit: «{title}» espera la vostra doble signatura",
+        "subject": "Quòrum assolit: «{title}» espera la vostra signatura",
         "preheader": "Una idea de la bústia ja té les signatures necessàries.",
         "title": "Una idea ha assolit el quòrum!",
         "body": "La proposta «{title}» ({alias}) ja té les signatures verificades que demana la vostra entitat.",
-        "next": "Per convertir-la en iniciativa calen dues signatures: la de la direcció i la de la cosignatura. Entreu a Aprovacions i demaneu el vostre enllaç de signatura.",
+        "next": "Per convertir-la en iniciativa cal la signatura de la direcció i, si l’entitat signa amb dues persones, també la de la cofirma. Entreu a Aprovacions i demaneu el vostre enllaç de signatura.",
         "cta": "Anar a Aprovacions"
       },
       "centerReplied": {
@@ -634,7 +634,7 @@
           "subject": "La teva proposta ja recull signatures a {organization}",
           "preheader": "L’entitat ha publicat la teva idea a la bústia.",
           "title": "La teva idea ja és a la bústia!",
-          "body": "{organization} ha revisat la teva proposta {alias} i ja és publicada perquè les famílies la donin suport amb la seva signatura. Comparteix-la perquè arribi al mínim.",
+          "body": "{organization} ha revisat la teva proposta {alias} i ja està publicada perquè les famílies la donin suport amb la seva signatura. Comparteix-la perquè arribi al mínim.",
           "edited": "L’entitat ha corregit el text en publicar-la. Pots veure-ho al teu compte i preguntar-li pel xat si alguna cosa no encaixa."
         },
         "cta": "Llegir-ho al meu compte",
@@ -644,37 +644,59 @@
     "signer": {
       "handover": {
         "requested": {
-          "subject": "{organization}: et proposen un relleu al teu lloc de signatura",
-          "preheader": "Necessitem el teu vistiplau abans de convidar ningú.",
+          "subject": "{organization}: han proposat substituir-te en el teu lloc de signatura",
+          "preheader": "El canvi es farà quan la persona nova accepti la invitació.",
           "title": "Proposen qui et substitueix",
-          "body": "L'altra persona que signa per {organization} proposa que una altra persona ocupi el teu lloc. Entra al panell per veure qui és i donar el teu vistiplau amb el teu codi, o rebutjar-lo. Si no fas res, la proposta caduca en 7 dies i continues signant."
-        },
-        "declined": {
-          "subject": "{organization}: el relleu no ha rebut el vistiplau",
-          "preheader": "Tot continua com estava.",
-          "title": "Relleu rebutjat",
-          "body": "La persona el lloc de la qual vas proposar rellevar a {organization} no ha donat el vistiplau. Continueu signant les mateixes dues persones."
+          "body": "L’altra persona que signa per {organization} ha convidat una altra persona a ocupar el teu lloc ({role}). No cal el teu vistiplau: quan la persona nova accepti, el canvi serà immediat i deixaràs de signar per l’entitat. Si no hi estàs d’acord, parla-ho amb l’altra persona que signa. El canvi queda registrat."
         },
         "completedLeaving": {
-          "subject": "{organization}: ja no signes per l'entitat",
+          "subject": "{organization}: ja no signes per l’entitat",
           "preheader": "La persona que et substitueix ha acceptat el càrrec.",
           "title": "Relleu completat",
-          "body": "La persona que et substitueix a {organization} ha acceptat el càrrec ({role}). Des d'ara ja no signes per l'entitat i les teves signatures pendents han deixat de valer. Gràcies per la teva feina."
+          "body": "La persona que et substitueix a {organization} ha acceptat el càrrec ({role}). Des d’ara ja no signes per l’entitat i les teves signatures pendents han deixat de valer. Gràcies per la teva feina."
         },
         "completedStaying": {
-          "subject": "{organization}: hi ha una persona nova a l'equip que signa",
-          "preheader": "El relleu s'ha completat.",
+          "subject": "{organization}: hi ha una persona nova a l’equip que signa",
+          "preheader": "El relleu s’ha completat.",
           "title": "Nova persona signant",
-          "body": "S'ha completat un relleu a {organization}: la persona nova ja ocupa el seu lloc ({role}). Les signatures pendents de qui ha sortit han deixat de valer: si hi havia alguna cosa a mitges, torna a demanar la signatura."
+          "body": "S’ha completat un relleu a {organization}: la persona nova ja ocupa el seu lloc ({role}). Les signatures pendents de qui ha sortit han deixat de valer: si hi havia alguna cosa a mitges, torna a demanar la signatura."
         },
         "why": "Si no reconeixes aquest canvi, escriu a suport com més aviat millor.",
-        "cta": "Veure l'equip que signa"
+        "cta": "Veure l’equip que signa",
+        "modeSingle": {
+          "subject": "{organization}: l’entitat passa a signatura única",
+          "preheader": "El teu lloc de cofirma ja no existeix.",
+          "title": "L’entitat passa a signatura única",
+          "body": "La direcció de {organization} ha decidit que l’entitat signi amb una sola persona. El teu lloc ({role}) ja no existeix: no pots signar ni entrar al tauler de l’entitat, i els codis de porteria que tinguessis han deixat de valer. El teu compte continua existint. El canvi queda registrat."
+        },
+        "seat": {
+          "DIRECTOR": "Direcció",
+          "COSIGNER": "Cofirma"
+        },
+        "modeChangedSingle": {
+          "subject": "{organization}: l’entitat signa ara amb una sola signatura",
+          "preheader": "Aprovar i alliberar diners exigeix només la signatura de Direcció.",
+          "title": "Canvi en la forma de signar",
+          "body": "S’ha canviat la forma de signar de {organization}: ara n’hi ha prou amb la signatura de Direcció per aprovar idees i alliberar diners, i el lloc de Cofirma ha desaparegut. Si aquest canvi no l’has fet tu, escriu a suport com abans millor."
+        },
+        "modeChangedDouble": {
+          "subject": "{organization}: l’entitat torna a doble signatura",
+          "preheader": "Cal convidar la cofirma per poder aprovar.",
+          "title": "Canvi en la forma de signar",
+          "body": "{organization} torna a signar amb dues persones (Direcció i Cofirma). Fins que la cofirma accepti la invitació no es podrà aprovar res. Si aquest canvi no l’has fet tu, escriu a suport com abans millor."
+        },
+        "expired": {
+          "subject": "{organization}: la invitació per al relleu ha caducat",
+          "preheader": "Ningú no la va acceptar a temps i tot continua com estava.",
+          "title": "Invitació caducada",
+          "body": "La invitació que vas enviar per al lloc de {role} de {organization} ha caducat sense que ningú l’acceptés. Tot continua com estava. Si vols, proposa el relleu de nou des de l’equip que signa."
+        }
       }
     },
     "activityFund": {
       "amount": "Import",
       "deadline": "Liquidar abans del",
-      "how": "Per rebre’l al vostre compte, una de les dues persones signants demana la liquidació al panell indicant per a què es farà servir, i totes dues signeu amb el vostre codi.",
+      "how": "Per rebre’l al vostre compte, una de les persones signants demana la liquidació al panell indicant per a què es farà servir, i se signa amb el vostre codi.",
       "cta": "Obrir el Fons d’activitats",
       "received": {
         "subject": "{amount} han passat al Fons d’activitats de {organization}",
@@ -687,7 +709,7 @@
         "preheader": "El termini de PAYCOMET per enviar els diners s’acaba.",
         "title": "El termini per liquidar el Fons s’acaba",
         "body": "Al vostre Fons d’activitats hi ha {amount} sense liquidar. PAYCOMET només els pot enviar al vostre compte fins al {deadline}.",
-        "footnote": "Si ja heu demanat la liquidació, falta completar la doble signatura."
+        "footnote": "Si ja heu demanat la liquidació, falta completar la signatura."
       },
       "paid": {
         "subject": "{amount} del Fons d’activitats enviats a {organization}",
@@ -702,7 +724,7 @@
     "payout": {
       "executed": {
         "subject": "Liquidació feta: {amount} de «{initiative}»",
-        "preheader": "Les dues signatures hi són i els diners ja són de camí.",
+        "preheader": "Les signatures hi són i els diners ja són de camí.",
         "title": "Liquidació feta!",
         "bodyORGANIZATION": "PAYCOMET ha enviat {amount} de la guardiola de «{initiative}» al compte de l’entitat. Ja podeu pagar el proveïdor amb la seva factura.",
         "bodyPROVIDER": "PAYCOMET ha enviat {amount} de la guardiola de «{initiative}» directament al proveïdor que vau triar.",
@@ -731,7 +753,7 @@
         "preheader": "{organization} ha arribat al 100 % gràcies a tu i a les altres famílies.",
         "title": "Ho hem aconseguit!",
         "body": "«{initiative}» de {organization} ha arribat a la seva meta gràcies a {count, plural, one {una aportació: la teva} other {# aportacions, i una és la teva}}. Gràcies!",
-        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones de {organization} signin la liquidació. Quan estigui feta, t’ensenyarem l’Abans i el Després.",
+        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que {organization} signi la liquidació. Quan estigui feta, t’ensenyarem l’Abans i el Després.",
         "cta": "Compartir la fita"
       },
       "photos": {
@@ -760,7 +782,7 @@
         "wonPreheader": "La votació ha triat un projecte. Toca liquidar.",
         "wonTitle": "La votació ha triat un projecte",
         "wonBody": "A «{initiative}» ha guanyat «{option}». La meta nova és {amount}: el que van aportar qui va votar una opció de projecte (a qui no va votar o va demanar la devolució se li ha retornat).",
-        "wonNext": "La comissió de KORUM baixa en la mateixa proporció. Per liquidar calen, com sempre, la factura i les dues signatures.",
+        "wonNext": "La comissió de KORUM baixa en la mateixa proporció. Per liquidar calen, com sempre, la factura i les signatures de l’entitat.",
         "newGoal": "Meta nova",
         "settleCta": "Anar a Liquidacions",
         "refundSubject": "La votació de «{initiative}» acaba sense projecte",
@@ -786,7 +808,7 @@
         "preheader": "Gràcies a les famílies de {organization} que han votat.",
         "title": "Tira endavant!",
         "body": "La votació de «{initiative}» ha triat: «{option}». Es farà amb el que vau aportar qui vau votar, inclosa la teva aportació.",
-        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones de {organization} signin la liquidació. Quan estigui fet, t’ensenyarem l’Abans i el Després.",
+        "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que {organization} signi la liquidació. Quan estigui fet, t’ensenyarem l’Abans i el Després.",
         "cta": "Veure els assoliments"
       },
       "refunding": {
@@ -813,6 +835,30 @@
         "someone": "Una de les persones signants",
         "factNew": "Butlletes noves",
         "factReplaced": "Substitueixen"
+      }
+    },
+    "org": {
+      "kybStatus": {
+        "verified": {
+          "subject": "{organization}: els vostres documents estan verificats",
+          "preheader": "Ja podeu publicar campanyes.",
+          "title": "Documents verificats",
+          "body": "KORUM ha revisat els documents del titular de {organization} i estan verificats. Ja podeu publicar campanyes.",
+          "ley49": {
+            "VERIFIED": "També hem verificat el vostre règim de la Llei 49/2002: les vostres famílies rebran certificat fiscal de donació.",
+            "NOT_ACCREDITED": "El document de la Llei 49/2002 no acredita el règim: de moment les donacions emeten justificant nominatiu d’aportació, no certificat fiscal. Podeu tornar-lo a enviar des dels vostres ajustos."
+          },
+          "cta": "Ves al panell"
+        },
+        "rejected": {
+          "subject": "{organization}: falten o cal corregir documents",
+          "preheader": "T’expliquem què cal canviar.",
+          "title": "Cal corregir uns documents",
+          "body": "KORUM ha revisat els documents del titular de {organization} i encara no els pot verificar.",
+          "note": "Què cal corregir: {note}",
+          "next": "Corregiu-los als vostres ajustos i torneu-los a enviar a revisió. Si teniu dubtes, escriviu a suport des del panell.",
+          "cta": "Corregeix els documents"
+        }
       }
     }
   },
@@ -972,9 +1018,9 @@
     "pages": {
       "colegios": {
         "title": "Recaptar fons per a escoles i AMPA/AFA",
-        "description": "Financia climatització, ombra o pissarres digitals amb campanyes tot o res, doble signatura i devolució del 100 % si no s’arriba a la meta.",
+        "description": "Financia climatització, ombra o pissarres digitals amb campanyes tot o res, doble signatura per defecte i devolució del 100 % si no s’arriba.",
         "h1": "Com finançar millores a la teva escola sense manejar efectiu",
-        "answer": "KORUM permet que una escola o la seva AMPA/AFA proposi una millora, l’aprovi amb doble signatura i la financi amb les aportacions de les famílies en una campanya «tot o res»: si no s’arriba a la meta, es retorna el 100 % a cada persona. Els primers {exempt} de cada curs no paguen comissió.",
+        "answer": "KORUM permet que una escola o la seva AMPA/AFA proposi una millora, l’aprovi amb les signatures que decideixi l’entitat (per defecte, doble signatura) i la financi amb les aportacions de les famílies en una campanya «tot o res»: si no s’arriba a la meta, es retorna el 100 % a cada persona. Els primers {exempt} de cada curs no paguen comissió.",
         "sections": [
           {
             "title": "Què pot fer la teva escola",
@@ -990,7 +1036,7 @@
             "title": "Qui signa i qui cobra",
             "paragraphs": [
               "Una escola pública participa sempre a través de la seva AMPA/AFA, que és l’entitat titular dels fons. Les escoles concertades i privades es donen d’alta a través del seu titular.",
-              "Aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents: la direcció del centre i la presidència de l’AMPA/AFA. Els diners es cobren amb Paycomet, queden retinguts fins a assolir la meta i es paguen a l’entitat o directament al seu proveïdor amb la factura davant."
+              "Per defecte, aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents: la direcció del centre i la presidència de l’AMPA/AFA; l’entitat pot decidir, sota la seva responsabilitat, que signi només la direcció. Els diners es cobren amb Paycomet, queden retinguts fins a assolir la meta i es paguen a l’entitat o directament al seu proveïdor amb la factura davant."
             ]
           },
           {
@@ -1025,7 +1071,7 @@
             "title": "Pensat per a com funciona un club",
             "bullets": [
               "Equips per categoria (Prebenjamí, Benjamí, Aleví, Infantil, Cadet, Juvenil, Sènior…) més l’afició i els antics jugadors.",
-              "Doble signatura entre la gestió principal del club i la seva tresoreria o presidència.",
+              "Per defecte, doble signatura entre la gestió principal del club i la seva tresoreria o presidència.",
               "Campanyes per a equipacions, material, desplaçaments o millores de les instal·lacions.",
               "Model 182 amb un clic si l’entitat s’acull a la Llei 49/2002."
             ]
@@ -1079,7 +1125,7 @@
               "Finançar instruments, vestuari, escenografia, gires o reformes del local.",
               "Vendre entrades amb QR per a concerts i funcions, amb l’aforament controlat.",
               "Organitzar la teva comunitat en grups que configures tu: alumnat o integrants, famílies, professorat o monitors, socis i amics, antics membres.",
-              "Decidir amb quòrum i doble signatura quins projectes es fan."
+              "Decidir amb quòrum i amb la signatura de l’entitat (per defecte, doble) quins projectes es fan."
             ]
           },
           {
@@ -1146,9 +1192,9 @@
       },
       "comoFunciona": {
         "title": "Com funciona la plataforma",
-        "description": "De la idea a la millora en 4 passos: idees amb quòrum, doble signatura, aportacions tot o res amb Paycomet i devolució del 100 % si no s’arriba.",
+        "description": "De la idea a la millora en 4 passos: idees amb quòrum, signatura de l’entitat, aportacions tot o res amb Paycomet i devolució del 100 % si no s’arriba.",
         "h1": "Com funciona KORUM, pas a pas",
-        "answer": "A KORUM una comunitat proposa una millora, la recolza amb signatures, l’aproven dues persones de l’entitat i les famílies la financen amb aportacions «tot o res»: els diners es cobren amb Paycomet i, si no s’arriba a la meta en termini, es retorna el 100 % a cada persona.",
+        "answer": "A KORUM una comunitat proposa una millora, la recolza amb signatures, l’entitat l’aprova amb les signatures que decideixi (per defecte, doble signatura) i les famílies la financen amb aportacions «tot o res»: els diners es cobren amb Paycomet i, si no s’arriba a la meta en termini, es retorna el 100 % a cada persona.",
         "sections": [
           {
             "title": "De la idea a la millora",
@@ -1158,8 +1204,8 @@
                 "text": "Una família proposa una idea amb un àlies privat. Les altres la recolzen amb la seva signatura fins a assolir el quòrum."
               },
               {
-                "title": "Doble signatura de l’entitat",
-                "text": "Dues persones diferents de l’entitat aproven la idea. L’entitat tria lliurement el seu proveïdor i la plataforma calcula la meta."
+                "title": "Signatura de l’entitat",
+                "text": "Per defecte, dues persones diferents de l’entitat aproven la idea (l’entitat pot decidir que signi només la direcció). L’entitat tria lliurement el seu proveïdor i la plataforma calcula la meta."
               },
               {
                 "title": "Les famílies aporten en 10 segons",
@@ -1187,7 +1233,7 @@
             "title": "Qui hi intervé",
             "bullets": [
               "Les famílies i socis proposen, signen i aporten.",
-              "L’entitat aprova amb doble signatura, tria proveïdor i rep els diners.",
+              "L’entitat aprova amb les signatures que hagi decidit (per defecte, doble signatura), tria proveïdor i rep els diners.",
               "Els comerços del barri patrocinen i guanyen visibilitat.",
               "Paycomet executa els cobraments, les retencions i les devolucions.",
               "KORUM posa la tecnologia i no guarda els diners."
@@ -1250,7 +1296,7 @@
           {
             "title": "Com s’aproven les despeses",
             "paragraphs": [
-              "Aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents de l’entitat, totes dues amb verificació en dos passos. El pagament es fa amb la factura del proveïdor davant i queda registrat en un llibre major que no es pot editar: els errors es corregeixen amb un contraassentament."
+              "Per defecte, aprovar una idea i alliberar fons exigeix la signatura de dues persones diferents de l’entitat, totes dues amb verificació en dos passos; l’entitat pot triar, sota la seva responsabilitat, que signi només la direcció (també amb verificació en dos passos). El pagament es fa amb la factura del proveïdor davant i queda registrat en un llibre major que no es pot editar: els errors es corregeixen amb un contraassentament."
             ]
           },
           {
@@ -1275,7 +1321,7 @@
       },
       "faq": {
         "title": "Preguntes freqüents",
-        "description": "Respostes clares sobre diners, devolucions, doble signatura, comissions, rifes, certificats fiscals i dades personals a KORUM.",
+        "description": "Respostes clares sobre diners, devolucions, signatures de l’entitat, comissions, rifes, certificats fiscals i dades personals a KORUM.",
         "h1": "Preguntes freqüents sobre KORUM",
         "answer": "Aquí responem, en llenguatge planer, el que més ens pregunten les entitats, les famílies i els comerços.",
         "sections": [
@@ -1317,7 +1363,7 @@
               },
               {
                 "q": "Qui signa les decisions de l’entitat?",
-                "a": "Dues persones diferents: la gestió principal (direcció, presidència del club…) i un cosignant (presidència de l’AMPA/AFA, tresoreria del club…). Calen les dues per aprovar una idea i per alliberar fons."
+                "a": "Per defecte, dues persones diferents: la gestió principal (direcció, presidència del club…) i un cosignant (presidència de l’AMPA/AFA, tresoreria del club…). Calen les dues per aprovar una idea i per alliberar fons. L’entitat pot decidir, sota la seva responsabilitat, que signi només la gestió principal."
               },
               {
                 "q": "Podem fer rifes?",
@@ -1475,14 +1521,14 @@
     }
   },
   "registration": {
-    "metaTitle": "Donar d'alta la teva escola, AFA o club",
+    "metaTitle": "Donar d’alta la teva escola, AFA o club",
     "metaDescription": "Alta gratuïta en 3 passos per a escoles (a través de la seva AFA o el seu titular), clubs i entitats culturals, amb doble signatura.",
-    "title": "Doneu d'alta la vostra comunitat",
-    "intro": "Tres passos i ja hi sou, sense quota d'alta. Els primers {exempt} que recapteu cada curs no paguen comissió de plataforma.",
+    "title": "Doneu d’alta la vostra comunitat",
+    "intro": "Tres passos i ja hi sou, sense quota d’alta. Els primers {exempt} que recapteu cada curs no paguen comissió de plataforma.",
     "haveAccount": "Ja teniu compte?",
     "login": "Iniciar sessió",
-    "formLabel": "Formulari d'alta",
-    "progress": "Passos de l'alta",
+    "formLabel": "Formulari d’alta",
+    "progress": "Passos de l’alta",
     "stepLabel": "Pas {number} de {total}",
     "steps": {
       "community": "Comunitat i titular legal",
@@ -1491,17 +1537,17 @@
     },
     "back": "Enrere",
     "continue": "Continuar",
-    "submit": "Donar d'alta",
+    "submit": "Donar d’alta",
     "fixErrors": "{count, plural, one {Revisa el camp marcat.} other {Revisa els # camps marcats.}}",
     "choose": "Tria una opció",
     "vertical": {
-      "label": "Quin tipus d'entitat sou?",
+      "label": "Quin tipus d’entitat sou?",
       "SCHOOL": "Escola",
       "SPORTS_CLUB": "Club esportiu",
       "CULTURAL": "Entitat cultural"
     },
     "legalTitle": "Titular dels fons",
-    "legalIntro": "És l'entitat amb CIF que rep els diners i signa. Abans de la vostra primera campanya amb cobrament en pujareu els documents.",
+    "legalIntro": "És l’entitat amb CIF que rep els diners i signa. Abans de la vostra primera campanya amb cobrament en pujareu els documents.",
     "publicTitle": "La vostra pàgina a KORUM",
     "fields": {
       "name": "Nom públic",
@@ -1511,7 +1557,7 @@
       "postalCode": "Codi postal",
       "legalName": "Raó social del titular",
       "legalForm": "Forma jurídica",
-      "centerOwnership": "Titularitat de l'escola",
+      "centerOwnership": "Titularitat de l’escola",
       "ley49": "Estem acollits a la Llei 49/2002 (certificats fiscals de donació)",
       "contentLocale": "Idioma en què escriureu les vostres campanyes",
       "publicIndexing": "Que la nostra pàgina aparegui als cercadors",
@@ -1527,9 +1573,9 @@
       "name": "Com us coneixen les famílies, p. ex. «Escola Cervantes».",
       "slug": "Quedarà així: {url}. Només minúscules, números i guionets.",
       "legalName": "P. ex. «AFA Escola Cervantes» o «Club Bàsquet Vallès».",
-      "publicSchool": "Una escola pública es dona d'alta a través de la seva AFA.",
-      "ley49": "Només si l'entitat ho pot acreditar. Si no, les famílies rebran un justificant nominatiu.",
-      "ley49Owner": "La titularitat d'una escola privada o concertada no pot emetre certificats de donació per aquí.",
+      "publicSchool": "Una escola pública es dona d’alta a través de la seva AFA.",
+      "ley49": "Només si l’entitat ho pot acreditar. Si no, les famílies rebran un justificant nominatiu.",
+      "ley49Owner": "La titularitat d’una escola privada o concertada no pot emetre certificats de donació per aquí.",
       "contentLocale": "El web de KORUM es veu en castellà, català i anglès; els vostres textos, en aquest idioma.",
       "publicIndexing": "Ho podeu canviar quan vulgueu des del panell.",
       "roleLabel": "Com apareixerà al costat de la seva signatura.",
@@ -1537,7 +1583,7 @@
     },
     "legalForm": {
       "PARENTS_ASSOCIATION": "AMPA / AFA",
-      "SCHOOL_OWNER": "Titular d'una escola privada o concertada",
+      "SCHOOL_OWNER": "Titular d’una escola privada o concertada",
       "FOUNDATION": "Fundació",
       "SPORTS_ENTITY": "Club o entitat esportiva",
       "CULTURAL_ASSOCIATION": "Associació cultural",
@@ -1554,44 +1600,44 @@
       "en": "Anglès"
     },
     "signers": {
-      "intro": "Per aprovar idees i alliberar fons calen dues signatures de dues persones diferents. Cap no ho pot fer sola.",
+      "intro": "Per aprovar idees i alliberar fons calen, d’entrada, dues signatures de dues persones diferents. Més endavant, a Ajustos, l’entitat pot triar que signi només Direcció.",
       "directorTitle": "Primera signatura: tu",
-      "directorIntro": "Gestionaràs l'entitat a KORUM. Entraràs amb el teu correu i aquesta contrasenya.",
+      "directorIntro": "Gestionaràs l’entitat a KORUM. Entraràs amb el teu correu i aquesta contrasenya.",
       "cosignerTitle": "Segona signatura",
       "cosignerIntro": "Li enviarem una invitació perquè activi el seu compte. Ha de ser una altra persona, amb el seu propi correu."
     },
     "roles": {
       "SCHOOL": {
         "director": "Direcció del centre",
-        "cosigner": "Presidència de l'AFA"
+        "cosigner": "Presidència de l’AFA"
       },
       "SPORTS_CLUB": {
         "director": "Presidència del club",
         "cosigner": "Tresoreria del club"
       },
       "CULTURAL": {
-        "director": "Presidència de l'entitat",
-        "cosigner": "Tresoreria de l'entitat"
+        "director": "Presidència de l’entitat",
+        "cosigner": "Tresoreria de l’entitat"
       }
     },
     "activation": {
       "title": "Així queda {name}",
-      "exempt": "Els primers <strong>{amount}</strong> d'aquest curs, sense comissió de plataforma.",
+      "exempt": "Els primers <strong>{amount}</strong> d’aquest curs, sense comissió de plataforma.",
       "groups": "{count} grups per als reptes ({vertical}), que podreu ajustar.",
       "signers": "Doble signatura: {director} i {cosigner}.",
       "kyb": "Abans de la primera campanya amb cobrament pujareu els documents del titular (CIF, estatuts o acta, DNI de qui representa i titularitat del compte).",
       "money": "Els diners de les famílies queden retinguts a PAYCOMET fins a assolir cada meta. KORUM és la tecnologia: no guarda els vostres diners."
     },
     "fieldErrors": {
-      "vertical": "Tria el tipus d'entitat.",
-      "name": "Escriu un nom d'entre 2 i 80 caràcters.",
+      "vertical": "Tria el tipus d’entitat.",
+      "name": "Escriu un nom d’entre 2 i 80 caràcters.",
       "slug": "Fes servir entre 3 i 40 minúscules, números o guionets.",
       "provinceCode": "Tria la província.",
       "city": "Escriu el municipi.",
       "postalCode": "El codi postal té 5 xifres.",
       "legalName": "Escriu la raó social del titular.",
       "legalForm": "Tria la forma jurídica.",
-      "centerOwnership": "Tria la titularitat de l'escola.",
+      "centerOwnership": "Tria la titularitat de l’escola.",
       "ley49": "Revisa aquesta opció.",
       "contentLocale": "Tria un idioma.",
       "publicIndexing": "Revisa aquesta opció.",
@@ -1603,44 +1649,44 @@
       "representationDeclared": "Marca la casella per continuar."
     },
     "issues": {
-      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "Una escola pública només es pot donar d'alta a través de la seva AFA.",
-      "SCHOOL_OWNER_NO_LEY49": "La titularitat d'una escola privada o concertada no pot marcar la Llei 49/2002.",
-      "LEGAL_FORM_NOT_FOR_VERTICAL": "Aquesta forma jurídica no correspon a aquest tipus d'entitat.",
-      "OWNERSHIP_REQUIRED": "Tria si l'escola és pública, concertada o privada.",
+      "PUBLIC_SCHOOL_NEEDS_PARENTS_ASSOCIATION": "Una escola pública només es pot donar d’alta a través de la seva AFA.",
+      "SCHOOL_OWNER_NO_LEY49": "La titularitat d’una escola privada o concertada no pot marcar la Llei 49/2002.",
+      "LEGAL_FORM_NOT_FOR_VERTICAL": "Aquesta forma jurídica no correspon a aquest tipus d’entitat.",
+      "OWNERSHIP_REQUIRED": "Tria si l’escola és pública, concertada o privada.",
       "UNKNOWN_PROVINCE": "Tria la província de la llista.",
       "POSTAL_CODE_PROVINCE_MISMATCH": "Aquest codi postal no és de la província triada.",
       "SLUG_INVALID": "Fes servir entre 3 i 40 minúscules, números o guionets (sense començar ni acabar en guionet).",
-      "SLUG_RESERVED": "Aquesta adreça la fa servir KORUM. Prova'n una altra."
+      "SLUG_RESERVED": "Aquesta adreça la fa servir KORUM. Prova’n una altra."
     },
     "failures": {
-      "SLUG_TAKEN": "Una altra entitat ja fa servir aquesta adreça. Prova'n una altra.",
+      "SLUG_TAKEN": "Una altra entitat ja fa servir aquesta adreça. Prova’n una altra.",
       "SAME_INBOX": "Les dues signatures han de ser de dues persones amb correus diferents.",
-      "COSIGNER_UNAVAILABLE": "Aquest correu no pot signar per una entitat. Fes servir el d'una altra persona.",
+      "COSIGNER_UNAVAILABLE": "Aquest correu no pot signar per una entitat. Fes servir el d’una altra persona.",
       "DIRECTOR_EMAIL_IN_USE": "Aquest correu ja té compte a KORUM. Inicia sessió amb ell i torna a aquest formulari, o fes servir un altre correu.",
       "DISPOSABLE_EMAIL": "No admetem correus temporals. Fes servir un correu habitual.",
-      "RATE_LIMITED": "S'han fet massa altes des d'aquesta connexió. Torna-ho a provar d'aquí a una hora.",
-      "UNKNOWN": "No hem pogut completar l'alta. Torna-ho a provar d'aquí a uns segons."
+      "RATE_LIMITED": "S’han fet massa altes des d’aquesta connexió. Torna-ho a provar d’aquí a una hora.",
+      "UNKNOWN": "No hem pogut completar l’alta. Torna-ho a provar d’aquí a uns segons."
     },
     "verify": {
       "title": "{name} ja és a KORUM!",
       "created": "Hem enviat un codi a {email} per verificar el teu correu, i la invitació a {cosigner}.",
-      "resent": "T'hem enviat un codi nou.",
+      "resent": "T’hem enviat un codi nou.",
       "code": "Codi de 6 xifres",
       "submit": "Verificar i continuar",
       "resend": "Envieu-me un altre codi"
     },
     "codeErrors": {
-      "INVALID_OTP": "El codi no és correcte. Revisa'l i torna-ho a provar.",
-      "OTP_EXPIRED": "El codi ha caducat. Demana'n un altre.",
-      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana'n un altre.",
+      "INVALID_OTP": "El codi no és correcte. Revisa’l i torna-ho a provar.",
+      "OTP_EXPIRED": "El codi ha caducat. Demana’n un altre.",
+      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana’n un altre.",
       "RATE_LIMITED": "Massa intents seguits. Espera uns minuts.",
-      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons."
+      "UNKNOWN": "No ha funcionat. Torna-ho a provar d’aquí a uns segons."
     }
   },
   "panel": {
     "headerSubtitle": "Panell de l'entitat",
     "welcome": "Hola, {name}",
-    "intro": "Des d'aquí gestionareu les idees, les campanyes i els pagaments, sempre amb les dues signatures.",
+    "intro": "Des d’aquí gestionareu les idees, les campanyes i els pagaments, sempre amb les signatures que hagi decidit l’entitat.",
     "wallet": {
       "title": "Guardiola de l'entitat",
       "explain": "És l'identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta."
@@ -1648,8 +1694,8 @@
     "signers": {
       "title": "Doble signatura ({ready} de {total} a punt)",
       "role": {
-        "DIRECTOR": "Primera signatura",
-        "COSIGNER": "Segona signatura"
+        "DIRECTOR": "Direcció",
+        "COSIGNER": "Cofirma"
       },
       "status": {
         "ACTIVE": "A punt per signar (verificació en dos passos activa)",
@@ -1660,9 +1706,10 @@
       "resendResult": {
         "SENT": "Invitació enviada de nou.",
         "NOT_NEEDED": "No cal: ja ha activat el compte, o s'ha enviat fa molt poc.",
-        "FORBIDDEN": "Només la primera signatura pot tornar a enviar la invitació.",
+        "FORBIDDEN": "Només Direcció pot tornar a enviar la invitació.",
         "ERROR": "No s'ha pogut enviar. Torneu-ho a provar d'aquí a uns segons."
-      }
+      },
+      "titleSingle": "Signatura única ({ready} d'1 a punt)"
     },
     "kyb": {
       "title": "Documents del titular",
@@ -1679,7 +1726,7 @@
       "cardText": "Pugeu les fotos de cada millora acabada i escriviu l’agraïment que veuran les famílies.",
       "cardLink": "Anar a èxits",
       "title": "Èxits de l’entitat",
-      "intro": "Les fotos Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal tan aviat com la liquidació de la campanya està feta (amb les dues signatures). Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
+      "intro": "Les fotos Abans i Després i el missatge d’agraïment apareixen a l’apartat «Èxits aconseguits» del portal tan aviat com la liquidació de la campanya està feta (amb les signatures de l’entitat). Reescrivim cada foto sense la ubicació ni les dades del mòbil abans de publicar-la.",
       "viewPublic": "Veure com ho veuen les famílies",
       "listLabel": "Iniciatives amb èxit",
       "empty": {
@@ -1761,7 +1808,7 @@
       "kybLinkFix": "Corregir els documents"
     },
     "dashboard": {
-      "summaryTitle": "Resum de l'entitat",
+      "summaryTitle": "Resum de l’entitat",
       "filter": {
         "toggle": "Filtrar",
         "count": "{count, plural, one {# filtre actiu} other {# filtres actius}}",
@@ -1787,16 +1834,16 @@
       },
       "resultCount": "{count, plural, =0 {Cap iniciativa coincideix amb els filtres} one {# iniciativa} other {# iniciatives}}",
       "kpi": {
-        "total": "Total d'iniciatives",
+        "total": "Total d’iniciatives",
         "active": "Actives i taquilles",
         "achieved": "Fites assolides",
         "raised": "Recaptat",
         "sponsors": "Comerços actius"
       },
       "timeline": {
-        "title": "Línia d'estats i guardioles",
-        "intro": "En quina fase és cada iniciativa de l'entitat.",
-        "listLabel": "Iniciatives de l'entitat",
+        "title": "Línia d’estats i guardioles",
+        "intro": "En quina fase és cada iniciativa de l’entitat.",
+        "listLabel": "Iniciatives de l’entitat",
         "stepsLabel": "Fases de «{title}»",
         "now": "Ara: {step}. {hint}"
       },
@@ -1819,18 +1866,18 @@
       "steps": {
         "moderation": "1. Moderació",
         "signatures": "2. Signatures",
-        "doubleCheck": "3. Doble signatura",
+        "doubleCheck": "3. Signatura de l’entitat",
         "budget": "4. Pressupost",
         "fundraising": "5. Recaptant",
         "achievement": "6. Fita"
       },
       "stepTip": {
-        "moderation": "Revisió inicial per part de l'entitat.",
+        "moderation": "Revisió inicial per part de l’entitat.",
         "signatures": "Recollida de signatures de la comunitat, amb auditoria antifrau.",
-        "doubleCheck": "Validació conjunta de les dues persones signants.",
+        "doubleCheck": "L’entitat aprova amb les signatures que hagi decidit (per defecte, dues persones).",
         "budget": "Pressupost del proveïdor i meta de la campanya.",
         "fundraising": "Campanya oberta: els diners queden retinguts a PAYCOMET fins a assolir la meta.",
-        "achievement": "Meta assolida: liquidació i fotos d'Abans i Després."
+        "achievement": "Meta assolida: liquidació i fotos d’Abans i Després."
       },
       "stepState": {
         "done": "feta",
@@ -1843,18 +1890,19 @@
       },
       "empty": {
         "title": "La vostra primera campanya comença aquí",
-        "description": "Quan les dues signatures i els documents del titular estiguin a punt, creareu la primera campanya a l'Estudi. Mentrestant, això és el que falta.",
+        "description": "Quan les signatures i els documents del titular estiguin a punt, creareu la primera campanya a l’Estudi. Mentrestant, això és el que falta.",
         "stepsLabel": "Passos fins a la primera campanya",
         "steps": {
           "signers": {
-            "title": "Les dues signatures",
-            "done": "Les dues persones signants estan a punt.",
-            "todo": "Falta que l'altra persona signant activi el compte i la verificació en dos passos."
+            "title": "Les persones signants",
+            "done": "Les persones signants estan a punt.",
+            "todo": "Falta que l’altra persona signant activi el compte i la verificació en dos passos.",
+            "todoSingle": "Falta activar la teva verificació en dos passos per poder signar."
           },
           "documents": {
             "title": "Documents del titular",
             "done": "Verificats: podeu publicar campanyes amb cobrament.",
-            "todo": "Falten els documents del titular (CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte) per publicar la primera campanya amb cobrament.",
+            "todo": "Falten els documents del titular (CIF, estatuts o acta, DNI de qui representa l’entitat i certificat de titularitat del compte) per publicar la primera campanya amb cobrament.",
             "cta": "Anar als documents",
             "review": "Enviats: estan en revisió i us avisarem per correu."
           },
@@ -1956,8 +2004,8 @@
     },
     "approvals": {
       "metaTitle": "Aprovacions",
-      "title": "Aprovacions i doble signatura",
-      "intro": "Reviseu les propostes de les famílies i dels comerços amics, parleu amb les famílies pel seu codi anònim i aproveu amb doble signatura les idees que assoleixen el quòrum.",
+      "title": "Aprovacions i signatura",
+      "intro": "Reviseu les propostes de les famílies i dels comerços amics, converseu amb les famílies pel seu codi anònim i aproveu amb les signatures de l’entitat les idees que assoleixen el quòrum.",
       "antifraud": "Compten fins a 2 comptes familiars per dispositiu (pare i mare). El 3r compte d’un mateix dispositiu o una ràfega de signatures des de la mateixa xarxa queden com a sospitosos i no sumen fins que els reviseu.",
       "openTitle": "{count, plural, =0 {Idees: res pendent} one {# idea en marxa} other {# idees en marxa}}",
       "closedTitle": "{count, plural, one {Darrera idea tancada} other {Darreres # idees tancades}}",
@@ -1969,13 +2017,13 @@
       "phases": {
         "PHASE0_MOD": "🛡️ Revisió inicial",
         "PUBLIC_VOTING": "🗳️ Recollint signatures",
-        "DOUBLE_CHECK": "✅ Quòrum assolit · doble signatura",
+        "DOUBLE_CHECK": "✅ Quòrum assolit · pendent de signatura",
         "CONVERTED": "🚀 Convertida en iniciativa",
         "REJECTED": "❌ Desestimada"
       },
       "meta": "{category} · {votes} de {needed} signatures verificades · proposada el {date}.",
       "daysLeft": "{count, plural, =0 {Les signatures tanquen avui.} one {Queda # dia de signatures.} other {Queden # dies de signatures.}}",
-      "signDaysLeft": "{count, plural, =0 {La doble signatura venç avui.} one {Queda # dia per a la doble signatura.} other {Queden # dies per a la doble signatura.}}",
+      "signDaysLeft": "{count, plural, =0 {La signatura venç avui.} one {Queda # dia per signar.} other {Queden # dies per signar.}}",
       "progressLabel": "Avenç cap al quòrum",
       "edit": {
         "legend": "Reviseu el text abans de publicar-lo",
@@ -1984,7 +2032,7 @@
         "description": "Descripció",
         "hint": "Títol de 8 a 90 caràcters i descripció de 20 a 600. Pots corregir errates o aclarir la proposta: la família rebrà un avís. El termini de signatures comença el dia que l’aproves."
       },
-      "converted": "Doble signatura completa: ja és una iniciativa en pressupost (guardiola {wallet}).",
+      "converted": "Signatura completa: ja és una iniciativa en pressupost (guardiola {wallet}).",
       "convertedLink": "Editar a l’Estudi",
       "actions": {
         "approve": "Aprovar i obrir a signatures",
@@ -1997,7 +2045,7 @@
       },
       "notices": {
         "approved": "Idea publicada: ja es poden recollir signatures a la bústia.",
-        "approvedQuorum": "Idea publicada i amb quòrum: ja espera la doble signatura.",
+        "approvedQuorum": "Idea publicada i amb quòrum: ja espera la signatura.",
         "rejected": "Idea desestimada. El motiu és al seu xat i la família rebrà un avís."
       },
       "errors": {
@@ -2028,11 +2076,11 @@
         "ALREADY_INVITED": "Ja li vau enviar la invitació a renovar d’aquest any: només s’envia un cop."
       },
       "doubleCheck": {
-        "label": "Doble signatura de la idea",
-        "progress": "Doble signatura: {signed} de 2",
+        "label": "Signatura de la idea",
+        "progress": "{total, plural, =1 {Signatura única: {signed} de 1} other {Doble signatura: {signed} de {total}}}",
         "roles": {
-          "DIRECTOR": "Primera signatura",
-          "COSIGNER": "Segona signatura"
+          "DIRECTOR": "Direcció",
+          "COSIGNER": "Cofirma"
         },
         "signedBy": "Signat per {name} el {date}",
         "pending": "Pendent de signatura",
@@ -2042,7 +2090,7 @@
         "resend": "No m’ha arribat: enviar un altre enllaç",
         "notYours": "La teva signatura ja hi consta o li toca a l’altra persona signant. Rebrà l’enllaç per correu.",
         "revalidated": "{count, plural, one {Inclou # signatura que l’entitat va validar a mà (era sospitosa).} other {Inclou # signatures que l’entitat va validar a mà (eren sospitoses).}}",
-        "readOnly": "Només les dues persones signants de l’entitat poden signar."
+        "readOnly": "Només les persones signants de l’entitat poden signar."
       },
       "audit": {
         "summary": "Auditoria de signatures ({total})",
@@ -2055,7 +2103,7 @@
         "statusRevalidated": "🟢 Validada per l’entitat",
         "revalidate": "Donar per bona",
         "revalidated": "Signatura validada: ja compta per al quòrum.",
-        "revalidatedQuorum": "Signatura validada: la idea ha assolit el quòrum i espera la doble signatura.",
+        "revalidatedQuorum": "Signatura validada: la idea ha assolit el quòrum i espera la signatura.",
         "truncated": "{shown, plural, one {Es mostra # signatura} other {Es mostren # signatures}}: primer les sospitoses i després les més recents."
       },
       "chat": {
@@ -2073,7 +2121,7 @@
       "metaShort": "{category} · proposada el {date}."
     },
     "sign": {
-      "title": "Doble signatura",
+      "title": "Signatura",
       "needsLogin": "Per signar, entra amb el teu compte de l’entitat. Desem l’enllaç en aquesta pestanya: en tornar, continuaràs aquí.",
       "needsSecondFactor": "Per signar has de superar la verificació en dos passos en aquesta sessió.",
       "loginCta": "Entrar per signar",
@@ -2085,20 +2133,20 @@
         "cta": "Anar a Aprovacions"
       },
       "done": {
-        "completeTitle": "Doble signatura completa! 2 de 2",
+        "completeTitle": "Signatura completa!",
         "partialTitle": "La teva signatura queda registrada: 1 de 2",
         "completeIdea": "La idea ja és una iniciativa en pressupost. El pas següent és preparar-ne el pressupost.",
-        "completePayout": "Les dues signatures de la liquidació queden registrades.",
+        "completePayout": "Les signatures que exigeix l’entitat per a la liquidació queden registrades.",
         "partialNotified": "Hem enviat l’enllaç a l’altra persona signant per completar la doble signatura.",
         "partialWaiting": "Falta la signatura de l’altra persona. Quan tingui activada la verificació en dos passos, podrà demanar el seu enllaç des d’Aprovacions.",
         "cta": "Tornar a Aprovacions",
         "celebrate": "Una idea de les famílies comença a fer-se realitat!",
         "ctaFund": "Tornar al Fons d’activitats",
         "fund": {
-          "executed": "Les dues signatures estan registrades i els diners ja van cap al compte de l’entitat. Teniu el justificant al Fons d’activitats.",
-          "pending": "Les dues signatures estan registrades. L’enviament al compte de l’entitat encara no ha acabat: el reintentem i veureu com va al Fons d’activitats.",
+          "executed": "Les signatures necessàries estan registrades i els diners ja van cap al compte de l’entitat. Teniu el justificant al Fons d’activitats.",
+          "pending": "Les signatures necessàries estan registrades. L’enviament al compte de l’entitat encara no ha acabat: el reintentem i veureu com va al Fons d’activitats.",
           "changed": "El Fons ha canviat des que es va demanar la liquidació (un comerç ha anul·lat el seu pagament). L’hem anul·lada: demaneu-la de nou amb el que hi ha ara.",
-          "blocked": "Les dues signatures estan registrades, però encara no podem enviar els diners: falten els documents del titular verificats o el compte de destinació. Reviseu-ho a Ajustos.",
+          "blocked": "Les signatures necessàries estan registrades, però encara no podem enviar els diners: falten els documents del titular verificats o el compte de destinació. Reviseu-ho a Ajustos.",
           "changedTitle": "La liquidació s’ha anul·lat",
           "blockedTitle": "Signada, però encara no es pot enviar",
           "expiredTitle": "La liquidació s’ha anul·lat",
@@ -2109,14 +2157,14 @@
         "payout": {
           "celebrate": "Èxit aconseguit! Els diners ja són de camí.",
           "photosCta": "Pujar les fotos de l’Abans i el Després",
-          "executed": "Les dues signatures estan registrades i PAYCOMET ja ha enviat els diners. L’últim pas: pugeu les fotos i l’agraïment per a les famílies.",
-          "pending": "Les dues signatures estan registrades. L’enviament encara no ha acabat: el reintentem nosaltres i veureu com va a Liquidacions.",
+          "executed": "Les signatures necessàries estan registrades i PAYCOMET ja ha enviat els diners. L’últim pas: pugeu les fotos i l’agraïment per a les famílies.",
+          "pending": "Les signatures necessàries estan registrades. L’enviament encara no ha acabat: el reintentem nosaltres i veureu com va a Liquidacions.",
           "changedTitle": "Les xifres han canviat",
           "changed": "El que s’ha recaptat ha canviat des que es va demanar la liquidació (una retrocessió). Torneu-la a demanar a Liquidacions: es tornarà a signar.",
           "blockedTitle": "Signada, però encara no es pot enviar",
-          "blocked": "Les dues signatures estan registrades, però falten els documents del titular verificats o el compte a PAYCOMET. S’enviarà tan aviat com hi siguin.",
+          "blocked": "Les signatures necessàries estan registrades, però falten els documents del titular verificats o el compte a PAYCOMET. S’enviarà tan aviat com hi siguin.",
           "notReadyTitle": "Signada, però la campanya encara no es pot liquidar",
-          "notReady": "Les dues signatures estan registrades, però falta alguna cosa abans de liquidar (el sorteig de la rifa o decidir sobre un comerç). Ho veureu a Liquidacions.",
+          "notReady": "Les signatures necessàries estan registrades, però falta alguna cosa abans de liquidar (el sorteig de la rifa o decidir sobre un comerç). Ho veureu a Liquidacions.",
           "invoiceTitle": "Falta una factura vàlida",
           "invoice": "La factura adjunta ja no és vàlida. Pugeu-ne una altra a Liquidacions i torneu a demanar la liquidació.",
           "providerTitle": "El pagament al proveïdor encara no està disponible",
@@ -2128,7 +2176,7 @@
       "what": "El que signaràs",
       "ideaMeta": "{alias} · {category} · {votes} signatures verificades",
       "ideaRevalidated": "{count, plural, one {Inclou # signatura que l’entitat va validar a mà (era sospitosa).} other {Inclou # signatures que l’entitat va validar a mà (eren sospitoses).}}",
-      "ideaEffect": "En completar les dues signatures, la idea passa a pressupost com a iniciativa de l’entitat.",
+      "ideaEffect": "En completar les signatures que exigeix l’entitat, la idea passa a pressupost com a iniciativa de l’entitat.",
       "payoutMeta": "Guardiola {wallet} · {amount} · destinació: {destination}",
       "destinations": {
         "ORGANIZATION": "compte de l’entitat",
@@ -2163,12 +2211,12 @@
       "retry": "Tornar a comprovar l’enllaç",
       "fundMeta": "{amount} · {count, plural, one {de # comerç} other {de # comerços}}",
       "fundPurpose": "Per a què es farà servir (ho va escriure l’entitat):",
-      "fundEffect": "Amb les dues signatures, els diners s’envien al compte de l’entitat. No es pot desfer.",
+      "fundEffect": "Amb les signatures que exigeix l’entitat, els diners s’envien al compte de l’entitat. No es pot desfer.",
       "fundTitle": "Liquidació {reference} del Fons d’activitats",
       "payoutBeneficiary": "Per a: {name}",
       "payoutBeneficiaryIban": "Per a: {name} · IBAN amb codi d’entitat {bank}, acabat en {last4}",
       "payoutInvoice": "Veure la factura del proveïdor",
-      "payoutEffect": "Amb les dues signatures, els diners surten de la guardiola de la iniciativa cap a aquesta destinació. No es pot desfer.",
+      "payoutEffect": "Amb les signatures que exigeix l’entitat, els diners surten de la guardiola de la iniciativa cap a aquesta destinació. No es pot desfer.",
       "payoutRequestedBy": "Demanada o canviada per última vegada per {name} el {date}. Si no esperaves aquesta destinació, no signis."
     },
     "sponsors": {
@@ -2218,7 +2266,7 @@
         "cancel": "Cancel·lar",
         "tooShort": "Escriviu el motiu: almenys {min} caràcters."
       },
-      "readOnly": "Només les dues persones signants de l’entitat poden aprovar o no admetre comerços.",
+      "readOnly": "Només les persones signants de l’entitat poden aprovar o no admetre comerços.",
       "notices": {
         "approved": "{name} ja és comerç amic: surt a la vostra pàgina durant 12 mesos i li hem enviat la benvinguda.",
         "approvedMatching": "{name} ja és comerç amic i la seva bossa Matching 2x està activa: cada donació es duplica fins a esgotar-la.",
@@ -2264,7 +2312,7 @@
         "saving": "Desant…",
         "saved": "Regla desada: «{rule}».",
         "savedPlaced": "{count, plural, one {Regla desada. Hem portat a una campanya els diners de # comerç que esperava a la seva bossa.} other {Regla desada. Hem portat a campanyes els diners de # comerços que esperaven a la seva bossa.}}",
-        "readOnly": "Només les dues persones signants de l’entitat poden canviar la regla."
+        "readOnly": "Només les persones signants de l’entitat poden canviar la regla."
       },
       "detail": {
         "summary": "Fitxa / Renovar",
@@ -2307,7 +2355,7 @@
       "readOnly": "Només lectura: aquesta configuració la canvien les persones que signen per l'entitat.",
       "kyb": {
         "title": "Documents del titular",
-        "intro": "Serveixen per comprovar qui rep els diners abans de cobrar la primera campanya. Es guarden en privat: només els veieu les dues persones signants i l'equip de verificació.",
+        "intro": "Serveixen per comprovar qui rep els diners abans de cobrar la primera campanya. Es guarden en privat: només els veieu les persones signants i l’equip de verificació.",
         "status": {
           "PENDING": "Encara no els heu enviat. Mentrestant podeu preparar campanyes, però no cobrar.",
           "SUBMITTED": "Enviats el {date}. Estan en revisió i us avisarem per correu.",
@@ -2328,7 +2376,7 @@
           "legalName": "Raó social del titular",
           "legalNameHint": "Tal com figura als seus documents. Sense enllaços ni adreces de correu.",
           "cif": "CIF del titular",
-          "cifHint": "El de l'entitat que cobra: una lletra, set xifres i un caràcter de control (p. ex. G08451296).",
+          "cifHint": "El de l’entitat que cobra: una lletra, set xifres i un caràcter de control (p. ex. G08451296).",
           "cifMissing": "Sense CIF",
           "save": "Desar les dades del titular",
           "saving": "Desant…",
@@ -2339,7 +2387,7 @@
             "CIF_IN_USE": "Aquest CIF ja figura en una altra entitat de KORUM. Si és un error, escriviu a suport.",
             "LOCKED": "Les dades del titular ja no es poden canviar des d’aquí.",
             "FORBIDDEN": "No teniu permís per canviar aquestes dades.",
-            "generic": "No s'han pogut desar. Torneu-ho a provar d'aquí a uns segons."
+            "generic": "No s’han pogut desar. Torneu-ho a provar d’aquí a uns segons."
           },
           "required": "Les dues dades són obligatòries per enviar els documents."
         },
@@ -2347,24 +2395,24 @@
           "legend": "Documents",
           "kinds": {
             "TAX_ID_CARD": {
-              "title": "Targeta d'identificació fiscal (CIF)",
-              "hint": "La targeta o el document d'Hisenda amb el CIF de l'entitat titular."
+              "title": "Targeta d’identificació fiscal (CIF)",
+              "hint": "La targeta o el document d’Hisenda amb el CIF de l’entitat titular."
             },
             "STATUTES": {
               "title": "Estatuts, acta fundacional o escriptures",
-              "hint": "Els estatuts registrats de l'associació o fundació, o les escriptures si el titular és una societat."
+              "hint": "Els estatuts registrats de l’associació o fundació, o les escriptures si el titular és una societat."
             },
             "REPRESENTATIVE_ID": {
-              "title": "DNI o NIE de qui representa l'entitat",
+              "title": "DNI o NIE de qui representa l’entitat",
               "hint": "Per les dues cares. De la persona que figura com a representant (presidència, titularitat o direcció)."
             },
             "ACCOUNT_OWNERSHIP": {
-              "title": "Certificat de titularitat del compte de l'entitat",
+              "title": "Certificat de titularitat del compte de l’entitat",
               "hint": "El fa la vostra entitat financera i diu que el compte és del titular. Aquí no cal escriure cap número de compte."
             },
             "LEY49_ACCREDITATION": {
               "title": "Acreditació de la Llei 49/2002",
-              "hint": "Declaració d'utilitat pública o certificat de l'Agència Tributària del règim fiscal especial. Un cop acreditada, permet emetre certificats fiscals de donació."
+              "hint": "Declaració d’utilitat pública o certificat de l’Agència Tributària del règim fiscal especial. Un cop acreditada, permet emetre certificats fiscals de donació."
             }
           },
           "delivered": "Lliurat el {date} · {format}, {size}",
@@ -2388,8 +2436,8 @@
             "FILE_EXTENSION_MISMATCH": "El fitxer no és el que diu el seu nom. Torneu-lo a desar com a PDF o imatge.",
             "LOCKED": "Els documents ja no es poden canviar des d’aquí.",
             "NOT_REQUIRED": "La vostra entitat no ha declarat la Llei 49/2002: aquest document no cal.",
-            "FORBIDDEN": "No teniu permís per pujar documents d'aquesta entitat.",
-            "generic": "No s'ha pogut pujar. Torneu-ho a provar d'aquí a uns segons.",
+            "FORBIDDEN": "No teniu permís per pujar documents d’aquesta entitat.",
+            "generic": "No s’ha pogut pujar. Torneu-ho a provar d’aquí a uns segons.",
             "RATE_LIMITED": "Massa pujades seguides en aquesta entitat. Espereu una estona i torneu-ho a provar."
           }
         },
@@ -2404,7 +2452,7 @@
             "INCOMPLETE": "Encara falta algun document o el CIF del titular.",
             "LOCKED": "Ja estaven enviats: recarregueu la pàgina.",
             "FORBIDDEN": "No teniu permís per enviar aquests documents.",
-            "generic": "No s'han pogut enviar. Torneu-ho a provar d'aquí a uns segons."
+            "generic": "No s’han pogut enviar. Torneu-ho a provar d’aquí a uns segons."
           }
         }
       },
@@ -2420,8 +2468,8 @@
         },
         "ideas": {
           "legend": "Bústia d'idees",
-          "minVotes": "Signatures mínimes perquè una idea arribi a la doble signatura",
-          "minVotesHint": "Entre {min} i {max}. Si el baixeu, les idees que ja l’assoleixen passen a la doble signatura en desar.",
+          "minVotes": "Signatures mínimes perquè una idea arribi a la signatura de l’entitat",
+          "minVotesHint": "Entre {min} i {max}. Si el baixeu, les idees que ja l’assoleixen passen a la signatura de l’entitat en desar.",
           "maxIdeaDays": "Dies per recollir signatures",
           "maxIdeaDaysHint": "Entre {min} i {max}. Val per a les idees que aproveu d'ara endavant."
         },
@@ -2436,8 +2484,8 @@
         },
         "contact": {
           "legend": "Contacte",
-          "phone": "Telèfon de l'entitat",
-          "phoneHint": "El de l'entitat (secretaria, seu…), no el mòbil d'una persona. El veieu les dues persones signants i es proposa com a contacte al Model 182. Opcional."
+          "phone": "Telèfon de l’entitat",
+          "phoneHint": "El de l’entitat (secretaria, seu…), no el mòbil d’una persona. El veieu les persones signants i es proposa com a contacte al Model 182. Opcional."
         },
         "portal": {
           "legend": "Portal públic",
@@ -2454,7 +2502,7 @@
         "save": "Desar la configuració",
         "saving": "Desant…",
         "saved": "Configuració desada.",
-        "savedQuorum": "Configuració desada: {count, plural, one {# idea passa} other {# idees passen}} a la doble signatura en arribar al nou mínim de signatures.",
+        "savedQuorum": "Configuració desada: {count, plural, one {# idea passa} other {# idees passen}} a la signatura de l’entitat en arribar al nou mínim de signatures.",
         "errors": {
           "donationPresetsEuros": "Tres imports de {min} a {max} €, en euros sencers i de menor a major, sense repetir.",
           "defaultDonationIdx": "Trieu quin botó apareix preseleccionat.",
@@ -2469,105 +2517,145 @@
       },
       "team": {
         "title": "Equip que signa",
-        "intro": "Les dues persones que signen juntes per aprovar idees i alliberar diners. Si una deixa el càrrec, proposa aquí qui la substitueix: ningú no pot treure l'altra signatura sense el seu vistiplau.",
+        "intro": "Les persones que signen per aprovar idees i alliberar diners. Cada entitat tria si calen dues signatures (Direcció i Cofirma) o una sola (Direcció) i canvia els seus signants per si mateixa: KORUM no hi intervé i cada canvi queda registrat.",
         "seatsLabel": "Llocs que signen",
         "seat": {
           "DIRECTOR": "Direcció",
-          "COSIGNER": "Cosignatura"
+          "COSIGNER": "Cofirma"
         },
         "you": "Tu",
         "noRoleLabel": "Sense càrrec indicat",
         "ready": "Pot signar (verificació en dos passos activada).",
         "needsTwoFactor": "Encara no pot signar: li falta activar la verificació en dos passos.",
         "pending": "Invitació enviada a {email}, encara sense acceptar.",
-        "pendingExpired": "La invitació a {email} ha caducat sense acceptar-se. Reenvieu-la o corregiu-la.",
-        "correctTitle": "Corregir la invitació de la cosignatura",
+        "pendingExpired": "La invitació a {email} ha caducat sense acceptar-se. Reenvia-la o corregeix-la.",
+        "correctTitle": "Corregir la invitació de la cofirma",
         "proposeTitle": "Proposar un relleu",
-        "rule": "Pots cedir el teu lloc (la invitació surt de seguida) o proposar qui substitueix l'altra persona: en aquest cas li demanarem el vistiplau. Fins que qui entra accepta, signeu les mateixes dues persones. Ho confirmes amb el codi de la teva app de verificació.",
+        "rule": "Pots cedir el teu lloc o proposar qui substitueix l’altra persona (per exemple, si la Direcció ja no hi és, la Cofirma proposa el seu substitut). La invitació surt a l’instant i l’altra persona rep un avís: no necessita el seu vistiplau. El canvi es fa quan qui entra accepta. Ho confirmes amb el codi de la teva app de verificació.",
         "form": {
           "seatLegend": "Quin lloc es releva?",
           "seatMine": "El meu lloc ({seat})",
           "seatOther": "{seat}: {name}",
-          "selfHint": "Convidarem aquesta persona a ocupar el teu lloc. Quan accepti, signarà al teu lloc i tu deixaràs de signar per l'entitat. Ho confirmes amb el codi de la teva app de verificació.",
-          "otherHint": "Demanarem el vistiplau a l'altra persona. Només si el dona, convidarem qui proposes.",
-          "correctHint": "Si hi havia una invitació, deixarà de valer i n'enviarem una de nova a aquest correu. Ho confirmes amb el codi de la teva app de verificació.",
+          "selfHint": "Convidarem aquesta persona a ocupar el teu lloc. Quan accepti, signarà al teu lloc i tu deixaràs de signar per l’entitat. Ho confirmes amb el codi de la teva app de verificació.",
+          "otherHint": "Convidarem aquesta persona a ocupar el lloc de l’altra. L’altra persona rebrà un avís per email i, quan qui entra accepti, deixarà de signar. El canvi queda registrat.",
+          "correctHint": "Si hi havia una invitació, deixarà de valer i n’enviarem una de nova a aquest correu. Ho confirmes amb el codi de la teva app de verificació.",
           "name": "Nom i cognoms de qui entra",
           "email": "El seu correu",
           "roleLabel": "El seu càrrec",
-          "roleLabelHint": "Per exemple: Presidència de l'AFA, Tresoreria del club. Sense enllaços ni adreces.",
+          "roleLabelHint": "Per exemple: Presidència de l’AFA, Tresoreria del club. Sense enllaços ni adreces.",
           "sending": "Enviant…",
           "submitSelf": "Convidar qui em substitueix",
-          "submitOther": "Demanar el seu vistiplau",
+          "submitOther": "Convidar qui la substitueix",
           "submitCorrect": "Enviar la invitació corregida",
           "savedSelf": "Invitació enviada. Continuaràs signant fins que la persona nova accepti.",
-          "savedOther": "Proposta enviada. Avisarem l'altra persona perquè doni el seu vistiplau.",
-          "savedCorrected": "Invitació corregida: l'anterior ja no val i hem enviat la nova.",
+          "savedOther": "Invitació enviada. L’altra persona ha rebut un avís; el canvi es farà quan la persona nova accepti.",
+          "savedCorrected": "Invitació corregida: l’anterior ja no val i hem enviat la nova.",
           "errors": {
             "form": "Revisa els camps marcats.",
             "name": "Escriu el seu nom (com a mínim 2 lletres, sense enllaços).",
             "email": "Revisa el correu.",
             "roleLabel": "Escriu el seu càrrec (com a mínim 3 lletres, sense enllaços ni adreces).",
             "REAUTH_REQUIRED": "Per fer aquest canvi, confirma el codi de la teva app de verificació.",
-            "ALREADY_OPEN": "Ja hi ha un relleu en curs. Acaba'l o retira'l abans de proposar-ne un altre.",
-            "SEAT_EMPTY": "Aquest lloc és buit: convida la cosignatura des de «Convidar la cosignatura».",
-            "SEAT_TAKEN": "La cosignatura ja ha acceptat: per canviar-la cal un relleu amb el seu vistiplau.",
-            "SAME_INBOX": "Aquest correu és d'una persona que ja signa per l'entitat. Les dues signatures han de ser persones diferents.",
+            "ALREADY_OPEN": "Ja hi ha un relleu en curs. Acaba’l o retira’l abans de proposar-ne un altre.",
+            "SEAT_EMPTY": "Aquest lloc és buit: convida la cofirma des de «Convidar la cofirma».",
+            "SEAT_TAKEN": "La cofirma ja ha acceptat: per canviar-la proposa un relleu del seu lloc.",
+            "SAME_INBOX": "Aquest correu és d’una persona que ja signa per l’entitat. Les dues signatures han de ser persones diferents.",
             "DISPOSABLE_EMAIL": "Aquest correu és temporal. Fes servir una adreça permanent.",
             "UNAVAILABLE": "Aquest correu no pot rebre un càrrec en una entitat. Fes-ne servir un altre.",
-            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d'aquí a una estona.",
-            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
-            "generic": "No ho hem pogut desar. Torna-ho a provar d'aquí a uns segons.",
-            "INVITEE_BUSY": "Aquesta persona ja té una altra invitació pendent a la vostra entitat. Espera que l'accepti o retira-la abans."
+            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d’aquí a una estona.",
+            "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No ho hem pogut desar. Torna-ho a provar d’aquí a uns segons.",
+            "INVITEE_BUSY": "Aquesta persona ja té una altra invitació pendent a l’entitat. Espera que l’accepti o retira-la abans.",
+            "SINGLE_MODE": "L’entitat signa amb una sola signatura. Per convidar una cofirma, torna abans a doble signatura."
           }
         },
         "handover": {
-          "titleAwaiting": "Relleu pendent de vistiplau",
           "titleInvited": "Relleu en curs",
-          "askMe": "Es proposa que {name} ({email}) ocupi el teu lloc ({seat}) com a «{role}». Si hi estàs d'acord, li enviarem la invitació; quan l'accepti, deixaràs de signar per l'entitat. Tens fins al {date}.",
-          "waitingOther": "Has proposat que {name} ({email}) ocupi el lloc de {seat} com a «{role}». Esperem el vistiplau de la persona que surt fins al {date}.",
-          "invitedSelf": "Invitació enviada a {name} ({email}) per ocupar el lloc de {seat} com a «{role}». Qui surt continua signant fins que l'accepti (abans del {date}).",
-          "invitedOther": "La persona que surt ha donat el vistiplau. Invitació enviada a {name} ({email}) per al lloc de {seat} com a «{role}», vàlida fins al {date}.",
-          "expiredConsent": "La proposta perquè {name} ocupi el lloc de {seat} ha caducat sense vistiplau. Si la persona que surt ja no hi és, escriviu a suport. Retireu-la per proposar-ne una altra.",
+          "invitedSelf": "Invitació enviada a {name} ({email}) per ocupar el lloc de {seat} com a «{role}». Qui surt continua signant fins que l’accepti (abans del {date}).",
+          "invitedOther": "Has convidat {name} ({email}) a ocupar el lloc de {seat} com a «{role}». La seva invitació val fins al {date}. Qui surt ha rebut un avís; el canvi serà immediat quan accepti.",
           "expiredInvitation": "La invitació a {name} ({email}) per al lloc de {seat} ha caducat sense acceptar-se. Retira-la i, si cal, torna a proposar el relleu.",
-          "consentHint": "Donar el vistiplau es confirma amb el codi de la teva app de verificació.",
           "actions": {
-            "consent": "Donar el meu vistiplau",
-            "decline": "No hi estic d'acord",
             "resend": "Reenviar la invitació",
             "cancel": "Retirar el relleu"
           },
           "done": {
-            "consent": "Vistiplau donat: hem enviat la invitació a la persona nova.",
-            "decline": "Has rebutjat el relleu. Avisarem qui el va proposar.",
-            "resend": "Invitació reenviada: l'anterior ja no val.",
+            "resend": "Invitació reenviada: l’anterior ja no val.",
             "cancel": "Relleu retirat: tot continua com estava."
           },
           "errors": {
-            "REAUTH_REQUIRED": "Per donar el vistiplau, confirma el codi de la teva app de verificació.",
             "NOT_FOUND": "Aquest relleu ja no és obert. Recarrega la pàgina.",
-            "SAME_INBOX": "La persona proposada ja signa per l'entitat. Retira el relleu.",
+            "SAME_INBOX": "La persona proposada ja signa per l’entitat. Retira el relleu.",
             "UNAVAILABLE": "La persona proposada ja no pot rebre el càrrec. Retira el relleu.",
-            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d'aquí a una estona.",
-            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
-            "generic": "No ho hem pogut fer. Torna-ho a provar d'aquí a uns segons.",
-            "INVITEE_BUSY": "La persona proposada ja té una altra invitació pendent a la vostra entitat. Retira el relleu o espera que l'accepti."
+            "RATE_LIMITED": "Hem enviat massa correus a aquesta adreça. Prova-ho d’aquí a una estona.",
+            "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No ho hem pogut fer. Torna-ho a provar d’aquí a uns segons.",
+            "INVITEE_BUSY": "La persona proposada ja té una altra invitació pendent a l’entitat. Retira el relleu o espera que l’accepti."
           },
-          "invitedMine": "Invitació enviada a {name} ({email}) per ocupar el teu lloc ({seat}) com a «{role}». Continuaràs signant fins que l'accepti (abans del {date})."
+          "invitedMine": "Invitació enviada a {name} ({email}) per ocupar el teu lloc ({seat}) com a «{role}». Continuaràs signant fins que l’accepti (abans del {date}).",
+          "invitedReplacingMe": "L’altra persona que signa ha convidat {name} ({email}) a ocupar el teu lloc ({seat}) com a «{role}». Continuaràs signant fins que accepti (abans del {date}); llavors el canvi serà immediat.",
+          "busy": {
+            "resend": "Reenviant…",
+            "cancel": "Retirant…"
+          },
+          "expiredInvitationOther": "La invitació a {name} ({email}) per al lloc de {seat} ha caducat sense acceptar-se. Qui la va proposar pot retirar-la; després l’entitat podrà proposar el relleu de nou."
         },
         "roleLabel": {
           "open": "Canviar el meu càrrec",
           "label": "El meu càrrec",
-          "hint": "El que veuen l'altra persona signant i les famílies als documents. No canvia el que signes.",
+          "hint": "El que veuen l’altra persona signant i les famílies als documents. No canvia el que signes.",
           "save": "Desar el meu càrrec",
           "saved": "Càrrec actualitzat.",
           "errors": {
             "invalid": "Escriu el teu càrrec (de 3 a 60 caràcters, sense enllaços ni adreces).",
-            "generic": "No l'hem pogut desar. Torna-ho a provar d'aquí a uns segons."
+            "generic": "No l’hem pogut desar. Torna-ho a provar d’aquí a uns segons."
           }
         },
         "needsTwoFactorMine": "Encara no pots signar: activa la verificació en dos passos.",
-        "inviteTitle": "Convidar la cosignatura",
-        "cosignerEmpty": "Sense cosignatura: fins que algú accepti aquest lloc no es poden aprovar idees ni alliberar fons."
+        "inviteTitle": "Convidar la cofirma",
+        "cosignerEmpty": "Sense cofirma: fins que algú accepti aquest lloc no es poden aprovar idees ni alliberar fons.",
+        "mode": {
+          "title": "Quantes signatures exigeix l’entitat",
+          "current": {
+            "DOUBLE": "Doble signatura: aprovar idees i alliberar diners exigeix Direcció i Cofirma, dues persones diferents.",
+            "SINGLE": "Signatura única: aprovar idees i alliberar diners exigeix només la signatura de Direcció."
+          },
+          "help": {
+            "DOUBLE": "És el més segur: cap persona pot moure diners sola.",
+            "SINGLE": "Ho decideix la pròpia entitat i és responsabilitat seva. KORUM no controla qui signa ni revisa els canvis; tot queda registrat i l’entitat no ho pot esborrar."
+          },
+          "change": {
+            "SINGLE": {
+              "open": "Passar a signatura única",
+              "intro": "En passar a signatura única, el lloc de Cofirma desapareix a l’instant: aquesta persona deixa de signar i d’entrar al tauler (el seu compte no s’esborra) i rep un avís. A partir d’ara aprovar idees i alliberar diners ho fa només Direcció.",
+              "confirm": "Entenc que l’entitat assumeix la responsabilitat que una sola persona aprovi i alliberi diners, que ningú més ho revisarà i que el canvi és immediat.",
+              "submit": "Passar a signatura única",
+              "effects": {
+                "noReview": "Ningú més comprovarà el que signis: KORUM no revisa els canvis i qualsevol aprovació o pagament dependrà només de Direcció.",
+                "gate": "S’anul·len els PIN i les sessions de porteria de tots els esdeveniments, no només els de la Cofirma: crea PIN nous si hi ha alguna porta en marxa.",
+                "pending": "El que ja porti la teva signatura i estigui esperant la Cofirma (idees i liquidacions) quedarà aprovat sense una altra signatura: les idees, a l’instant; les liquidacions, en reintentar-les o amb la revisió automàtica de demà a primera hora."
+              }
+            },
+            "DOUBLE": {
+              "open": "Tornar a doble signatura",
+              "intro": "En tornar a doble signatura, el lloc de Cofirma queda buit fins que conviïs la persona. Mentrestant no es podrà aprovar res: faltarà la seva signatura.",
+              "confirm": "Entenc que, fins que la cofirma accepti, no s’aprovaran idees ni s’alliberaran diners.",
+              "submit": "Tornar a doble signatura"
+            }
+          },
+          "done": {
+            "SINGLE": "L’entitat signa ara amb una sola signatura (Direcció).",
+            "DOUBLE": "L’entitat torna a doble signatura. Convida la cofirma per poder aprovar."
+          },
+          "saving": "Desant…",
+          "cancel": "Cancel·lar",
+          "onlyDirector": "Només Direcció pot canviar això.",
+          "errors": {
+            "REAUTH_REQUIRED": "Per fer aquest canvi, confirma el codi de la teva app de verificació.",
+            "ALREADY_IN_MODE": "L’entitat ja signa així: hem actualitzat la pantalla.",
+            "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb ell i prova de nou.",
+            "generic": "No ho hem pogut desar. Prova de nou d’aquí a uns segons."
+          }
+        }
       },
       "groups": {
         "title": "Grups de participació",
@@ -2660,7 +2748,7 @@
     "fund": {
       "metaTitle": "Fons d’activitats",
       "title": "Fons d’activitats",
-      "intro": "Aquí arriben els diners dels comerços amics que heu admès quan no s’han pogut portar a cap campanya abans que vencés el seu termini. No es retornen al comerç: són per a les activitats de l’entitat. Per rebre’ls al vostre compte, una persona els demana indicant per a què es faran servir i totes dues signeu.",
+      "intro": "Aquí arriben els diners dels comerços amics que heu admès quan no s’ha pogut portar a cap campanya abans que vencés el termini. No es torna al comerç: és per a les activitats de l’entitat. Per rebre’l al vostre compte, una persona el demana indicant per a què es farà servir i se signa amb les signatures que exigeix l’entitat.",
       "summary": {
         "title": "Disponible per liquidar",
         "deadline": "Liquideu-ho abans del {date}: després PAYCOMET ja no ho podria enviar.",
@@ -2668,7 +2756,7 @@
         "stuck": "{amount} ja no es poden enviar perquè ha passat el termini de PAYCOMET. L’equip de KORUM ho revisa amb PAYCOMET i us escriurà.",
         "notPayable": "Per rebre el Fons necessiteu els documents del titular verificats i el compte de destinació.",
         "notPayableCta": "Anar als documents",
-        "inPayout": "En liquidació, esperant la doble signatura: {amount}"
+        "inPayout": "En liquidació: {amount}"
       },
       "empty": {
         "title": "El vostre Fons és buit",
@@ -2687,18 +2775,18 @@
       },
       "request": {
         "title": "Demanar la liquidació al vostre compte",
-        "lead": "Avui podeu liquidar <amount></amount>. Expliqueu per a què ho farà servir l’entitat: ho signareu les dues persones i sortirà al justificant.",
+        "lead": "Avui podeu liquidar <amount></amount>. Expliqueu per a què ho farà servir l’entitat: ho signarà l’entitat i sortirà al justificant.",
         "purposeLabel": "Per a què es faran servir els diners",
         "purposeHelp": "Per exemple: «Material per a les colònies de primavera i la festa de final de curs». Entre {min} i {max} caràcters, sense enllaços. No escriviu noms d’alumnes ni altres dades personals: el text surt al justificant i no es pot canviar.",
         "purposeLength": "Escriviu entre {min} i {max} caràcters, sense enllaços.",
-        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura i el teu codi. Quan signeu les dues persones, els diners s’envien al compte de l’entitat.",
+        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura i el teu codi. Quan es completin les signatures de l’entitat, els diners s’envien al compte de l’entitat.",
         "submit": "Demanar la liquidació i el meu enllaç de signatura",
         "sending": "Demanant…",
         "requested": "Liquidació demanada. T’hem enviat el teu enllaç de signatura i el teu codi; valen fins al {date}.",
         "requestedNoLink": "Liquidació demanada. Demana el teu enllaç de signatura des de la mateixa liquidació."
       },
       "pending": {
-        "title": "Liquidació {reference} · esperant la doble signatura",
+        "title": "Liquidació {reference} · esperant la signatura",
         "purpose": "La va demanar {name} el {date}. Per a què es farà servir:",
         "someone": "una persona signant",
         "splits": "{count, plural, one {De quin comerç surt (# comerç)} other {De quins comerços surt (# comerços)}}",
@@ -2709,13 +2797,15 @@
         "cancelConfirm": "En retirar-la, els enllaços de signatura deixen de valer i els diners tornen a estar disponibles per demanar-la de nou (per exemple, amb un altre ús).",
         "cancelYes": "Sí, retirar-la",
         "cancelNo": "No, mantenir-la",
-        "cancelled": "Liquidació retirada. La podeu tornar a demanar quan vulgueu."
+        "cancelled": "Liquidació retirada. La podeu tornar a demanar quan vulgueu.",
+        "allSigned": "Ja hi són les signatures que exigeix l’entitat: falta enviar els diners.",
+        "titleSigned": "Liquidació {reference} · signada, falta enviar-la"
       },
       "history": {
         "title": "Liquidacions",
         "none": "Encara no heu liquidat el Fons.",
         "status": {
-          "PENDING_DOUBLE_CHECK": "Esperant la doble signatura",
+          "PENDING_DOUBLE_CHECK": "Esperant la signatura",
           "APPROVED": "Signada · enviant",
           "PROCESSING": "Signada · enviant",
           "EXECUTED": "Enviada al vostre compte",
@@ -2734,13 +2824,15 @@
         "retry": "Reintentar l’enviament ara",
         "retrying": "Reintentant…",
         "retryDone": "Fet: els diners ja van cap al vostre compte.",
-        "retryPending": "Encara no ha acabat. Ho continuem intentant cada dia; si no es resol, l’equip de KORUM us escriurà."
+        "retryPending": "Encara no ha acabat. Ho continuem intentant cada dia; si no es resol, l’equip de KORUM us escriurà.",
+        "send": "Enviar els diners ara",
+        "sending": "Enviant…"
       },
       "errors": {
         "INVALID_INPUT": "Escriviu per a què es faran servir els diners: entre 10 i 500 caràcters, sense enllaços.",
         "NOT_FOUND": "No trobem aquesta liquidació a la vostra entitat. Recarregueu la pàgina.",
         "NOTHING_TO_PAY": "Ara no hi ha res que es pugui liquidar del Fons.",
-        "PAYOUT_PENDING": "Ja hi ha una liquidació esperant la doble signatura: signeu-la o retireu-la abans de demanar-ne una altra.",
+        "PAYOUT_PENDING": "Ja hi ha una liquidació esperant la signatura: signeu-la o retireu-la abans de demanar-ne una altra.",
         "KYB_NOT_VERIFIED": "Per liquidar el Fons necessiteu els documents del titular verificats.",
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té compte de destinació a PAYCOMET.",
         "WRONG_STATUS": "Aquesta liquidació ja ha canviat: una altra persona l’ha signada o retirada. Recarregueu la pàgina.",
@@ -2760,12 +2852,12 @@
       },
       "receipt": {
         "title": "Justificant de liquidació del Fons d’activitats",
-        "intro": "KORUM deixa constància que {entity} ({legalName}) ha liquidat al seu compte els diners del seu Fons d’activitats que es detallen, amb la doble signatura dels seus dos responsables.",
+        "intro": "KORUM deixa constància que {entity} ({legalName}) ha liquidat al seu compte els diners del seu Fons d’activitats que es detallen, amb les signatures que exigeix l’entitat.",
         "sections": {
           "payout": "Liquidació",
           "purpose": "Per a què es farà servir (destinació signada per l’entitat)",
           "origin": "D’on provenen els diners",
-          "signatures": "Doble signatura",
+          "signatures": "Signatures",
           "notes": "Notes"
         },
         "reference": "Referència",
@@ -2989,6 +3081,7 @@
         "publish": "Desar i publicar a KORUM",
         "publishing": "Publicant…",
         "publishHint": "El botó s’activa quan no falti res de la llista.",
+        "syncing": "Obrint l’esborrany desat…",
         "saveDraft": "Desar esborrany",
         "saving": "Desant…",
         "saveChanges": "Desar canvis",
@@ -3090,7 +3183,7 @@
     "payouts": {
       "metaTitle": "Liquidacions",
       "title": "Liquidacions de les campanyes aconseguides",
-      "intro": "Quan una campanya arriba a la seva meta, els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que dues persones diferents de l’entitat signen la liquidació. Trieu la destinació, adjunteu la factura del proveïdor i signeu totes dues amb el vostre codi.",
+      "intro": "Quan una campanya arriba a la seva meta, els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que l’entitat signa la liquidació (dues persones diferents, o només Direcció si l’entitat va triar signatura única). Trieu la destinació, adjunteu la factura del proveïdor i signeu amb el vostre codi.",
       "badge": "100 % aconseguit · liquidació",
       "figures": {
         "raised": "Recaptat",
@@ -3113,11 +3206,11 @@
         "SPONSORS_PENDING": "Revisar els comerços",
         "KYB_NOT_VERIFIED": "Anar als documents del titular"
       },
-      "readOnly": "Només les dues persones signants de l’entitat poden demanar i signar la liquidació.",
+      "readOnly": "Només les persones signants de l’entitat poden demanar i signar la liquidació.",
       "photosHint": "Fotos Abans i Després i agraïment (les famílies les veuran quan acabi la liquidació)",
       "empty": {
         "title": "Encara no hi ha campanyes per liquidar",
-        "text": "Quan una campanya arribi al 100 %, apareixerà aquí per enviar els diners al projecte amb la doble signatura.",
+        "text": "Quan una campanya arribi al 100 %, apareixerà aquí per enviar els diners al projecte amb les signatures de l’entitat.",
         "cta": "Anar al quadre de comandament"
       },
       "form": {
@@ -3135,11 +3228,11 @@
         "providerNameError": "Escriviu el nom del proveïdor (entre {min} i {max} caràcters).",
         "invoiceLabel": "Factura (o proforma) del proveïdor",
         "invoiceOptional": "Factura del proveïdor (opcional)",
-        "invoiceHelp": "PDF o foto, fins a {size} MB. La veuran les dues persones que signen; les famílies, no.",
+        "invoiceHelp": "PDF o foto, fins a {size} MB. La veuran les persones que signen; les famílies, no.",
         "invoiceReady": "Factura adjunta: {name}",
         "invoiceKept": "la que ja vau pujar",
         "uploading": "Pujant la factura…",
-        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura amb un codi. Després signarà l’altra persona.",
+        "effect": "En demanar-la t’enviem per correu el teu enllaç de signatura amb un codi. Si l’entitat té una altra persona signant, signarà després.",
         "effectUpdate": "En canviar-la, les signatures que hi hagués deixen de valer i es tornen a demanar.",
         "submit": "Demanar la liquidació i signar",
         "submitUpdate": "Desar els canvis i tornar a signar",
@@ -3186,7 +3279,7 @@
         "FILE_RETENTION_REQUIRED": "No hem pogut desar el fitxer. Torna-ho a provar."
       },
       "pending": {
-        "title": "Liquidació {reference} · esperant les dues signatures",
+        "title": "Liquidació {reference} · esperant les signatures",
         "toProvider": "Per al proveïdor {name} · IBAN amb codi d’entitat {bank}, acabat en {last4}",
         "toOrganization": "Per al compte de {name}",
         "openInvoice": "Veure la factura del proveïdor",
@@ -3208,8 +3301,8 @@
           "SPONSORS_PENDING": "No s’ha pogut aprovar: hi ha comerços cobrats sense admetre ni rebutjar.",
           "FIGURES_CHANGED": "Les xifres han canviat des que es va signar (una retrocessió). Torneu a demanar la liquidació: es tornarà a signar.",
           "ESCROW_MISMATCH": "La guardiola no quadra amb el que s’ha recaptat. L’equip de KORUM ho està revisant.",
-          "KYB_NOT_VERIFIED": "Les dues signatures compten, però falten els documents del titular verificats. S’enviarà tan aviat com hi siguin.",
-          "DESTINATION_ACCOUNT_MISSING": "Les dues signatures compten, però l’entitat encara no té el seu compte a PAYCOMET.",
+          "KYB_NOT_VERIFIED": "Les signatures ja compten, però falten els documents del titular verificats. S’enviarà tan aviat com hi siguin.",
+          "DESTINATION_ACCOUNT_MISSING": "Les signatures ja compten, però l’entitat encara no té el seu compte a PAYCOMET.",
           "INVOICE_INVALID": "La factura adjunta ja no és vàlida. Pugeu-ne una altra i torneu a demanar la liquidació.",
           "PROVIDER_UNAVAILABLE": "El pagament directe al proveïdor encara no està disponible. Canvieu la destinació al compte de l’entitat.",
           "SIGNATURES": "Les signatures no són vàlides per al que hi ha ara (alguna cosa ha canviat o algú ha deixat el càrrec). Torneu a signar.",
@@ -3218,7 +3311,11 @@
         },
         "invoiceMissing": "Falta la factura (o proforma) del proveïdor: adjunteu-la per poder signar.",
         "blockedNote": "Es podrà signar quan resolgueu el que falta (a dalt).",
-        "requestedBy": "Demanada o canviada per última vegada per {name} el {date}."
+        "requestedBy": "Demanada o canviada per última vegada per {name} el {date}.",
+        "titleSigned": "Liquidació {reference} · signada, falta enviar-la",
+        "allSigned": "Ja hi són les signatures que exigeix l’entitat: falta enviar els diners.",
+        "send": "Enviar els diners ara",
+        "sending": "Enviant…"
       },
       "history": {
         "title": "Liquidacions enviades",
@@ -3256,7 +3353,7 @@
       },
       "closedOn": "Va vèncer el {date}",
       "raised": "Recaptat {raised} de {goal} ({percent} %)",
-      "decideIntro": "Decideix una persona signant i l’altra rep un avís. Cap de les dues opcions no envia diners a l’entitat: per a això continuarà fent falta la doble signatura de la liquidació.",
+      "decideIntro": "Decideix una persona signant i, si n’hi ha una altra, rep un avís. Cap de les dues opcions no envia diners a l’entitat: per a això continuarà fent falta la signatura de la liquidació.",
       "readOnly": "Només les persones que signen a l’entitat poden decidir què fer amb aquesta campanya.",
       "poll": {
         "open": "Votació oberta fins al {date}",
@@ -3483,7 +3580,7 @@
         "download": "Descarregar acta",
         "downloadLabel": "Descarregar acta de la ronda {round}",
         "extraTitle": "Ronda extra",
-        "extraIntro": "Si ningú no reclama el premi d’una butlleta, o qui la va comprar ha demanat el reemborsament, pots sortejar una altra butlleta per substituir-lo. N’hi ha prou amb una de les dues persones signants: l’altra rebrà un avís i la ronda queda a l’acta. Només es pot fer abans de liquidar la rifa.",
+        "extraIntro": "Si ningú no reclama el premi d’una butlleta, o qui la va comprar ha demanat el reemborsament, pots sortejar una altra butlleta per substituir-lo. N’hi ha prou amb una persona signant: si n’hi ha una altra, rebrà un avís, i la ronda queda a l’acta. Només es pot fer abans de liquidar la rifa.",
         "reasonLabel": "Motiu",
         "reasonOption": "{reason} (fins a {max, plural, one {# premi} other {# premis}})",
         "prepare": "Preparar la ronda extra",
@@ -3717,13 +3814,14 @@
       "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar",
       "ACTIVITY_FUND_WINDOW": "Fons d’activitats a prop del termini de 90 dies (o passat)",
       "SPONSOR_MONEY_BLOCKED": "Diners d’un comerç bloquejats amb el termini corrent",
-      "PAYOUT_BLOCKED": "Liquidació de campanya bloquejada: hi ha repartiments que no es poden enviar ni replanificar"
+      "PAYOUT_BLOCKED": "Liquidació de campanya bloquejada: hi ha repartiments que no es poden enviar ni replanificar",
+      "SIGNER_HANDOVER_EXPIRED": "Un relleu de signant va caducar sense tancar-se (alerta antiga: ja no s’obre; la tasca diària tanca els relleus caducats)"
     },
     "fundsTitle": "{count, plural, =0 {Fons d’activitats} one {Fons d’activitats · # entitat} other {Fons d’activitats · # entitats}}",
     "fundsNone": "Cap entitat no té diners al seu Fons d’activitats.",
     "fundPayout": {
       "NONE": "Sense liquidació demanada",
-      "PENDING_DOUBLE_CHECK": "Liquidació esperant la doble signatura",
+      "PENDING_DOUBLE_CHECK": "Liquidació esperant la signatura",
       "APPROVED": "Liquidació signada, enviant",
       "PROCESSING": "Liquidació signada, enviant",
       "FAILED": "Liquidació signada, enviament pendent"
@@ -3734,7 +3832,8 @@
       "avisos": "Alertes",
       "salud-de-precios": "Salut de preus",
       "procesos": "Tasques programades",
-      "fondos": "Fons d’activitats"
+      "fondos": "Fons d’activitats",
+      "entities": "Entitats i KYB ({count, plural, =0 {res per revisar} one {# per revisar} other {# per revisar}})"
     },
     "sections": {
       "business": "Negoci: ingressos reals i projectats"
@@ -3790,10 +3889,12 @@
       "cost": {
         "gateway": "Cost de passarel·la assumit",
         "autoBoost": "Autoimpuls aportat per KORUM",
-        "chargebacks": "Contracàrrecs assumits"
+        "chargebacks": "Contracàrrecs assumits",
+        "sunk": "Autoimpuls i contracàrrecs ja assentats en campanyes obertes"
       },
       "notProjected": "No es projecta",
-      "net": "Ingrés net"
+      "net": "Ingrés net",
+      "includedAbove": "Ja inclòs a dalt"
     },
     "orgs": {
       "title": "Rendiment per entitat, històric d’iniciatives i comerços",
@@ -3810,7 +3911,8 @@
         "goal": "Meta activa",
         "raised": "Recaptat",
         "expectedNet": "Net esperat",
-        "weightedNet": "Net ponderat"
+        "weightedNet": "Net ponderat",
+        "manage": "Gestió"
       },
       "medal": {
         "0": "Sense medalla",
@@ -3821,7 +3923,8 @@
       "closedValue": "{year} aquest curs / {historical} hist.",
       "sponsorsValue": "{active} act. / {historical} hist.",
       "total": "Total ({count, plural, one {# entitat} other {# entitats}})",
-      "noValue": "—"
+      "noValue": "—",
+      "open360": "Obre la fitxa 360º"
     },
     "forecast": {
       "title": "Previsió agregada de tancaments per trimestre",
@@ -3866,7 +3969,8 @@
         "diagnosis": "Diagnòstic de rendibilitat i Autoimpuls",
         "wallet": "Guardiola de la iniciativa",
         "status": "Estat"
-      }
+      },
+      "openPopup": "(obre la fitxa executiva)"
     },
     "diagnosis": {
       "negative": "🚨 Perill de retorn negatiu! ({net}) · Ajustar preus",
@@ -3915,7 +4019,21 @@
         }
       },
       "resolved": "Alerta marcada com a resolta.",
-      "failed": "No s’ha pogut desar. Torna-ho a provar."
+      "failed": "No s’ha pogut desar. Torna-ho a provar.",
+      "requeue": {
+        "button": "Torna a posar a la cua",
+        "running": "Posant a la cua…",
+        "hint": "Fes-ho servir quan ja hagis arreglat la causa. Els emails d’accés o d’invitació no es reactiven: el seu codi era d’un sol ús.",
+        "done": "{count, plural, =0 {No hi havia emails per reactivar} one {S’ha tornat a posar a la cua 1 email} other {S’han tornat a posar a la cua # emails}}",
+        "skipped": "{count, plural, one {1 email no es pot reactivar} other {# emails no es poden reactivar}}: duien un codi o enllaç d’un sol ús que ja s’ha esborrat.",
+        "failed": "No s’ha pogut posar a la cua. Torna-ho a provar.",
+        "outcome": {
+          "NOT_OPEN": "Aquesta alerta ja no era oberta.",
+          "NOT_REQUEUEABLE": "Aquesta alerta no és d’emails fallits d’una plantilla: s’arregla canviant l’ajust de l’email.",
+          "FORBIDDEN": "No tens permís per fer això.",
+          "INVALID": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar."
+        }
+      }
     },
     "jobs": {
       "title": "Tasques programades",
@@ -3999,7 +4117,385 @@
       "pricing": "Avisos de preus sense acceptar",
       "filtered": "Les xifres de campanyes amb 💎 i 🚨 segueixen els filtres de negoci que has triat."
     },
-    "quarterLabel": "{quarter, select, 1 {1r trimestre} 2 {2n trimestre} 3 {3r trimestre} other {4t trimestre}} de {year}"
+    "quarterLabel": "{quarter, select, 1 {1r trimestre} 2 {2n trimestre} 3 {3r trimestre} other {4t trimestre}} de {year}",
+    "open360": "Obre la fitxa 360º",
+    "popup": {
+      "badge": "Fitxa executiva del Super-Admin",
+      "loading": "Carregant la fitxa…",
+      "close": "Tanca la fitxa",
+      "error": {
+        "NOT_FOUND": "Aquesta iniciativa ja no és al llistat. Recarrega la pàgina.",
+        "FORBIDDEN": "No tens permís per veure aquesta fitxa.",
+        "FAILED": "No s’ha pogut carregar la fitxa. Tanca-la i torna-la a obrir."
+      },
+      "organization": "Entitat",
+      "format": "Format",
+      "formats": {
+        "BUDGET": "Pressupost",
+        "TICKETING": "Taquilla i rifes amb QR"
+      },
+      "wallet": "Guardiola i estat",
+      "progress": "Progrés",
+      "percent": "{value} %",
+      "contributions": "Aportacions",
+      "contributionsCount": "{count, plural, one {# aportació} other {# aportacions}}",
+      "closesAt": "Data límit",
+      "publicLink": "Enllaç públic de la iniciativa",
+      "copy": "Copia l’enllaç",
+      "copied": "Enllaç copiat.",
+      "copyFailed": "No s’ha pogut copiar. Selecciona’l i copia’l a mà.",
+      "openPublic": "Obre la fitxa pública",
+      "newTab": "(s’obre en una pestanya nova)",
+      "sponsorsTitle": "Comerços que participen en aquesta iniciativa ({count})",
+      "sponsorsNone": "Cap comerç ha aportat a aquesta iniciativa encara.",
+      "level": {
+        "ORO": "Categoria OR",
+        "PLATA": "Categoria PLATA",
+        "BRONCE": "Categoria BRONZE"
+      },
+      "sponsorStatus": {
+        "PENDING": "Pendent de l’entitat",
+        "APPROVED": "Admès",
+        "REJECTED": "No admès",
+        "CREDIT_POOL": "A la bossa del comerç",
+        "REFUNDED": "Retornat"
+      },
+      "matching": "bossa Matching 2x",
+      "sponsorAmount": "{amount} íntegres (+{fee} de gestió de KORUM)",
+      "negativeTitle": "Perill de retorn negatiu per a KORUM! ({net})",
+      "negativeText": "Aquesta iniciativa no deixa ingressos a KORUM i KORUM està assumint {loss} de cost de passarel·la de pagament.",
+      "analysisTitle": "Rendibilitat i Autoimpuls de KORUM",
+      "analysisProfitable": "Autoimpuls rendible!",
+      "missing": "Falta per arribar al 100 %",
+      "netAt100": "Net de KORUM en completar-se la meta",
+      "returnAfterBoost": "Retorn després d’aportar el que falta",
+      "returnHint": "El retorn compta el que ja s’ha cobrat més la comissió de trams i el manteniment que es liquiden en completar la meta. No compta res de projectat ni el fee de patrocini ja cobrat, que KORUM conserva aporti o no.",
+      "recoverableNote": "Ja hi ha un Autoimpuls anterior de {amount} en aquesta campanya. Si la campanya no s’aconsegueix, torna a KORUM; si aportes ara i la completes, ja no torna. Per això es resta del retorn.",
+      "previousTitle": "Autoimpulsos ja aportats",
+      "previousItem": "{amount} el {date} · {visibility}",
+      "visibilityShort": {
+        "SHOW": "mostrat en públic",
+        "HIDE": "no mostrat en públic"
+      },
+      "reauthLink": "Torna a verificar la meva identitat",
+      "boost": {
+        "title": "Autoimpuls de KORUM",
+        "titleProfitable": "Autoimpuls rendible: completar la meta amb diners de KORUM",
+        "visibilityLegend": "Es mostra aquest Autoimpuls en públic?",
+        "visibility": {
+          "SHOW": "Mostra’l en públic: la fitxa dirà, sense import, que la plataforma KORUM ha ajudat a aconseguir el repte",
+          "HIDE": "No el mostris en públic: la fitxa només dirà que s’ha assolit la meta"
+        },
+        "visibilityHint": "Es decideix en cada execució. Preseleccionat: el valor que fixen els ajustos de la plataforma. Si es mostra, la fitxa diu, sense import, que la plataforma KORUM també ha aportat. En els dos casos l’Autoimpuls queda assentat al llibre major i suma com qualsevol aportació (també +1 al comptador 💛), però no compta per al repte de cap curs.",
+        "start": "Aporta {amount} des de KORUM i completa la meta",
+        "confirmTitle": "Confirma l’Autoimpuls",
+        "confirmText": "KORUM aportarà {amount} dels seus diners i la iniciativa passarà a «meta assolida». Quedarà {visibility}. No es pot desfer.",
+        "confirm": "Sí, aporta {amount}",
+        "running": "Aportant…",
+        "cancel": "Cancel·la",
+        "done": "Autoimpuls aportat: {amount}. La iniciativa ha arribat al 100 %.",
+        "problem": {
+          "FAILED": "No s’ha pogut aportar. Revisa la fitxa i torna-ho a provar.",
+          "AMOUNT_CHANGED": "El que falta ha canviat mentre miraves la fitxa (ha arribat una altra aportació). No s’ha gastat res: revisa la xifra nova.",
+          "NOT_ALLOWED": "Aquesta iniciativa ja no pot rebre un Autoimpuls (ja no recapta, ha passat la data límit o ja és completa).",
+          "REAUTH_REQUIRED": "Per gastar diners de KORUM cal que tornis a posar el teu codi de verificació.",
+          "FORBIDDEN": "No tens permís per fer això.",
+          "INVALID": "No s’ha pogut llegir la petició. Tanca la fitxa i torna-la a obrir.",
+          "NOT_PROFITABLE": "A KORUM no li compensa aportar a aquesta iniciativa i no has acceptat la pèrdua. Revisa la fitxa i marca la casella si vols aportar igualment."
+        },
+        "acceptLoss": "A KORUM no li compensa aportar: el retorn després d’aportar és de {profit}. Entenc que perdrà aquests diners i vull aportar igualment.",
+        "lossTitle": "Última comprovació: aquesta aportació no compensa KORUM",
+        "lossText": "Gastaràs {amount} de KORUM i, tot i així, aquesta iniciativa deixarà una pèrdua de {loss}. Aquests diners no es recuperen. No es pot desfer.",
+        "lossTextZero": "Gastaràs {amount} de KORUM i aquesta iniciativa no deixarà cap benefici. Aquests diners no es recuperen. No es pot desfer.",
+        "lossConfirm": "Sí, aporta {amount} encara que no compensi",
+        "lossBack": "No, torna"
+      },
+      "fix": {
+        "button": "Corregeix les tarifes amb 1 clic",
+        "running": "Corregint…",
+        "done": "Tarifes corregides.",
+        "explainAvailable": "Puja als valors globals les tarifes pròpies de l’entitat que són per sota (per a les seves properes campanyes).",
+        "explainPublished": "Aquesta campanya ja està publicada: la seva pissarra no es toca, perquè l’entitat rebi el que se li va ensenyar (i, si té una taquilla a la venda, tampoc les despeses de gestió de les seves entrades). L’avís continuarà fins que acabi.",
+        "explainNothing": "No hi ha tarifes per corregir sense canviar el que ja s’ha promès a l’entitat.",
+        "problem": {
+          "FAILED": "No s’ha pogut corregir. Torna-ho a provar.",
+          "NOTHING_TO_FIX": "Ja no hi ha tarifes per corregir. Recarrega la fitxa.",
+          "REAUTH_REQUIRED": "Per canviar tarifes cal que tornis a posar el teu codi de verificació.",
+          "INVALID": "No s’ha pogut llegir la petició. Tanca la fitxa i torna-la a obrir."
+        }
+      },
+      "genericTitle": "Fitxa de la iniciativa",
+      "retry": "Torna-ho a provar",
+      "negativeTextSunk": "Aquesta iniciativa no deixa ingressos a KORUM perquè KORUM ja ha assumit {sunk} entre Autoimpuls i contracàrrecs d’aquesta campanya. No és un problema de tarifes: és un cost ja gastat.",
+      "negativeTextBoth": "Aquesta iniciativa no deixa ingressos a KORUM: KORUM assumeix {loss} de cost de passarel·la de pagament i ja ha gastat {sunk} entre Autoimpuls i contracàrrecs d’aquesta campanya."
+    },
+    "entities": {
+      "metaTitle": "Entitats · Consola KORUM",
+      "back": "← Torna a la consola",
+      "title": "Entitats",
+      "waitingTitle": "{count, plural, =0 {Documents esperant revisió} one {1 entitat espera la revisió dels seus documents} other {# entitats esperen la revisió dels seus documents}}",
+      "waitingNone": "No hi ha documents pendents de revisar.",
+      "waitingSince": "Esperant des del {date}",
+      "review": "Revisa els documents",
+      "allTitle": "Totes les entitats ({count})",
+      "none": "Encara no hi ha entitats.",
+      "region": "Totes les entitats",
+      "caption": "Entitats de la plataforma amb l’estat dels seus documents del titular",
+      "col": {
+        "name": "Entitat",
+        "province": "Província",
+        "kyb": "Documents del titular",
+        "submitted": "Enviats el",
+        "medal": "Medalla",
+        "manage": "Gestió"
+      },
+      "archived": "Arxivada",
+      "kyb": {
+        "PENDING": "Sense enviar",
+        "SUBMITTED": "Esperant revisió",
+        "VERIFIED": "Verificats",
+        "REJECTED": "Retornats"
+      },
+      "noValue": "—",
+      "medal": {
+        "0": "Sense medalla",
+        "1": "Bronze",
+        "2": "Plata",
+        "3": "Or"
+      },
+      "open360": "Obre la fitxa 360º"
+    },
+    "org360": {
+      "metaTitle": "Fitxa 360º · Consola KORUM",
+      "back": "← Totes les entitats",
+      "archived": "Arxivada",
+      "medal": {
+        "0": "Sense medalla",
+        "1": "Medalla de Bronze",
+        "2": "Medalla de Plata",
+        "3": "Medalla d’Or"
+      },
+      "nav": {
+        "label": "Seccions de la fitxa",
+        "titular": "Titular",
+        "kyb": "Documents (KYB)",
+        "firmas": "Signatures",
+        "tarifas": "Tarifes",
+        "categorias": "Categories",
+        "facturas": "Factures",
+        "negocio": "Negoci"
+      },
+      "reauthLink": "Torna a verificar la meva identitat",
+      "outcome": {
+        "FAILED": "No s’ha pogut completar. Torna-ho a provar.",
+        "REAUTH_REQUIRED": "Per això cal que tornis a posar el teu codi de verificació.",
+        "INVALID_INPUT": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar."
+      },
+      "reason": {
+        "NOT_FOUND": "Aquesta entitat ja no existeix.",
+        "ARCHIVED": "L’entitat és arxivada: la seva fitxa és només de lectura.",
+        "INVALID": "Revisa els camps marcats: algun valor no és vàlid.",
+        "CATEGORY_EXISTS": "Ja hi ha una categoria amb aquest nom.",
+        "CATEGORY_NOT_FOUND": "Aquesta categoria ja no existeix.",
+        "NOT_SUBMITTED": "Aquesta entitat no està esperant revisió. Recarrega la pàgina per veure’n l’estat actual.",
+        "INCOMPLETE": "Falten documents o el CIF del titular: no es pot verificar.",
+        "LEY49_NOT_DECLARED": "L’entitat no ha declarat el règim de la Llei 49/2002: no es pot acreditar.",
+        "SPLIT_ID_IN_USE": "Aquest identificador de compte destí ja el fa servir una altra entitat.",
+        "PUBLISHED_TICKETING": "L’entitat té una taquilla o rifa a la venda: les seves despeses de gestió d’entrades no es canvien mentrestant, perquè canviarien el que ja s’ha promès. Torna-ho a provar quan acabi.",
+        "LIMIT_BELOW_USED": "L’import exempt anual no pot ser menor que el que l’entitat ja ha gastat aquest curs."
+      },
+      "holder": {
+        "title": "Titular legal",
+        "hint": "Qui cobra i signa per aquesta entitat.",
+        "none": "Sense indicar",
+        "legalName": "Raó social del titular",
+        "legalForm": "Forma jurídica",
+        "vertical": "Tipus d’entitat",
+        "cif": "CIF",
+        "iban": "IBAN connectat",
+        "destination": "Compte destí a Paycomet",
+        "destinationYes": "Configurat",
+        "destinationNo": "Sense configurar: no se li pot liquidar",
+        "ley49": "Llei 49/2002",
+        "ley49No": "No declarada",
+        "ley49Verified": "Verificada el {date}",
+        "ley49Pending": "Declarada, sense verificar (emet justificant nominatiu)",
+        "closed": "Iniciatives tancades",
+        "closedValue": "{year} aquest any · {historical} històriques",
+        "sponsors": "Comerços patrocinadors",
+        "sponsorsValue": "{active} actius · {historical} històrics",
+        "raised": "Recaptat en total"
+      },
+      "legalForm": {
+        "PARENTS_ASSOCIATION": "AMPA / AFA",
+        "SCHOOL_OWNER": "Titular del col·legi",
+        "FOUNDATION": "Fundació",
+        "SPORTS_ENTITY": "Entitat esportiva",
+        "CULTURAL_ASSOCIATION": "Associació cultural",
+        "OTHER_NONPROFIT": "Una altra entitat sense ànim de lucre"
+      },
+      "vertical": {
+        "SCHOOL": "Centre escolar",
+        "SPORTS_CLUB": "Club esportiu",
+        "CULTURAL": "Entitat cultural"
+      },
+      "kyb": {
+        "title": "Documents del titular (KYB)",
+        "hint": "Revisa els documents, verifica’ls o retorna’ls amb una nota. Cada obertura d’un document queda registrada.",
+        "status": {
+          "PENDING": "Sense enviar",
+          "SUBMITTED": "Esperant la teva revisió",
+          "VERIFIED": "Documents verificats",
+          "REJECTED": "Retornats a l’entitat"
+        },
+        "submittedAt": "Enviats el {date}",
+        "reviewedAt": "Revisats el {date}",
+        "lastNote": "Nota enviada a l’entitat:",
+        "documents": "Documents vigents",
+        "kind": {
+          "TAX_ID_CARD": "Targeta d’identificació fiscal (CIF)",
+          "STATUTES": "Estatuts, acta fundacional o escriptures",
+          "REPRESENTATIVE_ID": "DNI o NIE de qui representa l’entitat",
+          "ACCOUNT_OWNERSHIP": "Certificat de titularitat del compte de l’entitat",
+          "LEY49_ACCREDITATION": "Acreditació de la Llei 49/2002"
+        },
+        "open": "Obre el document",
+        "newTab": "(s’obre en una pestanya nova)",
+        "missing": "Falta",
+        "cif": "CIF del titular",
+        "openHint": "El document s’obre amb un enllaç que caduca als 5 minuts. Conté dades personals: no el baixis sense necessitat.",
+        "reviewTitle": "La teva decisió",
+        "incomplete": "Falten documents o el CIF: pots retornar-los amb una nota, però no verificar-los.",
+        "decision": {
+          "VERIFIED": "Verifica els documents",
+          "REJECTED": "Retorna els documents amb una nota"
+        },
+        "ley49Accredited": "El document acredita el règim de la Llei 49/2002",
+        "ley49Hint": "Sense acreditar, l’entitat continuarà emetent justificant nominatiu en lloc de certificat fiscal.",
+        "splitId": "Identificador del compte destí a Paycomet (opcional)",
+        "splitIdSet": "Ja té un compte destí: si n’escrius un altre, el substitueix.",
+        "splitIdHint": "Quan Paycomet creï el compte del titular, escriu aquí el seu identificador. Sense ell no se li pot liquidar.",
+        "note": "Què falta o què cal corregir",
+        "noteHint": "Entre 10 i {max} caràcters. Sense dades personals: ni emails, ni IBAN, ni DNI. La llegeixen les persones que signen.",
+        "noteError": {
+          "short": "Escriu almenys 10 caràcters perquè l’entitat sàpiga què ha de corregir.",
+          "personal": "La nota sembla portar una dada personal (email, IBAN, DNI o una sèrie llarga de xifres). Treu-la i descriu el problema sense ella."
+        },
+        "releaseCifWithReject": "Allibera també el CIF que van escriure (per si és d’una altra entitat)",
+        "submit": {
+          "VERIFIED": "Verifica els documents",
+          "REJECTED": "Retorna els documents"
+        },
+        "saving": "Desant…",
+        "releaseCifText": "Si algú va escriure el CIF d’una altra entitat que encara no és a KORUM i li bloqueja l’alta, el pots alliberar. L’entitat haurà d’escriure el seu per tornar a enviar.",
+        "releaseCif": "Treu el CIF escrit per aquesta entitat",
+        "doneVerified": "Documents verificats. S’ha avisat qui signa.",
+        "doneRejected": "Documents retornats. S’ha avisat qui signa.",
+        "doneCifReleased": "CIF alliberat.",
+        "releaseCifConfirmTitle": "Confirma treure el CIF",
+        "releaseCifConfirmText": "S’esborrarà el CIF {cif} d’aquesta entitat i haurà d’escriure el seu per tornar a enviar. Confirma-ho només si no és el seu.",
+        "releaseCifConfirm": "Sí, treu el CIF",
+        "releaseCifCancel": "Cancel·la"
+      },
+      "seats": {
+        "title": "Qui signa",
+        "role": {
+          "DIRECTOR": "Direcció",
+          "COSIGNER": "Cofirma"
+        },
+        "twoFactorOn": "amb verificació en dos passos",
+        "twoFactorOff": "sense verificació en dos passos",
+        "none": "Encara no signa ningú per aquesta entitat.",
+        "handover": {
+          "INVITED": "Relleu de {role}: la persona nova té la seva invitació pendent.",
+          "EXPIRED": "Relleu de {role}: la invitació va caducar sense acceptar-se."
+        },
+        "handoverUntil": "Val fins al {date}.",
+        "noHandover": "No hi ha cap relleu obert.",
+        "hint": "Quantes signatures exigeix l’entitat i qui signa, només per consultar-ho. Ho decideix i ho gestiona la pròpia entitat.",
+        "mode": {
+          "DOUBLE": "Doble signatura: Direcció i Cofirma.",
+          "SINGLE": "Signatura única: només Direcció (decisió de l’entitat)."
+        },
+        "handoverExpired": "Va caducar el {date}: l’entitat pot tornar-ho a proposar des del seu tauler.",
+        "since": "Al càrrec des del {date}",
+        "entityRegulates": "L’entitat regula els seus signants pels seus propis procediments: KORUM no dona de baixa ni confirma llocs. Cada canvi queda anotat en un registre d’auditoria que l’entitat no pot esborrar."
+      },
+      "tariffs": {
+        "title": "Condicions econòmiques individuals",
+        "hint": "Només afecten les campanyes noves d’aquesta entitat: les ja calculades conserven la seva pissarra.",
+        "custom": "Aplica una tarifa personalitzada",
+        "modeCustom": "S’apliquen les tarifes pròpies d’aquesta entitat.",
+        "modeGlobal": "S’apliquen automàticament els valors globals per defecte (es veuen a sota, sense poder-se editar).",
+        "unitEur": "€",
+        "unitPct": "%",
+        "field": {
+          "exemptLimitCents": "Import exempt anual",
+          "t1Bps": "Tram 1",
+          "t2Bps": "Tram 2",
+          "t3Bps": "Tram 3",
+          "sponsorFeeBps": "Fee de comerços",
+          "fullIntegrityCheckCents": "Aportació voluntària suggerida (garantia KORUM)",
+          "ticketFeeFixedCents": "Despeses de gestió digital fixes per entrada",
+          "ticketFeeBps": "Despeses de gestió digital variables sobre el preu",
+          "maintPerInitCents": "Càrrec de manteniment per iniciativa",
+          "maintAnnualCapCents": "Topall anual de manteniment"
+        },
+        "fieldError": "Escriu un nombre positiu, amb 2 decimals com a màxim i dins del rang permès.",
+        "maintActive": "Cobra manteniment a aquesta entitat",
+        "futureOnly": "Si canvies l’import exempt anual, el que queda per fer servir puja o baixa el mateix; el que ja s’ha gastat aquest curs no canvia.",
+        "saving": "Desant…",
+        "saveCustom": "Desa la tarifa personalitzada",
+        "saveGlobal": "Torna als valors globals",
+        "doneCustom": "Tarifa personalitzada desada.",
+        "doneGlobal": "L’entitat torna als valors globals."
+      },
+      "categories": {
+        "title": "Categories de l’entitat",
+        "hint": "Exemptes (0 %) o per trams. Una categoria global amb una altra regla aquí només canvia per a aquesta entitat.",
+        "source": {
+          "OVERRIDE": "regla pròpia",
+          "CUSTOM": "pròpia"
+        },
+        "rule": {
+          "EXEMPT": "💚 0 % exempta",
+          "BRACKETS": "🏗️ Per trams"
+        },
+        "doneRule": "Regla de la categoria desada.",
+        "confirmTitle": "Confirma el canvi de regla",
+        "confirmText": "«{name}» passarà a {rule} a les campanyes noves d’aquesta entitat. Les que ja estan publicades no canvien.",
+        "confirmYes": "Sí, canvia la regla",
+        "confirmNo": "No, deixa-la com està",
+        "doneAdd": "Categoria creada.",
+        "newName": "Nova categoria de l’entitat",
+        "newRule": "Regla de la nova categoria",
+        "add": "Crea la categoria"
+      },
+      "invoices": {
+        "title": "Factures Veri*factu de l’entitat",
+        "hint": "Les 100 més recents. Només lectura.",
+        "none": "Encara no hi ha factures d’aquesta entitat.",
+        "region": "Factures de l’entitat",
+        "caption": "Factures de l’entitat amb el seu import i el seu estat davant del proveïdor de Veri*factu",
+        "number": "Número",
+        "date": "Data",
+        "concept": "Concepte",
+        "total": "Total",
+        "status": "Estat",
+        "rectification": "Rectificativa",
+        "state": {
+          "PENDING": "Pendent d’enviament",
+          "SENT": "Enviada, sense resposta",
+          "ACCEPTED": "Acceptada",
+          "ACCEPTED_WITH_ERRORS": "Acceptada amb errors",
+          "REJECTED": "Rebutjada"
+        }
+      },
+      "business": {
+        "title": "El que {name} aporta a KORUM",
+        "hint": "Les 6 fonts d’ingressos d’aquesta entitat i les seves iniciatives. Prem el títol d’una per obrir-ne la fitxa executiva."
+      }
+    }
   },
   "forbidden": {
     "title": "No tens accés a aquesta pàgina",
@@ -4175,7 +4671,8 @@
         "buyTickets": "Compra entrades",
         "buyRaffle": "Compra butlletes"
       },
-      "contributionsClosed": "Aquesta iniciativa ja no admet aportacions"
+      "contributionsClosed": "Aquesta iniciativa ja no admet aportacions",
+      "selfBoost": "La plataforma KORUM també ha aportat i ha ajudat a aconseguir el repte."
     },
     "share": {
       "title": "Comparteix a KORUM",
@@ -5141,7 +5638,7 @@
       "phases": {
         "PHASE0_MOD": "En revisió prèvia",
         "PUBLIC_VOTING": "Oberta a signatures",
-        "DOUBLE_CHECK": "Amb quòrum, pendent de la doble signatura",
+        "DOUBLE_CHECK": "Amb quòrum, pendent de la signatura de l’entitat",
         "CONVERTED": "Transformada en iniciativa",
         "REJECTED": "No s’ha pogut aprovar"
       },

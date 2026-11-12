@@ -4,6 +4,7 @@ import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { authorizeSuperadmin, recordAudit, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { InvoiceNotAllowedError, resolveUnknownInvoice, type UnknownInvoiceResolution } from '@/services/invoicing/invoice.service';
+import { secretFieldsOf } from '@/services/email/templates/catalog';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { RefundNotAllowedError } from '@/services/payments/payment-reversals';
 
@@ -22,14 +23,21 @@ const RESOLVED_BY_THEIR_CASE: Record<string, string> = { REFUND_STUCK: 'Contribu
 const needsItsForm = (alert: { type: string; targetType: string | null; targetId: string | null }) =>
   RESOLVED_BY_THEIR_CASE[alert.type] === alert.targetType && alert.targetId !== null && /^\d{1,10}$/.test(alert.targetId);
 
-/** Marca como resuelta una alerta abierta. Solo el Super-Admin (con el segundo factor de su sesión); un identificador que no está abierto no hace nada. */
-export async function resolveOpsAlertById(db: KorumPrismaClient, actor: SessionActor, alertId: string): Promise<ResolveAlertResult> {
-  // Una acción de servidor se puede llamar sin pasar por la página: el segundo factor de la sesión se comprueba aquí también, no solo en el `layout`.
+/**
+ * Una acción de servidor se puede llamar sin pasar por la página: el segundo factor de la sesión se comprueba aquí también, no solo en el `layout`.
+ * Solo el Super-Admin; cualquier otra sesión se deniega y queda en la auditoría.
+ */
+export async function authorizeConsoleSession(db: KorumPrismaClient, actor: SessionActor, operation: string, targetType: string): Promise<void> {
   if (actor.kind === 'user' && actor.isSuperadmin && actor.secondFactor !== true) {
-    await recordAudit(db, actor, { action: 'tenant.access_denied', organizationId: null, targetType: 'OpsAlert', targetId: '*', metadata: { attempted: 'alert.resolve', reason: 'SECOND_FACTOR_REQUIRED' } });
+    await recordAudit(db, actor, { action: 'tenant.access_denied', organizationId: null, targetType, targetId: '*', metadata: { attempted: operation, reason: 'SECOND_FACTOR_REQUIRED' } });
     throw new TenantAccessError('SUPERADMIN_ONLY');
   }
-  await authorizeSuperadmin(db, actor, 'alert.resolve', 'OpsAlert');
+  await authorizeSuperadmin(db, actor, operation, targetType);
+}
+
+/** Marca como resuelta una alerta abierta. Solo el Super-Admin (con el segundo factor de su sesión); un identificador que no está abierto no hace nada. */
+export async function resolveOpsAlertById(db: KorumPrismaClient, actor: SessionActor, alertId: string): Promise<ResolveAlertResult> {
+  await authorizeConsoleSession(db, actor, 'alert.resolve', 'OpsAlert');
   // Cerrar y dejar constancia van juntos: si la auditoría falla, la alerta sigue abierta.
   return inTransaction(db, async (tx): Promise<ResolveAlertResult> => {
     const alert = await tx.opsAlert.findFirst({ where: { id: alertId, status: 'OPEN' }, select: { dedupeKey: true, type: true, organizationId: true, targetType: true, targetId: true } });
@@ -64,5 +72,37 @@ export async function resolveStuckInvoice(db: KorumPrismaClient, actor: Verified
     if (!open) throw new InvoiceNotAllowedError(invoiceId, 'no tiene una alerta de factura atascada abierta');
     await resolveUnknownInvoice(tx, actor, invoiceId, resolution);
     await resolveAlert(tx, dedupeKey);
+  });
+}
+
+export type RequeueEmailsResult = { status: 'REQUEUED'; requeued: number; skipped: number } | { status: 'NOT_OPEN' } | { status: 'NOT_REQUEUEABLE' };
+
+/** Plantilla de una alerta `email:failed:{plantilla}`: la única forma de alerta de email cuyos mensajes se pueden volver a poner en cola. */
+const EMAIL_FAILED_KEY = /^email:failed:([A-Za-z][A-Za-z0-9.]{0,79})$/;
+export const requeueTemplateOf = (dedupeKey: string): string | null => EMAIL_FAILED_KEY.exec(dedupeKey)?.[1] ?? null;
+const REQUEUE_BATCH = 500;
+
+/**
+ * «Volver a poner en cola» (Sprint 5.2, heredado del 2.6): los mensajes de una plantilla que agotaron sus reintentos o fueron rechazados vuelven a
+ * `PENDING` con los intentos a cero, para cuando ya se ha arreglado la causa (clave del proveedor, remitente, plantilla). Los de plantillas con un
+ * código o enlace de un solo uso (acceso, invitación) **no** se reactivan: su secreto ya se borró al fallar y caducaría igualmente. Cierra la alerta
+ * en la misma transacción; si los mensajes vuelven a fallar, la alerta se reabre sola. Queda en la auditoría con los recuentos, sin direcciones.
+ */
+export async function requeueFailedEmails(db: KorumPrismaClient, actor: SessionActor, alertId: string, now: Date = new Date()): Promise<RequeueEmailsResult> {
+  await authorizeConsoleSession(db, actor, 'outbox.requeue', 'OpsAlert');
+  return inTransaction(db, async (tx): Promise<RequeueEmailsResult> => {
+    const alert = await tx.opsAlert.findFirst({ where: { id: alertId, status: 'OPEN', type: 'EMAIL_DELIVERY_FAILED' }, select: { dedupeKey: true } });
+    if (!alert) return { status: 'NOT_OPEN' };
+    const templateKey = requeueTemplateOf(alert.dedupeKey);
+    if (templateKey === null) return { status: 'NOT_REQUEUEABLE' };
+    const failed = await tx.outboxMessage.findMany({ where: { status: 'FAILED', templateKey }, orderBy: { id: 'asc' }, take: REQUEUE_BATCH, select: { id: true } });
+    const requeueable = secretFieldsOf(templateKey).length === 0;
+    const ids = requeueable ? failed.map((row) => row.id) : [];
+    // La condición `FAILED` en la escritura cubre la carrera con otra persona que lo haga a la vez: solo pasa a la cola quien sigue fallido.
+    const { count } = ids.length === 0 ? { count: 0 } : await tx.outboxMessage.updateMany({ where: { id: { in: ids }, status: 'FAILED' }, data: { status: 'PENDING', attempts: 0, nextAttemptAt: now, lastError: null } });
+    // Con más mensajes fallidos que el lote la alerta sigue abierta: quien la atiende vuelve a pulsar hasta vaciarla.
+    if (failed.length < REQUEUE_BATCH) await resolveAlert(tx, alert.dedupeKey, now);
+    await recordAudit(tx, actor, { action: 'outbox.requeued', organizationId: null, targetType: 'OpsAlert', targetId: alertId, metadata: { templateKey, requeued: count, skipped: failed.length - count } }, { required: true });
+    return { status: 'REQUEUED', requeued: count, skipped: failed.length - count };
   });
 }

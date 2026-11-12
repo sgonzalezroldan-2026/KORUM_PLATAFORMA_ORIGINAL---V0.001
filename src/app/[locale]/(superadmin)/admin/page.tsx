@@ -77,6 +77,9 @@ export default async function AdminHomePage({ params, searchParams }: { params: 
               {t(`nav.${anchor}`)}
             </a>
           ))}
+          <Link href="/admin/entidades" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-entities">
+            {t('nav.entities', { count: overview.pendingKyb })}
+          </Link>
         </nav>
         <dl className="mobile-stack grid gap-4 md:grid-cols-2">
           <div className="korum-trust-vault p-5">

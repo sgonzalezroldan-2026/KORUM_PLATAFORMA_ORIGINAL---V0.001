@@ -42,7 +42,7 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
    - **Mi Hucha**, según el modo configurado por el Super-Admin: aportación mensual programada (`PLEDGE`) o monedero custodiado por una entidad autorizada (`REGULATED_WALLET`). KORUM nunca guarda saldo propio.
 3. **Entorno 2 · Panel de la entidad** (`/panel/[orgSlug]`):
    - Cuadro de mandos con línea de 6 estados, kit de medallas e ID de hucha `WLT-ESC-XXX`.
-   - **Doble firma mancomunada real** entre dos personas distintas: `DIRECTOR` (gestión principal) y `COSIGNER` (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato…), para aprobar ideas y para liberar fondos.
+   - **Doble firma mancomunada real** entre dos personas distintas: `DIRECTOR` (gestión principal) y `COSIGNER` (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato…), para aprobar ideas y para liberar fondos. **La entidad elige** si exige las dos firmas (por defecto) o una sola, la de `DIRECTOR`, bajo su responsabilidad (`Organization.signatureMode`); cambia a sus firmantes y su modo de firma **ella misma, al instante y sin el Super-Admin**, con aviso por email y registro de auditoría que no puede borrar.
    - Estudio de edición con pizarra TCO cuadrada al céntimo (presupuesto con proveedor libre, o taquilla/rifa con aviso normativo).
    - Liquidaciones con factura del proveedor, fotos Antes/Después, redimensionamiento o reembolso del 100 %.
    - **Modo portería** (`/panel/[orgSlug]/porteria`) con PIN por evento, escáner QR y sorteo certificado; exportación del Modelo 182 y cartel A4 con QR.

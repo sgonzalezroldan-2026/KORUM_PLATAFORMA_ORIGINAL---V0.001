@@ -22,7 +22,7 @@ import { loadGateAdmin } from '@/repositories/gate-admin.repository';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
 import { reserveTickets } from '@/core/ticketing/ticket-reservation.service';
-import { createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, signerOf, uniqueId } from './test-database';
 
 /**
  * Sprint 4.5 · portería móvil: lecturas sin cobertura (QA-S04), límites de la red y sorteo en la fecha del evento (QA-SEC09), pantalla del panel.
@@ -70,7 +70,7 @@ async function joinGate(organizationId: string, initiativeId: number, pin: strin
 }
 
 async function gateSession(organizationId: string, initiativeId: number): Promise<GateActor> {
-  const { pin } = await setGatePin(db, PIN_SECRET, director(organizationId), organizationId, initiativeId);
+  const { pin } = await setGatePin(db, PIN_SECRET, await signerOf(db, organizationId), organizationId, initiativeId);
   return joinGate(organizationId, initiativeId, pin);
 }
 
@@ -158,7 +158,7 @@ describe('QA-S04 · sincronizar lo leído sin cobertura', () => {
 
   it('si otro móvil ya había dejado entrar el pase, la lectura sin red vuelve como conflicto con la hora del primer acceso', async () => {
     const { event, initiative } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId);
+    const { pin } = await setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId);
     const phoneA = await joinGate(event.organizationId, event.initiativeId, pin);
     const phoneB = await joinGate(event.organizationId, event.initiativeId, pin);
     const { payload, pass } = await buy(initiative.id, 4);
@@ -250,11 +250,11 @@ describe('QA-SEC09 · portería expuesta a Internet', () => {
   it('cambiar la fecha del evento mueve la caducidad del PIN: no la decide quien llama', async () => {
     const firstDay = new Date(Date.now() + 2 * 86_400_000);
     const { event } = await eventSetup({ closesAt: firstDay });
-    const first = await setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId);
+    const first = await setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId);
     expect(first.expiresAt.getTime()).toBe(firstDay.getTime() + 6 * 3_600_000);
     const later = new Date(Date.now() + 10 * 86_400_000);
     await db.initiative.update({ where: { id: event.initiativeId }, data: { closesAt: later } });
-    const second = await setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId);
+    const second = await setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId);
     expect(second.expiresAt.getTime()).toBe(later.getTime() + 6 * 3_600_000);
   });
 });
@@ -330,7 +330,7 @@ describe('Correcciones de la auditoría del Sprint 4.5', () => {
 
   it('(R1) quien tiene el PIN no abre sesiones sin límite: las entradas correctas también cuentan para el tope de la red', async () => {
     const { event } = await eventSetup();
-    const { pin } = await setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId);
+    const { pin } = await setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId);
     const ipHash = uniqueId('ip');
     const key = `${GATE_ENTRY_RULE.prefix}${ipHash}`;
     await db.rateLimit.create({ data: { id: key, key, count: GATE_ENTRY_RULE.limit - 1, lastRequest: BigInt(Date.now()) } });
@@ -386,16 +386,16 @@ describe('Correcciones de la auditoría del Sprint 4.5', () => {
   it('(M2) solo se crea el PIN de un evento a la venta o ya conseguido', async () => {
     for (const status of ['BUDGETING', 'CANCELLED', 'REFUNDED', 'CLOSED'] as const) {
       const { event } = await eventSetup({ status });
-      await expect(setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId)).rejects.toThrow('no está a la venta');
+      await expect(setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId)).rejects.toThrow('no está a la venta');
     }
     const reached = await eventSetup({ status: 'GOAL_REACHED' });
-    await expect(setGatePin(db, PIN_SECRET, director(reached.event.organizationId), reached.event.organizationId, reached.event.initiativeId)).resolves.toHaveProperty('pin');
+    await expect(setGatePin(db, PIN_SECRET, await signerOf(db, reached.event.organizationId), reached.event.organizationId, reached.event.initiativeId)).resolves.toHaveProperty('pin');
   });
 
   it('(M3) la sesión vive como mucho 48 horas, aunque el PIN dure semanas', async () => {
     const closes = new Date(Date.now() + 20 * 86_400_000);
     const { event } = await eventSetup({ closesAt: closes });
-    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, director(event.organizationId), event.organizationId, event.initiativeId);
+    const { pin, expiresAt } = await setGatePin(db, PIN_SECRET, await signerOf(db, event.organizationId), event.organizationId, event.initiativeId);
     expect(expiresAt.getTime()).toBe(closes.getTime() + 6 * 3_600_000);
     const opened = await openGateSession(db, PIN_SECRET, { initiativeId: event.initiativeId, pin, requestMeta: { ipHash: uniqueId('ip') } });
     if (opened.status !== 'OPENED') throw new Error('Debía abrirse');
@@ -480,7 +480,7 @@ describe('Sprint 4.6 · ronda extra del sorteo', () => {
     const root = await createUser(db);
     await db.user.update({ where: { id: root.id }, data: { isSuperadmin: true } });
     await db.organizationMember.createMany({ data: [{ userId: a.id, organizationId: organization.id, role: 'DIRECTOR' }, { userId: b.id, organizationId: organization.id, role: 'COSIGNER' }, { userId: root.id, organizationId: organization.id, role: 'COSIGNER' }] });
-    const { pin } = await setGatePin(db, PIN_SECRET, director(organization.id), organization.id, event.initiativeId);
+    const { pin } = await setGatePin(db, PIN_SECRET, await signerOf(db, organization.id), organization.id, event.initiativeId);
     const wrong = pin === '000000' ? '000001' : '000000';
     let last: Awaited<ReturnType<typeof openGateSession>> | null = null;
     for (let attempt = 0; attempt < MAX_FAILURES_PER_EVENT; attempt += 1) last = await openGateSession(db, PIN_SECRET, { initiativeId: event.initiativeId, pin: wrong, requestMeta: { ipHash: uniqueId('ip') } });
@@ -519,7 +519,7 @@ describe('Sprint 4.6 · ronda extra del sorteo', () => {
 
   it('el panel dice si el PIN se anuló por abuso (y deja de decirlo al crear otro) y mantiene a la vista una rifa conseguida durante 60 días', async () => {
     const { event } = await eventSetup();
-    const asDirector = director(event.organizationId);
+    const asDirector = await signerOf(db, event.organizationId);
     const find = async () => (await loadGateAdmin(db, asDirector, event.organizationId)).find((item) => item.id === event.initiativeId)!;
     expect(await find()).toMatchObject({ pinActive: false, pinRevoked: false });
     const { pin } = await setGatePin(db, PIN_SECRET, asDirector, event.organizationId, event.initiativeId);
@@ -660,7 +660,7 @@ describe('Sprint 4.7 · ronda extra con números sustituidos, plazo mínimo y c�
 
   it('se puede cambiar el enlace de la puerta: el código nuevo es distinto, queda auditado y solo lo hace quien firma', async () => {
     const { event, organization } = await eventSetup();
-    const asDirector = director(organization.id);
+    const asDirector = await signerOf(db, organization.id);
     await expect(rotateGateCode(db, asDirector, organization.id, event.initiativeId)).rejects.toThrow('todavía no hay PIN');
     await setGatePin(db, PIN_SECRET, asDirector, organization.id, event.initiativeId);
     const before = (await db.initiative.findUniqueOrThrow({ where: { id: event.initiativeId } })).gateCode!;
@@ -698,12 +698,12 @@ describe('Sprint 4.7 · ronda extra con números sustituidos, plazo mínimo y c�
     const b = await eventSetup();
     const find = async (target: typeof a) => (await loadGateAdmin(db, director(target.organization.id), target.organization.id)).find((item) => item.id === target.event.initiativeId)!;
     expect((await find(a)).gateCode).toBeNull();
-    await setGatePin(db, PIN_SECRET, director(a.organization.id), a.organization.id, a.event.initiativeId);
+    await setGatePin(db, PIN_SECRET, await signerOf(db, a.organization.id), a.organization.id, a.event.initiativeId);
     const code = (await find(a)).gateCode!;
     expect(code).toMatch(GATE_CODE_PATTERN);
-    await setGatePin(db, PIN_SECRET, director(a.organization.id), a.organization.id, a.event.initiativeId);
+    await setGatePin(db, PIN_SECRET, await signerOf(db, a.organization.id), a.organization.id, a.event.initiativeId);
     expect((await find(a)).gateCode).toBe(code);
-    await setGatePin(db, PIN_SECRET, director(b.organization.id), b.organization.id, b.event.initiativeId);
+    await setGatePin(db, PIN_SECRET, await signerOf(db, b.organization.id), b.organization.id, b.event.initiativeId);
     expect((await find(b)).gateCode).not.toBe(code);
     await expect(db.initiative.update({ where: { id: b.event.initiativeId }, data: { gateCode: 'MAL-CODIGO' } })).rejects.toThrow();
     await expect(db.initiative.update({ where: { id: b.event.initiativeId }, data: { gateCode: code } })).rejects.toThrow();

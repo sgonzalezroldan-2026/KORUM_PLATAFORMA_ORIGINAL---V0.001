@@ -4,6 +4,7 @@ import type { Db } from '@/lib/db';
 import { purgeStaleAttempts, type PurgeRule } from '@/lib/rate-limit';
 import { ACCOUNT_ERASURE_RULE, GATE_BLOCK_NOTICE_RULE, GATE_ENTRY_RULE, GATE_REJECTED_NOTICE_RULE, GATE_REQUEST_RULE, ACCOUNT_EXPORT_RULE, ACTIVITY_FUND_RULE, AUTH_EMAIL_RULE, CAMPAIGN_PAYOUT_RULE, EXPIRED_DECISION_RULE, RESIZE_VOTE_RULE, AUTH_REQUEST_PURGE_RULE, AUTH_SECOND_FACTOR_FAILURE_RULE, AUTH_SECOND_FACTOR_RULE, CHECKOUT_RULE, CHECKOUT_SEATS_RULE, IDEA_CHAT_RULE, IDEA_PROPOSAL_RULE, ENTITY_IMAGE_UPLOAD_RULE, IDEA_SIGN_RULE, KYB_UPLOAD_RULE, REGISTRATION_RULE, SIGNATURE_REQUEST_RULE, SUPPORT_ORG_TICKET_DAILY_RULE, SUPPORT_ORG_TICKET_RULE, SUPPORT_TICKET_DAILY_RULE, SUPPORT_TICKET_RULE, WEBHOOK_INVALID_RULE } from '@/lib/rate-limit-rules';
 import type { JobHandler } from '../job-types';
+import { checkExpiredSignerHandovers } from './handover-checks';
 
 const DAY_MS = 86_400_000;
 const MAX_ROUNDS = 20;
@@ -36,7 +37,8 @@ async function purgeSignatureChallenges(db: Db, now: Date, limit: number): Promi
  *   - contadores de intentos por IP caducados;
  *   - notificaciones de pago rechazadas de más de 90 días;
  *   - desafíos de firma caducados, consumidos o revocados hace más de 7 días;
- *   - y, durante una rotación de clave, vuelve a cifrar con la actual lo cifrado con la anterior (`key-rotation.ts`).
+ *   - y, durante una rotación de clave, vuelve a cifrar con la actual lo cifrado con la anterior (`key-rotation.ts`);
+ *   - y cierra solos los relevos de firmante caducados (`handover-checks.ts`, Sprint 5.2), sin alerta para el Super-Admin.
  * Nunca toca asientos, facturas, auditoría ni webhooks de pago válidos (6 años de conservación). La purga de datos personales por plazos es
  * otra tarea (`DATA_RETENTION_PURGE`, semanal).
  */
@@ -55,6 +57,7 @@ export const housekeepingHandler: JobHandler = async ({ db, now, batchSize, deps
     if (!hasMore) break;
   }
   const rotation = await rotateEncryptedData(db, deps.keyring(), batchSize, now);
-  const detail = { ...total, reencrypted: rotation.rotated, undecryptable: rotation.undecryptable };
+  const expiredHandovers = await checkExpiredSignerHandovers(db, now);
+  const detail = { ...total, reencrypted: rotation.rotated, undecryptable: rotation.undecryptable, expiredHandovers };
   return { processed: total.rateLimits + total.webhooks + total.challenges + rotation.rotated, hasMore: hasMore || rotation.hasMore, detail };
 };

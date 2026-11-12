@@ -19,7 +19,7 @@ import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAwaitingDecision, sponsorLateReceived, sponsorToEntityFund } from './definitions-activity-fund';
 import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
-import { signerHandover } from './definitions-team';
+import { orgKybStatus, signerHandover } from './definitions-team';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
 import { initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
 
@@ -97,6 +97,7 @@ const ENTRIES = [
   register('idea.quorumReached', ideaQuorumReached),
   register('idea.centerReplied', ideaCenterReplied),
   register('signer.handover', signerHandover),
+  register('org.kybStatus', orgKybStatus),
   register('payout.executed', payoutExecuted),
   register('payout.changed', payoutChanged),
   register('initiative.goalReachedSupporter', initiativeGoalReachedSupporter),

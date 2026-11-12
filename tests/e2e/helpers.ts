@@ -20,8 +20,21 @@ export async function expectNoHorizontalOverflow(page: Page) {
   expect(scrollWidth, `scrollWidth ${scrollWidth} > ancho ${innerWidth}`).toBeLessThanOrEqual(innerWidth);
 }
 
+/**
+ * Espera a que acaben las animaciones finitas de la página (como la aparición de los números del sorteo, 700 ms). axe mide el contraste con la opacidad que tiene el
+ * elemento en ese instante: en un servidor lento (el CI de GitHub) la medición caía a mitad de la animación y daba un falso «color-contrast». Las infinitas
+ * (confeti, esqueletos) se dejan: esperarlas no terminaría nunca.
+ */
+export async function waitForFiniteAnimations(page: Page) {
+  await page.evaluate(async () => {
+    const finite = document.getAnimations().filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity);
+    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
+  });
+}
+
 /** axe con las etiquetas WCAG 2.2 AA: 0 incidencias serias o críticas. */
 export async function expectNoSeriousA11yViolations(page: Page) {
+  await waitForFiniteAnimations(page);
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
   const serious = results.violations.filter((violation) => violation.impact === 'serious' || violation.impact === 'critical');
   const summary = serious.map((violation) => `${violation.id}: ${violation.nodes.map((node) => node.target.join(' ')).join(' | ')}`);

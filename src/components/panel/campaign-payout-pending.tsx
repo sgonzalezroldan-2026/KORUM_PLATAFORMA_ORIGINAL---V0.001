@@ -59,7 +59,7 @@ export function CampaignPayoutPending({
   return (
     <section aria-labelledby={`payout-pending-${payout.id}`} className="flex flex-col gap-3 rounded-xl border-2 border-varsity-navy/20 bg-varsity-ivory p-4" data-testid={`payout-pending-${initiativeId}`}>
       <h3 id={`payout-pending-${payout.id}`} className="font-corp text-lg font-extrabold text-varsity-navy">
-        {t('title', { reference: payout.reference })}
+        {t(payout.slots.length > 0 && payout.signed === payout.slots.length ? 'titleSigned' : 'title', { reference: payout.reference })}
       </h3>
       <p className="font-corp text-2xl font-extrabold tabular-nums text-varsity-navy">
         <CurrencyText cents={payout.netPaidCents} />
@@ -81,7 +81,7 @@ export function CampaignPayoutPending({
       ) : null}
       {!payout.invoice && !invoiceMissing ? <p className="text-sm text-ink-soft">{t('noInvoice')}</p> : null}
 
-      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{tSlots('progress', { signed: payout.signed })}</p>
+      <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{tSlots('progress', { signed: payout.signed, total: payout.slots.length })}</p>
       <ul className="mobile-stack grid gap-2 sm:grid-cols-2">
         {payout.slots.map((slot) => (
           <li key={slot.role} className={clsx('flex flex-col gap-0.5 rounded-lg border-2 p-3', slot.signedBy ? 'border-varsity-emerald bg-emerald-50' : 'border-dashed border-stone-300 bg-white')}>
@@ -95,15 +95,18 @@ export function CampaignPayoutPending({
         ))}
       </ul>
 
-      {canAct && !blocked && payout.signed === 2 ? (
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => run(() => retryPayoutAction(orgSlug, { initiativeId }), (result) => announce(...settlementNotice(t, result.settlement)))}
-          className="tactile-btn self-start disabled:opacity-60"
-        >
-          {pending ? t('retrying') : t('retry')}
-        </button>
+      {canAct && !blocked && payout.signed === payout.slots.length ? (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-ink-soft">{t('allSigned')}</p>
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => run(() => retryPayoutAction(orgSlug, { initiativeId }), (result) => announce(...settlementNotice(t, result.settlement)))}
+            className="tactile-btn self-start disabled:opacity-60"
+          >
+            {pending ? t('sending') : t('send')}
+          </button>
+        </div>
       ) : canAct && !blocked && payout.mySlotOpen && !payout.stale && !invoiceMissing ? (
         <div className="flex flex-col gap-2">
           {payout.myChallengeExpiresAt ? <FormAlert tone="success">{tSlots('sent', { date: date(payout.myChallengeExpiresAt) })}</FormAlert> : null}

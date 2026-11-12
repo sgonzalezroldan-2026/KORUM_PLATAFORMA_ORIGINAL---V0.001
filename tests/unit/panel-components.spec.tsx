@@ -135,8 +135,18 @@ describe('cuadro de mandos (QA-S02)', () => {
   it('con las firmas y los documentos listos, los dos primeros pasos salen hechos', () => {
     board([], { readySigners: 2, kybStatus: 'VERIFIED' });
     const steps = within(screen.getByRole('list', { name: 'Pasos hasta la primera campaña' })).getAllByRole('listitem');
-    expect(steps[0]).toHaveTextContent('Las dos personas firmantes están listas.');
+    expect(steps[0]).toHaveTextContent('Las personas firmantes están listas.');
     expect(steps[1]).toHaveTextContent('Verificados: podéis publicar campañas con cobro.');
+  });
+
+  it('con firma única, una sola firma lista completa el paso; sin ella, el texto no habla de «la otra persona»', () => {
+    const { unmount } = board([], { readySigners: 1, kybStatus: 'PENDING', signatureMode: 'SINGLE' });
+    expect(within(screen.getByRole('list', { name: 'Pasos hasta la primera campaña' })).getAllByRole('listitem')[0]).toHaveTextContent('Las personas firmantes están listas.');
+    unmount();
+    board([], { readySigners: 0, kybStatus: 'PENDING', signatureMode: 'SINGLE' });
+    const first = within(screen.getByRole('list', { name: 'Pasos hasta la primera campaña' })).getAllByRole('listitem')[0]!;
+    expect(first).toHaveTextContent('Falta activar tu verificación en dos pasos para poder firmar.');
+    expect(first).not.toHaveTextContent('la otra persona');
   });
 });
 
@@ -227,6 +237,7 @@ const signers = [
 ];
 const headerOrg = {
   slug: 'cervantes',
+  signatureMode: 'DOUBLE' as 'DOUBLE' | 'SINGLE',
   walletId: 'WLT-ESC-AAAAAA',
   kybStatus: 'VERIFIED',
   exemptLimitCents: 100_000,
@@ -257,6 +268,13 @@ describe('cabecera de gestión', () => {
     expect(screen.getByRole('button', { name: 'Reenviar la invitación' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Cuadro de mandos' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('link', { name: 'Logros' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('con firma única el título cuenta una sola firma y no dice «de 2» (recorrido manual del 5.2)', async () => {
+    const header = await PanelManagementHeader({ locale: 'es', organization: { ...headerOrg, signatureMode: 'SINGLE' }, signers: signers.slice(0, 1), isDirector: true });
+    renderWithIntl(header);
+    expect(screen.getByText('Firma única (1 de 1 lista)')).toBeInTheDocument();
+    expect(screen.queryByText(/Doble firma/)).toBeNull();
   });
 
   it('con la beca ya usada la nombra; con mantenimiento activo enseña lo pagado y el tope; la segunda firma no ve «reenviar»', async () => {

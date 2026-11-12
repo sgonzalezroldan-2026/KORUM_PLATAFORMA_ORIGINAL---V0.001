@@ -2,6 +2,7 @@ import { inject } from 'vitest';
 import type { Prisma } from '@/generated/prisma/client';
 import { createKeyring } from '@/core/security/crypto';
 import { markSessionReauthenticated, verifySuperadminSession } from '@/core/security/verified-actor';
+import type { SessionActor } from '@/repositories/tenant-guard';
 import { createPrismaClient, type KorumPrismaClient } from '@/lib/prisma';
 import { PreviewEmailProvider } from '@/services/email/preview-email-provider';
 import { MemoryStorage } from '@/services/storage/memory-storage';
@@ -105,4 +106,22 @@ export async function verifiedSuperadmin(db: KorumPrismaClient, now: Date = new 
   await markSessionReauthenticated(db, session.id, { secondFactor: true }, new Date(now.getTime() - 60_000));
   const actor = await verifySuperadminSession(db, { userId: admin.id, sessionId: session.id, operation }, now);
   return { admin, session, actor };
+}
+
+const signerCache = new Map<string, SessionActor>();
+
+/**
+ * Una persona firmante **de verdad** (usuaria con su fila de cargo en la entidad), una por entidad y cargo. `setGatePin` vuelve a comprobar el cargo en la base de datos
+ * dentro de la transacción (auditoría de seguridad del 5.2, H1): un actor inventado, sin fila, ya no basta.
+ */
+export async function signerOf(db: KorumPrismaClient, organizationId: string, role: 'DIRECTOR' | 'COSIGNER' = 'DIRECTOR'): Promise<SessionActor> {
+  const key = `${organizationId}:${role}`;
+  const cached = signerCache.get(key);
+  if (cached) return cached;
+  // Si la entidad ya tiene a esa persona (la prueba la creó), se usa: no se añade una firmante más que cambiaría quién recibe los avisos.
+  const existing = await db.organizationMember.findFirst({ where: { organizationId, role }, select: { userId: true } });
+  const userId = existing?.userId ?? (await (async () => { const user = await createUser(db, { twoFactorEnabled: true }); await db.organizationMember.create({ data: { organizationId, userId: user.id, role } }); return user.id; })());
+  const actor: SessionActor = { kind: 'user', userId, isSuperadmin: false, memberships: [{ organizationId, role }], secondFactor: true };
+  signerCache.set(key, actor);
+  return actor;
 }

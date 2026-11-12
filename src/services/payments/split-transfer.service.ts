@@ -54,7 +54,7 @@ class PayoutSignaturesRejectedError extends PayoutNotAllowedError {
     readonly organizationId: string,
     readonly reasons: SignatureInvalidReason[]
   ) {
-    super(payoutId, `faltan dos firmas válidas de DIRECTOR y COSIGNER, dos personas distintas (${reasons.join(', ')})`, 'SIGNATURES');
+    super(payoutId, `faltan las firmas válidas que exige la entidad: DIRECTOR y COSIGNER, dos personas distintas, o solo DIRECTOR con firma única (${reasons.join(', ')})`, 'SIGNATURES');
   }
 }
 

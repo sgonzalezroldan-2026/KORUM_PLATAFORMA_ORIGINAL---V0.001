@@ -1,5 +1,6 @@
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
+import { revokeGateAccess } from '@/core/ticketing/gate-revoke';
 import type { Db } from '@/lib/db';
 
 /**
@@ -108,6 +109,8 @@ export async function completeHandoverInTx(tx: Db, handoverId: string, incomingU
     },
     data: { revokedAt: now }
   });
+  // Quien sale no conserva el PIN ni las sesiones de portería (auditoría de seguridad del 5.2, M9): quien entra genera uno nuevo.
+  await revokeGateAccess(tx, handover.organizationId, now);
   if (handover.role === 'DIRECTOR') {
     const incoming = await tx.user.findUniqueOrThrow({
       where: { id: incomingUserId },

@@ -154,7 +154,7 @@ test.describe('Sprint 4.2f · Fondo de actividades de la entidad', () => {
     await page.goto(director.path);
     await server(page.getByText(PURPOSE)).toBeVisible();
     await expect(page.getByText(/100,00\s€ · de 1 comercio/)).toBeVisible();
-    await expect(page.getByText('Con las dos firmas, el dinero se envía a la cuenta de la entidad. No se puede deshacer.')).toBeVisible();
+    await expect(page.getByText('Con las firmas que exige la entidad, el dinero se envía a la cuenta de la entidad. No se puede deshacer.')).toBeVisible();
     await checkPage(page, isMobile);
     await page.getByLabel('Código de 6 dígitos del email').fill(director.otp);
     await page.getByRole('button', { name: 'Firmar' }).click();
@@ -166,7 +166,7 @@ test.describe('Sprint 4.2f · Fondo de actividades de la entidad', () => {
     await server(cosigner.page.getByText(PURPOSE)).toBeVisible();
     await cosigner.page.getByLabel('Código de 6 dígitos del email').fill(other.otp);
     await cosigner.page.getByRole('button', { name: 'Firmar' }).click();
-    await server(cosigner.page.getByRole('heading', { name: '¡Doble firma completa! 2 de 2' })).toBeVisible();
+    await server(cosigner.page.getByRole('heading', { name: '¡Firma completa!' })).toBeVisible();
     await expect(cosigner.page.getByText(/el dinero ya va de camino a la cuenta de la entidad/)).toBeVisible();
     await cosigner.page.getByRole('link', { name: 'Volver al Fondo de actividades' }).click();
 

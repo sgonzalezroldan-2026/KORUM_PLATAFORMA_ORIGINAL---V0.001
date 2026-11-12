@@ -22,6 +22,8 @@ export interface BiProjection {
   sourcesCents: RevenueSources;
   sourcesTotalCents: number;
   gatewayLossCents: number;
+  /** Auto-Impulso y contracargos ya asentados en las campañas abiertas: un coste ya gastado, aparte de la pasarela. */
+  sunkCostsCents: number;
   netRevenueCents: number;
 }
 
@@ -31,18 +33,21 @@ export function summarizeProjection(rows: readonly BiInitiativeRow[]): BiProject
   const totals = sumRevenueBreakdowns(open);
   const potentialGoalCents = sum(open, (row) => row.goalCents);
   const raisedCents = sum(open, (row) => row.raisedCents);
+  const sunkCostsCents = sum(open, (row) => row.sunkCostsCents);
+  const netRevenueCents = assertSafeCents(totals.netRevenueCents - sunkCostsCents, 'ingreso neto proyectado');
   return {
     kpis: {
       potentialGoalCents,
       raisedCents,
-      expectedNetCents: totals.netRevenueCents,
+      expectedNetCents: netRevenueCents,
       weightedNetCents: sum(open, (row) => row.weightedNetCents),
       averageProgressPct: progressPercent(raisedCents, potentialGoalCents)
     },
     sourcesCents: totals.sourcesCents,
     sourcesTotalCents: totals.sourcesTotalCents,
     gatewayLossCents: totals.gatewayLossCents,
-    netRevenueCents: totals.netRevenueCents
+    sunkCostsCents,
+    netRevenueCents
   };
 }
 

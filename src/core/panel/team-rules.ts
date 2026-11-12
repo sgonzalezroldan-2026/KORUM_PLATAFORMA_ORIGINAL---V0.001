@@ -4,13 +4,13 @@ import { LINK_LIKE } from '@/core/onboarding/registration-rules';
 /**
  * Reglas del equipo que firma (Sprint 4.2e). Funciones puras: el formulario las usa para avisar campo a campo y el servidor las vuelve a aplicar.
  *
- * - **Relevo** (decisión del promotor del 2026-11-09): cada persona firmante puede ceder su puesto, y cualquiera de las dos puede proponer el relevo
- *   de la otra, pero quien sale lo confirma con su código. Si no responde en `HANDOVER_CONSENT_DAYS`, la propuesta caduca y lo resuelve soporte.
+ * - **Relevo** (decisión del promotor del 2026-11-12): cada persona firmante puede ceder su puesto, y cualquiera de las dos puede proponer el relevo
+ *   de la otra (también la Cofirma sustituyendo a la Dirección). Sin esperas ni visto bueno de quien sale: la entidad lo resuelve y queda registrado.
+ * - **Modo de firma:** la entidad elige entre dos firmas (Dirección y Cofirma) o una sola (Dirección), bajo su responsabilidad.
  * - **Cargo** (`roleLabel`): cada persona cambia el suyo; el de la persona nueva viaja en la invitación. Sin enlaces, dominios ni emails: sale en
  *   el email de invitación, firmado por KORUM (anti-suplantación, como en el alta).
  */
 
-export const HANDOVER_CONSENT_DAYS = 7;
 export const SEAT_ROLES = ['DIRECTOR', 'COSIGNER'] as const;
 export type SeatRole = (typeof SEAT_ROLES)[number];
 
@@ -60,3 +60,6 @@ export function maskEmail(address: string): string {
   if (local.length <= 1) return `•••@${domain}`;
   return `${local.slice(0, Math.min(2, local.length - 1))}•••@${domain}`;
 }
+
+/** Cambio del modo de firma de la entidad: solo lo cambia Dirección y la entidad lo confirma expresamente (el cambio es inmediato). */
+export const signatureModeChangeSchema = z.object({ mode: z.enum(['DOUBLE', 'SINGLE']), confirm: z.literal(true) }).strict();

@@ -62,14 +62,14 @@ test('el Super-Admin ve lo real y lo proyectado por separado, con las 6 fuentes 
     let sources = 0;
     for (const row of await chart.locator('[data-source]').all()) sources += await cents(row.locator('td').nth(column));
     const footer = await chart.locator('tfoot tr').all();
-    expect(footer).toHaveLength(5);
+    expect(footer).toHaveLength(6);
     expect(await cents(footer[0]!.locator('td').nth(column)), `total de fuentes, columna ${column}`).toBe(sources);
     let net = sources;
-    for (const cost of footer.slice(1, 4)) {
+    for (const cost of footer.slice(1, 5)) {
       const cell = cost.locator('td').nth(column);
       if ((await cell.locator('[data-cents]').count()) > 0) net += await cents(cell);
     }
-    expect(await cents(footer[4]!.locator('td').nth(column)), `neto, columna ${column}`).toBe(net);
+    expect(await cents(footer[5]!.locator('td').nth(column)), `neto, columna ${column}`).toBe(net);
   }
   // El neto proyectado de la tabla es el mismo que el del KPI «Ingreso neto esperado».
   expect(await cents(page.getByTestId('sources-net-projected'))).toBe(await cents(page.getByTestId('kpi-expected-net')));
@@ -165,7 +165,10 @@ test('avisos de precios con insignia y banner, alertas que se resuelven y tareas
   await refund.getByLabel('Paycomet no devolvió el dinero (se podrá volver a intentar)').check();
   await refund.getByRole('button', { name: 'Guardar resolución' }).click();
   await server(refund.getByRole('alert')).toContainText('Ese caso ya no está pendiente de resolver');
-  expect((await withE2eDb((db) => db.query(`SELECT "status" FROM "OpsAlert" WHERE "dedupeKey" = $1`, [stuck]))).rows[0]?.status).toBe('OPEN');
+  // La tarea de devoluciones de otra prueba, que corre a la vez, puede cerrar por su cuenta una alerta cuyo cobro no existe: el estado no distingue quién la cerró.
+  // Lo que esta acción no debe hacer es dejar constancia de una resolución manual.
+  expect((await withE2eDb((db) => db.query(`SELECT "status" FROM "OpsAlert" WHERE "dedupeKey" = $1`, [stuck]))).rows[0]?.status).toMatch(/^(OPEN|RESOLVED)$/);
+  expect((await withE2eDb((db) => db.query(`SELECT count(*)::int AS n FROM "AuditLog" WHERE action = 'payment.refund_resolved' AND "targetId" = $1`, [stuck.split(':')[1]]))).rows[0]?.n).toBe(0);
 
   // Tareas programadas: la tabla con la última ejecución de cada una, o el aviso de que aún no hay ninguna.
   await expect(page.getByTestId('job-runs').or(page.getByText('Todavía no se ha ejecutado ninguna tarea.'))).toBeVisible();

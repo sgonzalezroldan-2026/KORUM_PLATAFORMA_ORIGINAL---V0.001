@@ -227,4 +227,35 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
 
     expect(errors).toEqual([]);
   });
+
+  // Al guardar por primera vez, Next vuelve a pedir la página al servidor y el Estudio se monta de nuevo. Con la red lenta, una confirmación abierta en ese
+  // intervalo desaparecía sola (fallo intermitente de la E2E en móvil): ahora descartar y publicar esperan a que la campaña guardada esté abierta.
+  test('guardar un borrador nuevo y pulsar «Descartar» enseguida, con la red lenta, no pierde la confirmación', async ({ page, isMobile }) => {
+    const errors = trackConsoleErrors(page);
+    const entity = await registerEntityAndEnterPanel(page, isMobile);
+    await page.goto(`/panel/${entity.slug}/estudio?nueva=presupuesto&plantilla=playground`);
+    await server(page.getByRole('heading', { level: 1, name: 'Patio y deporte' })).toBeVisible();
+    await page.getByLabel('Presupuesto del proveedor (€)').fill('3800');
+    // La respuesta del servidor con la campaña ya guardada tarda 3 segundos.
+    await page.route(/estudio?iniciativa=d+/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 3_000));
+      await route.continue();
+    });
+    await page.getByTestId('studio-save').click();
+    await server(page.getByTestId('studio-saved')).toContainText('Borrador guardado');
+    // Mientras la campaña guardada se abre, descartar espera y lo dice con texto.
+    await expect(page.getByTestId('studio-syncing')).toBeVisible();
+    await expect(page.getByTestId('studio-discard')).toBeDisabled();
+    // Al estar abierta, la confirmación aparece y ya no se va sola.
+    await server(page.getByTestId('studio-discard')).toBeEnabled();
+    await page.getByTestId('studio-discard').click();
+    const dialog = page.getByRole('alertdialog');
+    await expect(dialog).toBeFocused();
+    await page.waitForTimeout(1_500);
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'No, conservarlo' }).click();
+    await expect(page.getByTestId('studio-discard')).toBeFocused();
+    await expectNoSeriousA11yViolations(page);
+    expect(errors).toEqual([]);
+  });
 });

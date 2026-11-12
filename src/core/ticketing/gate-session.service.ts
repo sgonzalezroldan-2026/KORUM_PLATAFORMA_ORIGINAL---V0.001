@@ -6,7 +6,7 @@ import type { KorumPrismaClient } from '@/lib/prisma';
 import { clearAttempts, countAttempts, lastAttemptAt, releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
 import { GATE_ENTRY_RULE } from '@/lib/rate-limit-rules';
 import { requireOwnedResource } from '@/repositories/ownership';
-import { authorizeTenant, type RequestMeta, type SessionActor } from '@/repositories/tenant-guard';
+import { authorizeTenant, recordAudit, TenantAccessError, type RequestMeta, type SessionActor } from '@/repositories/tenant-guard';
 import { generateGateCode } from './gate-code';
 import { firstNotice, firstRejectedNotice, ipOf } from './gate-limits';
 import { generateGatePin, hashGatePin, verifyGatePin } from './gate-pin';
@@ -59,16 +59,26 @@ export async function setGatePin(db: KorumPrismaClient, secret: string, actor: S
 
   const pin = generateGatePin();
   const gatePinHash = await hashGatePin(secret, pin);
-  await db.$transaction(async (tx) => {
-    await tx.initiative.update({ where: { id: initiativeId }, data: { gatePinHash, gatePinExpiresAt: expiresAt, gateCode: initiative.gateCode ?? generateGateCode() } });
-    const closed = await tx.gateSession.updateMany({ where: { initiativeId, revokedAt: null }, data: { revokedAt: now } });
-    await clearAttempts(tx, eventKey(initiativeId));
-    // Con un PIN nuevo, los fallos con el anterior no deben dejar fuera a los voluntarios de la misma wifi.
-    await tx.rateLimit.deleteMany({ where: { key: { startsWith: ipKey(initiativeId, '') } } });
-    await tx.auditLog.create({
-      data: { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, organizationId, action: 'gate.pin_set', targetType: 'Initiative', targetId: String(initiativeId), metadataJson: { expiresAt: expiresAt.toISOString(), sessionsClosed: closed.count } }
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.initiative.update({ where: { id: initiativeId }, data: { gatePinHash, gatePinExpiresAt: expiresAt, gateCode: initiative.gateCode ?? generateGateCode() } });
+      // Con la iniciativa ya bloqueada y después la entidad (el mismo orden que el resto del código), se vuelve a comprobar que quien pide el PIN sigue firmando: si
+      // justo antes le dieron de baja (firma única, relevo), el PIN que estaba calculando no se escribe y no sobrevive a `revokeGateAccess` (auditoría de seguridad, H1).
+      await tx.organization.updateMany({ where: { id: organizationId }, data: { updatedAt: now } });
+      if (actor.kind !== 'user' || (await tx.organizationMember.count({ where: { organizationId, userId: actor.userId, role: { in: [...SIGNER_ROLES] } } })) === 0) throw new TenantAccessError('ROLE_NOT_ALLOWED');
+      const closed = await tx.gateSession.updateMany({ where: { initiativeId, revokedAt: null }, data: { revokedAt: now } });
+      await clearAttempts(tx, eventKey(initiativeId));
+      // Con un PIN nuevo, los fallos con el anterior no deben dejar fuera a los voluntarios de la misma wifi.
+      await tx.rateLimit.deleteMany({ where: { key: { startsWith: ipKey(initiativeId, '') } } });
+      await tx.auditLog.create({
+        data: { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, organizationId, action: 'gate.pin_set', targetType: 'Initiative', targetId: String(initiativeId), metadataJson: { expiresAt: expiresAt.toISOString(), sessionsClosed: closed.count } }
+      });
     });
-  });
+  } catch (error) {
+    // Dentro de la transacción un rechazo lo deshace todo, también su registro: el acceso denegado se anota fuera (Regla 01 §4; auditoría de seguridad del 5.2, H4).
+    if (error instanceof TenantAccessError) await recordAudit(db, actor, { action: 'tenant.access_denied', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { reason: 'ROLE_NOT_ALLOWED', attempted: 'gate.pin_set' } });
+    throw error;
+  }
   return { pin, expiresAt };
 }
 

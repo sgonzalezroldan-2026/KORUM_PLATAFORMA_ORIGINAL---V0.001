@@ -76,7 +76,7 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
 
     // --- La bandeja: lo que pide acción primero, sin emails de las familias ---
     await page.getByRole('navigation', { name: 'Secciones del panel' }).getByRole('link', { name: 'Aprobaciones' }).click();
-    await server(page.getByRole('heading', { level: 1, name: 'Aprobaciones y doble firma' })).toBeVisible();
+    await server(page.getByRole('heading', { level: 1, name: 'Aprobaciones y firma' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Aprobaciones' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { level: 2, name: '3 ideas en marcha' })).toBeVisible();
     const order = await page.getByTestId('moderation-idea').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-phase')));
@@ -121,10 +121,10 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
     const director = await signingEmail(entity.director, directorSince);
     const cosignerSince = Date.now();
     await page.goto(director.path);
-    await server(page.getByRole('heading', { level: 1, name: 'Doble firma' })).toBeVisible();
+    await server(page.getByRole('heading', { level: 1, name: 'Firma' })).toBeVisible();
     await expect(page.getByText(ideas.quorum)).toBeVisible();
     expect(new URL(page.url()).hash).toBe('');
-    await expect(page).toHaveTitle(/^Doble firma · KORUM$/);
+    await expect(page).toHaveTitle(/^Firma · KORUM$/);
     await checkPage(page, errors);
     await page.getByLabel('Código de 6 dígitos del email').fill(director.otp);
     await page.getByRole('button', { name: 'Firmar' }).click();
@@ -137,14 +137,14 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
     await server(cosigner.page.getByText(ideas.quorum)).toBeVisible();
     await cosigner.page.getByLabel('Código de 6 dígitos del email').fill(other.otp);
     await cosigner.page.getByRole('button', { name: 'Firmar' }).click();
-    await server(cosigner.page.getByRole('heading', { name: '¡Doble firma completa! 2 de 2' })).toBeVisible();
+    await server(cosigner.page.getByRole('heading', { name: '¡Firma completa!' })).toBeVisible();
     await checkPage(cosigner.page, cosignerErrors);
 
     // --- La idea ya es una iniciativa en presupuestación, con su hucha, también en el cuadro de mandos ---
     await page.goto(`/panel/${entity.slug}/aprobaciones`);
     await page.getByText(/Últimas \d+ ideas cerradas|Última idea cerrada/).click();
     const converted = card(ideas.quorum);
-    await server(converted.getByText(/Doble firma completa: ya es una iniciativa en presupuestación \(hucha WLT-ESC-[A-Z0-9]{6}\)/)).toBeVisible();
+    await server(converted.getByText(/Firma completa: ya es una iniciativa en presupuestación \(hucha WLT-ESC-[A-Z0-9]{6}\)/)).toBeVisible();
     await converted.getByRole('link', { name: 'Editar en el Estudio' }).click();
     await server(page.getByRole('heading', { level: 1, name: ideas.quorum })).toBeVisible();
     await expect(page.getByTestId('studio-publish')).toBeDisabled();
@@ -154,7 +154,7 @@ test.describe('Panel de la entidad: aprobaciones y doble firma', () => {
 
     // --- La misma bandeja en catalán ---
     await page.goto(`/ca/panel/${entity.slug}/aprobaciones`);
-    await server(page.getByRole('heading', { level: 1, name: 'Aprovacions i doble signatura' })).toBeVisible();
+    await server(page.getByRole('heading', { level: 1, name: 'Aprovacions i signatura' })).toBeVisible();
     await checkPage(page, errors);
     await cosigner.context.close();
     expect(totpCode(entity.totpSecret)).toMatch(/^\d{6}$/);

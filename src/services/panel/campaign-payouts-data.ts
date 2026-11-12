@@ -1,5 +1,5 @@
 import { invoiceRequired, payoutFigures, payoutFiguresMatch, payoutWindow } from '@/core/payouts/campaign-payout-rules';
-import { evaluateDoubleCheck, type SignerRole } from '@/core/security/double-check-evaluation';
+import { evaluateDoubleCheck, requiredRolesFor, type SignerRole } from '@/core/security/double-check-evaluation';
 import { payoutDigestFor } from '@/core/security/signature-hash';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadCampaignPayoutRows, openPayoutChallengeOf } from '@/repositories/campaign-payout.repository';
@@ -90,19 +90,21 @@ type PendingRow = NonNullable<Rows['ready'][number]['payout']>;
 
 const reference = (id: number) => `LQ-${id}`;
 
-async function pendingView(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, splitId: string | null, row: PendingRow, initiative: Rows['ready'][number], now: Date): Promise<PendingPayoutView> {
+async function pendingView(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, organization: Rows['organization'], row: PendingRow, initiative: Rows['ready'][number], now: Date): Promise<PendingPayoutView> {
+  const splitId = organization.paycometSplitId;
   const evaluation = await evaluateDoubleCheck(db, secret, { organizationId, targetType: 'ESCROW_PAYOUT', targetId: row.id, targetDigest: payoutDigestFor(secret, row, splitId) }, row.signatures);
   const invalid = new Set(evaluation.invalid.map((entry) => entry.signatureId));
   const valid = row.signatures.filter((signature) => !invalid.has(signature.id) && evaluation.validRoles.includes(signature.signerRole as SignerRole));
   const signers = await listSigners(db, actor, organizationId);
-  const slots = (['DIRECTOR', 'COSIGNER'] as const).map((role): DoubleCheckSlot => {
+  const requiredRoles = requiredRolesFor(evaluation.mode);
+  const slots = requiredRoles.map((role): DoubleCheckSlot => {
     const signature = valid.find((entry) => entry.signerRole === role);
     const signer = signature ? signers.find((entry) => entry.userId === signature.signerUserId && entry.role === role) : undefined;
     const holder = signers.find((entry) => entry.role === role && entry.status !== 'INVITED') ?? signers.find((entry) => entry.role === role);
     return { role, holderLabel: holder?.roleLabel?.trim() || null, signedBy: signature ? { name: signer?.name ?? '', roleLabel: signer?.roleLabel ?? null, signedAt: signature.signedAt.toISOString() } : null };
   });
   const myRoles = actor.kind === 'user' && !actor.isSuperadmin ? actor.memberships.filter((membership) => membership.organizationId === organizationId).map((membership) => membership.role) : [];
-  const myRole = myRoles.length === 1 && (myRoles[0] === 'DIRECTOR' || myRoles[0] === 'COSIGNER') ? myRoles[0] : null;
+  const myRole = myRoles.length === 1 && (myRoles[0] === 'DIRECTOR' || myRoles[0] === 'COSIGNER') && requiredRoles.includes(myRoles[0]) ? myRoles[0] : null;
   const iSigned = actor.kind === 'user' && valid.some((signature) => signature.signerUserId === actor.userId);
   const challenge = actor.kind === 'user' && myRole ? await openPayoutChallengeOf(db, organizationId, row.id, actor.userId, now) : null;
   const file = row.providerInvoiceFile;
@@ -131,7 +133,7 @@ export async function loadCampaignPayouts(db: KorumPrismaClient, secret: string,
   const ready: ReadyInitiativeView[] = [];
   for (const initiative of rows.ready) {
     const figures = payoutFigures(initiative);
-    const pending = initiative.payout && initiative.payout.status === 'PENDING_DOUBLE_CHECK' ? await pendingView(db, secret, actor, organizationId, rows.organization.paycometSplitId, initiative.payout, initiative, now) : null;
+    const pending = initiative.payout && initiative.payout.status === 'PENDING_DOUBLE_CHECK' ? await pendingView(db, secret, actor, organizationId, rows.organization, initiative.payout, initiative, now) : null;
     // Si ya hay una liquidación aprobada (se está enviando), la campaña aparece en el historial, no aquí.
     if (initiative.payout && !pending) continue;
     const window = payoutWindow(initiative.firstPayinAt, now);

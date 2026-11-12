@@ -17,7 +17,7 @@
 
 - **Filtros ocultos por defecto** en el portal de familias y en el cuadro de mandos de la entidad; se despliegan con `🔍 Filtrar` y muestran un contador si hay filtros activos.
 - **En la pestaña pública "Iniciativas y taquilla" solo aparecen iniciativas `FUNDRAISING`** (etiqueta visible «Recaudando»), destacando las que tienen *Matching 2x* activo.
-- **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio (el Auto-Impulso no cuenta).
+- **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio y por el Auto-Impulso de KORUM (que no suma a ningún curso).
 - **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**.
 - **Tarjetas para WhatsApp y redes (`next/og`):** todo enlace de iniciativa o curso genera su imagen en servidor (logo del centro, `%` de avance, días restantes y reto del curso o equipo). Detalle en [korum-seo-discoverability](../skills/korum-seo-discoverability/SKILL.md).
 - **Comercios amigos por categoría, sin importes en público:** `🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`, siempre en ese orden.

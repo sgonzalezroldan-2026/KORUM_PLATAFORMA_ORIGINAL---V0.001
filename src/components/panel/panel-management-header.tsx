@@ -9,13 +9,15 @@ import { ResendInvitationButton } from './resend-invitation-button';
 
 /**
  * Cabecera de gestión del panel (Sprint 4.1, `id="env-school"` del prototipo): la hucha de la entidad, el estado de los documentos del titular,
- * los cupos del curso (importe exento, beca de medalla y mantenimiento) y las dos personas firmantes con su cargo. Es la misma en todas las
+ * los cupos del curso (importe exento, beca de medalla y mantenimiento) y las personas firmantes (una o dos) con su cargo. Es la misma en todas las
  * páginas del panel. Componente de servidor: recibe lo que el repositorio ya eligió campo a campo (sin IBAN, CIF ni contactos). Va antes del `h1`
  * de cada página, así que sus títulos son párrafos destacados y no encabezados (WCAG 1.3.1: el primer encabezado de la página es su `h1`).
  */
 
 export interface PanelHeaderOrganization {
   slug: string;
+  /** Cuántas firmas exige la entidad: el título de las personas firmantes cuenta una o dos. */
+  signatureMode: 'DOUBLE' | 'SINGLE';
   walletId: string;
   kybStatus: string;
   exemptLimitCents: number;
@@ -106,7 +108,7 @@ export async function PanelManagementHeader({
           </div>
 
           <div className="korum-trust-vault flex flex-col gap-3 p-4">
-            <p className="font-corp text-sm font-extrabold text-varsity-navy">{t('signers.title', { ready, total: 2 })}</p>
+            <p className="font-corp text-sm font-extrabold text-varsity-navy">{organization.signatureMode === 'SINGLE' ? t('signers.titleSingle', { ready }) : t('signers.title', { ready, total: 2 })}</p>
             <ul className="flex flex-col gap-2">
               {signers.map((signer) => (
                 <li key={`${signer.role}-${signer.userId}`} className="rounded-xl border-2 border-varsity-navy/15 bg-white p-2.5">

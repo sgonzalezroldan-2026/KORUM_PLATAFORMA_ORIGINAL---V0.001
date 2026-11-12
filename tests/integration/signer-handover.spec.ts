@@ -1,19 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { acceptInvitation, acceptInvitationWithSession, createInvitation, inspectInvitation, InvitationError } from '@/core/onboarding/invitations';
+import { resendCosignerInvitation } from '@/core/onboarding/community-registration';
+import { acceptInvitation, acceptInvitationWithSession, createInvitation, inspectInvitation, InvitationError, listPendingCosignerInvitations } from '@/core/onboarding/invitations';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { purgeUnactivatedInvitees } from '@/core/privacy/retention-purge';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
-import { cancelHandover, consentHandover, declineHandover, proposeHandover, resendHandoverInvitation } from '@/services/panel/signer-handover.service';
-import { correctCosignerInvitation, loadSignerTeam, updateOwnRoleLabel } from '@/services/panel/signer-team.service';
+import { cancelHandover, proposeHandover, resendHandoverInvitation } from '@/services/panel/signer-handover.service';
+import { changeSignatureMode, correctCosignerInvitation, loadSignerTeam, updateOwnRoleLabel } from '@/services/panel/signer-team.service';
 import { TeamRejectedError, type TeamContext } from '@/services/panel/team-common';
-import { createOrganization, createTestClient, createUser, table, TEST_HMAC_SECRET, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, table, TEST_HMAC_SECRET, uniqueId } from './test-database';
 
 /**
  * Sprint 4.2e · Relevo de firmantes contra PostgreSQL real (QA-S02, «relevo de firmantes sin vaciar la doble firma»). Decisión del promotor del
- * 2026-11-09: cada persona cede su puesto, y cualquiera de las dos puede proponer el relevo de la otra, que lo confirma con su código. La persona nueva
- * no firma hasta aceptar; entonces, en una transacción, sale la fila del cargo anterior (sus enlaces de firma se anulan) y entra la suya. Nunca una
+ * 2026-11-12: cada persona cede su puesto, y cualquiera de las dos puede proponer el relevo de la otra **sin esperas ni visto bueno** (la otra recibe un
+ * aviso); también cambia el modo de firma (una o dos firmas) Dirección, al instante. La persona nueva no firma hasta aceptar; entonces, en una transacción, sale la fila del cargo anterior (sus enlaces de firma se anulan) y entra la suya. Nunca una
  * misma bandeja en los dos puestos, nunca dos relevos a la vez, nada desde otra entidad ni desde la consola del Super-Admin.
  */
 
@@ -88,6 +89,10 @@ describe('ceder el propio puesto', () => {
       data: { organizationId: organization.id, targetType: 'IDEA_APPROVAL', ideaId: idea.id, signerUserId: director.user.id, signerRole: 'DIRECTOR', tokenHash: randomUUID(), otpHmac: 'x', targetDigest: 'y', expiresAt: new Date(Date.now() + HOUR) }
     });
 
+    // Quien sale conserva el PIN de un evento y una sesión de portería abierta: al completar el relevo dejan de valer.
+    const event = await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', gatePinHash: 'hash-del-pin', gatePinExpiresAt: new Date(Date.now() + 86_400_000) });
+    const gateSession = await db.gateSession.create({ data: { initiativeId: event.id, tokenHash: randomUUID(), expiresAt: new Date(Date.now() + 86_400_000) } });
+
     const incoming = await db.user.findUniqueOrThrow({ where: { canonicalEmail: email } });
     const token = await invitationToken(incoming.id, organization.id, handoverId);
     expect(await inspectInvitation(db, token)).toMatchObject({ purpose: 'HANDOVER', organizationSlug: organization.slug, email });
@@ -100,6 +105,8 @@ describe('ceder el propio puesto', () => {
     ]);
     expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'COMPLETED' });
     expect((await db.doubleCheckChallenge.findUniqueOrThrow({ where: { id: challenge.id } })).revokedAt).not.toBeNull();
+    expect(await db.initiative.findUniqueOrThrow({ where: { id: event.id }, select: { gatePinHash: true, gatePinExpiresAt: true } })).toEqual({ gatePinHash: null, gatePinExpiresAt: null });
+    expect((await db.gateSession.findUniqueOrThrow({ where: { id: gateSession.id } })).revokedAt).not.toBeNull();
     // El contacto del alta era de quien dirigía: pasa al email de la persona nueva y el móvil se vacía.
     expect(await db.organization.findUniqueOrThrow({ where: { id: organization.id }, select: { contactEmail: true, contactPhone: true } })).toEqual({ contactEmail: email, contactPhone: null });
     const notices = await db.outboxMessage.findMany({ where: { organizationId: organization.id, templateKey: 'signer.handover' }, select: { userId: true, payloadJson: true } });
@@ -111,23 +118,18 @@ describe('ceder el propio puesto', () => {
 });
 
 describe('proponer el relevo de la otra persona', () => {
-  it('queda pendiente de su visto bueno; nadie más puede darlo, se confirma con el código y entonces sale la invitación', async () => {
+  it('sale la invitación al momento, la otra persona recibe un aviso sin tener que dar su visto bueno, y al aceptar el cambio es inmediato', async () => {
     const { organization, director, cosigner } = await team();
     const ctx = context();
     const existingEmail = newEmail('tesoreria');
     const existing = await createUser(db, { email: existingEmail, canonicalEmail: existingEmail, twoFactorEnabled: true });
     const { handoverId, status } = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Jordi Puig', email: existing.email, roleLabel: 'Tesorería del AMPA' }, ctx);
-    expect(status).toBe('AWAITING_CONSENT');
+    expect(status).toBe('INVITED');
+    // El aviso a quien sale es solo informativo; la invitación a quien entra ya salió.
     const requested = await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: cosigner.user.id } });
-    expect(requested.payloadJson).toMatchObject({ stage: 'REQUESTED', role: 'COSIGNER' });
-    expect(await db.verification.count({ where: { identifier: { contains: existing.id } } })).toBe(0);
-
-    // Quien propone no puede dar el visto bueno por la otra persona; ella sí, pero con el código reciente.
-    expect(await reason(consentHandover(db, director.actor, organization.id, handoverId, context()))).toBe('NOT_FOUND');
-    expect(await reason(consentHandover(db, cosigner.actor, organization.id, handoverId, context({ secondFactorFresh: false })))).toBe('REAUTH_REQUIRED');
-    await consentHandover(db, cosigner.actor, organization.id, handoverId, ctx);
-    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'INVITED' });
+    expect(requested.payloadJson).toMatchObject({ stage: 'REQUESTED', role: 'COSIGNER', leaving: true });
     expect(await db.outboxMessage.count({ where: { organizationId: organization.id, templateKey: 'auth.invitation', toAddress: existing.email } })).toBe(1);
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'INVITED', proposedByUserId: director.user.id });
 
     // Una cuenta que ya tenía contraseña acepta con su propia sesión; con la de otra persona, no.
     const token = await invitationToken(existing.id, organization.id, handoverId);
@@ -137,24 +139,36 @@ describe('proponer el relevo de la otra persona', () => {
     expect(await db.organizationMember.count({ where: { id: cosigner.member.id } })).toBe(0);
   });
 
-  it('quien sale puede rechazarlo: se cierra y se avisa a quien lo propuso', async () => {
+  it('la Cofirma puede sustituir a la Dirección si esta ya no está, sin esperar a nadie', async () => {
+    const { organization, director, cosigner } = await team();
+    const email = newEmail('nueva-direccion');
+    const { handoverId, status } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Marta Gil', email, roleLabel: 'Dirección del centro' }, context());
+    expect(status).toBe('INVITED');
+    const incoming = await db.user.findUniqueOrThrow({ where: { canonicalEmail: email } });
+    expect((await acceptInvitation(db, await invitationToken(incoming.id, organization.id, handoverId), 'una-clave-larga-y-segura')).handoverId).toBe(handoverId);
+    expect(await db.organizationMember.findFirstOrThrow({ where: { organizationId: organization.id, role: 'DIRECTOR' } })).toMatchObject({ userId: incoming.id });
+    expect(await db.organizationMember.count({ where: { id: director.member.id } })).toBe(0);
+    expect(await db.organizationMember.count({ where: { id: cosigner.member.id } })).toBe(1);
+  });
+
+  it('quien sale no tiene veto: solo quien propuso el relevo puede retirarlo', async () => {
     const { organization, director, cosigner } = await team();
     const { handoverId } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Otra Persona', email: newEmail('otra'), roleLabel: 'Dirección' }, context());
-    await declineHandover(db, director.actor, organization.id, handoverId, context());
-    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'DECLINED' });
-    expect((await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: cosigner.user.id } })).payloadJson).toMatchObject({ stage: 'DECLINED' });
+    expect(await reason(cancelHandover(db, director.actor, organization.id, handoverId))).toBe('NOT_FOUND');
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'INVITED' });
+    await cancelHandover(db, cosigner.actor, organization.id, handoverId);
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'CANCELLED' });
     expect(await db.organizationMember.count({ where: { organizationId: organization.id } })).toBe(2);
   });
 
-  it('caduca a los 7 días sin respuesta: ya no se puede dar el visto bueno y se puede proponer otro', async () => {
-    const { organization, director, cosigner } = await team();
+  it('la invitación caduca a las 72 horas: la siguiente propuesta cierra la anterior y se puede proponer otra', async () => {
+    const { organization, director } = await team();
     const t0 = new Date('2026-11-10T09:00:00Z');
     const { handoverId } = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Ana Ruiz', email: newEmail('ana'), roleLabel: 'Tesorería' }, context({ now: t0 }));
-    const late = new Date(t0.getTime() + 7 * 24 * HOUR + 1);
-    expect(await reason(consentHandover(db, cosigner.actor, organization.id, handoverId, context({ now: late })))).toBe('NOT_FOUND');
+    const late = new Date(t0.getTime() + 72 * HOUR + 1);
     const second = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Ana Ruiz', email: newEmail('ana2'), roleLabel: 'Tesorería' }, context({ now: late }));
     expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'EXPIRED' });
-    expect(second.status).toBe('AWAITING_CONSENT');
+    expect(second.status).toBe('INVITED');
   });
 });
 
@@ -216,7 +230,7 @@ describe('la doble firma nunca se vacía ni se duplica', () => {
     const later = new Date(t0.getTime() + 2 * HOUR);
     await resendHandoverInvitation(db, cosigner.actor, organization.id, handoverId, { ...context(), now: later });
     expect((await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).expiresAt.getTime()).toBe(later.getTime() + 72 * HOUR);
-    await cancelHandover(db, cosigner.actor, organization.id, handoverId);
+    await cancelHandover(db, director.actor, organization.id, handoverId);
     const incoming = await db.user.findUniqueOrThrow({ where: { canonicalEmail: email } });
     expect(await db.verification.count({ where: { identifier: `korum-invite:${incoming.id}:${organization.id}` } })).toBe(0);
     expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'CANCELLED' });
@@ -241,9 +255,9 @@ describe('la doble firma nunca se vacía ni se duplica', () => {
   });
 
   it('la base no deja borrar un relevo ni cambiar uno cerrado, salvo anonimizar el nombre escrito', async () => {
-    const { organization, director, cosigner } = await team();
+    const { organization, cosigner } = await team();
     const { handoverId } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Cerrado', email: newEmail('cerrado'), roleLabel: 'Dirección' }, context());
-    await declineHandover(db, director.actor, organization.id, handoverId, context());
+    await cancelHandover(db, cosigner.actor, organization.id, handoverId);
     await expect(db.$executeRawUnsafe(`DELETE FROM ${table('SignerHandover')} WHERE "id" = $1`, handoverId)).rejects.toThrow(/no se borra/);
     await expect(db.$executeRawUnsafe(`UPDATE ${table('SignerHandover')} SET "status" = 'INVITED', "closedAt" = NULL, "consentedAt" = now() WHERE "id" = $1`, handoverId)).rejects.toThrow(/cerrado no se modifica/);
     await expect(db.$executeRawUnsafe(`UPDATE ${table('SignerHandover')} SET "incomingUserId" = 'otra' WHERE "id" = $1`, handoverId)).rejects.toThrow(/no se cambian/);
@@ -304,11 +318,10 @@ describe('auditoría de seguridad del 4.2e', () => {
     expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'INVITED' });
   });
 
-  it('I2 · un relevo caducado no se reenvía: se cierra y hay que proponerlo (y darle el visto bueno) de nuevo', async () => {
-    const { organization, director, cosigner } = await team();
+  it('I2 · un relevo caducado no se reenvía: se cierra y hay que proponerlo de nuevo', async () => {
+    const { organization, cosigner } = await team();
     const t0 = new Date('2026-11-12T09:00:00Z');
     const { handoverId } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Tarde', email: newEmail('tarde2'), roleLabel: 'Dirección' }, context({ now: t0 }));
-    await consentHandover(db, director.actor, organization.id, handoverId, context({ now: t0 }));
     const weeksLater = new Date(t0.getTime() + 21 * 24 * HOUR);
     expect(await reason(resendHandoverInvitation(db, cosigner.actor, organization.id, handoverId, { ...context(), now: weeksLater }))).toBe('NOT_FOUND');
     expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'EXPIRED' });
@@ -342,23 +355,21 @@ describe('auditoría de seguridad del 4.2e', () => {
     expect(await db.verification.count({ where: { identifier: `korum-invite:${pending.id}:${organization.id}` } })).toBe(1);
   });
 
-  it('I5 · quien da el visto bueno ve el email completo mientras decide; los demás, a medias', async () => {
+  it('I5 · el email de la persona invitada sale a medias para las dos personas que firman: nadie lo ve completo', async () => {
     const { organization, director, cosigner } = await team();
     const email = newEmail('marta.gil');
     await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Marta Gil', email, roleLabel: 'Dirección' }, context());
-    expect((await loadSignerTeam(db, director.actor, organization.id)).handover?.email).toBe(email);
+    expect((await loadSignerTeam(db, director.actor, organization.id)).handover?.email).toMatch(/^ma•••@correo-familias\.es$/);
     expect((await loadSignerTeam(db, cosigner.actor, organization.id)).handover?.email).toMatch(/^ma•••@correo-familias\.es$/);
   });
 
-  it('M3 · dar o negar el visto bueno por la otra persona queda en la auditoría y no cambia nada', async () => {
+  it('M3 · quien sale no retira el relevo que propuso la otra persona: no cambia nada', async () => {
     const { organization, director, cosigner } = await team();
     const { handoverId } = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Alguien', email: newEmail('m3'), roleLabel: 'Tesorería' }, context());
-    expect(await reason(consentHandover(db, director.actor, organization.id, handoverId, context()))).toBe('NOT_FOUND');
-    expect(await reason(declineHandover(db, director.actor, organization.id, handoverId, context()))).toBe('NOT_FOUND');
-    const denied = await db.auditLog.findMany({ where: { organizationId: organization.id, action: 'tenant.access_denied', targetId: handoverId } });
-    expect(denied.map((row) => (row.metadataJson as { attempted: string }).attempted).sort()).toEqual(['signer.handover_consent', 'signer.handover_decline']);
-    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'AWAITING_CONSENT' });
-    await declineHandover(db, cosigner.actor, organization.id, handoverId, context());
+    expect(await reason(cancelHandover(db, cosigner.actor, organization.id, handoverId))).toBe('NOT_FOUND');
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'INVITED' });
+    const view = await loadSignerTeam(db, cosigner.actor, organization.id);
+    expect(view.handover).toMatchObject({ outgoingIsMe: true, proposedByMe: false });
   });
 
   it('I6 · la cuenta de alguien invitado que nunca aceptó se borra a los 30 días si no queda nada abierto hacia ella', async () => {
@@ -366,7 +377,7 @@ describe('auditoría de seguridad del 4.2e', () => {
     const t0 = new Date();
     const declinedEmail = newEmail('rechazada');
     const { handoverId } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Rechazada', email: declinedEmail, roleLabel: 'Dirección' }, context());
-    await declineHandover(db, director.actor, organization.id, handoverId, context());
+    await cancelHandover(db, cosigner.actor, organization.id, handoverId);
     const declined = await db.user.findUniqueOrThrow({ where: { canonicalEmail: declinedEmail } });
     const openEmail = newEmail('abierta');
     await proposeHandover(db, director.actor, organization.id, { role: 'DIRECTOR', name: 'Abierta', email: openEmail, roleLabel: 'Dirección' }, context());
@@ -377,5 +388,136 @@ describe('auditoría de seguridad del 4.2e', () => {
     expect(await db.user.count({ where: { id: open.id } })).toBe(1);
     // Las personas firmantes (con cargo) nunca entran en la purga.
     expect(await db.user.count({ where: { id: { in: [director.user.id, cosigner.user.id] } } })).toBe(2);
+  });
+});
+
+describe('relevo sin visto bueno: avisos y rastro (auditoría de seguridad del 5.2)', () => {
+  it('un relevo nuevo no lleva fecha de «consentimiento» que no existe, y quien no lo propuso no lo retira, pero el intento queda anotado', async () => {
+    const { organization, director, cosigner } = await team();
+    const { handoverId } = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Marta Gil', email: newEmail('marta'), roleLabel: 'Presidencia del AMPA' }, context());
+    expect((await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).consentedAt).toBeNull();
+    expect(await reason(cancelHandover(db, cosigner.actor, organization.id, handoverId))).toBe('NOT_FOUND');
+    expect((await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).status).toBe('INVITED');
+    const denied = await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'tenant.access_denied', targetId: handoverId } });
+    expect(denied).toMatchObject({ actorUserId: cosigner.user.id });
+    expect(denied.metadataJson).toMatchObject({ reason: 'NOT_PROPOSER', attempted: 'signer.handover_cancel' });
+  });
+
+  it('cuando la invitación caduca sin que nadie la acepte, el cierre automático avisa por email a quien la propuso', async () => {
+    const { organization, director } = await team();
+    const { handoverId } = await proposeHandover(db, director.actor, organization.id, { role: 'DIRECTOR', name: 'Lucía Pérez', email: newEmail('caduca'), roleLabel: 'Dirección del centro' }, context());
+    await db.signerHandover.update({ where: { id: handoverId }, data: { expiresAt: new Date(Date.now() - HOUR) } });
+    // Reenviar uno caducado lo cierra (se guarda aunque no se reenvíe) y no hay nada que reenviar.
+    expect(await reason(resendHandoverInvitation(db, director.actor, organization.id, handoverId, context()))).toBe('NOT_FOUND');
+    expect((await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).status).toBe('EXPIRED');
+    const notice = await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: director.user.id, payloadJson: { path: ['stage'], equals: 'EXPIRED' } } });
+    expect(notice.payloadJson).toMatchObject({ stage: 'EXPIRED', role: 'DIRECTOR', leaving: false });
+  });
+});
+
+describe('modo de firma: la entidad elige una o dos firmas, al instante y sin el Super-Admin (decisión del 2026-11-12)', () => {
+  it('Dirección pasa a firma única: la cofirma deja el puesto, se le avisa, se anulan sus enlaces, la portería y el relevo abierto, y queda en la auditoría', async () => {
+    const { organization, director, cosigner } = await team();
+    const ctx = context();
+    const { handoverId } = await proposeHandover(db, director.actor, organization.id, { role: 'DIRECTOR', name: 'Lucía Pérez', email: newEmail('relevo'), roleLabel: 'Dirección del centro' }, context());
+    const idea = await db.idea.create({ data: { organizationId: organization.id, alias: '#FAM-0002', authorCanonicalEmail: 'autor@correo-familias.es', title: 'Pistas', category: 'Patios', description: 'd', expiresAt: new Date(Date.now() + 86_400_000) } });
+    const challenge = await db.doubleCheckChallenge.create({
+      data: { organizationId: organization.id, targetType: 'IDEA_APPROVAL', ideaId: idea.id, signerUserId: cosigner.user.id, signerRole: 'COSIGNER', tokenHash: randomUUID(), otpHmac: 'x', targetDigest: 'y', expiresAt: new Date(Date.now() + HOUR) }
+    });
+    const event = await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', gatePinHash: 'hash-del-pin', gatePinExpiresAt: new Date(Date.now() + 86_400_000) });
+
+    expect(await changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, ctx)).toEqual({ mode: 'SINGLE' });
+    expect((await db.organization.findUniqueOrThrow({ where: { id: organization.id }, select: { signatureMode: true } })).signatureMode).toBe('SINGLE');
+    expect(await db.organizationMember.count({ where: { organizationId: organization.id, role: 'COSIGNER' } })).toBe(0);
+    expect(await db.organizationMember.count({ where: { id: director.member.id } })).toBe(1);
+    // La cuenta de la persona no se borra: solo deja el puesto.
+    expect(await db.user.count({ where: { id: cosigner.user.id } })).toBe(1);
+    expect((await db.doubleCheckChallenge.findUniqueOrThrow({ where: { id: challenge.id } })).revokedAt).not.toBeNull();
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: handoverId } })).toMatchObject({ status: 'CANCELLED' });
+    expect(await db.initiative.findUniqueOrThrow({ where: { id: event.id }, select: { gatePinHash: true } })).toEqual({ gatePinHash: null });
+
+    const notice = await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: cosigner.user.id, payloadJson: { path: ['stage'], equals: 'MODE_SINGLE' } } });
+    expect(notice.payloadJson).toMatchObject({ stage: 'MODE_SINGLE', role: 'COSIGNER', leaving: true });
+    expect(ctx.sent).toContain(notice.id);
+    const audit = await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'signer.signature_mode_changed' } });
+    expect(audit).toMatchObject({ actorUserId: director.user.id });
+    expect(audit.metadataJson).toMatchObject({ from: 'DOUBLE', to: 'SINGLE', removedCosignerUserId: cosigner.user.id });
+
+    // La pantalla del equipo lo refleja, y ya no se invita a una cofirma mientras dure la firma única.
+    expect(await loadSignerTeam(db, director.actor, organization.id)).toMatchObject({ signatureMode: 'SINGLE' });
+    expect(await reason(correctCosignerInvitation(db, director.actor, organization.id, { name: 'Nueva', email: newEmail('cof'), roleLabel: 'Tesorería' }, context()))).toBe('SINGLE_MODE');
+    expect(await reason(proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Nueva', email: newEmail('cof2'), roleLabel: 'Tesorería' }, context()))).toBe('SEAT_EMPTY');
+  });
+
+  it('volver a doble firma deja el puesto de Cofirma vacío y permite invitarla otra vez', async () => {
+    const { organization, director } = await team();
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, context());
+    expect(await changeSignatureMode(db, director.actor, organization.id, { mode: 'DOUBLE', confirm: true }, context())).toEqual({ mode: 'DOUBLE' });
+    expect((await loadSignerTeam(db, director.actor, organization.id)).signatureMode).toBe('DOUBLE');
+    await correctCosignerInvitation(db, director.actor, organization.id, { name: 'Nueva', email: newEmail('vuelve'), roleLabel: 'Tesorería' }, context());
+    expect((await loadSignerTeam(db, director.actor, organization.id)).pendingCosigner).toMatchObject({ displayName: 'Nueva' });
+    expect(await db.auditLog.count({ where: { organizationId: organization.id, action: 'signer.signature_mode_changed' } })).toBe(2);
+  });
+
+  it('Dirección también recibe el aviso del cambio; sin cargo escrito el aviso a la cofirma sale con el cargo vacío (el email lo dice en su idioma) y la auditoría cuenta lo que se retiró (auditoría del 5.2, B4 y B5)', async () => {
+    const { organization, director, cosigner } = await team();
+    await db.organizationMember.update({ where: { id: cosigner.member.id }, data: { roleLabel: null } });
+    await proposeHandover(db, director.actor, organization.id, { role: 'DIRECTOR', name: 'Lucía Pérez', email: newEmail('relevo-modo'), roleLabel: 'Dirección del centro' }, context());
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, context());
+    const toDirector = await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: director.user.id, payloadJson: { path: ['stage'], equals: 'MODE_CHANGED' } } });
+    expect(toDirector.payloadJson).toMatchObject({ stage: 'MODE_CHANGED', mode: 'SINGLE', leaving: false });
+    const toCosigner = await db.outboxMessage.findFirstOrThrow({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: cosigner.user.id, payloadJson: { path: ['stage'], equals: 'MODE_SINGLE' } } });
+    expect(toCosigner.payloadJson).toMatchObject({ roleLabel: '' });
+    expect((await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'signer.signature_mode_changed' } })).metadataJson).toMatchObject({ cancelledHandovers: 1, revokedInvitations: 0, convertedIdeas: 0 });
+    // Volver a doble firma también avisa a Dirección.
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'DOUBLE', confirm: true }, context());
+    expect(await db.outboxMessage.count({ where: { organizationId: organization.id, templateKey: 'signer.handover', userId: director.user.id, payloadJson: { path: ['mode'], equals: 'DOUBLE' } } })).toBe(1);
+  });
+
+  it('una invitación de Cofirma pendiente deja de valer si la entidad pasa a firma única (aunque la persona la acepte justo después), y tampoco sirve si el puesto ya está ocupado (auditoría de seguridad del 5.2, M3)', async () => {
+    const { organization, director } = await team();
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, context());
+    const late = await createUser(db, {});
+    const { token } = await createInvitation(db, { userId: late.id, organizationId: organization.id, purpose: 'COSIGNER', roleLabel: 'Tesorería', displayName: 'Persona tardía' });
+    await expect(acceptInvitation(db, token, 'una-clave-larga-y-segura')).rejects.toBeInstanceOf(InvitationError);
+    expect(await db.organizationMember.count({ where: { organizationId: organization.id, role: 'COSIGNER' } })).toBe(0);
+
+    // Con doble firma y el puesto ya ocupado, una segunda invitación de Cofirma tampoco crea un segundo puesto.
+    const other = await team();
+    const intruder = await createUser(db, {});
+    const second = await createInvitation(db, { userId: intruder.id, organizationId: other.organization.id, purpose: 'COSIGNER', roleLabel: 'Tesorería', displayName: 'Otra persona' });
+    await expect(acceptInvitation(db, second.token, 'una-clave-larga-y-segura')).rejects.toBeInstanceOf(InvitationError);
+    expect(await db.organizationMember.count({ where: { organizationId: other.organization.id, role: 'COSIGNER' } })).toBe(1);
+    expect(await db.organizationMember.count({ where: { userId: intruder.id } })).toBe(0);
+  });
+
+  it('reenviar la invitación de Cofirma se hace con la entidad bloqueada y no crea nada con firma única; y volver a doble firma anula una invitación de Cofirma de antes (auditoría de seguridad del 5.2, N3)', async () => {
+    const { organization, director } = await team();
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, context());
+    const late = await createUser(db, {});
+    await createInvitation(db, { userId: late.id, organizationId: organization.id, purpose: 'COSIGNER', roleLabel: 'Tesorería', displayName: 'Persona tardía' });
+    const mailContext = { appUrl: 'https://korum.test', hmacSecret: TEST_HMAC_SECRET, dispatch: () => undefined };
+    // Con firma única no se reenvía nada, aunque haya una invitación suelta de antes.
+    expect(await resendCosignerInvitation(db, organization.id, mailContext)).toBe(false);
+    // Al volver a doble firma, esa invitación vieja deja de valer: Dirección invita de nuevo si quiere.
+    await changeSignatureMode(db, director.actor, organization.id, { mode: 'DOUBLE', confirm: true }, context());
+    expect(await listPendingCosignerInvitations(db, organization.id)).toEqual([]);
+    expect(await resendCosignerInvitation(db, organization.id, mailContext)).toBe(false);
+    // Una invitación vigente en doble firma sí se reenvía.
+    await correctCosignerInvitation(db, director.actor, organization.id, { name: 'Nueva', email: newEmail('reenvia'), roleLabel: 'Tesorería' }, context());
+    expect(await resendCosignerInvitation(db, organization.id, mailContext)).toBe(true);
+  });
+
+  it('solo Dirección lo cambia, con el código reciente, una confirmación expresa y un modo distinto del actual', async () => {
+    const { organization, director, cosigner } = await team();
+    await expect(changeSignatureMode(db, cosigner.actor, organization.id, { mode: 'SINGLE', confirm: true }, context())).rejects.toBeInstanceOf(TenantAccessError);
+    expect(await reason(changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: true }, context({ secondFactorFresh: false })))).toBe('REAUTH_REQUIRED');
+    expect(await reason(changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE' }, context()))).toBe('INVALID');
+    expect(await reason(changeSignatureMode(db, director.actor, organization.id, { mode: 'SINGLE', confirm: false }, context()))).toBe('INVALID');
+    expect(await reason(changeSignatureMode(db, director.actor, organization.id, { mode: 'DOUBLE', confirm: true }, context()))).toBe('ALREADY_IN_MODE');
+    const superadmin = await createUser(db, { isSuperadmin: true });
+    await expect(changeSignatureMode(db, { kind: 'user', userId: superadmin.id, isSuperadmin: true, memberships: [], secondFactor: true } as SessionActor, organization.id, { mode: 'SINGLE', confirm: true }, context())).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await db.organization.findUniqueOrThrow({ where: { id: organization.id }, select: { signatureMode: true } })).signatureMode).toBe('DOUBLE');
+    expect(await db.organizationMember.count({ where: { organizationId: organization.id, role: 'COSIGNER' } })).toBe(1);
   });
 });

@@ -78,8 +78,8 @@ enum KybDocumentKind {
   LEY49_ACCREDITATION // Acreditación del régimen de la Ley 49/2002
 }
 
-/// Relevo de una persona firmante (Sprint 4.2e). `AWAITING_CONSENT`: lo propuso la otra firma y espera el visto bueno de quien sale;
-/// `INVITED`: la persona nueva tiene su invitación; los demás estados cierran el relevo.
+/// Relevo de una persona firmante (Sprint 4.2e). `INVITED`: la persona nueva tiene su invitación; los demás estados cierran el relevo.
+/// `AWAITING_CONSENT` y `DECLINED` son de los relevos antiguos (antes del 2026-11-12, cuando quien salía tenía que dar su visto bueno): ya no se crean.
 enum SignerHandoverStatus {
   AWAITING_CONSENT
   INVITED
@@ -87,6 +87,12 @@ enum SignerHandoverStatus {
   DECLINED
   CANCELLED
   EXPIRED
+}
+
+/// Firmas que exige una entidad para aprobar ideas y liberar fondos (Sprint 5.2, decisión del promotor del 2026-11-12).
+enum SignatureMode {
+  DOUBLE
+  SINGLE
 }
 
 enum HealthStatus {
@@ -460,6 +466,8 @@ enum OpsAlertType {
   SPONSOR_MONEY_BLOCKED
   /// Una liquidación de campaña aprobada tiene repartos que no se pueden enviar y no hay otros cobros desde los que replanificarlos (Sprint 4.4a): la revisa el Super-Admin con Paycomet.
   PAYOUT_BLOCKED
+  /// Heredada (Sprint 5.2): ya no se abre. Los relevos caducados los cierra solos la tarea diaria y las alertas antiguas se resuelven al pasar (sin intervención del Super-Admin).
+  SIGNER_HANDOVER_EXPIRED
 }
 
 enum OpsAlertSeverity {
@@ -828,6 +836,9 @@ model Organization {
   contentLocale            Locale               @default(es)
   /// La portada pública puede indexarse en buscadores (decisión del centro en el onboarding).
   publicIndexing           Boolean              @default(true)
+  /// Cuántas firmas necesita la entidad para aprobar ideas y liberar fondos (decisión del promotor, 2026-11-12): `DOUBLE` (por defecto) exige a Dirección y
+  /// Cofirma, dos personas distintas; `SINGLE` la elige la propia entidad y solo exige la de Dirección, bajo su responsabilidad. Lo cambia Dirección.
+  signatureMode            SignatureMode        @default(DOUBLE)
   archivedAt               DateTime?
   createdAt                DateTime             @default(now())
   updatedAt                DateTime             @updatedAt
@@ -858,9 +869,9 @@ model Organization {
   activityFundPayouts   ActivityFundPayout[]
 }
 
-/// Relevo de una persona firmante (Sprint 4.2e, decisión del promotor del 2026-11-09). Cada persona puede ceder su puesto, y cualquiera de las dos
-/// puede proponer el relevo de la otra, pero quien sale lo confirma con su código: la doble firma nunca se vacía desde una sola cuenta. El cargo
-/// de la persona nueva no existe hasta que acepta su invitación; entonces, en la misma transacción, se da de baja la fila de quien sale y se crea la
+/// Relevo de una persona firmante (Sprint 4.2e; rediseñado por decisión del promotor del 2026-11-12). Cada persona puede ceder su puesto, y cualquiera de las
+/// dos puede proponer el relevo de la otra: la invitación sale al momento y quien sale no tiene veto (solo recibe un aviso; el cambio queda en la auditoría).
+/// El cargo de la persona nueva no existe hasta que acepta su invitación; entonces, en la misma transacción, se da de baja la fila de quien sale y se crea la
 /// suya. Un solo relevo abierto por entidad (índice único parcial en la migración).
 model SignerHandover {
   id               String               @id @default(cuid())
@@ -877,8 +888,9 @@ model SignerHandover {
   displayName      String
   proposedByUserId String
   status           SignerHandoverStatus
-  /// Hasta cuándo vale el paso en curso: 7 días para el visto bueno y las 72 horas de la invitación.
+  /// Hasta cuándo vale la invitación (72 horas desde que sale).
   expiresAt        DateTime
+  /// Solo en los relevos antiguos, con el visto bueno de quien salía. Los nuevos lo llevan vacío: no hay consentimiento que registrar.
   consentedAt      DateTime?
   closedAt         DateTime?
   createdAt        DateTime             @default(now())

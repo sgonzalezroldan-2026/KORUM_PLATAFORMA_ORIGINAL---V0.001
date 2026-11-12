@@ -193,7 +193,7 @@ describe('SignChallengeForm (/firmar)', () => {
     await userEvent.type(screen.getByLabelText('Código de 6 dígitos del email'), '12a3456');
     await userEvent.click(screen.getByRole('button', { name: 'Firmar' }));
     expect(signing.completeSignatureAction).toHaveBeenCalledWith({ token, otp: '123456' });
-    const done = await screen.findByRole('heading', { name: '¡Doble firma completa! 2 de 2' });
+    const done = await screen.findByRole('heading', { name: '¡Firma completa!' });
     await waitFor(() => expect(done).toHaveFocus());
     expect(window.sessionStorage.getItem('korum:double-check:cervantes')).toBeNull();
   });

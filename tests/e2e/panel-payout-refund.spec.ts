@@ -163,7 +163,7 @@ test.describe('Sprint 4.4a · liquidación de una campaña conseguida', () => {
     await server(cosigner.page.getByTestId('sign-payout-beneficiary')).toContainText('Toldos Mediterráneo');
     await cosigner.page.getByLabel('Código de 6 dígitos del email').fill(other.otp);
     await cosigner.page.getByRole('button', { name: 'Firmar' }).click();
-    await server(cosigner.page.getByRole('heading', { name: '¡Doble firma completa! 2 de 2' })).toBeVisible();
+    await server(cosigner.page.getByRole('heading', { name: '¡Firma completa!' })).toBeVisible();
     await expect(cosigner.page.getByText('¡Logro conseguido! El dinero ya va de camino.')).toBeVisible();
     await expect(cosigner.page.getByRole('link', { name: 'Subir las fotos del Antes y el Después' })).toBeVisible();
     await checkPage(cosigner.page, isMobile);

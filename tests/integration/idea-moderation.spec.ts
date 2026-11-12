@@ -10,6 +10,7 @@ import type { KorumPrismaClient } from '@/lib/prisma';
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { signIdeaForRequest } from '@/services/ideas/idea-requests.service';
 import { loadApprovalsData } from '@/services/panel/approvals-data';
+import { changeSignatureMode } from '@/services/panel/signer-team.service';
 import { createOrganization, createTestClient, createUser, uniqueId } from './test-database';
 
 /**
@@ -264,6 +265,32 @@ describe('Doble firma 1/2 → 2/2 y conversión en iniciativa', () => {
 
     const after = await loadApprovalsData(db, SECRET, directorActor, organization.id, NOW);
     expect(after.closed.find((entry) => entry.id === idea.id)?.initiative).toEqual({ id: initiative.id, walletEscrowId: initiative.walletEscrowId });
+  });
+
+  it('con firma única (decisión de la entidad) la firma de Dirección convierte la idea sin pedir la de la cofirma, y la cofirma que quedara no firma', async () => {
+    const { organization, directorActor, cosignerActor, director } = await team();
+    await db.organization.update({ where: { id: organization.id }, data: { signatureMode: 'SINGLE' } });
+    const idea = await createIdea(organization.id, { phase: 'DOUBLE_CHECK' });
+    await expect(requestSignature(db, SECRET, cosignerActor, organization.id, { targetType: 'IDEA_APPROVAL', ideaId: idea.id }, NOW)).rejects.toMatchObject({ reason: 'NOT_A_SIGNER' });
+    await requestSignature(db, SECRET, directorActor, organization.id, { targetType: 'IDEA_APPROVAL', ideaId: idea.id }, NOW);
+    const done = await completeSignature(db, SECRET, directorActor, await secretsSentTo(director.id), NOW);
+    expect(done).toMatchObject({ status: 'SIGNED', complete: true, ideaConverted: true, signatures: 1, nextChallenges: [] });
+    expect(await db.initiative.count({ where: { sourceIdeaId: idea.id } })).toBe(1);
+    expect((await db.idea.findUniqueOrThrow({ where: { id: idea.id } })).phase).toBe('CONVERTED');
+  });
+
+  it('una idea que ya firmó Dirección no se queda atascada si la entidad pasa después a firma única: se convierte al cambiar el modo (auditoría de seguridad del 5.2, M2)', async () => {
+    const { organization, directorActor, director } = await team();
+    const idea = await createIdea(organization.id, { phase: 'DOUBLE_CHECK' });
+    await requestSignature(db, SECRET, directorActor, organization.id, { targetType: 'IDEA_APPROVAL', ideaId: idea.id }, NOW);
+    expect(await completeSignature(db, SECRET, directorActor, await secretsSentTo(director.id), NOW)).toMatchObject({ status: 'SIGNED', complete: false });
+    expect((await db.idea.findUniqueOrThrow({ where: { id: idea.id } })).phase).toBe('DOUBLE_CHECK');
+
+    await changeSignatureMode(db, directorActor, organization.id, { mode: 'SINGLE', confirm: true }, { hmacSecret: SECRET, secondFactorFresh: true, dispatch: () => undefined, now: NOW });
+    expect((await db.idea.findUniqueOrThrow({ where: { id: idea.id } })).phase).toBe('CONVERTED');
+    expect(await db.initiative.count({ where: { sourceIdeaId: idea.id } })).toBe(1);
+    expect((await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'idea.converted' } })).metadataJson).toMatchObject({ reason: 'SIGNATURE_MODE_SINGLE' });
+    expect((await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'signer.signature_mode_changed' } })).metadataJson).toMatchObject({ convertedIdeas: 1 });
   });
 
   it('convertir dos veces la misma idea devuelve la misma iniciativa', async () => {

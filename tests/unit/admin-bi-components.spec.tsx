@@ -1,6 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react';
 import { createTranslator } from 'next-intl';
-import { describe, expect, it } from 'vitest';
+import type { ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { BiInitiativesTables } from '@/components/admin/bi-initiatives-tables';
 import { BiOrganizationsTable } from '@/components/admin/bi-organizations-table';
 import { BiSummary } from '@/components/admin/bi-summary';
@@ -19,6 +20,25 @@ import es from '../../messages/es.json';
 import { renderWithIntl } from '../utils/render-with-intl';
 
 const MESSAGES = { es, ca, en };
+
+// Las tablas abren el pop-up ejecutivo (Sprint 5.2), que usa la navegación de la app y acciones de servidor: aquí no se ejercitan.
+vi.mock('@/i18n/navigation', () => ({
+  Link: ({ href, children, prefetch: _prefetch, ...props }: { href: string; children: ReactNode; prefetch?: boolean }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+  useRouter: () => ({ refresh: vi.fn() })
+}));
+vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/app/[locale]/(superadmin)/admin/actions', () => ({
+  loadInitiativePopupAction: vi.fn(),
+  executeSelfBoostAction: vi.fn(),
+  fixTariffAction: vi.fn(),
+  requeueEmailsAction: vi.fn(),
+  resolveAlertAction: vi.fn(),
+  resolveStuckAction: vi.fn()
+}));
 /** Los importes llevan un espacio duro antes del «€»: se compara con espacios normales. */
 const plain = (text: string) => text.replace(/ /g, ' ');
 

@@ -100,8 +100,11 @@ test.describe('Sprint 4.2d · renovación y reasignación de comercios amigos', 
     await withE2eDb((db) => db.query(`UPDATE "Initiative" SET status = 'REFUNDING' WHERE id = $1`, [origin]));
     const since = Date.now();
     await runMassRefund(request);
-    await page.reload();
-    await server(card).toContainText('Esperando campaña · visible');
+    // Otra prueba puede estar ejecutando a la vez la misma tarea global y quedarse con este trabajo: si todavía no ha terminado, se vuelve a cargar la página.
+    await expect(async () => {
+      await page.reload();
+      await expect(card).toContainText('Esperando campaña · visible', { timeout: 4_000 });
+    }).toPass({ timeout: 60_000 });
     await card.getByText('Ficha / Renovar').click();
     const detail = card.getByTestId('sponsor-detail');
     await expect(detail.getByTestId('sponsor-money')).toContainText(/100,00\s€ esperando campaña, retenidos en PAYCOMET hasta el/);

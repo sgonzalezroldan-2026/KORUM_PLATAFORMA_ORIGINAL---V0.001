@@ -10,6 +10,7 @@ import { type BiStatusFilter, filterByStatus } from '@/core/finance/bi-summary';
 import type { SortAccessors } from '@/lib/sort-rows';
 import { useSortableRows } from '@/lib/use-sortable-rows';
 import { InitiativeDiagnosis } from './initiative-diagnosis';
+import { InitiativePopup } from './initiative-popup';
 
 type Key = 'wallet' | 'title' | 'organization' | 'closesAt' | 'status' | 'goal' | 'raised' | 'contributions' | 'progress' | 'net' | 'weightedNet';
 
@@ -30,18 +31,19 @@ const ACCESSORS: SortAccessors<BiInitiativeRow, Key> = {
 const TOP_COUNT = 10;
 /** Orden del ciclo de vida: el «Estado» se ordena como lo lee una persona, no por su código interno. */
 const STATUS_ORDER = ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED', 'EXPIRED', 'RESIZE_VOTING', 'REFUNDING', 'REFUNDED', 'BUDGETING', 'CANCELLED'];
-const ROW_TONE = (row: BiInitiativeRow) => (row.isNegativeReturnAlert ? 'bg-red-50' : '');
+const ROW_TONE = (row: BiInitiativeRow) => `cursor-pointer hover:bg-amber-50 ${row.isNegativeReturnAlert ? 'bg-red-50' : ''}`;
 
 /**
  * Top 10 y listado global de iniciativas. Las dos tablas ordenan por cualquier columna (`↕`): el top 10 ordena **todas** las filtradas y se
  * queda con las 10 primeras, como el prototipo. Lleva siempre `💛 Aportaciones` y el diagnóstico 💎 / 🚨 de cada iniciativa.
  */
-export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow[]; truncated: boolean }) {
+export function BiInitiativesTables({ rows, truncated, showTop10 = true }: { rows: BiInitiativeRow[]; truncated: boolean; showTop10?: boolean }) {
   const t = useTranslations('admin.initiatives');
   const ta = useTranslations('admin');
   const format = useFormatter();
   const statusId = useId();
   const [status, setStatus] = useState<BiStatusFilter>('ALL');
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const top = useSortableRows<BiInitiativeRow, Key>(rows, ACCESSORS, { key: 'raised', direction: 'desc' });
   const listed = useMemo(() => filterByStatus(rows, status), [rows, status]);
@@ -56,6 +58,7 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
         </p>
       ) : null}
 
+      {showTop10 ? (
       <section aria-labelledby="top10-title" className="flex flex-col gap-3" data-testid="bi-top10">
         <div>
           <h3 id="top10-title" className="font-corp text-xl font-extrabold text-varsity-navy">
@@ -68,7 +71,7 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
         ) : (
           <>
           <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
-          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('top10Region')}>
+          <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('top10Region')}>
             <table className="w-full min-w-[66rem] border-collapse text-start">
               <caption className="sr-only">{t('top10Caption')}</caption>
               <thead>
@@ -92,10 +95,13 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
               </thead>
               <tbody className="divide-y divide-patio-rule">
                 {top.rows.slice(0, TOP_COUNT).map((row, index) => (
-                  <tr key={row.id} className={ROW_TONE(row)} data-initiative={row.id}>
+                  <tr key={row.id} className={ROW_TONE(row)} data-initiative={row.id} onClick={() => setOpenId(row.id)}>
                     <td className="px-2 py-2 font-extrabold tabular-nums text-ink-soft">{index + 1}</td>
                     <th scope="row" className="min-w-44 px-2 py-2 text-start font-bold text-varsity-navy">
-                      {row.title}
+                      <button type="button" onClick={() => setOpenId(row.id)} aria-haspopup="dialog" className="min-h-11 text-start font-bold underline decoration-varsity-navy/40 underline-offset-2 hover:decoration-varsity-navy" data-testid="open-popup">
+                        {row.title}
+                        <span className="sr-only"> {t('openPopup')}</span>
+                      </button>
                     </th>
                     <td className="px-2 py-2">{row.organizationName}</td>
                     <td className="px-2 py-2 whitespace-nowrap">{date(row.closesAt)}</td>
@@ -127,6 +133,7 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
           </>
         )}
       </section>
+      ) : null}
 
       <section aria-labelledby="global-title" className="flex flex-col gap-3" data-testid="bi-global">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -136,9 +143,9 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
             </h3>
             <p className="text-sm text-ink-soft">{t('globalHint')}</p>
           </div>
-          <label htmlFor={statusId} className="flex flex-col gap-1 text-sm font-semibold text-ink-soft">
+          <label htmlFor={statusId} className="flex min-w-0 max-w-full flex-col gap-1 text-sm font-semibold text-ink-soft">
             {t('statusFilter')}
-            <select id={statusId} value={status} onChange={(event) => setStatus(event.target.value as BiStatusFilter)} className="min-h-11 rounded-lg border-2 border-varsity-navy/30 bg-white px-3 text-base text-ink">
+            <select id={statusId} value={status} onChange={(event) => setStatus(event.target.value as BiStatusFilter)} className="min-h-11 w-full min-w-0 max-w-full rounded-lg border-2 border-varsity-navy/30 bg-white px-3 text-base text-ink">
               <option value="ALL">{t('statusAll')}</option>
               <option value="ACTIVE">{t('statusActive')}</option>
               <option value="FINISHED">{t('statusFinished')}</option>
@@ -150,7 +157,7 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
         ) : (
           <>
           <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
-          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('globalRegion')}>
+          <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('globalRegion')}>
             <table className="w-full min-w-[66rem] border-collapse text-start">
               <caption className="sr-only">{t('globalCaption')}</caption>
               <thead>
@@ -170,10 +177,13 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
               </thead>
               <tbody className="divide-y divide-patio-rule">
                 {global.rows.map((row) => (
-                  <tr key={row.id} className={ROW_TONE(row)} data-initiative={row.id}>
+                  <tr key={row.id} className={ROW_TONE(row)} data-initiative={row.id} onClick={() => setOpenId(row.id)}>
                     <td className="px-2 py-2 font-mono text-sm text-ink-soft">{row.walletEscrowId}</td>
                     <th scope="row" className="min-w-44 px-2 py-2 text-start font-bold text-varsity-navy">
-                      {row.title}
+                      <button type="button" onClick={() => setOpenId(row.id)} aria-haspopup="dialog" className="min-h-11 text-start font-bold underline decoration-varsity-navy/40 underline-offset-2 hover:decoration-varsity-navy" data-testid="open-popup">
+                        {row.title}
+                        <span className="sr-only"> {t('openPopup')}</span>
+                      </button>
                     </th>
                     <td className="px-2 py-2">{`${row.organizationName} (${row.province})`}</td>
                     <td className="px-2 py-2">
@@ -203,6 +213,7 @@ export function BiInitiativesTables({ rows, truncated }: { rows: BiInitiativeRow
           </>
         )}
       </section>
+      <InitiativePopup initiativeId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
 }

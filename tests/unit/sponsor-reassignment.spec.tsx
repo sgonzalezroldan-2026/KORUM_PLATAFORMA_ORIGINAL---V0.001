@@ -223,6 +223,6 @@ describe('Sprint 4.2d · regla de la entidad', () => {
     renderWithIntl(<SponsorRenewalRuleForm orgSlug="colegio-sol" rule="SOONEST" canEdit={false} maxDays={60} />);
     expect(screen.getByLabelText(/A dónde va el dinero/)).toBeDisabled();
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.getByText(/Solo las dos personas firmantes/)).toBeInTheDocument();
+    expect(screen.getByText(/Solo las personas firmantes/)).toBeInTheDocument();
   });
 });

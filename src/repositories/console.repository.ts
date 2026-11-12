@@ -1,9 +1,12 @@
 import type { Prisma } from '@/generated/prisma/client';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadBiSnapshot, type BiSnapshot } from '@/services/admin/bi-snapshot';
+import { loadInitiativePopup, type InitiativePopupView } from '@/services/admin/initiative-popup';
+import { listOrganizationsForConsole, loadOrganization360, type Org360View, type OrgListRow } from '@/services/admin/org-360-data';
 import { loadPricingHealth, type PricingHealthView } from '@/services/admin/pricing-health-data';
 import type { BiFilters } from '@/core/finance/bi-summary';
-import { authorizeSuperadmin, type SessionActor } from './tenant-guard';
+import { authorizeConsoleSession, requeueTemplateOf } from '@/services/admin/console-alerts.service';
+import { authorizeSuperadmin, recordAudit, type SessionActor } from './tenant-guard';
 
 /**
  * Lecturas transversales de la consola del Super-Admin. Cada una pasa por `authorizeSuperadmin` (403 y `AuditLog` a cualquier otra sesión;
@@ -19,11 +22,13 @@ export interface ConsoleAlert {
   severity: 'INFO' | 'WARNING' | 'CRITICAL';
   occurrences: number;
   lastSeenAt: Date;
-  organization: { name: string } | null;
+  organization: { id: string; name: string } | null;
   /** Solo `RECONCILIATION_MISMATCH`: qué descuadre es (`MISSING_LOCALLY`, `AMOUNT_MISMATCH`…). */
   kind: string | null;
   /** Solo `REFUND_STUCK` e `INVOICE_STUCK`: el cobro o la factura que se resuelve a mano. */
   resolvableId: number | null;
+  /** Solo `EMAIL_DELIVERY_FAILED` de una plantilla: se pueden volver a poner en cola sus mensajes fallidos (Sprint 5.2). */
+  requeueTemplate: string | null;
 }
 
 /** Última ejecución de cada tarea programada: tipo, estado, cuándo y cuántos intentos. Sin el texto del error (va en la alerta). */
@@ -65,7 +70,7 @@ export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionAc
       orderBy: [{ severity: 'desc' }, { lastSeenAt: 'desc' }],
       take: 50,
       // Solo el tipo, la gravedad, a qué afecta y cuándo: el detalle (importes, códigos) se abre en su ficha.
-      select: { id: true, type: true, severity: true, targetType: true, targetId: true, detailJson: true, occurrences: true, lastSeenAt: true, organization: { select: { name: true } } }
+      select: { id: true, type: true, severity: true, dedupeKey: true, targetType: true, targetId: true, detailJson: true, occurrences: true, lastSeenAt: true, organization: { select: { id: true, name: true } } }
     }),
     db.opsAlert.count({ where: { status: 'OPEN' } }),
     db.opsAlert.count({ where: { status: 'OPEN', severity: 'CRITICAL' } }),
@@ -82,7 +87,8 @@ export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionAc
       lastSeenAt: alert.lastSeenAt,
       organization: alert.organization,
       kind: alert.type === 'RECONCILIATION_MISMATCH' ? detailKind(alert.detailJson) : null,
-      resolvableId
+      resolvableId,
+      requeueTemplate: alert.type === 'EMAIL_DELIVERY_FAILED' ? requeueTemplateOf(alert.dedupeKey) : null
     };
   });
   const jobs: ConsoleJobRun[] = jobRuns;
@@ -93,6 +99,30 @@ export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionAc
 export async function getConsoleBusiness(db: KorumPrismaClient, actor: SessionActor, filters: BiFilters): Promise<BiSnapshot> {
   await authorizeSuperadmin(db, actor, 'console.business', 'Console');
   return loadBiSnapshot(db, filters);
+}
+
+/** Ficha ejecutiva de una iniciativa (pop-up de las tablas, Sprint 5.2). `null` si no existe. */
+export async function getInitiativePopup(db: KorumPrismaClient, actor: SessionActor, initiativeId: number): Promise<InitiativePopupView | null> {
+  // Una acción de servidor se puede llamar sin pasar por la página: aquí también se exige el segundo factor de la sesión, no solo en el `layout`.
+  await authorizeConsoleSession(db, actor, 'console.initiative_popup', 'Initiative');
+  const view = await loadInitiativePopup(db, initiativeId);
+  // Qué iniciativa de qué entidad se abrió, no solo que se entró a la consola.
+  if (view) await recordAudit(db, actor, { action: 'superadmin.access', organizationId: view.row.organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { operation: 'console.initiative_popup' } }, { required: true });
+  return view;
+}
+
+/** Entidades de la plataforma para elegir ficha 360º (Sprint 5.2). */
+export async function getConsoleOrganizations(db: KorumPrismaClient, actor: SessionActor): Promise<OrgListRow[]> {
+  await authorizeSuperadmin(db, actor, 'console.organizations', 'Organization');
+  return listOrganizationsForConsole(db);
+}
+
+/** Ficha 360º de una entidad: titular, KYB, tarifas, categorías, facturas y negocio. `null` si no existe. Lo abierto queda en la auditoría (`superadmin.access`). */
+export async function getOrganization360(db: KorumPrismaClient, actor: SessionActor, organizationId: string): Promise<Org360View | null> {
+  await authorizeSuperadmin(db, actor, 'console.organization_360', 'Organization');
+  const view = await loadOrganization360(db, organizationId);
+  if (view) await recordAudit(db, actor, { action: 'superadmin.access', organizationId, targetType: 'Organization', targetId: organizationId, metadata: { operation: 'console.organization_360' } }, { required: true });
+  return view;
 }
 
 /** Avisos de las reglas de precio (cabecera de la consola y portada). */

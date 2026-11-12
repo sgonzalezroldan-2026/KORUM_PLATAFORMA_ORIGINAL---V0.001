@@ -128,15 +128,16 @@ export async function retryCampaignPayout(
  */
 export async function resumeCampaignPayouts(db: Db, provider: PaymentProvider, deps: SettlementDeps, now: Date, limit: number): Promise<{ executed: number; pending: number; errors: number }> {
   const result = { executed: 0, pending: 0, errors: 0 };
-  // Solo las que tienen las dos firmas: las que esperan una no ocupan el lote (auditoría financiera del 4.4a, M5).
+  // Solo las que ya tienen todas las firmas que exige su entidad (las dos, o solo la de Dirección con firma única): las que esperan una no ocupan el lote
+  // (auditoría financiera del 4.4a, M5).
   const waiting = await db.escrowPayout.findMany({
-    where: { status: 'PENDING_DOUBLE_CHECK', AND: [{ signatures: { some: { signerRole: 'DIRECTOR' } } }, { signatures: { some: { signerRole: 'COSIGNER' } } }] },
+    where: { status: 'PENDING_DOUBLE_CHECK', signatures: { some: { signerRole: 'DIRECTOR' } }, OR: [{ organization: { signatureMode: 'SINGLE' } }, { signatures: { some: { signerRole: 'COSIGNER' } } }] },
     orderBy: { id: 'asc' },
     take: limit,
-    select: { id: true, _count: { select: { signatures: true } } }
+    select: { id: true }
   });
   const open = await db.escrowPayout.findMany({ where: { status: { in: ['APPROVED', 'PROCESSING', 'FAILED'] }, splits: { none: { status: 'SENDING' } } }, orderBy: { id: 'asc' }, take: limit, select: { id: true } });
-  for (const id of [...waiting.filter((row) => row._count.signatures >= 2).map((row) => row.id), ...open.map((row) => row.id)]) {
+  for (const id of [...waiting.map((row) => row.id), ...open.map((row) => row.id)]) {
     try {
       const settlement = await settleSignedCampaignPayout(db, async () => provider, id, deps, now);
       if (settlement.status === 'EXECUTED') result.executed += 1;

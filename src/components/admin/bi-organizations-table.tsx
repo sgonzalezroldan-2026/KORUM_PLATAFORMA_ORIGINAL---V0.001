@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { CurrencyText } from '@/components/ui/currency-text';
 import { SortableTh } from '@/components/ui/sortable-th';
 import type { BiOrganizationRow } from '@/core/finance/bi-aggregate';
+import { Link } from '@/i18n/navigation';
 import type { SortAccessors } from '@/lib/sort-rows';
 import { useSortableRows } from '@/lib/use-sortable-rows';
 
@@ -34,8 +35,8 @@ export function BiOrganizationsTable({ rows: source }: { rows: BiOrganizationRow
   return (
     <>
     <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
-    <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('regionLabel')} data-testid="bi-orgs">
-      <table className="w-full min-w-[56rem] border-collapse text-start">
+    <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('regionLabel')} data-testid="bi-orgs">
+      <table className="w-full min-w-[62rem] border-collapse text-start">
         <caption className="sr-only">{t('caption')}</caption>
         <thead>
           <tr className="border-b-2 border-varsity-navy/20">
@@ -48,6 +49,9 @@ export function BiOrganizationsTable({ rows: source }: { rows: BiOrganizationRow
             <SortableTh label={t('col.raised')} sortKey="raised" sort={sort} onToggle={toggle} align="end" />
             <SortableTh label={t('col.expectedNet')} sortKey="expectedNet" sort={sort} onToggle={toggle} align="end" />
             <SortableTh label={t('col.weightedNet')} sortKey="weightedNet" sort={sort} onToggle={toggle} align="end" />
+            <th scope="col" className="px-2 py-1 text-start font-corp text-sm font-bold">
+              {t('col.manage')}
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-patio-rule">
@@ -73,6 +77,12 @@ export function BiOrganizationsTable({ rows: source }: { rows: BiOrganizationRow
               <td className={`px-2 py-2 text-end ${row.weightedNetCents < 0 ? 'text-red-800' : ''}`}>
                 <CurrencyText cents={row.weightedNetCents} className="font-bold" />
               </td>
+              <td className="px-2 py-2">
+                <Link href={`/admin/entidades/${row.id}`} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline" data-testid="open-360">
+                  {t('open360')}
+                  <span className="sr-only">{` ${row.name}`}</span>
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -97,6 +107,7 @@ export function BiOrganizationsTable({ rows: source }: { rows: BiOrganizationRow
             <td className="px-2 py-2 text-end">
               <CurrencyText cents={sumOf(source, (row) => row.weightedNetCents)} />
             </td>
+            <td className="px-2 py-2">{t('noValue')}</td>
           </tr>
         </tfoot>
       </table>

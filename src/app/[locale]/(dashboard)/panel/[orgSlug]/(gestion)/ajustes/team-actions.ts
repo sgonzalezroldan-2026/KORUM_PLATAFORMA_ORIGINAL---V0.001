@@ -10,14 +10,14 @@ import { findOrganizationIdBySlug } from '@/repositories/organization.repository
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
-import { cancelHandover, consentHandover, declineHandover, proposeHandover, resendHandoverInvitation } from '@/services/panel/signer-handover.service';
-import { correctCosignerInvitation, updateOwnRoleLabel } from '@/services/panel/signer-team.service';
+import { cancelHandover, proposeHandover, resendHandoverInvitation } from '@/services/panel/signer-handover.service';
+import { changeSignatureMode, correctCosignerInvitation, updateOwnRoleLabel } from '@/services/panel/signer-team.service';
 import { TeamRejectedError, type TeamContext, type TeamRejection } from '@/services/panel/team-common';
 
 /**
  * Acciones del equipo que firma (Sprint 4.2e). La entidad sale de su `orgSlug`; quien actúa y si confirmó su código hace menos de 10 minutos, de
  * la sesión (nunca del formulario). Los servicios exigen el cargo con el segundo factor y dejan en la auditoría lo denegado. Los emails (invitación,
- * aviso a quien sale) salen al momento con `after()`, no con la tarea de la bandeja.
+ * aviso a quien sale) salen al momento con `after()`, no con la tarea de la bandeja. El modo de firma y los relevos los decide la propia entidad (2026-11-12).
  */
 
 export type TeamActionResult = { status: 'OK' } | { status: 'ERROR'; reason: TeamRejection | 'FORBIDDEN'; fields?: string[] };
@@ -67,12 +67,10 @@ export async function proposeHandoverAction(orgSlug: string, payload: unknown): 
   });
 }
 
-export async function consentHandoverAction(orgSlug: string, id: unknown): Promise<TeamActionResult> {
-  return run(orgSlug, ({ actor, organizationId, context }) => consentHandover(getPrisma(), actor, organizationId, handoverId(id), context));
-}
-
-export async function declineHandoverAction(orgSlug: string, id: unknown): Promise<TeamActionResult> {
-  return run(orgSlug, ({ actor, organizationId, context }) => declineHandover(getPrisma(), actor, organizationId, handoverId(id), context));
+export async function changeSignatureModeAction(orgSlug: string, payload: unknown): Promise<TeamActionResult> {
+  return run(orgSlug, async ({ actor, organizationId, context }) => {
+    await changeSignatureMode(getPrisma(), actor, organizationId, payload, context);
+  });
 }
 
 export async function cancelHandoverAction(orgSlug: string, id: unknown): Promise<TeamActionResult> {
