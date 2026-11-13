@@ -96,10 +96,10 @@ export function SupportTicketCard({ ticket }: { ticket: ConsoleTicket }) {
         ) : null}
         <span className="text-ink-soft">{t(`topic.${ticket.topic}` as 'topic.OTHER')}</span>
       </div>
-      <h3 id={`ticket-title-${ticket.ticketCode}`} tabIndex={-1} className="font-corp break-words text-lg font-extrabold text-varsity-navy">
+      <h3 id={`ticket-title-${ticket.ticketCode}`} tabIndex={-1} className="font-corp wrap-break-word text-lg font-extrabold text-varsity-navy">
         {ticket.subject}
       </h3>
-      <p className="break-words text-sm text-ink-soft">
+      <p className="wrap-break-word text-sm text-ink-soft">
         {t('from', { origin: ticket.origin, date: date(ticket.createdAt) })}
         {ticket.senderEmail ? <span className="[overflow-wrap:anywhere]">{` · ${t('sender', { email: ticket.senderEmail })}`}</span> : null}
       </p>
@@ -112,14 +112,14 @@ export function SupportTicketCard({ ticket }: { ticket: ConsoleTicket }) {
           {t('openPanel')}
         </Link>
       ) : null}
-      <p className="whitespace-pre-wrap break-words" data-testid="ticket-message">
+      <p className="whitespace-pre-wrap wrap-break-word" data-testid="ticket-message">
         {ticket.message === '' ? t('purged') : ticket.message}
       </p>
 
       {hasReply ? (
         <blockquote className="rounded-xl border-s-4 border-emerald-600 bg-emerald-50 p-3 text-emerald-950">
           <p className="text-sm font-bold">{t('replied', { date: ticket.repliedAt ? date(ticket.repliedAt) : '' })}</p>
-          <p className="whitespace-pre-wrap break-words">{ticket.replyMessage}</p>
+          <p className="whitespace-pre-wrap wrap-break-word">{ticket.replyMessage}</p>
         </blockquote>
       ) : null}
 
