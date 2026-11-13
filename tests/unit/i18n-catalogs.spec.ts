@@ -113,7 +113,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Consola (Sprint 5.2): «Medalla», «Plata», «CIF», «Forma jurídica», «Titular legal», «Número», «Rectificativa», «Total», «Falta» y las unidades se escriben igual en catalán.
       'admin.entities.col.medal', 'admin.entities.medal.2', 'admin.entities.noValue', 'admin.org360.holder.cif', 'admin.org360.holder.legalForm', 'admin.org360.holder.ley49No', 'admin.org360.holder.ley49Verified', 'admin.org360.holder.title', 'admin.org360.invoices.number', 'admin.org360.invoices.rectification', 'admin.org360.invoices.total', 'admin.org360.kyb.cif', 'admin.org360.kyb.missing', 'admin.org360.legalForm.PARENTS_ASSOCIATION', 'admin.org360.medal.2', 'admin.org360.nav.titular', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'admin.popup.percent', 'admin.popup.previousItem',
       // Motor de reglas y soporte de la consola (Sprint 5.3): «Ajustar», «Meta», «No consta», «Sobre una iniciativa», las unidades y el patrón «De {origen} · {fecha}» se escriben igual en catalán.
-      'admin.pricingHealth.adjust', 'admin.rules.exempt.columns.goal', 'admin.rules.unit.eur', 'admin.rules.unit.pct', 'admin.splits.unknown', 'admin.splits.save', 'admin.support.from', 'admin.support.topic.INITIATIVE']);
+      'admin.pricingHealth.adjust', 'admin.rules.exempt.columns.goal', 'admin.rules.unit.eur', 'admin.rules.unit.pct', 'admin.splits.unknown', 'admin.splits.save', 'admin.support.from', 'admin.support.topic.INITIATIVE',
+      // Ajustes de la plataforma (Sprint 5.4): «Mi Hucha», «Brevo», «Terminal», «JET ID», «NIF o CIF», «Historial», «Sistema», «Cada», «Desactivada», «simulador», «IP pública del servidor», «Revisa: …», «Caduca el …», «valor: …» y los patrones sin texto traducible se escriben igual en catalán.
+      'admin.settings.nav.hucha', 'admin.settings.nav.historial', 'admin.settings.sections.hucha.title', 'admin.settings.rejectedFields', 'admin.settings.fields.paycomet_terminalId.label', 'admin.settings.fields.paycomet_jetId.label', 'admin.settings.fields.paycomet_serverIp.label', 'admin.settings.fields.email_provider.options.brevo', 'admin.settings.fields.hucha_mode.options.DISABLED', 'admin.settings.payments.modes.mock', 'admin.settings.limits.colWindow', 'admin.settings.company.fields.taxId', 'admin.settings.legal.openAria', 'admin.settings.team.expires', 'admin.settings.security.pendingRow', 'admin.settings.history.system', 'admin.settings.history.detail.value', 'admin.settings.history.detail.status.SIMULATED', 'admin.settings.history.targets.legal']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no',
       // Consola (Sprint 5.2): el guion, «Total» y las unidades son iguales en inglés.
       'admin.entities.noValue', 'admin.org360.invoices.total', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'privacy.export.fields.idea', 'registration.fields.email',
@@ -140,7 +142,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Portería móvil (Sprint 4.5): patrones sin texto traducible.
       'gate.raffle.roundButton', 'panel.gate.pin.digits',
       // Motor de reglas (Sprint 5.3): las unidades son iguales en inglés.
-      'admin.rules.unit.eur', 'admin.rules.unit.pct']);
+      'admin.rules.unit.eur', 'admin.rules.unit.pct',
+      // Ajustes de la plataforma (Sprint 5.4): «Mi Hucha» y «Brevo» son nombres propios, «Terminal», «JET ID», «NIF o CIF» y «Sistema» se escriben igual en inglés (o son siglas) y {table}: {count} es un patrón.
+      'admin.settings.nav.email', 'admin.settings.history.targets.documents.cookies', 'admin.settings.nav.hucha', 'admin.settings.sections.hucha.title', 'admin.settings.fields.paycomet_terminalId.label', 'admin.settings.fields.paycomet_jetId.label', 'admin.settings.fields.email_provider.options.brevo', 'admin.settings.security.pendingRow', 'admin.settings.history.targets.legal']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

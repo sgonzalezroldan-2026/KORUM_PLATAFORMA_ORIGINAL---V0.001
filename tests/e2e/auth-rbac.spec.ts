@@ -16,6 +16,18 @@ test.describe.configure({ mode: 'serial', timeout: 180_000 });
 /** Esperas que dependen del servidor (crear la sesión, comprobar el PIN): en desarrollo, la primera vez se compila la ruta. */
 const server = expect.configure({ timeout: 30_000 });
 
+/** Una dirección de red de prueba distinta para cada navegador: los límites por red de la plataforma no se comparten entre pruebas. */
+const testNetwork = () => {
+  const octet = () => 1 + Math.floor(Math.random() * 250);
+  return `10.${octet()}.${octet()}.${octet()}`;
+};
+
+// Cada prueba, desde su propia red: escritorio y móvil, y las repeticiones, comparten la dirección del servidor y, juntos, agotaban los intentos por red de
+// los códigos por email, del alta, del segundo factor y de los PIN de portería (protecciones reales que no se tocan).
+test.beforeEach(async ({ page }) => {
+  await page.setExtraHTTPHeaders({ 'x-forwarded-for': testNetwork() });
+});
+
 /**
  * El servidor de desarrollo compila cada ruta la primera vez que se pide; si escritorio y móvil la piden a la vez, Next puede leer su índice
  * a medio escribir («Unexpected end of JSON input», un 500 que no existe en la compilación de producción). Se piden una vez antes, de una en
@@ -78,7 +90,7 @@ test.describe('Familias: código por email y acceso denegado al panel y a la con
     await page.getByRole('button', { name: 'Entrar', exact: true }).click();
     await server(page).toHaveURL(/\/$/);
 
-    for (const path of ['/panel/cervantes', '/admin']) {
+    for (const path of ['/panel/cervantes', '/admin', '/admin/ajustes']) {
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(403);
       await expect(page.getByRole('heading', { level: 1, name: 'No tienes acceso a esta página' })).toBeVisible();
@@ -178,7 +190,7 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
     // La segunda firma abre su invitación en otro navegador: el token sale de la barra, crea su contraseña y activa su TOTP.
     const link = /https?:\/\/\S+\/invitacion#t=\S+/.exec(invitation)?.[0];
     expect(link).toBeTruthy();
-    const other = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+    const other = await browser.newContext({ viewport: page.viewportSize() ?? undefined, extraHTTPHeaders: { 'x-forwarded-for': testNetwork() } });
     const guest = await other.newPage();
     const guestErrors = trackConsoleErrors(guest);
     await guest.goto(new URL(link!).pathname + new URL(link!).hash);

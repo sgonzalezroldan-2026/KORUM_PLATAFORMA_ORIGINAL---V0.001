@@ -13,7 +13,8 @@ const MESSAGES: Record<BootstrapOutcome, string> = {
   ALREADY_EXISTS: 'ℹ️ Ya existe un Super-Admin: no se ha hecho nada. Los siguientes se dan de alta desde la consola.',
   NOT_CONFIGURED: '⚠️ Falta SUPERADMIN_BOOTSTRAP_EMAIL en el entorno.',
   INVALID_EMAIL: '⚠️ SUPERADMIN_BOOTSTRAP_EMAIL no es un email válido.',
-  RATE_LIMITED: '⚠️ Se han pedido demasiadas invitaciones para este email. Espera 15 minutos y vuelve a intentarlo.'
+  RATE_LIMITED: '⚠️ Se han pedido demasiadas invitaciones para este email. Espera 15 minutos y vuelve a intentarlo.',
+  ACCOUNT_SIGNS: '⚠️ Ese email es de una cuenta que ya firma por una entidad: la doble firma excluye siempre al Super-Admin. Usa otro email.'
 };
 
 async function main() {

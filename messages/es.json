@@ -3847,7 +3847,8 @@
       "entities": "Entidades y KYB ({count, plural, =0 {nada por revisar} one {# por revisar} other {# por revisar}})",
       "rules": "Reglas y precios",
       "support": "Soporte ({count, plural, =0 {nada pendiente} one {# consulta} other {# consultas}})",
-      "repartos": "Repartos por resolver"
+      "repartos": "Repartos por resolver",
+      "settings": "Ajustes"
     },
     "sections": {
       "business": "Negocio: ingresos reales y proyectados"
@@ -4909,6 +4910,527 @@
       "resolveConfirmYes": "Sí, cerrar la consulta",
       "resolveConfirmBack": "No, volver",
       "resolveConfirmAlreadyReplied": "Esta consulta ya tiene respuesta. Se cerrará y no se podrá volver a contestar."
+    },
+    "settings": {
+      "metaTitle": "Ajustes de la plataforma",
+      "back": "← Volver a la consola",
+      "title": "Ajustes de la plataforma",
+      "intro": "Aquí se configura lo que sostiene el servicio: los cobros con Paycomet, el email, las facturas, Mi Hucha, la visibilidad en buscadores, los textos legales, el equipo con acceso y las claves de cifrado. Cada bloque se guarda por separado y cada cambio queda registrado en el historial. Cualquier cambio (no solo las claves) pide haber confirmado tu segundo factor en los últimos 10 minutos.",
+      "nav": {
+        "label": "Bloques de ajustes",
+        "pagos": "Cobros",
+        "email": "Email",
+        "facturacion": "Facturación",
+        "hucha": "Mi Hucha",
+        "autoimpulso": "Auto-Impulso",
+        "seo": "Buscadores",
+        "textos": "Textos legales",
+        "limites": "Límites",
+        "equipo": "Equipo",
+        "seguridad": "Claves de cifrado",
+        "historial": "Historial"
+      },
+      "sections": {
+        "pagos": {
+          "title": "Cobros con Paycomet",
+          "hint": "Credenciales y datos del comercio. KORUM no custodia fondos: los cobros, retenciones y devoluciones los ejecuta Paycomet."
+        },
+        "email": {
+          "title": "Email y remitente",
+          "hint": "Quién envía los recibos, las entradas y los enlaces de firma, y con qué proveedor."
+        },
+        "facturacion": {
+          "title": "Facturación Veri*factu",
+          "hint": "Datos del emisor de las facturas de KORUM. Sin ellos no se emite ninguna factura."
+        },
+        "hucha": {
+          "title": "Mi Hucha",
+          "hint": "Cómo participan las familias con Mi Hucha. KORUM nunca guarda saldo propio."
+        },
+        "autoimpulso": {
+          "title": "Auto-Impulso",
+          "hint": "Qué opción aparece marcada al ejecutar un Auto-Impulso. La decisión final se toma en cada ejecución."
+        },
+        "seo": {
+          "title": "Buscadores y asistentes de IA",
+          "hint": "Quién puede rastrear la web pública y los códigos de verificación de Google y Bing."
+        },
+        "textos": {
+          "title": "Textos legales y datos de la empresa",
+          "hint": "Términos, privacidad, cookies y aviso legal, en cada idioma y con su versión. Todavía no hay páginas públicas que los muestren: se conectan antes de abrir al público."
+        },
+        "limites": {
+          "title": "Límites",
+          "hint": "Los topes que protegen el servicio frente a abusos."
+        },
+        "equipo": {
+          "title": "Equipo con acceso a la consola",
+          "hint": "Quién puede ver y cambiar todo esto. El acceso se da al aceptar la invitación."
+        },
+        "seguridad": {
+          "title": "Claves de cifrado y alertas de seguridad",
+          "hint": "Estado de la rotación de claves y avisos abiertos de tarjetas, privacidad y claves."
+        },
+        "historial": {
+          "title": "Historial de cambios",
+          "hint": "Qué se cambió, quién lo hizo y cuándo. Nunca incluye claves ni contraseñas."
+        }
+      },
+      "save": "Guardar este bloque",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "saved": "Ajustes guardados.",
+      "savedNoChanges": "No había nada que cambiar en este bloque.",
+      "reload": "Recargar la página",
+      "reauthLink": "Volver a confirmar mi segundo factor",
+      "rejectedFields": "Revisa: {fields}.",
+      "sourceEnv": "Ahora se usa el valor de respaldo del servidor; al guardar, el de la consola tendrá prioridad.",
+      "outcome": {
+        "FAILED": "No se ha podido guardar. Inténtalo de nuevo.",
+        "REAUTH_REQUIRED": "Han pasado más de 10 minutos desde tu último segundo factor. Confírmalo de nuevo y vuelve a intentarlo.",
+        "INVALID_INPUT": "Los datos enviados no son válidos. Recarga la página e inténtalo de nuevo."
+      },
+      "reason": {
+        "INVALID": "Hay un valor que no es válido.",
+        "STALE": "Otra persona ha guardado estos ajustes mientras los editabas; no se ha guardado nada para no pisar su cambio.",
+        "UNKNOWN": "Hay un campo que no pertenece a este bloque.",
+        "SERVER_IP_REQUIRED": "Con cobros de pruebas o reales la IP pública del servidor es obligatoria: sin ella fallan las devoluciones.",
+        "SENDER_REQUIRED": "Con cobros de pruebas o reales el remitente es obligatorio: sin él no sale ningún email.",
+        "INVOICING_PAIR": "El NIF y la razón social del emisor van juntos: sin cualquiera de los dos no se emite ninguna factura.",
+        "WALLET_PROVIDER_REQUIRED": "El monedero con saldo necesita el nombre de la entidad autorizada que lo custodia.",
+        "WALLET_KEY_REQUIRED": "Guarda primero la clave de la entidad que custodia el saldo.",
+        "WALLET_CONFIRMATION_REQUIRED": "Marca la confirmación del proveedor y de la revisión legal para activar el monedero con saldo.",
+        "WALLET_BALANCES_OPEN": "Hay familias con saldo en su monedero: no se puede salir de este modo hasta que no quede ninguno.",
+        "VERSION_OLDER": "La versión no puede ser anterior a la guardada.",
+        "VERSION_IN_USE": "Un texto ya publicado no se puede modificar sin cambiar de versión: publica una versión nueva.",
+        "PUBLISHED_TO_DRAFT": "Un texto publicado no vuelve a borrador: publica una versión nueva.",
+        "INVALID_EMAIL": "Ese email no es válido.",
+        "ALREADY_SUPERADMIN": "Esa persona ya tiene acceso a la consola.",
+        "ENTITY_MEMBER": "Esa cuenta firma por una entidad y no puede ser Super-Admin: usa otro email.",
+        "RATE_LIMITED": "Demasiadas invitaciones hoy o demasiados emails a esa persona. Inténtalo más tarde.",
+        "SELF": "No puedes retirarte el acceso a ti mismo.",
+        "LAST_ADMIN": "No se puede retirar a la última persona con acceso.",
+        "NOT_FOUND": "Ya no existe: puede que otra persona lo haya cambiado. Recarga la página.",
+        "VERSION_NOT_TODAY": "Un texto se publica con la fecha de hoy (hora de España): ni futura ni atrasada.",
+        "SECRET_REQUIRED": "Con cobros de pruebas o reales esta clave es imprescindible y el servidor no tiene otra de respaldo: sin ella el servicio se pararía.",
+        "FIELD_REQUIRED": "Con cobros de pruebas o reales este dato es imprescindible y el servidor no tiene otro de respaldo: sin él los cobros se pararían.",
+        "WALLET_PROVIDER_LOCKED": "Hay familias con saldo en el monedero: no se puede cambiar la entidad que lo custodia hasta que no quede ninguno."
+      },
+      "fields": {
+        "paycomet_merchantCode": {
+          "label": "Código de comercio",
+          "help": "El que te dio Paycomet para tu cuenta."
+        },
+        "paycomet_terminalId": {
+          "label": "Terminal",
+          "help": "Número del terminal de Paycomet (solo cifras)."
+        },
+        "paycomet_jetId": {
+          "label": "JET ID",
+          "help": "Código público del formulario de tarjeta que da Paycomet. Todavía no lo usa ninguna pantalla: se guarda para cuando se conecte Paycomet real."
+        },
+        "paycomet_serverIp": {
+          "label": "IP pública del servidor",
+          "help": "La que se da de alta en Paycomet para poder devolver pagos. Obligatoria con cobros de pruebas o reales."
+        },
+        "email_provider": {
+          "label": "Proveedor de email",
+          "help": "Solo Brevo tiene adaptador por ahora.",
+          "options": {
+            "brevo": "Brevo"
+          }
+        },
+        "email_fromAddress": {
+          "label": "Dirección del remitente",
+          "help": "Desde dónde salen los emails (por ejemplo hola@tudominio.es). Debe estar validada en el proveedor."
+        },
+        "email_fromName": {
+          "label": "Nombre del remitente",
+          "help": "Lo que ve la familia como remitente. Por defecto, KORUM."
+        },
+        "email_replyTo": {
+          "label": "Responder a (opcional)",
+          "help": "Dirección a la que llegan las respuestas, si es distinta del remitente."
+        },
+        "invoicing_provider": {
+          "label": "Proveedor de facturación",
+          "help": "Nombre del proveedor homologado de Veri*factu. Todavía no hay conexión con uno real: se guarda para cuando se contrate."
+        },
+        "invoicing_issuerNif": {
+          "label": "NIF o CIF del emisor",
+          "help": "Se valida con su dígito de control. Va junto a la razón social."
+        },
+        "invoicing_issuerName": {
+          "label": "Razón social del emisor",
+          "help": "Tal y como debe aparecer en las facturas."
+        },
+        "invoicing_series": {
+          "label": "Serie de las facturas",
+          "help": "Mayúsculas y cifras, hasta 10 caracteres (por ejemplo KR). Todavía no se usa: hoy las facturas llevan series fijas; se aplicará con el proveedor real."
+        },
+        "hucha_mode": {
+          "label": "Modo de Mi Hucha",
+          "help": "Cambia lo que ven las familias en menos de un minuto.",
+          "options": {
+            "DISABLED": "Desactivada",
+            "PLEDGE": "Aportación mensual programada",
+            "REGULATED_WALLET": "Monedero con saldo (entidad autorizada)"
+          }
+        },
+        "hucha_walletProvider": {
+          "label": "Entidad que custodia el saldo",
+          "help": "Solo para el monedero con saldo: nombre de la entidad autorizada."
+        },
+        "autoBoost_publicDisclosureDefault": {
+          "label": "Aviso público por defecto",
+          "help": "Si la ficha dice, sin importe, que la plataforma KORUM también aportó.",
+          "options": {
+            "SHOW": "Mostrar el aviso",
+            "HIDE": "No mostrarlo"
+          }
+        },
+        "seo_aiCrawlers": {
+          "label": "Rastreadores de IA"
+        },
+        "seo_verification_google": {
+          "label": "Verificación de Google",
+          "help": "Código de Google Search Console (solo letras, cifras, guion y guion bajo)."
+        },
+        "seo_verification_bing": {
+          "label": "Verificación de Bing",
+          "help": "Código de Bing Webmaster Tools (solo letras, cifras, guion y guion bajo)."
+        },
+        "platform_company": {
+          "label": "Datos de la empresa"
+        },
+        "raffle_extraRoundMinHours": {
+          "label": "Horas de espera antes de una ronda extra del sorteo",
+          "help": "Entre 0 y 720. 0 = sin espera. Lo fija el abogado; el reembolso de un ganador no espera."
+        }
+      },
+      "secretsTitle": "Claves y contraseñas",
+      "secretsHint": "Se guardan cifradas y no se vuelven a mostrar: solo se ve cuándo se cambió y, si son largas, sus cuatro últimos caracteres. Cada clave se guarda con su propio botón.",
+      "secrets": {
+        "paycomet_apiKey": {
+          "label": "Clave de la API de Paycomet",
+          "help": "Con ella KORUM llama a Paycomet (cobros, devoluciones, repartos)."
+        },
+        "paycomet_webhookSecret": {
+          "label": "Contraseña de las notificaciones de Paycomet",
+          "help": "Con ella se comprueba que cada aviso de pago viene de Paycomet."
+        },
+        "email_apiKey": {
+          "label": "Clave de la API de Brevo",
+          "help": "Con ella se envían los emails."
+        },
+        "invoicing_apiKey": {
+          "label": "Clave del proveedor de facturación",
+          "help": "Para registrar las facturas en Veri*factu."
+        },
+        "hucha_walletApiKey": {
+          "label": "Clave de la entidad que custodia el saldo",
+          "help": "Solo para el monedero con saldo."
+        },
+        "seo_indexNowKey": {
+          "label": "Clave de IndexNow",
+          "help": "Avisa a los buscadores cuando se publica o se cierra una iniciativa."
+        }
+      },
+      "secretStatus": {
+        "set": "Guardada en la consola · termina en «{hint}» · actualizada el {when}.",
+        "env": "No hay clave en la consola: se usa la clave de respaldo del servidor.",
+        "none": "Sin configurar.",
+        "setNoHint": "Guardada en la consola · actualizada el {when}."
+      },
+      "secretNewPlaceholder": "Escribe la clave para guardarla",
+      "secretReplacePlaceholder": "Escribe una clave nueva para sustituirla",
+      "secretSave": "Guardar clave",
+      "secretSaved": "Clave guardada.",
+      "secretRemove": "Quitar la clave",
+      "secretRemoved": "Clave quitada.",
+      "secretRemoveAria": "Quitar {name}",
+      "secretRemoveConfirm": "Si la quitas, se usará la clave de respaldo del servidor si existe; si no, el servicio que la necesita dejará de funcionar. ¿Seguro?",
+      "secretRemoveYes": "Sí, quitar la clave",
+      "testButton": "Probar conexión",
+      "testing": "Probando…",
+      "testHint": "Comprueba lo que ya está guardado; no envía dinero ni mensajes.",
+      "test": {
+        "OK": "Conexión correcta: el proveedor ha aceptado las credenciales.",
+        "SIMULATED_paycomet": "Los cobros están en modo simulador: no se llama a Paycomet, así que no hay nada que probar.",
+        "SIMULATED_email": "Los cobros están en modo simulador: los emails se quedan en la vista previa local y no se llama a Brevo.",
+        "SIMULATED_invoicing": "Los datos del emisor están completos. Todavía no hay conexión con un proveedor real de Veri*factu: de momento solo se emite con el simulador.",
+        "NOT_CONFIGURED": "Falta por configurar: {missing}.",
+        "RATE_LIMITED": "Demasiadas pruebas seguidas. Espera unos minutos.",
+        "FAILED": "El proveedor no ha aceptado la conexión (código {code}). Revisa las credenciales.",
+        "CONFIG": "Hay un ajuste o una clave guardados que no se pueden leer. Vuelve a guardarlos y prueba otra vez.",
+        "NETWORK": "No se ha podido contactar con el proveedor (corte de red o tiempo agotado). Inténtalo de nuevo en unos minutos."
+      },
+      "payments": {
+        "modeLabel": "Modo de cobros: {mode}.",
+        "modes": {
+          "mock": "simulador",
+          "sandbox": "pruebas (sandbox)",
+          "live": "cobros reales"
+        },
+        "modeHelp": {
+          "mock": "No se mueve dinero ni se llama a Paycomet. El modo lo fija el servidor y no se cambia desde esta pantalla.",
+          "sandbox": "Se llama al entorno de pruebas de Paycomet, sin dinero real. El modo lo fija el servidor y no se cambia desde esta pantalla.",
+          "live": "Cobros reales: un error aquí mueve dinero de verdad, así que cambia solo lo necesario. El modo lo fija el servidor y no se cambia desde esta pantalla."
+        },
+        "ipMissing": "Falta la IP pública del servidor. Sin darla de alta en Paycomet, las devoluciones fallarán con cobros de pruebas o reales."
+      },
+      "email": {
+        "smtpNote": "La conexión directa con tu proveedor de correo aún no está disponible: de momento solo se puede usar Brevo. Con cobros simulados los emails nunca salen: se quedan en la vista previa local."
+      },
+      "invoicing": {
+        "complete": "NIF y razón social completos: ya se pueden emitir facturas.",
+        "pair": "Falta uno de los dos datos. Sin el NIF o sin la razón social no se emite ninguna factura: un patrocinio con comisión falla y no se puede dejar de admitir a un comercio facturado.",
+        "missing": "Faltan el NIF y la razón social del emisor. Sin ellos no se emite ninguna factura: un patrocinio con comisión falla y no se puede dejar de admitir a un comercio facturado."
+      },
+      "hucha": {
+        "modeHelp": {
+          "DISABLED": "Mi Hucha no aparece en ninguna pantalla.",
+          "PLEDGE": "La familia elige un importe mensual y una entidad; cada mes se cobra con su tarjeta y se aplica directamente a una iniciativa activa. No hay saldo guardado.",
+          "REGULATED_WALLET": "El saldo es de la familia y lo custodia una entidad autorizada para ello; KORUM solo refleja ese saldo. La retirada se hace siempre con reembolso al medio de pago original."
+        },
+        "walletConfirm": "Confirmo que tengo por escrito la confirmación del proveedor de que puede custodiar saldos de usuarios y que se ha hecho la revisión legal. Esta confirmación queda anotada en el historial."
+      },
+      "limits": {
+        "noWindow": "Sin caducidad",
+        "hours": "{count, plural, one {# hora} other {# horas}}",
+        "minutes": "{count, plural, one {# minuto} other {# minutos}}",
+        "fixedTitle": "Límites fijos del servicio",
+        "fixedHint": "Estos topes están en el código de la plataforma y no se cambian desde aquí; se muestran para que sepas qué protección hay. Cambiarlos requiere una nueva versión.",
+        "colRule": "Qué limita",
+        "colLimit": "Intentos",
+        "colWindow": "Cada",
+        "rules": {
+          "authEmail": "Emails de acceso por destinatario",
+          "secondFactorFailures": "Fallos seguidos del segundo factor",
+          "registration": "Altas de entidades por red",
+          "checkout": "Pagos iniciados por red",
+          "signatureRequests": "Peticiones de enlace y código de firma",
+          "gateEntry": "Intentos de PIN de portería por red",
+          "activityFund": "Liquidaciones del Fondo de actividades por entidad",
+          "webhookInvalid": "Notificaciones de pago con firma inválida por red"
+        }
+      },
+      "seo": {
+        "delay": "Un cambio tarda unos 12 minutos como máximo en verse en la web pública y en los ficheros robots.txt y llms.txt (los que leen buscadores y asistentes).",
+        "crawlersTitle": "Rastreadores de asistentes de IA",
+        "crawlersHint": "Los de búsqueda son los asistentes que consultan la web para contestar a quien les pregunta. Los de entrenamiento solo leen las páginas de presentación de KORUM, nunca las portadas de las entidades. Ahora se usa {source}.",
+        "sourceDefault": "la lista inicial de la plataforma",
+        "sourceConsole": "la lista guardada aquí",
+        "groups": {
+          "search": {
+            "title": "Búsqueda y respuesta",
+            "hint": "Permitidos en toda la web pública."
+          },
+          "training": {
+            "title": "Entrenamiento",
+            "hint": "Solo en las páginas de marketing."
+          }
+        },
+        "nameInvalid": "El nombre solo puede llevar letras, cifras, punto, guion y guion bajo (de 2 a 100 caracteres).",
+        "nameTaken": "Ese rastreador ya está en la lista.",
+        "removeAria": "Quitar a {name} de la lista",
+        "remove": "Quitar",
+        "allowed": "Permitido",
+        "blocked": "Bloqueado",
+        "empty": "No hay ninguno en esta lista.",
+        "addLabel": "Añadir un rastreador (nombre del agente)",
+        "add": "Añadir",
+        "added": "{name} añadido a la lista (falta guardar).",
+        "removed": "{name} quitado de la lista (falta guardar).",
+        "unsaved": "Hay cambios en la lista sin guardar.",
+        "reset": "Volver a la lista inicial"
+      },
+      "company": {
+        "title": "Datos de la empresa",
+        "hint": "Datos de la empresa. Todavía no los usa ninguna página, email ni factura: se guardan para cuando se conecten. Con todos los campos vacíos se borran.",
+        "fields": {
+          "legalName": "Razón social",
+          "taxId": "NIF o CIF",
+          "address": "Domicilio",
+          "supportEmail": "Email de soporte",
+          "privacyEmail": "Email de privacidad"
+        },
+        "errors": {
+          "legalName": "Escribe la razón social.",
+          "taxId": "El NIF o CIF no es válido: revisa la última cifra o letra.",
+          "address": "Escribe el domicilio.",
+          "supportEmail": "El email de soporte no es válido.",
+          "privacyEmail": "El email de privacidad no es válido."
+        },
+        "required": {
+          "legalName": "Escribe la razón social.",
+          "taxId": "Escribe el NIF o CIF.",
+          "address": "Escribe el domicilio.",
+          "supportEmail": "Escribe el email de soporte.",
+          "privacyEmail": "Escribe el email de privacidad."
+        }
+      },
+      "legal": {
+        "intro": "Cada texto lleva su versión (la fecha de publicación) y su estado. Un texto publicado no se modifica sin cambiar de versión: para cambiarlo se publica una versión nueva, y cada consentimiento guarda la versión de la política que la persona aceptó. La consola guarda solo el texto vigente de cada uno.",
+        "policyVersion": "Versión vigente de la política de privacidad: {version}. La guarda cada consentimiento y sube sola cuando la política está publicada en los tres idiomas (pasa a la más antigua de las tres versiones).",
+        "matrixTitle": "Textos legales por documento e idioma",
+        "colDocument": "Documento",
+        "locales": {
+          "es": "Castellano",
+          "ca": "Catalán",
+          "en": "Inglés"
+        },
+        "documents": {
+          "terminos": "Términos y condiciones",
+          "privacidad": "Política de privacidad",
+          "cookies": "Política de cookies",
+          "aviso-legal": "Aviso legal"
+        },
+        "openAria": "{document} en {locale}: ",
+        "statusNone": "Sin crear",
+        "status": {
+          "BORRADOR": "Borrador",
+          "PUBLICADO": "Publicado"
+        },
+        "editing": "Editando: {document} · {locale}",
+        "publishedHint": "Este texto está publicado con la versión {version}. Para cambiarlo, publica una versión nueva.",
+        "draftHint": "Mientras sea un borrador, solo se ve aquí. Cuando haya páginas públicas, el texto publicado será la versión vigente.",
+        "version": "Versión",
+        "versionHelp": "La fecha de publicación (AAAA-MM-DD); si hay varias el mismo día, añade «.1», «.2»… Al publicar, la fecha es la de hoy.",
+        "statusLabel": "Estado",
+        "text": "Texto (puedes usar # para títulos y - para listas)",
+        "characters": "{count, plural, one {# carácter} other {# caracteres}}",
+        "confirmPublish": "Vas a publicar la versión {version} ({locale}). Pasará a ser la versión vigente y no podrás editarla: para cambiarla tendrás que publicar otra.",
+        "confirmYes": "Sí, publicar la versión {version}",
+        "publish": "Publicar una versión nueva",
+        "saveDraft": "Guardar borrador",
+        "saved": "Texto guardado (versión {version}).",
+        "published": "Texto publicado (versión {version}).",
+        "nothingToPublish": "No hay cambios en el texto: modifícalo para publicar una versión nueva.",
+        "publishFirst": "Publicar este texto"
+      },
+      "team": {
+        "intro": "Estas personas pueden ver y cambiar todo lo de esta consola. Quien recibe una invitación solo tiene acceso cuando la acepta, con una contraseña de al menos 12 caracteres y el segundo factor activado. Una cuenta que firma por una entidad no puede ser Super-Admin.",
+        "membersTitle": "Personas con acceso",
+        "you": "tú",
+        "twoFactorOn": "Segundo factor activado",
+        "twoFactorOff": "Sin segundo factor",
+        "lastSeen": "Última actividad: {when}",
+        "neverSeen": "Sin actividad registrada",
+        "selfNote": "Nadie puede quitarse el acceso a sí mismo: que lo haga otra persona del equipo.",
+        "revoke": "Retirar el acceso",
+        "revokeAria": "Retirar el acceso a {email}",
+        "revokeConfirm": "{email} perderá el acceso a la consola y se cerrarán todas sus sesiones ahora mismo. ¿Seguro?",
+        "revokeYes": "Sí, retirar el acceso",
+        "cancel": "Cancelar",
+        "revoked": "Acceso retirado.",
+        "pendingTitle": "Invitaciones sin aceptar",
+        "expires": "Caduca el {when}",
+        "expired": "Caducó el {when}",
+        "resend": "Volver a enviar",
+        "resendAria": "Volver a enviar la invitación a {email}",
+        "cancelInvitation": "Anular invitación",
+        "cancelInvitationAria": "Anular invitación de {email}",
+        "invitationCancelled": "Invitación anulada.",
+        "invited": "Invitación enviada.",
+        "inviteLabel": "Invitar a una persona nueva (email)",
+        "inviteHelp": "Recibirá un enlace válido 72 horas. Comprueba bien la dirección: quien reciba el enlace podrá aceptar el acceso.",
+        "invite": "Enviar invitación",
+        "sending": "Enviando…",
+        "languageLabel": "Idioma del email y de la cuenta nueva",
+        "languages": {
+          "es": "Castellano",
+          "ca": "Catalán",
+          "en": "Inglés"
+        },
+        "emailLabel": "Email de la persona",
+        "cancelInvitationConfirm": "La invitación a {email} dejará de valer y su enlace no se podrá usar. Podrás volver a invitarla. ¿Seguro?",
+        "cancelInvitationYes": "Sí, anular la invitación"
+      },
+      "security": {
+        "keyVersion": "Versión de la clave actual",
+        "previousKeys": "Claves anteriores configuradas",
+        "pendingTotal": "Valores aún con una clave anterior",
+        "state": {
+          "ok": "Todo está cifrado con la clave actual y no hay claves anteriores: nada que hacer.",
+          "readyToRetire": "Todo está cifrado con la clave actual: ya puedes vaciar ENCRYPTION_PREVIOUS_KEYS en el servidor.",
+          "rotating": "La rotación está en marcha: la tarea diaria vuelve a cifrar los valores con la clave actual. No retires la clave anterior hasta que llegue a 0.",
+          "orphaned": "Hay valores cifrados con una versión de clave que no está entre las configuradas. Recupera esa clave anterior en el servidor (ENCRYPTION_PREVIOUS_KEYS) o no se podrán descifrar."
+        },
+        "pendingByTable": "Valores pendientes por tipo de dato",
+        "pendingRow": "{table}: {count}",
+        "tables": {
+          "PlatformSecret": "Claves de la consola",
+          "PaymentMethodToken": "Tarjetas guardadas",
+          "Contribution": "NIF de donantes",
+          "User": "NIF de cuentas",
+          "Invoice": "NIF de facturas",
+          "Sponsor": "CIF de comercios",
+          "EscrowPayout": "Datos de proveedores de liquidaciones"
+        },
+        "alertsTitle": "Alertas abiertas",
+        "alerts": {
+          "CARD_DELETE_FAILED": "No se pudo borrar una tarjeta guardada",
+          "PRIVACY_REQUEST_OVERDUE": "Solicitud de privacidad fuera de plazo (el plazo legal es de un mes)",
+          "ENCRYPTION_KEY_MISSING": "Falta una clave de cifrado"
+        },
+        "alertsLink": "Ver en las alertas",
+        "alertsNone": "Ninguna abierta"
+      },
+      "history": {
+        "title": "Historial de cambios de ajustes",
+        "empty": "Todavía no hay cambios registrados.",
+        "columns": {
+          "when": "Cuándo",
+          "who": "Quién",
+          "what": "Qué",
+          "target": "Ajuste",
+          "detail": "Detalle"
+        },
+        "system": "Sistema",
+        "person": "Una persona del equipo",
+        "more": "Ver más cambios",
+        "actions": {
+          "settings_setting_updated": "Ajuste guardado",
+          "settings_setting_cleared": "Ajuste borrado",
+          "settings_secret_updated": "Clave guardada",
+          "settings_secret_deleted": "Clave quitada",
+          "settings_connection_tested": "Conexión probada",
+          "superadmin_invited": "Invitación al equipo",
+          "superadmin_invitation_cancelled": "Invitación anulada",
+          "superadmin_revoked": "Acceso retirado"
+        },
+        "detail": {
+          "legal": "versión {version} ({status})",
+          "legalStatus": {
+            "BORRADOR": "borrador",
+            "PUBLICADO": "publicado"
+          },
+          "value": "valor: {value}",
+          "status": {
+            "OK": "conexión correcta",
+            "SIMULATED": "simulador",
+            "NOT_CONFIGURED": "faltaban datos",
+            "FAILED": "rechazada",
+            "RATE_LIMITED": "demasiadas pruebas"
+          },
+          "version": "cambio nº {version}",
+          "sessions": "{count, plural, =0 {sin sesiones abiertas} one {# sesión cerrada} other {# sesiones cerradas}}",
+          "walletConfirmed": "confirmación legal del monedero anotada"
+        },
+        "targets": {
+          "legal": "{document} · {locale}",
+          "connection": {
+            "paycomet": "Conexión con Paycomet",
+            "email": "Conexión del email",
+            "invoicing": "Datos de facturación"
+          },
+          "policyVersion": "Versión vigente de la política de privacidad"
+        }
+      },
+      "fieldInvalid": "Este valor no es válido: revisa su formato.",
+      "backToIndex": "Volver al índice de bloques",
+      "unsavedLeave": "Hay cambios sin guardar. Si sales ahora se perderán. ¿Salir igualmente?"
     }
   },
   "forbidden": {

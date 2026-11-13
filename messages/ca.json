@@ -3847,7 +3847,8 @@
       "entities": "Entitats i KYB ({count, plural, =0 {res per revisar} one {# per revisar} other {# per revisar}})",
       "rules": "Regles i preus",
       "support": "Suport ({count, plural, =0 {res pendent} one {# consulta} other {# consultes}})",
-      "repartos": "Repartiments per resoldre"
+      "repartos": "Repartiments per resoldre",
+      "settings": "Configuració"
     },
     "sections": {
       "business": "Negoci: ingressos reals i projectats"
@@ -4909,6 +4910,527 @@
       "resolveConfirmYes": "Sí, tancar la consulta",
       "resolveConfirmBack": "No, tornar",
       "resolveConfirmAlreadyReplied": "Aquesta consulta ja té resposta. Es tancarà i no es podrà tornar a respondre."
+    },
+    "settings": {
+      "metaTitle": "Configuració de la plataforma",
+      "back": "← Tornar a la consola",
+      "title": "Configuració de la plataforma",
+      "intro": "Aquí es configura el que sosté el servei: els cobraments amb Paycomet, el correu electrònic, les factures, Mi Hucha, la visibilitat als cercadors, els textos legals, l’equip amb accés i les claus de xifratge. Cada bloc es desa per separat i cada canvi queda registrat a l’historial. Qualsevol canvi (no només les claus) demana haver confirmat el teu segon factor en els últims 10 minuts.",
+      "nav": {
+        "label": "Blocs de configuració",
+        "pagos": "Cobraments",
+        "email": "Correu",
+        "facturacion": "Facturació",
+        "hucha": "Mi Hucha",
+        "autoimpulso": "Autoimpuls",
+        "seo": "Cercadors",
+        "textos": "Textos legals",
+        "limites": "Límits",
+        "equipo": "Equip",
+        "seguridad": "Claus de xifratge",
+        "historial": "Historial"
+      },
+      "sections": {
+        "pagos": {
+          "title": "Cobraments amb Paycomet",
+          "hint": "Credencials i dades del comerç. KORUM no custodia fons: els cobraments, retencions i devolucions els executa Paycomet."
+        },
+        "email": {
+          "title": "Correu i remitent",
+          "hint": "Qui envia els rebuts, les entrades i els enllaços de signatura, i amb quin proveïdor."
+        },
+        "facturacion": {
+          "title": "Facturació Veri*factu",
+          "hint": "Dades de l’emissor de les factures de KORUM. Sense elles no s’emet cap factura."
+        },
+        "hucha": {
+          "title": "Mi Hucha",
+          "hint": "Com participen les famílies amb Mi Hucha. KORUM mai no guarda saldo propi."
+        },
+        "autoimpulso": {
+          "title": "Autoimpuls",
+          "hint": "Quina opció apareix marcada en executar un Autoimpuls. La decisió final es pren en cada execució."
+        },
+        "seo": {
+          "title": "Cercadors i assistents d’IA",
+          "hint": "Qui pot rastrejar el web públic i els codis de verificació de Google i Bing."
+        },
+        "textos": {
+          "title": "Textos legals i dades de l’empresa",
+          "hint": "Termes, privacitat, galetes i avís legal, en cada idioma i amb la seva versió. Encara no hi ha pàgines públiques que els mostrin: es connecten abans d’obrir al públic."
+        },
+        "limites": {
+          "title": "Límits",
+          "hint": "Els topalls que protegeixen el servei davant d’abusos."
+        },
+        "equipo": {
+          "title": "Equip amb accés a la consola",
+          "hint": "Qui pot veure i canviar tot això. L’accés es dona en acceptar la invitació."
+        },
+        "seguridad": {
+          "title": "Claus de xifratge i alertes de seguretat",
+          "hint": "Estat de la rotació de claus i avisos oberts de targetes, privacitat i claus."
+        },
+        "historial": {
+          "title": "Historial de canvis",
+          "hint": "Què s’ha canviat, qui ho ha fet i quan. Mai inclou claus ni contrasenyes."
+        }
+      },
+      "save": "Desar aquest bloc",
+      "saving": "Desant…",
+      "cancel": "Cancel·lar",
+      "saved": "Configuració desada.",
+      "savedNoChanges": "No hi havia res a canviar en aquest bloc.",
+      "reload": "Recarregar la pàgina",
+      "reauthLink": "Tornar a confirmar el meu segon factor",
+      "rejectedFields": "Revisa: {fields}.",
+      "sourceEnv": "Ara s’usa el valor de reserva del servidor; en desar, el de la consola tindrà prioritat.",
+      "outcome": {
+        "FAILED": "No s’ha pogut desar. Torna-ho a provar.",
+        "REAUTH_REQUIRED": "Han passat més de 10 minuts des del teu últim segon factor. Confirma’l de nou i torna-ho a provar.",
+        "INVALID_INPUT": "Les dades enviades no són vàlides. Recarrega la pàgina i torna-ho a provar."
+      },
+      "reason": {
+        "INVALID": "Hi ha un valor que no és vàlid.",
+        "STALE": "Una altra persona ha desat aquesta configuració mentre l’editaves; no s’ha desat res per no trepitjar el seu canvi.",
+        "UNKNOWN": "Hi ha un camp que no pertany a aquest bloc.",
+        "SERVER_IP_REQUIRED": "Amb cobraments de proves o reals la IP pública del servidor és obligatòria: sense ella fallen les devolucions.",
+        "SENDER_REQUIRED": "Amb cobraments de proves o reals el remitent és obligatori: sense ell no surt cap correu.",
+        "INVOICING_PAIR": "El NIF i la raó social de l’emissor van junts: sense qualsevol dels dos no s’emet cap factura.",
+        "WALLET_PROVIDER_REQUIRED": "El moneder amb saldo necessita el nom de l’entitat autoritzada que el custodia.",
+        "WALLET_KEY_REQUIRED": "Desa primer la clau de l’entitat que custodia el saldo.",
+        "WALLET_CONFIRMATION_REQUIRED": "Marca la confirmació del proveïdor i de la revisió legal per activar el moneder amb saldo.",
+        "WALLET_BALANCES_OPEN": "Hi ha famílies amb saldo al moneder: no es pot sortir d’aquest mode fins que no n’hi quedi cap.",
+        "VERSION_OLDER": "La versió no pot ser anterior a la desada.",
+        "VERSION_IN_USE": "Un text ja publicat no es pot modificar sense canviar de versió: publica’n una versió nova.",
+        "PUBLISHED_TO_DRAFT": "Un text publicat no torna a esborrany: publica’n una versió nova.",
+        "INVALID_EMAIL": "Aquest correu no és vàlid.",
+        "ALREADY_SUPERADMIN": "Aquesta persona ja té accés a la consola.",
+        "ENTITY_MEMBER": "Aquest compte signa per una entitat i no pot ser Super-Admin: usa un altre correu.",
+        "RATE_LIMITED": "Massa invitacions avui o massa correus a aquesta persona. Torna-ho a provar més tard.",
+        "SELF": "No et pots retirar l’accés a tu mateix.",
+        "LAST_ADMIN": "No es pot retirar l’última persona amb accés.",
+        "NOT_FOUND": "Ja no existeix: pot ser que una altra persona ho hagi canviat. Recarrega la pàgina.",
+        "VERSION_NOT_TODAY": "Un text es publica amb la data d’avui (hora d’Espanya): ni futura ni endarrerida.",
+        "SECRET_REQUIRED": "Amb cobraments de proves o reals aquesta clau és imprescindible i el servidor no en té cap altra de reserva: sense ella el servei s’aturaria.",
+        "FIELD_REQUIRED": "Amb cobraments de proves o reals aquesta dada és imprescindible i el servidor no en té cap altra de reserva: sense ella els cobraments s’aturarien.",
+        "WALLET_PROVIDER_LOCKED": "Hi ha famílies amb saldo al moneder: no es pot canviar l’entitat que el custodia fins que no n’hi quedi cap."
+      },
+      "fields": {
+        "paycomet_merchantCode": {
+          "label": "Codi de comerç",
+          "help": "El que et va donar Paycomet per al teu compte."
+        },
+        "paycomet_terminalId": {
+          "label": "Terminal",
+          "help": "Número del terminal de Paycomet (només xifres)."
+        },
+        "paycomet_jetId": {
+          "label": "JET ID",
+          "help": "Codi públic del formulari de targeta que dona Paycomet. Encara no el fa servir cap pantalla: es desa per quan es connecti Paycomet real."
+        },
+        "paycomet_serverIp": {
+          "label": "IP pública del servidor",
+          "help": "La que es dona d’alta a Paycomet per poder retornar pagaments. Obligatòria amb cobraments de proves o reals."
+        },
+        "email_provider": {
+          "label": "Proveïdor de correu",
+          "help": "Només Brevo té adaptador de moment.",
+          "options": {
+            "brevo": "Brevo"
+          }
+        },
+        "email_fromAddress": {
+          "label": "Adreça del remitent",
+          "help": "Des d’on surten els correus (per exemple hola@elteudomini.cat). Ha d’estar validada al proveïdor."
+        },
+        "email_fromName": {
+          "label": "Nom del remitent",
+          "help": "El que veu la família com a remitent. Per defecte, KORUM."
+        },
+        "email_replyTo": {
+          "label": "Respondre a (opcional)",
+          "help": "Adreça a la qual arriben les respostes, si és diferent del remitent."
+        },
+        "invoicing_provider": {
+          "label": "Proveïdor de facturació",
+          "help": "Nom del proveïdor homologat de Veri*factu. Encara no hi ha connexió amb un de real: es desa per quan es contracti."
+        },
+        "invoicing_issuerNif": {
+          "label": "NIF o CIF de l’emissor",
+          "help": "Es valida amb el seu dígit de control. Va junt amb la raó social."
+        },
+        "invoicing_issuerName": {
+          "label": "Raó social de l’emissor",
+          "help": "Tal com ha d’aparèixer a les factures."
+        },
+        "invoicing_series": {
+          "label": "Sèrie de les factures",
+          "help": "Majúscules i xifres, fins a 10 caràcters (per exemple KR). Encara no s’usa: avui les factures porten sèries fixes; s’aplicarà amb el proveïdor real."
+        },
+        "hucha_mode": {
+          "label": "Mode de Mi Hucha",
+          "help": "Canvia el que veuen les famílies en menys d’un minut.",
+          "options": {
+            "DISABLED": "Desactivada",
+            "PLEDGE": "Aportació mensual programada",
+            "REGULATED_WALLET": "Moneder amb saldo (entitat autoritzada)"
+          }
+        },
+        "hucha_walletProvider": {
+          "label": "Entitat que custodia el saldo",
+          "help": "Només per al moneder amb saldo: nom de l’entitat autoritzada."
+        },
+        "autoBoost_publicDisclosureDefault": {
+          "label": "Avís públic per defecte",
+          "help": "Si la fitxa diu, sense import, que la plataforma KORUM també ha aportat.",
+          "options": {
+            "SHOW": "Mostrar l’avís",
+            "HIDE": "No mostrar-lo"
+          }
+        },
+        "seo_aiCrawlers": {
+          "label": "Rastrejadors d’IA"
+        },
+        "seo_verification_google": {
+          "label": "Verificació de Google",
+          "help": "Codi de Google Search Console (només lletres, xifres, guionet i guió baix)."
+        },
+        "seo_verification_bing": {
+          "label": "Verificació de Bing",
+          "help": "Codi de Bing Webmaster Tools (només lletres, xifres, guionet i guió baix)."
+        },
+        "platform_company": {
+          "label": "Dades de l’empresa"
+        },
+        "raffle_extraRoundMinHours": {
+          "label": "Hores d’espera abans d’una ronda extra del sorteig",
+          "help": "Entre 0 i 720. 0 = sense espera. El fixa l’advocat; el reemborsament d’un guanyador no espera."
+        }
+      },
+      "secretsTitle": "Claus i contrasenyes",
+      "secretsHint": "Es desen xifrades i no es tornen a mostrar: només es veu quan es va canviar i, si són llargues, els seus quatre últims caràcters. Cada clau es desa amb el seu propi botó.",
+      "secrets": {
+        "paycomet_apiKey": {
+          "label": "Clau de l’API de Paycomet",
+          "help": "Amb ella KORUM crida Paycomet (cobraments, devolucions, repartiments)."
+        },
+        "paycomet_webhookSecret": {
+          "label": "Contrasenya de les notificacions de Paycomet",
+          "help": "Amb ella es comprova que cada avís de pagament ve de Paycomet."
+        },
+        "email_apiKey": {
+          "label": "Clau de l’API de Brevo",
+          "help": "Amb ella s’envien els correus."
+        },
+        "invoicing_apiKey": {
+          "label": "Clau del proveïdor de facturació",
+          "help": "Per registrar les factures a Veri*factu."
+        },
+        "hucha_walletApiKey": {
+          "label": "Clau de l’entitat que custodia el saldo",
+          "help": "Només per al moneder amb saldo."
+        },
+        "seo_indexNowKey": {
+          "label": "Clau d’IndexNow",
+          "help": "Avisa els cercadors quan es publica o es tanca una iniciativa."
+        }
+      },
+      "secretStatus": {
+        "set": "Desada a la consola · acaba en «{hint}» · actualitzada el {when}.",
+        "env": "No hi ha clau a la consola: s’usa la clau de reserva del servidor.",
+        "none": "Sense configurar.",
+        "setNoHint": "Desada a la consola · actualitzada el {when}."
+      },
+      "secretNewPlaceholder": "Escriu la clau per desar-la",
+      "secretReplacePlaceholder": "Escriu una clau nova per substituir-la",
+      "secretSave": "Desar la clau",
+      "secretSaved": "Clau desada.",
+      "secretRemove": "Treure la clau",
+      "secretRemoved": "Clau treta.",
+      "secretRemoveAria": "Treure {name}",
+      "secretRemoveConfirm": "Si la treus, s’usarà la clau de reserva del servidor si n’hi ha; si no, el servei que la necessita deixarà de funcionar. Segur?",
+      "secretRemoveYes": "Sí, treure la clau",
+      "testButton": "Provar la connexió",
+      "testing": "Provant…",
+      "testHint": "Comprova el que ja està desat; no envia diners ni missatges.",
+      "test": {
+        "OK": "Connexió correcta: el proveïdor ha acceptat les credencials.",
+        "SIMULATED_paycomet": "Els cobraments estan en mode simulador: no es crida Paycomet, així que no hi ha res a provar.",
+        "SIMULATED_email": "Els cobraments estan en mode simulador: els correus es queden a la vista prèvia local i no es crida Brevo.",
+        "SIMULATED_invoicing": "Les dades de l’emissor estan completes. Encara no hi ha connexió amb un proveïdor real de Veri*factu: de moment només s’emet amb el simulador.",
+        "NOT_CONFIGURED": "Falta per configurar: {missing}.",
+        "RATE_LIMITED": "Massa proves seguides. Espera uns minuts.",
+        "FAILED": "El proveïdor no ha acceptat la connexió (codi {code}). Revisa les credencials.",
+        "CONFIG": "Hi ha una configuració o una clau desades que no es poden llegir. Torna a desar-les i prova de nou.",
+        "NETWORK": "No s’ha pogut contactar amb el proveïdor (tall de xarxa o temps esgotat). Torna-ho a provar d’aquí a uns minuts."
+      },
+      "payments": {
+        "modeLabel": "Mode de cobraments: {mode}.",
+        "modes": {
+          "mock": "simulador",
+          "sandbox": "proves (sandbox)",
+          "live": "cobraments reals"
+        },
+        "modeHelp": {
+          "mock": "No es mouen diners ni es crida Paycomet. El mode el fixa el servidor i no es canvia des d’aquesta pantalla.",
+          "sandbox": "Es crida l’entorn de proves de Paycomet, sense diners reals. El mode el fixa el servidor i no es canvia des d’aquesta pantalla.",
+          "live": "Cobraments reals: un error aquí mou diners de debò, així que canvia només el necessari. El mode el fixa el servidor i no es canvia des d’aquesta pantalla."
+        },
+        "ipMissing": "Falta la IP pública del servidor. Sense donar-la d’alta a Paycomet, les devolucions fallaran amb cobraments de proves o reals."
+      },
+      "email": {
+        "smtpNote": "La connexió directa amb el teu proveïdor de correu encara no està disponible: de moment només es pot fer servir Brevo. Amb cobraments simulats els correus mai no surten: es queden a la vista prèvia local."
+      },
+      "invoicing": {
+        "complete": "NIF i raó social complets: ja es poden emetre factures.",
+        "pair": "Falta una de les dues dades. Sense el NIF o sense la raó social no s’emet cap factura: un patrocini amb comissió falla i no es pot deixar d’admetre un comerç facturat.",
+        "missing": "Falten el NIF i la raó social de l’emissor. Sense ells no s’emet cap factura: un patrocini amb comissió falla i no es pot deixar d’admetre un comerç facturat."
+      },
+      "hucha": {
+        "modeHelp": {
+          "DISABLED": "Mi Hucha no apareix en cap pantalla.",
+          "PLEDGE": "La família tria un import mensual i una entitat; cada mes es cobra amb la seva targeta i s’aplica directament a una iniciativa activa. No hi ha saldo guardat.",
+          "REGULATED_WALLET": "El saldo és de la família i el custodia una entitat autoritzada per a això; KORUM només reflecteix aquest saldo. La retirada es fa sempre amb reemborsament al mitjà de pagament original."
+        },
+        "walletConfirm": "Confirmo que tinc per escrit la confirmació del proveïdor que pot custodiar saldos d’usuaris i que s’ha fet la revisió legal. Aquesta confirmació queda anotada a l’historial."
+      },
+      "limits": {
+        "noWindow": "Sense caducitat",
+        "hours": "{count, plural, one {# hora} other {# hores}}",
+        "minutes": "{count, plural, one {# minut} other {# minuts}}",
+        "fixedTitle": "Límits fixos del servei",
+        "fixedHint": "Aquests topalls són al codi de la plataforma i no es canvien des d’aquí; es mostren perquè sàpigues quina protecció hi ha. Canviar-los requereix una versió nova.",
+        "colRule": "Què limita",
+        "colLimit": "Intents",
+        "colWindow": "Cada",
+        "rules": {
+          "authEmail": "Correus d’accés per destinatari",
+          "secondFactorFailures": "Errors seguits del segon factor",
+          "registration": "Altes d’entitats per xarxa",
+          "checkout": "Pagaments iniciats per xarxa",
+          "signatureRequests": "Peticions d’enllaç i codi de signatura",
+          "gateEntry": "Intents de PIN de porteria per xarxa",
+          "activityFund": "Liquidacions del Fons d’activitats per entitat",
+          "webhookInvalid": "Notificacions de pagament amb signatura invàlida per xarxa"
+        }
+      },
+      "seo": {
+        "delay": "Un canvi triga uns 12 minuts com a màxim a veure’s al web públic i als fitxers robots.txt i llms.txt (els que llegeixen cercadors i assistents).",
+        "crawlersTitle": "Rastrejadors d’assistents d’IA",
+        "crawlersHint": "Els de cerca són els assistents que consulten el web per contestar a qui els pregunta. Els d’entrenament només llegeixen les pàgines de presentació de KORUM, mai les portades de les entitats. Ara s’usa {source}.",
+        "sourceDefault": "la llista inicial de la plataforma",
+        "sourceConsole": "la llista desada aquí",
+        "groups": {
+          "search": {
+            "title": "Cerca i resposta",
+            "hint": "Permesos a tot el web públic."
+          },
+          "training": {
+            "title": "Entrenament",
+            "hint": "Només a les pàgines de màrqueting."
+          }
+        },
+        "nameInvalid": "El nom només pot portar lletres, xifres, punt, guionet i guió baix (de 2 a 100 caràcters).",
+        "nameTaken": "Aquest rastrejador ja és a la llista.",
+        "removeAria": "Treure {name} de la llista",
+        "remove": "Treure",
+        "allowed": "Permès",
+        "blocked": "Bloquejat",
+        "empty": "No n’hi ha cap en aquesta llista.",
+        "addLabel": "Afegir un rastrejador (nom de l’agent)",
+        "add": "Afegir",
+        "added": "{name} afegit a la llista (falta desar).",
+        "removed": "{name} tret de la llista (falta desar).",
+        "unsaved": "Hi ha canvis a la llista sense desar.",
+        "reset": "Tornar a la llista inicial"
+      },
+      "company": {
+        "title": "Dades de l’empresa",
+        "hint": "Dades de l’empresa. Encara no les fa servir cap pàgina, correu ni factura: es desen per quan es connectin. Amb tots els camps buits s’esborren.",
+        "fields": {
+          "legalName": "Raó social",
+          "taxId": "NIF o CIF",
+          "address": "Domicili",
+          "supportEmail": "Correu de suport",
+          "privacyEmail": "Correu de privacitat"
+        },
+        "errors": {
+          "legalName": "Escriu la raó social.",
+          "taxId": "El NIF o CIF no és vàlid: revisa l’última xifra o lletra.",
+          "address": "Escriu el domicili.",
+          "supportEmail": "El correu de suport no és vàlid.",
+          "privacyEmail": "El correu de privacitat no és vàlid."
+        },
+        "required": {
+          "legalName": "Escriu la raó social.",
+          "taxId": "Escriu el NIF o CIF.",
+          "address": "Escriu el domicili.",
+          "supportEmail": "Escriu el correu de suport.",
+          "privacyEmail": "Escriu el correu de privacitat."
+        }
+      },
+      "legal": {
+        "intro": "Cada text porta la seva versió (la data de publicació) i el seu estat. Un text publicat no es modifica sense canviar de versió: per canviar-lo es publica una versió nova, i cada consentiment desa la versió de la política que la persona va acceptar. La consola només desa el text vigent de cadascun.",
+        "policyVersion": "Versió vigent de la política de privacitat: {version}. La desa cada consentiment i puja sola quan la política està publicada en els tres idiomes (passa a la més antiga de les tres versions).",
+        "matrixTitle": "Textos legals per document i idioma",
+        "colDocument": "Document",
+        "locales": {
+          "es": "Castellà",
+          "ca": "Català",
+          "en": "Anglès"
+        },
+        "documents": {
+          "terminos": "Termes i condicions",
+          "privacidad": "Política de privacitat",
+          "cookies": "Política de galetes",
+          "aviso-legal": "Avís legal"
+        },
+        "openAria": "{document} en {locale}: ",
+        "statusNone": "Sense crear",
+        "status": {
+          "BORRADOR": "Esborrany",
+          "PUBLICADO": "Publicat"
+        },
+        "editing": "Editant: {document} · {locale}",
+        "publishedHint": "Aquest text està publicat amb la versió {version}. Per canviar-lo, publica’n una versió nova.",
+        "draftHint": "Mentre sigui un esborrany, només es veu aquí. Quan hi hagi pàgines públiques, el text publicat serà la versió vigent.",
+        "version": "Versió",
+        "versionHelp": "La data de publicació (AAAA-MM-DD); si n’hi ha diverses el mateix dia, afegeix «.1», «.2»… En publicar, la data és la d’avui.",
+        "statusLabel": "Estat",
+        "text": "Text (pots fer servir # per als títols i - per a les llistes)",
+        "characters": "{count, plural, one {# caràcter} other {# caràcters}}",
+        "confirmPublish": "Vas a publicar la versió {version} ({locale}). Passarà a ser la versió vigent i no la podràs editar: per canviar-la hauràs de publicar-ne una altra.",
+        "confirmYes": "Sí, publicar la versió {version}",
+        "publish": "Publicar una versió nova",
+        "saveDraft": "Desar l’esborrany",
+        "saved": "Text desat (versió {version}).",
+        "published": "Text publicat (versió {version}).",
+        "nothingToPublish": "No hi ha canvis al text: modifica’l per publicar-ne una versió nova.",
+        "publishFirst": "Publicar aquest text"
+      },
+      "team": {
+        "intro": "Aquestes persones poden veure i canviar tot el d’aquesta consola. Qui rep una invitació només té accés quan l’accepta, amb una contrasenya d’almenys 12 caràcters i el segon factor activat. Un compte que signa per una entitat no pot ser Super-Admin.",
+        "membersTitle": "Persones amb accés",
+        "you": "tu",
+        "twoFactorOn": "Segon factor activat",
+        "twoFactorOff": "Sense segon factor",
+        "lastSeen": "Última activitat: {when}",
+        "neverSeen": "Sense activitat registrada",
+        "selfNote": "Ningú no es pot treure l’accés a si mateix: que ho faci una altra persona de l’equip.",
+        "revoke": "Retirar l’accés",
+        "revokeAria": "Retirar l’accés a {email}",
+        "revokeConfirm": "{email} perdrà l’accés a la consola i es tancaran totes les seves sessions ara mateix. Segur?",
+        "revokeYes": "Sí, retirar l’accés",
+        "cancel": "Cancel·lar",
+        "revoked": "Accés retirat.",
+        "pendingTitle": "Invitacions sense acceptar",
+        "expires": "Caduca el {when}",
+        "expired": "Va caducar el {when}",
+        "resend": "Tornar a enviar",
+        "resendAria": "Tornar a enviar la invitació a {email}",
+        "cancelInvitation": "Anul·lar la invitació",
+        "cancelInvitationAria": "Anul·lar la invitació de {email}",
+        "invitationCancelled": "Invitació anul·lada.",
+        "invited": "Invitació enviada.",
+        "inviteLabel": "Invitar una persona nova (correu)",
+        "inviteHelp": "Rebrà un enllaç vàlid 72 hores. Comprova bé l’adreça: qui rebi l’enllaç podrà acceptar l’accés.",
+        "invite": "Enviar la invitació",
+        "sending": "Enviant…",
+        "languageLabel": "Idioma del correu i del compte nou",
+        "languages": {
+          "es": "Castellà",
+          "ca": "Català",
+          "en": "Anglès"
+        },
+        "emailLabel": "Correu de la persona",
+        "cancelInvitationConfirm": "La invitació a {email} deixarà de valer i el seu enllaç no es podrà fer servir. Podràs tornar a invitar-la. Segur?",
+        "cancelInvitationYes": "Sí, anul·lar la invitació"
+      },
+      "security": {
+        "keyVersion": "Versió de la clau actual",
+        "previousKeys": "Claus anteriors configurades",
+        "pendingTotal": "Valors encara amb una clau anterior",
+        "state": {
+          "ok": "Tot està xifrat amb la clau actual i no hi ha claus anteriors: res a fer.",
+          "readyToRetire": "Tot està xifrat amb la clau actual: ja pots buidar ENCRYPTION_PREVIOUS_KEYS al servidor.",
+          "rotating": "La rotació està en marxa: la tasca diària torna a xifrar els valors amb la clau actual. No retiris la clau anterior fins que arribi a 0.",
+          "orphaned": "Hi ha valors xifrats amb una versió de clau que no és entre les configurades. Recupera aquesta clau anterior al servidor (ENCRYPTION_PREVIOUS_KEYS) o no es podran desxifrar."
+        },
+        "pendingByTable": "Valors pendents per tipus de dada",
+        "pendingRow": "{table}: {count}",
+        "tables": {
+          "PlatformSecret": "Claus de la consola",
+          "PaymentMethodToken": "Targetes desades",
+          "Contribution": "NIF de donants",
+          "User": "NIF de comptes",
+          "Invoice": "NIF de factures",
+          "Sponsor": "CIF de comerços",
+          "EscrowPayout": "Dades de proveïdors de liquidacions"
+        },
+        "alertsTitle": "Alertes obertes",
+        "alerts": {
+          "CARD_DELETE_FAILED": "No s’ha pogut esborrar una targeta desada",
+          "PRIVACY_REQUEST_OVERDUE": "Sol·licitud de privacitat fora de termini (el termini legal és d’un mes)",
+          "ENCRYPTION_KEY_MISSING": "Falta una clau de xifratge"
+        },
+        "alertsLink": "Veure a les alertes",
+        "alertsNone": "Cap d’oberta"
+      },
+      "history": {
+        "title": "Historial de canvis de configuració",
+        "empty": "Encara no hi ha canvis registrats.",
+        "columns": {
+          "when": "Quan",
+          "who": "Qui",
+          "what": "Què",
+          "target": "Configuració",
+          "detail": "Detall"
+        },
+        "system": "Sistema",
+        "person": "Una persona de l’equip",
+        "more": "Veure més canvis",
+        "actions": {
+          "settings_setting_updated": "Configuració desada",
+          "settings_setting_cleared": "Configuració esborrada",
+          "settings_secret_updated": "Clau desada",
+          "settings_secret_deleted": "Clau treta",
+          "settings_connection_tested": "Connexió provada",
+          "superadmin_invited": "Invitació a l’equip",
+          "superadmin_invitation_cancelled": "Invitació anul·lada",
+          "superadmin_revoked": "Accés retirat"
+        },
+        "detail": {
+          "legal": "versió {version} ({status})",
+          "legalStatus": {
+            "BORRADOR": "esborrany",
+            "PUBLICADO": "publicat"
+          },
+          "value": "valor: {value}",
+          "status": {
+            "OK": "connexió correcta",
+            "SIMULATED": "simulador",
+            "NOT_CONFIGURED": "faltaven dades",
+            "FAILED": "rebutjada",
+            "RATE_LIMITED": "massa proves"
+          },
+          "version": "canvi núm. {version}",
+          "sessions": "{count, plural, =0 {sense sessions obertes} one {# sessió tancada} other {# sessions tancades}}",
+          "walletConfirmed": "confirmació legal del moneder anotada"
+        },
+        "targets": {
+          "legal": "{document} · {locale}",
+          "connection": {
+            "paycomet": "Connexió amb Paycomet",
+            "email": "Connexió del correu",
+            "invoicing": "Dades de facturació"
+          },
+          "policyVersion": "Versió vigent de la política de privacitat"
+        }
+      },
+      "fieldInvalid": "Aquest valor no és vàlid: revisa’n el format.",
+      "backToIndex": "Tornar a l’índex de blocs",
+      "unsavedLeave": "Hi ha canvis sense desar. Si surts ara es perdran. Vols sortir igualment?"
     }
   },
   "forbidden": {

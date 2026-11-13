@@ -90,8 +90,15 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
     if (await tx.organization.findUnique({ where: { slug: input.slug }, select: { id: true } })) throw new RegistrationError({ code: 'SLUG_TAKEN' });
     const [existingDirector, existingCosigner] = await Promise.all([
       tx.user.findUnique({ where: { canonicalEmail: directorCanonical }, select: { id: true, isSuperadmin: true, gdprAnonymizedAt: true, accounts: { where: { providerId: 'credential', password: { not: null } }, select: { id: true } } } }),
-      tx.user.findUnique({ where: { canonicalEmail: cosignerCanonical }, select: { id: true, isSuperadmin: true, gdprAnonymizedAt: true } })
+      tx.user.findUnique({ where: { canonicalEmail: cosignerCanonical }, select: { id: true, email: true, isSuperadmin: true, gdprAnonymizedAt: true } })
     ]);
+    // Las cuentas que ya existen se bloquean y se vuelve a leer su rol: si a la vez aceptan una invitación de Super-Admin (que bloquea la misma fila), una de las dos operaciones espera a la
+    // otra y nadie acaba siendo Super-Admin y firmante a la vez.
+    for (const id of [existingDirector?.id, existingCosigner?.id].filter((value): value is string => value !== undefined).sort()) await tx.user.updateMany({ where: { id }, data: { updatedAt: now } });
+    const lockedIds = [existingDirector?.id, existingCosigner?.id].filter((value): value is string => value !== undefined);
+    const nowAdmins = new Set((await tx.user.findMany({ where: { id: { in: lockedIds }, isSuperadmin: true }, select: { id: true } })).map((row) => row.id));
+    if (existingDirector && nowAdmins.has(existingDirector.id)) existingDirector.isSuperadmin = true;
+    if (existingCosigner && nowAdmins.has(existingCosigner.id)) existingCosigner.isSuperadmin = true;
     // Sin sesión de esa misma cuenta (y verificada hace poco: la decide quien llama) no se toca una cuenta existente. El Super-Admin no firma.
     if (existingDirector && (existingDirector.id !== context.sessionUserId || existingDirector.gdprAnonymizedAt || existingDirector.isSuperadmin)) throw new RegistrationError({ code: 'DIRECTOR_EMAIL_IN_USE' });
     // El Super-Admin nunca firma por una entidad, y una cuenta suprimida no puede recibir cargos.
@@ -158,7 +165,8 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
       { db: tx, hmacSecret: context.hmacSecret, dispatch: (ids) => queued.push(...ids) },
       {
         template: 'auth.invitation',
-        to: input.cosigner.email,
+        // A la dirección **de la cuenta** si ya existe: el email se busca por su forma canónica (sin alias `+…`) y lo tecleado puede ser otro buzón que el de esa cuenta.
+        to: existingCosigner?.email ?? input.cosigner.email,
         locale: cosignerLocale,
         organizationId,
         payload: { url: invitationUrl(context.appUrl, cosignerLocale, token), hours: INVITATION_HOURS, organizationName: input.name, roleLabel: input.cosigner.roleLabel }

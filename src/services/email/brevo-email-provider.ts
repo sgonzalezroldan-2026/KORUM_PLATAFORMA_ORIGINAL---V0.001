@@ -10,6 +10,7 @@ import { EmailConfigurationError, EmailSendError, type EmailMessage, type EmailP
  * ocurre con una cuenta real habrá que distinguirlo por el código del cuerpo (bitácora 2.6).
  */
 const ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
+const ACCOUNT_ENDPOINT = 'https://api.brevo.com/v3/account';
 const TIMEOUT_MS = 10_000;
 
 export class BrevoEmailProvider implements EmailProvider {
@@ -19,6 +20,21 @@ export class BrevoEmailProvider implements EmailProvider {
     private readonly apiKey: string,
     private readonly fetchImpl: typeof fetch = fetch
   ) {}
+
+  /**
+   * Comprobación de la clave desde la consola («Probar conexión»): `GET /v3/account`, que no envía nada ni cuesta nada. Suposición contra su documentación pública, sin cuenta real
+   * todavía. `401`/`403` es que Brevo rechaza la clave; cualquier otro fallo, que no se pudo comprobar. No sigue redirecciones: la clave no puede viajar a otro servidor.
+   */
+  async checkCredentials(): Promise<void> {
+    let response: Response;
+    try {
+      response = await this.fetchImpl(ACCOUNT_ENDPOINT, { method: 'GET', headers: { 'api-key': this.apiKey, accept: 'application/json' }, redirect: 'error', signal: AbortSignal.timeout(TIMEOUT_MS) });
+    } catch {
+      throw new EmailSendError('Brevo no respondió (corte de red o tiempo agotado).', false);
+    }
+    if (response.status === 401 || response.status === 403) throw new EmailConfigurationError(['email.apiKey (Brevo la ha rechazado)']);
+    if (!response.ok) throw new EmailSendError(`Brevo respondió ${response.status}.`, false);
+  }
 
   async send(message: EmailMessage): Promise<EmailSendResult> {
     let response: Response;

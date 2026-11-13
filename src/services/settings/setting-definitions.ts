@@ -1,5 +1,6 @@
 import { isIP } from 'node:net';
 import { z } from 'zod';
+import { CRAWLER_USER_AGENT, LEGAL_DOCUMENTS, LEGAL_LOCALES, LEGAL_VERSION_PATTERN, SEARCH_VERIFICATION_TOKEN, type LegalDocument, type LegalLocale } from '@/core/admin/settings-model';
 import { validateTaxId } from '@/core/tax/tax-id';
 
 /**
@@ -13,7 +14,7 @@ const ipAddress = z.string().trim().refine((value) => isIP(value) !== 0, 'Debe s
 const taxId = z.string().trim().refine((value) => validateTaxId(value).valid, 'NIF o CIF no válido');
 
 const legalText = z.object({
-  version: z.string().regex(/^\d{4}-\d{2}-\d{2}(\.\d+)?$/, 'La versión es la fecha de publicación (AAAA-MM-DD, con «.n» si hay varias el mismo día)'),
+  version: z.string().regex(LEGAL_VERSION_PATTERN, 'La versión es la fecha de publicación (AAAA-MM-DD, con «.1», «.2»… si hay varias el mismo día)'),
   status: z.enum(['BORRADOR', 'PUBLICADO']),
   markdown: z.string().min(1).max(200_000)
 });
@@ -27,7 +28,15 @@ const company = z.object({
 });
 
 const acknowledgement = z.object({ code: text(80), fingerprint: text(200), acknowledgedById: text(80), acknowledgedAt: z.iso.datetime(), note: z.string().max(1000) });
-const crawlerPolicy = z.object({ search: z.array(z.object({ userAgent: text(100), allow: z.boolean() })), training: z.array(z.object({ userAgent: text(100), allow: z.boolean() })) });
+
+/** Un rastreador de `seo.aiCrawlers`: su nombre se valida con `CRAWLER_USER_AGENT` (se escribe tal cual en `robots.txt`). */
+const crawlerRule = z.object({ userAgent: z.string().trim().regex(CRAWLER_USER_AGENT, 'Nombre de rastreador no válido (letras, cifras, punto, guion y guion bajo)'), allow: z.boolean() });
+const crawlerPolicy = z
+  .object({ search: z.array(crawlerRule).max(40), training: z.array(crawlerRule).max(40) })
+  .refine((policy) => {
+    const names = [...policy.search, ...policy.training].map((rule) => rule.userAgent.toLowerCase());
+    return new Set(names).size === names.length;
+  }, 'Un rastreador no puede aparecer dos veces');
 
 export interface SettingDefinition<T> {
   schema: z.ZodType<T>;
@@ -46,9 +55,10 @@ export const SETTING_DEFINITIONS = {
   'paycomet.jetId': def(text(80), { auditValue: true }),
   'paycomet.serverIp': def(ipAddress, { auditValue: true }),
   'email.provider': def(z.enum(['brevo', 'smtp']), { defaultValue: 'brevo', auditValue: true }),
-  'email.fromAddress': def(z.email(), { auditValue: true }),
+  // Un remitente o un «responder a» puede ser el buzón de una persona: no se copia a la auditoría (que se conserva 6 años).
+  'email.fromAddress': def(z.email(), { auditValue: false }),
   'email.fromName': def(text(80), { defaultValue: 'KORUM', auditValue: true }),
-  'email.replyTo': def(z.email(), { auditValue: true }),
+  'email.replyTo': def(z.email(), { auditValue: false }),
   'email.smtp.host': def(text(253), { auditValue: true }),
   'email.smtp.port': def(z.number().int().min(1).max(65_535), { auditValue: true }),
   'invoicing.provider': def(text(60), { auditValue: true }),
@@ -61,17 +71,15 @@ export const SETTING_DEFINITIONS = {
   'hucha.walletProvider': def(text(60), { auditValue: true }),
   'autoBoost.publicDisclosureDefault': def(z.enum(['SHOW', 'HIDE']), { defaultValue: 'SHOW', auditValue: true }),
   'seo.aiCrawlers': def(crawlerPolicy, { auditValue: false }),
-  'seo.verification.google': def(text(200), { auditValue: true }),
-  'seo.verification.bing': def(text(200), { auditValue: true }),
+  'seo.verification.google': def(z.string().trim().regex(SEARCH_VERIFICATION_TOKEN, 'El código de verificación solo lleva letras, cifras, guion y guion bajo (8 a 200)'), { auditValue: true }),
+  'seo.verification.bing': def(z.string().trim().regex(SEARCH_VERIFICATION_TOKEN, 'El código de verificación solo lleva letras, cifras, guion y guion bajo (8 a 200)'), { auditValue: true }),
   'platform.company': def(company, { auditValue: false }),
   'pricing.acknowledgements': def(z.array(acknowledgement), { defaultValue: [], auditValue: false }),
-  'privacy.policyVersion': def(z.string().regex(/^\d{4}-\d{2}-\d{2}(\.\d+)?$/), { defaultValue: '2026-11-01', auditValue: true })
+  'privacy.policyVersion': def(z.string().regex(LEGAL_VERSION_PATTERN), { defaultValue: '2026-11-01', auditValue: true })
 } satisfies Record<string, SettingDefinition<unknown>>;
 
-export const LEGAL_DOCUMENTS = ['terminos', 'privacidad', 'cookies', 'aviso-legal'] as const;
-export const LEGAL_LOCALES = ['es', 'ca', 'en'] as const;
-export type LegalDocument = (typeof LEGAL_DOCUMENTS)[number];
-export type LegalLocale = (typeof LEGAL_LOCALES)[number];
+export { LEGAL_DOCUMENTS, LEGAL_LOCALES };
+export type { LegalDocument, LegalLocale };
 export type LegalText = z.infer<typeof legalText>;
 
 /** Límites de intentos editables (`limits.gatePinMaxFailures`, `limits.otpMaxAttempts`…). Enteros positivos, nunca 0: un 0 bloquearía el servicio. */

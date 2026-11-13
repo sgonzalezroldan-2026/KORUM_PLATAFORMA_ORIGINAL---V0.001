@@ -3847,7 +3847,8 @@
       "entities": "Entities and KYB ({count, plural, =0 {nothing to review} one {# to review} other {# to review}})",
       "rules": "Rules and prices",
       "support": "Support ({count, plural, =0 {nothing pending} one {# enquiry} other {# enquiries}})",
-      "repartos": "Payouts to resolve"
+      "repartos": "Payouts to resolve",
+      "settings": "Settings"
     },
     "sections": {
       "business": "Business: actual and projected revenue"
@@ -4909,6 +4910,527 @@
       "resolveConfirmYes": "Yes, close the enquiry",
       "resolveConfirmBack": "No, go back",
       "resolveConfirmAlreadyReplied": "This enquiry already has an answer. It will be closed and cannot be answered again."
+    },
+    "settings": {
+      "metaTitle": "Platform settings",
+      "back": "← Back to the console",
+      "title": "Platform settings",
+      "intro": "This is where you configure what keeps the service running: payments with Paycomet, email, invoices, Mi Hucha, search visibility, legal texts, the team with access and the encryption keys. Each block is saved on its own and every change is recorded in the history. Any change (not only keys) requires you to have confirmed your second factor in the last 10 minutes.",
+      "nav": {
+        "label": "Settings blocks",
+        "pagos": "Payments",
+        "email": "Email",
+        "facturacion": "Invoicing",
+        "hucha": "Mi Hucha",
+        "autoimpulso": "Auto-Boost",
+        "seo": "Search engines",
+        "textos": "Legal texts",
+        "limites": "Limits",
+        "equipo": "Team",
+        "seguridad": "Encryption keys",
+        "historial": "History"
+      },
+      "sections": {
+        "pagos": {
+          "title": "Payments with Paycomet",
+          "hint": "Credentials and merchant details. KORUM does not hold funds: payments, holds and refunds are carried out by Paycomet."
+        },
+        "email": {
+          "title": "Email and sender",
+          "hint": "Who sends receipts, tickets and signing links, and through which provider."
+        },
+        "facturacion": {
+          "title": "Veri*factu invoicing",
+          "hint": "Details of the issuer of KORUM’s invoices. Without them no invoice is issued."
+        },
+        "hucha": {
+          "title": "Mi Hucha",
+          "hint": "How families take part with Mi Hucha. KORUM never holds a balance of its own."
+        },
+        "autoimpulso": {
+          "title": "Auto-Boost",
+          "hint": "Which option is pre-selected when running an Auto-Boost. The final decision is made at each run."
+        },
+        "seo": {
+          "title": "Search engines and AI assistants",
+          "hint": "Who may crawl the public website, and the Google and Bing verification codes."
+        },
+        "textos": {
+          "title": "Legal texts and company details",
+          "hint": "Terms, privacy, cookies and legal notice, in each language and with its version. There are no public pages showing them yet: they are connected before opening to the public."
+        },
+        "limites": {
+          "title": "Limits",
+          "hint": "The caps that protect the service from abuse."
+        },
+        "equipo": {
+          "title": "Team with console access",
+          "hint": "Who can see and change all of this. Access is granted when the invitation is accepted."
+        },
+        "seguridad": {
+          "title": "Encryption keys and security alerts",
+          "hint": "State of the key rotation and open alerts about cards, privacy and keys."
+        },
+        "historial": {
+          "title": "Change history",
+          "hint": "What changed, who did it and when. It never includes keys or passwords."
+        }
+      },
+      "save": "Save this block",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "saved": "Settings saved.",
+      "savedNoChanges": "There was nothing to change in this block.",
+      "reload": "Reload the page",
+      "reauthLink": "Confirm my second factor again",
+      "rejectedFields": "Please check: {fields}.",
+      "sourceEnv": "The server’s fallback value is being used now; once you save, the console value takes priority.",
+      "outcome": {
+        "FAILED": "It could not be saved. Please try again.",
+        "REAUTH_REQUIRED": "More than 10 minutes have passed since your last second factor. Confirm it again and retry.",
+        "INVALID_INPUT": "The data sent is not valid. Reload the page and try again."
+      },
+      "reason": {
+        "INVALID": "One of the values is not valid.",
+        "STALE": "Someone else saved these settings while you were editing; nothing was saved so as not to overwrite their change.",
+        "UNKNOWN": "A field does not belong to this block.",
+        "SERVER_IP_REQUIRED": "With test or live payments the server’s public IP is required: without it refunds fail.",
+        "SENDER_REQUIRED": "With test or live payments the sender is required: without it no email goes out.",
+        "INVOICING_PAIR": "The issuer’s tax ID and legal name go together: without either of them no invoice is issued.",
+        "WALLET_PROVIDER_REQUIRED": "The wallet with a balance needs the name of the authorized entity that holds it.",
+        "WALLET_KEY_REQUIRED": "Save the key of the entity that holds the balance first.",
+        "WALLET_CONFIRMATION_REQUIRED": "Tick the confirmation from the provider and the legal review to enable the wallet with a balance.",
+        "WALLET_BALANCES_OPEN": "Some families still have a balance in their wallet: you cannot leave this mode until none is left.",
+        "VERSION_OLDER": "The version cannot be earlier than the saved one.",
+        "VERSION_IN_USE": "A text that is already published cannot be modified without changing its version: publish a new version.",
+        "PUBLISHED_TO_DRAFT": "A published text does not go back to draft: publish a new version.",
+        "INVALID_EMAIL": "That email is not valid.",
+        "ALREADY_SUPERADMIN": "That person already has console access.",
+        "ENTITY_MEMBER": "That account signs for an organization and cannot be a Super-Admin: use another email.",
+        "RATE_LIMITED": "Too many invitations today or too many emails to that person. Please try again later.",
+        "SELF": "You cannot remove your own access.",
+        "LAST_ADMIN": "The last person with access cannot be removed.",
+        "NOT_FOUND": "It no longer exists: someone else may have changed it. Reload the page.",
+        "VERSION_NOT_TODAY": "A text is published with today’s date (Spain time): neither in the future nor backdated.",
+        "SECRET_REQUIRED": "With test or live payments this key is essential and the server has no fallback one: without it the service would stop.",
+        "FIELD_REQUIRED": "With test or live payments this detail is essential and the server has no fallback one: without it payments would stop.",
+        "WALLET_PROVIDER_LOCKED": "Some families still have a balance in the wallet: the entity that holds it cannot be changed until none is left."
+      },
+      "fields": {
+        "paycomet_merchantCode": {
+          "label": "Merchant code",
+          "help": "The one Paycomet gave you for your account."
+        },
+        "paycomet_terminalId": {
+          "label": "Terminal",
+          "help": "Paycomet terminal number (digits only)."
+        },
+        "paycomet_jetId": {
+          "label": "JET ID",
+          "help": "Public code of the card form that Paycomet provides. No screen uses it yet: it is stored for when the real Paycomet is connected."
+        },
+        "paycomet_serverIp": {
+          "label": "Server public IP",
+          "help": "The one registered with Paycomet so refunds can be made. Required with test or live payments."
+        },
+        "email_provider": {
+          "label": "Email provider",
+          "help": "Only Brevo has an adapter for now.",
+          "options": {
+            "brevo": "Brevo"
+          }
+        },
+        "email_fromAddress": {
+          "label": "Sender address",
+          "help": "Where emails come from (for example hello@yourdomain.com). It must be verified with the provider."
+        },
+        "email_fromName": {
+          "label": "Sender name",
+          "help": "What families see as the sender. KORUM by default."
+        },
+        "email_replyTo": {
+          "label": "Reply-to (optional)",
+          "help": "Address that receives replies, if different from the sender."
+        },
+        "invoicing_provider": {
+          "label": "Invoicing provider",
+          "help": "Name of the approved Veri*factu provider. There is no connection to a real one yet: it is stored for when one is hired."
+        },
+        "invoicing_issuerNif": {
+          "label": "Issuer tax ID",
+          "help": "Validated with its check digit. It goes together with the legal name."
+        },
+        "invoicing_issuerName": {
+          "label": "Issuer legal name",
+          "help": "Exactly as it must appear on invoices."
+        },
+        "invoicing_series": {
+          "label": "Invoice series",
+          "help": "Capital letters and digits, up to 10 characters (for example KR). Not used yet: today invoices carry fixed series; it will apply with the real provider."
+        },
+        "hucha_mode": {
+          "label": "Mi Hucha mode",
+          "help": "Changes what families see in under a minute.",
+          "options": {
+            "DISABLED": "Disabled",
+            "PLEDGE": "Scheduled monthly contribution",
+            "REGULATED_WALLET": "Wallet with a balance (authorized entity)"
+          }
+        },
+        "hucha_walletProvider": {
+          "label": "Entity holding the balance",
+          "help": "Only for the wallet with a balance: name of the authorized entity."
+        },
+        "autoBoost_publicDisclosureDefault": {
+          "label": "Default public notice",
+          "help": "Whether the page says, with no amount, that the KORUM platform also contributed.",
+          "options": {
+            "SHOW": "Show the notice",
+            "HIDE": "Do not show it"
+          }
+        },
+        "seo_aiCrawlers": {
+          "label": "AI crawlers"
+        },
+        "seo_verification_google": {
+          "label": "Google verification",
+          "help": "Google Search Console code (letters, digits, hyphen and underscore only)."
+        },
+        "seo_verification_bing": {
+          "label": "Bing verification",
+          "help": "Bing Webmaster Tools code (letters, digits, hyphen and underscore only)."
+        },
+        "platform_company": {
+          "label": "Company details"
+        },
+        "raffle_extraRoundMinHours": {
+          "label": "Hours to wait before an extra raffle round",
+          "help": "Between 0 and 720. 0 = no wait. Set by the lawyer; refunding a winner does not wait."
+        }
+      },
+      "secretsTitle": "Keys and passwords",
+      "secretsHint": "They are stored encrypted and are not shown again: you only see when it was changed and, if they are long, their last four characters. Each key is saved with its own button.",
+      "secrets": {
+        "paycomet_apiKey": {
+          "label": "Paycomet API key",
+          "help": "With it KORUM calls Paycomet (payments, refunds, payouts)."
+        },
+        "paycomet_webhookSecret": {
+          "label": "Paycomet notification password",
+          "help": "It is used to check that each payment notice really comes from Paycomet."
+        },
+        "email_apiKey": {
+          "label": "Brevo API key",
+          "help": "It is used to send emails."
+        },
+        "invoicing_apiKey": {
+          "label": "Invoicing provider key",
+          "help": "To register invoices with Veri*factu."
+        },
+        "hucha_walletApiKey": {
+          "label": "Key of the entity holding the balance",
+          "help": "Only for the wallet with a balance."
+        },
+        "seo_indexNowKey": {
+          "label": "IndexNow key",
+          "help": "Tells search engines when an initiative is published or closed."
+        }
+      },
+      "secretStatus": {
+        "set": "Saved in the console · ends in “{hint}” · updated on {when}.",
+        "env": "There is no key in the console: the server’s fallback key is used.",
+        "none": "Not configured.",
+        "setNoHint": "Saved in the console · updated on {when}."
+      },
+      "secretNewPlaceholder": "Type the key to save it",
+      "secretReplacePlaceholder": "Type a new key to replace it",
+      "secretSave": "Save key",
+      "secretSaved": "Key saved.",
+      "secretRemove": "Remove the key",
+      "secretRemoved": "Key removed.",
+      "secretRemoveAria": "Remove {name}",
+      "secretRemoveConfirm": "If you remove it, the server’s fallback key will be used if there is one; otherwise the service that needs it will stop working. Are you sure?",
+      "secretRemoveYes": "Yes, remove the key",
+      "testButton": "Test connection",
+      "testing": "Testing…",
+      "testHint": "It checks what is already saved; it sends no money or messages.",
+      "test": {
+        "OK": "Connection successful: the provider accepted the credentials.",
+        "SIMULATED_paycomet": "Payments are in simulator mode: Paycomet is not called, so there is nothing to test.",
+        "SIMULATED_email": "Payments are in simulator mode: emails stay in the local preview and Brevo is not called.",
+        "SIMULATED_invoicing": "The issuer details are complete. There is no connection to a real Veri*factu provider yet: for now invoices are only issued with the simulator.",
+        "NOT_CONFIGURED": "Still to configure: {missing}.",
+        "RATE_LIMITED": "Too many tests in a row. Wait a few minutes.",
+        "FAILED": "The provider did not accept the connection (code {code}). Check the credentials.",
+        "CONFIG": "A saved setting or key cannot be read. Save it again and retry.",
+        "NETWORK": "The provider could not be reached (network failure or timeout). Please try again in a few minutes."
+      },
+      "payments": {
+        "modeLabel": "Payments mode: {mode}.",
+        "modes": {
+          "mock": "simulator",
+          "sandbox": "test (sandbox)",
+          "live": "live payments"
+        },
+        "modeHelp": {
+          "mock": "No money moves and Paycomet is not called. The mode is set by the server and cannot be changed from this screen.",
+          "sandbox": "Paycomet’s test environment is called, with no real money. The mode is set by the server and cannot be changed from this screen.",
+          "live": "Live payments: a mistake here moves real money, so change only what is needed. The mode is set by the server and cannot be changed from this screen."
+        },
+        "ipMissing": "The server’s public IP is missing. Unless it is registered with Paycomet, refunds will fail with test or live payments."
+      },
+      "email": {
+        "smtpNote": "A direct connection to your own email provider is not available yet: for now only Brevo can be used. With simulated payments emails never go out: they stay in the local preview."
+      },
+      "invoicing": {
+        "complete": "Tax ID and legal name are complete: invoices can now be issued.",
+        "pair": "One of the two details is missing. Without the tax ID or the legal name no invoice is issued: a sponsorship with a fee fails and a billed business cannot be left unaccepted.",
+        "missing": "The issuer’s tax ID and legal name are missing. Without them no invoice is issued: a sponsorship with a fee fails and a billed business cannot be left unaccepted."
+      },
+      "hucha": {
+        "modeHelp": {
+          "DISABLED": "Mi Hucha does not appear on any screen.",
+          "PLEDGE": "The family chooses a monthly amount and an organization; each month it is charged to their card and applied directly to an active initiative. No balance is stored.",
+          "REGULATED_WALLET": "The balance belongs to the family and is held by an entity authorized to do so; KORUM only reflects that balance. Withdrawals are always refunded to the original payment method."
+        },
+        "walletConfirm": "I confirm that I have the provider’s written confirmation that it can hold user balances and that the legal review has been done. This confirmation is recorded in the history."
+      },
+      "limits": {
+        "noWindow": "No expiry",
+        "hours": "{count, plural, one {# hour} other {# hours}}",
+        "minutes": "{count, plural, one {# minute} other {# minutes}}",
+        "fixedTitle": "Fixed service limits",
+        "fixedHint": "These caps live in the platform’s code and cannot be changed from here; they are shown so you know what protection there is. Changing them needs a new release.",
+        "colRule": "What it limits",
+        "colLimit": "Attempts",
+        "colWindow": "Every",
+        "rules": {
+          "authEmail": "Sign-in emails per recipient",
+          "secondFactorFailures": "Consecutive second-factor failures",
+          "registration": "Organization sign-ups per network",
+          "checkout": "Payments started per network",
+          "signatureRequests": "Signing link and code requests",
+          "gateEntry": "Door PIN attempts per network",
+          "activityFund": "Activity Fund payouts per organization",
+          "webhookInvalid": "Payment notices with an invalid signature per network"
+        }
+      },
+      "seo": {
+        "delay": "A change takes about 12 minutes at most to show on the public website and in the robots.txt and llms.txt files (the ones search engines and assistants read).",
+        "crawlersTitle": "AI assistant crawlers",
+        "crawlersHint": "Search crawlers are the assistants that look the web up to answer whoever asks them. Training crawlers only read KORUM’s presentation pages, never an organization’s home page. Right now {source} is in use.",
+        "sourceDefault": "the platform’s initial list",
+        "sourceConsole": "the list saved here",
+        "groups": {
+          "search": {
+            "title": "Search and answers",
+            "hint": "Allowed across the whole public website."
+          },
+          "training": {
+            "title": "Training",
+            "hint": "Only on the marketing pages."
+          }
+        },
+        "nameInvalid": "The name can only contain letters, digits, dot, hyphen and underscore (2 to 100 characters).",
+        "nameTaken": "That crawler is already in the list.",
+        "removeAria": "Remove {name} from the list",
+        "remove": "Remove",
+        "allowed": "Allowed",
+        "blocked": "Blocked",
+        "empty": "There are none in this list.",
+        "addLabel": "Add a crawler (agent name)",
+        "add": "Add",
+        "added": "{name} added to the list (not saved yet).",
+        "removed": "{name} removed from the list (not saved yet).",
+        "unsaved": "The list has unsaved changes.",
+        "reset": "Back to the initial list"
+      },
+      "company": {
+        "title": "Company details",
+        "hint": "Company details. No page, email or invoice uses them yet: they are stored for when they are connected. With every field empty they are deleted.",
+        "fields": {
+          "legalName": "Legal name",
+          "taxId": "Tax ID",
+          "address": "Registered address",
+          "supportEmail": "Support email",
+          "privacyEmail": "Privacy email"
+        },
+        "errors": {
+          "legalName": "Enter the legal name.",
+          "taxId": "The tax ID is not valid: check the last digit or letter.",
+          "address": "Enter the registered address.",
+          "supportEmail": "The support email is not valid.",
+          "privacyEmail": "The privacy email is not valid."
+        },
+        "required": {
+          "legalName": "Enter the legal name.",
+          "taxId": "Enter the tax ID.",
+          "address": "Enter the registered address.",
+          "supportEmail": "Enter the support email.",
+          "privacyEmail": "Enter the privacy email."
+        }
+      },
+      "legal": {
+        "intro": "Each text has its version (the publication date) and its status. A published text is not modified without changing its version: to change it a new version is published, and each consent records the version of the policy the person accepted. The console only keeps the current text of each one.",
+        "policyVersion": "Current privacy policy version: {version}. Each consent records it, and it goes up by itself once the policy is published in all three languages (it becomes the oldest of the three versions).",
+        "matrixTitle": "Legal texts by document and language",
+        "colDocument": "Document",
+        "locales": {
+          "es": "Spanish",
+          "ca": "Catalan",
+          "en": "English"
+        },
+        "documents": {
+          "terminos": "Terms and conditions",
+          "privacidad": "Privacy policy",
+          "cookies": "Cookie policy",
+          "aviso-legal": "Legal notice"
+        },
+        "openAria": "{document} in {locale}: ",
+        "statusNone": "Not created",
+        "status": {
+          "BORRADOR": "Draft",
+          "PUBLICADO": "Published"
+        },
+        "editing": "Editing: {document} · {locale}",
+        "publishedHint": "This text is published with version {version}. To change it, publish a new version.",
+        "draftHint": "While it is a draft it is only visible here. Once there are public pages, the published text will be the current version.",
+        "version": "Version",
+        "versionHelp": "The publication date (YYYY-MM-DD); if there are several on the same day, add “.1”, “.2”… When publishing, the date is today’s.",
+        "statusLabel": "Status",
+        "text": "Text (you can use # for headings and - for lists)",
+        "characters": "{count, plural, one {# character} other {# characters}}",
+        "confirmPublish": "You are about to publish version {version} ({locale}). It will become the current version and you will not be able to edit it: to change it you will have to publish another one.",
+        "confirmYes": "Yes, publish version {version}",
+        "publish": "Publish a new version",
+        "saveDraft": "Save draft",
+        "saved": "Text saved (version {version}).",
+        "published": "Text published (version {version}).",
+        "nothingToPublish": "The text has not changed: edit it to publish a new version.",
+        "publishFirst": "Publish this text"
+      },
+      "team": {
+        "intro": "These people can see and change everything in this console. Someone who receives an invitation only gets access once they accept it, with a password of at least 12 characters and the second factor enabled. An account that signs for an organization cannot be a Super-Admin.",
+        "membersTitle": "People with access",
+        "you": "you",
+        "twoFactorOn": "Second factor enabled",
+        "twoFactorOff": "No second factor",
+        "lastSeen": "Last activity: {when}",
+        "neverSeen": "No activity recorded",
+        "selfNote": "Nobody can remove their own access: another team member has to do it.",
+        "revoke": "Remove access",
+        "revokeAria": "Remove access for {email}",
+        "revokeConfirm": "{email} will lose access to the console and all their sessions will be closed right now. Are you sure?",
+        "revokeYes": "Yes, remove access",
+        "cancel": "Cancel",
+        "revoked": "Access removed.",
+        "pendingTitle": "Invitations not yet accepted",
+        "expires": "Expires on {when}",
+        "expired": "Expired on {when}",
+        "resend": "Send again",
+        "resendAria": "Send again: invitation to {email}",
+        "cancelInvitation": "Cancel invitation",
+        "cancelInvitationAria": "Cancel invitation for {email}",
+        "invitationCancelled": "Invitation cancelled.",
+        "invited": "Invitation sent.",
+        "inviteLabel": "Invite a new person (email)",
+        "inviteHelp": "They will receive a link valid for 72 hours. Check the address carefully: whoever receives the link will be able to accept the access.",
+        "invite": "Send invitation",
+        "sending": "Sending…",
+        "languageLabel": "Language of the email and of the new account",
+        "languages": {
+          "es": "Spanish",
+          "ca": "Catalan",
+          "en": "English"
+        },
+        "emailLabel": "Person’s email",
+        "cancelInvitationConfirm": "The invitation to {email} will stop working and its link can no longer be used. You can invite them again. Are you sure?",
+        "cancelInvitationYes": "Yes, cancel the invitation"
+      },
+      "security": {
+        "keyVersion": "Current key version",
+        "previousKeys": "Previous keys configured",
+        "pendingTotal": "Values still on a previous key",
+        "state": {
+          "ok": "Everything is encrypted with the current key and there are no previous keys: nothing to do.",
+          "readyToRetire": "Everything is encrypted with the current key: you can now empty ENCRYPTION_PREVIOUS_KEYS on the server.",
+          "rotating": "The rotation is under way: the daily task re-encrypts values with the current key. Do not remove the previous key until it reaches 0.",
+          "orphaned": "Some values are encrypted with a key version that is not among the configured ones. Recover that previous key on the server (ENCRYPTION_PREVIOUS_KEYS) or they cannot be decrypted."
+        },
+        "pendingByTable": "Pending values by data type",
+        "pendingRow": "{table}: {count}",
+        "tables": {
+          "PlatformSecret": "Console keys",
+          "PaymentMethodToken": "Saved cards",
+          "Contribution": "Donor tax IDs",
+          "User": "Account tax IDs",
+          "Invoice": "Invoice tax IDs",
+          "Sponsor": "Business tax IDs",
+          "EscrowPayout": "Payout supplier details"
+        },
+        "alertsTitle": "Open alerts",
+        "alerts": {
+          "CARD_DELETE_FAILED": "A saved card could not be deleted",
+          "PRIVACY_REQUEST_OVERDUE": "Privacy request past its deadline (the legal deadline is one month)",
+          "ENCRYPTION_KEY_MISSING": "An encryption key is missing"
+        },
+        "alertsLink": "See in the alerts",
+        "alertsNone": "None open"
+      },
+      "history": {
+        "title": "Settings change history",
+        "empty": "No changes have been recorded yet.",
+        "columns": {
+          "when": "When",
+          "who": "Who",
+          "what": "What",
+          "target": "Setting",
+          "detail": "Details"
+        },
+        "system": "System",
+        "person": "A team member",
+        "more": "See more changes",
+        "actions": {
+          "settings_setting_updated": "Setting saved",
+          "settings_setting_cleared": "Setting deleted",
+          "settings_secret_updated": "Key saved",
+          "settings_secret_deleted": "Key removed",
+          "settings_connection_tested": "Connection tested",
+          "superadmin_invited": "Team invitation",
+          "superadmin_invitation_cancelled": "Invitation cancelled",
+          "superadmin_revoked": "Access removed"
+        },
+        "detail": {
+          "legal": "version {version} ({status})",
+          "legalStatus": {
+            "BORRADOR": "draft",
+            "PUBLICADO": "published"
+          },
+          "value": "value: {value}",
+          "status": {
+            "OK": "connection successful",
+            "SIMULATED": "simulator",
+            "NOT_CONFIGURED": "details missing",
+            "FAILED": "rejected",
+            "RATE_LIMITED": "too many tests"
+          },
+          "version": "change no. {version}",
+          "sessions": "{count, plural, =0 {no open sessions} one {# session closed} other {# sessions closed}}",
+          "walletConfirmed": "wallet legal confirmation recorded"
+        },
+        "targets": {
+          "legal": "{document} · {locale}",
+          "connection": {
+            "paycomet": "Paycomet connection",
+            "email": "Email connection",
+            "invoicing": "Invoicing details"
+          },
+          "policyVersion": "Current privacy policy version"
+        }
+      },
+      "fieldInvalid": "This value is not valid: check its format.",
+      "backToIndex": "Back to the list of blocks",
+      "unsavedLeave": "There are unsaved changes. If you leave now they will be lost. Leave anyway?"
     }
   },
   "forbidden": {

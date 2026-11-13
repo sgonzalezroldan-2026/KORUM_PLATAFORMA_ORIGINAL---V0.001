@@ -3,7 +3,9 @@ import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound, redirect as redirectRaw } from 'next/navigation';
 import { TwoFactorSetup } from '@/components/auth/two-factor-setup';
+import { secondFactorIsFresh } from '@/core/security/verified-actor';
 import { routing } from '@/i18n/routing';
+import { getPrisma } from '@/lib/prisma';
 import { requireSession } from '@/lib/auth/guards';
 import { safeNextPath } from '@/lib/auth/protected-paths';
 import { localizedPath } from '@/lib/seo/marketing-routes';
@@ -26,7 +28,9 @@ export default async function TwoFactorPage({ params, searchParams }: Params) {
   const next = safeNextPath(typeof query.next === 'string' ? query.next : null);
   const session = await requireSession(locale, `${localizedPath(locale, '/acceso/doble-factor')}${next ? `?next=${encodeURIComponent(next)}` : ''}`);
   const nextUrl = next ?? localizedPath(locale, '/acceso/continuar');
-  if (session.twoFactorEnabled && session.secondFactor) redirectRaw(nextUrl);
+  // Con el segundo factor ya superado **hace poco** no hay nada que pedir. Si caducó (la consola y los ajustes exigen un código de hace menos de 10 minutos), se vuelve a pedir: antes esta
+  // página mandaba de vuelta a la pantalla de origen y quien llegaba desde «Volver a confirmar mi segundo factor» no podía hacer nada sin cerrar sesión.
+  if (session.twoFactorEnabled && session.secondFactor && (await secondFactorIsFresh(getPrisma(), { userId: session.userId, sessionId: session.sessionId }))) redirectRaw(nextUrl);
   const t = await getTranslations({ locale, namespace: 'auth.twoFactor' });
 
   return (

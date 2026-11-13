@@ -140,10 +140,12 @@ describe('QA-SEC07 · secretos cifrados y ajustes auditados', () => {
   it('cada ajuste se valida, dos personas no se pisan y el valor se audita solo si no es personal', async () => {
     const { admin, actor } = await verifiedAdmin();
     await expect(updateSetting(db, actor, 'paycomet.serverIp', '300.0.0.1')).rejects.toBeInstanceOf(InvalidSettingError);
-    expect(await updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.7')).toEqual({ version: 1 });
+    // Las versiones nunca se reutilizan: si el ajuste se borró antes (otras pruebas, o la consola), la primera versión parte del número de cambios que quedan en la auditoría.
+    const first = await updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.7');
+    expect(first.version).toBeGreaterThanOrEqual(1);
     expect(await getSetting(db, 'paycomet.serverIp')).toBe('203.0.113.7');
-    await expect(updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.8', { expectedVersion: 0 })).rejects.toBeInstanceOf(SettingConflictError);
-    expect(await updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.8', { expectedVersion: 1 })).toEqual({ version: 2 });
+    await expect(updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.8', { expectedVersion: first.version - 1 })).rejects.toBeInstanceOf(SettingConflictError);
+    expect(await updateSetting(db, actor, 'paycomet.serverIp', '203.0.113.8', { expectedVersion: first.version })).toEqual({ version: first.version + 1 });
     expect(await getSetting(db, 'paycomet.serverIp')).toBe('203.0.113.8');
     await expect(updateSetting(db, actor, 'nada.de.nada' as 'paycomet.serverIp', '1.1.1.1')).rejects.toBeInstanceOf(UnknownSettingError);
 
@@ -157,7 +159,7 @@ describe('QA-SEC07 · secretos cifrados y ajustes auditados', () => {
     const companyAudit = await db.auditLog.findFirstOrThrow({ where: { actorUserId: admin.id, targetId: 'platform.company' } });
     expect(JSON.stringify(companyAudit.metadataJson)).not.toMatch(/B12345674|korum\.example|Mayor/);
     const modeAudit = await db.auditLog.findFirstOrThrow({ where: { actorUserId: admin.id, targetId: 'hucha.mode' } });
-    expect(modeAudit.metadataJson).toMatchObject({ version: 1, newSetting: 'REGULATED_WALLET' });
+    expect(modeAudit.metadataJson).toMatchObject({ version: expect.any(Number), newSetting: 'REGULATED_WALLET' });
 
     // Un valor guardado que ya no pasa la validación no se usa en silencio.
     await db.platformSetting.upsert({ where: { key: 'email.fromAddress' }, create: { key: 'email.fromAddress', valueJson: 'no-es-un-email' }, update: { valueJson: 'no-es-un-email' } });

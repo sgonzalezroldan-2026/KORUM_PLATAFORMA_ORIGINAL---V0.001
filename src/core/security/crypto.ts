@@ -146,7 +146,7 @@ export function openParts(keyring: Keyring, parts: EncryptedParts & { keyVersion
 /** `true` si el valor está cifrado con una versión que no es la actual y la rotación debe volver a cifrarlo. */
 export const needsRotation = (keyring: Keyring, keyVersion: number | null): boolean => keyVersion !== keyring.currentVersion;
 
-/** Cuatro últimos caracteres de un secreto, para reconocerlo en la consola sin mostrarlo. Con menos de 12, ninguno. */
+/** Cuatro últimos caracteres de un secreto, para reconocerlo en la consola sin mostrarlo. Con menos de 20, ninguno: en una contraseña corta serían demasiada parte del secreto. */
 export function secretHint(value: string): string | null {
-  return value.length >= 12 ? value.slice(-4) : null;
+  return value.length >= 20 ? value.slice(-4) : null;
 }

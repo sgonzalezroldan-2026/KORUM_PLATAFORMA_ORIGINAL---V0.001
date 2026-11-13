@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { RegistrationError, registerCommunity } from '@/core/onboarding/community-registration';
-import { acceptInvitation, acceptInvitationWithSession, InvitationError, inspectInvitation, listPendingCosignerInvitations } from '@/core/onboarding/invitations';
+import { acceptInvitation, acceptInvitationWithSession, createInvitation, InvitationError, inspectInvitation, listPendingCosignerInvitations } from '@/core/onboarding/invitations';
 import { bootstrapSuperadmin } from '@/core/onboarding/superadmin-bootstrap';
 import { verifySuperadminSession } from '@/core/security/verified-actor';
 import { createKorumAuth, type KorumAuth } from '@/lib/auth/auth-config';
@@ -8,7 +8,7 @@ import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadUserActor } from '@/repositories/actor';
 import { listSigners } from '@/repositories/organization.repository';
 import { secretFromTotpUri, totpCode } from '../support/totp';
-import { createTestClient, createUser, TEST_HMAC_SECRET, uniqueId } from './test-database';
+import { createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, uniqueId } from './test-database';
 
 /**
  * Autenticación por rol y alta autónoma (Sprint 3.2, QA-M02) contra PostgreSQL real, llamando a Better Auth como lo hace la aplicación.
@@ -218,6 +218,29 @@ describe('alta autónoma de una entidad (QA-M02)', () => {
     const admin = await createUser(db, { isSuperadmin: true });
     await expect(registerCommunity(db, registration({ director: { ...registration().director, email: admin.email } }), context(admin.id))).rejects.toMatchObject({ failure: { code: 'DIRECTOR_EMAIL_IN_USE' } });
   });
+
+  it('la invitación de la cofirma va a la dirección de la cuenta que ya existe, no a un alias (+…) que busca la misma cuenta (auditoría del 5.4: quien abriera ese enlace se quedaría con una cuenta ajena)', async () => {
+    const owner = await createUser(db);
+    const [local, domain] = owner.email.split('@');
+    const alias = `${local}+afa@${domain}`;
+    const result = await registerCommunity(db, registration({ cosigner: { ...registration().cosigner, email: alias } }), context());
+    expect(await db.outboxMessage.count({ where: { toAddress: alias } })).toBe(0);
+    const message = await db.outboxMessage.findFirstOrThrow({ where: { toAddress: owner.email, templateKey: 'auth.invitation' } });
+    expect(message.userId).toBe(owner.id);
+    expect(await listPendingCosignerInvitations(db, result.organizationId)).toHaveLength(1);
+  });
+
+  it('aceptar a la vez el rol de Super-Admin y ser dirección de una entidad con la misma cuenta no deja a la persona con los dos papeles', async () => {
+    for (let round = 0; round < 4; round += 1) {
+      const person = await createUser(db);
+      const { token } = await createInvitation(db, { userId: person.id, organizationId: null, purpose: 'SUPERADMIN' });
+      const registered = registerCommunity(db, registration({ director: { ...registration().director, email: person.email } }), context(person.id));
+      const accepted = acceptInvitationWithSession(db, token, person.id);
+      await Promise.allSettled([registered, accepted]);
+      const [row, signs] = await Promise.all([db.user.findUniqueOrThrow({ where: { id: person.id } }), db.organizationMember.count({ where: { userId: person.id, role: { in: ['DIRECTOR', 'COSIGNER'] } } })]);
+      expect(row.isSuperadmin && signs > 0, `ronda ${round}`).toBe(false);
+    }
+  });
 });
 
 describe('firmantes: contraseña + TOTP, e invitación al cofirmante', () => {
@@ -318,6 +341,22 @@ describe('firmantes: contraseña + TOTP, e invitación al cofirmante', () => {
     const user = await db.user.findUniqueOrThrow({ where: { email: input.director.email } });
     for (let attempt = 0; attempt < 10; attempt += 1) expect((await as('/two-factor/verify-totp', { code: '000000' })).status).not.toBe(200);
     expect(await db.session.count({ where: { userId: user.id, secondFactorVerifiedAt: null } })).toBe(0);
+  });
+
+  it('el alta del primer Super-Admin rechaza una cuenta que ya firma por una entidad (la doble firma excluye siempre al Super-Admin) y no le da el rol', async () => {
+    const organization = await createOrganization(db);
+    const signer = await createUser(db);
+    await db.organizationMember.create({ data: { organizationId: organization.id, userId: signer.id, role: 'DIRECTOR' } });
+    const rollback = new Error('rollback de la prueba');
+    await expect(
+      db.$transaction(async (tx) => {
+        // Sin ningún Super-Admin en esta transacción (se deshace al final): la base compartida puede tener otros.
+        await tx.user.updateMany({ where: { isSuperadmin: true }, data: { isSuperadmin: false } });
+        expect(await bootstrapSuperadmin(tx, { email: signer.email, appUrl: APP, hmacSecret: TEST_HMAC_SECRET, dispatch: () => undefined })).toBe('ACCOUNT_SIGNS');
+        expect(await tx.user.count({ where: { id: signer.id, isSuperadmin: true } })).toBe(0);
+        throw rollback;
+      })
+    ).rejects.toBe(rollback);
   });
 
   it('el primer Super-Admin se invita una sola vez y su sesión verificada da el actor de la consola', async () => {

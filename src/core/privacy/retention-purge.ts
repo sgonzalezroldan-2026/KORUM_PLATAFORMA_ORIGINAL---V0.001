@@ -200,7 +200,12 @@ export async function purgeUnactivatedInvitees(db: Db, now: Date, limit: number)
     consentRecords: { none: {} },
     privacyRequests: { none: {} },
     walletSubscriptions: { none: {} },
-    paymentMethodTokens: { none: {} }
+    paymentMethodTokens: { none: {} },
+    walletTransactions: { none: {} },
+    escrowLedgerEntries: { none: {} },
+    doubleCheckSignatures: { none: {} },
+    doubleCheckChallenges: { none: {} },
+    activityFundPayouts: { none: {} }
   };
   const rows = await db.user.findMany({ where: untouched, take: limit, select: { id: true } });
   let deleted = 0;

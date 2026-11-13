@@ -237,7 +237,7 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await server(page.getByRole('heading', { level: 1, name: 'Patio y deporte' })).toBeVisible();
     await page.getByLabel('Presupuesto del proveedor (€)').fill('3800');
     // La respuesta del servidor con la campaña ya guardada tarda 3 segundos.
-    await page.route(/estudio?iniciativa=d+/, async (route) => {
+    await page.route(/estudio\?iniciativa=\d+/, async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 3_000));
       await route.continue();
     });

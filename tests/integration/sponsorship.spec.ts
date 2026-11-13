@@ -2,8 +2,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { signPaymentSimulator, verifyCheckoutResult } from '@/core/checkout/checkout-rules';
 import { getAccountBalance, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { sortSponsorsByLevel } from '@/core/sponsors/sponsorship-rules';
+import { hashIpSubnet } from '@/core/security/device-signals';
 import { openSponsorTaxId } from '@/core/tax/tax-id-vault';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { reserveUnits } from '@/lib/rate-limit';
+import { CHECKOUT_RULE } from '@/lib/rate-limit-rules';
 import { findSponsorableInitiative, getSponsorshipContext, getSponsorshipDocuments, getSponsorshipResult, listFriendlySponsors } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { settleSimulatedPayment } from '@/services/checkout/payment-simulator';
@@ -173,14 +176,13 @@ describe('QA-F05 · inicio del patrocinio', () => {
     expect(row.sponsor?.paidAt).toBeNull();
   });
 
-  it('limita los inicios por red como el checkout de familias', async () => {
+  it('limita los inicios por red como el checkout de familias (mismo cupo de la red)', async () => {
     const { org, init } = await setup();
     const ip = freshIp();
-    let limited = false;
-    for (let attempt = 0; attempt < 32 && !limited; attempt += 1) {
-      limited = (await startSponsorship(deps(), sponsorship(org.slug, init.id), { session: null, ip })).status === 'RATE_LIMITED';
-    }
-    expect(limited).toBe(true);
+    const key = `${CHECKOUT_RULE.prefix}${hashIpSubnet(TEST_HMAC_SECRET, ip)}`;
+    expect(await reserveUnits(db, key, CHECKOUT_RULE, CHECKOUT_RULE.limit, new Date())).toBe(true);
+    expect(await startSponsorship(deps(), sponsorship(org.slug, init.id), { session: null, ip })).toEqual({ status: 'RATE_LIMITED' });
+    expect((await startSponsorship(deps(), sponsorship(org.slug, init.id), { session: null, ip: freshIp() })).status).toBe('REDIRECT');
   });
 });
 

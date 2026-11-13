@@ -2,6 +2,9 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { signPaymentSimulator, verifyCheckoutResult } from '@/core/checkout/checkout-rules';
 import { createDonationIntent } from '@/core/checkout/donation-intent.service';
 import { getRaisedFromLedger } from '@/core/finance/ledger.service';
+import { hashIpSubnet } from '@/core/security/device-signals';
+import { reserveUnits } from '@/lib/rate-limit';
+import { CHECKOUT_RULE } from '@/lib/rate-limit-rules';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { getCheckoutContext, getCheckoutResult } from '@/repositories/checkout.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
@@ -312,13 +315,29 @@ describe('Página de pago, simulador y límites', () => {
     expect(await db.contribution.findUniqueOrThrow({ where: { id: intent.contributionId } })).toMatchObject({ status: 'COMPLETED', fiscalYear: 2027 });
   });
 
-  it('desde una misma red, a partir del intento 31 en 15 minutos se para (sin crear aportaciones)', async () => {
+  it('un acto con toda la comunidad en la misma wifi: 200 aportaciones seguidas desde una red se cobran todas (Sprint 5.4)', async () => {
     const { org, init } = await schoolSetup();
     const ip = freshIp();
-    for (let attempt = 0; attempt < 30; attempt += 1) {
-      expect((await startCheckout(deps(), donation(org.slug, init.id), { ...guest, ip })).status).toBe('REDIRECT');
+    const statuses: string[] = [];
+    for (let batch = 0; batch < 10; batch += 1) {
+      const results = await Promise.all(Array.from({ length: 20 }, () => startCheckout(deps(), donation(org.slug, init.id), { ...guest, ip })));
+      statuses.push(...results.map((result) => result.status));
     }
+    expect(statuses).toHaveLength(200);
+    expect(statuses.every((status) => status === 'REDIRECT')).toBe(true);
+    expect(await db.contribution.count({ where: { initiativeId: init.id } })).toBe(200);
+  });
+
+  it('el freno contra automatismos sigue ahí: agotado el cupo de la red (600 en 15 minutos) se para sin crear aportaciones, y otra red no se ve afectada', async () => {
+    const { org, init } = await schoolSetup();
+    const ip = freshIp();
+    const key = `${CHECKOUT_RULE.prefix}${hashIpSubnet(TEST_HMAC_SECRET, ip)}`;
+    expect(CHECKOUT_RULE.limit).toBe(600);
+    // Se consume de golpe todo el cupo menos un intento, en vez de hacer 599 pagos de verdad.
+    expect(await reserveUnits(db, key, CHECKOUT_RULE, CHECKOUT_RULE.limit - 1, new Date())).toBe(true);
+    expect((await startCheckout(deps(), donation(org.slug, init.id), { ...guest, ip })).status).toBe('REDIRECT');
     expect(await startCheckout(deps(), donation(org.slug, init.id), { ...guest, ip })).toEqual({ status: 'RATE_LIMITED' });
-    expect(await db.contribution.count({ where: { initiativeId: init.id } })).toBe(30);
+    expect(await db.contribution.count({ where: { initiativeId: init.id } })).toBe(1);
+    expect((await startCheckout(deps(), donation(org.slug, init.id), { ...guest, ip: freshIp() })).status).toBe('REDIRECT');
   });
 });

@@ -1,6 +1,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { hashPassword } from 'better-auth/crypto';
 import { safeEqual } from '@/core/security/data-hmac';
+import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { lockGatePinInitiatives } from '@/core/ticketing/gate-revoke';
 import { inTransaction, type Db } from '@/lib/db';
 import { completeHandoverInTx, handoverStillValid, HandoverCompletionError } from './signer-handover-completion';
@@ -103,6 +104,24 @@ export async function revokePendingCosignerInvitations(db: Db, organizationId: s
   return cosigner.map(({ stored }) => stored.userId);
 }
 
+/** Invitaciones de Super-Admin aún sin aceptar (también las caducadas: se pueden anular y volver a enviar). Sin el secreto. */
+export async function listPendingSuperadminInvitations(db: Db): Promise<Array<{ userId: string; expiresAt: Date; expired: boolean }>> {
+  const rows = await db.verification.findMany({ where: { identifier: { startsWith: PREFIX, endsWith: ':platform' } }, select: { value: true, expiresAt: true }, orderBy: { createdAt: 'asc' } });
+  const now = Date.now();
+  return rows
+    .map((row) => ({ stored: JSON.parse(row.value) as StoredInvitation, expiresAt: row.expiresAt }))
+    .filter(({ stored }) => stored.purpose === 'SUPERADMIN' && stored.organizationId === null)
+    .map(({ stored, expiresAt }) => ({ userId: stored.userId, expiresAt, expired: expiresAt.getTime() <= now }));
+}
+
+/** Anula la invitación de Super-Admin de una persona: el enlace deja de valer al momento. Devuelve cuántas anuló. */
+export async function revokeSuperadminInvitation(db: Db, userId: string): Promise<number> {
+  const rows = await db.verification.findMany({ where: { identifier: identifierOf(userId, null) }, select: { id: true, value: true } });
+  const ids = rows.filter((row) => (JSON.parse(row.value) as StoredInvitation).purpose === 'SUPERADMIN').map((row) => row.id);
+  if (ids.length === 0) return 0;
+  return (await db.verification.deleteMany({ where: { id: { in: ids } } })).count;
+}
+
 async function findInvitation(db: Db, token: string, now: Date): Promise<(StoredInvitation & { id: string }) | null> {
   const [id, secret] = token.split('.');
   if (!id || !secret || !/^[0-9a-f-]{36}$/.test(id)) return null;
@@ -153,6 +172,9 @@ export class InvitationError extends Error {
 
 /** Dentro de la transacción: consume el enlace, crea el cargo si es de una entidad y lo deja en la auditoría. */
 async function consume(tx: Db, invitation: StoredInvitation & { id: string }, now: Date): Promise<void> {
+  // Primero la cuenta de quien acepta (orden: cuenta → entidad → enlace): aceptar a la vez el rol de Super-Admin y un cargo que firma se ordenan y no pueden dejar a la misma persona con los dos.
+  await tx.user.updateMany({ where: { id: invitation.userId }, data: { updatedAt: now } });
+  if ((invitation.purpose === 'COSIGNER' || invitation.purpose === 'HANDOVER') && (await tx.user.count({ where: { id: invitation.userId, isSuperadmin: true } })) > 0) throw new InvitationError('INVALID_LINK');
   // Primero la entidad y después el enlace, en el mismo orden que el cambio de modo de firma y los relevos: así dos operaciones cruzadas se ordenan en
   // lugar de bloquearse entre sí (auditoría de seguridad del 5.2, B6).
   if (invitation.organizationId && (invitation.purpose === 'COSIGNER' || invitation.purpose === 'HANDOVER')) {
@@ -176,6 +198,12 @@ async function consume(tx: Db, invitation: StoredInvitation & { id: string }, no
     const { signatureMode } = await tx.organization.findUniqueOrThrow({ where: { id: invitation.organizationId }, select: { signatureMode: true } });
     if (signatureMode === 'SINGLE' || (await tx.organizationMember.count({ where: { organizationId: invitation.organizationId, role: 'COSIGNER' } })) > 0) throw new InvitationError('INVALID_LINK');
     await tx.organizationMember.createMany({ data: [{ organizationId: invitation.organizationId, userId: invitation.userId, role: 'COSIGNER', roleLabel: invitation.roleLabel }], skipDuplicates: true });
+  }
+  if (invitation.purpose === 'SUPERADMIN') {
+    // El rol de Super-Admin se da **al aceptar**, no al invitar (una dirección mal escrita no deja un Super-Admin esperando a quien la reciba por error), y nunca a una cuenta que
+    // firma por una entidad (dirección o cofirma): la doble firma excluye siempre al Super-Admin (si pasó a ser firmante mientras esperaba, el enlace ya no vale).
+    if ((await tx.organizationMember.count({ where: { userId: invitation.userId, role: { in: [...SIGNER_ROLES] } } })) > 0) throw new InvitationError('INVALID_LINK');
+    await tx.user.update({ where: { id: invitation.userId }, data: { isSuperadmin: true } });
   }
   await tx.auditLog.create({
     data: { actorType: 'USER', actorUserId: invitation.userId, organizationId: invitation.organizationId, action: 'account.invitation_accepted', targetType: 'User', targetId: invitation.userId, metadataJson: { purpose: invitation.purpose } }

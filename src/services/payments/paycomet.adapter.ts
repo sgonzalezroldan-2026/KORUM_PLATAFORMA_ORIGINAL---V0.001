@@ -190,6 +190,14 @@ export class PaycometAdapter implements PaymentProvider {
       .map((operation) => ({ order: operation.order, amountCents: operation.amount, authCode: operation.authCode ?? null, occurredAt: parsePaycometDate(operation.timestamp) }));
   }
 
+  /**
+   * Comprobación de las credenciales desde la consola («Probar conexión»): una consulta de operaciones de los últimos minutos, que solo lee. Si la clave, el código de comercio o el
+   * terminal no valen, Paycomet la rechaza y la llamada falla con su código; no mueve dinero ni crea nada.
+   */
+  async verifyCredentials(now: Date = new Date()): Promise<void> {
+    await this.listCharges({ from: new Date(now.getTime() - 5 * 60_000), to: now });
+  }
+
   verifyNotification(rawBody: string, contentType: string | null): NotificationCheck {
     return verifyPaycometNotification(rawBody, contentType, {
       accountCode: this.credentials.merchantCode,

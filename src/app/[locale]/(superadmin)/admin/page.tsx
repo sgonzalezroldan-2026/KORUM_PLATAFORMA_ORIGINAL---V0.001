@@ -87,6 +87,9 @@ export default async function AdminHomePage({ params, searchParams }: { params: 
           <Link href="/admin/soporte" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-support">
             {t('nav.support', { count: overview.supportWaiting })}
           </Link>
+          <Link href="/admin/ajustes" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-settings">
+            {t('nav.settings')}
+          </Link>
         </nav>
         <dl className="mobile-stack grid gap-4 md:grid-cols-2">
           <div className="korum-trust-vault p-5">

@@ -3,7 +3,7 @@ import type { Db } from '@/lib/db';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { DEFAULT_CRAWLER_POLICY, type CrawlerPolicy } from '@/lib/seo/crawler-policy';
-import { getSetting } from '@/services/settings/settings.service';
+import { getSetting, InvalidSettingError } from '@/services/settings/settings.service';
 
 /**
  * Configuración que necesita la web pública (tarifas, verificación de buscadores y política de rastreadores). Sale de la consola del
@@ -30,13 +30,29 @@ export const PUBLIC_CONFIG_TIMEOUT_MS = 2500;
 const SUCCESS_TTL_MS = 60_000;
 const FAILURE_TTL_MS = 15_000;
 
-/** Lee la configuración de la consola. Lanza si la base de datos no responde o un ajuste guardado no es válido. */
+/**
+ * Un ajuste de buscadores guardado que ya no pasa su validación (p. ej. de antes de endurecer el catálogo) se ignora **solo él** (se usa su valor de lanzamiento y se avisa): si no, tumbaría
+ * también las tarifas públicas y la web entera caería a los valores de lanzamiento.
+ */
+async function readOptional<T>(read: () => Promise<T | undefined>, key: string): Promise<T | undefined> {
+  try {
+    return await read();
+  } catch (error) {
+    if (error instanceof InvalidSettingError) {
+      if (process.env.NEXT_PHASE !== 'phase-production-build') reportError(error, { area: 'public-config', setting: key });
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+/** Lee la configuración de la consola. Lanza si la base de datos no responde. */
 export async function loadPublicPlatformConfig(db: Db): Promise<PublicPlatformConfig> {
   const row = await db.globalConfig.findUnique({ where: { id: 'GLOBAL' } });
   const [google, bing, crawlers] = await Promise.all([
-    getSetting(db, 'seo.verification.google'),
-    getSetting(db, 'seo.verification.bing'),
-    getSetting(db, 'seo.aiCrawlers')
+    readOptional(() => getSetting(db, 'seo.verification.google'), 'seo.verification.google'),
+    readOptional(() => getSetting(db, 'seo.verification.bing'), 'seo.verification.bing'),
+    readOptional(() => getSetting(db, 'seo.aiCrawlers'), 'seo.aiCrawlers')
   ]);
   return {
     pricing: row ? publicPricingFromGlobalConfig(row) : DEFAULT_PUBLIC_PRICING,

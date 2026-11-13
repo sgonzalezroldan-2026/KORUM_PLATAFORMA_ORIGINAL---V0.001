@@ -50,14 +50,18 @@ export const REGISTRATION_RULE: RateLimitRule & PurgeRule = { prefix: 'register:
 export const AUTH_SECOND_FACTOR_FAILURE_RULE: RateLimitRule & PurgeRule = { prefix: 'auth:totp-fail:', limit: 8, windowMs: 24 * 3_600_000 };
 
 /**
- * Pagos iniciados por red (checkout de familias, Sprint 3.4). Cada inicio crea una aportación pendiente y, en taquilla, retiene plazas 15
- * minutos: sin este tope, alguien podría bloquear todo el aforo sin pagar. Es generoso porque un colegio entero puede salir por la misma red.
+ * Pagos iniciados por red (checkout de familias, patrocinios y renovaciones de comercios y primera aportación mensual de Mi Hucha; Sprint 3.4, corregido en el Sprint 5.4). Es un **freno contra programas automáticos**, no una barrera para
+ * personas: un acto con toda la comunidad conectada a la misma wifi del colegio (alguien pide aportar en directo y cientos de familias pagan a la vez) tiene que
+ * poder cobrar sin que nadie vea un error. Con 30 cada 15 minutos (el valor original) la aportación 31 de una red compartida se rechazaba justo en el mejor
+ * momento. Una donación no retiene nada, así que no hay nada que proteger con un tope bajo; y en taquilla el aforo ya lo cuida `CHECKOUT_SEATS_RULE`
+ * (plazas retenidas por red y evento), que es lo que evita bloquear un evento sin pagar. 600 cada 15 minutos son 40 por minuto desde una misma red: un
+ * salón de actos entero, y aun así corta un guion que lance miles de intentos.
  */
-export const CHECKOUT_RULE: RateLimitRule & PurgeRule = { prefix: 'checkout:ip:', limit: 30, windowMs: 15 * 60_000 };
+export const CHECKOUT_RULE: RateLimitRule & PurgeRule = { prefix: 'checkout:ip:', limit: 600, windowMs: 15 * 60_000 };
 
 /**
- * Plazas de taquilla retenidas por red **y por evento** (auditoría del Sprint 3.4): el límite de pagos cuenta pedidos, y 30 pedidos de 20 entradas
- * dejarían agotado cualquier evento de colegio sin pagar nada. Cada compra consume tantas unidades como plazas retiene. El tope real es
+ * Plazas de taquilla retenidas por red **y por evento** (auditoría del Sprint 3.4): el límite de pagos solo cuenta pedidos (entonces 30, hoy 600), y
+ * 30 pedidos de 20 entradas ya dejaban agotado cualquier evento de colegio sin pagar nada. Cada compra consume tantas unidades como plazas retiene. El tope real es
  * `seatHoldLimit(ticketMax)`: un cuarto del aforo, nunca menos que una compra máxima (20, para que una red compartida como el wifi del colegio
  * pueda comprar) y nunca más que el propio aforo: en una rifa de 40 papeletas, una sola red no puede retenerlas todas.
  */
@@ -124,3 +128,7 @@ export const GATE_REQUEST_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:req:
 export const GATE_BLOCK_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:notice:', limit: 1, windowMs: 15 * 60_000 };
 /** Marca de «ya anotado» de una sesión de portería cerrada que sigue intentando entrar: una fila por sesión y 6 horas, no una por petición. */
 export const GATE_REJECTED_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:rejected:', limit: 1, windowMs: 6 * 3_600_000 };
+
+/** Invitaciones a nuevos Super-Admin y comprobaciones de conexión de la consola (Sprint 5.4): dan acceso total o llaman a proveedores con sus credenciales, así que llevan tope. */
+export const SUPERADMIN_INVITE_RULE: RateLimitRule & PurgeRule = { prefix: 'console:superadmin-invite:', limit: 5, windowMs: 24 * 3_600_000 };
+export const CONNECTION_TEST_RULE: RateLimitRule & PurgeRule = { prefix: 'console:connection-test:', limit: 10, windowMs: 10 * 60_000 };

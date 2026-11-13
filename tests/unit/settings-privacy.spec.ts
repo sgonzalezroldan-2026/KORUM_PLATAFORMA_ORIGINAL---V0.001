@@ -87,6 +87,10 @@ describe('crypto.ts · AES-256-GCM con versión de clave y contexto', () => {
   it('la pista de un secreto son sus 4 últimos caracteres, y ninguna si es corto', () => {
     expect(secretHint('sk_live_0123456789abcd')).toBe('abcd');
     expect(secretHint('corto')).toBeNull();
+    // Con menos de 20 caracteres (una contraseña de 12 enseñaría un tercio) no se enseña nada.
+    expect(secretHint('contraseña-1234')).toBeNull();
+    expect(secretHint('x'.repeat(19))).toBeNull();
+    expect(secretHint(`${'x'.repeat(16)}abcd`)).toBe('abcd');
   });
 
   it('el NIF del donante se valida y su HMAC no depende de la clave de cifrado', () => {

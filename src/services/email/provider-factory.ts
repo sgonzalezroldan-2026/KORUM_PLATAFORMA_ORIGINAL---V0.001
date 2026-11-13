@@ -14,11 +14,11 @@ export interface EmailSender {
   replyTo?: string;
 }
 
-export async function resolveEmailSender(db: Db): Promise<EmailSender | undefined> {
+export async function resolveEmailSender(db: Db, mode: 'mock' | 'sandbox' | 'live' = getEnv().PAYCOMET_MODE): Promise<EmailSender | undefined> {
   const fromAddress = await getSetting(db, 'email.fromAddress');
   // Con cobros simulados los emails solo van a la vista previa (nunca salen): sin remitente en la consola se usa uno de pruebas, para que
   // en desarrollo y en la demostración se pueda iniciar sesión desde el primer momento (Sprint 3.2).
-  if (!fromAddress) return getEnv().PAYCOMET_MODE === 'mock' ? { fromAddress: 'no-responder@korum.test', fromName: 'KORUM' } : undefined;
+  if (!fromAddress) return mode === 'mock' ? { fromAddress: 'no-responder@korum.test', fromName: 'KORUM' } : undefined;
   const replyTo = await getSetting(db, 'email.replyTo');
   return { fromAddress, fromName: (await getSetting(db, 'email.fromName')) ?? 'KORUM', ...(replyTo ? { replyTo } : {}) };
 }

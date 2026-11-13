@@ -15,20 +15,20 @@ import type { PaymentProvider } from './payment-provider';
  */
 
 export class PaymentConfigurationError extends Error {
-  constructor(missing: string[]) {
+  constructor(readonly missing: string[]) {
     super(`Faltan credenciales de Paycomet: ${missing.join(', ')}. Configúralas en /admin/ajustes.`);
     this.name = 'PaymentConfigurationError';
   }
 }
 
-export async function resolvePaycometCredentials(db: Db, keyring: Keyring = getKeyring()): Promise<PaycometCredentials> {
+export async function resolvePaycometCredentials(db: Db, keyring: Keyring = getKeyring(), fallbacks?: Readonly<Record<string, string | undefined>>): Promise<PaycometCredentials> {
   // Consola primero y variables de respaldo después (lo resuelve el servicio de ajustes). Con el llavero, un secreto cifrado con una clave
   // anterior se sigue leyendo durante la rotación: cambiar `ENCRYPTION_KEY_VERSION` no deja sin webhooks.
   const values = {
-    apiKey: await getSecret(db, keyring, 'paycomet.apiKey'),
-    notificationPassword: await getSecret(db, keyring, 'paycomet.webhookSecret'),
-    merchantCode: await getSetting(db, 'paycomet.merchantCode'),
-    terminal: await getSetting(db, 'paycomet.terminalId')
+    apiKey: await getSecret(db, keyring, 'paycomet.apiKey', fallbacks),
+    notificationPassword: await getSecret(db, keyring, 'paycomet.webhookSecret', fallbacks),
+    merchantCode: await getSetting(db, 'paycomet.merchantCode', fallbacks),
+    terminal: await getSetting(db, 'paycomet.terminalId', fallbacks)
   };
   const missing = Object.entries(values)
     .filter(([, value]) => !value)

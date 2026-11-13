@@ -10,7 +10,9 @@ import { loadConsoleSupport, type ConsoleSupportView } from '@/services/admin/co
 import { loadExemptCampaigns, type ExemptCampaignRow } from '@/services/admin/exempt-campaigns';
 import { loadGlobalRulesView, loadMedalsView, type GlobalRulesView, type MedalsView } from '@/services/admin/global-rules.service';
 import { loadSplitsToResolve, type SplitToResolve } from '@/services/admin/payout-review.service';
-import { authorizeSuperadmin, recordAudit, type SessionActor } from './tenant-guard';
+import { loadSettingsView, type SettingsView, type SettingsViewOptions } from '@/services/admin/platform-settings-view';
+import type { SettingsRuntime } from '@/services/admin/settings-runtime';
+import { authorizeSuperadmin, recordAudit, TenantAccessError, type SessionActor } from './tenant-guard';
 
 /**
  * Lecturas transversales de la consola del Super-Admin. Cada una pasa por `authorizeSuperadmin` (403 y `AuditLog` a cualquier otra sesión;
@@ -203,6 +205,16 @@ export async function getConsoleRules(db: KorumPrismaClient, actor: SessionActor
     loadExemptCampaigns(db)
   ]);
   return { rules, medals, categories, pricing, exemptCampaigns };
+}
+
+/**
+ * Ajustes de la plataforma (Sprint 5.4): valores, secretos (solo su pista), textos legales, equipo de Super-Admin, claves de cifrado e historial de cambios. Con el segundo factor de la sesión, como el
+ * resto de lecturas de la consola; abrirla queda en la auditoría.
+ */
+export async function getConsoleSettings(db: KorumPrismaClient, actor: SessionActor, runtime: SettingsRuntime, options: Omit<SettingsViewOptions, 'actorUserId'>): Promise<SettingsView> {
+  await authorizeConsoleSession(db, actor, 'console.settings', 'PlatformSetting');
+  if (actor.kind !== 'user') throw new TenantAccessError('SUPERADMIN_ONLY');
+  return loadSettingsView(db, runtime, { ...options, actorUserId: actor.userId });
 }
 
 /** Bandeja de soporte de KORUM (Sprint 5.3): consultas dirigidas a la plataforma, las de las entidades primero. */
