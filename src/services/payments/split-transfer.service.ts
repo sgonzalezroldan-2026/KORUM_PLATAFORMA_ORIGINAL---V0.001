@@ -142,8 +142,9 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     if (escrow !== initiative.raisedCents) throw new PayoutNotAllowedError(payoutId, `la hucha tiene ${escrow} céntimos y lo recaudado es ${initiative.raisedCents}`, 'ESCROW_MISMATCH');
 
     let plan;
+    const candidates = await payoutCandidates(tx, payout.initiativeId, payoutId);
     try {
-      plan = planPayoutSplits(await payoutCandidates(tx, payout.initiativeId, payoutId), payout.netPaidCents, now);
+      plan = planPayoutSplits(candidates, payout.netPaidCents, now);
     } catch {
       throw new PayoutNotAllowedError(payoutId, `no quedan cobros dentro de la ventana de ${SPLIT_WINDOW_DAYS} días para repartir el neto`, 'WINDOW_EXPIRED');
     }

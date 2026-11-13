@@ -3,7 +3,7 @@ import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor
 import type { Keyring } from '@/core/security/crypto';
 import { validateTaxId } from '@/core/tax/tax-id';
 import { openInvoiceRecipientTaxId, sealInvoiceRecipientTaxId } from '@/core/tax/tax-id-vault';
-import { inTransaction, isUniqueViolation, QUEUED_TRANSACTION, type Db } from '@/lib/db';
+import { inTransaction, isRootDb, isUniqueViolation, QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import { InvoicingProviderError, type InvoicingProvider } from './invoicing-provider';
 import { computeVerifactuHash, formatCents, generatedAtOf, invoiceYearOf, issueDateOf, verifactuQrUrl, type VerifactuRecord } from './verifactu-record';
 
@@ -121,8 +121,9 @@ async function appendToChain(db: Db, input: ChainedInvoice, now: Date) {
       return invoice;
     }, QUEUED_TRANSACTION);
   } catch (error) {
-    // Dos llamadas con la misma clave a la vez: se devuelve la que ganó.
-    if (!isUniqueViolation(error)) throw error;
+    // Dos llamadas con la misma clave a la vez: se devuelve la que ganó. Dentro de una transacción ajena la violación la aborta y no se puede consultar nada más en ella:
+    // que lo reintente quien la abrió (al reintentar, la clave ya existe y devuelve la misma factura).
+    if (!isUniqueViolation(error) || !isRootDb(db)) throw error;
     const winner = await db.invoice.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
     if (!winner) throw error;
     return winner;

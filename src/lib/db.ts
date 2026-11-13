@@ -12,9 +12,25 @@ type RootDb = Db & {
   $transaction<R>(fn: (tx: Db) => Promise<R>, options?: { isolationLevel?: Prisma.TransactionIsolationLevel; maxWait?: number; timeout?: number }): Promise<R>;
 };
 
-/** `true` si es el cliente raíz (puede abrir transacciones); `false` si ya estamos dentro de una. */
+/**
+ * `true` si es el cliente raíz (puede abrir transacciones); `false` si ya estamos dentro de una.
+ *
+ * Con Prisma 7 el cliente que recibe una transacción interactiva **también tiene `$transaction`** (abriría una anidada, con punto de guardado), así que mirar solo eso
+ * confundía una transacción con el cliente raíz: tras una violación de unicidad, `postJournal` creía poder consultar al ganador y lo hacía dentro de la transacción ya abortada
+ * («transacción abortada», 25P02, `P2039`) en lugar de dejar pasar el `P2002` que documenta. Lo que solo tiene el cliente raíz es `$disconnect`.
+ */
 export function isRootDb(db: Db): db is RootDb {
-  return typeof (db as Partial<RootDb>).$transaction === 'function';
+  const client = db as Partial<RootDb> & { $disconnect?: unknown };
+  return typeof client.$transaction === 'function' && typeof client.$disconnect === 'function';
+}
+
+/**
+ * `true` solo si es el cliente de una transacción interactiva (tiene `$transaction` pero no `$disconnect`). Un objeto que no es un cliente de Prisma (un doble de prueba)
+ * no cuenta como transacción.
+ */
+export function isTransactionDb(db: unknown): boolean {
+  const client = db as { $transaction?: unknown; $disconnect?: unknown };
+  return typeof client.$transaction === 'function' && typeof client.$disconnect !== 'function';
 }
 
 /** Ejecuta `fn` en una transacción: abre una nueva si hace falta o reutiliza la de quien llama. */

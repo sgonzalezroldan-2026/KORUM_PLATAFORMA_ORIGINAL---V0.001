@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { PostJournalInput } from '@/core/finance/ledger-accounts';
 import { getAccountBalance, IdempotencyConflictError, JournalReversalError, postJournal, reverseJournal } from '@/core/finance/ledger.service';
 import { LedgerValidationError } from '@/core/finance/ledger-validation';
+import { isRootDb } from '@/lib/db';
 import { ImmutableRecordError, type KorumPrismaClient } from '@/lib/prisma';
 import { createInitiative, createOrganization, createTestClient, table, TEST_SCHEMA, uniqueId } from './test-database';
 
@@ -217,6 +218,24 @@ describe('idempotencia: la misma clave solo vale para la misma operación', () =
     const retry = await db.$transaction((tx) => postJournal(tx, input));
     expect(retry.created).toBe(false);
     expect(await db.ledgerJournal.count({ where: { idempotencyKey: input.idempotencyKey } })).toBe(1);
+  });
+
+  it('el cliente de una transacción no se confunde con el raíz (Prisma 7 le deja $transaction, pero no $disconnect)', async () => {
+    expect(isRootDb(db)).toBe(true);
+    expect(await db.$transaction(async (tx) => isRootDb(tx))).toBe(false);
+  });
+
+  it('más transacciones que conexiones y varias rondas: las perdedoras fallan siempre con P2002 (nunca «transacción abortada», P2039) y la conexión queda limpia', async () => {
+    const { orgId, initiativeId } = await scenario();
+    for (let round = 0; round < 4; round += 1) {
+      const input = payin(orgId, initiativeId);
+      const results = await Promise.allSettled(Array.from({ length: 14 }, () => db.$transaction((tx) => postJournal(tx, input))));
+      expect(results.filter((result) => result.status === 'fulfilled' && result.value.created)).toHaveLength(1);
+      for (const result of results) {
+        if (result.status === 'rejected') expect((result.reason as { code?: string }).code).toBe('P2002');
+      }
+      expect(await db.ledgerJournal.count({ where: { idempotencyKey: input.idempotencyKey } })).toBe(1);
+    }
   });
 });
 

@@ -3,7 +3,7 @@ import { signCheckoutResult } from '@/core/checkout/checkout-rules';
 import { getAccountBalance } from '@/core/finance/ledger-balances';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { approveSponsorSchema, badgeExpiryFrom, needsDecision, rejectSponsorSchema, SponsorModerationError } from '@/core/sponsors/sponsor-moderation-rules';
-import { inTransaction, type Db } from '@/lib/db';
+import { inTransaction, QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { requireOwnedResource } from '@/repositories/ownership';
 import { authorizeTenant, recordAudit, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -177,7 +177,7 @@ export async function rejectSponsor(
         { required: true }
       );
       return { contributionId: sponsor.contribution.id, retiredLogo };
-    });
+    }, QUEUED_TRANSACTION);
   } catch (error) {
     if (error instanceof RefundNotAllowedError) throw new SponsorModerationError('ALREADY_SETTLED');
     // Cambió el NIF emisor desde la factura del fee: la rectificativa la tiene que emitir el mismo obligado, así que se resuelve a mano (soporte).

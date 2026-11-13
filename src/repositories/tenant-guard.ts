@@ -1,5 +1,6 @@
 import type { Prisma } from '@/generated/prisma/client';
 import type { MemberRole } from '@/generated/prisma/enums';
+import { isTransactionDb } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 
 /**
@@ -142,7 +143,7 @@ export function coarseUserAgent(userAgent: string | undefined): string | null {
 
 /**
  * Escribe una fila de auditoría a nombre del actor. Con `required: true` un fallo se propaga (la operación no debe
- * continuar sin rastro); por defecto se registra en el servidor y no cambia el resultado (una denegación sigue siéndolo).
+ * continuar sin rastro); por defecto se registra en el servidor y no cambia el resultado (una denegación sigue siéndolo), salvo dentro de una transacción, donde el fallo se propaga.
  */
 export async function recordAudit(db: AuditDb, actor: SessionActor, entry: AuditEntry, options: { required?: boolean } = {}): Promise<void> {
   try {
@@ -160,7 +161,8 @@ export async function recordAudit(db: AuditDb, actor: SessionActor, entry: Audit
       }
     });
   } catch (error) {
-    if (options.required) throw error;
+    // Dentro de una transacción un error de base de datos la deja abortada: seguir adelante solo haría fallar lo siguiente con un «transacción abortada» que oculta la causa.
+    if (options.required || isTransactionDb(db)) throw error;
     console.error('No se pudo escribir en AuditLog', entry.action, error);
   }
 }

@@ -51,8 +51,9 @@ export async function payoutBlockers(tx: Db, initiative: ReadinessInitiative, or
     blockers.push('NOTHING_TO_PAY');
     return blockers;
   }
+  const candidates = await payoutCandidates(tx, initiative.id, options.payoutId ?? 0);
   try {
-    planPayoutSplits(await payoutCandidates(tx, initiative.id, options.payoutId ?? 0), netPaidCents, options.now);
+    planPayoutSplits(candidates, netPaidCents, options.now);
   } catch {
     // Los cobros que quedan dentro de los 90 días de Paycomet no alcanzan para el neto: lo resuelve KORUM con Paycomet (alerta del Super-Admin).
     blockers.push('WINDOW_EXPIRED');
