@@ -186,6 +186,10 @@ describe('QA-S01 · fechas y duración máxima', () => {
     expect(saveProblems(context(), budget({ closesOn: '2027-03-01' }), NOW)).toContain('CLOSING_TOO_LATE');
     expect(saveProblems(context(), budget({ closesOn: '2026-11-09' }), NOW)).toContain('CLOSING_PAST');
     expect(saveProblems(context(), budget({ closesOn: '2026-12-10' }), NOW)).toEqual([]);
+    // Con reglas extremas la meta calculada no puede pasar de lo que cabe en un entero de la base de datos: se avisa en vez de fallar al guardar.
+    const extreme = context({ gateway: { pctBps: 100, fixedCents: 10_000 }, donationTicketCents: 500 });
+    expect(saveProblems(extreme, budget({ costMatCents: 50_000_000, costInstCents: 50_000_000, contingencyBps: 3_000 }), NOW)).toContain('GOAL_TOO_HIGH');
+    expect(saveProblems(context(), budget({ costMatCents: 50_000_000, costInstCents: 50_000_000, contingencyBps: 3_000 }), NOW)).not.toContain('GOAL_TOO_HIGH');
     // El cierre es a las 23:59 de España: el último día que cabe en 60 días es el 8 de enero y el siguiente ya no.
     expect(latestCloseOn(NOW, 60)).toBe('2027-01-08');
     expect(saveProblems(context(), budget({ closesOn: '2027-01-08' }), NOW)).toEqual([]);

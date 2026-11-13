@@ -155,7 +155,7 @@ export async function reserveInitiativeQuotas(db: Db, initiativeId: number, now:
  * Devuelve a la entidad los cupos reservados por una iniciativa cancelada o reembolsada (`released: false` si ya se
  * devolvieron o nunca se reservaron). Devuelve la instantánea de la reserva, no los importes actuales del presupuesto.
  * Si los cupos de la entidad ya son de otro curso (`credited: false`), la reserva se cierra sin abonar nada: el cupo de un
- * curso pasado no engorda el del nuevo. El exento y la beca nunca superan el límite anual ni la beca de la medalla actual.
+ * curso pasado no engorda el del nuevo. El exento nunca supera el límite anual; la beca se devuelve exactamente lo reservado, sin tope con la beca vigente del nivel (solo dentro del mismo curso).
  */
 export async function releaseInitiativeQuotas(db: Db, initiativeId: number): Promise<{ released: boolean; credited: boolean }> {
   return inTransaction(db, async (tx) => {
@@ -168,10 +168,6 @@ export async function releaseInitiativeQuotas(db: Db, initiativeId: number): Pro
     });
     if (marked.count === 0) return { released: false, credited: false };
 
-    // Tope de la beca: la de la medalla actual. Sin configuración para ese rango (tabla aún vacía) no se recorta; aun así
-    // nunca se devuelve más de lo que se reservó (instantánea), así que no se puede crear beca de la nada.
-    const medalTiers = await tx.medalTierConfig.findMany({ select: { rank: true, grantCents: true } });
-    const medalCap = (rank: number) => medalTiers.find((tier) => tier.rank === rank)?.grantCents ?? Number.MAX_SAFE_INTEGER;
     let credited = false;
     try {
       await updateOrganizationQuotas(tx, before.organizationId, (current) => {
@@ -181,7 +177,10 @@ export async function releaseInitiativeQuotas(db: Db, initiativeId: number): Pro
         }
         return {
           exemptRemainingCents: Math.min(current.exemptLimitCents, current.exemptRemainingCents + before.quotaReservedExemptCents),
-          medalGrantAvailableCents: Math.min(Math.max(medalCap(current.medalRank), current.medalGrantAvailableCents), current.medalGrantAvailableCents + before.quotaReservedMedalCents),
+          // Se abona exactamente lo reservado (instantánea): nunca más (no se crea beca de la nada) ni menos. No hay tope con la beca vigente del nivel: el motor de reglas puede
+          // bajarla a mitad de curso mientras la entidad conserva la que tenía, y recortar la devolución destruiría beca reservada (auditoría financiera del 5.3, I3).
+          // La condición de mismo curso de arriba (`quotaReservedPeriod`) ya impide abonar un cupo de otro curso.
+          medalGrantAvailableCents: current.medalGrantAvailableCents + before.quotaReservedMedalCents,
           maintPaidCents: Math.max(0, current.maintPaidCents - before.quotaReservedMaintCents)
         };
       });
@@ -230,7 +229,12 @@ export async function shrinkReservedMaintenance(db: Db, initiativeId: number, ne
  */
 export async function renewOrganizationQuotas(db: Db, organizationId: string, newPeriod: string): Promise<{ renewed: boolean }> {
   return inTransaction(db, async (tx) => {
-    const current = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { quotaPeriod: true, medalRank: true, exemptLimitCents: true } });
+    // Se bloquea la fila de la entidad antes de leer el límite global, pero solo cuando de verdad toca renovar (el Estudio llama aquí en cada vista y no debe esperar
+    // ni cambiar `updatedAt`, que da la fecha de modificación del sitemap): un guardado del motor de reglas a la vez (que bloquea la global y las entidades antes de
+    // propagar) se ordena con la renovación, que así nunca escribe un límite global ya viejo (auditoría financiera del 5.3, M-A y N2).
+    const { count: due } = await tx.organization.updateMany({ where: { id: organizationId, OR: [{ quotaPeriod: null }, { quotaPeriod: { lt: newPeriod } }] }, data: { updatedAt: new Date() } });
+    if (due === 0) return { renewed: false };
+    const current = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { quotaPeriod: true, medalRank: true, exemptLimitCents: true, customRules: true } });
     if (!isLaterAcademicYear(newPeriod, current.quotaPeriod)) return { renewed: false };
     const audit = (action: string) => tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId, action, targetType: 'Organization', targetId: organizationId, metadataJson: { period: newPeriod } } });
 
@@ -243,9 +247,13 @@ export async function renewOrganizationQuotas(db: Db, organizationId: string, ne
     }
 
     const tier = await tx.medalTierConfig.findUnique({ where: { rank: current.medalRank }, select: { grantCents: true } });
+    // Una entidad sin tarifa propia empieza el curso con el límite **global** de ese momento: si el límite global bajó por debajo de lo que gastó el curso anterior,
+    // su copia se quedó en lo gastado (`saveGlobalRules`) y no debe arrastrar ese límite más alto para siempre (auditoría financiera del 5.3, I1). La de tarifa propia conserva el suyo.
+    const global = current.customRules ? null : await tx.globalConfig.findUnique({ where: { id: 'GLOBAL' }, select: { exemptLimitCents: true } });
+    const exemptLimitCents = global?.exemptLimitCents ?? current.exemptLimitCents;
     const { count } = await tx.organization.updateMany({
       where: { id: organizationId, quotaPeriod: current.quotaPeriod },
-      data: { quotaPeriod: newPeriod, exemptRemainingCents: current.exemptLimitCents, medalGrantAvailableCents: tier?.grantCents ?? 0, medalGrantUsedInTitle: null, maintPaidCents: 0, completedThisYear: 0 }
+      data: { quotaPeriod: newPeriod, exemptLimitCents, exemptRemainingCents: exemptLimitCents, medalGrantAvailableCents: tier?.grantCents ?? 0, medalGrantUsedInTitle: null, maintPaidCents: 0, completedThisYear: 0 }
     });
     if (count !== 1) return { renewed: false };
     await audit('quota.renewed');

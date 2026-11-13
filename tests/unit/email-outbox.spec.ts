@@ -64,6 +64,7 @@ const SAMPLES: Record<string, unknown> = {
   'account.passkeyAdded': {},
   'support.received': { ticketCode: 'TCK-7K3M9Q', rectification: true, answeredBy: 'SUPERADMIN' },
   'support.replied': { ticketCode: 'TCK-7K3M9Q', organization: 'CEIP Cervantes' },
+  'platform.message': { organization: 'CEIP Cervantes', subject: 'Una novedad sobre vuestra campaña', message: 'Hola.\n\nHemos revisado la documentación de vuestra entidad y todo está en orden.\n\nUn saludo.' },
   'pledge.charged': { initiativeId: 1, amountCents: 1_000, feeCents: 25, totalCents: 1_025, reference: 'KH0123456789ABCDEF', cycle: 2, totalMonths: 9, fiscalCertificate: true },
   'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },
   'pledge.failed': { amountCents: 1_000, cycle: 4, reason: 'CHARGE_FAILED' },
@@ -97,6 +98,37 @@ const SAMPLES: Record<string, unknown> = {
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>
   renderEmail({ templateKey, locale, payload: SAMPLES[templateKey], createdAt: NOW, appUrl: APP_URL, organization: ORGANIZATION, initiative: initiative(), qrSecret: QR_SECRET, ...overrides });
+
+describe('Sprint 5.3 · respuesta de KORUM y email directo a una entidad', () => {
+  it('la respuesta de KORUM a lo que escribe una entidad se lee en su panel y no en Mi cuenta; la de una familia, en su cuenta', async () => {
+    for (const locale of LOCALES) {
+      const family = await render('support.replied', locale);
+      const panel = await render('support.replied', locale, { payload: { ...(SAMPLES['support.replied'] as object), organization: 'KORUM', panelOrgSlug: 'colegio-sol' } });
+      expect(family.text).toContain('/mi-cuenta#support');
+      expect(panel.text).toContain('/panel/colegio-sol/soporte');
+      expect(panel.text).not.toContain('/mi-cuenta');
+    }
+  });
+
+  it('el email directo lleva el asunto y los párrafos de quien lo escribe, un botón al soporte del panel y el pie de la plataforma', async () => {
+    const email = await render('platform.message', 'es');
+    expect(email.subject).toContain('Una novedad sobre vuestra campaña');
+    expect(email.html).toContain('Hemos revisado la documentación');
+    expect(email.text).toContain('/panel/colegio-sol/soporte');
+    expect(email.text).toContain('equipo de KORUM');
+  });
+
+  it('el email directo sale con KORUM como remitente (no «Entidad vía KORUM») y no conserva el texto en la bandeja de salida una vez enviado', async () => {
+    for (const locale of LOCALES) expect((await render('platform.message', locale)).senderName).toBeUndefined();
+    // Una plantilla de la entidad sigue saliendo con su nombre.
+    expect((await render('signer.handover', 'es', { payload: { stage: 'REQUESTED', role: 'DIRECTOR', roleLabel: '', leaving: true } })).senderName).toBe('AMPA Colegio Sol vía KORUM');
+    expect([...secretFieldsOf('platform.message')].sort()).toEqual(['message', 'subject']);
+  });
+
+  it('un mensaje directo con un asunto o un texto fuera de los límites no es una plantilla válida', async () => {
+    await expect(render('platform.message', 'es', { payload: { organization: 'X', subject: 'a', message: 'corto' } })).rejects.toThrow();
+  });
+});
 
 describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
   it('cada plantilla del catálogo tiene su ejemplo, y todas las claves del catálogo se pueden componer', () => {

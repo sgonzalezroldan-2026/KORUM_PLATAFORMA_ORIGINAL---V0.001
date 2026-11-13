@@ -118,6 +118,14 @@ export function localUseOf(queue: readonly QueuedScan[]): Record<string, LocalUs
   return use;
 }
 
+/**
+ * El aforo que se muestra: lo que dice el servidor más las personas que este móvil ya dejó entrar sin red y aún no ha enviado (el servidor todavía no las cuenta).
+ * Sin esto, una respuesta del latido que llega después de una lectura sin red hacía bajar el contador por debajo de la realidad.
+ */
+export function summaryWithQueued<T extends { checkedIn: number }>(summary: T, queue: readonly QueuedScan[]): T {
+  return { ...summary, checkedIn: summary.checkedIn + queue.reduce((total, scan) => total + scan.quantity, 0) };
+}
+
 export function newClientScanId(): string {
   return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }

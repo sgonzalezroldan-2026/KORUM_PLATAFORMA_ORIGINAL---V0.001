@@ -605,7 +605,9 @@
         "preheader": "Tens una resposta nova.",
         "title": "Tens una resposta",
         "body": "{organization} ha contestat la teva consulta. Per privacitat no copiem el missatge aquí: llegeix-lo al teu compte.",
-        "cta": "Veure la resposta"
+        "cta": "Veure la resposta",
+        "bodyPanel": "{organization} ha contestat el que vas escriure. Per privacitat no copiem el missatge aquí: llegeix-lo al panell de la teva entitat.",
+        "ctaPanel": "Veure la resposta"
       }
     },
     "idea": {
@@ -859,6 +861,14 @@
           "next": "Corregiu-los als vostres ajustos i torneu-los a enviar a revisió. Si teniu dubtes, escriviu a suport des del panell.",
           "cta": "Corregeix els documents"
         }
+      }
+    },
+    "platform": {
+      "message": {
+        "subject": "Missatge de KORUM: {subject}",
+        "preheader": "L’equip de KORUM escriu a {organization}.",
+        "cta": "Anar al suport del panell",
+        "footnote": "Aquest missatge l’ha escrit una persona de l’equip de KORUM per a qui signa per la teva entitat. Pots respondre des de Suport, al panell."
       }
     }
   },
@@ -3062,7 +3072,8 @@
         "CLOSING_TOO_LATE": "La campanya duraria més del màxim permès: trieu una data de tancament anterior.",
         "RAFFLE_PRIZES_EXCEED": "No pot haver-hi més premis que butlletes.",
         "TITLE_MISSING": "Escriviu un títol d’almenys 3 lletres.",
-        "MAINT_EXCEEDS_TAKINGS": "Amb aquest preu i aquest aforament la recaptació no cobreix el manteniment de la plataforma: pugeu el preu o l’aforament."
+        "MAINT_EXCEEDS_TAKINGS": "Amb aquest preu i aquest aforament la recaptació no cobreix el manteniment de la plataforma: pugeu el preu o l’aforament.",
+        "GOAL_TOO_HIGH": "Amb aquest pressupost i les condicions de la plataforma la meta superaria el màxim que es pot desar: baixeu el pressupost o escriviu a KORUM."
       },
       "errors": {
         "INVALID_INPUT": "Hi ha dades que no són vàlides. Reviseu el formulari.",
@@ -3833,7 +3844,10 @@
       "salud-de-precios": "Salut de preus",
       "procesos": "Tasques programades",
       "fondos": "Fons d’activitats",
-      "entities": "Entitats i KYB ({count, plural, =0 {res per revisar} one {# per revisar} other {# per revisar}})"
+      "entities": "Entitats i KYB ({count, plural, =0 {res per revisar} one {# per revisar} other {# per revisar}})",
+      "rules": "Regles i preus",
+      "support": "Suport ({count, plural, =0 {res pendent} one {# consulta} other {# consultes}})",
+      "repartos": "Repartiments per resoldre"
     },
     "sections": {
       "business": "Negoci: ingressos reals i projectats"
@@ -4033,6 +4047,44 @@
           "FORBIDDEN": "No tens permís per fer això.",
           "INVALID": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar."
         }
+      },
+      "blocked": {
+        "summary": "Diners que no es poden enviar: què fer",
+        "splitText": "Una liquidació aprovada té {blocked} que no es poden enviar: el seu cobrament es va contracarregar o va passar dels 90 dies de Paycomet, i no queda cap altre cobrament amb marge des del qual refer el repartiment.",
+        "unsignedText": "Una liquidació del Fons d’activitats de {amount} té les signatures que exigeix l’entitat però no s’ha pogut aprovar, i la seva finestra de 90 dies de Paycomet venç el {deadline}.",
+        "windowText": "Hi ha diners del Fons d’activitats fora de la finestra de 90 dies de Paycomet: {stuck} ja no es poden repartir i {available} encara és dins de la finestra.",
+        "noMove": "KORUM no mou diners des d’aquí per a aquest cas: es resol amb Paycomet.",
+        "split": {
+          "step1": "Obre Paycomet i comprova l’estat del cobrament (contracarregat, retornat o fora de termini).",
+          "step2": "Pregunta a Paycomet com fer arribar a l’entitat aquest import. Fins que ho confirmi per escrit, no es promet res a l’entitat.",
+          "step3": "Anota aquí el que has fet i amb qui n’has parlat, sense dades personals."
+        },
+        "unsigned": {
+          "step1": "Mira al panell de l’entitat per què no s’aprova (documents sense verificar, compte de destí sense fixar).",
+          "step2": "Demana a l’entitat que ho corregeixi abans de la data límit: pots escriure-li des de la seva fitxa 360º.",
+          "step3": "Anota aquí el que has fet."
+        },
+        "window": {
+          "step1": "Mira a la fitxa de l’entitat quins cobraments del Fons han passat dels 90 dies.",
+          "step2": "Pregunta a Paycomet si permet repartir aquests diners fora de termini o com fer-los arribar a l’entitat.",
+          "step3": "Anota aquí el que s’ha acordat, sense dades personals."
+        },
+        "noteLabel": "Nota de qui ho gestiona (obligatòria)",
+        "noteHint": "De {min} a {max} caràcters. Sense dades personals: ni noms de persones, ni emails, ni IBAN, ni DNI, ni telèfons.",
+        "noteError": "Escriu una nota d’almenys {min} caràcters, sense noms de persones, emails, IBAN, DNI ni telèfons.",
+        "resolve": "Deixar constància i tancar l’alerta",
+        "resolving": "Tancant…",
+        "resolved": "Alerta tancada amb la teva nota. Si el problema continua, es tornarà a obrir sola.",
+        "failed": "No s’ha pogut desar. Torna-ho a provar.",
+        "outcome": {
+          "NOT_OPEN": "Aquesta alerta ja no estava oberta.",
+          "NOT_ALLOWED": "Aquesta alerta no es tanca amb una nota.",
+          "FORBIDDEN": "No tens permís per fer això."
+        },
+        "splitTextGeneric": "Una liquidació aprovada té diners que no es poden enviar: el seu cobrament es va contracarregar o va passar dels 90 dies de Paycomet, i no queda cap altre cobrament amb marge des del qual refer el repartiment.",
+        "amountLine": "Import de la liquidació: {amount}.",
+        "unsignedTextGeneric": "Una liquidació del Fons d’activitats té les signatures que exigeix l’entitat però no s’ha pogut aprovar, i la seva finestra de 90 dies de Paycomet està a punt de vèncer.",
+        "closeHint": "Tancar-la no arregla el problema: només deixa constància que el gestiones. Si continua, es tornarà a obrir."
       }
     },
     "jobs": {
@@ -4072,7 +4124,7 @@
     },
     "pricingHealth": {
       "title": "Salut de preus",
-      "intro": "Avisos quan una regla de preus perd diners o és incoherent. Cap impedeix desar res: hi són perquè decideixis amb la xifra al davant. Aquí es veuen els avisos; les regles de preus s’editen al motor de regles.",
+      "intro": "Avisos quan una regla de preus perd diners o és incoherent. Cap no impedeix desar res: són perquè decideixis amb la xifra al davant. «Ajustar» et porta al camp del motor de regles; «Acceptar i registrar» assumeix l’avís a propòsit, amb una nota.",
       "none": "No hi ha avisos: cap regla de preus perd diners ni és incoherent.",
       "badge": "{count, plural, one {# avís de preus} other {# avisos de preus}}",
       "bannerTitle": "{count, plural, one {Hi ha # avís crític de preus sense acceptar} other {Hi ha # avisos crítics de preus sense acceptar}}",
@@ -4100,10 +4152,32 @@
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "Amb un patrocini de {tierCents}, el fee ({feeCents}) no cobreix la passarel·la ({gatewayCostCents}): perds {lossCents} per patrocini.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hi ha # valor buit, negatiu o amb decimals a les regles de preus.} other {Hi ha # valors buits, negatius o amb decimals a les regles de preus.}} Mentre no es corregeixi, no es poden calcular els altres avisos.",
         "BRACKET_THRESHOLDS_INVALID": "El límit del tram 1 ({t1MaxCents}) supera el del tram 2 ({t2MaxCents}): el tram 2 queda buit.",
-        "BRACKET_CLIFF": "Amb {exemptCents} exempts, un net de {thresholdCents} paga {feeAtCents} de comissió i un d’1 cèntim més paga {feeAboveCents}: pujar el pressupost abaixa la comissió.{cliffCount, plural, one {} other { Hi ha # salts així; el més gran baixa {worstDropCents}.}} Considera el mode marginal.",
+        "BRACKET_CLIFF": "Amb {exemptCents} exempts, un pressupost de {thresholdCents} paga {feeAtCents} de comissió i un d’1 cèntim més paga {feeAboveCents}: pujar el pressupost abaixa la comissió.{cliffCount, plural, one {} other { Hi ha # salts així; el més gran baixa {worstDropCents}.}} Considera el mode marginal.",
         "BRACKET_RATES_NOT_DECREASING": "Les tarifes per trams no baixen en pujar de tram ({t1Bps} · {t2Bps} · {t3Bps}): és el contrari d’un descompte per volum.",
         "SOURCE_NEGATIVE_MARGIN": "Aquesta font acumula un marge de {marginCents} (ingrés menys la passarel·la dels seus cobraments)."
-      }
+      },
+      "adjust": "Ajustar",
+      "accept": "Acceptar i registrar",
+      "noteLabel": "Nota obligatòria: per què assumeixes aquest avís",
+      "noteHint": "De {min} a {max} caràcters. Sense dades personals. Queda a l’auditoria.",
+      "noteError": "Escriu una nota d’almenys {min} caràcters, sense emails, IBAN, DNI ni telèfons.",
+      "acceptSubmit": "Registrar l’acceptació",
+      "accepting": "Registrant…",
+      "cancel": "Cancel·lar",
+      "acceptedToast": "Avís acceptat i registrat.",
+      "unsaved": "Surt de valors que encara no has desat.",
+      "saveFirst": "Desa primer les regles per poder acceptar aquest avís.",
+      "reauthLink": "Tornar a verificar la meva identitat",
+      "error": {
+        "FAILED": "No s’ha pogut completar. Torna-ho a provar.",
+        "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació.",
+        "INVALID_INPUT": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar.",
+        "INVALID": "Revisa la nota: no és vàlida.",
+        "ALERT_CHANGED": "Les regles han canviat mentrestant i aquest avís ja és un altre. Recarrega la pàgina i revisa’l.",
+        "ALERT_NOT_FOUND": "Aquest avís ja no existeix. Recarrega la pàgina.",
+        "STALE": "Una altra persona ha desat una acceptació alhora. Recarrega la pàgina i torna-ho a provar."
+      },
+      "acceptWarning": "Això no canvia cap regla: KORUM continuarà perdent diners en aquest cas. Només deixa constància que ho saps. Si canvies la regla, l’avís torna a saltar."
     },
     "alertsCapped": "Es mostren les {shown} més greus i recents de {total}.",
     "metaTitle": "Consola",
@@ -4283,7 +4357,8 @@
         "tarifas": "Tarifes",
         "categorias": "Categories",
         "facturas": "Factures",
-        "negocio": "Negoci"
+        "negocio": "Negoci",
+        "contacto": "Contacte"
       },
       "reauthLink": "Torna a verificar la meva identitat",
       "outcome": {
@@ -4494,7 +4569,346 @@
       "business": {
         "title": "El que {name} aporta a KORUM",
         "hint": "Les 6 fonts d’ingressos d’aquesta entitat i les seves iniciatives. Prem el títol d’una per obrir-ne la fitxa executiva."
+      },
+      "directEmail": {
+        "title": "Email directe a l’entitat",
+        "hint": "Un text lliure de KORUM a qui signa per l’entitat. Queda registrat.",
+        "explain": "El reben la direcció i la cosignatura. El text surt tal com l’escriguis (només el botó i el peu de l’email es tradueixen a l’idioma de cada persona). Hi ha un topall d’enviaments per entitat i dia. Al registre només queda quant de text s’ha enviat i a quantes persones, no el contingut.",
+        "subject": "Assumpte",
+        "message": "Missatge",
+        "lengthHint": "Entre {min} i {max} caràcters, sense enllaços ni adreces web o d’email.",
+        "send": "Enviar l’email",
+        "sending": "Enviant…",
+        "sent": "{count, plural, one {Email enviat a # persona.} other {Email enviat a # persones.}}",
+        "archived": "L’entitat està arxivada: no se li pot escriure.",
+        "error": {
+          "FAILED": "No s’ha pogut enviar. Torna-ho a provar.",
+          "INVALID_INPUT": "Revisa l’assumpte i el missatge: han de tenir la longitud mínima i no poden portar enllaços ni adreces web o d’email.",
+          "NOT_FOUND": "Aquesta entitat ja no existeix o està arxivada.",
+          "RATE_LIMITED": "Ja has enviat el màxim d’emails d’avui a aquesta entitat. Torna-ho a provar demà.",
+          "NO_RECIPIENTS": "L’entitat no té persones que signin i rebin emails.",
+          "FORBIDDEN": "No tens permís per fer això.",
+          "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació."
+        },
+        "confirmTitle": "Confirma l’enviament",
+        "confirmText": "S’enviarà a qui signa per {organization}, amb el nom de KORUM. Un email enviat no es pot retirar.",
+        "confirmYes": "Sí, enviar l’email",
+        "confirmBack": "No, tornar",
+        "continue": "Revisar i enviar",
+        "reauthLink": "Tornar a verificar la meva identitat"
       }
+    },
+    "splits": {
+      "sectionTitle": "{count, plural, =0 {Repartiments per resoldre: cap} one {# repartiment per resoldre} other {# repartiments per resoldre}}",
+      "sectionIntro": "Quan Paycomet no confirma si un repartiment de diners a una entitat ha sortit, ningú no el torna a enviar sol: podria pagar-se dues vegades. Mira a Paycomet què ha passat i digues-ho aquí.",
+      "none": "No hi ha repartiments pendents de resoldre.",
+      "title": "{kind}: {amount} per a {organization}",
+      "kind": {
+        "CAMPAIGN": "Liquidació de campanya",
+        "FUND": "Fons d’activitats"
+      },
+      "order": "Comanda del cobrament a Paycomet",
+      "destination": "Identificador del compte de destí a Paycomet",
+      "sentAt": "Enviat",
+      "unknown": "No consta",
+      "legend": "Què ha passat a Paycomet amb aquest repartiment?",
+      "choice": {
+        "DONE": "Sí que ha sortit: Paycomet l’ha fet",
+        "NOT_DONE": "No ha sortit: torna a estar pendent"
+      },
+      "code": "Codi d’autorització del repartiment",
+      "codeError": "Escriu el codi que dona Paycomet (lletres, xifres, punt, guionet o dos punts).",
+      "warning": "Si marques que sí que ha sortit i no és cert, l’entitat no cobrarà aquest import. KORUM el dona per enviat i l’anota a la seva comptabilitat sense cap altra comprovació que la teva. Queda registrat.",
+      "save": "Continuar",
+      "saving": "Desant…",
+      "doneYes": "Repartiment donat per enviat.",
+      "doneNo": "El repartiment torna a estar pendent: es tornarà a enviar.",
+      "failed": "No s’ha pogut desar. Torna-ho a provar.",
+      "reauthLink": "Tornar a verificar la meva identitat",
+      "outcome": {
+        "NOT_SENDING": "Aquest repartiment ja no estava per resoldre. Recarrega la pàgina per veure’n l’estat actual.",
+        "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació."
+      },
+      "warningNotDone": "Si marques que no ha sortit i en realitat Paycomet sí que ho ha fet, l’entitat cobrarà aquest import dues vegades. Comprova-ho bé a Paycomet abans de confirmar.",
+      "confirmTitle": "Confirma el que has comprovat a Paycomet",
+      "confirmDone": "Donaràs aquest repartiment per enviat amb el codi {code}.",
+      "confirmNotDone": "Deixaràs aquest repartiment pendent: es tornarà a enviar.",
+      "confirmYes": "Sí, ho he comprovat a Paycomet",
+      "confirmBack": "No, tornar"
+    },
+    "rules": {
+      "metaTitle": "Regles i preus · Consola KORUM",
+      "back": "Tornar a la consola",
+      "title": "Regles i preus",
+      "intro": "El que cobra la plataforma. Mentre escrius, els avisos de la salut de preus es recalculen amb la xifra concreta. Cap avís no impedeix desar: són perquè decideixis amb els números al davant.",
+      "nav": {
+        "label": "Seccions del motor de regles",
+        "pasarela": "Passarel·la i gestió",
+        "tramos": "Trams i comerços",
+        "garantia": "Aportació de garantia",
+        "mantenimiento": "Manteniment",
+        "duracion": "Durada",
+        "medallas": "Medalles",
+        "categorias": "Categories",
+        "campanas-exentas": "Campanyes al 0 %"
+      },
+      "unit": {
+        "eur": "€",
+        "pct": "%",
+        "days": "dies"
+      },
+      "fieldError": "Escriu un valor de {min} a {max}, amb fins a dos decimals i sense negatius.",
+      "fieldErrorDays": "Escriu un nombre enter de dies, d’{min} a {max}.",
+      "invalidSummary": "{count, plural, one {Hi ha # camp amb un valor no vàlid: corregeix-lo per desar.} other {Hi ha # camps amb un valor no vàlid: corregeix-los per desar.}}",
+      "futureOnly": "Els canvis s’apliquen al que es calculi a partir d’ara. Les campanyes ja publicades conserven el seu càlcul. Les entitats sense tarifa pròpia passen a les noves tarifes; les que tenen tarifa pròpia no canvien.",
+      "save": "Desar les regles",
+      "saving": "Desant…",
+      "saved": "Regles desades. Aplicades a {count, plural, =0 {cap entitat sense tarifa pròpia} one {# entitat sense tarifa pròpia} other {# entitats sense tarifa pròpia}}.",
+      "savedNothing": "No hi havia canvis per desar.",
+      "reauthLink": "Tornar a verificar la meva identitat",
+      "reload": "Recarregar la pàgina",
+      "outcome": {
+        "FAILED": "No sabem si s’ha desat. Recarrega la pàgina i comprova els valors abans de repetir-ho.",
+        "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació.",
+        "INVALID_INPUT": "No s’ha pogut llegir la petició. Recarrega la pàgina i torna-ho a provar."
+      },
+      "reason": {
+        "INVALID": "Revisa els camps marcats: algun valor no és vàlid.",
+        "STALE": "Una altra persona ha desat canvis mentre editaves. Recarrega la pàgina per veure’n els canvis i torna a fer els teus.",
+        "TICKETING_ON_SALE": "No s’ha desat res. Hi ha una taquilla o rifa a la venda en una entitat sense tarifa pròpia i les despeses de gestió digital no poden canviar fins que acabi, perquè canviarien el que ja s’ha promès a qui compra. Deixa aquests dos camps com estaven i desa de nou.",
+        "CATEGORY_EXISTS": "Ja existeix una categoria amb aquest nom.",
+        "CATEGORY_NOT_FOUND": "Aquesta categoria ja no existeix.",
+        "ALERT_CHANGED": "Les regles han canviat i aquest avís ja és un altre.",
+        "ALERT_NOT_FOUND": "Aquest avís ja no existeix.",
+        "CREDIT_POOL_OPEN": "No s’ha desat res. Hi ha comerços amb diners a la borsa i la seva data límit ja se’ls va comunicar: la durada de les borses no pot canviar fins que es buidin. Deixa aquest camp com estava i desa de nou."
+      },
+      "gateway": {
+        "title": "Passarel·la, Guardiola i despeses de gestió digital",
+        "hint": "El que costa cada cobrament a Paycomet i el que cobra KORUM per gestionar una recàrrega de la Guardiola o una entrada. Cada import es prova amb cobraments d’exemple.",
+        "pct": "% variable de la passarel·la",
+        "fixed": "Fix per transacció",
+        "topupFixed": "Comissió de la Guardiola: fix per càrrec",
+        "topupHint": "Si és menor que el cost de la passarel·la, KORUM perd diners a cada càrrec: saltarà un avís.",
+        "topupPct": "Comissió de la Guardiola: % sobre el càrrec",
+        "ticketFixed": "Despeses de gestió digital: fix per entrada",
+        "ticketPct": "Despeses de gestió digital: % sobre el preu",
+        "ticketOk": "En una entrada de {price}: despeses de gestió digital {fee}, passarel·la {gateway}. Marge net de KORUM: +{margin} per entrada."
+      },
+      "brackets": {
+        "title": "Trams de comissió, exempt i comerços",
+        "hint": "La comissió per trams es calcula sobre el que queda per sobre de l’import exempt. El fee de comerços se suma al damunt del nivell de patrocini.",
+        "mode": "Com s’apliquen els trams",
+        "modeFLAT": "Pla: el tram es tria per l’import total",
+        "modeMARGINAL": "Marginal: cada tram grava només la seva part",
+        "modeHint": {
+          "FLAT": "Amb el mode pla, un pressupost un cèntim major que un llindar pot pagar menys comissió (efecte escaló). Exemple amb les xifres per defecte: amb 1.000 € exempts, un pressupost de 5.000 € paga 200 € i un de 5.001 € paga 160 €. Saltarà un avís amb la xifra.",
+          "MARGINAL": "Amb el mode marginal la comissió creix de manera contínua amb el pressupost: cada tram cobra només la seva part i no hi ha efecte escaló."
+        },
+        "exempt": "Import exempt anual base",
+        "exemptHint": "És la quota sense comissió de cada entitat en començar el curs. Si canvia, la quota que li queda a cada entitat es mou igual; el que ja s’ha gastat no canvia.",
+        "t1Max": "Límit del tram 1",
+        "t2Max": "Límit del tram 2",
+        "t1": "Comissió del tram 1",
+        "t2": "Comissió del tram 2",
+        "t3": "Comissió del tram 3",
+        "sponsor": "Comissió de comerços patrocinadors"
+      },
+      "guarantee": {
+        "title": "Aportació voluntària de garantia",
+        "hint": "L’aportació voluntària a KORUM del checkout. El check va sempre desmarcat: aquests imports només són el que se suggereix.",
+        "check": "Import suggerit de l’aportació",
+        "presets": "Nivells que s’ofereixen al selector",
+        "preset": "Nivell {n}",
+        "default": "Nivell que apareix triat",
+        "uncheckedNote": "Encara que hi hagi un nivell triat, el check de l’aportació continua desmarcat fins que la família el marqui.",
+        "presetOption": "Nivell {n} ({amount} €)"
+      },
+      "maintenance": {
+        "title": "Manteniment amb topall anual",
+        "hint": "Un càrrec per iniciativa que es desactiva sol en arribar al topall anual de cada entitat.",
+        "active": "Activar el càrrec de manteniment globalment",
+        "perInit": "Càrrec per iniciativa",
+        "cap": "Topall màxim anual per entitat",
+        "capHint": "En arribar al topall, la resta del curs es mostra 0,00 €."
+      },
+      "duration": {
+        "title": "Durada de les campanyes i de les borses de comerços",
+        "hint": "Paycomet només permet repartir fons durant 90 dies des de cada cobrament, així que aquests terminis tenen un màxim.",
+        "campaign": "Durada màxima d’una campanya",
+        "campaignHint": "Fins a 75 dies des de la publicació. Per defecte, 60.",
+        "pool": "Dies que dura la borsa d’un comerç",
+        "poolHint": "Fins a 70 dies: el dia 70 des del cobrament els diners passen al Fons d’activitats de l’entitat, i queden 20 dies fins al 90 per signar i enviar."
+      },
+      "medals": {
+        "title": "Medalles i beques d’exempció",
+        "hint": "Quantes campanyes tancades durant el curs calen per a cada medalla i la beca exempta (al 0 %) que dona.",
+        "name": {
+          "bronze": "Medalla de Bronze",
+          "silver": "Medalla de Plata",
+          "gold": "Medalla d’Or"
+        },
+        "campaigns": "Campanyes necessàries",
+        "grant": "Beca d’ampliació de l’exempt (€)",
+        "campaignsError": "Escriu un nombre enter de campanyes, d’1 a 99.",
+        "grantError": "Escriu un import vàlid, sense més de dos decimals i sense negatius.",
+        "orderError": "Cada medalla ha de demanar més campanyes que l’anterior: Bronze menys que Plata i Plata menys que Or.",
+        "applies": "S’aplica des de la propera renovació de quotes (canvi de curs) i a les medalles que es guanyin a partir d’ara: la beca que una entitat té disponible aquest curs pot estar ja en part reservada per una campanya.",
+        "save": "Desar les medalles",
+        "saving": "Desant…",
+        "saved": "Medalles desades."
+      },
+      "categories": {
+        "title": "Categories globals",
+        "hint": "Cada categoria és exempta (0 %) o va per trams. Una categoria pròpia d’una entitat amb el mateix nom continua manant sobre la global.",
+        "ruleEXEMPT": "0 % exempta de comissió",
+        "ruleBRACKETS": "Per trams (escala)",
+        "confirmTitle": "Confirma el canvi de regla",
+        "confirmExempt": "«{name}» passarà a ser exempta (0 %) en totes les campanyes noves de la plataforma. Les ja publicades no canvien.",
+        "confirmBrackets": "«{name}» passarà a pagar comissió per trams en totes les campanyes noves de la plataforma. Les ja publicades no canvien.",
+        "confirmYes": "Sí, canviar la regla",
+        "confirmNo": "No, deixar-la com està",
+        "ruleSaved": "Regla de «{name}» desada.",
+        "addTitle": "Afegir una categoria global",
+        "newName": "Nom de la nova categoria",
+        "newRule": "Regla de la nova categoria",
+        "nameError": "Escriu un nom de 2 a 60 caràcters que no existeixi ja com a categoria global.",
+        "add": "Afegir categoria global",
+        "adding": "Afegint…",
+        "added": "Categoria «{name}» afegida.",
+        "addHint": "Escriu almenys 2 caràcters per poder afegir-la.",
+        "confirmAddTitle": "Confirma la categoria exempta",
+        "confirmAddExempt": "«{name}» es crearà exempta (0 %): cap campanya nova d’aquesta categoria pagarà comissió per trams. Crear-la?",
+        "confirmAddYes": "Sí, crear-la exempta",
+        "confirmAddNo": "No, tornar"
+      },
+      "exempt": {
+        "title": "Campanyes al 0 % per revisar",
+        "hint": "El pany d’equipament és un filtre de bona fe. Aquí hi ha les campanyes de pressupost que continuen en una categoria exempta, les més recents primer, amb una marca si el pany va saltar alguna vegada.",
+        "none": "No hi ha campanyes de pressupost en categories al 0 %.",
+        "scrollHint": "Llisca la taula cap als costats per veure totes les columnes.",
+        "region": "Campanyes en categories al 0 %",
+        "caption": "Campanyes de pressupost en categories exemptes, amb la seva entitat, categoria, estat i si el filtre d’equipament va saltar",
+        "columns": {
+          "organization": "Entitat",
+          "campaign": "Campanya",
+          "category": "Categoria",
+          "status": "Estat",
+          "goal": "Meta",
+          "saved": "Últim desat",
+          "lock": "Filtre d’equipament"
+        },
+        "status": {
+          "BUDGETING": "En pressupost",
+          "FUNDRAISING": "Recaptant",
+          "GOAL_REACHED": "Meta aconseguida",
+          "CLOSED": "Tancada",
+          "EXPIRED": "Vençuda",
+          "RESIZE_VOTING": "En votació",
+          "REFUNDING": "Reemborsant",
+          "REFUNDED": "Reemborsada",
+          "CANCELLED": "Cancel·lada"
+        },
+        "lockYes": "Va saltar el filtre: el text semblava d’equipament",
+        "lockNo": "No ha saltat"
+      },
+      "fieldErrorServer": "Aquest valor no es pot desar ara. Deixa’l com estava i desa de nou."
+    },
+    "support": {
+      "metaTitle": "Suport · Consola KORUM",
+      "back": "Tornar a la consola",
+      "title": "Suport de KORUM",
+      "intro": "Les consultes adreçades a la plataforma (pagaments, compte, rectificació i d’altres) i el que escriuen les entitats des del seu panell, aquestes primer. Es respon una vegada per consulta i l’estat només avança.",
+      "waitingTitle": "{count, plural, =0 {Res pendent de respondre} one {# consulta pendent} other {# consultes pendents}}{priority, plural, =0 {} one { (# d’una entitat)} other { (# d’entitats)}}",
+      "waitingNone": "No hi ha consultes pendents.",
+      "capped": "Es mostren les {shown} més antigues de {total}. En resoldre’n algunes apareixeran les següents.",
+      "resolvedTitle": "Resoltes recentment",
+      "resolvedNone": "Encara no hi ha consultes resoltes.",
+      "status": {
+        "OPEN": "Oberta",
+        "IN_PROGRESS": "En curs",
+        "RESOLVED": "Resolta"
+      },
+      "priority": "Prioritària: d’una entitat",
+      "topic": {
+        "INITIATIVE": "Sobre una iniciativa",
+        "PAYMENT": "Un pagament",
+        "ACCOUNT": "El compte",
+        "RECTIFICATION": "Corregir dades personals",
+        "OTHER": "Una altra consulta"
+      },
+      "from": "De {origin} · {date}",
+      "sender": "Contacte: {email}",
+      "openPanel": "Obrir el panell de l’entitat",
+      "purged": "El text d’aquesta consulta ja s’ha esborrat (compte suprimit o termini de conservació).",
+      "replied": "Resposta el {date}",
+      "alreadyReplied": "Aquesta consulta ja té resposta: només en pots canviar l’estat.",
+      "replyLabel": "La teva resposta (una de sola per consulta)",
+      "replyHint": "Entre {min} i {max} caràcters. La persona rep un avís per email sense el text i el llegeix al seu compte o al seu panell.",
+      "statusLabel": "Estat",
+      "statusKeep": "No canviar l’estat",
+      "statusAuto": "Passar a «en curs» en respondre",
+      "statusTo": {
+        "IN_PROGRESS": "Passar a «en curs»",
+        "RESOLVED": "Marcar com a resolta"
+      },
+      "send": "Enviar resposta",
+      "changeStatus": "Canviar l’estat",
+      "saving": "Desant…",
+      "done": "Consulta {code} actualitzada.",
+      "doneNotified": "Consulta {code} actualitzada i avís enviat.",
+      "outcome": {
+        "INVALID_INPUT": "Revisa la resposta: ha de tenir entre {min} i {max} caràcters.",
+        "NOT_FOUND": "Aquesta consulta ja no existeix o no és de KORUM.",
+        "ALREADY_RESOLVED": "Aquesta consulta ja estava resolta.",
+        "ALREADY_REPLIED": "Aquesta consulta ja tenia resposta. Recarrega la pàgina.",
+        "NOTHING_TO_CHANGE": "No hi ha res a canviar: la consulta ja és en aquest estat.",
+        "CONFLICT": "Una altra persona l’ha canviada alhora. Recarrega la pàgina i torna-la a mirar.",
+        "PURGED": "El text d’aquesta consulta ja s’ha esborrat: no es pot respondre.",
+        "FORBIDDEN": "No tens permís per fer això.",
+        "FAILED": "No s’ha pogut desar. Torna-ho a provar."
+      },
+      "rectification": {
+        "title": "Sol·licitud de rectificació de dades (RGPD)",
+        "open": "S’ha d’atendre abans del {date}.",
+        "overdue": "El termini legal d’un mes va vèncer el {date}: atén-la avui (si és un canvi d’email, que l’equip tècnic ho resolgui avui).",
+        "done": "Sol·licitud tancada: {status}.",
+        "status": {
+          "COMPLETED": "feta",
+          "REJECTED": "rebutjada"
+        },
+        "how": "Des d’aquí pots corregir el nom del compte. El canvi d’email encara no es pot fer: no hi ha encara cap tràmit que comprovi que la persona controla el nou email. No canviïs l’email a mà i no rebutgis la sol·licitud per això: deixa-la oberta i escriu a l’equip tècnic de KORUM amb el codi de la consulta perquè es resolgui, perquè el termini legal d’un mes corre. Després de corregir el nom, tanca la sol·licitud.",
+        "notes": "Nota interna (opcional, sense dades personals; mínim 10 caràcters si l’escrius)",
+        "markDone": "Canvi fet: tancar la sol·licitud",
+        "markRejected": "Rebutjar la sol·licitud",
+        "closed": "Sol·licitud tancada.",
+        "reauthLink": "Tornar a verificar la meva identitat",
+        "error": {
+          "NOT_FOUND": "Aquesta sol·licitud ja no existeix.",
+          "ALREADY_CLOSED": "Aquesta sol·licitud ja estava tancada.",
+          "INVALID": "Revisa el que has escrit: el nom necessita almenys 2 caràcters i la nota, si l’escrius, 10 i sense dades personals.",
+          "REAUTH_REQUIRED": "Per a això cal que tornis a posar el teu codi de verificació.",
+          "FAILED": "No s’ha pogut completar. Recarrega la pàgina i comprova si la sol·licitud continua oberta abans de repetir-ho.",
+          "NO_ACCOUNT": "Qui va escriure ja no té un compte actiu: no hi ha cap nom per corregir."
+        },
+        "rejectTitle": "Confirma que rebutges la sol·licitud",
+        "rejectText": "Rebutjar tanca la sol·licitud sense fer el canvi: la persona no veurà corregida la seva dada. Fes-ho només si no s’ha pogut comprovar la seva identitat o la petició no procedeix. Si el que demana és canviar el seu email, no la rebutgis: deixa-la oberta i avisa l’equip tècnic.",
+        "rejectYes": "Sí, rebutjar la sol·licitud",
+        "rejectBack": "No, tornar",
+        "nameLabel": "Nom correcte del compte",
+        "nameButton": "Corregir el nom",
+        "nameHint": "Comprova abans la identitat de la persona. Queda registrat sense el nom.",
+        "nameDone": "Nom del compte corregit.",
+        "nameCurrent": "Nom actual del compte: {name}"
+      },
+      "noContact": "No es podrà avisar aquesta persona (ja no té compte o adreça de contacte): la teva resposta es desarà, però no rebrà cap avís.",
+      "statusResolvedHint": "Una consulta resolta ja no es pot respondre.",
+      "doneNotNotified": "Consulta {code} actualitzada. No s’ha avisat per email: aquesta persona ja no té compte o la seva adreça s’ha esborrat.",
+      "resolveConfirmTitle": "Confirma que vols tancar la consulta",
+      "resolveConfirmWithReply": "S’enviarà la teva resposta i la consulta quedarà resolta: no es podrà tornar a respondre.",
+      "resolveConfirmNoReply": "Tancaràs la consulta sense respondre: la persona no rebrà cap resposta i no es podrà respondre després.",
+      "resolveConfirmYes": "Sí, tancar la consulta",
+      "resolveConfirmBack": "No, tornar",
+      "resolveConfirmAlreadyReplied": "Aquesta consulta ja té resposta. Es tancarà i no es podrà tornar a respondre."
     }
   },
   "forbidden": {

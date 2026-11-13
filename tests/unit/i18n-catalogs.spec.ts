@@ -111,7 +111,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // BI de la consola (Sprint 5.1): «Meta», «Iniciativa», «Medalla» y «Plata» se escriben igual en catalán; los porcentajes y los patrones no tienen texto traducible.
       'admin.metaTitle', 'admin.kpi.potentialGoal', 'admin.kpi.percent', 'admin.orgs.col.medal', 'admin.orgs.col.goal', 'admin.orgs.medal.2', 'admin.orgs.sponsorsValue', 'admin.orgs.noValue', 'admin.initiatives.percent', 'admin.initiatives.col.title', 'admin.initiatives.col.goal',
       // Consola (Sprint 5.2): «Medalla», «Plata», «CIF», «Forma jurídica», «Titular legal», «Número», «Rectificativa», «Total», «Falta» y las unidades se escriben igual en catalán.
-      'admin.entities.col.medal', 'admin.entities.medal.2', 'admin.entities.noValue', 'admin.org360.holder.cif', 'admin.org360.holder.legalForm', 'admin.org360.holder.ley49No', 'admin.org360.holder.ley49Verified', 'admin.org360.holder.title', 'admin.org360.invoices.number', 'admin.org360.invoices.rectification', 'admin.org360.invoices.total', 'admin.org360.kyb.cif', 'admin.org360.kyb.missing', 'admin.org360.legalForm.PARENTS_ASSOCIATION', 'admin.org360.medal.2', 'admin.org360.nav.titular', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'admin.popup.percent', 'admin.popup.previousItem']);
+      'admin.entities.col.medal', 'admin.entities.medal.2', 'admin.entities.noValue', 'admin.org360.holder.cif', 'admin.org360.holder.legalForm', 'admin.org360.holder.ley49No', 'admin.org360.holder.ley49Verified', 'admin.org360.holder.title', 'admin.org360.invoices.number', 'admin.org360.invoices.rectification', 'admin.org360.invoices.total', 'admin.org360.kyb.cif', 'admin.org360.kyb.missing', 'admin.org360.legalForm.PARENTS_ASSOCIATION', 'admin.org360.medal.2', 'admin.org360.nav.titular', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'admin.popup.percent', 'admin.popup.previousItem',
+      // Motor de reglas y soporte de la consola (Sprint 5.3): «Ajustar», «Meta», «No consta», «Sobre una iniciativa», las unidades y el patrón «De {origen} · {fecha}» se escriben igual en catalán.
+      'admin.pricingHealth.adjust', 'admin.rules.exempt.columns.goal', 'admin.rules.unit.eur', 'admin.rules.unit.pct', 'admin.splits.unknown', 'admin.splits.save', 'admin.support.from', 'admin.support.topic.INITIATIVE']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no',
       // Consola (Sprint 5.2): el guion, «Total» y las unidades son iguales en inglés.
       'admin.entities.noValue', 'admin.org360.invoices.total', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'privacy.export.fields.idea', 'registration.fields.email',
@@ -136,7 +138,9 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Estudio de edición (Sprint 4.3): el patrón «{entity} × KORUM» no tiene texto traducible.
       'panel.studio.poster.withKorum',
       // Portería móvil (Sprint 4.5): patrones sin texto traducible.
-      'gate.raffle.roundButton', 'panel.gate.pin.digits']);
+      'gate.raffle.roundButton', 'panel.gate.pin.digits',
+      // Motor de reglas (Sprint 5.3): las unidades son iguales en inglés.
+      'admin.rules.unit.eur', 'admin.rules.unit.pct']);
     const sameByNature = (locale: string, key: string) =>
       key.startsWith('languageSwitcher.') || key === 'brand.name' || (locale === 'ca' ? SAME_IN_CATALAN : SAME_IN_ENGLISH).has(key);
     const sameAsSpanish = (locale: string) => spanishKeys.filter((key) => flat[locale]![key] === flat.es![key] && !sameByNature(locale, key));

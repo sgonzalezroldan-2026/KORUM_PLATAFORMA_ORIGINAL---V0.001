@@ -20,6 +20,7 @@ import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge
 import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAwaitingDecision, sponsorLateReceived, sponsorToEntityFund } from './definitions-activity-fund';
 import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { orgKybStatus, signerHandover } from './definitions-team';
+import { platformMessage } from './definitions-platform';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
 import { initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
 
@@ -38,6 +39,7 @@ export class InvalidPayloadError extends Error {
 export interface RegisteredTemplate {
   secretFields: readonly string[];
   needs: TemplateDefinition<unknown>['needs'];
+  sender: NonNullable<TemplateDefinition<unknown>['sender']>;
   build: (rawPayload: unknown, context: TemplateContext) => Promise<EmailContent>;
 }
 
@@ -47,6 +49,7 @@ function register<Payload>(templateKey: string, definition: TemplateDefinition<P
     {
       secretFields: definition.secretFields ?? [],
       needs: definition.needs,
+      sender: definition.sender ?? 'organization',
       build: async (rawPayload, context) => {
         const parsed = definition.schema.safeParse(rawPayload);
         // Solo la ruta del campo, nunca su valor: el payload puede llevar enlaces o códigos de un solo uso.
@@ -91,6 +94,7 @@ const ENTRIES = [
   register('account.passkeyAdded', accountPasskeyAdded),
   register('support.received', supportReceived),
   register('support.replied', supportReplied),
+  register('platform.message', platformMessage),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed),

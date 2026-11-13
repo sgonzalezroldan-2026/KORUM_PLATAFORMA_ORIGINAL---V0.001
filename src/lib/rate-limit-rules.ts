@@ -97,6 +97,11 @@ export const SUPPORT_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 's
 export const SUPPORT_ORG_TICKET_RULE: RateLimitRule & PurgeRule = { prefix: 'support:org:', limit: 5, windowMs: 60 * 60_000 };
 export const SUPPORT_ORG_TICKET_DAILY_RULE: RateLimitRule & PurgeRule = { prefix: 'support:day:org:', limit: 12, windowMs: 24 * 3_600_000 };
 
+/** Emails directos de KORUM a una entidad desde la consola (Sprint 5.3): el texto es libre y sale con el nombre de la plataforma, así que tiene tope por entidad y día. */
+export const CONSOLE_DIRECT_EMAIL_RULE: RateLimitRule & PurgeRule = { prefix: 'console:direct-email:org:', limit: 3, windowMs: 24 * 3_600_000 };
+/** Y un tope global por persona y día: una sesión de Super-Admin robada no puede escribir a todas las entidades a la vez (auditoría de seguridad del 5.3, I3). */
+export const CONSOLE_DIRECT_EMAIL_PERSON_RULE: RateLimitRule & PurgeRule = { prefix: 'console:direct-email:user:', limit: 20, windowMs: 24 * 3_600_000 };
+
 /**
  * Subidas de documentos del titular por entidad (Sprint 4.2c): cada sustitución se conserva 6 años, así que una cuenta firmante robada o un guion no
  * puede llenar el almacén. Treinta a la hora cubren de sobra subir y corregir los cinco documentos varias veces.

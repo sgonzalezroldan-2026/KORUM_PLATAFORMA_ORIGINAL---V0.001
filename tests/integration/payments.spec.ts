@@ -9,6 +9,7 @@ import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.servi
 import { PaymentProviderError } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { executePendingRefund, refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
+import { loadSplitsToResolve, resolveSplitToResolve } from '@/services/admin/payout-review.service';
 import { approvePayout, executeApprovedPayout, PayoutNotAllowedError, resolveUnknownSplit } from '@/services/payments/split-transfer.service';
 import { createInitiative, createOrganization, createTestClient, createUser, TEST_KEYRING, uniqueId, verifiedSuperadmin } from './test-database';
 
@@ -727,6 +728,44 @@ describe('liquidación con doble firma y reparto cobro a cobro', () => {
     expect(await db.auditLog.count({ where: { action: 'payout.split_resolved', targetId: String(unknown.id) } })).toBe(1);
     await expect(resolveUnknownSplit(db, person, unknown.id, { splitAuthCode: null }, now)).rejects.toBeInstanceOf(PayoutNotAllowedError);
     expect(await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: unknown.id } })).toMatchObject({ status: 'DONE' });
+  });
+
+  it('Sprint 5.3 · el reparto de resultado desconocido sale en la consola con lo que hace falta para buscarlo en Paycomet y se resuelve desde ella una sola vez', async () => {
+    const cutFor = (order: string) => new MockPaycometProvider({ secrets, failSplit: (candidate) => (candidate === order ? new PaymentProviderError('corte', 'NETWORK', true) : null) });
+    const { actor: person } = await verifiedSuperadmin(db, now);
+
+    // «Sí salió»: queda hecho con el código que da Paycomet y desaparece de la lista.
+    const done = await reachedCampaign();
+    await approvePayout(db, done.payout.id, HMAC_SECRET, now);
+    const doneOrder = done.charges[0]!.paycometOrder!;
+    expect(await executeApprovedPayout(db, cutFor(doneOrder), done.payout.id, now)).toMatchObject({ status: 'NEEDS_REVIEW' });
+    const unknown = await db.escrowPayoutSplit.findFirstOrThrow({ where: { payoutId: done.payout.id, status: 'SENDING' } });
+    const listed = (await loadSplitsToResolve(db)).find((row) => row.kind === 'CAMPAIGN' && row.splitId === unknown.id);
+    expect(listed).toMatchObject({ payoutId: done.payout.id, amountCents: unknown.amountCents, paycometOrder: doneOrder, organizationName: expect.any(String) });
+    expect(listed?.destinationSplitId).toBeTruthy();
+    expect(listed?.sentAt).toEqual(expect.any(String));
+    // Nada de datos personales ni secretos en lo que se lista.
+    expect(Object.keys(listed!).sort()).toEqual(['amountCents', 'destinationSplitId', 'kind', 'organizationName', 'organizationSlug', 'paycometOrder', 'payoutId', 'sentAt', 'splitId']);
+
+    expect(await resolveSplitToResolve(db, person, { kind: 'CAMPAIGN', splitId: unknown.id, splitAuthCode: 'S-COMPROBADO' }, now)).toEqual({ status: 'RESOLVED', done: true });
+    expect(await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: unknown.id } })).toMatchObject({ status: 'DONE', splitAuthCode: 'S-COMPROBADO' });
+    expect((await loadSplitsToResolve(db)).some((row) => row.kind === 'CAMPAIGN' && row.splitId === unknown.id)).toBe(false);
+    // Otra persona que lo resuelve a la vez, o la misma otra vez, no paga dos veces.
+    expect(await resolveSplitToResolve(db, person, { kind: 'CAMPAIGN', splitId: unknown.id, splitAuthCode: 'S-OTRO' }, now)).toEqual({ status: 'NOT_SENDING' });
+    expect(await resolveSplitToResolve(db, person, { kind: 'CAMPAIGN', splitId: unknown.id, splitAuthCode: null }, now)).toEqual({ status: 'NOT_SENDING' });
+    expect(await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: unknown.id } })).toMatchObject({ status: 'DONE', splitAuthCode: 'S-COMPROBADO' });
+
+    // «No salió»: vuelve a estar pendiente y se reenvía con normalidad.
+    const notDone = await reachedCampaign();
+    await approvePayout(db, notDone.payout.id, HMAC_SECRET, now);
+    expect(await executeApprovedPayout(db, cutFor(notDone.charges[0]!.paycometOrder!), notDone.payout.id, now)).toMatchObject({ status: 'NEEDS_REVIEW' });
+    const hanging = await db.escrowPayoutSplit.findFirstOrThrow({ where: { payoutId: notDone.payout.id, status: 'SENDING' } });
+    expect(await resolveSplitToResolve(db, person, { kind: 'CAMPAIGN', splitId: hanging.id, splitAuthCode: null }, now)).toEqual({ status: 'RESOLVED', done: false });
+    expect(await db.escrowPayoutSplit.findUniqueOrThrow({ where: { id: hanging.id } })).toMatchObject({ status: 'PENDING' });
+    expect(await executeApprovedPayout(db, new MockPaycometProvider({ secrets }), notDone.payout.id, now)).toMatchObject({ status: 'EXECUTED' });
+    // Un identificador que no existe responde igual que uno ya resuelto.
+    expect(await resolveSplitToResolve(db, person, { kind: 'CAMPAIGN', splitId: 2_000_000_000, splitAuthCode: null }, now)).toEqual({ status: 'NOT_SENDING' });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
   it('dos ejecuciones simultáneas no envían dos veces el mismo reparto', async () => {

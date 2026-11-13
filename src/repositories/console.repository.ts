@@ -6,6 +6,10 @@ import { listOrganizationsForConsole, loadOrganization360, type Org360View, type
 import { loadPricingHealth, type PricingHealthView } from '@/services/admin/pricing-health-data';
 import type { BiFilters } from '@/core/finance/bi-summary';
 import { authorizeConsoleSession, requeueTemplateOf } from '@/services/admin/console-alerts.service';
+import { loadConsoleSupport, type ConsoleSupportView } from '@/services/admin/console-support.service';
+import { loadExemptCampaigns, type ExemptCampaignRow } from '@/services/admin/exempt-campaigns';
+import { loadGlobalRulesView, loadMedalsView, type GlobalRulesView, type MedalsView } from '@/services/admin/global-rules.service';
+import { loadSplitsToResolve, type SplitToResolve } from '@/services/admin/payout-review.service';
 import { authorizeSuperadmin, recordAudit, type SessionActor } from './tenant-guard';
 
 /**
@@ -29,6 +33,26 @@ export interface ConsoleAlert {
   resolvableId: number | null;
   /** Solo `EMAIL_DELIVERY_FAILED` de una plantilla: se pueden volver a poner en cola sus mensajes fallidos (Sprint 5.2). */
   requeueTemplate: string | null;
+  /** Solo `PAYOUT_BLOCKED` y `ACTIVITY_FUND_WINDOW`: las cifras del caso para enseñarlas junto al procedimiento (importes en céntimos, sin datos personales). */
+  figures: AlertFigures | null;
+}
+
+export interface AlertFigures {
+  reason: string | null;
+  amountCents: number | null;
+  blockedCents: number | null;
+  stuckCents: number | null;
+  availableCents: number | null;
+  deadline: string | null;
+}
+
+/** Las cifras de una alerta de dinero bloqueado, leídas con cuidado: el detalle es JSON y cualquier campo puede faltar. */
+function figuresOf(type: string, detail: Prisma.JsonValue): AlertFigures | null {
+  if (type !== 'PAYOUT_BLOCKED' && type !== 'ACTIVITY_FUND_WINDOW') return null;
+  const source = detail !== null && typeof detail === 'object' && !Array.isArray(detail) ? detail : {};
+  const cents = (key: string) => (typeof source[key] === 'number' && Number.isSafeInteger(source[key]) ? (source[key] as number) : null);
+  const text = (key: string, pattern: RegExp) => (typeof source[key] === 'string' && pattern.test(source[key] as string) ? (source[key] as string) : null);
+  return { reason: text('reason', /^[A-Z_]{1,40}$/), amountCents: cents('amountCents'), blockedCents: cents('blockedCents'), stuckCents: cents('stuckCents'), availableCents: cents('availableCents'), deadline: text('deadline', /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/) };
 }
 
 /** Última ejecución de cada tarea programada: tipo, estado, cuándo y cuántos intentos. Sin el texto del error (va en la alerta). */
@@ -61,8 +85,9 @@ function detailKind(detail: Prisma.JsonValue): string | null {
 }
 
 export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionActor) {
-  await authorizeSuperadmin(db, actor, 'console.overview', 'Console');
-  const [organizations, pendingKyb, rawAlerts, openAlerts, criticalAlerts, jobRuns] = await Promise.all([
+  // Con el segundo factor de la sesión, como el resto de lecturas de la consola: la portada lleva ya los repartos por resolver (pedido y cuenta destino de Paycomet).
+  await authorizeConsoleSession(db, actor, 'console.overview', 'Console');
+  const [organizations, pendingKyb, rawAlerts, openAlerts, criticalAlerts, jobRuns, supportWaiting] = await Promise.all([
     db.organization.count({ where: { archivedAt: null } }),
     db.organization.count({ where: { archivedAt: null, kybStatus: { in: ['PENDING', 'SUBMITTED'] } } }),
     db.opsAlert.findMany({
@@ -74,7 +99,9 @@ export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionAc
     }),
     db.opsAlert.count({ where: { status: 'OPEN' } }),
     db.opsAlert.count({ where: { status: 'OPEN', severity: 'CRITICAL' } }),
-    loadLatestJobRuns(db)
+    loadLatestJobRuns(db),
+    // Consultas dirigidas a KORUM que esperan respuesta: el contador del enlace «Soporte» (Sprint 5.3).
+    db.supportTicket.count({ where: { target: 'SUPERADMIN', status: { in: ['OPEN', 'IN_PROGRESS'] } } })
   ]);
   const alerts: ConsoleAlert[] = rawAlerts.map((alert) => {
     const resolvableType = alert.type === 'REFUND_STUCK' || alert.type === 'INVOICE_STUCK' ? RESOLVABLE_TARGETS[alert.type] : null;
@@ -88,11 +115,13 @@ export async function getConsoleOverview(db: KorumPrismaClient, actor: SessionAc
       organization: alert.organization,
       kind: alert.type === 'RECONCILIATION_MISMATCH' ? detailKind(alert.detailJson) : null,
       resolvableId,
-      requeueTemplate: alert.type === 'EMAIL_DELIVERY_FAILED' ? requeueTemplateOf(alert.dedupeKey) : null
+      requeueTemplate: alert.type === 'EMAIL_DELIVERY_FAILED' ? requeueTemplateOf(alert.dedupeKey) : null,
+      figures: figuresOf(alert.type, alert.detailJson)
     };
   });
   const jobs: ConsoleJobRun[] = jobRuns;
-  return { organizations, pendingKyb, alerts, openAlerts, criticalAlerts, jobs, activityFunds: await listActivityFunds(db) };
+  const [activityFunds, splitsToResolve] = await Promise.all([listActivityFunds(db), loadSplitsToResolve(db)]);
+  return { organizations, pendingKyb, alerts, openAlerts, criticalAlerts, jobs, activityFunds, splitsToResolve, supportWaiting };
 }
 
 /** Negocio de la consola: ingresos reales (libro mayor) y proyectados, tablas y alertas 💎 / 🚨 (Sprint 5.1). */
@@ -154,3 +183,32 @@ async function listActivityFunds(db: KorumPrismaClient) {
     return { name: organization.name, slug: organization.slug, balanceCents: balance.get(organization.id) ?? 0, openPayout: payout ? { status: payout.status, amountCents: payout.amountCents } : null };
   });
 }
+
+/** Todo lo que pinta el motor de reglas (`/admin/reglas`, Sprint 5.3): reglas, medallas, categorías globales, avisos de precios y campañas al 0 % por revisar. */
+export interface ConsoleRulesView {
+  rules: GlobalRulesView;
+  medals: MedalsView;
+  categories: Array<{ name: string; icon: string; rule: 'EXEMPT' | 'BRACKETS' }>;
+  pricing: PricingHealthView;
+  exemptCampaigns: ExemptCampaignRow[];
+}
+
+export async function getConsoleRules(db: KorumPrismaClient, actor: SessionActor): Promise<ConsoleRulesView> {
+  await authorizeConsoleSession(db, actor, 'console.rules', 'Console');
+  const [rules, medals, categories, pricing, exemptCampaigns] = await Promise.all([
+    loadGlobalRulesView(db),
+    loadMedalsView(db),
+    db.globalCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }], select: { name: true, icon: true, rule: true } }),
+    loadPricingHealth(db),
+    loadExemptCampaigns(db)
+  ]);
+  return { rules, medals, categories, pricing, exemptCampaigns };
+}
+
+/** Bandeja de soporte de KORUM (Sprint 5.3): consultas dirigidas a la plataforma, las de las entidades primero. */
+export async function getConsoleSupport(db: KorumPrismaClient, actor: SessionActor): Promise<ConsoleSupportView> {
+  await authorizeConsoleSession(db, actor, 'console.support', 'SupportTicket');
+  return loadConsoleSupport(db);
+}
+
+export type { ConsoleSupportView, SplitToResolve };

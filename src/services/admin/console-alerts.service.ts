@@ -1,8 +1,10 @@
+import { isNoteClosedAlertType, resolveWithNoteSchema } from '@/core/admin/console-support-rules';
 import { resolveAlert } from '@/core/jobs/ops-alerts';
 import type { VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { authorizeSuperadmin, recordAudit, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import { authorizeSuperadmin, coarseUserAgent, recordAudit, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import { writeAudit } from '@/services/audit/audit.service';
 import { InvoiceNotAllowedError, resolveUnknownInvoice, type UnknownInvoiceResolution } from '@/services/invoicing/invoice.service';
 import { secretFieldsOf } from '@/services/email/templates/catalog';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
@@ -42,9 +44,33 @@ export async function resolveOpsAlertById(db: KorumPrismaClient, actor: SessionA
   return inTransaction(db, async (tx): Promise<ResolveAlertResult> => {
     const alert = await tx.opsAlert.findFirst({ where: { id: alertId, status: 'OPEN' }, select: { dedupeKey: true, type: true, organizationId: true, targetType: true, targetId: true } });
     if (!alert) return { status: 'NOT_OPEN' };
-    if (needsItsForm(alert)) return { status: 'USE_RESOLVER' };
+    if (needsItsForm(alert) || isNoteClosedAlertType(alert.type)) return { status: 'USE_RESOLVER' };
     if (!(await resolveAlert(tx, alert.dedupeKey))) return { status: 'NOT_OPEN' };
     await recordAudit(tx, actor, { action: 'ops_alert.resolved', organizationId: alert.organizationId, targetType: 'OpsAlert', targetId: alertId, metadata: { type: alert.type } }, { required: true });
+    return { status: 'RESOLVED' };
+  });
+}
+
+export type ResolveWithNoteResult = { status: 'RESOLVED' } | { status: 'NOT_OPEN' } | { status: 'NOT_ALLOWED' } | { status: 'INVALID' };
+
+/**
+ * Cierra con una nota una alerta de dinero que solo se arregla fuera de la plataforma (`PAYOUT_BLOCKED`, `ACTIVITY_FUND_WINDOW`: un reparto que no se puede enviar y
+ * no hay otro cobro desde el que rehacerlo). Decisión del promotor (2026-11-13): la consola **no mueve dinero ni escribe asientos** para estos casos; enseña las cifras
+ * y el procedimiento, y quien lo gestiona con Paycomet lo anota aquí. Sin nota no se cierra. La nota queda en la auditoría con quién y cuándo. Si el problema sigue,
+ * la tarea diaria reabre la alerta sola (`raiseAlert`): cerrarla no lo arregla, solo deja constancia de que alguien lo está llevando.
+ */
+export async function resolveOpsAlertWithNote(db: KorumPrismaClient, actor: SessionActor, payload: unknown): Promise<ResolveWithNoteResult> {
+  await authorizeConsoleSession(db, actor, 'alert.resolve_with_note', 'OpsAlert');
+  const parsed = resolveWithNoteSchema.safeParse(payload);
+  if (!parsed.success) return { status: 'INVALID' };
+  const { alertId, note } = parsed.data;
+  return inTransaction(db, async (tx): Promise<ResolveWithNoteResult> => {
+    const alert = await tx.opsAlert.findFirst({ where: { id: alertId, status: 'OPEN' }, select: { dedupeKey: true, type: true, organizationId: true } });
+    if (!alert) return { status: 'NOT_OPEN' };
+    if (!isNoteClosedAlertType(alert.type)) return { status: 'NOT_ALLOWED' };
+    if (!(await resolveAlert(tx, alert.dedupeKey))) return { status: 'NOT_OPEN' };
+    // Con `writeAudit`: segunda barrera (limpia direcciones, IP y otros datos que la regla de la nota no detecta) y el mismo criterio que el resto de auditorías del sprint.
+    await writeAudit(tx, { actorType: 'USER', actorUserId: actor.kind === 'user' ? actor.userId : null, ipHash: actor.requestMeta?.ipHash ?? null, userAgent: coarseUserAgent(actor.requestMeta?.userAgent), organizationId: alert.organizationId, action: 'ops_alert.resolved_with_note', targetType: 'OpsAlert', targetId: alertId, metadata: { type: alert.type, note } });
     return { status: 'RESOLVED' };
   });
 }

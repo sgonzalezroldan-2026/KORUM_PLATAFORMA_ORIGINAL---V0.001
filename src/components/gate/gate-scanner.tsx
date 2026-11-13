@@ -70,7 +70,8 @@ export function GateScanner({ eventId, initialSummary }: { eventId: number; init
           try {
             const result = await scanPassAction(eventId, { payload, quantity });
             if (result.status === 'OK') {
-              setSummary(result.summary);
+              // Con lecturas aún sin enviar (la red acaba de volver), el aforo las incluye: el servidor todavía no las cuenta.
+              setSummary(sync.withQueued(result.summary));
               show(result.outcome, payload, false);
               return;
             }
@@ -232,7 +233,7 @@ export function GateScanner({ eventId, initialSummary }: { eventId: number; init
         <h2 id="gate-camera" className="font-corp text-lg font-extrabold text-varsity-navy">
           {t('camera.title')}
         </h2>
-        <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-varsity-navy-deep" hidden={cameraStatus !== 'scanning'}>
+        <div className="aspect-4/3 w-full overflow-hidden rounded-xl bg-varsity-navy-deep" hidden={cameraStatus !== 'scanning'}>
           <video ref={videoRef} muted playsInline className="h-full w-full object-cover" aria-label={t('camera.videoLabel')} />
         </div>
         {cameraStatus === 'scanning' ? <p className="text-sm text-ink-soft">{t('camera.hint')}</p> : null}

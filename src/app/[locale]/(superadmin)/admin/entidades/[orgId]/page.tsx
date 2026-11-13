@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 import { BiInitiativesTables } from '@/components/admin/bi-initiatives-tables';
 import { OrgCategories } from '@/components/admin/org-categories';
+import { OrgDirectEmail } from '@/components/admin/org-direct-email';
 import { OrgInvoices } from '@/components/admin/org-invoices';
 import { OrgKybReview } from '@/components/admin/org-kyb-review';
 import { OrgSeats } from '@/components/admin/org-seats';
@@ -65,7 +66,7 @@ export default async function AdminOrganizationPage({ params }: { params: Promis
           {organization.archived ? ` · ${t('archived')}` : ''}
         </p>
         <nav aria-label={t('nav.label')} className="flex flex-wrap gap-2">
-          {(['titular', 'kyb', 'firmas', 'tarifas', 'categorias', 'facturas', 'negocio'] as const).map((anchor) => (
+          {(['titular', 'kyb', 'firmas', 'tarifas', 'categorias', 'facturas', 'contacto', 'negocio'] as const).map((anchor) => (
             <a key={anchor} href={`#${anchor}`} className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy/30 px-4 font-semibold text-varsity-navy hover:bg-varsity-navy/5">
               {t(`nav.${anchor}`)}
             </a>
@@ -111,6 +112,10 @@ export default async function AdminOrganizationPage({ params }: { params: Promis
 
       <Block id="facturas" title={t('invoices.title')} hint={t('invoices.hint')}>
         <OrgInvoices invoices={view.invoices} locale={locale} />
+      </Block>
+
+      <Block id="contacto" title={t('directEmail.title')} hint={t('directEmail.hint')}>
+        <OrgDirectEmail organizationId={organization.id} organizationName={organization.name} disabled={organization.archived} />
       </Block>
 
       <Block id="negocio" title={t('business.title', { name: organization.name })} hint={t('business.hint')}>

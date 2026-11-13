@@ -155,7 +155,7 @@ export function GateRaffleAdmin({ orgSlug, event, canAct }: { orgSlug: string; e
                 <ul className="flex flex-wrap gap-2">
                   {candidates.map((winner) => (
                     <li key={winner.number}>
-                      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-2 border-varsity-navy px-3 font-corp font-extrabold tabular-nums text-varsity-navy has-[:checked]:bg-varsity-navy has-[:checked]:text-varsity-ivory">
+                      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border-2 border-varsity-navy px-3 font-corp font-extrabold tabular-nums text-varsity-navy has-checked:bg-varsity-navy has-checked:text-varsity-ivory">
                         <input
                           type="radio"
                           name={`replace-${event.id}`}

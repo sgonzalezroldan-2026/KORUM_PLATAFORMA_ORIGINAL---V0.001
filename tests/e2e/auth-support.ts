@@ -3,6 +3,7 @@ import path from 'node:path';
 import { expect } from '@playwright/test';
 import pg from 'pg';
 import { E2E_SCHEMA, e2eDatabaseUrl } from './e2e-database';
+import { chooseEmail, EMAIL_MARGIN_MS, type MailFile } from './email-pick';
 
 /**
  * Apoyo de las pruebas de acceso: leer los emails que la bandeja de salida deja en `.email-preview/` (modo vista previa con cobros
@@ -13,23 +14,27 @@ const PREVIEW_DIR = path.join(process.cwd(), '.email-preview');
 
 /**
  * Texto del último email enviado a `address` después de `since` (ms) que cumple `accept` (por defecto, cualquiera). Espera hasta 20 s a que la
- * bandeja lo envíe.
+ * bandeja lo envíe. Un email escrito hasta 1 s antes de `since` solo se devuelve si no llega otro posterior en 2,5 s (ver `chooseEmail`): sin eso, el código con el que
+ * la prueba acababa de entrar se confundía con el nuevo cuando todo iba rápido.
  */
 export async function emailTo(address: string, since: number, accept: (text: string) => boolean = () => true): Promise<string> {
   let found: string | null = null;
+  let ambiguousSince: number | null = null;
   await expect
     .poll(
       async () => {
         const files = await readdir(PREVIEW_DIR).catch(() => [] as string[]);
-        const candidates: Array<{ text: string; time: number }> = [];
+        const candidates: MailFile[] = [];
         for (const file of files.filter((name) => name.endsWith('.txt'))) {
           const full = path.join(PREVIEW_DIR, file);
           const info = await stat(full);
-          if (info.mtimeMs < since - 1000) continue;
+          if (info.mtimeMs < since - EMAIL_MARGIN_MS) continue;
           const text = await readFile(full, 'utf8');
           if (text.startsWith(`Para: ${address}\n`) && accept(text)) candidates.push({ text, time: info.mtimeMs });
         }
-        found = candidates.sort((a, b) => b.time - a.time)[0]?.text ?? null;
+        if (candidates.some((candidate) => candidate.time < since) && !candidates.some((candidate) => candidate.time >= since)) ambiguousSince ??= Date.now();
+        else ambiguousSince = null;
+        found = chooseEmail(candidates, since, ambiguousSince === null ? 0 : Date.now() - ambiguousSince);
         return found !== null;
       },
       { timeout: 20_000, message: `email a ${address}` }

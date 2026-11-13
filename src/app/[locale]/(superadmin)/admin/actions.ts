@@ -1,13 +1,15 @@
 'use server';
 
 import { z } from 'zod';
+import { splitResolutionSchema } from '@/core/admin/console-support-rules';
 import { SelfBoostNotAllowedError } from '@/core/finance/self-boost';
 import { SuperadminRequiredError } from '@/core/security/superadmin-guard';
 import { getSessionActor, requireVerifiedSuperadmin } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { getInitiativePopup } from '@/repositories/console.repository';
 import { TenantAccessError } from '@/repositories/tenant-guard';
-import { requeueFailedEmails, resolveOpsAlertById, resolveStuckInvoice, resolveStuckRefund } from '@/services/admin/console-alerts.service';
+import { requeueFailedEmails, resolveOpsAlertById, resolveOpsAlertWithNote, resolveStuckInvoice, resolveStuckRefund } from '@/services/admin/console-alerts.service';
+import { resolveSplitToResolve } from '@/services/admin/payout-review.service';
 import type { InitiativePopupView } from '@/services/admin/initiative-popup';
 import { executeSelfBoost, fixNegativeReturnTariff, TariffFixNotNeededError } from '@/services/admin/self-boost.service';
 import { InvoiceNotAllowedError } from '@/services/invoicing/invoice.service';
@@ -127,6 +129,36 @@ export async function fixTariffAction(payload: unknown): Promise<FixActionResult
   } catch (error) {
     if (error instanceof SuperadminRequiredError) return { status: 'REAUTH_REQUIRED' };
     if (error instanceof TariffFixNotNeededError) return { status: 'NOTHING_TO_FIX' };
+    throw error;
+  }
+}
+
+export type NoteResolveResult = { status: 'RESOLVED' | 'NOT_OPEN' | 'NOT_ALLOWED' | 'INVALID' | 'FORBIDDEN' };
+
+/** Cierra con una nota una alerta de dinero que solo se arregla con Paycomet (`PAYOUT_BLOCKED`, `ACTIVITY_FUND_WINDOW`): sin nota no se cierra (Sprint 5.3). */
+export async function resolveAlertWithNoteAction(payload: unknown): Promise<NoteResolveResult> {
+  try {
+    return await resolveOpsAlertWithNote(getPrisma(), await getSessionActor(), payload);
+  } catch (error) {
+    if (error instanceof TenantAccessError) return { status: 'FORBIDDEN' };
+    throw error;
+  }
+}
+
+export type SplitActionResult = { status: 'RESOLVED'; done: boolean } | { status: 'NOT_SENDING' | 'INVALID' | 'REAUTH_REQUIRED' };
+
+/**
+ * Reparto de resultado desconocido (campaña o Fondo de actividades): una persona ya ha comprobado en Paycomet qué pasó. Mueve dinero en el libro mayor, así que pide
+ * el Super-Admin verificado (TOTP de hace menos de 10 minutos).
+ */
+export async function resolveSplitAction(payload: unknown): Promise<SplitActionResult> {
+  const parsed = splitResolutionSchema.safeParse(payload);
+  if (!parsed.success) return { status: 'INVALID' };
+  try {
+    const actor = await requireVerifiedSuperadmin(parsed.data.kind === 'CAMPAIGN' ? 'payout.resolve_unknown_split' : 'activity_fund.resolve_unknown_split');
+    return await resolveSplitToResolve(getPrisma(), actor, parsed.data);
+  } catch (error) {
+    if (error instanceof SuperadminRequiredError) return { status: 'REAUTH_REQUIRED' };
     throw error;
   }
 }

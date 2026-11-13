@@ -72,7 +72,7 @@ export function BiInitiativesTables({ rows, truncated, showTop10 = true }: { row
           <>
           <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
           <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('top10Region')}>
-            <table className="w-full min-w-[66rem] border-collapse text-start">
+            <table className="w-full min-w-264 border-collapse text-start">
               <caption className="sr-only">{t('top10Caption')}</caption>
               <thead>
                 <tr className="border-b-2 border-varsity-navy/20">
@@ -158,7 +158,7 @@ export function BiInitiativesTables({ rows, truncated, showTop10 = true }: { row
           <>
           <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
           <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('globalRegion')}>
-            <table className="w-full min-w-[66rem] border-collapse text-start">
+            <table className="w-full min-w-264 border-collapse text-start">
               <caption className="sr-only">{t('globalCaption')}</caption>
               <thead>
                 <tr className="border-b-2 border-varsity-navy/20">

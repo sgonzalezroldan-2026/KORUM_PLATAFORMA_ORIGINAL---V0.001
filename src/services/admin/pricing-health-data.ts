@@ -1,5 +1,5 @@
 import type { RevenueSourceKey } from '@/core/finance/bi-analytics.service';
-import { countOpenPricingAlerts, evaluatePricingHealth, reviewPricingAlerts, type PricingAlertCode, type ReviewedPricingAlert } from '@/core/finance/pricing-health';
+import { countOpenPricingAlerts, evaluatePricingHealth, reviewPricingAlerts, type PricingAcknowledgement, type PricingAlertCode, type ReviewedPricingAlert } from '@/core/finance/pricing-health';
 import type { Prisma } from '@/generated/prisma/client';
 import type { LedgerAccount } from '@/generated/prisma/enums';
 import type { Db } from '@/lib/db';
@@ -55,14 +55,15 @@ export interface PricingHealthView {
   /** Avisos sin aceptar y, de ellos, los críticos: la insignia de la cabecera y el banner de la portada. */
   open: number;
   openCritical: number;
+  /** Los márgenes reales y las aceptaciones guardadas: el motor de reglas recalcula los avisos con ellos mientras se escribe (Sprint 5.3). */
+  margins: Partial<Record<RevenueSourceKey, number>>;
+  acknowledgements: PricingAcknowledgement[];
 }
 
 export async function loadPricingHealth(db: Db): Promise<PricingHealthView> {
   const [rules, margins, acknowledgements] = await Promise.all([loadGlobalRules(db), loadRealSourceMargins(db), getSetting(db, 'pricing.acknowledgements')]);
-  const alerts = reviewPricingAlerts(
-    evaluatePricingHealth(rules, margins),
-    // Un código guardado que ya no existe no coincide con ningún aviso: simplemente no aplica.
-    (acknowledgements ?? []).map((acknowledgement) => ({ ...acknowledgement, code: acknowledgement.code as PricingAlertCode }))
-  );
-  return { alerts, ...countOpenPricingAlerts(alerts) };
+  // Un código guardado que ya no existe no coincide con ningún aviso: simplemente no aplica.
+  const saved: PricingAcknowledgement[] = (acknowledgements ?? []).map((acknowledgement) => ({ ...acknowledgement, code: acknowledgement.code as PricingAlertCode }));
+  const alerts = reviewPricingAlerts(evaluatePricingHealth(rules, margins), saved);
+  return { alerts, ...countOpenPricingAlerts(alerts), margins, acknowledgements: saved };
 }

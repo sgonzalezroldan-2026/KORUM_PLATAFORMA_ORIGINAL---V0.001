@@ -81,7 +81,7 @@ export async function renderEmail(input: RenderEmailInput): Promise<RenderedEmai
     html,
     text: toPlainText(content, labels),
     attachments: content.attachments ?? [],
-    senderName: input.organization ? t('common.senderName', { organization: input.organization.name }) : undefined
+    senderName: input.organization && template.sender !== 'platform' ? t('common.senderName', { organization: input.organization.name }) : undefined
   };
 }
 

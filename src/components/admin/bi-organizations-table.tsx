@@ -36,7 +36,7 @@ export function BiOrganizationsTable({ rows: source }: { rows: BiOrganizationRow
     <>
     <p className="text-sm text-ink-soft xl:hidden">{ta('scrollHint')}</p>
     <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('regionLabel')} data-testid="bi-orgs">
-      <table className="w-full min-w-[62rem] border-collapse text-start">
+      <table className="w-full min-w-248 border-collapse text-start">
         <caption className="sr-only">{t('caption')}</caption>
         <thead>
           <tr className="border-b-2 border-varsity-navy/20">

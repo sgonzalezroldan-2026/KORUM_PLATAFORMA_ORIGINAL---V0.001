@@ -102,6 +102,38 @@ describe('ToastProvider', () => {
     expect(screen.getByText('aviso 6')).toBeInTheDocument();
   });
 
+  describe('en móvil (menos de 640 px)', () => {
+    const mockViewport = (mobile: boolean) =>
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: mobile && query === '(max-width: 639px)', media: query, addEventListener: () => undefined, removeEventListener: () => undefined }));
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('tocar el aviso lo cierra', () => {
+      mockViewport(true);
+      setup({ tone: 'success', title: 'Guardado' });
+      fireEvent.click(screen.getByText('Guardado'));
+      expect(screen.queryByText('Guardado')).not.toBeInTheDocument();
+    });
+
+    it('en escritorio tocar el texto no lo cierra: solo el botón o el tiempo', () => {
+      mockViewport(false);
+      setup({ tone: 'success', title: 'Guardado' });
+      fireEvent.click(screen.getByText('Guardado'));
+      expect(screen.getByText('Guardado')).toBeInTheDocument();
+    });
+
+    it('la región de avisos va arriba en móvil y abajo desde 640 px, para no tapar los botones de confirmación', () => {
+      mockViewport(true);
+      setup({ title: 'Hola' });
+      const region = screen.getByRole('region');
+      expect(region.className).toContain('top-[max(1rem,env(safe-area-inset-top))]');
+      expect(region.className).toContain('sm:bottom-4');
+      expect(region.className).not.toMatch(/(^|s)bottom-4/);
+    });
+  });
+
   it('useToast fuera del proveedor lanza un error claro', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     expect(() => renderWithIntl(<Launcher input={{ title: 'x' }} />)).toThrow(/ToastProvider/);

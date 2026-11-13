@@ -263,3 +263,19 @@ export function countOpenPricingAlerts(reviewed: readonly ReviewedPricingAlert[]
   const open = reviewed.filter((alert) => alert.acknowledgement === null);
   return { open: open.length, openCritical: open.filter((alert) => alert.severity === 'CRITICAL').length };
 }
+
+/** Importe de referencia del validador en vivo de los gastos de gestión digital (prototipo `validateTicketFeeCoverageLive`): una entrada de 5 €. */
+export const TICKET_SAMPLE_PRICE_CENTS = 500;
+
+/**
+ * Lo que ve quien edita los gastos de gestión digital mientras escribe: con una entrada del precio de muestra, cuánto cobra KORUM de gestión, cuánto cuesta la
+ * pasarela sobre `precio + gestión` y qué margen queda. Mismas fórmulas que `TICKET_FEE_BELOW_GATEWAY_COST` (el aviso con la cifra y el botón «Ajustar» sale de ahí).
+ * Nunca lanza con valores que aún no se pueden calcular: devuelve `null`.
+ */
+export function sampleTicketMargin(rules: Pick<KorumGlobalRulesCents, 'ticketFeeFixedCents' | 'ticketFeeBps' | 'gatewayPctBps' | 'gatewayFixedCents'>, priceCents: number = TICKET_SAMPLE_PRICE_CENTS): { priceCents: number; feeCents: number; gatewayCostCents: number; marginCents: number } | null {
+  const values = [rules.ticketFeeFixedCents, rules.ticketFeeBps, rules.gatewayPctBps, rules.gatewayFixedCents];
+  if (!values.every((value) => Number.isSafeInteger(value) && value >= 0 && value <= MAX_RULE_VALUE)) return null;
+  const feeCents = rules.ticketFeeFixedCents + bpsOf(priceCents, rules.ticketFeeBps);
+  const gatewayCostCents = gatewayChargeCostCents(priceCents + feeCents, { pctBps: rules.gatewayPctBps, fixedCents: rules.gatewayFixedCents });
+  return { priceCents, feeCents, gatewayCostCents, marginCents: feeCents - gatewayCostCents };
+}

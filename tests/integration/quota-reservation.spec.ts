@@ -119,20 +119,26 @@ describe('QA-FIN01 · reversibilidad de exenciones y medallas', () => {
     expect(await quotasOf(organization.id)).toMatchObject({ exemptRemainingCents: 100_000, maintPaidCents: 0 });
   });
 
-  it('devolver nunca supera el límite anual del exento ni la beca de la medalla actual', async () => {
+  it('devolver abona exactamente lo reservado: el exento nunca supera el límite anual y la beca no se recorta aunque la beca del nivel haya bajado entretanto', async () => {
     await db.medalTierConfig.upsert({
       where: { key: 'silver' },
       create: { key: 'silver', name: 'Plata', icon: '🥈', rank: 2, campaignsRequired: 2, grantCents: 100_000 },
       update: {}
     });
+    const silver = await db.medalTierConfig.findUniqueOrThrow({ where: { key: 'silver' } });
     const organization = await createOrganization(db, { exemptLimitCents: 100_000, exemptRemainingCents: 100_000, medalRank: 2, medalGrantAvailableCents: 100_000 });
     const initiative = await createInitiative(db, organization.id, { defaultExemptAppliedCents: 30_000, medalExemptAppliedCents: 100_000 });
     await reserveInitiativeQuotas(db, initiative.id);
-    // Entre medias, los cupos se recargan por otra vía (cambio de medalla, corrección manual).
-    await db.organization.update({ where: { id: organization.id }, data: { exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 } });
-
-    await releaseInitiativeQuotas(db, initiative.id);
-    expect(await quotasOf(organization.id)).toMatchObject({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 });
+    // Entre medias, el exento se recarga por otra vía (corrección manual) y el motor de reglas baja la beca del nivel; la entidad conserva la de este curso.
+    await db.organization.update({ where: { id: organization.id }, data: { exemptRemainingCents: 100_000 } });
+    await db.medalTierConfig.update({ where: { key: 'silver' }, data: { grantCents: 50_000 } });
+    try {
+      await releaseInitiativeQuotas(db, initiative.id);
+      // El exento no pasa del límite anual; la beca vuelve entera (100.000 reservados, ninguno recortado por la beca vigente de 50.000).
+      expect(await quotasOf(organization.id)).toMatchObject({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 });
+    } finally {
+      await db.medalTierConfig.update({ where: { key: 'silver' }, data: { grantCents: silver.grantCents } });
+    }
   });
 
   it('una campaña reabierta tras la devolución vuelve a reservar (y a descontar)', async () => {

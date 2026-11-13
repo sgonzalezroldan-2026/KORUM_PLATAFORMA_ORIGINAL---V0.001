@@ -3,7 +3,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
 import { isLocale } from '@/i18n/routing';
-import { useToast } from '@/components/ui/toast-provider';
 import { formatCents } from '@/core/finance/money';
 import { isKitAvailable, medalHashtags, whatsappShareUrl, type MedalLevel } from '@/core/medals/medal-kit';
 
@@ -27,7 +26,6 @@ export function MedalKit({ orgSlug, entityName, vertical, period, levels }: Meda
   const t = useTranslations('panel.medals');
   const locale = useLocale();
   const money = (cents: number) => formatCents(cents, isLocale(locale) ? locale : 'es');
-  const { toast } = useToast();
   /** El nombre del nivel en el idioma de la persona; si la consola trae un nivel nuevo sin traducir, el de la consola. */
   const nameOf = (level: MedalLevel) => (t.has(`names.${level.key}`) ? t(`names.${level.key}`) : level.name);
   const headingId = useId();
@@ -35,6 +33,8 @@ export function MedalKit({ orgSlug, entityName, vertical, period, levels }: Meda
   const dialog = useRef<HTMLDialogElement>(null);
   const [selected, setSelected] = useState<MedalLevel | null>(null);
   const [post, setPost] = useState('');
+  /** Resultado de «Copiar»: se dice dentro del diálogo, porque un diálogo modal deja fuera de la vista (y de los lectores de pantalla) cualquier aviso global. */
+  const [copyResult, setCopyResult] = useState<'copied' | 'manual' | null>(null);
 
   useEffect(() => {
     const node = dialog.current;
@@ -44,6 +44,7 @@ export function MedalKit({ orgSlug, entityName, vertical, period, levels }: Meda
   }, [selected]);
 
   const open = (level: MedalLevel) => {
+    setCopyResult(null);
     setPost(t(`post.${vertical}`, { entity: entityName, tier: nameOf(level), icon: level.icon, hashtags: medalHashtags(entityName) }));
     setSelected(level);
   };
@@ -53,11 +54,11 @@ export function MedalKit({ orgSlug, entityName, vertical, period, levels }: Meda
   async function copy() {
     try {
       await navigator.clipboard.writeText(post);
-      toast({ tone: 'success', title: t('kit.copied'), description: t('kit.copiedDescription') });
+      setCopyResult('copied');
     } catch {
       document.getElementById(textId)?.focus();
       (document.getElementById(textId) as HTMLTextAreaElement | null)?.select();
-      toast({ tone: 'info', title: t('kit.copyManual') });
+      setCopyResult('manual');
     }
   }
 
@@ -136,6 +137,22 @@ export function MedalKit({ orgSlug, entityName, vertical, period, levels }: Meda
                   <span className="sr-only">{t('kit.newTab').trim()}</span>
                 </a>
               </div>
+            </div>
+            <div role="status" data-testid="kit-copy-status" className="text-sm font-semibold text-varsity-navy">
+              {copyResult === 'copied' ? (
+                <p>
+                  <span aria-hidden="true">{'✅ '}</span>
+                  <span className="font-corp font-bold">{t('kit.copied')}</span>
+                  {' · '}
+                  {t('kit.copiedDescription')}
+                </p>
+              ) : null}
+              {copyResult === 'manual' ? (
+                <p>
+                  <span aria-hidden="true">{'ℹ️ '}</span>
+                  {t('kit.copyManual')}
+                </p>
+              ) : null}
             </div>
             <button type="button" className="min-h-11 font-bold text-varsity-navy underline underline-offset-4" onClick={() => dialog.current?.close()}>
               {t('kit.close')}

@@ -97,6 +97,8 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
     // El Super-Admin nunca firma por una entidad, y una cuenta suprimida no puede recibir cargos.
     if (existingCosigner && (existingCosigner.isSuperadmin || existingCosigner.gdprAnonymizedAt)) throw new RegistrationError({ code: 'COSIGNER_UNAVAILABLE' });
 
+    // Se bloquea la fila global antes de leerla: si el Super-Admin está guardando reglas, el alta espera y copia las nuevas; si ya había empezado el alta, el guardado espera y las propaga a esta entidad.
+    await tx.globalConfig.updateMany({ where: { id: 'GLOBAL' }, data: { updatedAt: now } });
     const rules = await tx.globalConfig.upsert({ where: { id: 'GLOBAL' }, create: { id: 'GLOBAL' }, update: {} });
     const organizationId = randomUUID();
     await tx.organization.create({

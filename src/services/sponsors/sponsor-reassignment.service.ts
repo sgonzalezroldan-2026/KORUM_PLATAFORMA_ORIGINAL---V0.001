@@ -111,6 +111,9 @@ export async function relocateSponsor(tx: Db, sponsorId: number, now: Date, opti
   // Solo cuentan campañas que recaudan: el origen fracasado o liquidado nunca lo es, y la de referencia de una renovación sí puede recibirla.
   const locked = new Set(candidates);
   const targets = (await eligibleTargets(tx, sponsor.organizationId, chargedAt, withdrawnFrom, now)).filter((target) => locked.has(target.id));
+  // Se bloquea la fila global antes de leer la duración de las bolsas (como hace la numeración de facturas): un guardado del motor de reglas a la vez se ordena con esta
+  // colocación y nunca deja a un comercio con una fecha límite distinta de la que se le comunica (auditoría financiera del 5.3, M-B).
+  await tx.globalConfig.updateMany({ where: { id: 'GLOBAL' }, data: { updatedAt: now } });
   const maxDays = (await tx.globalConfig.findUnique({ where: { id: 'GLOBAL' }, select: { creditPoolMaxDays: true } }))?.creditPoolMaxDays ?? DEFAULT_CREDIT_POOL_MAX_DAYS;
   const creditPoolAt = sponsor.creditPoolAt ?? now;
   const deadline = creditPoolDeadline({ paidAt: chargedAt, creditPoolAt }, maxDays);

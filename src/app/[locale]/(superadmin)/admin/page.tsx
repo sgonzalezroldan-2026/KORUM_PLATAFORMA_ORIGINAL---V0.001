@@ -8,6 +8,7 @@ import { BiSummary } from '@/components/admin/bi-summary';
 import { ConsoleSummary } from '@/components/admin/console-summary';
 import { JobRuns, OpsAlerts } from '@/components/admin/ops-alerts';
 import { PricingHealthPanel } from '@/components/admin/pricing-health-panel';
+import { SplitsToResolve } from '@/components/admin/splits-to-resolve';
 import { RevenueSourcesChart } from '@/components/admin/revenue-sources-chart';
 import { CurrencyText } from '@/components/ui/currency-text';
 import { Link } from '@/i18n/navigation';
@@ -72,13 +73,19 @@ export default async function AdminHomePage({ params, searchParams }: { params: 
           }}
         />
         <nav aria-label={t('nav.label')} className="flex flex-wrap gap-2">
-          {(['negocio', 'avisos', 'salud-de-precios', 'procesos', 'fondos'] as const).map((anchor) => (
+          {(['negocio', 'avisos', 'repartos', 'salud-de-precios', 'procesos', 'fondos'] as const).map((anchor) => (
             <a key={anchor} href={`#${anchor}`} className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy/30 px-4 font-semibold text-varsity-navy hover:bg-varsity-navy/5">
               {t(`nav.${anchor}`)}
             </a>
           ))}
           <Link href="/admin/entidades" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-entities">
             {t('nav.entities', { count: overview.pendingKyb })}
+          </Link>
+          <Link href="/admin/reglas" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-rules">
+            {t('nav.rules')}
+          </Link>
+          <Link href="/admin/soporte" className="inline-flex min-h-11 items-center rounded-full border-2 border-varsity-navy bg-varsity-navy px-4 font-semibold text-white hover:bg-varsity-navy-deep" data-testid="nav-support">
+            {t('nav.support', { count: overview.supportWaiting })}
           </Link>
         </nav>
         <dl className="mobile-stack grid gap-4 md:grid-cols-2">
@@ -130,12 +137,20 @@ export default async function AdminHomePage({ params, searchParams }: { params: 
         <OpsAlerts alerts={overview.alerts} openTotal={overview.openAlerts} locale={locale} />
       </section>
 
+      <section id="repartos" aria-labelledby="splits-title" className={SECTION} data-testid="admin-splits">
+        <h2 id="splits-title" tabIndex={-1} className={H2}>
+          {t('splits.sectionTitle', { count: overview.splitsToResolve.length })}
+        </h2>
+        <p className="text-ink-soft">{t('splits.sectionIntro')}</p>
+        <SplitsToResolve splits={overview.splitsToResolve} />
+      </section>
+
       <section id="salud-de-precios" aria-labelledby="pricing-title" className={SECTION}>
-        <h2 id="pricing-title" className={H2}>
+        <h2 id="pricing-title" tabIndex={-1} className={H2}>
           {t('pricingHealth.title')}
         </h2>
         <p className="text-ink-soft">{t('pricingHealth.intro')}</p>
-        <PricingHealthPanel alerts={pricing.alerts} locale={locale} />
+        <PricingHealthPanel alerts={pricing.alerts} />
       </section>
 
       <section id="procesos" aria-labelledby="jobs-title" className={SECTION}>

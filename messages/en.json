@@ -605,7 +605,9 @@
         "preheader": "You have a new reply.",
         "title": "You have a reply",
         "body": "{organization} has replied to your question. For privacy we do not copy the message here: read it in your account.",
-        "cta": "See the reply"
+        "cta": "See the reply",
+        "bodyPanel": "{organization} has replied to what you wrote. For privacy we do not copy the message here: read it in your organisation’s panel.",
+        "ctaPanel": "See the reply"
       }
     },
     "idea": {
@@ -859,6 +861,14 @@
           "next": "Correct them in your settings and send them for review again. If you have doubts, write to support from the dashboard.",
           "cta": "Correct the documents"
         }
+      }
+    },
+    "platform": {
+      "message": {
+        "subject": "Message from KORUM: {subject}",
+        "preheader": "The KORUM team is writing to {organization}.",
+        "cta": "Go to the panel support page",
+        "footnote": "This message was written by a member of the KORUM team for the people who sign for your organisation. You can reply from Support, in the panel."
       }
     }
   },
@@ -3062,7 +3072,8 @@
         "CLOSING_TOO_LATE": "The campaign would run longer than allowed: choose an earlier closing date.",
         "RAFFLE_PRIZES_EXCEED": "There cannot be more prizes than tickets.",
         "TITLE_MISSING": "Write a title of at least 3 letters.",
-        "MAINT_EXCEEDS_TAKINGS": "At this price and capacity the takings do not cover the platform maintenance charge: raise the price or the capacity."
+        "MAINT_EXCEEDS_TAKINGS": "At this price and capacity the takings do not cover the platform maintenance charge: raise the price or the capacity.",
+        "GOAL_TOO_HIGH": "With this budget and the platform’s terms, the goal would exceed the maximum that can be saved: lower the budget or write to KORUM."
       },
       "errors": {
         "INVALID_INPUT": "Some data is not valid. Check the form.",
@@ -3833,7 +3844,10 @@
       "salud-de-precios": "Pricing health",
       "procesos": "Scheduled tasks",
       "fondos": "Activity funds",
-      "entities": "Entities and KYB ({count, plural, =0 {nothing to review} one {# to review} other {# to review}})"
+      "entities": "Entities and KYB ({count, plural, =0 {nothing to review} one {# to review} other {# to review}})",
+      "rules": "Rules and prices",
+      "support": "Support ({count, plural, =0 {nothing pending} one {# enquiry} other {# enquiries}})",
+      "repartos": "Payouts to resolve"
     },
     "sections": {
       "business": "Business: actual and projected revenue"
@@ -4033,6 +4047,44 @@
           "FORBIDDEN": "You do not have permission to do this.",
           "INVALID": "The request could not be read. Reload the page and try again."
         }
+      },
+      "blocked": {
+        "summary": "Money that cannot be sent: what to do",
+        "splitText": "An approved settlement has {blocked} that cannot be sent: its payment was charged back or went past Paycomet’s 90 days, and there is no other payment with room from which to redo the payout.",
+        "unsignedText": "An Activities fund settlement of {amount} has the signatures the organisation requires but could not be approved, and its Paycomet 90-day window ends on {deadline}.",
+        "windowText": "There is Activities fund money outside Paycomet’s 90-day window: {stuck} can no longer be paid out and {available} is still inside the window.",
+        "noMove": "KORUM does not move money from here for this case: it is resolved with Paycomet.",
+        "split": {
+          "step1": "Open Paycomet and check the status of the payment (charged back, refunded or out of time).",
+          "step2": "Ask Paycomet how to get that amount to the organisation. Until it confirms in writing, nothing is promised to the organisation.",
+          "step3": "Note here what you did and who you spoke to, with no personal data."
+        },
+        "unsigned": {
+          "step1": "Check in the organisation’s panel why it is not approved (documents not verified, destination account not set).",
+          "step2": "Ask the organisation to fix it before the deadline: you can write to it from its 360º profile.",
+          "step3": "Note here what you did."
+        },
+        "window": {
+          "step1": "Check in the organisation’s profile which fund payments have passed 90 days.",
+          "step2": "Ask Paycomet whether it allows that money to be paid out late or how to get it to the organisation.",
+          "step3": "Note here what was agreed, with no personal data."
+        },
+        "noteLabel": "Note from whoever handles it (required)",
+        "noteHint": "From {min} to {max} characters. No personal data: no names of people, emails, IBANs, ID numbers or phone numbers.",
+        "noteError": "Write a note of at least {min} characters, with no names of people, emails, IBANs, ID numbers or phone numbers.",
+        "resolve": "Record it and close the alert",
+        "resolving": "Closing…",
+        "resolved": "Alert closed with your note. If the problem continues, it will reopen by itself.",
+        "failed": "Could not save. Please try again.",
+        "outcome": {
+          "NOT_OPEN": "This alert was no longer open.",
+          "NOT_ALLOWED": "This alert is not closed with a note.",
+          "FORBIDDEN": "You do not have permission to do this."
+        },
+        "splitTextGeneric": "An approved settlement has money that cannot be sent: its payment was charged back or went past Paycomet’s 90 days, and there is no other payment with room from which to redo the payout.",
+        "amountLine": "Settlement amount: {amount}.",
+        "unsignedTextGeneric": "An Activities fund settlement has the signatures the organisation requires but could not be approved, and its Paycomet 90-day window is about to end.",
+        "closeHint": "Closing it does not fix the problem: it only records that you are handling it. If it continues, it will reopen."
       }
     },
     "jobs": {
@@ -4072,7 +4124,7 @@
     },
     "pricingHealth": {
       "title": "Pricing health",
-      "intro": "Warnings when a pricing rule loses money or is inconsistent. None of them stops you from saving anything: they are there so you decide with the figure in front of you. The warnings are shown here; the pricing rules are edited in the rules engine.",
+      "intro": "Warnings when a pricing rule loses money or is inconsistent. None of them stops you saving: they are there so you decide with the figure in front of you. “Adjust” takes you to the field in the rules engine; “Accept and record” takes the warning on purpose, with a note.",
       "none": "No warnings: no pricing rule loses money or is inconsistent.",
       "badge": "{count, plural, one {# pricing warning} other {# pricing warnings}}",
       "bannerTitle": "{count, plural, one {There is # critical pricing warning not yet accepted} other {There are # critical pricing warnings not yet accepted}}",
@@ -4100,10 +4152,32 @@
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "With a {tierCents} sponsorship, the fee ({feeCents}) does not cover the gateway cost ({gatewayCostCents}): you lose {lossCents} per sponsorship.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {There is # empty, negative or decimal value in the pricing rules.} other {There are # empty, negative or decimal values in the pricing rules.}} Until it is fixed, the other warnings cannot be calculated.",
         "BRACKET_THRESHOLDS_INVALID": "The tier 1 limit ({t1MaxCents}) is higher than the tier 2 limit ({t2MaxCents}): tier 2 is left empty.",
-        "BRACKET_CLIFF": "With {exemptCents} exempt, a net of {thresholdCents} pays {feeAtCents} commission and one 1 cent higher pays {feeAboveCents}: raising the budget lowers the commission.{cliffCount, plural, one {} other { There are # such jumps; the largest drops by {worstDropCents}.}} Consider marginal mode.",
+        "BRACKET_CLIFF": "With {exemptCents} exempt, a budget of {thresholdCents} pays {feeAtCents} commission and one 1 cent higher pays {feeAboveCents}: raising the budget lowers the commission.{cliffCount, plural, one {} other { There are # such jumps; the largest drops by {worstDropCents}.}} Consider marginal mode.",
         "BRACKET_RATES_NOT_DECREASING": "The tier rates do not go down as the tier goes up ({t1Bps} · {t2Bps} · {t3Bps}): the opposite of a volume discount.",
         "SOURCE_NEGATIVE_MARGIN": "This source has accumulated a margin of {marginCents} (revenue minus the gateway cost of its payments)."
-      }
+      },
+      "adjust": "Adjust",
+      "accept": "Accept and record",
+      "noteLabel": "Required note: why you are accepting this warning",
+      "noteHint": "From {min} to {max} characters. No personal data. It goes in the audit log.",
+      "noteError": "Write a note of at least {min} characters, with no emails, IBANs, ID numbers or phone numbers.",
+      "acceptSubmit": "Record the acceptance",
+      "accepting": "Recording…",
+      "cancel": "Cancel",
+      "acceptedToast": "Warning accepted and recorded.",
+      "unsaved": "It comes from values you have not saved yet.",
+      "saveFirst": "Save the rules first so you can accept this warning.",
+      "reauthLink": "Verify my identity again",
+      "error": {
+        "FAILED": "Could not complete. Please try again.",
+        "REAUTH_REQUIRED": "For this you need to enter your verification code again.",
+        "INVALID_INPUT": "The request could not be read. Reload the page and try again.",
+        "INVALID": "Check the note: it is not valid.",
+        "ALERT_CHANGED": "The rules changed in the meantime and this warning is now a different one. Reload the page and review it.",
+        "ALERT_NOT_FOUND": "This warning no longer exists. Reload the page.",
+        "STALE": "Someone else saved an acceptance at the same time. Reload the page and try again."
+      },
+      "acceptWarning": "This does not change any rule: KORUM will keep losing money in that case. It only records that you know. If you change the rule, the warning appears again."
     },
     "alertsCapped": "Showing the {shown} most serious and recent of {total}.",
     "metaTitle": "Console",
@@ -4283,7 +4357,8 @@
         "tarifas": "Tariffs",
         "categorias": "Categories",
         "facturas": "Invoices",
-        "negocio": "Business"
+        "negocio": "Business",
+        "contacto": "Contact"
       },
       "reauthLink": "Verify my identity again",
       "outcome": {
@@ -4494,7 +4569,346 @@
       "business": {
         "title": "What {name} brings to KORUM",
         "hint": "This entity’s 6 income sources and its initiatives. Press the title of one to open its executive file."
+      },
+      "directEmail": {
+        "title": "Direct email to the organisation",
+        "hint": "Free text from KORUM to the people who sign for the organisation. It is logged.",
+        "explain": "The director and the co-signer receive it. The text goes out exactly as you write it (only the button and the email footer are translated into each person’s language). There is a cap on sends per organisation per day. The log only records how much text was sent and to how many people, not the content.",
+        "subject": "Subject",
+        "message": "Message",
+        "lengthHint": "Between {min} and {max} characters, with no links or web or email addresses.",
+        "send": "Send the email",
+        "sending": "Sending…",
+        "sent": "{count, plural, one {Email sent to # person.} other {Email sent to # people.}}",
+        "archived": "The organisation is archived: it cannot be written to.",
+        "error": {
+          "FAILED": "Could not send. Please try again.",
+          "INVALID_INPUT": "Check the subject and the message: they must have the minimum length and cannot contain links or web or email addresses.",
+          "NOT_FOUND": "This organisation no longer exists or is archived.",
+          "RATE_LIMITED": "You have already sent today’s maximum emails to this organisation. Try again tomorrow.",
+          "NO_RECIPIENTS": "The organisation has no people who sign and receive emails.",
+          "FORBIDDEN": "You do not have permission to do this.",
+          "REAUTH_REQUIRED": "For this you need to enter your verification code again."
+        },
+        "confirmTitle": "Confirm sending",
+        "confirmText": "It will be sent to the people who sign for {organization}, in KORUM’s name. An email that has been sent cannot be withdrawn.",
+        "confirmYes": "Yes, send the email",
+        "confirmBack": "No, go back",
+        "continue": "Review and send",
+        "reauthLink": "Verify my identity again"
       }
+    },
+    "splits": {
+      "sectionTitle": "{count, plural, =0 {Payouts to resolve: none} one {# payout to resolve} other {# payouts to resolve}}",
+      "sectionIntro": "When Paycomet does not confirm whether a payout to an organisation went through, nobody resends it automatically: it could be paid twice. Check in Paycomet what happened and say so here.",
+      "none": "There are no payouts waiting to be resolved.",
+      "title": "{kind}: {amount} for {organization}",
+      "kind": {
+        "CAMPAIGN": "Campaign settlement",
+        "FUND": "Activities fund"
+      },
+      "order": "Payment order in Paycomet",
+      "destination": "Destination account identifier in Paycomet",
+      "sentAt": "Sent",
+      "unknown": "Not recorded",
+      "legend": "What happened in Paycomet with this payout?",
+      "choice": {
+        "DONE": "It went through: Paycomet made it",
+        "NOT_DONE": "It did not go through: it becomes pending again"
+      },
+      "code": "Authorisation code of the payout",
+      "codeError": "Enter the code Paycomet gives (letters, digits, full stop, hyphen or colon).",
+      "warning": "If you mark that it went through and it did not, the organisation will not receive that amount. KORUM treats it as sent and records it in its accounts with no check other than yours. It is logged.",
+      "save": "Continue",
+      "saving": "Saving…",
+      "doneYes": "Payout recorded as sent.",
+      "doneNo": "The payout is pending again: it will be resent.",
+      "failed": "Could not save. Please try again.",
+      "reauthLink": "Verify my identity again",
+      "outcome": {
+        "NOT_SENDING": "This payout was no longer waiting to be resolved. Reload the page to see its current status.",
+        "REAUTH_REQUIRED": "For this you need to enter your verification code again."
+      },
+      "warningNotDone": "If you mark that it did not go through and Paycomet actually made it, the organisation will be paid that amount twice. Check carefully in Paycomet before confirming.",
+      "confirmTitle": "Confirm what you checked in Paycomet",
+      "confirmDone": "You are about to record this payout as sent with code {code}.",
+      "confirmNotDone": "You are about to leave this payout pending: it will be sent again.",
+      "confirmYes": "Yes, I checked in Paycomet",
+      "confirmBack": "No, go back"
+    },
+    "rules": {
+      "metaTitle": "Rules and prices · KORUM console",
+      "back": "Back to the console",
+      "title": "Rules and prices",
+      "intro": "What the platform charges. As you type, the price health warnings are recalculated with the exact figure. No warning stops you saving: they are there so you decide with the numbers in front of you.",
+      "nav": {
+        "label": "Rules engine sections",
+        "pasarela": "Gateway and handling",
+        "tramos": "Bands and shops",
+        "garantia": "Guarantee contribution",
+        "mantenimiento": "Maintenance",
+        "duracion": "Duration",
+        "medallas": "Medals",
+        "categorias": "Categories",
+        "campanas-exentas": "0 % campaigns"
+      },
+      "unit": {
+        "eur": "€",
+        "pct": "%",
+        "days": "days"
+      },
+      "fieldError": "Enter a value from {min} to {max}, with up to two decimals and no negatives.",
+      "fieldErrorDays": "Enter a whole number of days, from {min} to {max}.",
+      "invalidSummary": "{count, plural, one {There is # field with an invalid value: correct it to save.} other {There are # fields with invalid values: correct them to save.}}",
+      "futureOnly": "Changes apply to whatever is calculated from now on. Campaigns already published keep their calculation. Organisations without their own rates move to the new rates; those with their own rates do not change.",
+      "save": "Save the rules",
+      "saving": "Saving…",
+      "saved": "Rules saved. Applied to {count, plural, =0 {no organisation without its own rates} one {# organisation without its own rates} other {# organisations without their own rates}}.",
+      "savedNothing": "There were no changes to save.",
+      "reauthLink": "Verify my identity again",
+      "reload": "Reload the page",
+      "outcome": {
+        "FAILED": "We do not know whether it was saved. Reload the page and check the values before repeating it.",
+        "REAUTH_REQUIRED": "For this you need to enter your verification code again.",
+        "INVALID_INPUT": "The request could not be read. Reload the page and try again."
+      },
+      "reason": {
+        "INVALID": "Check the marked fields: one of the values is not valid.",
+        "STALE": "Someone else saved changes while you were editing. Reload the page to see their changes and make yours again.",
+        "TICKETING_ON_SALE": "Nothing has been saved. A ticket sale or raffle is on sale at an organisation without its own rates and the digital handling fees cannot change until it ends, because they would change what has already been promised to buyers. Leave those two fields as they were and save again.",
+        "CATEGORY_EXISTS": "A category with that name already exists.",
+        "CATEGORY_NOT_FOUND": "That category no longer exists.",
+        "ALERT_CHANGED": "The rules changed and this warning is now a different one.",
+        "ALERT_NOT_FOUND": "This warning no longer exists.",
+        "CREDIT_POOL_OPEN": "Nothing has been saved. Some shops have money in the credit pool and the deadline has already been communicated to them: the pool duration cannot change until they are emptied. Leave that field as it was and save again."
+      },
+      "gateway": {
+        "title": "Gateway, Piggy Bank and digital handling fees",
+        "hint": "What each payment costs in Paycomet and what KORUM charges to handle a Piggy Bank top-up or a ticket. Each amount is tested with sample payments.",
+        "pct": "Variable gateway %",
+        "fixed": "Fixed per transaction",
+        "topupFixed": "Piggy Bank commission: fixed per charge",
+        "topupHint": "If it is lower than the gateway cost, KORUM loses money on every charge: a warning will appear.",
+        "topupPct": "Piggy Bank commission: % of the charge",
+        "ticketFixed": "Digital handling fees: fixed per ticket",
+        "ticketPct": "Digital handling fees: % of the price",
+        "ticketOk": "On a {price} ticket: digital handling fee {fee}, gateway {gateway}. KORUM net margin: +{margin} per ticket."
+      },
+      "brackets": {
+        "title": "Fee bands, exempt amount and shops",
+        "hint": "The banded fee is calculated on what is left above the exempt amount. The shops fee is added on top of the sponsorship level.",
+        "mode": "How the bands apply",
+        "modeFLAT": "Flat: the band is chosen by the total amount",
+        "modeMARGINAL": "Marginal: each band charges only its own part",
+        "modeHint": {
+          "FLAT": "In flat mode, a budget one cent above a threshold can pay less commission (a cliff effect). Example with the default figures: with €1,000 exempt, a €5,000 budget pays €200 and a €5,001 budget pays €160. A warning with the figure will appear.",
+          "MARGINAL": "In marginal mode the commission grows continuously with the budget: each band charges only its own part and there is no cliff effect."
+        },
+        "exempt": "Base annual exempt amount",
+        "exemptHint": "This is each organisation’s fee-free allowance at the start of the school year. If it changes, each organisation’s remaining allowance moves by the same amount; what has already been spent does not change.",
+        "t1Max": "Band 1 limit",
+        "t2Max": "Band 2 limit",
+        "t1": "Band 1 fee",
+        "t2": "Band 2 fee",
+        "t3": "Band 3 fee",
+        "sponsor": "Sponsoring shops commission"
+      },
+      "guarantee": {
+        "title": "Voluntary guarantee contribution",
+        "hint": "The voluntary contribution to KORUM at checkout. The box is always unticked: these amounts are only what is suggested.",
+        "check": "Suggested contribution amount",
+        "presets": "Levels offered in the selector",
+        "preset": "Level {n}",
+        "default": "Level shown as selected",
+        "uncheckedNote": "Even with a level selected, the contribution box stays unticked until the family ticks it.",
+        "presetOption": "Level {n} (€{amount})"
+      },
+      "maintenance": {
+        "title": "Maintenance with an annual cap",
+        "hint": "A charge per initiative that switches itself off when each organisation reaches its annual cap.",
+        "active": "Switch on the maintenance charge globally",
+        "perInit": "Charge per initiative",
+        "cap": "Maximum annual cap per organisation",
+        "capHint": "Once the cap is reached, the rest of the school year shows €0.00."
+      },
+      "duration": {
+        "title": "Duration of campaigns and shop credit pools",
+        "hint": "Paycomet only allows funds to be paid out during 90 days from each payment, so these periods have a maximum.",
+        "campaign": "Maximum length of a campaign",
+        "campaignHint": "Up to 75 days from publication. 60 by default.",
+        "pool": "Days a shop’s credit pool lasts",
+        "poolHint": "Up to 70 days: on day 70 from the payment the money moves to the organisation’s Activities fund, leaving 20 days until day 90 to sign and send."
+      },
+      "medals": {
+        "title": "Medals and exemption grants",
+        "hint": "How many campaigns closed during the school year each medal needs, and the exempt grant (at 0 %) it gives.",
+        "name": {
+          "bronze": "Bronze medal",
+          "silver": "Silver medal",
+          "gold": "Gold medal"
+        },
+        "campaigns": "Campaigns needed",
+        "grant": "Exempt amount extension grant (€)",
+        "campaignsError": "Enter a whole number of campaigns, from 1 to 99.",
+        "grantError": "Enter a valid amount, with no more than two decimals and no negatives.",
+        "orderError": "Each medal must need more campaigns than the previous one: Bronze fewer than Silver and Silver fewer than Gold.",
+        "applies": "It applies from the next allowance renewal (change of school year) and to medals earned from now on: the grant an organisation has available this year may already be partly reserved by a campaign.",
+        "save": "Save the medals",
+        "saving": "Saving…",
+        "saved": "Medals saved."
+      },
+      "categories": {
+        "title": "Global categories",
+        "hint": "Each category is exempt (0 %) or goes by bands. An organisation’s own category with the same name still takes precedence over the global one.",
+        "ruleEXEMPT": "0 % commission-exempt",
+        "ruleBRACKETS": "By bands (scale)",
+        "confirmTitle": "Confirm the rule change",
+        "confirmExempt": "“{name}” will become exempt (0 %) in all new campaigns on the platform. Those already published do not change.",
+        "confirmBrackets": "“{name}” will start paying the banded fee in all new campaigns on the platform. Those already published do not change.",
+        "confirmYes": "Yes, change the rule",
+        "confirmNo": "No, leave it as it is",
+        "ruleSaved": "Rule for “{name}” saved.",
+        "addTitle": "Add a global category",
+        "newName": "Name of the new category",
+        "newRule": "Rule of the new category",
+        "nameError": "Enter a name of 2 to 60 characters that does not already exist as a global category.",
+        "add": "Add global category",
+        "adding": "Adding…",
+        "added": "Category “{name}” added.",
+        "addHint": "Enter at least 2 characters to be able to add it.",
+        "confirmAddTitle": "Confirm the exempt category",
+        "confirmAddExempt": "“{name}” will be created as exempt (0 %): no new campaign in that category will pay the banded commission. Create it?",
+        "confirmAddYes": "Yes, create it as exempt",
+        "confirmAddNo": "No, go back"
+      },
+      "exempt": {
+        "title": "0 % campaigns to review",
+        "hint": "The equipment lock is a good-faith filter. Here are the budget campaigns that are still in an exempt category, most recent first, with a mark if the lock ever triggered.",
+        "none": "There are no budget campaigns in 0 % categories.",
+        "scrollHint": "Swipe the table sideways to see all the columns.",
+        "region": "Campaigns in 0 % categories",
+        "caption": "Budget campaigns in exempt categories, with their organisation, category, status and whether the equipment filter triggered",
+        "columns": {
+          "organization": "Organisation",
+          "campaign": "Campaign",
+          "category": "Category",
+          "status": "Status",
+          "goal": "Goal",
+          "saved": "Last saved",
+          "lock": "Equipment filter"
+        },
+        "status": {
+          "BUDGETING": "Budgeting",
+          "FUNDRAISING": "Fundraising",
+          "GOAL_REACHED": "Goal reached",
+          "CLOSED": "Closed",
+          "EXPIRED": "Expired",
+          "RESIZE_VOTING": "In a vote",
+          "REFUNDING": "Refunding",
+          "REFUNDED": "Refunded",
+          "CANCELLED": "Cancelled"
+        },
+        "lockYes": "Filter triggered: the text looked like equipment",
+        "lockNo": "Has not triggered"
+      },
+      "fieldErrorServer": "This value cannot be saved right now. Leave it as it was and save again."
+    },
+    "support": {
+      "metaTitle": "Support · KORUM console",
+      "back": "Back to the console",
+      "title": "KORUM support",
+      "intro": "Enquiries addressed to the platform (payments, account, rectification and others) and what organisations write from their panel, those first. Each enquiry is answered once and its status only moves forward.",
+      "waitingTitle": "{count, plural, =0 {Nothing waiting for an answer} one {# enquiry waiting} other {# enquiries waiting}}{priority, plural, =0 {} one { (# from an organisation)} other { (# from organisations)}}",
+      "waitingNone": "There are no enquiries waiting.",
+      "capped": "Showing the {shown} oldest of {total}. As you resolve some, the next ones will appear.",
+      "resolvedTitle": "Recently resolved",
+      "resolvedNone": "There are no resolved enquiries yet.",
+      "status": {
+        "OPEN": "Open",
+        "IN_PROGRESS": "In progress",
+        "RESOLVED": "Resolved"
+      },
+      "priority": "Priority: from an organisation",
+      "topic": {
+        "INITIATIVE": "About an initiative",
+        "PAYMENT": "A payment",
+        "ACCOUNT": "The account",
+        "RECTIFICATION": "Correct personal data",
+        "OTHER": "Another enquiry"
+      },
+      "from": "From {origin} · {date}",
+      "sender": "Contact: {email}",
+      "openPanel": "Open the organisation’s panel",
+      "purged": "The text of this enquiry has already been deleted (account erased or retention period).",
+      "replied": "Answered on {date}",
+      "alreadyReplied": "This enquiry already has an answer: you can only change its status.",
+      "replyLabel": "Your answer (only one per enquiry)",
+      "replyHint": "Between {min} and {max} characters. The person gets an email notice without the text and reads it in their account or panel.",
+      "statusLabel": "Status",
+      "statusKeep": "Do not change the status",
+      "statusAuto": "Move to “in progress” when answering",
+      "statusTo": {
+        "IN_PROGRESS": "Move to “in progress”",
+        "RESOLVED": "Mark as resolved"
+      },
+      "send": "Send answer",
+      "changeStatus": "Change the status",
+      "saving": "Saving…",
+      "done": "Enquiry {code} updated.",
+      "doneNotified": "Enquiry {code} updated and notice sent.",
+      "outcome": {
+        "INVALID_INPUT": "Check the answer: it must be between {min} and {max} characters.",
+        "NOT_FOUND": "This enquiry no longer exists or is not KORUM’s.",
+        "ALREADY_RESOLVED": "This enquiry was already resolved.",
+        "ALREADY_REPLIED": "This enquiry already had an answer. Reload the page.",
+        "NOTHING_TO_CHANGE": "There is nothing to change: the enquiry is already in that status.",
+        "CONFLICT": "Someone else changed it at the same time. Reload the page and look at it again.",
+        "PURGED": "The text of this enquiry has already been deleted: it cannot be answered.",
+        "FORBIDDEN": "You do not have permission to do this.",
+        "FAILED": "Could not save. Please try again."
+      },
+      "rectification": {
+        "title": "Personal data rectification request (GDPR)",
+        "open": "It must be dealt with before {date}.",
+        "overdue": "The legal one-month deadline passed on {date}: deal with it today (if it is an email change, the technical team should resolve it today).",
+        "done": "Request closed: {status}.",
+        "status": {
+          "COMPLETED": "done",
+          "REJECTED": "rejected"
+        },
+        "how": "From here you can correct the account name. Changing the email cannot be done yet: there is no procedure yet to check that the person controls the new email. Do not change the email by hand and do not reject the request for that reason: leave it open and write to KORUM’s technical team with the ticket code so it gets resolved, because the one-month legal deadline is running. Once the name is corrected, close the request.",
+        "notes": "Internal note (optional, no personal data; at least 10 characters if you write one)",
+        "markDone": "Change made: close the request",
+        "markRejected": "Reject the request",
+        "closed": "Request closed.",
+        "reauthLink": "Verify my identity again",
+        "error": {
+          "NOT_FOUND": "This request no longer exists.",
+          "ALREADY_CLOSED": "This request was already closed.",
+          "INVALID": "Check what you wrote: the name needs at least 2 characters and the note, if you write one, 10 and no personal data.",
+          "REAUTH_REQUIRED": "For this you need to enter your verification code again.",
+          "FAILED": "Could not complete. Reload the page and check whether the request is still open before repeating it.",
+          "NO_ACCOUNT": "Whoever wrote no longer has an active account: there is no name to correct."
+        },
+        "rejectTitle": "Confirm you are rejecting the request",
+        "rejectText": "Rejecting closes the request without making the change: the person will not see their data corrected. Only do it if their identity could not be checked or the request is not valid. If what they ask for is to change their email, do not reject it: leave it open and tell the technical team.",
+        "rejectYes": "Yes, reject the request",
+        "rejectBack": "No, go back",
+        "nameLabel": "Correct name for the account",
+        "nameButton": "Correct the name",
+        "nameHint": "Check the person’s identity first. It is logged without the name.",
+        "nameDone": "Account name corrected.",
+        "nameCurrent": "Current account name: {name}"
+      },
+      "noContact": "This person cannot be notified (they no longer have an account or contact address): your answer will be saved, but they will receive no notice.",
+      "statusResolvedHint": "A resolved enquiry can no longer be answered.",
+      "doneNotNotified": "Enquiry {code} updated. No email notice was sent: that person no longer has an account or their address has been deleted.",
+      "resolveConfirmTitle": "Confirm you want to close the enquiry",
+      "resolveConfirmWithReply": "Your answer will be sent and the enquiry will be resolved: it cannot be answered again.",
+      "resolveConfirmNoReply": "You are about to close the enquiry without answering: the person will receive no answer and it cannot be answered afterwards.",
+      "resolveConfirmYes": "Yes, close the enquiry",
+      "resolveConfirmBack": "No, go back",
+      "resolveConfirmAlreadyReplied": "This enquiry already has an answer. It will be closed and cannot be answered again."
     }
   },
   "forbidden": {

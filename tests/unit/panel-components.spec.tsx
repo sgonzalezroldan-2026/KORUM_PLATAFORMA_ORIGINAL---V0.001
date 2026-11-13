@@ -227,7 +227,20 @@ describe('kit de medallas (QA-S05)', () => {
     await userEvent.click(screen.getByRole('button', { name: /Copiar el texto/ }));
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
     expect((writeText.mock.calls[0] as unknown as [string])[0]).toContain('socios, familias y comercios vecinos');
-    expect(await screen.findByText('Texto copiado')).toBeInTheDocument();
+    // El resultado se dice dentro del diálogo modal (un aviso global quedaría tapado por él).
+    const status = within(screen.getByRole('dialog')).getByTestId('kit-copy-status');
+    expect(await within(status).findByText('Texto copiado')).toBeInTheDocument();
+    expect(status).toHaveAttribute('role', 'status');
+  });
+
+  it('si no se puede copiar, lo dice dentro del diálogo y deja el texto seleccionado', async () => {
+    vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText: vi.fn(async () => Promise.reject(new Error('denegado'))) } });
+    kit(1, 1);
+    await userEvent.click(screen.getByRole('button', { name: /Sello y texto para redes/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Copiar el texto/ }));
+    const status = within(screen.getByRole('dialog')).getByTestId('kit-copy-status');
+    expect(await within(status).findByText(/No se ha podido copiar/)).toBeInTheDocument();
+    expect(within(screen.getByRole('dialog')).getByRole('textbox')).toHaveFocus();
   });
 });
 

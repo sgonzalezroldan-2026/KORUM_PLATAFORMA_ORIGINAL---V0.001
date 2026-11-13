@@ -27,7 +27,7 @@ export function OrgListTable({ rows: source }: { rows: OrgListRow[] }) {
   if (source.length === 0) return <p className="text-ink-soft">{t('none')}</p>;
   return (
     <div className="relative overflow-x-auto" tabIndex={0} role="region" aria-label={t('region')} data-testid="org-list">
-      <table className="w-full min-w-[40rem] border-collapse text-start">
+      <table className="w-full min-w-160 border-collapse text-start">
         <caption className="sr-only">{t('caption')}</caption>
         <thead>
           <tr className="border-b-2 border-varsity-navy/20">

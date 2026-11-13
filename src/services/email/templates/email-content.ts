@@ -57,5 +57,7 @@ export interface TemplateDefinition<Payload> {
   secretFields?: readonly string[];
   /** Hace falta una iniciativa (`initiativeId` en el payload) o una entidad (`organizationId` del mensaje) para componer el texto. */
   needs?: 'initiative' | 'organization';
+  /** Quién aparece como remitente: por defecto, la entidad («Entidad vía KORUM»); `platform` lo deja como KORUM (un texto que escribe el equipo de KORUM no debe parecer del centro). */
+  sender?: 'organization' | 'platform';
   build: (payload: Payload, context: TemplateContext) => EmailContent | Promise<EmailContent>;
 }

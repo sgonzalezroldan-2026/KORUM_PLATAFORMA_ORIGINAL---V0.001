@@ -240,11 +240,15 @@ export function latestCloseOn(now: Date, maxDays: number): string {
   return day;
 }
 
-export type SaveProblem = 'TITLE_MISSING' | 'INVALID_CATEGORY' | 'CLOSING_INVALID' | 'CLOSING_PAST' | 'CLOSING_TOO_LATE' | 'RAFFLE_PRIZES_EXCEED';
+/** Lo que cabe en `Initiative.goalCents` (un entero de 32 bits de PostgreSQL): con reglas extremas la meta calculada podría pasarlo y guardar fallaría con un error de la base de datos. */
+export const MAX_GOAL_CENTS = 2_147_483_647;
+
+export type SaveProblem = 'GOAL_TOO_HIGH' | 'TITLE_MISSING' | 'INVALID_CATEGORY' | 'CLOSING_INVALID' | 'CLOSING_PAST' | 'CLOSING_TOO_LATE' | 'RAFFLE_PRIZES_EXCEED';
 
 /** Lo que impide guardar el borrador. Es poco: un borrador a medias se puede guardar; lo que falta para publicar lo dice `publishBlockers`. */
 export function saveProblems(context: StudioContext, draft: StudioDraft, now: Date): SaveProblem[] {
   const problems: SaveProblem[] = [];
+  if (computeStudioBoard(context, draft).goalCents > MAX_GOAL_CENTS) problems.push('GOAL_TOO_HIGH');
   if (draft.title.trim().length < 3) problems.push('TITLE_MISSING');
   const category = findCategory(context, draft.category);
   const validCategory = draft.format === 'TICKETING' ? draft.category === TICKETING_CATEGORY : category !== undefined && category.name !== TICKETING_CATEGORY;

@@ -139,7 +139,7 @@ export function RaffleStage({ eventId, initial }: { eventId: number; initial: Ra
           </button>
         ) : null}
       </div>
-      <p className="break-words text-lg font-bold print:text-black">{view.title}</p>
+      <p className="wrap-break-word text-lg font-bold print:text-black">{view.title}</p>
 
       {stateNotice ? <FormAlert tone="info">{stateNotice}</FormAlert> : null}
 

@@ -260,6 +260,13 @@ export async function publishStudioInitiative(db: KorumPrismaClient, actor: Sess
     const result = await inTransaction(db, async (tx) => {
       await persistDraft(tx, signer, organizationId, accepted, context, board, now, { audit: false });
       const published = await publishInitiative(tx, saved.initiativeId, now, { expectedGoalCents: board.goalCents });
+      // Publicar reservó los cupos y, con ello, tomó la fila de la entidad: si el motor de reglas del Super-Admin cambió a la vez los gastos de gestión digital de las
+      // entradas, ya están confirmados y se ven aquí. Con otra tarifa que la de la pizarra aceptada, la meta de una taquilla `INC` no sumaría: no se publica (auditoría
+      // financiera del 5.3, M3).
+      if (published.published && draft.format === 'TICKETING') {
+        const fee = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { ticketFeeFixedCents: true, ticketFeeBps: true } });
+        if (fee.ticketFeeFixedCents !== context.ticketFee.fixedCents || fee.ticketFeeBps !== context.ticketFee.pctBps) throw new PublishGoalChangedError(saved.initiativeId);
+      }
       if (published.published) {
         await recordAudit(tx, signer, { action: 'studio.initiative_published', organizationId, targetType: 'Initiative', targetId: String(saved.initiativeId), metadata: { initiativeId: saved.initiativeId, format: draft.format, goalCents: board.goalCents } }, { required: true });
       }

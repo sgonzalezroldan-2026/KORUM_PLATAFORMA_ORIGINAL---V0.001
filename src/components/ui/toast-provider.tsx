@@ -28,6 +28,8 @@ interface ToastApi {
 const ToastContext = createContext<ToastApi | null>(null);
 
 const MAX_VISIBLE = 4;
+/** Hasta este ancho (Tailwind `sm`) los avisos van arriba y se cierran al tocarlos: abajo tapaban los botones de confirmación. */
+const MOBILE_QUERY = '(max-width: 639px)';
 const TONE_STYLES: Record<ToastTone, { icon: string; className: string }> = {
   success: { icon: '✅', className: 'border-varsity-emerald bg-emerald-50 text-emerald-950' },
   info: { icon: 'ℹ️', className: 'border-varsity-navy bg-white text-varsity-navy' },
@@ -105,6 +107,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       // Pausa el cierre automático mientras se lee o se enfoca (WCAG 2.2.1).
       onPointerEnter={() => stopTimer(item.id)}
       onPointerLeave={() => startTimer(item.id, item.durationMs ?? 6000)}
+      onClick={(event) => {
+        // En móvil basta tocar el aviso para quitarlo (el botón × sigue ahí para teclado y lectores de pantalla).
+        if ((event.target as HTMLElement).closest('button')) return;
+        if (window.matchMedia(MOBILE_QUERY).matches && !window.getSelection()?.toString()) dismiss(item.id);
+      }}
       onFocus={() => stopTimer(item.id)}
       onBlur={() => startTimer(item.id, item.durationMs ?? 6000)}
     >
@@ -133,7 +140,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         role="region"
         aria-label={t('region')}
-        className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col gap-2 sm:inset-x-auto sm:inset-e-4 sm:w-96"
+        className="pointer-events-none fixed inset-x-4 top-[max(1rem,env(safe-area-inset-top))] z-50 flex flex-col gap-2 sm:inset-x-auto sm:inset-e-4 sm:top-auto sm:bottom-4 sm:w-96"
       >
         {/* Las dos listas existen siempre para que los lectores de pantalla anuncien lo que se añade. */}
         <div aria-live="polite">

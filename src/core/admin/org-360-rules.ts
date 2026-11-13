@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GUARANTEE_MAX_CENTS } from '@/core/checkout/checkout-limits';
 import { safeDisplayText } from '@/core/security/safe-text';
 
 /**
@@ -14,7 +15,7 @@ const bps = z.number().int().min(0).max(10_000);
 
 export const TARIFF_LIMITS = {
   exemptLimitCents: 100_000_000,
-  fullIntegrityCheckCents: 100_000,
+  fullIntegrityCheckCents: GUARANTEE_MAX_CENTS,
   ticketFeeFixedCents: 100_000,
   maintPerInitCents: 10_000_000,
   maintAnnualCapCents: 100_000_000
@@ -98,13 +99,14 @@ export const KYB_NOTE_MAX = 600;
  * Dato personal que no debe ir en la nota que lee la entidad: email, IBAN, DNI/NIE o una serie de 9 cifras o más (un teléfono, una cuenta). Una fecha como
  * `12-05-2024` (8 cifras) o un año no cuentan: una nota sobre un acta caducada tiene que poder decir cuándo.
  */
-const PERSONAL_DATA = [/[^\s@]+@[^\s@]+/, /\b[A-Z]{2}\d{2}[A-Z0-9 ]{10,}/i, /\b[XYZ]?\d{7,8}[A-Z]\b/i, /(?:\d[ .-]?){9,}/];
+const PERSONAL_DATA = [/[^\s@]+@[^\s@]+/, /\barroba\b/i, /\b(?:punto|dot)\s+(?:com|es|cat|org|net|eu)\b/i, /\b[A-Z]{2}\d{2}[A-Z0-9 ]{10,}/i, /\b[XYZ]?[ -]?\d{7,8}[ -]?[TRWAGMYFPDXBNJZSQVHLCKE]\b/, /\b[XYZxyz]?\d{7,8}[a-z]\b/i, /(?:\d[ .-]?){9,}/];
 
 export function noteHasPersonalData(note: string): boolean {
   return PERSONAL_DATA.some((pattern) => pattern.test(note));
 }
 
-const note = z
+/** Nota libre de una decisión del Super-Admin (devolver el KYB, aceptar un aviso de precios, cerrar una alerta): de 10 a 600 caracteres y sin datos personales. */
+export const reviewNote = z
   .string()
   .transform((value) => safeDisplayText(value, KYB_NOTE_MAX + 1))
   .pipe(z.string().min(10).max(KYB_NOTE_MAX))
@@ -120,7 +122,7 @@ const splitId = z
 
 export const kybReviewSchema = z.discriminatedUnion('decision', [
   z.object({ decision: z.literal('VERIFIED'), ley49Accredited: z.boolean(), paycometSplitId: splitId.optional() }).strict(),
-  z.object({ decision: z.literal('REJECTED'), note, releaseCif: z.boolean() }).strict()
+  z.object({ decision: z.literal('REJECTED'), note: reviewNote, releaseCif: z.boolean() }).strict()
 ]);
 export type KybReviewInput = z.infer<typeof kybReviewSchema>;
 

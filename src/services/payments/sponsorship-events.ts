@@ -211,8 +211,10 @@ async function completeRenewalInTx(
   await tx.sponsor.update({ where: { id: sponsor.id }, data: { status: 'CREDIT_POOL', creditPoolAt: occurredAt, paidAt: occurredAt, expiresAt, reassignedCents: sponsor.amountCents } });
   // El distintivo anterior termina donde empieza el nuevo: el directorio no enseña dos veces al mismo comercio, y ya no se le vuelve a pedir renovar.
   await tx.sponsor.update({ where: { id: renewedFromId }, data: { expiresAt: new Date(Math.min(previous.expiresAt.getTime(), occurredAt.getTime())) } });
-  await issueFeeInvoice(tx, sponsor, order, occurredAt, invoicing, true);
+  // Primero se coloca el dinero y después se emite la factura: colocar bloquea las campañas y luego la fila global, y la factura bloquea la global. Con este orden, en todo el
+  // código se bloquean antes las campañas que la fila global, y dos transacciones a la vez no se esperan en cruz (auditoría financiera del 5.3, N1).
   const outcome = await relocateSponsor(tx, sponsor.id, occurredAt, { notice: 'NONE' });
+  await issueFeeInvoice(tx, sponsor, order, occurredAt, invoicing, true);
   const destination =
     outcome.kind === 'PLACED' ? { placed: outcome.titles.slice(0, 5), more: Math.max(0, outcome.titles.length - 5) } : outcome.kind === 'POOLED' ? { poolDeadline: outcome.deadline.toISOString(), manual: outcome.manual } : {};
   await tx.outboxMessage.createMany({

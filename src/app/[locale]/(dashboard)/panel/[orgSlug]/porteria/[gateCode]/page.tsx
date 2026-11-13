@@ -44,7 +44,7 @@ export default async function GateEventPage({ params }: { params: Promise<{ loca
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="font-corp break-words text-2xl font-extrabold">{event.title}</h1>
+      <h1 className="font-corp wrap-break-word text-2xl font-extrabold">{event.title}</h1>
       {summary ? (
         event.ticketSubtype === 'RAFFLE' ? (
           <section aria-labelledby="gate-raffle" className="flex flex-col gap-4 rounded-2xl bg-varsity-ivory p-5 text-ink">

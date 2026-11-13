@@ -76,6 +76,13 @@
     background-color: var(--color-patio-cream);
   }
 
+  /* En móvil los avisos flotan arriba: lo que se enfoca o se desplaza a la vista no debe quedar debajo de ellos. */
+  @media (max-width: 639px) {
+    html {
+      scroll-padding-block-start: 6rem;
+    }
+  }
+
   body {
     min-height: 100dvh;
     color: var(--color-ink);

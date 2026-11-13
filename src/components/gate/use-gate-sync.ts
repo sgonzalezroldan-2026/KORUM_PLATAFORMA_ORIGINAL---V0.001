@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { gateSummaryAction, loadGateListAction, syncScansAction, type GateSummaryView } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/porteria/scan-actions';
 import { decideOffline, type ScanOutcome } from '@/core/ticketing/gate-offline';
 import { OFFLINE_QUEUE_MAX, SYNC_BATCH_MAX } from '@/core/ticketing/gate-rules';
-import { getGateServerSnapshot, getGateStateSnapshot, localUseOf, subscribeGateState, writeGateState, type GateLocalState, type QueuedScan } from './gate-offline-store';
+import { getGateServerSnapshot, getGateStateSnapshot, localUseOf, subscribeGateState, summaryWithQueued, writeGateState, type GateLocalState, type QueuedScan } from './gate-offline-store';
 
 /**
  * Lista descargada, cola de lecturas sin enviar y sincronización de un móvil de portería (QA-S04). Con red, cada minuto refresca la lista y cada 10 s el
@@ -57,18 +57,27 @@ export function useGateSync(eventId: number, onSummary: (summary: GateSummaryVie
     [eventId]
   );
 
+  /** Un aforo del servidor llegado por su cuenta (lista o latido): se muestra con las lecturas sin enviar sumadas, y se ignora si justo se está enviando un lote (la respuesta del envío trae la cifra buena). */
+  const applySummary = useCallback(
+    (summary: GateSummaryView) => {
+      if (syncingRef.current) return;
+      callbacks.current.onSummary(summaryWithQueued(summary, current().queue));
+    },
+    [current]
+  );
+
   const refreshList = useCallback(async () => {
     try {
       const result = await loadGateListAction(eventId);
       if (result.status === 'OK') {
         commit({ ...current(), list: result.list });
-        callbacks.current.onSummary(result.summary);
+        applySummary(result.summary);
         setOnline(true);
       } else if (result.reason === 'NO_SESSION') callbacks.current.onEnded();
     } catch {
       setOnline(false);
     }
-  }, [commit, current, eventId, setOnline]);
+  }, [applySummary, commit, current, eventId, setOnline]);
 
   const sync = useCallback(async () => {
     if (syncingRef.current || current().queue.length === 0) return;
@@ -92,7 +101,7 @@ export function useGateSync(eventId: number, onSummary: (summary: GateSummaryVie
           callbacks.current.onEnded();
           break;
         }
-        callbacks.current.onSummary(result.summary);
+        callbacks.current.onSummary(summaryWithQueued(result.summary, current().queue));
         setOnline(true);
         if (done.size === 0) break;
       }
@@ -137,7 +146,7 @@ export function useGateSync(eventId: number, onSummary: (summary: GateSummaryVie
         try {
           const result = await gateSummaryAction(eventId);
           if (result.status === 'OK') {
-            callbacks.current.onSummary(result.summary);
+            applySummary(result.summary);
             setOnline(true);
           } else if (result.reason === 'NO_SESSION') callbacks.current.onEnded();
         } catch {
@@ -146,7 +155,7 @@ export function useGateSync(eventId: number, onSummary: (summary: GateSummaryVie
       })();
     }, TICK_MS);
     return () => clearInterval(timer);
-  }, [current, eventId, refreshList, setOnline, sync]);
+  }, [applySummary, current, eventId, refreshList, setOnline, sync]);
 
   const decide = useCallback((payload: string, quantity: number | 'ASK'): Promise<ScanOutcome> => {
     const { list, queue } = current();
@@ -164,6 +173,7 @@ export function useGateSync(eventId: number, onSummary: (summary: GateSummaryVie
   );
 
   const dismissConflicts = useCallback(() => setConflicts([]), []);
+  const withQueued = useCallback(<T extends { checkedIn: number }>(summary: T): T => summaryWithQueued(summary, current().queue), [current]);
 
-  return { list: state.list, pending: state.queue.length, online, setOnline, syncing, storageOk, conflicts, dismissConflicts, decide, enqueue, sync };
+  return { list: state.list, pending: state.queue.length, online, setOnline, syncing, storageOk, conflicts, dismissConflicts, decide, enqueue, sync, withQueued };
 }

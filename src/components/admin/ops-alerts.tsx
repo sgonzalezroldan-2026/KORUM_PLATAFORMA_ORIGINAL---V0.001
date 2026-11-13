@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { EmptyState } from '@/components/ui/empty-state';
 import type { ConsoleAlert, ConsoleJobRun } from '@/repositories/console.repository';
+import { BlockedMoneyAlert } from './blocked-money-alert';
 import { RequeueEmailsButton, ResolveAlertButton, StuckResolver } from './alert-actions';
 
 /** Tipos de descuadre que la conciliación puede registrar (`detailJson.kind`): cualquier otro valor no se pinta (no tiene texto). */
@@ -34,7 +35,9 @@ export async function OpsAlerts({ alerts, openTotal, locale }: { alerts: Console
               </p>
               <p className="text-sm text-ink-soft">{t('alertMeta', { count: alert.occurrences, date: format.dateTime(alert.lastSeenAt, TIME) })}</p>
             </div>
-            {(alert.type === 'REFUND_STUCK' || alert.type === 'INVOICE_STUCK') && alert.resolvableId !== null ? (
+            {alert.type === 'PAYOUT_BLOCKED' || alert.type === 'ACTIVITY_FUND_WINDOW' ? (
+              <BlockedMoneyAlert alertId={alert.id} type={alert.type} figures={alert.figures} describedBy={`alert-title-${alert.id}`} />
+            ) : (alert.type === 'REFUND_STUCK' || alert.type === 'INVOICE_STUCK') && alert.resolvableId !== null ? (
               <StuckResolver alertType={alert.type} id={alert.resolvableId} />
             ) : (
               <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-start">
@@ -58,7 +61,7 @@ export async function JobRuns({ jobs, locale }: { jobs: ConsoleJobRun[]; locale:
 
   return (
     <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('region')} data-testid="job-runs">
-      <table className="w-full min-w-[32rem] border-collapse text-start">
+      <table className="w-full min-w-lg border-collapse text-start">
         <caption className="sr-only">{t('caption')}</caption>
         <thead>
           <tr className="border-b-2 border-varsity-navy/20 text-sm">

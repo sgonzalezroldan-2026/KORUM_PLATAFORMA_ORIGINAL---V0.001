@@ -215,7 +215,7 @@ describe('QA-FIN06 · insignia y textos de los avisos de precios', () => {
     const [hucha, cliff] = evaluatePricingHealth(defaults);
     expect(plain(t(`message.${hucha!.code}`, pricingMessageValues(hucha!, 'es')))).toBe('Un cargo de 50,00 € en Mi Hucha cuesta 0,59 € de pasarela y cobras 0,25 €: pierdes 0,34 € por cargo. Es rentable hasta 16,00 €.');
     expect(plain(t(`message.${cliff!.code}`, pricingMessageValues(cliff!, 'es')))).toBe(
-      'Con 1.000,00 € exentos, un neto de 5.000,00 € paga 200,00 € de comisión y uno 1 céntimo mayor paga 160,00 €: subir el presupuesto baja la comisión. Hay 2 saltos así; el mayor baja 140,00 €. Considera el modo marginal.'
+      'Con 1.000,00 € exentos, un presupuesto de 5.000,00 € paga 200,00 € de comisión y uno 1 céntimo mayor paga 160,00 €: subir el presupuesto baja la comisión. Hay 2 saltos así; el mayor baja 140,00 €. Considera el modo marginal.'
     );
   });
 

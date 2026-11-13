@@ -16,7 +16,7 @@ export async function OrgInvoices({ invoices, locale }: { invoices: OrgInvoiceVi
   if (invoices.length === 0) return <p className="text-ink-soft">{t('none')}</p>;
   return (
     <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('region')} data-testid="org-invoices">
-      <table className="w-full min-w-[44rem] border-collapse text-start">
+      <table className="w-full min-w-176 border-collapse text-start">
         <caption className="sr-only">{t('caption')}</caption>
         <thead>
           <tr className="border-b-2 border-varsity-navy/20 text-sm">

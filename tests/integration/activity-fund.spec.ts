@@ -11,6 +11,7 @@ import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guar
 import { loadRenewalOffer, startSponsorRenewal } from '@/services/checkout/sponsor-renewal.service';
 import { startSponsorship } from '@/services/checkout/sponsorship.service';
 import { loadActivityFund } from '@/services/panel/activity-fund-data';
+import { loadSplitsToResolve, resolveSplitToResolve } from '@/services/admin/payout-review.service';
 import { resolveUnknownFundSplit, resumeFundPayouts, retryFundPayout, settleSignedFundPayout, splitUsageOf } from '@/services/payments/activity-fund-payout.service';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
@@ -432,6 +433,29 @@ describe('Repetir la tarea y la conciliación', () => {
     await inTransaction(db, async (tx) => {
       expect(await tx.sponsor.findUniqueOrThrow({ where: { id: paid.sponsorId }, select: { status: true } })).toEqual({ status: 'APPROVED' });
     });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+
+  it('Sprint 5.3 · un reparto del Fondo de resultado desconocido sale en la consola y se resuelve desde ella; «no salió» lo deja pendiente y la tarea lo termina', async () => {
+    const unknown = await team();
+    const { later } = await toFund(unknown);
+    const { payoutId } = await signedFundPayout(unknown, later);
+    const cut = new MockPaycometProvider({ secrets, failSplit: new PaymentProviderError('Conexión cortada', 'MOCK_TIMEOUT', true) });
+    expect(await settleSignedFundPayout(db, async () => cut, payoutId, TEST_HMAC_SECRET, later)).toEqual({ status: 'NEEDS_REVIEW' });
+    const split = await db.activityFundSplit.findFirstOrThrow({ where: { payoutId } });
+
+    const listed = (await loadSplitsToResolve(db)).find((row) => row.kind === 'FUND' && row.splitId === split.id);
+    expect(listed).toMatchObject({ payoutId, amountCents: split.amountCents, organizationSlug: unknown.organization.slug });
+    expect(listed?.paycometOrder).toBeTruthy();
+
+    const { actor } = await verifiedSuperadmin(db, new Date(), 'activity_fund.resolve_unknown_split');
+    expect(await resolveSplitToResolve(db, actor, { kind: 'FUND', splitId: split.id, splitAuthCode: null }, new Date())).toEqual({ status: 'RESOLVED', done: false });
+    expect(await db.activityFundSplit.findUniqueOrThrow({ where: { id: split.id } })).toMatchObject({ status: 'PENDING' });
+    expect((await loadSplitsToResolve(db)).some((row) => row.kind === 'FUND' && row.splitId === split.id)).toBe(false);
+    expect((await resumeFundPayouts(db, mock, later, 500)).executed).toBeGreaterThanOrEqual(1);
+    expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'EXECUTED' });
+    // Resuelto: otra resolución no cambia nada.
+    expect(await resolveSplitToResolve(db, actor, { kind: 'FUND', splitId: split.id, splitAuthCode: 'S-TARDE' }, new Date())).toEqual({ status: 'NOT_SENDING' });
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 });

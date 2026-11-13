@@ -605,7 +605,9 @@
         "preheader": "Tienes una respuesta nueva.",
         "title": "Tienes una respuesta",
         "body": "{organization} ha contestado tu consulta. Por privacidad no copiamos el mensaje aquí: léelo en tu cuenta.",
-        "cta": "Ver la respuesta"
+        "cta": "Ver la respuesta",
+        "bodyPanel": "{organization} ha contestado lo que escribiste. Por privacidad no copiamos el mensaje aquí: léelo en el panel de tu entidad.",
+        "ctaPanel": "Ver la respuesta"
       }
     },
     "idea": {
@@ -859,6 +861,14 @@
           "next": "Corregidlos en vuestros ajustes y volved a enviarlos a revisión. Si tenéis dudas, escribid a soporte desde el panel.",
           "cta": "Corregir los documentos"
         }
+      }
+    },
+    "platform": {
+      "message": {
+        "subject": "Mensaje de KORUM: {subject}",
+        "preheader": "El equipo de KORUM escribe a {organization}.",
+        "cta": "Ir al soporte del panel",
+        "footnote": "Este mensaje lo ha escrito una persona del equipo de KORUM para quienes firman por tu entidad. Puedes contestar desde Soporte, en el panel."
       }
     }
   },
@@ -3062,7 +3072,8 @@
         "CLOSING_TOO_LATE": "La campaña duraría más del máximo permitido: elegid una fecha de cierre anterior.",
         "RAFFLE_PRIZES_EXCEED": "No puede haber más premios que papeletas.",
         "TITLE_MISSING": "Escribid un título de al menos 3 letras.",
-        "MAINT_EXCEEDS_TAKINGS": "Con este precio y este aforo la recaudación no cubre el mantenimiento de la plataforma: subid el precio o el aforo."
+        "MAINT_EXCEEDS_TAKINGS": "Con este precio y este aforo la recaudación no cubre el mantenimiento de la plataforma: subid el precio o el aforo.",
+        "GOAL_TOO_HIGH": "Con este presupuesto y las condiciones de la plataforma la meta superaría el máximo que se puede guardar: bajad el presupuesto o escribid a KORUM."
       },
       "errors": {
         "INVALID_INPUT": "Hay datos que no son válidos. Revisad el formulario.",
@@ -3833,7 +3844,10 @@
       "salud-de-precios": "Salud de precios",
       "procesos": "Tareas programadas",
       "fondos": "Fondos de actividades",
-      "entities": "Entidades y KYB ({count, plural, =0 {nada por revisar} one {# por revisar} other {# por revisar}})"
+      "entities": "Entidades y KYB ({count, plural, =0 {nada por revisar} one {# por revisar} other {# por revisar}})",
+      "rules": "Reglas y precios",
+      "support": "Soporte ({count, plural, =0 {nada pendiente} one {# consulta} other {# consultas}})",
+      "repartos": "Repartos por resolver"
     },
     "sections": {
       "business": "Negocio: ingresos reales y proyectados"
@@ -4033,6 +4047,44 @@
           "FORBIDDEN": "No tienes permiso para hacer esto.",
           "INVALID": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo."
         }
+      },
+      "blocked": {
+        "summary": "Dinero que no se puede enviar: qué hacer",
+        "splitText": "Una liquidación aprobada tiene {blocked} que no se pueden enviar: su cobro se contracargó o pasó de los 90 días de Paycomet, y no queda otro cobro con margen desde el que rehacer el reparto.",
+        "unsignedText": "Una liquidación del Fondo de actividades de {amount} tiene las firmas que exige la entidad pero no se ha podido aprobar, y su ventana de 90 días de Paycomet vence el {deadline}.",
+        "windowText": "Hay dinero del Fondo de actividades fuera de la ventana de 90 días de Paycomet: {stuck} ya no se puede repartir y {available} aún está dentro de la ventana.",
+        "noMove": "KORUM no mueve dinero desde aquí para este caso: se resuelve con Paycomet.",
+        "split": {
+          "step1": "Abre Paycomet y comprueba el estado del cobro (contracargado, devuelto o fuera de plazo).",
+          "step2": "Pregunta a Paycomet cómo hacer llegar a la entidad ese importe. Hasta que lo confirme por escrito, no se promete nada a la entidad.",
+          "step3": "Anota aquí lo que has hecho y con quién lo has hablado, sin datos personales."
+        },
+        "unsigned": {
+          "step1": "Mira en el panel de la entidad por qué no se aprueba (documentos sin verificar, cuenta destino sin fijar).",
+          "step2": "Pide a la entidad que lo corrija antes de la fecha límite: puedes escribirle desde su ficha 360º.",
+          "step3": "Anota aquí lo que has hecho."
+        },
+        "window": {
+          "step1": "Mira en la ficha de la entidad qué cobros del Fondo han pasado los 90 días.",
+          "step2": "Pregunta a Paycomet si permite repartir ese dinero fuera de plazo o cómo hacerlo llegar a la entidad.",
+          "step3": "Anota aquí lo acordado, sin datos personales."
+        },
+        "noteLabel": "Nota de quien lo gestiona (obligatoria)",
+        "noteHint": "De {min} a {max} caracteres. Sin datos personales: ni nombres de personas, ni emails, ni IBAN, ni DNI, ni teléfonos.",
+        "noteError": "Escribe una nota de al menos {min} caracteres, sin nombres de personas, emails, IBAN, DNI ni teléfonos.",
+        "resolve": "Dejar constancia y cerrar la alerta",
+        "resolving": "Cerrando…",
+        "resolved": "Alerta cerrada con tu nota. Si el problema sigue, volverá a abrirse sola.",
+        "failed": "No se ha podido guardar. Inténtalo de nuevo.",
+        "outcome": {
+          "NOT_OPEN": "Esta alerta ya no estaba abierta.",
+          "NOT_ALLOWED": "Esta alerta no se cierra con una nota.",
+          "FORBIDDEN": "No tienes permiso para hacer esto."
+        },
+        "splitTextGeneric": "Una liquidación aprobada tiene dinero que no se puede enviar: su cobro se contracargó o pasó de los 90 días de Paycomet, y no queda otro cobro con margen desde el que rehacer el reparto.",
+        "amountLine": "Importe de la liquidación: {amount}.",
+        "unsignedTextGeneric": "Una liquidación del Fondo de actividades tiene las firmas que exige la entidad pero no se ha podido aprobar, y su ventana de 90 días de Paycomet está a punto de vencer.",
+        "closeHint": "Cerrarla no arregla el problema: solo deja constancia de que lo gestionas. Si sigue, volverá a abrirse."
       }
     },
     "jobs": {
@@ -4072,7 +4124,7 @@
     },
     "pricingHealth": {
       "title": "Salud de precios",
-      "intro": "Avisos cuando una regla de precios pierde dinero o es incoherente. Ninguno impide guardar nada: están para que decidas con la cifra delante. Aquí se ven los avisos; las reglas de precio se editan en el motor de reglas.",
+      "intro": "Avisos cuando una regla de precios pierde dinero o es incoherente. Ninguno impide guardar nada: están para que decidas con la cifra delante. «Ajustar» te lleva al campo en el motor de reglas; «Aceptar y registrar» asume el aviso a propósito, con una nota.",
       "none": "No hay avisos: ninguna regla de precios pierde dinero ni es incoherente.",
       "badge": "{count, plural, one {# aviso de precios} other {# avisos de precios}}",
       "bannerTitle": "{count, plural, one {Hay # aviso crítico de precios sin aceptar} other {Hay # avisos críticos de precios sin aceptar}}",
@@ -4100,10 +4152,32 @@
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "Con un patrocinio de {tierCents}, el fee ({feeCents}) no cubre la pasarela ({gatewayCostCents}): pierdes {lossCents} por patrocinio.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hay # valor vacío, negativo o con decimales en las reglas de precios.} other {Hay # valores vacíos, negativos o con decimales en las reglas de precios.}} Mientras no se corrija, no se pueden calcular los demás avisos.",
         "BRACKET_THRESHOLDS_INVALID": "El límite del tramo 1 ({t1MaxCents}) supera al del tramo 2 ({t2MaxCents}): el tramo 2 queda vacío.",
-        "BRACKET_CLIFF": "Con {exemptCents} exentos, un neto de {thresholdCents} paga {feeAtCents} de comisión y uno 1 céntimo mayor paga {feeAboveCents}: subir el presupuesto baja la comisión.{cliffCount, plural, one {} other { Hay # saltos así; el mayor baja {worstDropCents}.}} Considera el modo marginal.",
+        "BRACKET_CLIFF": "Con {exemptCents} exentos, un presupuesto de {thresholdCents} paga {feeAtCents} de comisión y uno 1 céntimo mayor paga {feeAboveCents}: subir el presupuesto baja la comisión.{cliffCount, plural, one {} other { Hay # saltos así; el mayor baja {worstDropCents}.}} Considera el modo marginal.",
         "BRACKET_RATES_NOT_DECREASING": "Las tarifas por tramos no bajan al subir de tramo ({t1Bps} · {t2Bps} · {t3Bps}): es lo contrario de un descuento por volumen.",
         "SOURCE_NEGATIVE_MARGIN": "Esta fuente acumula un margen de {marginCents} (ingreso menos la pasarela de sus cobros)."
-      }
+      },
+      "adjust": "Ajustar",
+      "accept": "Aceptar y registrar",
+      "noteLabel": "Nota obligatoria: por qué asumes este aviso",
+      "noteHint": "De {min} a {max} caracteres. Sin datos personales. Queda en la auditoría.",
+      "noteError": "Escribe una nota de al menos {min} caracteres, sin emails, IBAN, DNI ni teléfonos.",
+      "acceptSubmit": "Registrar la aceptación",
+      "accepting": "Registrando…",
+      "cancel": "Cancelar",
+      "acceptedToast": "Aviso aceptado y registrado.",
+      "unsaved": "Sale de valores que aún no has guardado.",
+      "saveFirst": "Guarda primero las reglas para poder aceptar este aviso.",
+      "reauthLink": "Volver a verificar mi identidad",
+      "error": {
+        "FAILED": "No se ha podido completar. Inténtalo de nuevo.",
+        "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación.",
+        "INVALID_INPUT": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo.",
+        "INVALID": "Revisa la nota: no es válida.",
+        "ALERT_CHANGED": "Las reglas han cambiado mientras tanto y este aviso ya es otro. Recarga la página y revísalo.",
+        "ALERT_NOT_FOUND": "Este aviso ya no existe. Recarga la página.",
+        "STALE": "Otra persona ha guardado una aceptación a la vez. Recarga la página e inténtalo de nuevo."
+      },
+      "acceptWarning": "Esto no cambia ninguna regla: KORUM seguirá perdiendo dinero en ese caso. Solo deja constancia de que lo sabes. Si cambias la regla, el aviso vuelve a saltar."
     },
     "alertsCapped": "Se muestran las {shown} más graves y recientes de {total}.",
     "metaTitle": "Consola",
@@ -4283,7 +4357,8 @@
         "tarifas": "Tarifas",
         "categorias": "Categorías",
         "facturas": "Facturas",
-        "negocio": "Negocio"
+        "negocio": "Negocio",
+        "contacto": "Contacto"
       },
       "reauthLink": "Volver a verificar mi identidad",
       "outcome": {
@@ -4494,7 +4569,346 @@
       "business": {
         "title": "Lo que {name} aporta a KORUM",
         "hint": "Las 6 fuentes de ingresos de esta entidad y sus iniciativas. Pulsa el título de una para abrir su ficha ejecutiva."
+      },
+      "directEmail": {
+        "title": "Email directo a la entidad",
+        "hint": "Un texto libre de KORUM a quienes firman por la entidad. Queda registrado.",
+        "explain": "Lo reciben la dirección y la cofirma. El texto sale tal como lo escribas (solo el botón y el pie del email se traducen al idioma de cada persona). Hay un tope de envíos por entidad y día. En el registro solo queda cuánto texto se envió y a cuántas personas, no el contenido.",
+        "subject": "Asunto",
+        "message": "Mensaje",
+        "lengthHint": "Entre {min} y {max} caracteres, sin enlaces ni direcciones web o de email.",
+        "send": "Enviar el email",
+        "sending": "Enviando…",
+        "sent": "{count, plural, one {Email enviado a # persona.} other {Email enviado a # personas.}}",
+        "archived": "La entidad está archivada: no se le puede escribir.",
+        "error": {
+          "FAILED": "No se ha podido enviar. Inténtalo de nuevo.",
+          "INVALID_INPUT": "Revisa el asunto y el mensaje: tienen que tener la longitud mínima y no pueden llevar enlaces ni direcciones web o de email.",
+          "NOT_FOUND": "Esta entidad ya no existe o está archivada.",
+          "RATE_LIMITED": "Ya has enviado el máximo de emails de hoy a esta entidad. Inténtalo mañana.",
+          "NO_RECIPIENTS": "La entidad no tiene personas que firmen y reciban emails.",
+          "FORBIDDEN": "No tienes permiso para hacer esto.",
+          "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación."
+        },
+        "confirmTitle": "Confirma el envío",
+        "confirmText": "Se enviará a quienes firman por {organization}, con el nombre de KORUM. Un email enviado no se puede retirar.",
+        "confirmYes": "Sí, enviar el email",
+        "confirmBack": "No, volver",
+        "continue": "Revisar y enviar",
+        "reauthLink": "Volver a verificar mi identidad"
       }
+    },
+    "splits": {
+      "sectionTitle": "{count, plural, =0 {Repartos por resolver: ninguno} one {# reparto por resolver} other {# repartos por resolver}}",
+      "sectionIntro": "Cuando Paycomet no confirma si un reparto de dinero a una entidad salió, nadie lo reenvía solo: podría pagarse dos veces. Mira en Paycomet qué pasó y dilo aquí.",
+      "none": "No hay repartos pendientes de resolver.",
+      "title": "{kind}: {amount} para {organization}",
+      "kind": {
+        "CAMPAIGN": "Liquidación de campaña",
+        "FUND": "Fondo de actividades"
+      },
+      "order": "Pedido del cobro en Paycomet",
+      "destination": "Identificador de la cuenta destino en Paycomet",
+      "sentAt": "Enviado",
+      "unknown": "No consta",
+      "legend": "¿Qué ha pasado en Paycomet con este reparto?",
+      "choice": {
+        "DONE": "Sí salió: Paycomet lo hizo",
+        "NOT_DONE": "No salió: vuelve a estar pendiente"
+      },
+      "code": "Código de autorización del reparto",
+      "codeError": "Escribe el código que da Paycomet (letras, cifras, punto, guion o dos puntos).",
+      "warning": "Si marcas que sí salió y no es cierto, la entidad no cobrará ese importe. KORUM lo da por enviado y lo anota en su contabilidad sin más comprobación que la tuya. Queda registrado.",
+      "save": "Continuar",
+      "saving": "Guardando…",
+      "doneYes": "Reparto dado por enviado.",
+      "doneNo": "El reparto vuelve a estar pendiente: se reenviará.",
+      "failed": "No se ha podido guardar. Inténtalo de nuevo.",
+      "reauthLink": "Volver a verificar mi identidad",
+      "outcome": {
+        "NOT_SENDING": "Este reparto ya no estaba por resolver. Recarga la página para ver su estado actual.",
+        "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación."
+      },
+      "warningNotDone": "Si marcas que no salió y en realidad Paycomet sí lo hizo, la entidad cobrará ese importe dos veces. Comprueba bien en Paycomet antes de confirmar.",
+      "confirmTitle": "Confirma lo que has comprobado en Paycomet",
+      "confirmDone": "Vas a dar este reparto por enviado con el código {code}.",
+      "confirmNotDone": "Vas a dejar este reparto pendiente: se volverá a enviar.",
+      "confirmYes": "Sí, lo he comprobado en Paycomet",
+      "confirmBack": "No, volver"
+    },
+    "rules": {
+      "metaTitle": "Reglas y precios · Consola KORUM",
+      "back": "Volver a la consola",
+      "title": "Reglas y precios",
+      "intro": "Lo que cobra la plataforma. Mientras escribes, los avisos de la salud de precios se recalculan con la cifra concreta. Ningún aviso impide guardar: están para que decidas con los números delante.",
+      "nav": {
+        "label": "Secciones del motor de reglas",
+        "pasarela": "Pasarela y gestión",
+        "tramos": "Tramos y comercios",
+        "garantia": "Aportación de garantía",
+        "mantenimiento": "Mantenimiento",
+        "duracion": "Duración",
+        "medallas": "Medallas",
+        "categorias": "Categorías",
+        "campanas-exentas": "Campañas al 0 %"
+      },
+      "unit": {
+        "eur": "€",
+        "pct": "%",
+        "days": "días"
+      },
+      "fieldError": "Escribe un valor de {min} a {max}, con hasta dos decimales y sin negativos.",
+      "fieldErrorDays": "Escribe un número entero de días, de {min} a {max}.",
+      "invalidSummary": "{count, plural, one {Hay # campo con un valor no válido: corrígelo para guardar.} other {Hay # campos con un valor no válido: corrígelos para guardar.}}",
+      "futureOnly": "Los cambios se aplican a lo que se calcule desde ahora. Las campañas ya publicadas conservan su cálculo. Las entidades sin tarifa propia pasan a las nuevas tarifas; las que tienen tarifa propia no cambian.",
+      "save": "Guardar las reglas",
+      "saving": "Guardando…",
+      "saved": "Reglas guardadas. Aplicadas a {count, plural, =0 {ninguna entidad sin tarifa propia} one {# entidad sin tarifa propia} other {# entidades sin tarifa propia}}.",
+      "savedNothing": "No había cambios que guardar.",
+      "reauthLink": "Volver a verificar mi identidad",
+      "reload": "Recargar la página",
+      "outcome": {
+        "FAILED": "No sabemos si se ha guardado. Recarga la página y comprueba los valores antes de repetirlo.",
+        "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación.",
+        "INVALID_INPUT": "No se ha podido leer la petición. Recarga la página e inténtalo de nuevo."
+      },
+      "reason": {
+        "INVALID": "Revisa los campos marcados: algún valor no es válido.",
+        "STALE": "Otra persona ha guardado cambios mientras editabas. Recarga la página para ver sus cambios y vuelve a hacer los tuyos.",
+        "TICKETING_ON_SALE": "No se ha guardado nada. Hay una taquilla o rifa a la venta en una entidad sin tarifa propia y los gastos de gestión digital no pueden cambiar hasta que termine, porque cambiarían lo ya prometido a quien compra. Deja esos dos campos como estaban y guarda de nuevo.",
+        "CATEGORY_EXISTS": "Ya existe una categoría con ese nombre.",
+        "CATEGORY_NOT_FOUND": "Esa categoría ya no existe.",
+        "ALERT_CHANGED": "Las reglas han cambiado y este aviso ya es otro.",
+        "ALERT_NOT_FOUND": "Este aviso ya no existe.",
+        "CREDIT_POOL_OPEN": "No se ha guardado nada. Hay comercios con dinero en la bolsa y su fecha límite ya se les comunicó: la duración de las bolsas no puede cambiar hasta que se vacíen. Deja ese campo como estaba y guarda de nuevo."
+      },
+      "gateway": {
+        "title": "Pasarela, Mi Hucha y gastos de gestión digital",
+        "hint": "Lo que cuesta cada cobro en Paycomet y lo que cobra KORUM por gestionar una recarga de Mi Hucha o una entrada. Cada importe se prueba con cobros de ejemplo.",
+        "pct": "% variable de la pasarela",
+        "fixed": "Fijo por transacción",
+        "topupFixed": "Comisión de Mi Hucha: fijo por cargo",
+        "topupHint": "Si es menor que el coste de la pasarela, KORUM pierde dinero en cada cargo: saltará un aviso.",
+        "topupPct": "Comisión de Mi Hucha: % sobre el cargo",
+        "ticketFixed": "Gastos de gestión digital: fijo por entrada",
+        "ticketPct": "Gastos de gestión digital: % sobre el precio",
+        "ticketOk": "En una entrada de {price}: gastos de gestión digital {fee}, pasarela {gateway}. Margen neto de KORUM: +{margin} por entrada."
+      },
+      "brackets": {
+        "title": "Tramos de comisión, exento y comercios",
+        "hint": "La comisión por tramos se calcula sobre lo que queda por encima del importe exento. El fee de comercios se suma encima del nivel de patrocinio.",
+        "mode": "Cómo se aplican los tramos",
+        "modeFLAT": "Plano: el tramo se elige por el importe total",
+        "modeMARGINAL": "Marginal: cada tramo grava solo su parte",
+        "modeHint": {
+          "FLAT": "Con el modo plano, un presupuesto un céntimo mayor que un umbral puede pagar menos comisión (efecto escalón). Ejemplo con las cifras por defecto: con 1.000 € exentos, un presupuesto de 5.000 € paga 200 € y uno de 5.001 € paga 160 €. Saltará un aviso con la cifra.",
+          "MARGINAL": "Con el modo marginal la comisión crece de forma continua con el presupuesto: cada tramo cobra solo su parte y no hay efecto escalón."
+        },
+        "exempt": "Importe exento anual base",
+        "exemptHint": "Es el cupo sin comisión de cada entidad al empezar el curso. Si cambia, el cupo que le queda a cada entidad se mueve lo mismo; lo ya gastado no cambia.",
+        "t1Max": "Límite del tramo 1",
+        "t2Max": "Límite del tramo 2",
+        "t1": "Comisión del tramo 1",
+        "t2": "Comisión del tramo 2",
+        "t3": "Comisión del tramo 3",
+        "sponsor": "Comisión de comercios patrocinadores"
+      },
+      "guarantee": {
+        "title": "Aportación voluntaria de garantía",
+        "hint": "La aportación voluntaria a KORUM del checkout. El check va siempre desmarcado: estos importes solo son lo que se sugiere.",
+        "check": "Importe sugerido de la aportación",
+        "presets": "Niveles que se ofrecen en el selector",
+        "preset": "Nivel {n}",
+        "default": "Nivel que aparece elegido",
+        "uncheckedNote": "Aunque haya un nivel elegido, el check de la aportación sigue desmarcado hasta que la familia lo marque.",
+        "presetOption": "Nivel {n} ({amount} €)"
+      },
+      "maintenance": {
+        "title": "Mantenimiento con tope anual",
+        "hint": "Un cargo por iniciativa que se desactiva solo al llegar al tope anual de cada entidad.",
+        "active": "Activar el cargo de mantenimiento globalmente",
+        "perInit": "Cargo por iniciativa",
+        "cap": "Tope máximo anual por entidad",
+        "capHint": "Al llegar al tope, el resto del curso se muestra 0,00 €."
+      },
+      "duration": {
+        "title": "Duración de las campañas y de las bolsas de comercios",
+        "hint": "Paycomet solo permite repartir fondos durante 90 días desde cada cobro, así que estos plazos tienen un máximo.",
+        "campaign": "Duración máxima de una campaña",
+        "campaignHint": "Hasta 75 días desde la publicación. Por defecto, 60.",
+        "pool": "Días que dura la bolsa de un comercio",
+        "poolHint": "Hasta 70 días: el día 70 desde el cobro el dinero pasa al Fondo de actividades de la entidad, y quedan 20 días hasta el 90 para firmar y enviar."
+      },
+      "medals": {
+        "title": "Medallas y becas de exención",
+        "hint": "Cuántas campañas cerradas en el curso hacen falta para cada medalla y la beca exenta (al 0 %) que da.",
+        "name": {
+          "bronze": "Medalla Bronce",
+          "silver": "Medalla Plata",
+          "gold": "Medalla Oro"
+        },
+        "campaigns": "Campañas necesarias",
+        "grant": "Beca de ampliación del exento (€)",
+        "campaignsError": "Escribe un número entero de campañas, de 1 a 99.",
+        "grantError": "Escribe un importe válido, sin más de dos decimales y sin negativos.",
+        "orderError": "Cada medalla debe pedir más campañas que la anterior: Bronce menos que Plata y Plata menos que Oro.",
+        "applies": "Se aplica desde la próxima renovación de cupos (cambio de curso) y a las medallas que se ganen a partir de ahora: la beca que una entidad tiene disponible este curso puede estar ya en parte reservada por una campaña.",
+        "save": "Guardar las medallas",
+        "saving": "Guardando…",
+        "saved": "Medallas guardadas."
+      },
+      "categories": {
+        "title": "Categorías globales",
+        "hint": "Cada categoría es exenta (0 %) o va por tramos. Una categoría propia de una entidad con el mismo nombre sigue mandando sobre la global.",
+        "ruleEXEMPT": "0 % exenta de comisión",
+        "ruleBRACKETS": "Por tramos (escala)",
+        "confirmTitle": "Confirma el cambio de regla",
+        "confirmExempt": "«{name}» pasará a estar exenta (0 %) en todas las campañas nuevas de la plataforma. Las ya publicadas no cambian.",
+        "confirmBrackets": "«{name}» pasará a pagar comisión por tramos en todas las campañas nuevas de la plataforma. Las ya publicadas no cambian.",
+        "confirmYes": "Sí, cambiar la regla",
+        "confirmNo": "No, dejarla como está",
+        "ruleSaved": "Regla de «{name}» guardada.",
+        "addTitle": "Añadir una categoría global",
+        "newName": "Nombre de la nueva categoría",
+        "newRule": "Regla de la nueva categoría",
+        "nameError": "Escribe un nombre de 2 a 60 caracteres que no exista ya como categoría global.",
+        "add": "Añadir categoría global",
+        "adding": "Añadiendo…",
+        "added": "Categoría «{name}» añadida.",
+        "addHint": "Escribe al menos 2 caracteres para poder añadirla.",
+        "confirmAddTitle": "Confirma la categoría exenta",
+        "confirmAddExempt": "«{name}» se creará exenta (0 %): ninguna campaña nueva de esa categoría pagará comisión por tramos. ¿Crearla?",
+        "confirmAddYes": "Sí, crearla exenta",
+        "confirmAddNo": "No, volver"
+      },
+      "exempt": {
+        "title": "Campañas al 0 % por revisar",
+        "hint": "El candado de equipamiento es un filtro de buena fe. Aquí están las campañas de presupuesto que siguen en una categoría exenta, las más recientes primero, con una marca si el candado saltó alguna vez.",
+        "none": "No hay campañas de presupuesto en categorías al 0 %.",
+        "scrollHint": "Desliza la tabla hacia los lados para ver todas las columnas.",
+        "region": "Campañas en categorías al 0 %",
+        "caption": "Campañas de presupuesto en categorías exentas, con su entidad, categoría, estado y si el filtro de equipamiento saltó",
+        "columns": {
+          "organization": "Entidad",
+          "campaign": "Campaña",
+          "category": "Categoría",
+          "status": "Estado",
+          "goal": "Meta",
+          "saved": "Último guardado",
+          "lock": "Filtro de equipamiento"
+        },
+        "status": {
+          "BUDGETING": "En presupuesto",
+          "FUNDRAISING": "Recaudando",
+          "GOAL_REACHED": "Meta conseguida",
+          "CLOSED": "Cerrada",
+          "EXPIRED": "Vencida",
+          "RESIZE_VOTING": "En votación",
+          "REFUNDING": "Reembolsando",
+          "REFUNDED": "Reembolsada",
+          "CANCELLED": "Cancelada"
+        },
+        "lockYes": "Saltó el filtro: el texto parecía de equipamiento",
+        "lockNo": "No ha saltado"
+      },
+      "fieldErrorServer": "Este valor no se puede guardar ahora. Déjalo como estaba y guarda de nuevo."
+    },
+    "support": {
+      "metaTitle": "Soporte · Consola KORUM",
+      "back": "Volver a la consola",
+      "title": "Soporte de KORUM",
+      "intro": "Las consultas dirigidas a la plataforma (pagos, cuenta, rectificación y otras) y lo que escriben las entidades desde su panel, estas primero. Se contesta una vez por consulta y el estado solo avanza.",
+      "waitingTitle": "{count, plural, =0 {Nada pendiente de contestar} one {# consulta pendiente} other {# consultas pendientes}}{priority, plural, =0 {} one { (# de una entidad)} other { (# de entidades)}}",
+      "waitingNone": "No hay consultas pendientes.",
+      "capped": "Se muestran las {shown} más antiguas de {total}. Al resolver algunas aparecerán las siguientes.",
+      "resolvedTitle": "Resueltas recientemente",
+      "resolvedNone": "Todavía no hay consultas resueltas.",
+      "status": {
+        "OPEN": "Abierta",
+        "IN_PROGRESS": "En curso",
+        "RESOLVED": "Resuelta"
+      },
+      "priority": "Prioritaria: de una entidad",
+      "topic": {
+        "INITIATIVE": "Sobre una iniciativa",
+        "PAYMENT": "Un pago",
+        "ACCOUNT": "La cuenta",
+        "RECTIFICATION": "Corregir datos personales",
+        "OTHER": "Otra consulta"
+      },
+      "from": "De {origin} · {date}",
+      "sender": "Contacto: {email}",
+      "openPanel": "Abrir el panel de la entidad",
+      "purged": "El texto de esta consulta ya se ha borrado (cuenta suprimida o plazo de conservación).",
+      "replied": "Respondida el {date}",
+      "alreadyReplied": "Esta consulta ya tiene respuesta: solo puedes cambiar su estado.",
+      "replyLabel": "Tu respuesta (una sola por consulta)",
+      "replyHint": "Entre {min} y {max} caracteres. La persona recibe un aviso por email sin el texto y lo lee en su cuenta o en su panel.",
+      "statusLabel": "Estado",
+      "statusKeep": "No cambiar el estado",
+      "statusAuto": "Pasar a «en curso» al contestar",
+      "statusTo": {
+        "IN_PROGRESS": "Pasar a «en curso»",
+        "RESOLVED": "Marcar como resuelta"
+      },
+      "send": "Enviar respuesta",
+      "changeStatus": "Cambiar el estado",
+      "saving": "Guardando…",
+      "done": "Consulta {code} actualizada.",
+      "doneNotified": "Consulta {code} actualizada y aviso enviado.",
+      "outcome": {
+        "INVALID_INPUT": "Revisa la respuesta: tiene que tener entre {min} y {max} caracteres.",
+        "NOT_FOUND": "Esta consulta ya no existe o no es de KORUM.",
+        "ALREADY_RESOLVED": "Esta consulta ya estaba resuelta.",
+        "ALREADY_REPLIED": "Esta consulta ya tenía respuesta. Recarga la página.",
+        "NOTHING_TO_CHANGE": "No hay nada que cambiar: la consulta ya está en ese estado.",
+        "CONFLICT": "Otra persona la ha cambiado a la vez. Recarga la página y vuelve a mirarla.",
+        "PURGED": "El texto de esta consulta ya se ha borrado: no se puede contestar.",
+        "FORBIDDEN": "No tienes permiso para hacer esto.",
+        "FAILED": "No se ha podido guardar. Inténtalo de nuevo."
+      },
+      "rectification": {
+        "title": "Solicitud de rectificación de datos (RGPD)",
+        "open": "Hay que atenderla antes del {date}.",
+        "overdue": "El plazo legal de un mes venció el {date}: atiéndela hoy (si es un cambio de email, que el equipo técnico lo resuelva hoy).",
+        "done": "Solicitud cerrada: {status}.",
+        "status": {
+          "COMPLETED": "hecha",
+          "REJECTED": "rechazada"
+        },
+        "how": "Desde aquí puedes corregir el nombre de la cuenta. El cambio de email todavía no se puede hacer: no existe aún un trámite que compruebe que la persona controla el email nuevo. No cambies el email a mano y no rechaces la solicitud por eso: déjala abierta y escribe al equipo técnico de KORUM con el código de la consulta para que se resuelva, porque el plazo legal de un mes corre. Tras corregir el nombre, cierra la solicitud.",
+        "notes": "Nota interna (opcional, sin datos personales; mínimo 10 caracteres si la escribes)",
+        "markDone": "Cambio hecho: cerrar la solicitud",
+        "markRejected": "Rechazar la solicitud",
+        "closed": "Solicitud cerrada.",
+        "reauthLink": "Volver a verificar mi identidad",
+        "error": {
+          "NOT_FOUND": "Esta solicitud ya no existe.",
+          "ALREADY_CLOSED": "Esta solicitud ya estaba cerrada.",
+          "INVALID": "Revisa lo escrito: el nombre necesita al menos 2 caracteres y la nota, si la escribes, 10 y sin datos personales.",
+          "REAUTH_REQUIRED": "Para esto hace falta que vuelvas a poner tu código de verificación.",
+          "FAILED": "No se ha podido completar. Recarga la página y comprueba si la solicitud sigue abierta antes de repetirlo.",
+          "NO_ACCOUNT": "Quien escribió ya no tiene una cuenta activa: no hay nombre que corregir."
+        },
+        "rejectTitle": "Confirma que rechazas la solicitud",
+        "rejectText": "Rechazar cierra la solicitud sin hacer el cambio: la persona no verá corregido su dato. Hazlo solo si no se ha podido comprobar su identidad o la petición no procede. Si lo que pide es cambiar su email, no la rechaces: déjala abierta y avisa al equipo técnico.",
+        "rejectYes": "Sí, rechazar la solicitud",
+        "rejectBack": "No, volver",
+        "nameLabel": "Nombre correcto de la cuenta",
+        "nameButton": "Corregir el nombre",
+        "nameHint": "Comprueba antes la identidad de la persona. Queda registrado sin el nombre.",
+        "nameDone": "Nombre de la cuenta corregido.",
+        "nameCurrent": "Nombre actual de la cuenta: {name}"
+      },
+      "noContact": "No se podrá avisar a esta persona (ya no tiene cuenta o dirección de contacto): tu respuesta se guardará, pero no recibirá ningún aviso.",
+      "statusResolvedHint": "Una consulta resuelta ya no se puede contestar.",
+      "doneNotNotified": "Consulta {code} actualizada. No se ha avisado por email: esa persona ya no tiene cuenta o su dirección se ha borrado.",
+      "resolveConfirmTitle": "Confirma que quieres cerrar la consulta",
+      "resolveConfirmWithReply": "Se enviará tu respuesta y la consulta quedará resuelta: no se podrá volver a contestar.",
+      "resolveConfirmNoReply": "Vas a cerrar la consulta sin responder: la persona no recibirá ninguna respuesta y no se podrá contestar después.",
+      "resolveConfirmYes": "Sí, cerrar la consulta",
+      "resolveConfirmBack": "No, volver",
+      "resolveConfirmAlreadyReplied": "Esta consulta ya tiene respuesta. Se cerrará y no se podrá volver a contestar."
     }
   },
   "forbidden": {

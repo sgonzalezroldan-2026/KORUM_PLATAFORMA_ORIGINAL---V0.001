@@ -86,7 +86,7 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
   return (
     <li className="flex flex-col gap-4 rounded-2xl border-2 border-varsity-navy bg-white p-5" data-testid="gate-admin-event" aria-labelledby={headingId}>
       <div className="flex flex-col gap-1">
-        <h3 id={headingId} className="font-corp break-words text-xl font-extrabold text-varsity-navy">
+        <h3 id={headingId} className="font-corp wrap-break-word text-xl font-extrabold text-varsity-navy">
           {event.title}
         </h3>
         <p className="text-sm text-ink-soft">
