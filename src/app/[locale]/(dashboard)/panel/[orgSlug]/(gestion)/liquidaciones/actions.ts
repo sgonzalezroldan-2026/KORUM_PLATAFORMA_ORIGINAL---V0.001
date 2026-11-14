@@ -6,7 +6,7 @@ import { buildJobDeps } from '@/core/jobs/job-deps';
 import { CampaignPayoutError, type CampaignPayoutRejection } from '@/core/payouts/campaign-payout-rules';
 import { DoubleCheckNotAllowedError, type DoubleCheckBlock } from '@/core/security/double-check.service';
 import { getSessionActor } from '@/lib/auth/session';
-import { dispatchOutboxSoon, dispatchPayoutExecutedSoon } from '@/lib/panel/outbox-soon';
+import { afterPayoutExecuted, dispatchOutboxSoon } from '@/lib/panel/outbox-soon';
 import { getPrisma } from '@/lib/prisma';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -71,7 +71,7 @@ export async function requestPayoutSignatureAction(orgSlug: string, payload: unk
 export async function retryPayoutAction(orgSlug: string, payload: unknown): Promise<PayoutActionResult> {
   return run(orgSlug, async ({ actor, organizationId }, db) => {
     const { payoutId, ...settlement } = await retryCampaignPayout(db, buildJobDeps(db).paymentProvider, { secret: getEnv().DATA_HMAC_SECRET, keyring: getKeyring() }, actor, organizationId, payload);
-    if (settlement.status === 'EXECUTED') await dispatchPayoutExecutedSoon(db, payoutId);
+    if (settlement.status === 'EXECUTED') await afterPayoutExecuted(db, payoutId);
     return { status: 'OK', settlement };
   });
 }

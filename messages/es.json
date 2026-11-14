@@ -1929,7 +1929,8 @@
         "settle": "Liquidar «{title}»",
         "decideExpired": "Decidir qué hacer con «{title}»",
         "followVote": "Ver la votación de «{title}»",
-        "followRefund": "Ver la devolución de «{title}»"
+        "followRefund": "Ver la devolución de «{title}»",
+        "viewInStudio": "Ver en Estudio: {title}"
       },
       "steps": {
         "moderation": "1. Moderación",
@@ -2198,7 +2199,7 @@
       "loading": "Comprobando el enlace…",
       "missing": {
         "title": "Este enlace ya no sirve",
-        "body": "Puede que ya se haya usado, que haya caducado, que sea de otra persona o que se hayan agotado los intentos. Pide uno nuevo desde Aprobaciones.",
+        "body": "Puede que ya se haya usado, que haya caducado, que sea de otra persona o que se hayan agotado los intentos. Pide uno nuevo desde donde lo pediste: Aprobaciones, Liquidaciones o Fondo de actividades.",
         "cta": "Ir a Aprobaciones"
       },
       "done": {
@@ -2263,10 +2264,10 @@
       "errors": {
         "otpFormat": "Escribe los 6 dígitos del código.",
         "otp": "{count, plural, one {El código no es correcto. Te queda # intento.} other {El código no es correcto. Te quedan # intentos.}}",
-        "locked": "Se han agotado los intentos de este enlace. Pide uno nuevo desde Aprobaciones.",
+        "locked": "Se han agotado los intentos de este enlace. Pide uno nuevo desde donde lo pediste: Aprobaciones, Liquidaciones o Fondo de actividades.",
         "failed": "No hemos podido completar la firma. Inténtalo de nuevo en unos segundos.",
-        "INVALID_LINK": "Este enlace ya no sirve. Pide uno nuevo desde Aprobaciones.",
-        "TARGET_CHANGED": "Lo que se iba a firmar ha cambiado desde que se envió el enlace. Revísalo en Aprobaciones y pide un enlace nuevo.",
+        "INVALID_LINK": "Este enlace ya no sirve. Pide uno nuevo desde donde lo pediste: Aprobaciones, Liquidaciones o Fondo de actividades.",
+        "TARGET_CHANGED": "Lo que se iba a firmar ha cambiado desde que se envió el enlace. Revísalo en el panel (Aprobaciones, Liquidaciones o Fondo de actividades) y pide un enlace nuevo.",
         "LOGIN_REQUIRED": "Tu sesión ha terminado. Vuelve a entrar para firmar.",
         "TWO_FACTOR_REQUIRED": "Necesitas superar la verificación en dos pasos en esta sesión."
       },
@@ -3101,12 +3102,12 @@
         "subtypeRaffle": "Papeleta de rifa numerada",
         "ticketPrice": "Precio de la entrada o papeleta (€)",
         "ticketMax": "Aforo máximo o número de papeletas",
-        "digitalFee": "Gastos de gestión digital",
+        "digitalFee": "Gastos de gestión digital (importe)",
         "digitalFeeHint": "Los fija KORUM; los veis aquí para calcular.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} por unidad)",
         "venue": "Lugar o fecha del acto o del sorteo",
         "venueHint": "Opcional. Se enseña en la ficha pública.",
-        "feeMode": "Gastos de gestión digital",
+        "feeMode": "Quién paga los gastos de gestión digital",
         "feeModeAdd": "Sumarlos al comprador",
         "feeModeInc": "Asumirlos dentro del precio de la entrada",
         "raffleNotice": "Las rifas y tómbolas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa según su importe. Los premios en especie no se pueden canjear por dinero.",
@@ -3169,7 +3170,9 @@
         "badgeBracket": "Tramo {rate}",
         "badgeExact": "Desglose exacto",
         "goalLabel": "Meta pública final exacta",
-        "goalLabelTicketing": "A la hucha con el aforo completo"
+        "goalLabelTicketing": "A la hucha con el aforo completo",
+        "badgeResized": "Meta fija por votación",
+        "goalLabelResized": "Meta fija tras la votación"
       },
       "blockers": {
         "title": "Para publicar falta:",
@@ -3319,6 +3322,25 @@
         "cinema": "Ensayo abierto con merienda para todo el grupo",
         "games": "Actuación dedicada a las familias",
         "noHomework": "Tarde de juegos y música para el grupo"
+      },
+      "resized": {
+        "notice": "Esta campaña se rehízo por votación: su meta es fija.",
+        "detail": "Quienes aportaron decidieron seguir adelante con lo recaudado: la meta pasó de {original} a {goal} y las comisiones bajaron en la misma proporción. Las cifras se muestran sin poder cambiarse.",
+        "originalGoal": "Meta con la que se publicó",
+        "provider": "Presupuesto de proveedor y equipamiento (ajustado a la meta nueva)",
+        "installation": "Instalación y adecuación técnica (ajustada a la meta nueva)",
+        "contingency": "Reserva de mantenimiento, riesgos y contingencia ({pct})",
+        "project": "Coste del proyecto con la meta nueva",
+        "feesTitle": "Comisiones y pasarela, reducidas en proporción a la meta nueva",
+        "bracket": "Comisión de la plataforma por tramos",
+        "maint": "Cargo de mantenimiento de la plataforma",
+        "gateway": "Coste de la pasarela de pago (Paycomet)",
+        "rounding": "Redondeo de la reserva (también llega a la entidad)",
+        "sum": "Suma cuadrada: {parts} = {goal}.",
+        "entity": "Para el proyecto al liquidar (meta menos comisiones)",
+        "gatewayAbsorbed": "Coste de la pasarela de pago (lo asume KORUM: no sale de la meta)",
+        "detailAfterLoss": "Quienes aportaron decidieron seguir adelante con lo recaudado: la meta pasó de {original} a {voted} y las comisiones bajaron en la misma proporción. Después, un contracargo (un cobro que se devolvió a su titular) la dejó en {goal}, con las comisiones otra vez en proporción. Las cifras se muestran sin poder cambiarse.",
+        "entitySame": "Para el proyecto al liquidar: la meta menos las comisiones (el mismo importe que el coste del proyecto)"
       }
     },
     "payouts": {
@@ -5814,7 +5836,7 @@
       "title": "Tu entrada",
       "event": "Evento",
       "quantity": "{count, plural, one {# entrada} other {# entradas}}",
-      "numbers": "Tus números de la rifa",
+      "numbers": "{count, plural, one {Tu número de la rifa} other {Tus números de la rifa}}",
       "qrAlt": "Código QR para entrar",
       "show": "Enséñalo en la puerta, en el móvil o impreso.",
       "serial": "Código {serial}",
@@ -5831,7 +5853,14 @@
       "shareWarning": "Quien tenga este enlace puede usar la entrada: envíalo solo a quien vaya a ir.",
       "shareMessage": "Tu entrada para «{title}»: {url}",
       "actions": "Acciones de la entrada",
-      "titleRaffle": "Tus papeletas"
+      "titleRaffle": "Tus papeletas",
+      "quantityRaffle": "{count, plural, one {# papeleta} other {# papeletas}}",
+      "qrAltRaffle": "Código QR de tus papeletas",
+      "showRaffle": "{count, plural, one {Guárdala: si sale tu número, enséñala en el móvil o impresa para reclamar tu premio. La entidad te dirá cómo recogerlo.} other {Guárdalas: si sale uno de tus números, enséñalas en el móvil o impresas para reclamar tu premio. La entidad te dirá cómo recogerlo.}}",
+      "shareWarningRaffle": "Quien tenga este enlace puede enseñar estas papeletas como suyas: envíalo solo a alguien de confianza.",
+      "shareMessageRaffle": "Tus papeletas de «{title}»: {url}",
+      "actionsRaffle": "Acciones de las papeletas",
+      "drawOn": "Sorteo: {date}"
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",

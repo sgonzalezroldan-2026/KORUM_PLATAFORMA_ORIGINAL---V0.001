@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSessionActor } from '@/lib/auth/session';
+import { revalidateAchievements } from '@/lib/portal/revalidate-portal';
 import { getPrisma } from '@/lib/prisma';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
 import { recordAudit, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
   try {
     if (parsed.data.intent === 'thanks') {
       const message = await saveThanksMessage(db, actor, { organizationId, initiativeId: parsed.data.initiativeId, message: String(form.get('message') ?? '') });
+      revalidateAchievements(parsed.data.orgSlug);
       return json({ ok: true, message }, 200);
     }
     const slot = form.get('slot');
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
       fileName: file.name,
       noIdentifiableMinors: form.get('noMinors') === 'on'
     });
+    revalidateAchievements(parsed.data.orgSlug);
     return json({ ok: true, fileId: result.fileId }, 200);
   } catch (error) {
     if (error instanceof TenantAccessError) return json({ ok: false, error: 'FORBIDDEN' }, 403);

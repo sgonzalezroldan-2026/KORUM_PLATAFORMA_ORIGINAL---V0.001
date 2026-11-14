@@ -12,10 +12,19 @@ import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { passPath } from '@/lib/seo/portal-routes';
 import { getPassForView } from '@/repositories/public.repository';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const { locale, orgSlug, passUuid } = await params;
   const t = await getTranslations({ locale: isLocale(locale) ? locale : 'es', namespace: 'portal.pass' });
-  return { title: t('title'), robots: { index: false, follow: false }, referrer: 'no-referrer' };
+  // El título de la pestaña distingue entrada de papeletas solo si el enlace es válido (misma comprobación que la página): sin firma, el genérico.
+  const pass = await authorizedPass(orgSlug, passUuid, (await searchParams).sig);
+  return { title: t(pass?.subtype === 'RAFFLE' ? 'titleRaffle' : 'title'), robots: { index: false, follow: false }, referrer: 'no-referrer' };
+}
+
+/** El pase, solo con su firma de visualización válida. Sin ella, de otra entidad o inexistente: `null`, sin distinguir. */
+async function authorizedPass(orgSlug: string, passUuid: string, rawSignature: string | string[] | undefined) {
+  const signature = typeof rawSignature === 'string' ? rawSignature : '';
+  const authorized = UUID.test(passUuid) && VIEW_SIGNATURE.test(signature) && verifyPassViewSignature(getEnv().QR_HMAC_SECRET, passUuid, signature);
+  return authorized ? getPassForView(getPrisma(), orgSlug, passUuid) : null;
 }
 
 interface PageProps {
@@ -41,8 +50,7 @@ export default async function PassPage({ params, searchParams }: PageProps) {
   const signature = typeof rawSignature === 'string' ? rawSignature : '';
   const secret = getEnv().QR_HMAC_SECRET;
 
-  const authorized = UUID.test(passUuid) && VIEW_SIGNATURE.test(signature) && verifyPassViewSignature(secret, passUuid, signature);
-  const pass = authorized ? await getPassForView(getPrisma(), orgSlug, passUuid) : null;
+  const pass = await authorizedPass(orgSlug, passUuid, rawSignature);
 
   if (!pass) {
     return <EmptyState icon="🎟️" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" />;
@@ -53,29 +61,34 @@ export default async function PassPage({ params, searchParams }: PageProps) {
 
   // Un SVG de la propia biblioteca de QR (sin datos del usuario en el marcado): se incrusta tal cual.
   const qrSvg = await QRCode.toString(buildPassQrPayload(secret, pass.uuid), { type: 'svg', errorCorrectionLevel: 'M', margin: 2 });
-  const when = format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Madrid' });
+  // Una papeleta no abre ninguna puerta (la rifa no usa lector): sus textos hablan de papeletas y de recoger el premio, no de entrar (repaso del Sprint 5.6).
+  const raffle = pass.subtype === 'RAFFLE';
+  // La fecha de un evento es cuándo se celebra; la de una rifa, el día del sorteo, y se dice (sin hora: la pone la entidad en su acto).
+  const when = raffle
+    ? t('drawOn', { date: format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeZone: 'Europe/Madrid' }) })
+    : format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Madrid' });
 
   return (
     <section className="korum-trust-vault mx-auto max-w-md space-y-4 p-6 text-center" aria-labelledby="pass-title">
       <h1 id="pass-title" className="font-joy text-2xl font-bold text-varsity-navy">
         <span aria-hidden="true">{'🎟️ '}</span>
-        {pass.subtype === 'RAFFLE' ? t('titleRaffle') : t('title')}
+        {raffle ? t('titleRaffle') : t('title')}
       </h1>
       <p className="font-corp text-lg font-extrabold text-varsity-navy">{pass.initiative.title}</p>
       <p className="text-sm text-ink-soft">
         {[pass.initiative.organization.name, when, pass.initiative.ticketVenue].filter(Boolean).join(' · ')}
       </p>
-      <div role="img" aria-label={t('qrAlt')} className="mx-auto w-64 max-w-full rounded-xl border-2 border-varsity-navy bg-white p-2 [&>svg]:h-auto [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-      <p className="font-bold text-varsity-navy">{t('quantity', { count: pass.quantity })}</p>
-      {pass.subtype === 'RAFFLE' && pass.raffleNumbers.length > 0 ? (
+      <div role="img" aria-label={t(raffle ? 'qrAltRaffle' : 'qrAlt')} className="mx-auto w-64 max-w-full rounded-xl border-2 border-varsity-navy bg-white p-2 [&>svg]:h-auto [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+      <p className="font-bold text-varsity-navy">{t(raffle ? 'quantityRaffle' : 'quantity', { count: pass.quantity })}</p>
+      {raffle && pass.raffleNumbers.length > 0 ? (
         <div>
-          <p className="text-sm font-bold text-ink-soft">{t('numbers')}</p>
+          <p className="text-sm font-bold text-ink-soft">{t('numbers', { count: pass.raffleNumbers.length })}</p>
           <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{pass.raffleNumbers.join(' · ')}</p>
         </div>
       ) : null}
       <p className="font-mono text-sm text-ink-soft">{t('serial', { serial: pass.serialCode })}</p>
-      <p className="text-sm font-semibold text-emerald-900">{t('show')}</p>
-      <PassActions title={pass.initiative.title} url={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} />
+      <p className="text-sm font-semibold text-emerald-900">{raffle ? t('showRaffle', { count: pass.quantity }) : t('show')}</p>
+      <PassActions raffle={raffle} title={pass.initiative.title} url={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} />
     </section>
   );
 }

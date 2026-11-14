@@ -10,7 +10,9 @@ import { secretsExpired } from '@/services/email/outbox-secrets';
 import { signResizeVoteToken } from '@/core/resize/resize-rules';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { resizedBudgetBoard } from '@/core/studio/resized-board';
 import { loadExpiredCampaigns } from '@/repositories/expired-campaigns.repository';
+import { getStudioInitiative } from '@/repositories/studio.repository';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { runSupporterBroadcasts } from '@/services/notifications/supporter-broadcast';
 import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
@@ -214,6 +216,13 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     expect(lines.line1ProviderCents + lines.line2InstallCents + lines.line3ContingencyCents + lines.line4EscrowAndGuaranteeCents).toBe(7_000);
     expect(lines.line4EscrowAndGuaranteeCents).toBeGreaterThanOrEqual(840);
     expect(await db.resizePoll.findUniqueOrThrow({ where: { id: poll.id } })).toMatchObject({ status: 'CLOSED_APPROVED', winningOptionIndex: 0, newGoalCents: 7_000, resultJson: { counts: [2, 0], refundVotes: 1, outcome: 'PROJECT', maintQuotaReleasedCents: 325 } });
+    // El Estudio la reconoce como rehecha y su pizarra de solo lectura cuadra con lo guardado (Sprint 5.6): proyecto + comisiones + redondeo = meta nueva.
+    const inStudio = await getStudioInitiative(db, director, organization.id, initiative.id);
+    expect(inStudio.resizePoll).toEqual({ status: 'CLOSED_APPROVED', originalGoalCents: 20_000, newGoalCents: 7_000 });
+    const board = resizedBudgetBoard({ ...inStudio, originalGoalCents: 20_000 });
+    expect(board.projectCents + board.feesCents + board.roundingCents).toBe(7_000);
+    expect(board).toMatchObject({ feesCents: 840, entityCents: 7_000 - 840 });
+    expect(board.roundingCents).toBeLessThanOrEqual(1);
     // El mantenimiento que ya no se cobra vuelve al cupo del curso.
     expect((await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).maintPaidCents).toBe(175);
     expect(await db.outboxMessage.count({ where: { templateKey: 'initiative.resizeClosed', organizationId: organization.id } })).toBe(2);
@@ -239,6 +248,12 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     expect(await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } })).toMatchObject({ status: 'GOAL_REACHED', raisedCents: 4_000, goalCents: 4_000, bracketFeeCents: 200, maintFeeCents: 100, gatewayFeeCents: 180 });
     expect((await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).maintPaidCents).toBe(100);
     await expect(requestCampaignPayout(db, { secret: SECRET, keyring: TEST_KEYRING, providerPayoutAvailable: false }, director, organization.id, { destination: 'ORGANIZATION', initiativeId: initiative.id, invoiceFileId: invoice.id })).resolves.toMatchObject({ netPaidCents: 4_000 - 200 - 100 - 180, updated: true });
+    // Tras el contracargo la pizarra del Estudio sigue cuadrando con la meta que quedó, y lo que recibe el proyecto es lo que paga la liquidación.
+    const afterLoss = resizedBudgetBoard({ ...(await getStudioInitiative(db, director, organization.id, initiative.id)), originalGoalCents: 20_000 });
+    expect(afterLoss.projectCents + afterLoss.feesCents + afterLoss.roundingCents).toBe(4_000);
+    expect(afterLoss.entityCents).toBe(4_000 - 200 - 100 - 180);
+    // La meta que fijó la votación se conserva en la votación (el aviso del Estudio distingue lo que decidió la votación de lo que quitó el contracargo).
+    expect((await db.resizePoll.findUniqueOrThrow({ where: { id: poll.id } })).newGoalCents).toBe(7_000);
     const trial = await getTrialBalance(db);
     expect(trial.debitCents).toBe(trial.creditCents);
   });
@@ -247,16 +262,20 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     const { organization, director } = await team();
     const one = `${uniqueId('una')}@pruebas.example`;
     const two = `${uniqueId('dos')}@pruebas.example`;
+    // Las dos votaciones se lanzaron hace casi 7 días y les quedan 5 minutos. Así su cierre se prueba adelantando el reloj 10 minutos, y no 8 días: la tarea
+    // recorre todas las campañas del esquema y, con 8 días por delante, vencía también las de la semilla que otras pruebas comprueban (su fecha límite
+    // es fija: desde el 2026-11-14 la prueba de la consola fallaba según el orden en que se ejecutaran).
+    const launchedAt = new Date(Date.now() - 7 * DAY + 5 * 60_000);
     const tied = await expiredCampaign(organization.id, [[3_000, one], [3_000, two]]);
-    await launchResizeVote(db, director, organization.id, { initiativeId: tied.initiative.id, options: OPTIONS });
+    await launchResizeVote(db, director, organization.id, { initiativeId: tied.initiative.id, options: OPTIONS }, launchedAt);
     const links = await voteLinks(tied.initiative.id, organization.id);
     await vote(organization.slug, links.get(one)!, { kind: 'OPTION', index: 0 });
     await vote(organization.slug, links.get(two)!, { kind: 'OPTION', index: 1 });
 
     const silent = await expiredCampaign(organization.id, [[3_000]]);
-    await launchResizeVote(db, director, organization.id, { initiativeId: silent.initiative.id, options: OPTIONS });
+    await launchResizeVote(db, director, organization.id, { initiativeId: silent.initiative.id, options: OPTIONS }, launchedAt);
 
-    const later = new Date(Date.now() + 8 * DAY);
+    const later = new Date(Date.now() + 10 * 60_000);
     await campaignExpiryHandler(ctx(later));
     for (const [id, outcome] of [[tied.initiative.id, 'TIE'], [silent.initiative.id, 'NO_VOTES']] as const) {
       expect((await db.initiative.findUniqueOrThrow({ where: { id } })).status).toBe('REFUNDING');

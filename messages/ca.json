@@ -1929,7 +1929,8 @@
         "settle": "Liquidar «{title}»",
         "decideExpired": "Decidir què fer amb «{title}»",
         "followVote": "Veure la votació de «{title}»",
-        "followRefund": "Veure la devolució de «{title}»"
+        "followRefund": "Veure la devolució de «{title}»",
+        "viewInStudio": "Veure a l’Estudi: {title}"
       },
       "steps": {
         "moderation": "1. Moderació",
@@ -2198,7 +2199,7 @@
       "loading": "Comprovant l’enllaç…",
       "missing": {
         "title": "Aquest enllaç ja no serveix",
-        "body": "Potser ja s’ha fet servir, ha caducat, és d’una altra persona o s’han esgotat els intents. Demana’n un de nou des d’Aprovacions.",
+        "body": "Potser ja s’ha fet servir, ha caducat, és d’una altra persona o s’han esgotat els intents. Demana’n un de nou des d’on el vas demanar: Aprovacions, Liquidacions o Fons d’activitats.",
         "cta": "Anar a Aprovacions"
       },
       "done": {
@@ -2263,10 +2264,10 @@
       "errors": {
         "otpFormat": "Escriu les 6 xifres del codi.",
         "otp": "{count, plural, one {El codi no és correcte. Et queda # intent.} other {El codi no és correcte. Et queden # intents.}}",
-        "locked": "S’han esgotat els intents d’aquest enllaç. Demana’n un de nou des d’Aprovacions.",
+        "locked": "S’han esgotat els intents d’aquest enllaç. Demana’n un de nou des d’on el vas demanar: Aprovacions, Liquidacions o Fons d’activitats.",
         "failed": "No hem pogut completar la signatura. Torna-ho a provar d’aquí a uns segons.",
-        "INVALID_LINK": "Aquest enllaç ja no serveix. Demana’n un de nou des d’Aprovacions.",
-        "TARGET_CHANGED": "El que s’havia de signar ha canviat des que es va enviar l’enllaç. Revisa-ho a Aprovacions i demana un enllaç nou.",
+        "INVALID_LINK": "Aquest enllaç ja no serveix. Demana’n un de nou des d’on el vas demanar: Aprovacions, Liquidacions o Fons d’activitats.",
+        "TARGET_CHANGED": "El que s’havia de signar ha canviat des que es va enviar l’enllaç. Revisa-ho al panell (Aprovacions, Liquidacions o Fons d’activitats) i demana un enllaç nou.",
         "LOGIN_REQUIRED": "La teva sessió ha acabat. Torna a entrar per signar.",
         "TWO_FACTOR_REQUIRED": "Has de superar la verificació en dos passos en aquesta sessió."
       },
@@ -3101,12 +3102,12 @@
         "subtypeRaffle": "Butlleta de rifa numerada",
         "ticketPrice": "Preu de l’entrada o butlleta (€)",
         "ticketMax": "Aforament màxim o nombre de butlletes",
-        "digitalFee": "Despeses de gestió digital",
+        "digitalFee": "Despeses de gestió digital (import)",
         "digitalFeeHint": "Les fixa KORUM; les veieu aquí per calcular.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} per unitat)",
         "venue": "Lloc o data de l’acte o del sorteig",
         "venueHint": "Opcional. Es mostra a la fitxa pública.",
-        "feeMode": "Despeses de gestió digital",
+        "feeMode": "Qui paga les despeses de gestió digital",
         "feeModeAdd": "Sumar-les al comprador",
         "feeModeInc": "Assumir-les dins del preu de l’entrada",
         "raffleNotice": "Les rifes i tómboles són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia segons l’import. Els premis en espècie no es poden bescanviar per diners.",
@@ -3169,7 +3170,9 @@
         "badgeBracket": "Tram {rate}",
         "badgeExact": "Desglossament exacte",
         "goalLabel": "Meta pública final exacta",
-        "goalLabelTicketing": "A la guardiola amb l’aforament complet"
+        "goalLabelTicketing": "A la guardiola amb l’aforament complet",
+        "badgeResized": "Meta fixa per votació",
+        "goalLabelResized": "Meta fixa després de la votació"
       },
       "blockers": {
         "title": "Per publicar falta:",
@@ -3319,6 +3322,25 @@
         "cinema": "Assaig obert amb berenar per a tot el grup",
         "games": "Actuació dedicada a les famílies",
         "noHomework": "Tarda de jocs i música per al grup"
+      },
+      "resized": {
+        "notice": "Aquesta campanya es va refer per votació: la seva meta és fixa.",
+        "detail": "Qui hi va aportar va decidir tirar endavant amb el que s’havia recaptat: la meta va passar de {original} a {goal} i les comissions van baixar en la mateixa proporció. Les xifres es mostren sense poder-se canviar.",
+        "originalGoal": "Meta amb què es va publicar",
+        "provider": "Pressupost de proveïdor i equipament (ajustat a la meta nova)",
+        "installation": "Instal·lació i adequació tècnica (ajustada a la meta nova)",
+        "contingency": "Reserva de manteniment, riscos i contingència ({pct})",
+        "project": "Cost del projecte amb la meta nova",
+        "feesTitle": "Comissions i passarel·la, reduïdes en proporció a la meta nova",
+        "bracket": "Comissió de la plataforma per trams",
+        "maint": "Càrrec de manteniment de la plataforma",
+        "gateway": "Cost de la passarel·la de pagament (Paycomet)",
+        "rounding": "Arrodoniment de la reserva (també arriba a l’entitat)",
+        "sum": "Suma quadrada: {parts} = {goal}.",
+        "entity": "Per al projecte en liquidar (meta menys comissions)",
+        "gatewayAbsorbed": "Cost de la passarel·la de pagament (l’assumeix KORUM: no surt de la meta)",
+        "detailAfterLoss": "Qui hi va aportar va decidir tirar endavant amb el que s’havia recaptat: la meta va passar de {original} a {voted} i les comissions van baixar en la mateixa proporció. Després, una retrocessió (un cobrament que es va retornar al seu titular) la va deixar en {goal}, amb les comissions una altra vegada en proporció. Les xifres es mostren sense poder-se canviar.",
+        "entitySame": "Per al projecte en liquidar: la meta menys les comissions (el mateix import que el cost del projecte)"
       }
     },
     "payouts": {
@@ -5814,7 +5836,7 @@
       "title": "La teva entrada",
       "event": "Esdeveniment",
       "quantity": "{count, plural, one {# entrada} other {# entrades}}",
-      "numbers": "Els teus números de la rifa",
+      "numbers": "{count, plural, one {El teu número de la rifa} other {Els teus números de la rifa}}",
       "qrAlt": "Codi QR per entrar",
       "show": "Ensenya’l a la porta, al mòbil o imprès.",
       "serial": "Codi {serial}",
@@ -5831,7 +5853,14 @@
       "shareWarning": "Qui tingui aquest enllaç pot fer servir l’entrada: envia’l només a qui hi hagi d’anar.",
       "shareMessage": "La teva entrada per a «{title}»: {url}",
       "actions": "Accions de l’entrada",
-      "titleRaffle": "Les teves butlletes"
+      "titleRaffle": "Les teves butlletes",
+      "quantityRaffle": "{count, plural, one {# butlleta} other {# butlletes}}",
+      "qrAltRaffle": "Codi QR de les teves butlletes",
+      "showRaffle": "{count, plural, one {Guarda-la: si surt el teu número, ensenya-la al mòbil o impresa per reclamar el premi. L’entitat et dirà com recollir-lo.} other {Guarda-les: si surt un dels teus números, ensenya-les al mòbil o impreses per reclamar el premi. L’entitat et dirà com recollir-lo.}}",
+      "shareWarningRaffle": "Qui tingui aquest enllaç pot ensenyar aquestes butlletes com a seves: envia’l només a algú de confiança.",
+      "shareMessageRaffle": "Les teves butlletes de «{title}»: {url}",
+      "actionsRaffle": "Accions de les butlletes",
+      "drawOn": "Sorteig: {date}"
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",

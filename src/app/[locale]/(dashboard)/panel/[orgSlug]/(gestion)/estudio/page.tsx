@@ -100,7 +100,13 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       if (error instanceof ResourceNotFoundError) notFound();
       throw error;
     }
-    const lock = initiative.status === 'BUDGETING' ? 'NONE' : initiative.status === 'FUNDRAISING' ? 'SOFT' : 'ALL';
+    // Rehecha por votación: su meta es fija y nada se edita, sea cual sea su estado (Sprint 5.6). Si un contracargo le quita dinero no vuelve a recaudar:
+    // su meta y sus comisiones bajan otra vez en proporción (`rescaleResizedAfterLoss`) y la pizarra sigue cuadrando.
+    const resized =
+      initiative.format === 'BUDGET' && initiative.resizePoll?.status === 'CLOSED_APPROVED'
+        ? { originalGoalCents: initiative.resizePoll.originalGoalCents, votedGoalCents: initiative.resizePoll.newGoalCents ?? initiative.goalCents }
+        : null;
+    const lock = resized ? 'ALL' : initiative.status === 'BUDGETING' ? 'NONE' : initiative.status === 'FUNDRAISING' ? 'SOFT' : 'ALL';
     const stored: StoredPricing = {
       status: initiative.status,
       walletEscrowId: initiative.walletEscrowId,
@@ -111,7 +117,8 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       medalExemptAppliedCents: initiative.medalExemptAppliedCents,
       bracketRateAppliedBps: initiative.bracketRateAppliedBps,
       bracketFeeCents: initiative.bracketFeeCents,
-      gatewayFeeCents: initiative.gatewayFeeCents
+      gatewayFeeCents: initiative.gatewayFeeCents,
+      absorbsGatewayCostByKorum: initiative.absorbsGatewayCostByKorum
     };
     heading = initiative.title;
     // Quien firma con el segundo factor puede cambiar la imagen; el Super-Admin la ve sin poder tocarla. Una campaña cancelada, vencida o reembolsada ya no se enseña.
@@ -120,6 +127,7 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       <>
         <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock}
           stored={stored}
+          resized={resized}
           justPublished={first('publicada') === '1'}
           shareText={tContent('published.whatsappText', { title: initiative.title, url: absoluteUrl(context.contentLocale, `/${orgSlug}/iniciativas/${initiative.id}`) })}
         />

@@ -66,7 +66,8 @@ export async function getPublicImageFile(db: KorumPrismaClient, fileId: string) 
 export async function listAchievementWorkbench(db: KorumPrismaClient, actor: SessionActor, organizationId: string) {
   await authorizeTenant(db, actor, organizationId, { roles: ['DIRECTOR', 'COSIGNER'], action: 'achievement.list', targetType: 'Initiative' });
   const rows = await db.initiative.findMany({
-    where: { organizationId, status: { in: ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'] } },
+    // Una mejora se puede fotografiar mientras recauda (el «antes»); una taquilla o una rifa, solo cuando ha terminado su venta (repaso del Sprint 5.6).
+    where: { organizationId, OR: [{ status: { in: ['GOAL_REACHED', 'CLOSED'] } }, { status: 'FUNDRAISING', format: 'BUDGET' }] },
     select: { id: true, title: true, status: true, thanksMessage: true, beforeFileId: true, afterFileId: true },
     orderBy: [{ status: 'desc' }, { id: 'desc' }]
   });

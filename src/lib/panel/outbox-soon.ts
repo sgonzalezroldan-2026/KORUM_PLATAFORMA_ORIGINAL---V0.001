@@ -1,5 +1,6 @@
 import { after } from 'next/server';
 import { reportError } from '@/lib/error-reporting';
+import { revalidatePortalAfterPayout } from '@/lib/portal/revalidate-portal';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
@@ -22,6 +23,20 @@ export function dispatchOutboxSoon(db: KorumPrismaClient, ids: readonly number[]
 export async function dispatchPayoutExecutedSoon(db: KorumPrismaClient, payoutId: number): Promise<void> {
   const rows = await db.outboxMessage.findMany({ where: { templateKey: 'payout.executed', status: 'PENDING', idempotencyKey: { startsWith: `payout.executed:payout:${payoutId}:` } }, select: { id: true }, take: 4 });
   dispatchOutboxSoon(db, rows.map((row) => row.id), 'outbox-after-campaign-payout');
+}
+
+/**
+ * Lo que se hace justo después de enviar una liquidación: avisar a quienes firman y regenerar el portal (la campaña pasa a «Logros conseguidos»). El dinero
+ * ya ha salido: si algo de esto falla se anota y **no se devuelve un error a quien firma** (auditoría financiera del Sprint 5.6); el aviso lo enviará la tarea
+ * de la bandeja y la página se regenera sola a los 60 segundos.
+ */
+export async function afterPayoutExecuted(db: KorumPrismaClient, payoutId: number): Promise<void> {
+  try {
+    await dispatchPayoutExecutedSoon(db, payoutId);
+    await revalidatePortalAfterPayout(db, payoutId);
+  } catch (error) {
+    reportError(error, { stage: 'after-payout-executed', payoutId });
+  }
 }
 
 /** Mensajes que se envían al momento tras repartir una difusión: los primeros; el resto, con la tarea de la bandeja. */

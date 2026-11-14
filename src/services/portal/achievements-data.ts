@@ -30,6 +30,7 @@ export async function loadAchievements(slug: string, locale: MoneyLocale): Promi
       raised: formatCents(row.raisedCents, locale),
       beforeSrc: row.beforeFileId ? publicFileSrc(row.beforeFileId) : null,
       afterSrc: row.afterFileId ? publicFileSrc(row.afterFileId) : null,
+      photosExpected: row.format === 'BUDGET',
       href: initiativePath(slug, row.id),
       url: absoluteUrl(locale, initiativePath(slug, row.id)),
       lang

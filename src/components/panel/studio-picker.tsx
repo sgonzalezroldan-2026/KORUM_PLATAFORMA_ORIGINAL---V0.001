@@ -92,7 +92,7 @@ export async function StudioPicker({ locale, orgSlug, vertical, canCreate, initi
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <StatusBadge status={item.status as Status} />
-                  <Link href={`${base}?iniciativa=${item.id}`} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline underline-offset-4">
+                  <Link href={`${base}?iniciativa=${item.id}`} className="inline-flex min-h-11 min-w-11 items-center justify-center font-bold text-varsity-navy underline underline-offset-4">
                     {t(item.status === 'BUDGETING' ? 'picker.edit' : 'picker.open')}
                     <span className="sr-only">{` ${item.title}`}</span>
                   </Link>

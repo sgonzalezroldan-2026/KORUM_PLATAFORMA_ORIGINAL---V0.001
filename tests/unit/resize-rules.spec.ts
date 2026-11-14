@@ -45,7 +45,7 @@ describe('recuento de la votación', () => {
 });
 
 describe('cifras de una campaña redimensionada', () => {
-  const base = { originalGoalCents: 20_000, bracketFeeCents: 1_000, maintFeeCents: 500, gatewayFeeCents: 900, costMatCents: 12_000, costInstCents: 4_000, contingencyBps: 1_000 };
+  const base = { originalGoalCents: 20_000, bracketFeeCents: 1_000, maintFeeCents: 500, gatewayFeeCents: 900, costMatCents: 12_000, costInstCents: 4_000, contingencyBps: 1_000, absorbsGatewayCostByKorum: false };
 
   it('al 35 %: comisiones proporcionales hacia abajo y las 4 líneas suman la meta nueva', () => {
     const figures = resizedFigures({ ...base, newGoalCents: 7_000 });
@@ -61,6 +61,20 @@ describe('cifras de una campaña redimensionada', () => {
     expect(() => resizedFigures({ ...base, newGoalCents: 0 })).toThrow(RangeError);
     expect(() => resizedFigures({ ...base, newGoalCents: -5 })).toThrow(RangeError);
     expect(() => resizedFigures({ ...base, newGoalCents: 1.5 })).toThrow(RangeError);
+  });
+
+  it('si KORUM asume la pasarela, esta no ocupa sitio en la meta nueva ni sale en la línea 4 (auditoría financiera del 5.6)', () => {
+    // La iniciativa 8 de la semilla: meta 4.500 € (la pasarela de 62,50 € la paga KORUM), vence con 2.100 €.
+    const absorbed = { originalGoalCents: 450_000, bracketFeeCents: 0, maintFeeCents: 0, gatewayFeeCents: 6_250, costMatCents: 400_000, costInstCents: 50_000, contingencyBps: 0, absorbsGatewayCostByKorum: true };
+    const figures = resizedFigures({ ...absorbed, newGoalCents: 210_000 });
+    // El coste de KORUM baja en proporción, pero el proyecto se queda con los 2.100 € enteros: es lo que paga la liquidación.
+    expect(figures).toMatchObject({ goalCents: 210_000, gatewayFeeCents: 2_916, line4Cents: 0 });
+    expect(figures.costMatCents + figures.costInstCents).toBe(210_000);
+    const lines = calculatePublicBreakdown4Lines({ ...figures, contingencyBps: 0 });
+    expect(lines).toMatchObject({ line1ProviderCents: figures.costMatCents, line4EscrowAndGuaranteeCents: 0 });
+    // Con la pasarela dentro de la meta, esos 29,16 € sí salen del proyecto.
+    const inside = resizedFigures({ ...absorbed, originalGoalCents: 456_300, absorbsGatewayCostByKorum: false, newGoalCents: 210_000 });
+    expect(inside.costMatCents + inside.costInstCents).toBe(210_000 - inside.gatewayFeeCents);
   });
 
   it('1.000 campañas aleatorias: cuadra al céntimo, la comisión nunca supera la proporción y a la entidad le queda al menos su parte', () => {
@@ -81,7 +95,7 @@ describe('cifras de una campaña redimensionada', () => {
       const originalGoalCents = Math.max(100, Math.ceil(raw / 100) * 100);
       const gatewayFeeCents = originalGoalCents - execution - contingency - bracketFeeCents - maintFeeCents;
       const newGoalCents = 1 + random(originalGoalCents - 1);
-      const figures = resizedFigures({ originalGoalCents, newGoalCents, bracketFeeCents, maintFeeCents, gatewayFeeCents, costMatCents, costInstCents, contingencyBps });
+      const figures = resizedFigures({ originalGoalCents, newGoalCents, bracketFeeCents, maintFeeCents, gatewayFeeCents, costMatCents, costInstCents, contingencyBps, absorbsGatewayCostByKorum: false });
       const fees = figures.bracketFeeCents + figures.maintFeeCents + figures.gatewayFeeCents;
       // Proporción exacta con enteros: comisión nueva × meta original ≤ comisión original × meta nueva.
       expect(BigInt(fees) * BigInt(originalGoalCents) <= BigInt(bracketFeeCents + maintFeeCents + gatewayFeeCents) * BigInt(newGoalCents)).toBe(true);

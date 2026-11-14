@@ -25,7 +25,8 @@ export class PreviewEmailProvider implements EmailProvider {
     const canWrite = this.options.writeFiles ?? (!process.env.VERCEL && (process.env.NODE_ENV !== 'production' || testServer));
     if (!canWrite) return { providerMessageId: id };
 
-    const directory = this.options.directory ?? path.join(process.cwd(), '.email-preview');
+    // `turbopackIgnore`: la carpeta se escribe al ejecutar y nunca forma parte de la compilación (sin la marca, Turbopack la rastrea entera y avisa).
+    const directory = this.options.directory ?? path.join(/* turbopackIgnore: true */ process.cwd(), '.email-preview');
     await mkdir(directory, { recursive: true });
     await writeFile(path.join(directory, `${id}.html`), message.html, 'utf8');
     await writeFile(path.join(directory, `${id}.txt`), `Para: ${message.to}\nDe: ${message.fromName} <${message.fromAddress}>\nAsunto: ${message.subject}\n\n${message.text}`, 'utf8');

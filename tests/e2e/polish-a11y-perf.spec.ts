@@ -3,7 +3,7 @@ import { expect, test, type CDPSession, type Page } from '@playwright/test';
 import { signCheckoutResult } from '../../src/core/checkout/checkout-rules';
 import { withE2eDb } from './auth-support';
 import { E2E_SERVER_ENV } from './e2e-env';
-import { expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
+import { expectHeadingsInOrder, expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
 /**
  * Sprint 5.5 · pulido de lo público: QA-SEO01 en las subpáginas del portal con su tarjeta propia, la tarjeta social de la entidad, la vuelta del pago
@@ -242,6 +242,8 @@ for (const locale of LOCALES) {
         await expectNoHorizontalOverflow(page);
         if ((page.viewportSize()?.width ?? 1440) < 768) await expectMobileStackIsOneColumn(page);
         await expectNoSeriousA11yViolations(page);
+        // Los encabezados bajan de nivel de uno en uno (deuda del 5.5b resuelta en el 5.6: las secciones de la ficha colgaban del título como «h3»).
+        await expectHeadingsInOrder(page);
         expect(missing.filter((pathname) => !pathname.startsWith('/api/files/public/')), 'recursos que fallan').toEqual([]);
         const forgiven = missing.length > 0 ? errors.filter((message) => !/Failed to load resource: .* 404/.test(message)) : errors;
         expect(forgiven).toEqual([]);

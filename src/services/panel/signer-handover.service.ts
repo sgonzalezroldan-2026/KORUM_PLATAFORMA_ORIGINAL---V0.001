@@ -3,7 +3,7 @@ import { handoverProposalSchema, invalidFields } from '@/core/panel/team-rules';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { inTransaction, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { recordAudit, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import { recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { requireSigner } from './kyb.service';
 import { canonicalInbox, findOrCreateInvitee, queueHandoverNotice, sendSeatInvitation, storedInbox, TeamRejectedError, type TeamContext } from './team-common';
 
@@ -67,6 +67,18 @@ async function denied<T>(db: KorumPrismaClient, signer: Parameters<typeof record
     if (error instanceof TenantAccessError) await recordAudit(db, signer, { action: 'tenant.access_denied', organizationId, targetType: 'Organization', targetId: organizationId, metadata: { reason: 'ROLE_NOT_ALLOWED', attempted } });
     throw error;
   }
+}
+
+/**
+ * Un relevo que no es de esta entidad, o que no existe, responde igual que uno propio ya cerrado (`NOT_FOUND`), y el sondeo queda anotado como el de cualquier
+ * otro recurso (`requireOwnedResource`): `tenant.resource_outside_tenant` si es de otra entidad y `tenant.resource_not_found` si no existe (Sprint 5.6).
+ */
+async function recordHandoverProbe(db: KorumPrismaClient, signer: SessionActor, organizationId: string, handoverId: string): Promise<void> {
+  const owner = handoverId === '' ? null : await db.signerHandover.findUnique({ where: { id: handoverId }, select: { organizationId: true } });
+  if (owner?.organizationId === organizationId) return;
+  const probe = { organizationId, resourceType: 'SignerHandover', resourceId: handoverId === '' ? '-' : handoverId };
+  if (owner) await recordCrossTenantAttempt(db, signer, { ...probe, ownerOrganizationId: owner.organizationId });
+  else await recordMissingResourceProbe(db, signer, probe);
 }
 
 export async function proposeHandover(db: KorumPrismaClient, actor: SessionActor, organizationId: string, raw: unknown, context: TeamContext): Promise<{ handoverId: string; status: 'INVITED' }> {
@@ -143,6 +155,8 @@ export async function cancelHandover(db: KorumPrismaClient, actor: SessionActor,
       // Una persona firmante que intenta retirar un relevo que no propuso: el motivo no se dice a quien lo intenta, pero queda anotado.
       if (error instanceof TeamRejectedError && error.reason === 'NOT_FOUND' && (await db.signerHandover.count({ where: { id: handoverId, organizationId, status: { in: [...OPEN] } } })) > 0) {
         await recordAudit(db, signer, { action: 'tenant.access_denied', organizationId, targetType: 'SignerHandover', targetId: handoverId, metadata: { reason: 'NOT_PROPOSER', attempted: 'signer.handover_cancel' } });
+      } else if (error instanceof TeamRejectedError && error.reason === 'NOT_FOUND') {
+        await recordHandoverProbe(db, signer, organizationId, handoverId);
       }
       throw error;
     }
@@ -174,6 +188,9 @@ export async function resendHandoverInvitation(db: KorumPrismaClient, actor: Ses
     await recordAudit(tx, signer, { action: 'signer.handover_resent', organizationId, targetType: 'SignerHandover', targetId: handover.id, metadata: { role: handover.role } }, { required: true });
     return true;
   }));
-  if (!found) throw new TeamRejectedError('NOT_FOUND');
+  if (!found) {
+    await recordHandoverProbe(db, signer, organizationId, handoverId);
+    throw new TeamRejectedError('NOT_FOUND');
+  }
   context.dispatch(queued);
 }

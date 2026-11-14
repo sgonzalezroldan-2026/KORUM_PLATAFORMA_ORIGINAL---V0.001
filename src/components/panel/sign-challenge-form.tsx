@@ -24,8 +24,13 @@ function readStoredToken(orgSlug: string): string | null {
   try {
     const fromHash = new URLSearchParams(window.location.hash.slice(1)).get('t');
     if (fromHash) {
-      window.sessionStorage.setItem(storageKey(orgSlug), fromHash);
+      // Primero se borra de la barra: si guardar en la pestaña falla (navegación privada estricta), el enlace no se queda en el historial.
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      try {
+        window.sessionStorage.setItem(storageKey(orgSlug), fromHash);
+      } catch {
+        // Sin almacenamiento sigue valiendo en esta carga de la página.
+      }
       return fromHash;
     }
     return window.sessionStorage.getItem(storageKey(orgSlug));
@@ -83,6 +88,16 @@ export function SignChallengeForm({ orgSlug, session, nextPath }: { orgSlug: str
       active = false;
     };
   }, [orgSlug, session, token, attempt]);
+
+  // Otro enlace de firma abierto en esta misma pestaña (pegado en la barra, o desde un email en la misma ventana) solo cambia el fragmento y el navegador no
+  // recarga la página: se quedaba enseñando la firma anterior (visto en el recorrido del Sprint 5.6). Se recarga para leer el enlace nuevo.
+  useEffect(() => {
+    const onHashChange = () => {
+      if (new URLSearchParams(window.location.hash.slice(1)).get('t')) window.location.reload();
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   const kind = !hydrated ? 'loading' : done ? 'done' : !token || preview === 'INVALID' ? 'missing' : session !== 'READY' ? 'session' : preview === null ? 'loading' : 'form';
 

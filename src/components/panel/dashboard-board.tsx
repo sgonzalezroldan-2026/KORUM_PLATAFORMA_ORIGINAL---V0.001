@@ -245,7 +245,7 @@ export function DashboardBoard({ orgSlug, initiatives, activeSponsors, readySign
                 <div className="flex flex-wrap gap-x-5">
                   <Link href={`/panel/${orgSlug}/estudio?iniciativa=${item.id}`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4" data-testid={`edit-in-studio-${item.id}`}>
                     <span aria-hidden="true">{'✏️ '}</span>
-                    {t('card.editInStudio', { title: item.title })}
+                    {t(item.status === 'BUDGETING' || item.status === 'FUNDRAISING' ? 'card.editInStudio' : 'card.viewInStudio', { title: item.title })}
                   </Link>
                   {item.status === 'FUNDRAISING' ? (
                     <Link href={`/panel/${orgSlug}/estudio/${item.id}/cartel`} className="inline-flex min-h-11 w-fit items-center font-bold text-varsity-navy underline underline-offset-4">

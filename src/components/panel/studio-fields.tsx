@@ -61,7 +61,8 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
   return (
     <div className="flex flex-col gap-5">
       <Field label={t('title')} value={draft.title} maxLength={STUDIO_LIMITS.titleMax} disabled={moneyLocked} error={errors.title} onChange={(event) => onChange({ title: event.target.value })} />
-      <div className="mobile-stack grid gap-4 sm:grid-cols-3">
+      {/* Dos por fila: en tres, el desplegable de la categoría cortaba su texto («Infraestructura…», repaso del Sprint 5.6). */}
+      <div className="mobile-stack grid gap-4 sm:grid-cols-2">
         {ticketing ? (
           <Field label={t('category')} value={t('ticketingCategory')} disabled readOnly />
         ) : (
@@ -141,12 +142,13 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
               value={draft.ticketMax === 0 ? '' : draft.ticketMax}
               onChange={(event) => onChange({ ticketMax: Math.max(0, Math.min(STUDIO_LIMITS.maxTicketMax, Math.trunc(Number(event.target.value)) || 0)) })}
             />
-            <Field
-              label={t('digitalFee')}
-              hint={t('digitalFeeHint')}
-              readOnly
-              value={t('digitalFeeValue', { fixed: formatCents(context.ticketFee.fixedCents, locale), pct: formatBps(context.ticketFee.pctBps, locale), unit: formatCents(ticketFeeUnitCents, locale) })}
-            />
+            <div className="flex flex-col gap-1" data-testid="studio-digital-fee">
+              <p className="font-semibold text-varsity-navy">{t('digitalFee')}</p>
+              <p className="font-corp font-bold tabular-nums text-varsity-navy">
+                {t('digitalFeeValue', { fixed: formatCents(context.ticketFee.fixedCents, locale), pct: formatBps(context.ticketFee.pctBps, locale), unit: formatCents(ticketFeeUnitCents, locale) })}
+              </p>
+              <p className="text-sm text-ink-soft">{t('digitalFeeHint')}</p>
+            </div>
           </div>
           <div className="mobile-stack grid gap-4 sm:grid-cols-2">
             <Field label={t('venue')} hint={t('venueHint')} value={draft.ticketVenue ?? ''} maxLength={STUDIO_LIMITS.venueMax} onChange={(event) => onChange({ ticketVenue: event.target.value === '' ? null : event.target.value })} />
@@ -210,7 +212,7 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
         <CheckboxField label={t('plaque')} checked={draft.plaqueEnabled} onChange={(event) => onChange({ plaqueEnabled: event.target.checked })} />
         {draft.rewardEnabled ? (
           <div className="mobile-stack grid gap-4 sm:grid-cols-3">
-            <div className="flex flex-col gap-3 sm:col-span-2">
+            <div className="flex flex-col gap-3 sm:col-span-3">
               <SelectField
                 label={t('rewardPreset')}
                 value={rewardChoice}

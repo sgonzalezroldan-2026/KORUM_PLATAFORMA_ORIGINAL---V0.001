@@ -59,7 +59,7 @@ export default async function ActivityFundPage({ params }: { params: Promise<{ l
             <CurrencyText cents={fund.availableCents} />
           </p>
           {fund.deadline && (fund.availableCents > 0 || fund.pending) ? <p className="font-semibold text-varsity-navy">{`⏳ ${t('summary.deadline', { date: date(fund.deadline) })}`}</p> : null}
-          <p className="text-sm text-ink-soft">{t('summary.where')}</p>
+          {!empty ? <p className="text-sm text-ink-soft">{t('summary.where')}</p> : null}
           {fund.pending ? (
             <p className="font-semibold tabular-nums text-varsity-navy">
               {t('summary.inPayout', {

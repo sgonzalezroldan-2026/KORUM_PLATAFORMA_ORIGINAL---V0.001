@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPrisma } from '@/lib/prisma';
 import { getPublicImageFile } from '@/repositories/achievements.repository';
-import { MemoryStorage } from '@/services/storage/memory-storage';
+import { isMemoryStorage } from '@/services/storage/memory-storage';
 import { getStorageProvider } from '@/services/storage/provider-factory';
 
 /**
@@ -34,7 +34,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
   const url = storage.publicUrl(file.bucket, file.objectKey);
   if (/^https:\/\//.test(url)) return NextResponse.redirect(url, { status: 302, headers: { 'Cache-Control': IMMUTABLE } });
-  if (storage instanceof MemoryStorage) {
+  if (isMemoryStorage(storage)) {
     const object = storage.readPublic(file.bucket, file.objectKey);
     if (!object) return notFound();
     return new NextResponse(Buffer.from(object.body), { headers: { 'Content-Type': file.mimeType, 'Cache-Control': IMMUTABLE, 'X-Content-Type-Options': 'nosniff', ETag: `"${file.sha256}"` } });

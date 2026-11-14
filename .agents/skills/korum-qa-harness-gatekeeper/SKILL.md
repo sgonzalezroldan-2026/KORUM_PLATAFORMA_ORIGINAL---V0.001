@@ -44,6 +44,7 @@ En todo sprint con interfaz:
    - `0` errores `pageerror` / `console.error`, `document.documentElement.scrollWidth <= 430` y apilado vertical real en `.mobile-stack`.
    - **Accesibilidad:** `@axe-core/playwright` sin incidencias `serious` ni `critical` en cada página visitada.
    - **Idiomas:** las páginas tocadas se recorren al menos en `es` y en otro idioma (`ca` o `en`), sin claves de traducción sin resolver.
+   - **Certificación (Sprint 5.6):** `full-lifecycle-journey.spec.ts` (`QA-X03`) hace el ciclo entero de una entidad en castellano y catalán con los textos del catálogo, y `tenant-intrusion.spec.ts` (`QA-SEC10`) ataca a otra entidad con todas las acciones de servidor del manifiesto de la compilación. Una pantalla o una acción nueva del ciclo se añade a estas dos pruebas; el censo de acciones solo corre contra la compilación de producción (`CI=1`). Los encabezados no se saltan niveles (`expectHeadingsInOrder`).
 2. **Prueba exploratoria de `qa-e2e-verifier` con el servidor MCP de Playwright** (en Claude Code, servidor `playwright` de `.mcp.json`; en Antigravity, el de `.agents/mcp_config.json`):
    - Navega como una persona real (madre o padre invitado, familia registrada, comercio, gestor/a de la entidad, voluntario/a de portería, Super-Admin), redimensiona a `1440×900` y `430×932`, pulsa, rellena formularios y abre modales.
    - Revisa los mensajes de consola, mide `scrollWidth` con una evaluación en página y toma capturas para inspeccionarlas visualmente.

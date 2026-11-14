@@ -1,7 +1,7 @@
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { getPublicImageFile } from '@/repositories/achievements.repository';
 import { FILE_RULES } from '@/services/storage/file-rules';
-import { MemoryStorage } from '@/services/storage/memory-storage';
+import { isMemoryStorage } from '@/services/storage/memory-storage';
 import { getStorageProvider } from '@/services/storage/provider-factory';
 
 /**
@@ -28,7 +28,7 @@ export async function readPublicImage(db: KorumPrismaClient, fileId: string | nu
       const body = new Uint8Array(await response.arrayBuffer());
       return body.byteLength > 0 && body.byteLength <= maxBytes ? { bytes: body, mimeType: file.mimeType } : null;
     }
-    if (storage instanceof MemoryStorage) {
+    if (isMemoryStorage(storage)) {
       const object = storage.readPublic(file.bucket, file.objectKey);
       return object && object.body.byteLength <= maxBytes ? { bytes: new Uint8Array(object.body), mimeType: file.mimeType } : null;
     }

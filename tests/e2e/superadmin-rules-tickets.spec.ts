@@ -162,6 +162,9 @@ test('las medallas piden niveles que suben y las categorías globales piden conf
     await select.selectOption('EXEMPT');
     const confirm = page.getByTestId('global-category-confirm');
     await expect(confirm).toContainText(`«${name}» pasará a estar exenta (0 %)`);
+    // El foco pasa al título de la confirmación (el desplegable queda bloqueado): desde ahí Escape la cancela. Pulsarlo antes de que llegue el foco, como
+    // solo puede hacer una prueba, no cancelaba nada y dejaba esta prueba intermitente con el equipo cargado (Sprint 5.6).
+    await expect(confirm.locator('p').first()).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(confirm).toHaveCount(0);
     await expect(select).toBeFocused();

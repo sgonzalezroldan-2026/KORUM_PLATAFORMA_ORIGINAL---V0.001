@@ -64,3 +64,13 @@ export class MemoryStorage implements StorageProvider {
     return this.objects.size;
   }
 }
+
+/**
+ * ¿Es el almacén en memoria? Se pregunta por lo que es (su nombre y su lectura pública) y **no con `instanceof`**: la compilación de producción lleva dos
+ * copias de esta clase, una para las rutas (`route.ts`) y otra para las páginas y las acciones de servidor, y el almacén compartido (`provider-factory.ts`)
+ * lo crea la primera que lo pide. Con `instanceof`, la otra copia no lo reconocía: en la demostración, las fotos, los logotipos y las portadas respondían
+ * 404 según qué parte de la aplicación hubiera tocado antes un fichero (lo destapó el recorrido de certificación del Sprint 5.6 al ejecutarse solo).
+ */
+export function isMemoryStorage(storage: StorageProvider): storage is MemoryStorage {
+  return storage.name === 'memory' && typeof (storage as Partial<MemoryStorage>).readPublic === 'function';
+}

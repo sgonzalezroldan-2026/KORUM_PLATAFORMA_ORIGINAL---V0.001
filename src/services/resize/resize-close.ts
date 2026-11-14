@@ -79,7 +79,7 @@ async function lockPoll(tx: Db, pollId: number) {
   });
   const initiative = await tx.initiative.findUniqueOrThrow({
     where: { id: reference.initiativeId },
-    select: { id: true, organizationId: true, status: true, raisedCents: true, goalCents: true, bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, costMatCents: true, costInstCents: true, contingencyBps: true }
+    select: { id: true, organizationId: true, status: true, raisedCents: true, goalCents: true, bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, costMatCents: true, costInstCents: true, contingencyBps: true, absorbsGatewayCostByKorum: true }
   });
   return { poll, initiative };
 }
@@ -152,7 +152,8 @@ async function refundNonVotersOrFinish(db: Db, pollId: number, now: Date): Promi
       gatewayFeeCents: initiative.gatewayFeeCents,
       costMatCents: initiative.costMatCents,
       costInstCents: initiative.costInstCents,
-      contingencyBps: initiative.contingencyBps
+      contingencyBps: initiative.contingencyBps,
+      absorbsGatewayCostByKorum: initiative.absorbsGatewayCostByKorum
     });
     await tx.initiative.update({
       where: { id: initiative.id },

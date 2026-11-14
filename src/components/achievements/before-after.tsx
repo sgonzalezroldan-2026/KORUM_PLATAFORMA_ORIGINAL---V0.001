@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 export interface BeforeAfterProps {
   title: string;
@@ -25,6 +25,12 @@ export function BeforeAfter({ title, beforeSrc, afterSrc }: BeforeAfterProps) {
   const [before, setBefore] = useState(50);
   // Una imagen que no carga (fichero retirado) no deja el texto alternativo desbordado sobre la tarjeta: se cae al aviso.
   const [failed, setFailed] = useState(false);
+  const frame = useRef<HTMLDivElement>(null);
+  // Una foto que ya había fallado cuando la página se hizo interactiva no vuelve a avisar con `onError`: se comprueba al montar (repaso del Sprint 5.6).
+  useEffect(() => {
+    const broken = [...(frame.current?.querySelectorAll('img') ?? [])].some((image) => image.complete && image.naturalWidth === 0);
+    if (broken) setFailed(true);
+  }, []);
 
   if ((!beforeSrc && !afterSrc) || failed) {
     return (
@@ -37,7 +43,7 @@ export function BeforeAfter({ title, beforeSrc, afterSrc }: BeforeAfterProps) {
     const only = afterSrc ?? beforeSrc!;
     const isAfter = afterSrc !== null;
     return (
-      <figure className="relative overflow-hidden rounded-2xl bg-patio-rule" data-testid="achievement-single-photo">
+      <figure ref={frame} className="relative overflow-hidden rounded-2xl bg-patio-rule" data-testid="achievement-single-photo">
         {/* eslint-disable-next-line @next/next/no-img-element -- la ruta es propia y devuelve una redirección al cubo público; no pasa por el optimizador */}
         <img src={only} alt={t(isAfter ? 'afterAlt' : 'beforeAlt', { title })} width={800} height={600} loading="lazy" decoding="async" onError={() => setFailed(true)} className="aspect-4/3 w-full object-cover" />
         <figcaption className={`${chip} left-2`}>{t(isAfter ? 'after' : 'before')}</figcaption>
@@ -46,7 +52,7 @@ export function BeforeAfter({ title, beforeSrc, afterSrc }: BeforeAfterProps) {
   }
 
   return (
-    <div className="space-y-2" data-testid="achievement-comparer">
+    <div ref={frame} className="space-y-2" data-testid="achievement-comparer">
       <div className="relative overflow-hidden rounded-2xl bg-patio-rule">
         {/* eslint-disable-next-line @next/next/no-img-element -- ver arriba */}
         <img src={afterSrc} alt={t('afterAlt', { title })} width={800} height={600} loading="lazy" decoding="async" onError={() => setFailed(true)} className="aspect-4/3 w-full object-cover" />

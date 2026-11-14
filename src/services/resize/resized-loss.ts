@@ -12,7 +12,7 @@ import type { Db } from '@/lib/db';
 export async function rescaleResizedAfterLoss(tx: Db, initiativeId: number): Promise<'RESCALED' | 'REFUNDING' | 'UNCHANGED'> {
   const initiative = await tx.initiative.findUniqueOrThrow({
     where: { id: initiativeId },
-    select: { organizationId: true, status: true, raisedCents: true, goalCents: true, bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, costMatCents: true, costInstCents: true, contingencyBps: true }
+    select: { organizationId: true, status: true, raisedCents: true, goalCents: true, bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, costMatCents: true, costInstCents: true, contingencyBps: true, absorbsGatewayCostByKorum: true }
   });
   if (initiative.status !== 'GOAL_REACHED' || initiative.raisedCents >= initiative.goalCents) return 'UNCHANGED';
   const audit = (action: string, metadata: Record<string, number>) =>
@@ -30,7 +30,8 @@ export async function rescaleResizedAfterLoss(tx: Db, initiativeId: number): Pro
     gatewayFeeCents: initiative.gatewayFeeCents,
     costMatCents: initiative.costMatCents,
     costInstCents: initiative.costInstCents,
-    contingencyBps: initiative.contingencyBps
+    contingencyBps: initiative.contingencyBps,
+    absorbsGatewayCostByKorum: initiative.absorbsGatewayCostByKorum
   });
   await tx.initiative.update({
     where: { id: initiativeId },

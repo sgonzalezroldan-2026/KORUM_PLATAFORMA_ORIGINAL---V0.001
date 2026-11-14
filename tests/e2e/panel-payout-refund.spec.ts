@@ -354,6 +354,26 @@ test.describe('Sprint 4.4b · campañas vencidas sin llegar a la meta', () => {
     await expect(page).toHaveURL(new RegExp(`/panel/${entity.slug}/liquidaciones$`), NAVIGATION);
     await server(page.getByTestId(`payout-ready-${voteId}`)).toContainText(/Para el proyecto\s*9,00\s€/);
 
+    // --- En el Estudio (Sprint 5.6) la campaña rehecha se enseña en solo lectura: aviso, meta fija y sus cifras guardadas, cuadradas al céntimo ---
+    await page.goto(`/panel/${entity.slug}/estudio?iniciativa=${voteId}`);
+    const resizedNotice = page.getByTestId('studio-resized-notice');
+    await server(resizedNotice).toContainText('Esta campaña se rehízo por votación: su meta es fija.');
+    await expect(resizedNotice).toContainText(/la meta pasó de 50,00\s€ a 10,00\s€/);
+    await expect(page.getByTestId('studio-badge')).toHaveText('Meta fija por votación');
+    await expect(page.getByTestId('studio-goal')).toHaveText(/^10,00\s€$/);
+    await expect(page.getByTestId('studio-resized-sum')).toHaveText(/^Suma cuadrada: 9,00\s€ \+ 0,50\s€ \+ 0,00\s€ \+ 0,50\s€ = 10,00\s€\.$/);
+    await expect(page.getByTestId('studio-board')).not.toContainText('Importe exento por defecto');
+    // Lo que el Estudio dice que recibe el proyecto es lo mismo que enseña la tarjeta de la liquidación: 9,00 €.
+    await expect(page.getByTestId('studio-resized-entity')).toHaveText(/Para el proyecto al liquidar: la meta menos las comisiones \(el mismo importe que el coste del proyecto\)\s*9,00\s€/);
+    await expect(page.getByLabel('Presupuesto del proveedor (€)')).toBeDisabled();
+    await expect(page.getByLabel('Descripción')).toBeDisabled();
+    await expect(page.getByTestId('studio-save')).toHaveCount(0);
+    await expect(page.getByTestId('studio-publish')).toHaveCount(0);
+    await checkPage(page, isMobile);
+    await page.goto(`/ca/panel/${entity.slug}/estudio?iniciativa=${voteId}`);
+    await server(page.getByTestId('studio-resized-notice')).toContainText('Aquesta campanya es va refer per votació: la seva meta és fixa.');
+    await checkPage(page, isMobile);
+
     // --- Los avisos a las familias: el resultado a quien siguió en la campaña y la devolución hecha a quien la pidió ---
     await cronUntil(request, BROADCAST, async () => (await sentTo('initiative.resizeResult', keeps)) && (await sentTo('initiative.refundingSupporter', keeps)));
     expect(await emailTo(keeps, familySince, (text) => text.includes('sale adelante'))).toContain('Comprar 4 tablets con lo recaudado');

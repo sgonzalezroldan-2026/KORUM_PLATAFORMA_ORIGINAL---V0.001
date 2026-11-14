@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { discardStudioAction, publishStudioAction, saveStudioAction } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/(gestion)/estudio/actions';
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
 import { formatCents } from '@/core/finance/money';
+import { resizedBudgetBoard } from '@/core/studio/resized-board';
 import { computeStudioBoard, computeTicketingBoard, publishBlockers, saveProblems, storedBudgetBoard, type PublishBlocker, type StudioContext } from '@/core/studio/studio-board';
 import type { RewardPreset, StudioDraft } from '@/core/studio/studio-draft';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -18,7 +19,7 @@ import { StudioFields, type StudioFieldErrors, type StudioLock } from './studio-
  * pizarra TCO a la derecha, recalculada en cada pulsación con las mismas funciones que usa el servidor. Una campaña en `BUDGETING` se edita entera; con la
  * campaña ya recaudando solo se tocan los campos que no mueven dinero, y una cerrada solo se mira. Publicar pide confirmación (no se deshace: reserva cupos y
  * fija presupuesto, precio y fecha) y el servidor vuelve a calcular y comprueba todo; si la meta que se aceptó ya no coincide, no publica. Un borrador se
- * puede descartar (`BUDGETING` → `CANCELLED`).
+ * puede descartar (`BUDGETING` → `CANCELLED`). Una campaña rehecha por votación (`resized`) se enseña entera en solo lectura, con sus cifras guardadas y su aviso.
  */
 
 export interface StoredPricing {
@@ -32,6 +33,8 @@ export interface StoredPricing {
   bracketRateAppliedBps: number;
   bracketFeeCents: number;
   gatewayFeeCents: number;
+  /** KORUM asume la pasarela de esta campaña (no está dentro de la meta). */
+  absorbsGatewayCostByKorum: boolean;
 }
 
 export interface StudioWorkbenchProps {
@@ -47,6 +50,11 @@ export interface StudioWorkbenchProps {
   justPublished: boolean;
   /** Mensaje de WhatsApp ya compuesto en el idioma en que escribe la entidad, con el enlace en ese idioma (revisión de experiencia del 5.5b): las familias lo reciben así aunque quien firma use otro. */
   shareText?: string;
+  /**
+   * Campaña rehecha por votación (Sprint 4.4b): la meta con la que se publicó y la que fijó la votación (la actual puede ser menor si después un banco
+   * devolvió un cobro). Su pizarra enseña las cifras guardadas y nada se edita (Sprint 5.6).
+   */
+  resized?: { originalGoalCents: number; votedGoalCents: number } | null;
 }
 
 type Message = { tone: 'error' | 'success' | 'info'; text: string; list?: string[] } | null;
@@ -76,7 +84,7 @@ const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STA
  */
 let carriedSavedNotice: { initiativeId: number; message: Exclude<Message, null> } | null = null;
 
-export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished, shareText }: StudioWorkbenchProps) {
+export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished, shareText, resized = null }: StudioWorkbenchProps) {
   const t = useTranslations('panel.studio');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -114,6 +122,10 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
     if (editable || !stored) return computeStudioBoard(context, draft);
     return draft.format === 'TICKETING' ? computeTicketingBoard(context, draft, stored.maintFeeCents) : storedBudgetBoard({ ...stored, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps });
   }, [context, draft, editable, stored]);
+  const resizedBoard = useMemo(
+    () => (resized && stored && draft.format === 'BUDGET' ? resizedBudgetBoard({ ...stored, originalGoalCents: resized.originalGoalCents, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps }) : null),
+    [resized, stored, draft.format, draft.costMatCents, draft.costInstCents, draft.contingencyBps]
+  );
   const blockers = useMemo(() => (editable ? publishBlockers(context, draft, board, now) : []), [context, draft, board, now, editable]);
   // En vivo solo la fecha (su error se arregla al momento); lo demás, tras el primer intento de guardar o publicar: no se grita a quien aún está escribiendo.
   const live = useMemo(() => saveProblems(context, draft, now).filter((problem) => problem.startsWith('CLOSING')), [context, draft, now]);
@@ -377,7 +389,21 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
         </div>
       ) : null}
       {lock === 'SOFT' ? <FormAlert tone="info">{t('lock.soft')}</FormAlert> : null}
-      {lock === 'ALL' ? <FormAlert tone="info">{t('lock.all')}</FormAlert> : null}
+      {resizedBoard ? (
+        <div className="rounded-xl border-2 border-varsity-navy bg-varsity-ivory p-3 text-sm text-varsity-navy" data-testid="studio-resized-notice">
+          <p className="font-extrabold">
+            <span aria-hidden="true">{'🗳️ '}</span>
+            {t('resized.notice')}
+          </p>
+          <p>
+            {resized && resized.votedGoalCents !== resizedBoard.goalCents
+              ? t('resized.detailAfterLoss', { original: formatCents(resizedBoard.originalGoalCents, locale), voted: formatCents(resized.votedGoalCents, locale), goal: formatCents(resizedBoard.goalCents, locale) })
+              : t('resized.detail', { original: formatCents(resizedBoard.originalGoalCents, locale), goal: formatCents(resizedBoard.goalCents, locale) })}
+          </p>
+        </div>
+      ) : lock === 'ALL' ? (
+        <FormAlert tone="info">{t('lock.all')}</FormAlert>
+      ) : null}
       {board.kind === 'BUDGET' && board.lock.blocked ? (
         <div role="status" className="rounded-2xl border-2 border-red-700 bg-red-50 p-3.5 text-sm text-red-950" data-testid="studio-lock-alert">
           <p className="font-extrabold">
@@ -404,7 +430,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
           <StudioFields draft={draft} context={context} lock={lock} rewardPresets={rewardPresets} ticketFeeUnitCents={ticketFeeUnitCents} today={today} maxCloseOn={maxCloseOn} onChange={change} errors={errors} />
         </section>
         <div className="lg:col-span-5">
-          <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} ticketSubtype={draft.ticketSubtype} footer={footer} />
+          <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} ticketSubtype={draft.ticketSubtype} footer={footer} resized={resizedBoard} resizedSettles={stored?.status === 'GOAL_REACHED' || stored?.status === 'CLOSED'} />
         </div>
       </div>
     </div>

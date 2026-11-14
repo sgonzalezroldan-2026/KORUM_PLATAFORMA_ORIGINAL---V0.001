@@ -9,6 +9,8 @@ import { assertSafeCents, bpsOf } from '@/core/finance/money';
  * - **Las 4 líneas públicas siguen sumando la meta** (Regla 02 §1): el presupuesto y la instalación se reparten en la misma proporción que tenían, con la
  *   reserva de la línea 3 calculada con su fórmula de siempre, y la línea 4 es el resto. Ese resto cubre las comisiones nuevas y, como mucho, un céntimo
  *   del redondeo de la reserva, que no es de KORUM: la liquidación paga a la entidad `recaudado − comisiones`, así que ese céntimo también le llega.
+ * - **Si KORUM asume la pasarela** (`absorbsGatewayCostByKorum`), esa pasarela nunca estuvo dentro de la meta ni se descuenta al liquidar (`payoutFigures`):
+ *   baja en la misma proporción como coste de KORUM, pero no le quita sitio al proyecto ni aparece en la línea 4 (auditoría financiera del Sprint 5.6).
  */
 
 export interface ResizeFiguresInput {
@@ -20,6 +22,8 @@ export interface ResizeFiguresInput {
   costMatCents: number;
   costInstCents: number;
   contingencyBps: number;
+  /** KORUM asume la pasarela de esta campaña: no forma parte de la meta. */
+  absorbsGatewayCostByKorum: boolean;
 }
 
 export interface ResizedFigures {
@@ -66,7 +70,8 @@ export function resizedFigures(input: ResizeFiguresInput): ResizedFigures {
   const bracketFeeCents = scaleDown(assertCents(input.bracketFeeCents, 'tramo'), newGoal, originalGoal);
   const maintFeeCents = scaleDown(assertCents(input.maintFeeCents, 'mantenimiento'), newGoal, originalGoal);
   const gatewayFeeCents = scaleDown(assertCents(input.gatewayFeeCents, 'pasarela'), newGoal, originalGoal);
-  const feesCents = bracketFeeCents + maintFeeCents + gatewayFeeCents;
+  // Lo que se descuenta de la meta al liquidar: la pasarela solo si va dentro de la meta.
+  const feesCents = bracketFeeCents + maintFeeCents + (input.absorbsGatewayCostByKorum ? 0 : gatewayFeeCents);
   if (feesCents > newGoal) throw new RangeError(`Las comisiones (${feesCents}) superan la meta nueva (${newGoal}).`);
 
   const executionCents = costMat + costInst === 0 ? 0 : largestExecutionWithin(newGoal - feesCents, contingencyBps);

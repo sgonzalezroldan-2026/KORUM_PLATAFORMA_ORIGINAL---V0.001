@@ -6,24 +6,10 @@ import type { EntityActionResult } from '@/app/[locale]/(superadmin)/admin/entid
 import { useToast } from '@/components/ui/toast-provider';
 import { Link, useRouter } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
+import { focusLater } from '@/lib/focus-later';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 
-/** Mueve el foco cuando el botón que lo tenía se deshabilita o desaparece (WCAG 2.4.3): sin esto el teclado vuelve al principio de la página. */
-export function focusLater(id: string | null | undefined) {
-  if (!id) return;
-  let attempts = 0;
-  // Si el destino sigue deshabilitado (la acción aún no ha terminado de pintarse) se reintenta unos instantes: un botón deshabilitado no recibe el foco.
-  const attempt = () => {
-    const target = document.getElementById(id) as (HTMLElement & { disabled?: boolean }) | null;
-    if (target && !target.disabled) {
-      target.focus();
-      return;
-    }
-    attempts += 1;
-    if (attempts < 30) setTimeout(attempt, 50);
-  };
-  requestAnimationFrame(attempt);
-}
+export { focusLater };
 
 /**
  * Una acción del motor de reglas: la lanza, anuncia el resultado (aviso si salió bien, texto junto al formulario si no), mueve el foco (al titular de la página si salió bien,

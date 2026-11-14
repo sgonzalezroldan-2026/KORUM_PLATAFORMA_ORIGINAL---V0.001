@@ -254,6 +254,33 @@ describe('la doble firma nunca se vacía ni se duplica', () => {
     expect(view.myRole).toBeNull();
   });
 
+  it('el relevo de otra entidad responde como uno que no existe y el sondeo queda anotado (Sprint 5.6, QA-SEC10)', async () => {
+    const { organization, director } = await team();
+    const other = await team();
+    const { handoverId: theirs } = await proposeHandover(db, other.cosigner.actor, other.organization.id, { role: 'DIRECTOR', name: 'De otra entidad', email: newEmail('ajeno'), roleLabel: 'Dirección' }, context());
+    const probes = (action: string) => db.auditLog.findMany({ where: { organizationId: organization.id, actorUserId: director.user.id, action }, select: { targetType: true, targetId: true, metadataJson: true } });
+
+    // Retirar y reenviar el relevo de otra entidad: lo mismo que con uno inventado, y nada cambia en la otra entidad.
+    for (const id of [theirs, 'z'.repeat(24), '']) {
+      expect(await reason(cancelHandover(db, director.actor, organization.id, id))).toBe('NOT_FOUND');
+      expect(await reason(resendHandoverInvitation(db, director.actor, organization.id, id, context()))).toBe('NOT_FOUND');
+    }
+    expect(await db.signerHandover.findUniqueOrThrow({ where: { id: theirs } })).toMatchObject({ status: 'INVITED', closedAt: null });
+    // El de otra entidad queda como tal (con su dueña, que nunca se devuelve a quien pregunta); los inventados, como inexistentes.
+    const outside = await probes('tenant.resource_outside_tenant');
+    expect(outside).toHaveLength(2);
+    expect(outside.every((row) => row.targetType === 'SignerHandover' && row.targetId === theirs && (row.metadataJson as { ownerOrganizationId?: string }).ownerOrganizationId === other.organization.id)).toBe(true);
+    expect((await probes('tenant.resource_not_found')).map((row) => row.targetId).sort()).toEqual(['-', '-', 'z'.repeat(24), 'z'.repeat(24)]);
+
+    // Un relevo propio ya cerrado no es un sondeo: responde lo mismo, sin fila nueva.
+    const { handoverId: own } = await proposeHandover(db, director.actor, organization.id, { role: 'COSIGNER', name: 'Propia', email: newEmail('propia'), roleLabel: 'Tesorería' }, context());
+    await cancelHandover(db, director.actor, organization.id, own);
+    expect(await reason(cancelHandover(db, director.actor, organization.id, own))).toBe('NOT_FOUND');
+    expect(await reason(resendHandoverInvitation(db, director.actor, organization.id, own, context()))).toBe('NOT_FOUND');
+    expect(await probes('tenant.resource_outside_tenant')).toHaveLength(2);
+    expect(await probes('tenant.resource_not_found')).toHaveLength(4);
+  });
+
   it('la base no deja borrar un relevo ni cambiar uno cerrado, salvo anonimizar el nombre escrito', async () => {
     const { organization, cosigner } = await team();
     const { handoverId } = await proposeHandover(db, cosigner.actor, organization.id, { role: 'DIRECTOR', name: 'Cerrado', email: newEmail('cerrado'), roleLabel: 'Dirección' }, context());

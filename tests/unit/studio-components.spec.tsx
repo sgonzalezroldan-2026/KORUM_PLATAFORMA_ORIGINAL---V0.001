@@ -161,7 +161,7 @@ describe('QA-S01 · Estudio de edición', () => {
   });
 
   it('con la campaña ya recaudando solo se pueden tocar la descripción y el reto; el presupuesto queda bloqueado', () => {
-    const stored = { status: 'FUNDRAISING', walletEscrowId: 'WLT-ESC-AAAAAA', raisedCents: 1000, goalCents: 587_400, maintFeeCents: 0, defaultExemptAppliedCents: 100_000, medalExemptAppliedCents: 0, bracketRateAppliedBps: 400, bracketFeeCents: 18_440, gatewayFeeCents: 7960 };
+    const stored = { status: 'FUNDRAISING', walletEscrowId: 'WLT-ESC-AAAAAA', raisedCents: 1000, goalCents: 587_400, maintFeeCents: 0, defaultExemptAppliedCents: 100_000, medalExemptAppliedCents: 0, bracketRateAppliedBps: 400, bracketFeeCents: 18_440, gatewayFeeCents: 7960, absorbsGatewayCostByKorum: false };
     renderWithIntl(<StudioWorkbench {...props(budget(), { lock: 'SOFT', stored })} />);
     expect(screen.getByLabelText('Presupuesto del proveedor (€)')).toBeDisabled();
     expect(screen.getByLabelText('Título de la iniciativa, evento o rifa')).toBeDisabled();

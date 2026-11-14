@@ -47,6 +47,7 @@ const STUDIO_INITIATIVE_VIEW = {
   bracketFeeCents: true,
   maintFeeCents: true,
   gatewayFeeCents: true,
+  absorbsGatewayCostByKorum: true,
   ticketSubtype: true,
   ticketPriceCents: true,
   ticketMax: true,
@@ -55,7 +56,9 @@ const STUDIO_INITIATIVE_VIEW = {
   ticketVenue: true,
   rafflePrizeCount: true,
   coverFileId: true,
-  sourceIdeaId: true
+  sourceIdeaId: true,
+  // Votación de redimensionamiento (Sprint 4.4b): si se cerró con un proyecto, el Estudio enseña la campaña en solo lectura con su meta fija (Sprint 5.6).
+  resizePoll: { select: { status: true, originalGoalCents: true, newGoalCents: true } }
 } as const;
 
 export type StudioInitiative = NonNullable<Awaited<ReturnType<typeof findStudioInitiative>>>;

@@ -69,7 +69,8 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof TenantAccessError) return json({ ok: false, error: 'FORBIDDEN' }, 403);
     if (error instanceof ResourceNotFoundError) return json({ ok: false, error: 'NOT_FOUND' }, 404);
-    if (error instanceof CampaignPayoutError) return json({ ok: false, error: error.reason }, error.reason === 'RATE_LIMITED' ? 429 : 422);
+    // Una campaña de otra entidad responde como una que no existe, también en el código HTTP (Sprint 5.6, QA-SEC10).
+    if (error instanceof CampaignPayoutError) return json({ ok: false, error: error.reason }, error.reason === 'RATE_LIMITED' ? 429 : error.reason === 'NOT_FOUND' ? 404 : 422);
     if (error instanceof FileRejectedError) return json({ ok: false, error: `FILE_${error.reason}` }, 422);
     throw error;
   }

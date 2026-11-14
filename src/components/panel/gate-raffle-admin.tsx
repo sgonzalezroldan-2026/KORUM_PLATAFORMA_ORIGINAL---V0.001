@@ -84,9 +84,9 @@ export function GateRaffleAdmin({ orgSlug, event, canAct }: { orgSlug: string; e
 
   return (
     <section aria-labelledby={`raffle-admin-${event.id}`} className="flex flex-col gap-3 rounded-xl border-2 border-stone-200 p-4" data-testid="gate-raffle-admin">
-      <h4 id={`raffle-admin-${event.id}`} className="font-corp text-base font-extrabold text-varsity-navy">
+      <h3 id={`raffle-admin-${event.id}`} className="font-corp text-base font-extrabold text-varsity-navy">
         {t('title')}
-      </h4>
+      </h3>
       {raffle === null ? (
         <p className="text-sm text-ink-soft">{t('notDrawn')}</p>
       ) : (
@@ -108,7 +108,7 @@ export function GateRaffleAdmin({ orgSlug, event, canAct }: { orgSlug: string; e
             ))}
           </ul>
 
-          <h5 className="font-corp text-sm font-extrabold text-varsity-navy">{t('extraTitle')}</h5>
+          <h4 className="font-corp text-sm font-extrabold text-varsity-navy">{t('extraTitle')}</h4>
           <p className="text-sm text-ink-soft">{t('extraIntro')}</p>
           {done ? (
             <p ref={doneRef} tabIndex={-1} role="status" className="rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-3 font-semibold text-emerald-950" data-testid="gate-raffle-done">

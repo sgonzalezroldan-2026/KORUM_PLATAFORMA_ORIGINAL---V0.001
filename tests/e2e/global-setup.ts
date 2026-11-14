@@ -1,14 +1,38 @@
 import { execFileSync } from 'node:child_process';
+import { readdir, stat, unlink } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import pg from 'pg';
 import { E2E_SCHEMA, e2eBaseDatabaseUrl, e2eDatabaseUrl } from './e2e-database';
 import { E2E_SERVER_ENV } from './e2e-env';
 
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
 
+const PREVIEW_MAX_AGE_MS = 24 * 3_600_000;
+
+/**
+ * Borra las vistas previas de email de hace más de un día (`.email-preview/`, carpeta ignorada por git). Cada ejecución deja miles y las pruebas las recorren
+ * todas para encontrar un código: con decenas de miles, leer un email tardaba cada vez más (Sprint 5.6). Sus enlaces y códigos caducaron hace horas.
+ */
+async function purgeOldEmailPreviews(): Promise<void> {
+  const directory = path.join(process.cwd(), '.email-preview');
+  const names = await readdir(directory).catch(() => [] as string[]);
+  const limit = Date.now() - PREVIEW_MAX_AGE_MS;
+  await Promise.all(
+    names
+      .filter((name) => name.startsWith('preview-'))
+      .map(async (name) => {
+        const file = path.join(directory, name);
+        const info = await stat(file).catch(() => null);
+        if (info?.isFile() && info.mtimeMs < limit) await unlink(file).catch(() => undefined);
+      })
+  );
+}
+
 /** Recrea el esquema `korum_e2e`, aplica las migraciones y carga la semilla de demostración (las entidades `cervantes`, `san-jose`…). */
 export default async function globalSetup() {
   const base = e2eBaseDatabaseUrl();
+  await purgeOldEmailPreviews();
   if (!process.env.CI && !LOCAL_HOSTS.has(new URL(base).hostname)) throw new Error('Las pruebas de navegador solo usan una base de datos local.');
   const client = new pg.Client({ connectionString: base });
   try {

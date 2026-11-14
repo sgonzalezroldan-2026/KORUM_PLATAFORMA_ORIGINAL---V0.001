@@ -86,9 +86,9 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
   return (
     <li className="flex flex-col gap-4 rounded-2xl border-2 border-varsity-navy bg-white p-5" data-testid="gate-admin-event" aria-labelledby={headingId}>
       <div className="flex flex-col gap-1">
-        <h3 id={headingId} className="font-corp wrap-break-word text-xl font-extrabold text-varsity-navy">
+        <h2 id={headingId} className="font-corp wrap-break-word text-xl font-extrabold text-varsity-navy">
           {event.title}
-        </h3>
+        </h2>
         <p className="text-sm text-ink-soft">
           {[t(event.subtype === 'RAFFLE' ? 'kind.raffle' : 'kind.event'), date, event.venue].filter(Boolean).join(' · ')}
         </p>
@@ -179,7 +179,7 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
       ) : null}
 
       <div className="flex flex-col gap-2">
-        <h4 className="font-corp text-base font-extrabold text-varsity-navy">{t('sessions.title', { count: event.sessions.length })}</h4>
+        <h3 className="font-corp text-base font-extrabold text-varsity-navy">{t('sessions.title', { count: event.sessions.length })}</h3>
         {event.sessions.length === 0 ? (
           <p className="text-sm text-ink-soft">{t('sessions.empty')}</p>
         ) : (

@@ -1929,7 +1929,8 @@
         "settle": "Pay out “{title}”",
         "decideExpired": "Decide what to do with “{title}”",
         "followVote": "See the vote on “{title}”",
-        "followRefund": "See the refund for “{title}”"
+        "followRefund": "See the refund for “{title}”",
+        "viewInStudio": "View in Studio: {title}"
       },
       "steps": {
         "moderation": "1. Moderation",
@@ -2198,7 +2199,7 @@
       "loading": "Checking the link…",
       "missing": {
         "title": "This link no longer works",
-        "body": "It may have been used already, expired, belong to someone else or run out of attempts. Request a new one from Approvals.",
+        "body": "It may have been used already, expired, belong to someone else or run out of attempts. Request a new one from where you asked for it: Approvals, Payouts or Activity Fund.",
         "cta": "Go to Approvals"
       },
       "done": {
@@ -2263,10 +2264,10 @@
       "errors": {
         "otpFormat": "Enter the 6 digits of the code.",
         "otp": "{count, plural, one {The code is not correct. You have # attempt left.} other {The code is not correct. You have # attempts left.}}",
-        "locked": "This link has run out of attempts. Request a new one from Approvals.",
+        "locked": "This link has run out of attempts. Request a new one from where you asked for it: Approvals, Payouts or Activity Fund.",
         "failed": "We could not complete the signature. Please try again in a few seconds.",
-        "INVALID_LINK": "This link no longer works. Request a new one from Approvals.",
-        "TARGET_CHANGED": "What was to be signed has changed since the link was sent. Review it in Approvals and request a new link.",
+        "INVALID_LINK": "This link no longer works. Request a new one from where you asked for it: Approvals, Payouts or Activity Fund.",
+        "TARGET_CHANGED": "What was to be signed has changed since the link was sent. Review it in the panel (Approvals, Payouts or Activity Fund) and request a new link.",
         "LOGIN_REQUIRED": "Your session has ended. Sign in again to sign.",
         "TWO_FACTOR_REQUIRED": "You need to complete two-step verification in this session."
       },
@@ -3101,12 +3102,12 @@
         "subtypeRaffle": "Numbered raffle ticket",
         "ticketPrice": "Ticket price (€)",
         "ticketMax": "Maximum capacity or number of tickets",
-        "digitalFee": "Digital handling fees",
+        "digitalFee": "Digital handling fees (amount)",
         "digitalFeeHint": "Set by KORUM; shown here for the calculation.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} each)",
         "venue": "Place or date of the event or draw",
         "venueHint": "Optional. Shown on the public page.",
-        "feeMode": "Digital handling fees",
+        "feeMode": "Who pays the digital handling fees",
         "feeModeAdd": "Add them to the buyer’s total",
         "feeModeInc": "Absorb them within the ticket price",
         "raffleNotice": "Raffles and lotteries are regulated by each region and may need prior notification or authorisation depending on their value. Prizes in kind cannot be exchanged for cash.",
@@ -3169,7 +3170,9 @@
         "badgeBracket": "Bracket {rate}",
         "badgeExact": "Exact breakdown",
         "goalLabel": "Exact final public goal",
-        "goalLabelTicketing": "Into the piggy bank at full capacity"
+        "goalLabelTicketing": "Into the piggy bank at full capacity",
+        "badgeResized": "Goal fixed by vote",
+        "goalLabelResized": "Fixed goal after the vote"
       },
       "blockers": {
         "title": "Before publishing you still need:",
@@ -3319,6 +3322,25 @@
         "cinema": "Open rehearsal with a snack for the whole group",
         "games": "A performance dedicated to the families",
         "noHomework": "An afternoon of games and music for the group"
+      },
+      "resized": {
+        "notice": "This campaign was resized by a vote, so its goal is fixed.",
+        "detail": "The people who contributed chose to go ahead with what had been raised: the goal went from {original} to {goal} and the fees went down in the same proportion. The figures are shown and cannot be changed.",
+        "originalGoal": "Goal it was published with",
+        "provider": "Supplier and equipment budget (adjusted to the new goal)",
+        "installation": "Installation and technical fitting (adjusted to the new goal)",
+        "contingency": "Reserve for maintenance, risks and contingencies ({pct})",
+        "project": "Project cost with the new goal",
+        "feesTitle": "Fees and gateway, reduced in proportion to the new goal",
+        "bracket": "Platform bracket fee",
+        "maint": "Platform maintenance charge",
+        "gateway": "Payment gateway cost (Paycomet)",
+        "rounding": "Reserve rounding (it also reaches the organisation)",
+        "sum": "Balanced total: {parts} = {goal}.",
+        "entity": "For the project at payout (goal minus fees)",
+        "gatewayAbsorbed": "Payment gateway cost (KORUM covers it: it does not come out of the goal)",
+        "detailAfterLoss": "The people who contributed chose to go ahead with what had been raised: the goal went from {original} to {voted} and the fees went down in the same proportion. Later, a chargeback (a payment that was returned to its holder) left it at {goal}, with the fees again in proportion. The figures are shown and cannot be changed.",
+        "entitySame": "For the project at payout: the goal minus fees (the same amount as the project cost)"
       }
     },
     "payouts": {
@@ -5814,7 +5836,7 @@
       "title": "Your ticket",
       "event": "Event",
       "quantity": "{count, plural, one {# ticket} other {# tickets}}",
-      "numbers": "Your raffle numbers",
+      "numbers": "{count, plural, one {Your raffle number} other {Your raffle numbers}}",
       "qrAlt": "QR code to get in",
       "show": "Show it at the door, on your phone or printed.",
       "serial": "Code {serial}",
@@ -5831,7 +5853,14 @@
       "shareWarning": "Anyone with this link can use the ticket: only send it to the person who is going.",
       "shareMessage": "Your ticket for “{title}”: {url}",
       "actions": "Ticket actions",
-      "titleRaffle": "Your raffle tickets"
+      "titleRaffle": "Your raffle tickets",
+      "quantityRaffle": "{count, plural, one {# raffle ticket} other {# raffle tickets}}",
+      "qrAltRaffle": "QR code for your raffle tickets",
+      "showRaffle": "{count, plural, one {Keep it: if your number comes up, show it on your phone or printed to claim your prize. The organisation will tell you how to collect it.} other {Keep them: if one of your numbers comes up, show them on your phone or printed to claim your prize. The organisation will tell you how to collect it.}}",
+      "shareWarningRaffle": "Anyone with this link can show these raffle tickets as their own: only send it to someone you trust.",
+      "shareMessageRaffle": "Your raffle tickets for “{title}”: {url}",
+      "actionsRaffle": "Raffle ticket actions",
+      "drawOn": "Draw: {date}"
     },
     "error": {
       "title": "We couldn’t load the community",

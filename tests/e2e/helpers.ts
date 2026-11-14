@@ -34,11 +34,61 @@ export async function waitForFiniteAnimations(page: Page) {
 
 /** axe con las etiquetas WCAG 2.2 AA: 0 incidencias serias o críticas. */
 export async function expectNoSeriousA11yViolations(page: Page) {
+  // Tras una navegación dentro de la aplicación, Next entrega el título de la página nueva en streaming, un instante después del contenido: medir en ese
+  // instante daba un falso «document-title» (visto en el recorrido del Sprint 5.6). Se espera a que llegue; si la página no tiene título, axe lo dice igual.
+  await page.waitForFunction(() => document.title.trim() !== '', undefined, { timeout: 10_000 }).catch(() => undefined);
   await waitForFiniteAnimations(page);
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
   const serious = results.violations.filter((violation) => violation.impact === 'serious' || violation.impact === 'critical');
   const summary = serious.map((violation) => `${violation.id}: ${violation.nodes.map((node) => node.target.join(' ')).join(' | ')}`);
   expect(summary, 'incidencias de accesibilidad serias o críticas').toEqual([]);
+}
+
+/**
+ * Los encabezados no se saltan niveles (regla `heading-order` de axe, de gravedad moderada: no la mira `expectNoSeriousA11yViolations`). Quien navega con
+ * lector de pantalla recorre la página por sus encabezados: un `h3` justo debajo del `h1` le hace creer que se ha saltado una sección (Sprint 5.6).
+ */
+/**
+ * Desplegables cuyo texto elegido no cabe y el navegador lo corta («Infraestructura…»): se mide el texto con la tipografía del propio desplegable y se
+ * compara con su hueco (ancho menos relleno y flecha). Devuelve la etiqueta y el texto de cada uno cortado (repaso del Sprint 5.6).
+ */
+export async function cutSelectTexts(page: Page): Promise<string[]> {
+  return page.locator('select').evaluateAll((elements) =>
+    (elements as HTMLSelectElement[]).flatMap((element) => {
+      const text = element.options[element.selectedIndex]?.text ?? '';
+      const style = getComputedStyle(element);
+      const context = document.createElement('canvas').getContext('2d');
+      if (!context || element.getBoundingClientRect().width === 0) return [];
+      context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const room = element.getBoundingClientRect().width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - 20;
+      return context.measureText(text).width > room ? [`${element.labels?.[0]?.textContent?.trim() ?? element.name}: ${text}`] : [];
+    })
+  );
+}
+
+/**
+ * Filas de la pizarra del Estudio (`data-board-row`): ningún rótulo se queda sin sitio (con menos de 80 px se partía letra a letra cuando su valor era una
+ * frase larga) y ningún importe ocupa más de una línea. «Sin desbordes» no lo ve: el texto cabe, pero no se puede leer (repaso del Sprint 5.6).
+ */
+export async function expectBoardRowsReadable(page: Page) {
+  const problems = await page.locator('[data-board-row]').evaluateAll((rows) =>
+    rows.flatMap((row) => {
+      const [label, value] = [...row.children] as HTMLElement[];
+      if (!label || !value || label.getBoundingClientRect().width === 0) return [];
+      const text = (label.textContent ?? '').trim();
+      const found: string[] = [];
+      if (text.length > 12 && label.getBoundingClientRect().width < 80) found.push(`rótulo sin sitio (${Math.round(label.getBoundingClientRect().width)} px): ${text}`);
+      if (row.getAttribute('data-board-row') === 'amount' && value.getBoundingClientRect().height > parseFloat(getComputedStyle(value).lineHeight) * 1.5) found.push(`importe partido: ${(value.textContent ?? '').trim()}`);
+      return found;
+    })
+  );
+  expect(problems, 'filas de la pizarra que no se leen bien').toEqual([]);
+}
+
+export async function expectHeadingsInOrder(page: Page) {
+  const results = await new AxeBuilder({ page }).withRules(['heading-order']).analyze();
+  const summary = results.violations.flatMap((violation) => violation.nodes.map((node) => node.html.replace(/\s+/g, ' ').slice(0, 120)));
+  expect(summary, 'encabezados que se saltan un nivel').toEqual([]);
 }
 
 /** Ninguna clave de traducción sin resolver (la marca la pone `getMessageFallback`). */

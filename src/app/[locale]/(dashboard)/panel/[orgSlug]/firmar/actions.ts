@@ -10,7 +10,7 @@ import { getSessionActor } from '@/lib/auth/session';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
 import { getKeyring } from '@/config/keyring';
-import { dispatchPayoutExecutedSoon } from '@/lib/panel/outbox-soon';
+import { afterPayoutExecuted } from '@/lib/panel/outbox-soon';
 import { settleSignedFundPayout, type FundSettlement } from '@/services/payments/activity-fund-payout.service';
 import { settleSignedCampaignPayout, type PayoutSettlement } from '@/services/payments/campaign-payout-settlement';
 import type { SessionActor } from '@/repositories/tenant-guard';
@@ -116,7 +116,7 @@ export async function completeSignatureAction(payload: unknown): Promise<SignRes
     }
   }
   const payout = result.target.targetType === 'ESCROW_PAYOUT' ? { settlement: result.complete ? await settleCampaign(db, result.target.payoutId) : null } : null;
-  if (result.target.targetType === 'ESCROW_PAYOUT' && payout?.settlement?.status === 'EXECUTED') await dispatchPayoutExecutedSoon(db, result.target.payoutId);
+  if (result.target.targetType === 'ESCROW_PAYOUT' && payout?.settlement?.status === 'EXECUTED') await afterPayoutExecuted(db, result.target.payoutId);
   return { status: 'SIGNED', complete: result.complete, initiativeId: result.initiativeId, otherSignerNotified: ids.length > 0, fund, payout };
 }
 

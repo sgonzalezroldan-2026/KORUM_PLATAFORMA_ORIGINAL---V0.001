@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import QRCode from 'qrcode';
 import { withE2eDb } from './auth-support';
-import { expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
+import { cutSelectTexts, expectBoardRowsReadable, expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 import { registerEntityAndEnterPanel } from './panel-support';
 
 /**
@@ -22,6 +22,8 @@ async function checkPage(page: Page, isMobile: boolean) {
   await expectNoHorizontalOverflow(page);
   await expectNoMissingTranslations(page);
   await expectNoSeriousA11yViolations(page);
+  // Las filas de la pizarra se leen enteras: ni rótulos sin sitio ni importes partidos (Sprint 5.6).
+  await expectBoardRowsReadable(page);
 }
 
 test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
@@ -45,6 +47,9 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await server(page.getByRole('heading', { level: 1, name: 'Confort en las aulas' })).toBeVisible();
     await expect(page.getByLabel('Título de la iniciativa, evento o rifa')).toHaveValue('Aulas más frescas y confortables');
     await expect(page.getByLabel('Presupuesto del proveedor (€)')).toHaveValue('0');
+    // En escritorio ningún desplegable corta el texto de lo elegido (a 1440 la categoría se leía «Infraestructura…» y el premio del reto, a medias: repaso
+    // del Sprint 5.6). En el móvil un premio largo no cabe en una línea y el desplegable del sistema lo enseña entero al abrirlo.
+    if (!isMobile) expect(await cutSelectTexts(page)).toEqual([]);
     await expect(page.getByTestId('studio-publish')).toBeDisabled();
     await expect(page.getByTestId('studio-blockers')).toContainText('Falta el presupuesto');
     await expect(page.getByTestId('studio-blockers')).toContainText('Los documentos del titular aún no están verificados');
@@ -171,6 +176,9 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await page.goto(`${studio}?nueva=taquilla&plantilla=raffle`);
     await server(page.getByRole('heading', { level: 1, name: 'Rifa solidaria' })).toBeVisible();
     await expect(page.getByTestId('raffle-notice')).toContainText('competencia de cada comunidad autónoma');
+    // La fila de los «Gastos de gestión digital» lleva una frase por valor: baja de línea entera y su rótulo no se queda sin sitio.
+    await expect(page.locator('[data-board-row="phrase"]')).toHaveCount(1);
+    await expectBoardRowsReadable(page);
     await expect(page.getByLabel('Premios que se sortean')).toHaveValue('3');
     await expect(page.getByTestId('studio-goal')).toHaveText(/^1\.000,00\s€$/);
     await expect(page.getByTestId('studio-publish')).toBeDisabled();

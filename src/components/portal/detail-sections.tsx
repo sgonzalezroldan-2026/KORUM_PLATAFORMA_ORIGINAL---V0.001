@@ -30,10 +30,10 @@ export function PublicBreakdown({ breakdown }: { breakdown: BreakdownData }) {
   return (
     <section aria-labelledby="breakdown-heading" className="space-y-2 border-t border-patio-rule pt-4 text-sm" data-testid="public-breakdown">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 id="breakdown-heading" className="font-extrabold text-varsity-navy">
+        <h2 id="breakdown-heading" className="font-extrabold text-varsity-navy">
           <span aria-hidden="true">{'🔍 '}</span>
           {t('heading')}
-        </h3>
+        </h2>
         <span className="rounded-full border border-emerald-700 bg-emerald-50 px-2 py-0.5 text-sm font-extrabold text-emerald-900">{t('exact')}</span>
       </div>
       <dl className="space-y-2 tabular-nums">
@@ -65,10 +65,10 @@ export function TicketDetails({ ticket }: { ticket: TicketInfoData }) {
 
   return (
     <section aria-labelledby="tickets-heading" className="space-y-2 border-t border-patio-rule pt-4 text-sm">
-      <h3 id="tickets-heading" className="font-extrabold text-varsity-navy">
+      <h2 id="tickets-heading" className="font-extrabold text-varsity-navy">
         <span aria-hidden="true">{'🎟️ '}</span>
         {t('ticketsHeading')}
-      </h3>
+      </h2>
       <dl className="space-y-2 tabular-nums">
         {ticket.mode === 'ADD' ? (
           <>
@@ -99,10 +99,10 @@ export function CourseChallenge({ lines, rewardText, target, vertical }: { lines
 
   return (
     <section aria-labelledby="challenge-heading" className="space-y-3 rounded-3xl border border-patio-rule-strong bg-white p-6" data-testid="course-challenge">
-      <h3 id="challenge-heading" className="font-joy text-lg font-bold text-varsity-navy">
+      <h2 id="challenge-heading" className="font-joy text-lg font-bold text-varsity-navy">
         <span aria-hidden="true">{'🏆 '}</span>
         {rewardText ? t('heading', { reward: rewardText }) : t('headingNoReward')}
-      </h3>
+      </h2>
       <p className="text-sm leading-relaxed text-ink-soft">{t('intro', { unit: t(`unit.${unit}`), target })}</p>
       {lines.length === 0 ? (
         <p className="rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-950">{t('empty')}</p>

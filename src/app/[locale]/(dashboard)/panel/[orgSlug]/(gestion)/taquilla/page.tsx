@@ -28,7 +28,7 @@ export default async function GateAdminPage({ params }: { params: Promise<{ loca
   const canAct = !actor.isSuperadmin && actor.memberships.some((membership) => membership.organizationId === organization.id && (membership.role === 'DIRECTOR' || membership.role === 'COSIGNER'));
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
       <header className="flex flex-col gap-2">
         <h1 className="font-corp text-3xl font-extrabold text-varsity-navy">{t('title')}</h1>
         <p className="max-w-3xl text-ink-soft">{t('intro')}</p>
