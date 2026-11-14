@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ResizeBallotForm } from '@/components/portal/resize-ballot-form';
+import { ResizeLinkResendForm } from '@/components/portal/resize-link-resend-form';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getEnv } from '@/config/env';
 import { formatCents } from '@/core/finance/money';
@@ -44,7 +45,15 @@ export default async function ResizeVotePage({ params, searchParams }: PageProps
       {t('backToPortal')}
     </Link>
   );
-  if (ballot.status === 'INVALID') return <EmptyState icon="🗳️" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" action={back} />;
+  if (ballot.status === 'INVALID') {
+    // Sin enlace (o con uno que no sirve): se puede pedir el propio otra vez con el email con el que se donó (Sprint 5.5b). Sin enlace no es un error.
+    return (
+      <div className="mobile-stack mx-auto flex max-w-xl flex-col gap-6 px-4 py-8">
+        <EmptyState icon="🗳️" title={t(token ? 'invalid.title' : 'noLink.title')} description={t(token ? 'invalid.description' : 'noLink.description')} headingLevel={1} role={token ? 'alert' : undefined} action={back} />
+        <ResizeLinkResendForm orgSlug={orgSlug} />
+      </div>
+    );
+  }
 
   const date = format.dateTime(ballot.closesAt, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Madrid' });
   const percent = ballot.originalGoalCents > 0 ? Math.floor((ballot.raisedCents * 100) / ballot.originalGoalCents) : 0;

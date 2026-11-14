@@ -117,6 +117,10 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     const published = page.getByTestId('studio-published');
     await server(published).toBeVisible(NAVIGATION);
     await expect(published).toBeFocused();
+    // Compartir al publicar (Sprint 5.5b): WhatsApp con el enlace de la ficha, en otra pestaña.
+    const whatsapp = published.getByTestId('published-whatsapp-link');
+    await expect(whatsapp).toHaveAttribute('href', new RegExp(`^https://wa\\.me/\\?text=.*%2F${entity.slug}%2Finiciativas%2F${initiativeId}`));
+    await expect(whatsapp).toHaveAttribute('target', '_blank');
     await expect(page).toHaveURL(new RegExp(`/estudio\\?iniciativa=${initiativeId}&publicada=1$`));
     await expect(page.getByTestId('studio-publish')).toHaveCount(0);
     await expect(page.getByLabel('Presupuesto del proveedor (€)')).toBeDisabled();

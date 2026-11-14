@@ -38,7 +38,7 @@ description: >-
 
 > Carga siempre junto a [korum-brand-design-system](../korum-brand-design-system/SKILL.md), que manda en tokens, logotipo y activos.
 
-1. **Capa 1 · Solidez colegial en dinero y gobierno (`.korum-trust-vault`):** cabecera, hucha `WLT-ESC-XXX`, desglose de 4 líneas, pizarra TCO, checkout, Mi Hucha, doble firma, certificados, facturas y pases/carteles QR. Superficies limpias, bordes en azul marino `#101F38` y esmeralda `#047857`, `Plus Jakarta Sans` con `tabular-nums`. Logotipo: *Parche Varsity Heritage* (componentes `KorumLogo` y `KorumMark` de `src/components/brand/`, dibujados a partir de la lámina `public/brand/korum-logo.jpg`; variante para fondos oscuros).
+1. **Capa 1 · Solidez colegial en dinero y gobierno (`.korum-trust-vault`):** cabecera, hucha `WLT-ESC-XXX`, desglose de 4 líneas, pizarra TCO, checkout, Mi Hucha, doble firma, certificados, facturas y pases/carteles QR. Superficies limpias, bordes en azul marino `#101F38` y esmeralda `#047857`, `Plus Jakarta Sans` con `tabular-nums`. Logotipo: *Parche Varsity Heritage* (componentes `KorumLogo` y `KorumMark` de `src/components/brand/`, dibujados a partir de la lámina `docs/brand/korum-logo.jpg`; variante para fondos oscuros).
 2. **Capa 2 · Emoción de patio en la comunidad:**
    - Fondo `.korum-paper-dots` (`#FFFDF8`) en `SCHOOL`; `.korum-court-grid` en `SPORTS_CLUB`.
    - `.korum-notebook-sheet` en el buzón de ideas; `.die-cut-sticker` y `.tactile-btn` en retos, medallas y *Matching 2x*; subrayados de cera (`#FFB800` / `#FF5A43`).

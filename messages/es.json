@@ -14,7 +14,8 @@
     "close": "Cerrar",
     "retry": "Reintentar",
     "loading": "Cargando…",
-    "footerNote": "KORUM es una plataforma tecnológica. Los cobros y las devoluciones los gestiona PAYCOMET."
+    "footerNote": "KORUM es una plataforma tecnológica. Los cobros y las devoluciones los gestiona PAYCOMET.",
+    "sending": "Enviando…"
   },
   "languageSwitcher": {
     "label": "Idioma",
@@ -756,7 +757,8 @@
         "title": "¡Lo hemos conseguido!",
         "body": "«{initiative}» de {organization} ha llegado a su meta gracias a {count, plural, one {una aportación: la tuya} other {# aportaciones, y una de ellas es la tuya}}. ¡Gracias!",
         "next": "El dinero sigue en la hucha de la iniciativa en PAYCOMET hasta que {organization} firme su liquidación. Cuando esté hecho, te enseñaremos el Antes y el Después.",
-        "cta": "Compartir el logro"
+        "cta": "Compartir el logro",
+        "nextSettled": "{organization} ya ha firmado la liquidación y el dinero ha salido de la hucha de la iniciativa hacia el proyecto. Muy pronto te enseñaremos el Antes y el Después."
       },
       "photos": {
         "subject": "Mirad cómo ha quedado: «{initiative}»",
@@ -870,6 +872,19 @@
         "cta": "Ir al soporte del panel",
         "footnote": "Este mensaje lo ha escrito una persona del equipo de KORUM para quienes firman por tu entidad. Puedes contestar desde Soporte, en el panel."
       }
+    },
+    "expiredReminder": {
+      "subject": "Quedan {days, plural, one {# día} other {# días}} para decidir qué hacer con «{initiative}»",
+      "subjectUrgent": "Urgente: «{initiative}» sigue sin decisión ({days, plural, one {# día} other {# días}})",
+      "preheader": "La campaña venció sin llegar a la meta y el dinero sigue en la hucha de la iniciativa en PAYCOMET.",
+      "title": "Falta vuestra decisión",
+      "titleUrgent": "Decidid cuanto antes",
+      "body": "«{initiative}» venció sin llegar a la meta y aún no habéis decidido qué hacer. Quedan {days, plural, one {# día} other {# días}} de los 90 que PAYCOMET permite para repartir el dinero desde el primer cobro.",
+      "canVote": "Todavía podéis preguntar a quienes aportaron si siguen adelante con un proyecto más pequeño: la votación se puede lanzar {days, plural, =0 {solo hoy} one {hoy y mañana} other {durante # días más}}. También podéis devolver el 100 % a cada persona.",
+      "refundOnly": "Ya no queda tiempo para una votación: lo que toca es devolver el 100 % a cada persona, al medio de pago con el que aportó.",
+      "why": "Mientras no decidáis, las familias no saben qué pasará con su aportación.",
+      "wallet": "Hucha de la iniciativa",
+      "cta": "Decidir ahora"
     }
   },
   "nav": {
@@ -887,7 +902,8 @@
       "comoFunciona": "Cómo funciona",
       "precios": "Precios",
       "seguridad": "Seguridad y transparencia",
-      "faq": "Preguntas frecuentes"
+      "faq": "Preguntas frecuentes",
+      "accesibilidad": "Accesibilidad"
     },
     "account": "Mi cuenta"
   },
@@ -1407,6 +1423,39 @@
         "ctaTitle": "¿Listos para empezar?",
         "ctaText": "Da de alta tu entidad gratis y resuelve el resto sobre la marcha."
       }
+    },
+    "accessibility": {
+      "metaTitle": "Declaración de accesibilidad",
+      "metaDescription": "Cómo hacemos KORUM accesible (WCAG 2.2 AA), lo que aún estamos mejorando y cómo avisarnos de un problema.",
+      "h1": "Declaración de accesibilidad",
+      "intro": "Queremos que cualquier persona pueda aportar, votar, comprar una entrada o gestionar su entidad en KORUM, use el dispositivo que use y con las ayudas que necesite.",
+      "dateLabel": "Fecha de la declaración y de su última revisión:",
+      "statusTitle": "Situación de cumplimiento",
+      "statusText": "KORUM es parcialmente conforme con las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.2, nivel AA. Cumplimos la mayoría de los requisitos; aún nos falta comprobar el pago y la portería con lectores de pantalla en móviles reales.",
+      "checksTitle": "Cómo lo comprobamos",
+      "checks": [
+        "Cada versión pasa una revisión automática de accesibilidad de las páginas públicas en castellano, catalán e inglés, y de las pantallas del panel, la consola y la portería, en ordenador y en móvil.",
+        "Todas las acciones se pueden hacer con el teclado y el foco siempre se ve.",
+        "Los textos tienen contraste suficiente y los botones miden al menos 44 × 44 píxeles. Diseñamos las páginas para que se puedan ampliar al 200 % sin perder información.",
+        "Los errores de los formularios se dicen junto a su campo y los lectores de pantalla los anuncian.",
+        "Las animaciones se paran si el dispositivo pide reducir el movimiento.",
+        "Los estados (recaudando, conseguida, pendiente…) nunca se indican solo con color o con un emoji."
+      ],
+      "limitsTitle": "Lo que aún estamos mejorando",
+      "limits": [
+        "Aún no hemos completado la prueba con lectores de pantalla (VoiceOver en iPhone y TalkBack en Android) del pago de una aportación y del modo portería.",
+        "Los textos e imágenes que publica cada centro, club o entidad (descripciones, fotos del Antes y el Después) los escribe la propia entidad: le pedimos que describa sus imágenes, pero no siempre podemos garantizarlo.",
+        "Algunos documentos PDF (certificados, justificantes y facturas) aún no llevan toda la estructura que necesitan los lectores de pantalla. Si necesitas uno en otro formato, pídenoslo.",
+        "El lector de entradas de la portería usa la cámara del móvil; quien no pueda usarla puede escribir el código de la entrada a mano."
+      ],
+      "contactTitle": "¿Has encontrado un problema?",
+      "contactText": "Si algo no te funciona o necesitas la información en otro formato, escríbenos. Te ayudaremos a completar lo que estabas haciendo y corregiremos el problema.",
+      "contactFallback": "Muy pronto publicaremos aquí la dirección de email para avisarnos.",
+      "contactInclude": "Cuéntanos en qué página estabas, qué intentabas hacer y qué dispositivo o ayuda técnica usas (por ejemplo, un lector de pantalla o la ampliación).",
+      "responseTime": "Te responderemos lo antes posible y, como máximo, en 20 días hábiles.",
+      "enforcementTitle": "Si no estás conforme con la respuesta",
+      "enforcementText": "Si no te respondemos a tiempo o la respuesta no te satisface, puedes presentar una reclamación ante las autoridades de consumo de tu comunidad autónoma.",
+      "mailSubject": "Problema de accesibilidad en KORUM"
     }
   },
   "auth": {
@@ -1508,7 +1557,15 @@
       "backupIntro": "Guárdalos en un lugar seguro (por ejemplo, impresos). Sirven para entrar si pierdes el móvil; cada uno, una sola vez. No volveremos a mostrarlos.",
       "backupSaved": "He guardado los códigos de respaldo",
       "firstCode": "Primer código de la app",
-      "confirm": "Activar y continuar"
+      "confirm": "Activar y continuar",
+      "backupCopy": "Copiar los códigos",
+      "backupPrint": "Imprimirlos",
+      "backupDownload": "Descargarlos (.txt)",
+      "backupCopied": "Códigos copiados. Pégalos en un lugar seguro, fuera de este dispositivo.",
+      "backupCopyFailed": "No se han podido copiar. Descárgalos o apúntalos a mano.",
+      "backupDownloaded": "Fichero descargado. Guárdalo en un lugar seguro, fuera de este dispositivo.",
+      "backupFileTitle": "KORUM · Códigos de respaldo de la verificación en dos pasos",
+      "backupFileIntro": "Cada código sirve una sola vez para entrar si pierdes el móvil. No los compartas con nadie."
     },
     "invitation": {
       "metaTitle": "Activa tu cuenta",
@@ -2944,7 +3001,7 @@
           "name": "Becas y solidaridad",
           "summary": "Ayudas para que nadie se quede fuera.",
           "title": "Becas para que nadie se quede fuera",
-          "description": "Creamos un fondo de ayudas para que ninguna familia renuncie a las actividades del curso por motivos económicos."
+          "description": "Creamos un fondo de ayudas para que ninguna familia renuncie a las actividades por motivos económicos."
         },
         "festival": {
           "name": "Festival con entradas",
@@ -2957,6 +3014,60 @@
           "summary": "Papeletas numeradas con sorteo certificado.",
           "title": "Rifa solidaria de la comunidad",
           "description": "Papeletas numeradas con sorteo en pantalla y acta. Lo recaudado se destina a las actividades de la comunidad."
+        },
+        "playgroundClub": {
+          "name": "Instalaciones del club",
+          "summary": "Porterías, canastas, redes y mejoras de la pista o el campo.",
+          "title": "Mejores instalaciones para entrenar y jugar",
+          "description": "Queremos renovar las instalaciones del club para que todos los equipos entrenen y jueguen con seguridad. El presupuesto es el de nuestro proveedor."
+        },
+        "scoreboard": {
+          "name": "Marcador del pabellón",
+          "summary": "Un marcador electrónico para los partidos en casa.",
+          "title": "Un marcador nuevo para el pabellón",
+          "description": "Queremos instalar un marcador electrónico para que los partidos en casa se vivan como se merecen. El presupuesto es el de nuestro proveedor."
+        },
+        "techCultural": {
+          "name": "Equipos y sonido",
+          "summary": "Sonido, luces, proyector y recursos para ensayar y actuar.",
+          "title": "Equipos para ensayar y actuar mejor",
+          "description": "Con esta campaña renovaremos el sonido, las luces y los recursos que usamos en ensayos y actuaciones. El presupuesto es el de nuestro proveedor."
+        },
+        "instruments": {
+          "name": "Instrumentos",
+          "summary": "Instrumentos para la banda, el coro o la escuela de música.",
+          "title": "Instrumentos para la banda y la escuela de música",
+          "description": "Queremos que más personas puedan aprender y tocar con instrumentos en buen estado. El presupuesto es el de nuestro proveedor y se detalla en la ficha."
+        },
+        "tripClub": {
+          "name": "Torneo o desplazamiento",
+          "summary": "Viajes a torneos y concentraciones de los equipos.",
+          "title": "Todos los equipos al torneo",
+          "description": "Queremos que ningún jugador ni jugadora se quede sin viajar al torneo. Lo recaudado cubre el transporte y las inscripciones."
+        },
+        "tripCultural": {
+          "name": "Encuentro o gira",
+          "summary": "Viajes a encuentros, certámenes o actuaciones fuera.",
+          "title": "De gira con toda la entidad",
+          "description": "Queremos que todo el grupo pueda viajar al encuentro y actuar fuera. Lo recaudado cubre el transporte y las inscripciones."
+        },
+        "solidarityClub": {
+          "name": "Becas deportivas",
+          "summary": "Cuotas y material para que nadie deje el deporte.",
+          "title": "Becas para que nadie deje el equipo",
+          "description": "Creamos un fondo de ayudas para que ninguna familia renuncie a que sus hijos jueguen en el club por motivos económicos."
+        },
+        "festivalClub": {
+          "name": "Fiesta del club con entradas",
+          "summary": "Entradas con aforo controlado y código QR.",
+          "title": "Fiesta de fin de temporada",
+          "description": "Venta de entradas con aforo controlado y código QR para la fiesta del club. Lo recaudado se destina a las actividades de los equipos."
+        },
+        "festivalCultural": {
+          "name": "Concierto o función con entradas",
+          "summary": "Entradas con aforo controlado y código QR.",
+          "title": "Concierto solidario",
+          "description": "Venta de entradas con aforo controlado y código QR para nuestro concierto. Lo recaudado se destina a las actividades de la entidad."
         }
       },
       "rewardPresets": {
@@ -3011,7 +3122,7 @@
         "showBreakdown": "Publicar en la ficha pública el desglose del presupuesto cuadrado al 100 %",
         "rewardEnabled": "Asociar un premio de reto colectivo por grupo",
         "rewardHint": "Se enseña solo en positivo, sin señalar a nadie.",
-        "plaque": "Incluir placa conmemorativa de la promoción",
+        "plaque": "Incluir placa conmemorativa de agradecimiento",
         "rewardPreset": "Premio del reto",
         "rewardCustom": "Escribir un premio propio…",
         "rewardCustomLabel": "Premio del reto",
@@ -3118,7 +3229,9 @@
       },
       "published": {
         "title": "¡Campaña publicada en la hucha {wallet}!",
-        "body": "Las familias ya pueden verla y aportar. Imprimid el cartel con su QR o compartid el enlace."
+        "body": "Las familias ya pueden verla y aportar. Imprimid el cartel con su QR o compartid el enlace.",
+        "whatsapp": "Compartir por WhatsApp",
+        "whatsappText": "¡Ya podéis apoyar «{title}»! Cada aportación suma y, si no se llega a la meta, se devuelve el 100 %: {url}"
       },
       "lock": {
         "soft": "La campaña ya está recaudando: solo se pueden cambiar la descripción, el desglose público, el reto y la placa. El presupuesto, el precio y la fecha ya los usan las aportaciones.",
@@ -3196,6 +3309,16 @@
           "generic": "No hemos podido hacerlo. Probad de nuevo en unos segundos."
         },
         "afterSave": "Podréis añadir la imagen de la campaña en cuanto guardéis el borrador."
+      },
+      "rewardPresetsClub": {
+        "cinema": "Entrenamiento especial con merienda para todo el equipo",
+        "games": "Partido amistoso de familias contra jugadores",
+        "noHomework": "Foto oficial del equipo con la equipación nueva"
+      },
+      "rewardPresetsCultural": {
+        "cinema": "Ensayo abierto con merienda para todo el grupo",
+        "games": "Actuación dedicada a las familias",
+        "noHomework": "Tarde de juegos y música para el grupo"
       }
     },
     "payouts": {
@@ -3583,7 +3706,8 @@
       "errors": {
         "FORBIDDEN": "No tienes permiso para hacerlo.",
         "NOT_FOUND": "Ese evento ya no existe.",
-        "NOT_ALLOWED": "No se puede crear el PIN: el evento ya ha terminado o su fecha no es válida."
+        "NOT_ALLOWED": "No se puede crear el PIN: el evento ya ha terminado o su fecha no es válida.",
+        "RATE_LIMITED": "Has creado muchos PIN seguidos. Espera un rato antes de crear otro: cada PIN nuevo cierra las sesiones de la puerta."
       },
       "raffle": {
         "title": "Sorteo y rondas extra",
@@ -3839,7 +3963,8 @@
       "ACTIVITY_FUND_WINDOW": "Fondo de actividades cerca del plazo de 90 días (o pasado)",
       "SPONSOR_MONEY_BLOCKED": "Dinero de un comercio bloqueado con su plazo corriendo",
       "PAYOUT_BLOCKED": "Liquidación de campaña bloqueada: hay repartos que no se pueden enviar ni replanificar",
-      "SIGNER_HANDOVER_EXPIRED": "Un relevo de firmante caducó sin cerrarse (alerta antigua: ya no se abre; la tarea diaria cierra los relevos caducados)"
+      "SIGNER_HANDOVER_EXPIRED": "Un relevo de firmante caducó sin cerrarse (alerta antigua: ya no se abre; la tarea diaria cierra los relevos caducados)",
+      "EXPIRED_DECISION_PENDING": "Campaña vencida sin decidir cerca del final de la ventana"
     },
     "fundsTitle": "{count, plural, =0 {Fondos de actividades} one {Fondos de actividades · # entidad} other {Fondos de actividades · # entidades}}",
     "fundsNone": "Ninguna entidad tiene dinero en su Fondo de actividades.",
@@ -5449,7 +5574,8 @@
   "forbidden": {
     "title": "No tienes acceso a esta página",
     "description": "Has iniciado sesión con una cuenta que no tiene permiso aquí. Si firmas por otra entidad o usas otra cuenta, entra con ella.",
-    "switchAccount": "Entrar con otra cuenta"
+    "switchAccount": "Entrar con otra cuenta",
+    "goToMyPanel": "Ir a mi panel"
   },
   "demo": {
     "label": "Entorno de demostración",
@@ -5569,7 +5695,7 @@
         "independence": "Independencia total de proveedores",
         "deadline": "Fecha límite"
       },
-      "plaque": "Incluye placa conmemorativa de la promoción",
+      "plaque": "Incluye placa conmemorativa de agradecimiento",
       "matching": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
       "matchingBy": "Gracias a {sponsor}, tu aportación se duplica mientras quede bolsa.",
       "goal": "Meta: {goal} ({pct} %)",
@@ -6400,6 +6526,22 @@
         "INVALID_CHOICE": "Elige una opción antes de votar.",
         "RATE_LIMITED": "Hay muchos votos desde tu red ahora mismo. Prueba de nuevo en unos minutos.",
         "FAILED": "No hemos podido registrar tu voto. Prueba de nuevo en unos segundos."
+      },
+      "noLink": {
+        "title": "Votación de la campaña",
+        "description": "Para votar necesitas el enlace personal que te enviamos por email. Si no lo encuentras, pídelo aquí abajo."
+      },
+      "resend": {
+        "title": "Reenviarme mi enlace de voto",
+        "intro": "Escribe el email con el que aportaste. Si aportaste a una campaña en votación, te enviaremos tu enlace a ese email.",
+        "email": "Tu email",
+        "submit": "Enviarme el enlace",
+        "invalidEmail": "Escribe un email válido, por ejemplo nombre@correo.com.",
+        "rateLimited": "Has pedido el enlace varias veces. Espera un rato y revisa tu correo, también la carpeta de no deseado.",
+        "failed": "No hemos podido enviarlo ahora. Inténtalo de nuevo en unos minutos.",
+        "sentTitle": "Revisa tu correo",
+        "sentBody": "Si ese email aportó a una campaña en votación, en unos minutos recibirás tu enlace personal. Mira también la carpeta de no deseado. No compartas el enlace: vota por ti.",
+        "another": "Usar otro email"
       }
     }
   },

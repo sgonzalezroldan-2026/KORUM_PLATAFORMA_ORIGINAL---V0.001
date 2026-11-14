@@ -14,6 +14,8 @@ export interface PublicPlatformConfig {
   pricing: PublicPricing;
   verification: { google?: string; bing?: string };
   crawlers: CrawlerPolicy;
+  /** Buzón de KORUM para la declaración de accesibilidad (Sprint 5.5b): `platform.company.supportEmail` o, si falta, `privacyEmail`. */
+  contactEmail?: string;
   /** `console`: leída de la consola; `defaults`: valores de lanzamiento por falta de base de datos. */
   source: 'console' | 'defaults';
 }
@@ -49,15 +51,17 @@ async function readOptional<T>(read: () => Promise<T | undefined>, key: string):
 /** Lee la configuración de la consola. Lanza si la base de datos no responde. */
 export async function loadPublicPlatformConfig(db: Db): Promise<PublicPlatformConfig> {
   const row = await db.globalConfig.findUnique({ where: { id: 'GLOBAL' } });
-  const [google, bing, crawlers] = await Promise.all([
+  const [google, bing, crawlers, company] = await Promise.all([
     readOptional(() => getSetting(db, 'seo.verification.google'), 'seo.verification.google'),
     readOptional(() => getSetting(db, 'seo.verification.bing'), 'seo.verification.bing'),
-    readOptional(() => getSetting(db, 'seo.aiCrawlers'), 'seo.aiCrawlers')
+    readOptional(() => getSetting(db, 'seo.aiCrawlers'), 'seo.aiCrawlers'),
+    readOptional(() => getSetting(db, 'platform.company'), 'platform.company')
   ]);
   return {
     pricing: row ? publicPricingFromGlobalConfig(row) : DEFAULT_PUBLIC_PRICING,
     verification: { ...(google ? { google } : {}), ...(bing ? { bing } : {}) },
     crawlers: crawlers ?? DEFAULT_CRAWLER_POLICY,
+    ...(company?.supportEmail || company?.privacyEmail ? { contactEmail: company.supportEmail || company.privacyEmail } : {}),
     source: row ? 'console' : 'defaults'
   };
 }

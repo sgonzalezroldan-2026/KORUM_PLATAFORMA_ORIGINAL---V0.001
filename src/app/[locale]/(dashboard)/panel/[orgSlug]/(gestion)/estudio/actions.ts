@@ -1,11 +1,14 @@
 'use server';
 
+import { after } from 'next/server';
+import { getKeyring } from '@/config/keyring';
 import { getSessionActor } from '@/lib/auth/session';
 import { revalidatePortal } from '@/lib/portal/revalidate-portal';
 import { getPrisma } from '@/lib/prisma';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { InitiativeCoverError, removeInitiativeCover } from '@/services/panel/initiative-cover.service';
+import { notifyIndexNow } from '@/services/seo/indexnow.service';
 import { getStorageProvider } from '@/services/storage/provider-factory';
 import { discardStudioDraft, publishStudioInitiative, saveStudioDraft, StudioError, type StudioErrorReason } from '@/services/panel/studio.service';
 
@@ -46,6 +49,8 @@ export async function publishStudioAction(orgSlug: string, payload: unknown): Pr
   return run(orgSlug, async ({ actor, organizationId, slug }) => {
     const result = await publishStudioInitiative(getPrisma(), actor, organizationId, payload);
     revalidatePortal(slug);
+    // Aviso a los buscadores con la respuesta ya enviada: ni dentro de la transacción ni haciendo esperar a quien publica (IndexNow, Sprint 5.5b).
+    if (result.published) after(() => notifyIndexNow({ db: getPrisma(), keyring: getKeyring }, { initiativeIds: [result.initiativeId] }).then(() => undefined));
     return { status: 'PUBLISHED', initiativeId: result.initiativeId };
   });
 }

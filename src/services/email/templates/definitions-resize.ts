@@ -134,3 +134,39 @@ export const initiativeRefundingSupporter: TemplateDefinition<z.infer<typeof sup
     };
   }
 };
+
+/**
+ * `expired.decisionReminder` (Sprint 5.5b): recordatorio a quienes firman de una campaña vencida que sigue sin decisión, cada vez más urgente según se acerca el final
+ * de la ventana de 90 días. Dice si aún se puede lanzar la votación y hasta cuándo; si no, que solo queda devolver el 100 %.
+ */
+const reminderPayload = z.object({
+  initiativeId: z.number().int().positive(),
+  walletEscrowId: z.string().max(40).nullish(),
+  daysLeft: z.number().int(),
+  canVote: z.boolean(),
+  voteDaysLeft: z.number().int().min(0),
+  urgent: z.boolean()
+});
+export const expiredDecisionReminder: TemplateDefinition<z.infer<typeof reminderPayload>> = {
+  schema: reminderPayload,
+  needs: 'initiative',
+  build(payload, context): EmailContent {
+    const { t } = context;
+    const initiative = initiativeOf(context, 'expired.decisionReminder');
+    const organization = organizationOf(context, 'expired.decisionReminder');
+    const days = Math.max(payload.daysLeft, 0);
+    return {
+      subject: t(payload.urgent ? 'expiredReminder.subjectUrgent' : 'expiredReminder.subject', { initiative: initiative.title, days }),
+      preheader: t('expiredReminder.preheader'),
+      title: t(payload.urgent ? 'expiredReminder.titleUrgent' : 'expiredReminder.title'),
+      paragraphs: [
+        t('expiredReminder.body', { initiative: initiative.title, days }),
+        payload.canVote ? t('expiredReminder.canVote', { days: payload.voteDaysLeft }) : t('expiredReminder.refundOnly'),
+        t('expiredReminder.why')
+      ],
+      facts: payload.walletEscrowId ? [{ label: t('expiredReminder.wallet'), value: payload.walletEscrowId }] : [],
+      button: { label: t('expiredReminder.cta'), url: context.url(`/panel/${organization.slug}/vencidas`) },
+      footer: 'organization'
+    };
+  }
+};

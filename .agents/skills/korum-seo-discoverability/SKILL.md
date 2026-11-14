@@ -45,7 +45,7 @@ Objetivo: que quien busque *"cómo recaudar dinero para el AMPA"*, *"ventiladore
 
 - `src/app/robots.ts`: `Allow: /`; `Disallow: /panel/`, `/admin/`, `/api/` (excepto `Allow: /api/og/`, para que las redes puedan leer las imágenes); referencia al sitemap.
 - `src/app/sitemap.ts`: dinámico, con páginas de marketing, entidades con `publicIndexing` e iniciativas públicas; `lastModified` real y `alternates` por idioma. Si supera 50.000 URL, se divide (`generateSitemaps`).
-- **IndexNow** (Bing y otros buscadores): aviso automático al publicar o cerrar una iniciativa pública, con la clave guardada en `PlatformSecret` `seo.indexNowKey`.
+- **IndexNow** (Bing y otros buscadores): aviso automático al publicar o cerrar una iniciativa pública, con la clave guardada en `PlatformSecret` `seo.indexNowKey` y publicada en `/indexnow-key.txt` (Sprint 5.5b: `src/services/seo/indexnow.service.ts`; solo lo que cambió desde el último aviso aceptado, `Initiative.indexNowStatus`; nunca dentro de una transacción).
 
 ## 5. Buscadores y asistentes de IA
 

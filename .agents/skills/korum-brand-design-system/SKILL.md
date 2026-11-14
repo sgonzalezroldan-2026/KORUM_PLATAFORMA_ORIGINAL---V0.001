@@ -3,7 +3,7 @@ name: korum-brand-design-system
 description: >-
   Sistema de Identidad Corporativa y Arquitectura Visual Híbrida de KORUM ("Varsity Heritage Colegial +
   Cuaderno Vivo de Patio"). Define el logotipo de referencia (parche colegial redondo con la K, laureles y
-  cinta, lámina public/brand/korum-logo.jpg), sus componentes SVG en el código, sellos de mérito escolar,
+  cinta, lámina docs/brand/korum-logo.jpg), sus componentes SVG en el código, sellos de mérito escolar,
   y la interacción nostálgica de libreta de anillas, pósits y sellos de goma para familias y colegios.
 ---
 
@@ -20,7 +20,7 @@ Opera bajo la **Solución Híbrida Oficial**:
 ### Capa 1 · Identidad Institucional y Solidez Colegial ("Varsity Heritage")
 Inspirada en el orgullo de las sudaderas y chaquetas universitarias de Stanford, Yale y colegios de referencia en España (*Reial Monestir de Santa Isabel*, *Pare Manyanet*):
 - **Dónde aplica:** Logotipo oficial de KORUM, cabeceras institucionales, custodia Escrow, pases QR oficiales, certificados y documentos de liquidación.
-- **Logotipo de referencia (*Escudo Varsity Heritage*), lámina `public/brand/korum-logo.jpg`:**
+- **Logotipo de referencia (*Escudo Varsity Heritage*), lámina `docs/brand/korum-logo.jpg`:**
   - **Parche redondo** bordado en hilo pesado sobre tejido azul marino de sudadera escolar (`#101F38`), con anillo exterior de oro deportivo (`#F59E0B`) y un fino anillo marfil (`#FDFBF7`).
   - Letra **"K"** en tipografía universitaria de serifa plana (*Collegiate Slab Serif*), rellena de oro y con **contorno marfil**.
   - Dos ramas de **laureles** (quórum y unión de la comunidad) y una **cinta inferior con la palabra `KORUM`**.
@@ -39,15 +39,15 @@ La experiencia de proponer ideas, sumar al curso de los niños y celebrar logros
 
 ---
 
-## 2. Inventario Oficial de Activos de Marca (`public/brand/`)
+## 2. Inventario Oficial de Activos de Marca (`docs/brand/`)
 
-**Activos vigentes en `public/brand/`** (el escáner de invariantes comprueba que todo archivo que esta skill cita existe):
+**Activos vigentes en `docs/brand/`** (fuera de `public/` desde el Sprint 5.5b: son láminas de referencia y no se sirven en la web; una imagen que sí se publique va en `public/brand/generated/`; el escáner de invariantes comprueba que todo archivo que esta skill cita existe):
 
-1. `public/brand/korum-logo.jpg` ➔ **Lámina de referencia del logotipo** (parche de sudadera bordada y su uso en pantallas). Es la guía para dibujar los SVG; no se usa tal cual en la interfaz.
-2. `public/brand/korum-cuaderno-vivo.jpg` ➔ Lámina maestra del cuaderno escolar, sellos de caucho y notas de familias.
-3. `public/brand/korum-hero-patio.jpg` y `korum-notebook-stickers.jpg` ➔ Recursos de ambientación comunitaria de patio.
-4. `public/brand/korum-cuaderno-stamp.svg` ➔ Sello entintado de aprobación escolar para el Buzón de Ideas y Logros.
-5. `public/brand/propuesta_athletic_club_colegial.jpg` ➔ Propuesta alternativa (club atlético, azul y coral). **No es la marca primaria.**
+1. `docs/brand/korum-logo.jpg` ➔ **Lámina de referencia del logotipo** (parche de sudadera bordada y su uso en pantallas). Es la guía para dibujar los SVG; no se usa tal cual en la interfaz.
+2. `docs/brand/korum-cuaderno-vivo.jpg` ➔ Lámina maestra del cuaderno escolar, sellos de caucho y notas de familias.
+3. `docs/brand/korum-hero-patio.jpg` y `korum-notebook-stickers.jpg` ➔ Recursos de ambientación comunitaria de patio.
+4. `docs/brand/korum-cuaderno-stamp.svg` ➔ Sello entintado de aprobación escolar para el Buzón de Ideas y Logros.
+5. `docs/brand/propuesta_athletic_club_colegial.jpg` ➔ Propuesta alternativa (club atlético, azul y coral). **No es la marca primaria.**
 
 **Componentes de marca en el código** (se dibujan en el Sprint 1.1 a partir de la lámina de referencia, sin año ni subtítulo):
 
@@ -55,7 +55,7 @@ La experiencia de proponer ideas, sumar al curso de los niños y celebrar logros
 - `src/components/brand/korum-mark.tsx` ➔ `KorumMark`: envuelve a `KorumMarkSvg` con el nombre accesible y el texto de la cinta traducidos. Favicon: `src/app/icon.svg`.
 - `src/components/brand/korum-logo.tsx` ➔ `KorumLogo`: `KorumMark` + wordmark `KORUM`, con variante sobre fondo oscuro. **Provisional:** se sustituye por el vectorial definitivo cuando el promotor lo aporte.
 
-**Descartados (no usar):** todo lo que hay en `public/brand/_old/` (`fase1_banco_corporativo/` y `fase2_propuestas_descartadas/`, incluidos los SVG antiguos del logotipo, el escudo y el sello de custodia, que decían «QUÓRUM ESCOLAR» y «CUSTODIA»). Se conservan solo como histórico.
+**Descartados (no usar):** todo lo que hay en `docs/brand/_old/` (`fase1_banco_corporativo/` y `fase2_propuestas_descartadas/`, incluidos los SVG antiguos del logotipo, el escudo y el sello de custodia, que decían «QUÓRUM ESCOLAR» y «CUSTODIA»). Se conservan solo como histórico.
 
 ---
 

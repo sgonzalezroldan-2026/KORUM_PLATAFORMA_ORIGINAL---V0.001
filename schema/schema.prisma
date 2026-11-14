@@ -468,6 +468,8 @@ enum OpsAlertType {
   PAYOUT_BLOCKED
   /// Heredada (Sprint 5.2): ya no se abre. Los relevos caducados los cierra solos la tarea diaria y las alertas antiguas se resuelven al pasar (sin intervención del Super-Admin).
   SIGNER_HANDOVER_EXPIRED
+  /// Una campaña vencida (`EXPIRED`) sigue sin decisión (votar o devolver) y se acerca el final de la ventana de 90 días de Paycomet (Sprint 5.5b).
+  EXPIRED_DECISION_PENDING
 }
 
 enum OpsAlertSeverity {
@@ -1021,6 +1023,9 @@ model Initiative {
   afterFileId                String?
   /// Momento en que la liquidación terminó de enviarse (GOAL_REACHED → CLOSED, Sprint 4.4a).
   closedAt                   DateTime?
+  /// Estado de la iniciativa en el último aviso a IndexNow que los buscadores aceptaron (Sprint 5.5b). Distinto del actual y uno de los dos público:
+  /// toca avisar (se publicó, se cerró o dejó de ser pública). `null`: nunca se ha avisado.
+  indexNowStatus             InitiativeStatus?
   createdAt                  DateTime         @default(now())
   updatedAt                  DateTime         @updatedAt
 

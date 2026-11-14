@@ -222,7 +222,7 @@ test.describe('Vuelta del pago con la campaña ya cerrada (heredado del 4.2f)', 
 });
 
 /** Rutas públicas sin sesión que no recorre ninguna otra prueba en los tres idiomas (la portada y las páginas pilar ya las recorre `marketing-seo`). */
-const PUBLIC_ROUTES = ['/cervantes', '/cervantes/iniciativas/1', '/cervantes/iniciativas/2', '/cervantes/iniciativas/4', '/cervantes/logros', '/cervantes/comercios', '/cervantes/ayuda', '/cervantes/ideas', '/basket-valles', '/login', '/registro-comunidad'] as const;
+const PUBLIC_ROUTES = ['/cervantes', '/cervantes/iniciativas/1', '/cervantes/iniciativas/2', '/cervantes/iniciativas/4', '/cervantes/logros', '/cervantes/comercios', '/cervantes/ayuda', '/cervantes/ideas', '/basket-valles', '/login', '/registro-comunidad', '/accesibilidad', '/cervantes/votacion'] as const;
 
 for (const locale of LOCALES) {
   test.describe(`QA-X02 · ${locale}: rutas públicas accesibles, traducidas, en una columna en móvil y sin errores`, () => {

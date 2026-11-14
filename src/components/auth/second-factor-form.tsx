@@ -1,9 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { authClient, authErrorCode } from '@/lib/auth/auth-client';
-import { CodeField, Field, FormAlert, linkButton, primaryButton } from './auth-ui';
+import { CodeField, Field, focusFirstInvalid, FormAlert, linkButton, SubmitButton } from './auth-ui';
 
 /** Segundo factor: código de la app de verificación o, si se ha perdido el móvil, uno de los códigos de respaldo (cada uno sirve una vez). */
 
@@ -16,6 +16,12 @@ export function SecondFactorForm({ onDone, onBack }: { onDone: () => void; /** V
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Un código que no vale se dice junto a su campo y le devuelve el foco (revisión de experiencia del 5.5b); lo demás (bloqueo, límite) va en el aviso general.
+  const codeError = error === 'INVALID_CODE' || error === 'INVALID_BACKUP_CODE' ? te(error) : null;
+  useEffect(() => {
+    if (error === 'INVALID_CODE' || error === 'INVALID_BACKUP_CODE') focusFirstInvalid(formRef.current);
+  }, [error]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -33,17 +39,17 @@ export function SecondFactorForm({ onDone, onBack }: { onDone: () => void; /** V
   };
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
+    <form ref={formRef} onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
       <p className="text-ink-soft">{backup ? t('backupIntro') : t('intro')}</p>
-      {error ? <FormAlert>{te(KNOWN.has(error) ? error : 'UNKNOWN')}</FormAlert> : null}
+      {error && !codeError ? <FormAlert>{te(KNOWN.has(error) ? error : 'UNKNOWN')}</FormAlert> : null}
       {backup ? (
-        <Field label={t('backupCode')} autoComplete="one-time-code" required value={code} onChange={(event) => setCode(event.target.value)} />
+        <Field label={t('backupCode')} autoComplete="one-time-code" required value={code} error={codeError} onChange={(event) => setCode(event.target.value)} />
       ) : (
-        <CodeField label={t('code')} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
+        <CodeField label={t('code')} value={code} error={codeError} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
       )}
-      <button type="submit" className={primaryButton} disabled={busy || (backup ? code.trim().length < 6 : code.length !== 6)}>
+      <SubmitButton busy={busy} disabled={backup ? code.trim().length < 6 : code.length !== 6}>
         {t('verify')}
-      </button>
+      </SubmitButton>
       <button
         type="button"
         className={linkButton}

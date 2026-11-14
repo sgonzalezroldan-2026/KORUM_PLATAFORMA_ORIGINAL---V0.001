@@ -14,7 +14,8 @@
     "close": "Tancar",
     "retry": "Tornar-ho a provar",
     "loading": "Carregant…",
-    "footerNote": "KORUM és una plataforma tecnològica. Els cobraments i les devolucions els gestiona PAYCOMET."
+    "footerNote": "KORUM és una plataforma tecnològica. Els cobraments i les devolucions els gestiona PAYCOMET.",
+    "sending": "Enviant…"
   },
   "languageSwitcher": {
     "label": "Idioma",
@@ -756,7 +757,8 @@
         "title": "Ho hem aconseguit!",
         "body": "«{initiative}» de {organization} ha arribat a la seva meta gràcies a {count, plural, one {una aportació: la teva} other {# aportacions, i una és la teva}}. Gràcies!",
         "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que {organization} signi la liquidació. Quan estigui feta, t’ensenyarem l’Abans i el Després.",
-        "cta": "Compartir la fita"
+        "cta": "Compartir la fita",
+        "nextSettled": "{organization} ja ha signat la liquidació i els diners han sortit de la guardiola de la iniciativa cap al projecte. Ben aviat t’ensenyarem l’Abans i el Després."
       },
       "photos": {
         "subject": "Mireu com ha quedat: «{initiative}»",
@@ -870,6 +872,19 @@
         "cta": "Anar al suport del panell",
         "footnote": "Aquest missatge l’ha escrit una persona de l’equip de KORUM per a qui signa per la teva entitat. Pots respondre des de Suport, al panell."
       }
+    },
+    "expiredReminder": {
+      "subject": "Queden {days, plural, one {# dia} other {# dies}} per decidir què fer amb «{initiative}»",
+      "subjectUrgent": "Urgent: «{initiative}» continua sense decisió ({days, plural, one {# dia} other {# dies}})",
+      "preheader": "La campanya va vèncer sense arribar a la meta i els diners continuen a la guardiola de la iniciativa a PAYCOMET.",
+      "title": "Falta la vostra decisió",
+      "titleUrgent": "Decidiu tan aviat com pugueu",
+      "body": "«{initiative}» va vèncer sense arribar a la meta i encara no heu decidit què fer. Queden {days, plural, one {# dia} other {# dies}} dels 90 que PAYCOMET permet per repartir els diners des del primer cobrament.",
+      "canVote": "Encara podeu preguntar a qui va aportar si tira endavant un projecte més petit: la votació es pot llançar {days, plural, =0 {només avui} one {avui i demà} other {durant # dies més}}. També podeu retornar el 100 % a cada persona.",
+      "refundOnly": "Ja no queda temps per a una votació: el que toca és retornar el 100 % a cada persona, al mitjà de pagament amb què va aportar.",
+      "why": "Mentre no decidiu, les famílies no saben què passarà amb la seva aportació.",
+      "wallet": "Guardiola de la iniciativa",
+      "cta": "Decidir ara"
     }
   },
   "nav": {
@@ -887,7 +902,8 @@
       "comoFunciona": "Com funciona",
       "precios": "Preus",
       "seguridad": "Seguretat i transparència",
-      "faq": "Preguntes freqüents"
+      "faq": "Preguntes freqüents",
+      "accesibilidad": "Accessibilitat"
     },
     "account": "El meu compte"
   },
@@ -1407,6 +1423,39 @@
         "ctaTitle": "A punt per començar?",
         "ctaText": "Dona d’alta la teva entitat gratis i resol la resta sobre la marxa."
       }
+    },
+    "accessibility": {
+      "metaTitle": "Declaració d’accessibilitat",
+      "metaDescription": "Com fem KORUM accessible (WCAG 2.2 AA), què encara estem millorant i com avisar-nos d’un problema.",
+      "h1": "Declaració d’accessibilitat",
+      "intro": "Volem que qualsevol persona pugui aportar, votar, comprar una entrada o gestionar la seva entitat a KORUM, faci servir el dispositiu que faci servir i amb les ajudes que necessiti.",
+      "dateLabel": "Data de la declaració i de la darrera revisió:",
+      "statusTitle": "Situació de compliment",
+      "statusText": "KORUM és parcialment conforme amb les Pautes d’Accessibilitat per al Contingut Web (WCAG) 2.2, nivell AA. Complim la majoria dels requisits; encara ens falta comprovar el pagament i la porteria amb lectors de pantalla en mòbils reals.",
+      "checksTitle": "Com ho comprovem",
+      "checks": [
+        "Cada versió passa una revisió automàtica d’accessibilitat de les pàgines públiques en castellà, català i anglès, i de les pantalles del panell, la consola i la porteria, a l’ordinador i al mòbil.",
+        "Totes les accions es poden fer amb el teclat i el focus sempre es veu.",
+        "Els textos tenen prou contrast i els botons fan com a mínim 44 × 44 píxels. Dissenyem les pàgines perquè es puguin ampliar al 200 % sense perdre informació.",
+        "Els errors dels formularis es diuen al costat del camp i els lectors de pantalla els anuncien.",
+        "Les animacions s’aturen si el dispositiu demana reduir el moviment.",
+        "Els estats (recaptant, aconseguida, pendent…) mai no s’indiquen només amb color o amb un emoji."
+      ],
+      "limitsTitle": "El que encara estem millorant",
+      "limits": [
+        "Encara no hem completat la prova amb lectors de pantalla (VoiceOver a l’iPhone i TalkBack a Android) del pagament d’una aportació i del mode porteria.",
+        "Els textos i les imatges que publica cada centre, club o entitat (descripcions, fotos de l’Abans i el Després) els escriu la mateixa entitat: li demanem que descrigui les imatges, però no sempre ho podem garantir.",
+        "Alguns documents PDF (certificats, justificants i factures) encara no porten tota l’estructura que necessiten els lectors de pantalla. Si en necessites un en un altre format, demana-ho.",
+        "El lector d’entrades de la porteria fa servir la càmera del mòbil; qui no la pugui fer servir pot escriure el codi de l’entrada a mà."
+      ],
+      "contactTitle": "Has trobat un problema?",
+      "contactText": "Si alguna cosa no et funciona o necessites la informació en un altre format, escriu-nos. T’ajudarem a acabar el que estaves fent i corregirem el problema.",
+      "contactFallback": "Ben aviat publicarem aquí l’adreça de correu per avisar-nos.",
+      "contactInclude": "Explica’ns en quina pàgina eres, què intentaves fer i quin dispositiu o ajuda tècnica fas servir (per exemple, un lector de pantalla o l’ampliació).",
+      "responseTime": "Et respondrem tan aviat com puguem i, com a màxim, en 20 dies hàbils.",
+      "enforcementTitle": "Si no estàs d’acord amb la resposta",
+      "enforcementText": "Si no et responem a temps o la resposta no et satisfà, pots presentar una reclamació davant les autoritats de consum de la teva comunitat autònoma.",
+      "mailSubject": "Problema d’accessibilitat a KORUM"
     }
   },
   "auth": {
@@ -1508,7 +1557,15 @@
       "backupIntro": "Desa’ls en un lloc segur (per exemple, impresos). Serveixen per entrar si perds el mòbil; cadascun, una sola vegada. No els tornarem a mostrar.",
       "backupSaved": "He desat els codis de recuperació",
       "firstCode": "Primer codi de l’app",
-      "confirm": "Activar i continuar"
+      "confirm": "Activar i continuar",
+      "backupCopy": "Copiar els codis",
+      "backupPrint": "Imprimir-los",
+      "backupDownload": "Descarregar-los (.txt)",
+      "backupCopied": "Codis copiats. Enganxa’ls en un lloc segur, fora d’aquest dispositiu.",
+      "backupCopyFailed": "No s’han pogut copiar. Descarrega’ls o apunta’ls a mà.",
+      "backupDownloaded": "Fitxer descarregat. Desa’l en un lloc segur, fora d’aquest dispositiu.",
+      "backupFileTitle": "KORUM · Codis de recuperació de la verificació en dos passos",
+      "backupFileIntro": "Cada codi serveix una sola vegada per entrar si perds el mòbil. No els comparteixis amb ningú."
     },
     "invitation": {
       "metaTitle": "Activa el teu compte",
@@ -2944,7 +3001,7 @@
           "name": "Beques i solidaritat",
           "summary": "Ajudes perquè ningú es quedi fora.",
           "title": "Beques perquè ningú es quedi fora",
-          "description": "Creem un fons d’ajudes perquè cap família renunciï a les activitats del curs per motius econòmics."
+          "description": "Creem un fons d’ajudes perquè cap família hagi de renunciar a les activitats per motius econòmics."
         },
         "festival": {
           "name": "Festival amb entrades",
@@ -2957,6 +3014,60 @@
           "summary": "Butlletes numerades amb sorteig certificat.",
           "title": "Rifa solidària de la comunitat",
           "description": "Butlletes numerades amb sorteig en pantalla i acta. El que es recapti es destina a les activitats de la comunitat."
+        },
+        "playgroundClub": {
+          "name": "Instal·lacions del club",
+          "summary": "Porteries, cistelles, xarxes i millores de la pista o el camp.",
+          "title": "Millors instal·lacions per entrenar i jugar",
+          "description": "Volem renovar les instal·lacions del club perquè tots els equips entrenin i juguin amb seguretat. El pressupost és el del nostre proveïdor."
+        },
+        "scoreboard": {
+          "name": "Marcador del pavelló",
+          "summary": "Un marcador electrònic per als partits a casa.",
+          "title": "Un marcador nou per al pavelló",
+          "description": "Volem instal·lar un marcador electrònic perquè els partits a casa es visquin com es mereixen. El pressupost és el del nostre proveïdor."
+        },
+        "techCultural": {
+          "name": "Equips i so",
+          "summary": "So, llums, projector i recursos per assajar i actuar.",
+          "title": "Equips per assajar i actuar millor",
+          "description": "Amb aquesta campanya renovarem el so, els llums i els recursos que fem servir en assajos i actuacions. El pressupost és el del nostre proveïdor."
+        },
+        "instruments": {
+          "name": "Instruments",
+          "summary": "Instruments per a la banda, el cor o l’escola de música.",
+          "title": "Instruments per a la banda i l’escola de música",
+          "description": "Volem que més persones puguin aprendre i tocar amb instruments en bon estat. El pressupost és el del nostre proveïdor i es detalla a la fitxa."
+        },
+        "tripClub": {
+          "name": "Torneig o desplaçament",
+          "summary": "Viatges a tornejos i concentracions dels equips.",
+          "title": "Tots els equips al torneig",
+          "description": "Volem que cap jugador ni jugadora es quedi sense viatjar al torneig. El que es recapta cobreix el transport i les inscripcions."
+        },
+        "tripCultural": {
+          "name": "Trobada o gira",
+          "summary": "Viatges a trobades, certàmens o actuacions fora.",
+          "title": "De gira amb tota l’entitat",
+          "description": "Volem que tot el grup pugui viatjar a la trobada i actuar fora. El que es recapta cobreix el transport i les inscripcions."
+        },
+        "solidarityClub": {
+          "name": "Beques esportives",
+          "summary": "Quotes i material perquè ningú deixi l’esport.",
+          "title": "Beques perquè ningú deixi l’equip",
+          "description": "Creem un fons d’ajudes perquè cap família hagi de deixar que els seus fills juguin al club per motius econòmics."
+        },
+        "festivalClub": {
+          "name": "Festa del club amb entrades",
+          "summary": "Entrades amb aforament controlat i codi QR.",
+          "title": "Festa de final de temporada",
+          "description": "Venda d’entrades amb aforament controlat i codi QR per a la festa del club. El que es recapta es destina a les activitats dels equips."
+        },
+        "festivalCultural": {
+          "name": "Concert o funció amb entrades",
+          "summary": "Entrades amb aforament controlat i codi QR.",
+          "title": "Concert solidari",
+          "description": "Venda d’entrades amb aforament controlat i codi QR per al nostre concert. El que es recapta es destina a les activitats de l’entitat."
         }
       },
       "rewardPresets": {
@@ -3011,7 +3122,7 @@
         "showBreakdown": "Publicar a la fitxa pública el desglossament del pressupost quadrat al 100 %",
         "rewardEnabled": "Associar un premi de repte col·lectiu per grup",
         "rewardHint": "Es mostra només en positiu, sense assenyalar ningú.",
-        "plaque": "Incloure placa commemorativa de la promoció",
+        "plaque": "Incloure placa commemorativa d’agraïment",
         "rewardPreset": "Premi del repte",
         "rewardCustom": "Escriure un premi propi…",
         "rewardCustomLabel": "Premi del repte",
@@ -3118,7 +3229,9 @@
       },
       "published": {
         "title": "Campanya publicada a la guardiola {wallet}!",
-        "body": "Les famílies ja la poden veure i aportar. Imprimiu el cartell amb el seu QR o compartiu l’enllaç."
+        "body": "Les famílies ja la poden veure i aportar. Imprimiu el cartell amb el seu QR o compartiu l’enllaç.",
+        "whatsapp": "Compartir per WhatsApp",
+        "whatsappText": "Ja podeu donar suport a «{title}»! Cada aportació suma i, si no s’arriba a la meta, es retorna el 100 %: {url}"
       },
       "lock": {
         "soft": "La campanya ja està recaptant: només es poden canviar la descripció, el desglossament públic, el repte i la placa. El pressupost, el preu i la data ja els fan servir les aportacions.",
@@ -3196,6 +3309,16 @@
           "generic": "No hem pogut fer-ho. Proveu-ho de nou d’aquí a uns segons."
         },
         "afterSave": "Podreu afegir la imatge de la campanya tan bon punt deseu l’esborrany."
+      },
+      "rewardPresetsClub": {
+        "cinema": "Entrenament especial amb berenar per a tot l’equip",
+        "games": "Partit amistós de famílies contra jugadors",
+        "noHomework": "Foto oficial de l’equip amb l’equipació nova"
+      },
+      "rewardPresetsCultural": {
+        "cinema": "Assaig obert amb berenar per a tot el grup",
+        "games": "Actuació dedicada a les famílies",
+        "noHomework": "Tarda de jocs i música per al grup"
       }
     },
     "payouts": {
@@ -3583,7 +3706,8 @@
       "errors": {
         "FORBIDDEN": "No tens permís per fer-ho.",
         "NOT_FOUND": "Aquest esdeveniment ja no existeix.",
-        "NOT_ALLOWED": "No es pot crear el PIN: l’esdeveniment ja ha acabat o la seva data no és vàlida."
+        "NOT_ALLOWED": "No es pot crear el PIN: l’esdeveniment ja ha acabat o la seva data no és vàlida.",
+        "RATE_LIMITED": "Has creat molts PIN seguits. Espera una estona abans de crear-ne un altre: cada PIN nou tanca les sessions de la porta."
       },
       "raffle": {
         "title": "Sorteig i rondes extra",
@@ -3839,7 +3963,8 @@
       "ACTIVITY_FUND_WINDOW": "Fons d’activitats a prop del termini de 90 dies (o passat)",
       "SPONSOR_MONEY_BLOCKED": "Diners d’un comerç bloquejats amb el termini corrent",
       "PAYOUT_BLOCKED": "Liquidació de campanya bloquejada: hi ha repartiments que no es poden enviar ni replanificar",
-      "SIGNER_HANDOVER_EXPIRED": "Un relleu de signant va caducar sense tancar-se (alerta antiga: ja no s’obre; la tasca diària tanca els relleus caducats)"
+      "SIGNER_HANDOVER_EXPIRED": "Un relleu de signant va caducar sense tancar-se (alerta antiga: ja no s’obre; la tasca diària tanca els relleus caducats)",
+      "EXPIRED_DECISION_PENDING": "Campanya vençuda sense decidir a prop del final de la finestra"
     },
     "fundsTitle": "{count, plural, =0 {Fons d’activitats} one {Fons d’activitats · # entitat} other {Fons d’activitats · # entitats}}",
     "fundsNone": "Cap entitat no té diners al seu Fons d’activitats.",
@@ -5449,7 +5574,8 @@
   "forbidden": {
     "title": "No tens accés a aquesta pàgina",
     "description": "Has iniciat sessió amb un compte que no té permís aquí. Si signes per una altra entitat o fas servir un altre compte, entra-hi.",
-    "switchAccount": "Entrar amb un altre compte"
+    "switchAccount": "Entrar amb un altre compte",
+    "goToMyPanel": "Anar al meu panell"
   },
   "demo": {
     "label": "Entorn de demostració",
@@ -5569,7 +5695,7 @@
         "independence": "Independència total de proveïdors",
         "deadline": "Data límit"
       },
-      "plaque": "Inclou placa commemorativa de la promoció",
+      "plaque": "Inclou placa commemorativa d’agraïment",
       "matching": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
       "matchingBy": "Gràcies a {sponsor}, la teva aportació es duplica mentre quedi bossa.",
       "goal": "Meta: {goal} ({pct} %)",
@@ -6400,6 +6526,22 @@
         "INVALID_CHOICE": "Tria una opció abans de votar.",
         "RATE_LIMITED": "Ara mateix hi ha molts vots des de la teva xarxa. Torna-ho a provar d’aquí a uns minuts.",
         "FAILED": "No hem pogut registrar el teu vot. Torna-ho a provar d’aquí a uns segons."
+      },
+      "noLink": {
+        "title": "Votació de la campanya",
+        "description": "Per votar necessites l’enllaç personal que et vam enviar per correu. Si no el trobes, demana’l aquí sota."
+      },
+      "resend": {
+        "title": "Reenvia’m l’enllaç de vot",
+        "intro": "Escriu el correu amb què vas aportar. Si vas aportar a una campanya en votació, t’enviarem l’enllaç a aquest correu.",
+        "email": "El teu correu",
+        "submit": "Envia’m l’enllaç",
+        "invalidEmail": "Escriu un correu vàlid, per exemple nom@correu.com.",
+        "rateLimited": "Has demanat l’enllaç diverses vegades. Espera una estona i revisa el correu, també la carpeta de correu brossa.",
+        "failed": "No l’hem pogut enviar ara. Torna-ho a provar d’aquí a uns minuts.",
+        "sentTitle": "Revisa el correu",
+        "sentBody": "Si aquest correu va aportar a una campanya en votació, d’aquí a uns minuts rebràs l’enllaç personal. Mira també la carpeta de correu brossa. No comparteixis l’enllaç: vota per tu.",
+        "another": "Fer servir un altre correu"
       }
     }
   },

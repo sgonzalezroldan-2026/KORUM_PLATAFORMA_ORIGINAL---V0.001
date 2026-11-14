@@ -10,7 +10,7 @@ import { LOCALES } from '@/i18n/routing';
  * Selector de idioma. Conserva la ruta actual y es una lista de enlaces reales (los buscadores los siguen). Si hay dos selectores en la misma
  * página (cabecera y pie), el segundo recibe un `label` propio: dos regiones de navegación no pueden llamarse igual.
  */
-export function LanguageSwitcher({ className, label }: { className?: string; label?: string }) {
+export function LanguageSwitcher({ className, label, tone = 'light' }: { className?: string; label?: string; /** `dark`: sobre el fondo azul de la portería. */ tone?: 'light' | 'dark' }) {
   const t = useTranslations('languageSwitcher');
   const current = useLocale();
   const pathname = usePathname();
@@ -35,7 +35,13 @@ export function LanguageSwitcher({ className, label }: { className?: string; lab
                 aria-current={active ? 'true' : undefined}
                 className={clsx(
                   'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg px-2 text-sm font-bold uppercase tracking-wide',
-                  active ? 'bg-varsity-navy text-varsity-ivory' : 'text-varsity-navy hover:bg-varsity-navy/10'
+                  tone === 'dark'
+                    ? active
+                      ? 'bg-varsity-ivory text-varsity-navy'
+                      : 'text-varsity-ivory hover:bg-varsity-ivory/10'
+                    : active
+                      ? 'bg-varsity-navy text-varsity-ivory'
+                      : 'text-varsity-navy hover:bg-varsity-navy/10'
                 )}
               >
                 <span aria-hidden="true">{code}</span>

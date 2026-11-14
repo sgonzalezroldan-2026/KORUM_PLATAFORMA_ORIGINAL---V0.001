@@ -3,6 +3,7 @@ import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { raiseAlert } from '../ops-alerts';
 import { inTransaction, type Db } from '@/lib/db';
 import { closeDueResizePolls } from '@/services/resize/resize-close';
+import { notifyIndexNow } from '@/services/seo/indexnow.service';
 import type { JobHandler } from '../job-types';
 import { notifySigners } from '../notify';
 
@@ -16,8 +17,11 @@ import { notifySigners } from '../notify';
  *
  * Desde el Sprint 4.4b cierra además las votaciones de redimensionamiento cuyos 7 días han pasado (`closeDueResizePolls`): corre antes que `MASS_REFUND`,
  * así que una votación sin proyecto empieza a devolverse el mismo día.
+ *
+ * Desde el Sprint 5.5b, al terminar avisa a IndexNow de las iniciativas públicas que han cambiado (vencidas hoy, conseguidas o cerradas desde el último aviso):
+ * es el barrido diario de respaldo. Nunca hace fallar la tarea.
  */
-export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, deadline }) => {
+export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, deadline, deps }) => {
   let expired = 0;
   let examined = 0;
   let cursor = 0;
@@ -41,9 +45,10 @@ export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, de
     const last = page[page.length - 1];
     if (!last || page.length < batchSize) {
       // Las campañas ya han vencido: ahora sí, la tarea falla por la votación que no se pudo cerrar (reintento con espera y alerta JOB_FAILED).
+      const indexNow = await notifyIndexNow({ db, keyring: () => deps.keyring() });
       if (polls.failure !== null) throw polls.failure;
       if (failure !== null) throw failure;
-      return { processed: examined + polls.closed, hasMore: polls.hasMore, detail: { expired, ...pollDetail } };
+      return { processed: examined + polls.closed, hasMore: polls.hasMore, detail: { expired, ...pollDetail, indexNowUrls: indexNow.status === 'SENT' ? indexNow.urls : 0 } };
     }
     if (deadline !== undefined && Date.now() > deadline) {
       if (failure !== null) throw failure;

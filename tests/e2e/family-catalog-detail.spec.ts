@@ -180,7 +180,7 @@ test.describe('QA-F03 · ficha de la iniciativa', () => {
 
   test('placa y reto por curso son independientes y el reto se cuenta solo en positivo', async ({ page }) => {
     await page.goto(initiative(1));
-    await expect(page.getByText('Incluye placa conmemorativa de la promoción')).toBeVisible();
+    await expect(page.getByText('Incluye placa conmemorativa de agradecimiento')).toBeVisible();
     const challenge = page.getByTestId('course-challenge');
     await expect(challenge).toBeVisible();
     await expect(challenge).toContainText(/Reto colectivo: desbloqueamos «/);

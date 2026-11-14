@@ -26,7 +26,7 @@ Falla con código `1` si detecta:
 
 - **Código y esquema:** `Float` en Prisma; placeholders (`TODO`, `FIXME`, `// ...`); textos prohibidos (`"propina"`, `"(Desactivado)"`); secretos expuestos con `NEXT_PUBLIC_`; descuadres de `>= 1` céntimo en `seed_data.json`; archivos con doble extensión.
 - **Libro mayor:** que las migraciones de `prisma/migrations/` siguen creando los triggers de inmutabilidad y de cuadre y el `CHECK (amountCents > 0)`, y que ninguna los borra ni los desactiva.
-- **Coherencia de la documentación:** restos de la marca descartada; activos de `public/brand/` citados que no existen; el nombre antiguo del rol de cofirmante (hoy `COSIGNER`); anclas de [korum-v8-anatomy.md](../korum-nextjs-multitenant-ui/references/korum-v8-anatomy.md) que ya no coinciden con su línea del prototipo; y `.claude/` desincronizado respecto a `.agents/` (se corrige con `node scripts/sync-ai-context.mjs`).
+- **Coherencia de la documentación:** restos de la marca descartada; activos de `docs/brand/` citados que no existen; el nombre antiguo del rol de cofirmante (hoy `COSIGNER`); anclas de [korum-v8-anatomy.md](../korum-nextjs-multitenant-ui/references/korum-v8-anatomy.md) que ya no coinciden con su línea del prototipo; y `.claude/` desincronizado respecto a `.agents/` (se corrige con `node scripts/sync-ai-context.mjs`).
 
 ## 2. Puerta 2 · Tests unitarios, fuzzing y concurrencia (Vitest)
 

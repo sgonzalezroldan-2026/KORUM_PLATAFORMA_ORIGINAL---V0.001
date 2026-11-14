@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { acceptInvitationAction, acceptInvitationWithSessionAction, inspectInvitationAction, type InvitationPageView } from '@/app/[locale]/(auth)/invitacion/actions';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { Locale } from '@/i18n/routing';
-import { Field, FormAlert, primaryButton } from './auth-ui';
+import { Field, focusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
 
 /**
  * Activación de la cuenta de la segunda persona firmante (o del primer Super-Admin). Lee el token del fragmento (`#t=`) y lo quita de la
@@ -21,6 +21,10 @@ export function InvitationForm() {
   const [repeat, setRepeat] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // El aviso de que no coinciden sale al salir del campo o al enviar, no al primer carácter (Sprint 5.5b, heredado del 3.2).
+  const [checkRepeat, setCheckRepeat] = useState(false);
+  const [checkPassword, setCheckPassword] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   // El token se lee del fragmento una sola vez y se guarda aquí: en desarrollo React ejecuta el efecto dos veces y, como la primera pasada
   // ya ha borrado el fragmento de la barra de direcciones, la segunda lo encontraría vacío (fallo visto en la certificación del 3.2).
@@ -76,17 +80,23 @@ export function InvitationForm() {
       <div className="flex flex-col gap-4">
         <p className="text-lg text-ink">{t('intro', { email: view.email, organization: view.organizationName ?? '', role: view.roleLabel ?? '' })}</p>
         {error ? <FormAlert>{error}</FormAlert> : null}
-        <button type="button" className={primaryButton} disabled={busy} onClick={() => void acceptWithSession()}>
+        <SubmitButton type="button" busy={busy} onClick={() => void acceptWithSession()}>
           {t('acceptRole')}
-        </button>
+        </SubmitButton>
       </div>
     );
   }
 
-  const mismatch = repeat !== '' && repeat !== password;
+  const tooShort = password.length < 12;
+  const mismatch = repeat !== password;
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (mismatch || password.length < 12) return;
+    if (mismatch || tooShort) {
+      setCheckPassword(true);
+      setCheckRepeat(true);
+      focusFirstInvalid(formRef.current);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -104,17 +114,36 @@ export function InvitationForm() {
   };
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
+    <form ref={formRef} onSubmit={(event) => void submit(event)} className="flex flex-col gap-4" noValidate>
       <p className="text-lg text-ink">
         {view.purpose === 'SUPERADMIN' ? t('platformIntro', { email: view.email }) : t('intro', { email: view.email, organization: view.organizationName ?? '', role: view.roleLabel ?? '' })}
       </p>
       <p className="text-ink-soft">{t('nextSteps')}</p>
       {error ? <FormAlert>{error}</FormAlert> : null}
-      <Field label={t('password')} hint={t('passwordHint')} type="password" autoComplete="new-password" minLength={12} maxLength={128} required value={password} onChange={(event) => setPassword(event.target.value)} />
-      <Field label={t('repeat')} type="password" autoComplete="new-password" required value={repeat} error={mismatch ? t('mismatch') : null} onChange={(event) => setRepeat(event.target.value)} />
-      <button type="submit" className={primaryButton} disabled={busy || mismatch || password.length < 12 || repeat === ''}>
-        {t('submit')}
-      </button>
+      <Field
+        label={t('password')}
+        hint={t('passwordHint')}
+        type="password"
+        autoComplete="new-password"
+        minLength={12}
+        maxLength={128}
+        required
+        value={password}
+        error={checkPassword && tooShort ? t('weak') : null}
+        onBlur={() => setCheckPassword(password !== '')}
+        onChange={(event) => setPassword(event.target.value)}
+      />
+      <Field
+        label={t('repeat')}
+        type="password"
+        autoComplete="new-password"
+        required
+        value={repeat}
+        error={checkRepeat && mismatch ? t('mismatch') : null}
+        onBlur={() => setCheckRepeat(repeat !== '')}
+        onChange={(event) => setRepeat(event.target.value)}
+      />
+      <SubmitButton busy={busy}>{t('submit')}</SubmitButton>
     </form>
   );
 }

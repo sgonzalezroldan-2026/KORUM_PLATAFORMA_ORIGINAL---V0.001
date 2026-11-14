@@ -1,7 +1,7 @@
 'use server';
 
 import { getEnv } from '@/config/env';
-import { GatePinNotAllowedError, revokeGateSession, rotateGateCode, setGatePin } from '@/core/ticketing/gate-session.service';
+import { GatePinNotAllowedError, GatePinRateLimitedError, revokeGateSession, rotateGateCode, setGatePin } from '@/core/ticketing/gate-session.service';
 import { drawRaffle, RaffleDrawNotAllowedError, type RaffleDrawBlock } from '@/core/ticketing/raffle-draw.service';
 import { loadRaffleActFile, type RaffleActFile } from '@/core/ticketing/raffle-state.service';
 import { dispatchOutboxSoon } from '@/lib/panel/outbox-soon';
@@ -17,7 +17,7 @@ import { ResourceNotFoundError, TenantAccessError } from '@/repositories/tenant-
  * caducidad del PIN no se pide aquí: sale de la fecha del evento guardada en la iniciativa.
  */
 
-export type GateAdminResult = { status: 'OK'; pin?: string; expiresAt?: string } | { status: 'ERROR'; reason: 'FORBIDDEN' | 'NOT_FOUND' | 'NOT_ALLOWED' };
+export type GateAdminResult = { status: 'OK'; pin?: string; expiresAt?: string } | { status: 'ERROR'; reason: 'FORBIDDEN' | 'NOT_FOUND' | 'NOT_ALLOWED' | 'RATE_LIMITED' };
 
 async function context(orgSlug: unknown) {
   if (typeof orgSlug !== 'string') return null;
@@ -31,6 +31,7 @@ async function context(orgSlug: unknown) {
 
 function failure(error: unknown): GateAdminResult {
   if (error instanceof GatePinNotAllowedError) return { status: 'ERROR', reason: 'NOT_ALLOWED' };
+  if (error instanceof GatePinRateLimitedError) return { status: 'ERROR', reason: 'RATE_LIMITED' };
   if (error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'NOT_FOUND' };
   if (error instanceof TenantAccessError) return { status: 'ERROR', reason: 'FORBIDDEN' };
   throw error;

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { InitiativeCoverForm } from '@/components/panel/initiative-cover-form';
 import { StudioPicker } from '@/components/panel/studio-picker';
 import { StudioWorkbench, type StoredPricing } from '@/components/panel/studio-workbench';
-import { findTemplate, draftFromTemplate } from '@/core/studio/campaign-templates';
+import { findTemplate, draftFromTemplate, REWARD_PRESET_SECTION, templateTextKey } from '@/core/studio/campaign-templates';
 import { effectiveMaxCampaignDays, latestCloseOn } from '@/core/studio/studio-board';
 import { REWARD_PRESETS, blankStudioDraft, defaultCloseOn, madridIsoDate, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
 import { Link } from '@/i18n/navigation';
@@ -79,7 +80,7 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
   const { context, initiatives, canCreate } = await getStudioOverview(db, actor, organization.id);
   const [t, tContent] = await Promise.all([getTranslations({ locale, namespace: 'panel.studio' }), getTranslations({ locale: context.contentLocale, namespace: 'panel.studio' })]);
 
-  const rewardPresets = Object.fromEntries(REWARD_PRESETS.map((key) => [key, tContent(`rewardPresets.${key}`)])) as Record<RewardPreset, string>;
+  const rewardPresets = Object.fromEntries(REWARD_PRESETS.map((key) => [key, tContent(`${REWARD_PRESET_SECTION[context.vertical]}.${key}`)])) as Record<RewardPreset, string>;
   const firstReward = rewardPresets[REWARD_PRESETS[0]];
   const maxDays = effectiveMaxCampaignDays(context.maxCampaignDays);
   const closeDefault = defaultCloseOn(now, Math.min(maxDays, DEFAULT_CAMPAIGN_DAYS));
@@ -117,7 +118,11 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
     const canEditCover = !actor.isSuperadmin && ['BUDGETING', 'FUNDRAISING', 'GOAL_REACHED', 'CLOSED'].includes(initiative.status);
     workbench = (
       <>
-        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock} stored={stored} justPublished={first('publicada') === '1'} />
+        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock}
+          stored={stored}
+          justPublished={first('publicada') === '1'}
+          shareText={tContent('published.whatsappText', { title: initiative.title, url: absoluteUrl(context.contentLocale, `/${orgSlug}/iniciativas/${initiative.id}`) })}
+        />
         <InitiativeCoverForm orgSlug={orgSlug} initiativeId={initiative.id} coverFileId={initiative.coverFileId} maxBytes={FILE_RULES.INITIATIVE_COVER.maxBytes} canEdit={canEditCover} canRemove={!actor.isSuperadmin && initiative.coverFileId !== null} />
       </>
     );
@@ -131,11 +136,11 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
     if (template && template.format === format) {
       draft = draftFromTemplate(
         template,
-        { title: tContent(`templates.${template.key}.title`), description: tContent(`templates.${template.key}.description`), rewardText: firstReward },
+        { title: tContent(`templates.${templateTextKey(template, context.vertical)}.title`), description: tContent(`templates.${templateTextKey(template, context.vertical)}.description`), rewardText: firstReward },
         { vertical: context.vertical, defaultCloseOn: closeDefault, availableCategories: context.categories.map((category) => category.name) }
       );
     }
-    heading = template ? t(`templates.${template.key}.name`) : t(format === 'TICKETING' ? 'picker.newTicketing' : 'picker.newBudget');
+    heading = template ? t(`templates.${templateTextKey(template, context.vertical)}.name`) : t(format === 'TICKETING' ? 'picker.newTicketing' : 'picker.newBudget');
     workbench = (
       <>
         <StudioWorkbench key={`${newParam}:${template?.key ?? ''}`} {...common} initialDraft={{ ...draft, rewardText: draft.rewardText ?? firstReward }} lock="NONE" stored={null} justPublished={false} />

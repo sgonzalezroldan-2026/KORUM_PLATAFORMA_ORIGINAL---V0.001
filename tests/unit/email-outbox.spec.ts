@@ -93,11 +93,37 @@ const SAMPLES: Record<string, unknown> = {
   'initiative.resizeClosed': { initiativeId: 7, outcome: 'PROJECT', newGoalCents: 210_000, option: 'Comprar 14 tablets con lo recaudado' },
   'initiative.resizePoll': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', pollId: 3, closesAt: IN_3_DAYS, voteToken: '3.41.' + 'a'.repeat(64) },
   'initiative.resizeResult': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', option: 'Comprar 14 tablets con lo recaudado', newGoalCents: 210_000 },
-  'initiative.refundingSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' }
+  'initiative.refundingSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
+  'expired.decisionReminder': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', daysLeft: 20, canVote: true, voteDaysLeft: 2, urgent: false }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>
   renderEmail({ templateKey, locale, payload: SAMPLES[templateKey], createdAt: NOW, appUrl: APP_URL, organization: ORGANIZATION, initiative: initiative(), qrSecret: QR_SECRET, ...overrides });
+
+describe('Sprint 5.5b · avisos que dicen lo que es verdad al enviarse', () => {
+  it('«¡Lo hemos conseguido!» no dice que el dinero espera la firma si la campaña ya se liquidó al salir el mensaje', async () => {
+    for (const locale of LOCALES) {
+      const waiting = await render('initiative.goalReachedSupporter', locale, { initiative: { ...initiative(), status: 'GOAL_REACHED' } });
+      const settled = await render('initiative.goalReachedSupporter', locale, { initiative: { ...initiative(), status: 'CLOSED' } });
+      expect(waiting.text).not.toBe(settled.text);
+    }
+    const waiting = await render('initiative.goalReachedSupporter', 'es', { initiative: { ...initiative(), status: 'GOAL_REACHED' } });
+    const settled = await render('initiative.goalReachedSupporter', 'es', { initiative: { ...initiative(), status: 'CLOSED' } });
+    expect(waiting.text).toContain('hasta que AMPA Colegio Sol firme su liquidación');
+    expect(settled.text).toContain('ya ha firmado la liquidación');
+    expect(settled.text).not.toContain('hasta que');
+  });
+
+  it('el recordatorio de una campaña vencida dice si aún se puede votar o si solo queda devolver, y sube el tono cuando es urgente', async () => {
+    const vote = await render('expired.decisionReminder', 'es');
+    expect(vote.text).toContain('durante 2 días más');
+    expect(vote.text).toContain('/panel/colegio-sol/vencidas');
+    const urgent = await render('expired.decisionReminder', 'es', { payload: { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', daysLeft: 3, canVote: false, voteDaysLeft: 0, urgent: true } });
+    expect(urgent.subject).toMatch(/^Urgente/);
+    expect(urgent.text).toContain('Ya no queda tiempo para una votación');
+    expect(urgent.text).not.toContain('durante');
+  });
+});
 
 describe('Sprint 5.3 · respuesta de KORUM y email directo a una entidad', () => {
   it('la respuesta de KORUM a lo que escribe una entidad se lee en su panel y no en Mi cuenta; la de una familia, en su cuenta', async () => {

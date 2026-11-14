@@ -310,11 +310,12 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
   describe('sitemap', () => {
     afterEach(() => vi.resetAllMocks());
 
-    it('sin base de datos lista solo la portada, las 8 páginas pilar y el alta, en los 3 idiomas y con sus alternativas', async () => {
+    it('sin base de datos lista solo la portada, las 8 páginas pilar, el alta y la declaración de accesibilidad, en los 3 idiomas y con sus alternativas', async () => {
       repository.listIndexableOrganizations.mockRejectedValue(new Error('sin base de datos'));
       const entries = await sitemap();
-      expect(entries).toHaveLength((MARKETING_PATHS.length + 1) * LOCALES.length);
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 2) * LOCALES.length);
       expect(entries.filter((entry) => new URL(entry.url).pathname.endsWith('/registro-comunidad'))).toHaveLength(LOCALES.length);
+      expect(entries.filter((entry) => new URL(entry.url).pathname.endsWith('/accesibilidad'))).toHaveLength(LOCALES.length);
       expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
       for (const entry of entries) {
         expect(entry.lastModified).toBe(MARKETING_CONTENT_UPDATED);
@@ -340,7 +341,7 @@ describe('QA-SEO02 · robots, sitemap y llms.txt', () => {
         expect(urls).not.toContain(absoluteUrl(locale, '/cervantes/ideas'));
       }
       // Portada, comercios, logros y FAQ y soporte de la entidad, más su iniciativa, además de las páginas fijas.
-      expect(entries).toHaveLength((MARKETING_PATHS.length + 1 + 1 + 2 + 1 + 1) * LOCALES.length);
+      expect(entries).toHaveLength((MARKETING_PATHS.length + 2 + 1 + 2 + 1 + 1) * LOCALES.length);
       const initiative = entries.find((entry) => entry.url === absoluteUrl('ca', '/cervantes/iniciativas/7'));
       expect(initiative?.lastModified).toBe(touched);
       expect(initiative?.alternates?.languages).toEqual(languageAlternates('/cervantes/iniciativas/7'));

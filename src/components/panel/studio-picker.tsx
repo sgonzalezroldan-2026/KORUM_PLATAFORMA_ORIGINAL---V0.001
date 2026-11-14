@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { templatesFor } from '@/core/studio/campaign-templates';
+import { templatesFor, templateTextKey } from '@/core/studio/campaign-templates';
 import type { StudioVertical } from '@/core/studio/studio-draft';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
@@ -63,12 +63,12 @@ export async function StudioPicker({ locale, orgSlug, vertical, canCreate, initi
           {templates.map((template) => (
             <li key={template.key} className="korum-notebook-sheet flex flex-col gap-2 p-3" data-testid={`studio-template-${template.key}`}>
               <TemplateArt kind={template.illustration} className="h-auto max-h-32 w-full" />
-              <p className="font-joy text-lg font-bold text-varsity-navy">{t(`templates.${template.key}.name`)}</p>
-              <p className="flex-1 text-sm text-ink-soft">{t(`templates.${template.key}.summary`)}</p>
+              <p className="font-joy text-lg font-bold text-varsity-navy">{t(`templates.${templateTextKey(template, vertical)}.name`)}</p>
+              <p className="flex-1 text-sm text-ink-soft">{t(`templates.${templateTextKey(template, vertical)}.summary`)}</p>
               {canCreate ? (
                 <Link href={`${base}?nueva=${template.format === 'TICKETING' ? 'taquilla' : 'presupuesto'}&plantilla=${template.key}`} className="inline-flex min-h-11 items-center font-bold text-varsity-navy underline underline-offset-4">
                   {t('picker.useTemplate')}
-                  <span className="sr-only">{` ${t(`templates.${template.key}.name`)}`}</span>
+                  <span className="sr-only">{` ${t(`templates.${templateTextKey(template, vertical)}.name`)}`}</span>
                 </Link>
               ) : null}
             </li>

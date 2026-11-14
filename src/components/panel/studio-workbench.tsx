@@ -9,6 +9,7 @@ import { computeStudioBoard, computeTicketingBoard, publishBlockers, saveProblem
 import type { RewardPreset, StudioDraft } from '@/core/studio/studio-draft';
 import { Link, useRouter } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
+import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { StudioBoardView } from './studio-board-view';
 import { StudioFields, type StudioFieldErrors, type StudioLock } from './studio-fields';
 
@@ -44,6 +45,8 @@ export interface StudioWorkbenchProps {
   today: string;
   maxCloseOn: string;
   justPublished: boolean;
+  /** Mensaje de WhatsApp ya compuesto en el idioma en que escribe la entidad, con el enlace en ese idioma (revisión de experiencia del 5.5b): las familias lo reciben así aunque quien firma use otro. */
+  shareText?: string;
 }
 
 type Message = { tone: 'error' | 'success' | 'info'; text: string; list?: string[] } | null;
@@ -73,7 +76,7 @@ const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STA
  */
 let carriedSavedNotice: { initiativeId: number; message: Exclude<Message, null> } | null = null;
 
-export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished }: StudioWorkbenchProps) {
+export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished, shareText }: StudioWorkbenchProps) {
   const t = useTranslations('panel.studio');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -358,6 +361,19 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
               </Link>
             ) : null}
           </div>
+          {publicHref ? (
+            // Compartir al momento, que es cuando más se comparte (Sprint 5.5b, heredado del 4.3): la tarjeta de WhatsApp de la ficha ya lleva el avance.
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(shareText ?? t('published.whatsappText', { title: draft.title, url: absoluteUrl(locale, publicHref) }))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[#0f7a40] px-4 font-bold text-white hover:bg-[#0b5f31]"
+              data-testid="published-whatsapp-link"
+            >
+              <span aria-hidden="true">{'📲'}</span>
+              {t('published.whatsapp')}
+            </a>
+          ) : null}
         </div>
       ) : null}
       {lock === 'SOFT' ? <FormAlert tone="info">{t('lock.soft')}</FormAlert> : null}

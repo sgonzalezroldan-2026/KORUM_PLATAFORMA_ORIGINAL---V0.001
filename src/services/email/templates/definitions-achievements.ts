@@ -88,7 +88,8 @@ export const initiativeGoalReachedSupporter: TemplateDefinition<z.infer<typeof s
       title: t('supporter.goalReached.title'),
       paragraphs: [
         t('supporter.goalReached.body', { initiative: initiative.title, organization: organization.name, count: initiative.totalContributions }),
-        t('supporter.goalReached.next', { organization: organization.name })
+        // El texto sale del estado al enviarse: en el plan gratuito la tarea de avisos corre una vez al día y la campaña puede estar ya liquidada (Sprint 5.5b).
+        t(initiative.status === 'CLOSED' ? 'supporter.goalReached.nextSettled' : 'supporter.goalReached.next', { organization: organization.name })
       ],
       facts: [],
       button: { label: t('supporter.goalReached.cta'), url: context.url(`/${organization.slug}/logros`) },

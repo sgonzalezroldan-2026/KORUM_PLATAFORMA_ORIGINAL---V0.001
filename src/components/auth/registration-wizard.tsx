@@ -9,7 +9,7 @@ import { InvalidEmailError, normalizeCanonicalEmail } from '@/core/security/emai
 import type { Locale } from '@/i18n/routing';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
 import { localizedPath } from '@/lib/seo/marketing-routes';
-import { CodeField, FormAlert, linkButton, primaryButton, secondaryButton } from './auth-ui';
+import { CodeField, focusFirstInvalid, FormAlert, linkButton, QuietFieldErrors, secondaryButton, SubmitButton } from './auth-ui';
 import { ActivationStep, CommunityStep, SignersStep, type RegistrationDraft } from './registration-steps';
 
 /**
@@ -58,6 +58,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
   const [code, setCode] = useState('');
   const [codeNotice, setCodeNotice] = useState<string | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const verifyHeadingRef = useRef<HTMLHeadingElement>(null);
   const router = useRouter();
   // Al terminar el alta, el formulario se sustituye por el de verificación: el foco pasa a su título (no se queda en el documento).
@@ -99,9 +100,9 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
   }
 
   const firstStepWith = (found: Record<string, string>) => STEP_FIELDS.findIndex((fields) => Object.keys(found).some((key) => fields.includes(key.split('.')[0]!)));
-  const moveTo = (next: number) => {
+  const moveTo = (next: number, options: { focusHeading?: boolean } = {}) => {
     setStep(next);
-    requestAnimationFrame(() => headingRef.current?.focus());
+    if (options.focusHeading !== false) requestAnimationFrame(() => headingRef.current?.focus());
   };
 
   const next = (event: FormEvent) => {
@@ -109,7 +110,11 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
     setFormError(null);
     const found = validate(step);
     setErrors(found);
-    if (Object.keys(found).length > 0) return setFormError(t('fixErrors', { count: Object.keys(found).length }));
+    if (Object.keys(found).length > 0) {
+      // Un solo resumen anunciado y el foco en el primer campo con error (Sprint 5.5b, heredado del 3.2): cada campo lleva su error vinculado, sin anunciarse por separado.
+      setFormError(t('fixErrors', { count: Object.keys(found).length }));
+      return focusFirstInvalid(formRef.current);
+    }
     if (step < STEPS.length - 1) return moveTo(step + 1);
     void submit();
   };
@@ -135,7 +140,8 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       setErrors(found);
       setFormError(failure.code === 'RATE_LIMITED' || failure.code === 'UNKNOWN' ? t(`failures.${failure.code}`) : t('fixErrors', { count: Object.keys(found).length }));
       const target = firstStepWith(found);
-      if (target >= 0 && target !== step) moveTo(target);
+      if (target >= 0 && target !== step) moveTo(target, { focusHeading: false });
+      if (Object.keys(found).length > 0) focusFirstInvalid(formRef.current);
     } catch {
       setFormError(t('failures.UNKNOWN'));
     } finally {
@@ -166,9 +172,9 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
         {codeNotice ? <FormAlert tone="info">{codeNotice}</FormAlert> : null}
         {formError ? <FormAlert>{formError}</FormAlert> : null}
         <CodeField label={t('verify.code')} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
-        <button type="submit" className={primaryButton} disabled={busy || code.length !== 6}>
+        <SubmitButton busy={busy} disabled={code.length !== 6}>
           {t('verify.submit')}
-        </button>
+        </SubmitButton>
         <button type="button" className={linkButton} onClick={() => void resend()}>
           {t('verify.resend')}
         </button>
@@ -178,7 +184,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
 
   const stepProps = { draft, errors, update };
   return (
-    <form onSubmit={next} className="flex flex-col gap-6" noValidate>
+    <form ref={formRef} onSubmit={next} className="flex flex-col gap-6" noValidate>
       <ol className="mobile-stack grid gap-2 md:grid-cols-3" aria-label={t('progress')}>
         {STEPS.map((name, index) => (
           <li key={name} aria-current={index === step ? 'step' : undefined} className={`rounded-xl border-2 px-3 py-2 text-sm font-bold ${index === step ? 'border-varsity-navy bg-varsity-navy text-varsity-ivory' : index < step ? 'border-varsity-emerald text-varsity-emerald' : 'border-varsity-navy/30 text-ink-soft'}`}>
@@ -189,10 +195,12 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       <h2 ref={headingRef} tabIndex={-1} className="font-corp text-2xl font-extrabold text-varsity-navy">
         {t(`steps.${STEPS[step]}`)}
       </h2>
-      {formError ? <FormAlert>{formError}</FormAlert> : null}
-      {step === 0 ? <CommunityStep {...stepProps} appHost={appHost} /> : null}
-      {step === 1 ? <SignersStep {...stepProps} /> : null}
-      {step === 2 ? <ActivationStep {...stepProps} exemptLimitCents={exemptLimitCents} groupCount={participationTemplate(draft.vertical).flatMap((cluster) => cluster.items).length} /> : null}
+      {formError ? <FormAlert focusOnShow={Object.keys(errors).length === 0}>{formError}</FormAlert> : null}
+      <QuietFieldErrors>
+        {step === 0 ? <CommunityStep {...stepProps} appHost={appHost} /> : null}
+        {step === 1 ? <SignersStep {...stepProps} /> : null}
+        {step === 2 ? <ActivationStep {...stepProps} exemptLimitCents={exemptLimitCents} groupCount={participationTemplate(draft.vertical).flatMap((cluster) => cluster.items).length} /> : null}
+      </QuietFieldErrors>
       <div className="mobile-stack grid gap-3 md:grid-cols-2">
         {step > 0 ? (
           <button type="button" className={secondaryButton} onClick={() => moveTo(step - 1)} disabled={busy}>
@@ -201,9 +209,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
         ) : (
           <span aria-hidden="true" />
         )}
-        <button type="submit" className={primaryButton} disabled={busy}>
-          {step === STEPS.length - 1 ? t('submit') : t('continue')}
-        </button>
+        <SubmitButton busy={busy}>{step === STEPS.length - 1 ? t('submit') : t('continue')}</SubmitButton>
       </div>
     </form>
   );

@@ -260,16 +260,17 @@ if (fs.existsSync(migrationsDir)) {
   errors.push('[MIGRATIONS-MISSING] prisma/migrations not found');
 }
 
-// 5b. Brand files cited in the documentation must exist (discarded assets live in public/brand/_old and are not cited as current)
-const brandRef = /public\/brand\/([\w./-]+\.(?:svg|jpg|jpeg|png|webp|avif))/g;
+// 5b. Brand reference files cited in the documentation must exist. Since Sprint 5.5b they live in docs/brand (outside public/, so they are not served);
+// discarded ones in docs/brand/_old are not cited as current. Images that are published go to public/brand/generated and are not checked here.
+const brandRef = /docs\/brand\/([\w./-]+\.(?:svg|jpg|jpeg|png|webp|avif))/g;
 for (const file of docFiles) {
   const rel = path.relative(ROOT, file);
   fs.readFileSync(file, 'utf8').split(/\r?\n/).forEach((line, idx) => {
     for (const match of line.matchAll(brandRef)) {
       const cited = match[1];
-      if (cited.startsWith('_old/') || cited.startsWith('generated/')) continue;
-      if (!fs.existsSync(path.join(ROOT, 'public', 'brand', ...cited.split('/')))) {
-        errors.push(`[BRAND-ASSET-MISSING] ${rel}:${idx + 1} cites public/brand/${cited}, which does not exist`);
+      if (cited.startsWith('_old/')) continue;
+      if (!fs.existsSync(path.join(ROOT, 'docs', 'brand', ...cited.split('/')))) {
+        errors.push(`[BRAND-ASSET-MISSING] ${rel}:${idx + 1} cites docs/brand/${cited}, which does not exist`);
       }
     }
   });

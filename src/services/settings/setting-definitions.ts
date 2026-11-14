@@ -121,12 +121,21 @@ export const SECRET_DEFINITIONS = {
   'email.smtp.password': { minLength: 8 },
   'invoicing.apiKey': { minLength: 16 },
   'hucha.walletApiKey': { minLength: 16 },
-  'seo.indexNowKey': { minLength: 8 }
-} as const satisfies Record<string, { envFallback?: string; minLength: number }>;
+  // IndexNow exige 8 a 128 letras, cifras o guiones: la clave se publica tal cual en `/indexnow-key.txt` (Sprint 5.5b).
+  'seo.indexNowKey': { minLength: 8, pattern: /^[A-Za-z0-9-]{8,128}$/, patternMessage: 'La clave de IndexNow lleva de 8 a 128 letras, cifras o guiones' }
+} as const satisfies Record<string, SecretDefinition>;
+
+export interface SecretDefinition {
+  envFallback?: string;
+  minLength: number;
+  /** Formato obligatorio, si el proveedor lo fija. */
+  pattern?: RegExp;
+  patternMessage?: string;
+}
 
 export type SecretKey = keyof typeof SECRET_DEFINITIONS;
 
-export function secretDefinition(key: string): { envFallback?: string; minLength: number } {
+export function secretDefinition(key: string): SecretDefinition {
   if (!Object.hasOwn(SECRET_DEFINITIONS, key)) throw new UnknownSettingError(key);
   return SECRET_DEFINITIONS[key as SecretKey];
 }

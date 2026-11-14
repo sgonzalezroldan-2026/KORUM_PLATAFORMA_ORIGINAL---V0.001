@@ -87,6 +87,34 @@ function Motif({ kind }: { kind: TemplateIllustration }) {
           </text>
         </g>
       );
+    case 'instrument':
+      // Tambor con sus baquetas y dos notas (Sprint 5.5b: plantilla «Instrumentos» de las entidades culturales).
+      return (
+        <g>
+          <ellipse cx="54" cy="34" rx="26" ry="8" fill={CREAM} stroke={NAVY} strokeWidth="3" />
+          <path d="M28 34 V58 Q54 70 80 58 V34 Q54 46 28 34 Z" fill={CORAL} stroke={NAVY} strokeWidth="3" strokeLinejoin="round" />
+          <path d="M32 40 L42 60 L52 42 L62 62 L72 42 L78 56" fill="none" stroke={GOLD} strokeWidth="2.5" strokeLinejoin="round" />
+          <line x1="40" y1="14" x2="56" y2="30" stroke={NAVY} strokeWidth="3" strokeLinecap="round" />
+          <line x1="70" y1="12" x2="60" y2="30" stroke={NAVY} strokeWidth="3" strokeLinecap="round" />
+          <path d="M92 20 V36 M92 20 L102 17 V33" fill="none" stroke={EMERALD} strokeWidth="2.5" strokeLinecap="round" />
+          <circle cx="89" cy="37" r="3.5" fill={EMERALD} />
+          <circle cx="99" cy="34" r="3.5" fill={EMERALD} />
+        </g>
+      );
+    case 'scoreboard':
+      // Marcador de pabellón con dígitos de segmentos (Sprint 5.5b: plantilla de los clubes).
+      return (
+        <g>
+          <rect x="20" y="14" width="80" height="44" rx="5" fill={NAVY} stroke={NAVY} strokeWidth="3" />
+          <rect x="28" y="22" width="26" height="28" rx="3" fill="#1C2E4E" />
+          <rect x="66" y="22" width="26" height="28" rx="3" fill="#1C2E4E" />
+          <path d="M35 27 H47 V45 H35 Z" fill="none" stroke={GOLD} strokeWidth="3" strokeLinejoin="round" />
+          <path d="M79 27 V45" fill="none" stroke={GOLD} strokeWidth="3" strokeLinecap="round" />
+          <circle cx="60" cy="31" r="2" fill={EMERALD} />
+          <circle cx="60" cy="41" r="2" fill={EMERALD} />
+          <rect x="56" y="58" width="8" height="10" fill={NAVY} />
+        </g>
+      );
   }
 }
 

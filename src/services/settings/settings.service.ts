@@ -278,6 +278,7 @@ export async function updateSecret(db: Db, actor: VerifiedSuperadminActor, keyri
   const definition = secretDefinition(key);
   const trimmed = plaintext.trim();
   if (trimmed.length < definition.minLength || trimmed.length > 4096) throw new InvalidSettingError(key, [`El secreto debe tener entre ${definition.minLength} y 4096 caracteres`]);
+  if (definition.pattern && !definition.pattern.test(trimmed)) throw new InvalidSettingError(key, [definition.patternMessage ?? 'El secreto no tiene el formato esperado']);
   const sealed = sealParts(keyring, trimmed, CRYPTO_CONTEXT.platformSecret(key));
   const hint = secretHint(trimmed);
   await inTransaction(db, async (tx) => {

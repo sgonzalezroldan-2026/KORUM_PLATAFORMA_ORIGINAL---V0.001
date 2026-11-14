@@ -43,7 +43,7 @@
 
 ## 4. Geometría Vectorial del Isotipo: *"Parche Varsity Heritage"* (`viewBox="0 0 100 100"`)
 
-Se dibuja a partir de la lámina de referencia `public/brand/korum-logo.jpg` (componente `KorumMark`):
+Se dibuja a partir de la lámina de referencia `docs/brand/korum-logo.jpg` (componente `KorumMark`):
 
 - **Base de parche redondo:** círculo de radio 46 relleno con paño azul marino de sudadera pesada (`#101F38`).
 - **Anillos:** anillo exterior de oro deportivo (`#F59E0B`, trazo ≈ 4) y, por dentro, un fino anillo marfil (`#FDFBF7`, trazo ≈ 1,2) con una separación de azul marino.

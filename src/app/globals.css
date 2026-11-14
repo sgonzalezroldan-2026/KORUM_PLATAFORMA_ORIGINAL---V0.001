@@ -293,3 +293,18 @@
     break-inside: avoid;
   }
 }
+
+/* Imprimir solo la hoja de códigos de respaldo del segundo factor (Sprint 5.5b): ni el QR ni la clave manual salen en papel. */
+@media print {
+  html.korum-print-backup body * {
+    visibility: hidden !important;
+  }
+  html.korum-print-backup #korum-backup-sheet,
+  html.korum-print-backup #korum-backup-sheet * {
+    visibility: visible !important;
+  }
+  html.korum-print-backup #korum-backup-sheet {
+    position: absolute;
+    inset: 0 0 auto 0;
+  }
+}

@@ -22,6 +22,7 @@ const INITIATIVE_SELECT = {
   totalContributions: true,
   ticketSubtype: true,
   ticketVenue: true,
+  status: true,
   organizationId: true,
   organization: { select: { name: true, legalName: true, slug: true } }
 } as const;

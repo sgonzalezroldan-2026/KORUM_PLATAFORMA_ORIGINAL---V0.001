@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { authClient, authErrorCode } from '@/lib/auth/auth-client';
-import { CodeField, Field, FormAlert, primaryButton } from './auth-ui';
+import { CodeField, Field, focusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
+import { BACKUP_SHEET_ID, BackupCodesActions } from './backup-codes-actions';
 import { SecondFactorForm } from './second-factor-form';
 
 /**
@@ -27,6 +28,13 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scanHeading = useRef<HTMLHeadingElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Contraseña o código que no valen: se dicen junto a su campo y le devuelven el foco (revisión de experiencia del 5.5b).
+  const passwordError = error === 'INVALID_PASSWORD' ? te(error) : null;
+  const codeError = error === 'INVALID_CODE' ? te(error) : null;
+  useEffect(() => {
+    if (error === 'INVALID_PASSWORD' || error === 'INVALID_CODE') focusFirstInvalid(formRef.current);
+  }, [error]);
   const router = useRouter();
   const done = () => router.push(nextUrl);
 
@@ -74,26 +82,26 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
     });
   };
 
-  const alert = error ? <FormAlert>{te(KNOWN.has(error) ? error : 'UNKNOWN')}</FormAlert> : null;
+  const alert = error && !passwordError && !codeError ? <FormAlert>{te(KNOWN.has(error) ? error : 'UNKNOWN')}</FormAlert> : null;
 
   if (!setup) {
     return (
-      <form onSubmit={start} className="flex flex-col gap-4">
+      <form ref={formRef} onSubmit={start} className="flex flex-col gap-4">
         <p className="text-ink-soft">{t('intro')}</p>
         {alert}
         {/* Los gestores de contraseñas esperan un usuario junto a la contraseña (aviso de Chrome): campo oculto, nunca se envía. */}
         <input type="text" name="username" autoComplete="username" hidden readOnly value="" tabIndex={-1} aria-hidden="true" />
-        <Field label={t('password')} type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} />
-        <button type="submit" className={primaryButton} disabled={busy || password === ''}>
+        <Field label={t('password')} type="password" autoComplete="current-password" required value={password} error={passwordError} onChange={(event) => setPassword(event.target.value)} />
+        <SubmitButton busy={busy} disabled={password === ''}>
           {t('start')}
-        </button>
+        </SubmitButton>
       </form>
     );
   }
 
   const secret = new URL(setup.uri).searchParams.get('secret') ?? '';
   return (
-    <form onSubmit={confirm} className="flex flex-col gap-5">
+    <form ref={formRef} onSubmit={confirm} className="flex flex-col gap-5">
       <h2 ref={scanHeading} tabIndex={-1} className="font-corp text-xl font-extrabold text-varsity-navy">
         {t('scanTitle')}
       </h2>
@@ -107,7 +115,7 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
           <code className="break-all rounded-lg bg-varsity-navy/5 p-2 font-mono text-sm">{secret}</code>
         </div>
       </div>
-      <section aria-labelledby="backup-codes" className="korum-trust-vault flex flex-col gap-3 p-4">
+      <section id={BACKUP_SHEET_ID} aria-labelledby="backup-codes" className="korum-trust-vault flex flex-col gap-3 p-4">
         <h3 id="backup-codes" className="font-corp font-extrabold text-varsity-navy">
           {t('backupTitle')}
         </h3>
@@ -119,16 +127,17 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
             </li>
           ))}
         </ol>
-        <label className="flex min-h-11 items-center gap-3 font-semibold text-varsity-navy">
+        <BackupCodesActions codes={setup.backupCodes} />
+        <label className="flex min-h-11 items-center gap-3 font-semibold text-varsity-navy print:hidden">
           <input type="checkbox" className="size-5 accent-varsity-emerald" checked={saved} onChange={(event) => setSaved(event.target.checked)} />
           {t('backupSaved')}
         </label>
       </section>
       {alert}
-      <CodeField label={t('firstCode')} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
-      <button type="submit" className={primaryButton} disabled={busy || !saved || code.length !== 6}>
+      <CodeField label={t('firstCode')} value={code} error={codeError} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
+      <SubmitButton busy={busy} disabled={!saved || code.length !== 6}>
         {t('confirm')}
-      </button>
+      </SubmitButton>
     </form>
   );
 }

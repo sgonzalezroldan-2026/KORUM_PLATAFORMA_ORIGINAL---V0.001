@@ -3,7 +3,7 @@
  * React no tiene contexto (tarjetas `next/og`, correos). `KorumMark` lo envuelve con el nombre accesible traducido.
  * Para `next/og` usa `variant="simple"` (sin cinta con texto).
  *
- * Parche colegial redondo con la K, laureles y cinta (lámina de referencia public/brand/korum-logo.jpg).
+ * Parche colegial redondo con la K, laureles y cinta (lámina de referencia docs/brand/korum-logo.jpg).
  * Sin año ni subtítulo: sirve a colegios, clubes y entidades culturales (skill korum-brand-design-system §1 y §5).
  */
 

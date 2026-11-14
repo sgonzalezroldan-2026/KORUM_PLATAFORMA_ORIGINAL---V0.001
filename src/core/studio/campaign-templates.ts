@@ -7,7 +7,7 @@ import { blankStudioDraft, TICKETING_CATEGORY, type StudioDraft, type StudioForm
  * las categorías globales de la plataforma, así que si la entidad no la tiene, la plantilla deja la categoría por elegir.
  */
 
-export type TemplateIllustration = 'fan' | 'court' | 'kit' | 'laptop' | 'bus' | 'heart' | 'stage' | 'raffle';
+export type TemplateIllustration = 'fan' | 'court' | 'kit' | 'laptop' | 'bus' | 'heart' | 'stage' | 'raffle' | 'instrument' | 'scoreboard';
 
 export interface CampaignTemplate {
   key: string;
@@ -17,20 +17,42 @@ export interface CampaignTemplate {
   category: string | null;
   illustration: TemplateIllustration;
   ticket?: { subtype: 'EVENT' | 'RAFFLE'; priceCents: number; max: number; prizes: number | null };
+  /**
+   * Textos propios de una vertical (Sprint 5.5b, heredado del 4.3): un club no hace «excursión de fin de curso» sino un desplazamiento a un torneo, y una
+   * entidad cultural no hace «festival de fin de curso» sino un concierto. La clave apunta a `panel.studio.templates.<clave>`.
+   */
+  textVariants?: Partial<Record<StudioVertical, string>>;
 }
 
 const ALL: readonly StudioVertical[] = ['SCHOOL', 'SPORTS_CLUB', 'CULTURAL'];
 
 export const CAMPAIGN_TEMPLATES: readonly CampaignTemplate[] = [
   { key: 'climate', verticals: ['SCHOOL'], format: 'BUDGET', category: 'Infraestructura y Confort', illustration: 'fan' },
-  { key: 'playground', verticals: ['SCHOOL', 'SPORTS_CLUB'], format: 'BUDGET', category: 'Patios y Deporte', illustration: 'court' },
+  { key: 'playground', verticals: ['SCHOOL', 'SPORTS_CLUB'], format: 'BUDGET', category: 'Patios y Deporte', illustration: 'court', textVariants: { SPORTS_CLUB: 'playgroundClub' } },
   { key: 'kit', verticals: ['SPORTS_CLUB'], format: 'BUDGET', category: 'Patios y Deporte', illustration: 'kit' },
-  { key: 'tech', verticals: ['SCHOOL', 'CULTURAL'], format: 'BUDGET', category: 'Tecnología y Recursos', illustration: 'laptop' },
-  { key: 'trip', verticals: ALL, format: 'BUDGET', category: 'Comunidad y Viajes', illustration: 'bus' },
-  { key: 'solidarity', verticals: ['SCHOOL', 'CULTURAL'], format: 'BUDGET', category: 'Solidaridad y Becas', illustration: 'heart' },
-  { key: 'festival', verticals: ALL, format: 'TICKETING', category: null, illustration: 'stage', ticket: { subtype: 'EVENT', priceCents: 500, max: 200, prizes: null } },
+  { key: 'scoreboard', verticals: ['SPORTS_CLUB'], format: 'BUDGET', category: 'Patios y Deporte', illustration: 'scoreboard' },
+  { key: 'tech', verticals: ['SCHOOL', 'CULTURAL'], format: 'BUDGET', category: 'Tecnología y Recursos', illustration: 'laptop', textVariants: { CULTURAL: 'techCultural' } },
+  { key: 'instruments', verticals: ['CULTURAL'], format: 'BUDGET', category: 'Tecnología y Recursos', illustration: 'instrument' },
+  { key: 'trip', verticals: ALL, format: 'BUDGET', category: 'Comunidad y Viajes', illustration: 'bus', textVariants: { SPORTS_CLUB: 'tripClub', CULTURAL: 'tripCultural' } },
+  { key: 'solidarity', verticals: ALL, format: 'BUDGET', category: 'Solidaridad y Becas', illustration: 'heart', textVariants: { SPORTS_CLUB: 'solidarityClub' } },
+  { key: 'festival', verticals: ALL, format: 'TICKETING', category: null, illustration: 'stage', ticket: { subtype: 'EVENT', priceCents: 500, max: 200, prizes: null }, textVariants: { SPORTS_CLUB: 'festivalClub', CULTURAL: 'festivalCultural' } },
   { key: 'raffle', verticals: ALL, format: 'TICKETING', category: null, illustration: 'raffle', ticket: { subtype: 'RAFFLE', priceCents: 200, max: 500, prizes: 3 } }
 ];
+
+/** Clave de los textos de una plantilla en una vertical (`panel.studio.templates.<clave>`): la propia de la vertical si la tiene. */
+export function templateTextKey(template: CampaignTemplate, vertical: StudioVertical): string {
+  return template.textVariants?.[vertical] ?? template.key;
+}
+
+/** Todas las claves de texto que usa el catálogo (para comprobar que existen en los tres idiomas). */
+export const TEMPLATE_TEXT_KEYS: readonly string[] = [...new Set(CAMPAIGN_TEMPLATES.flatMap((template) => [template.key, ...Object.values(template.textVariants ?? {})]))];
+
+/**
+ * Premios del reto por curso o grupo de cada vertical (Sprint 5.5b): los tres huecos de `REWARD_PRESETS` son posiciones, y su texto cambia con la vertical
+ * (`panel.studio.<sección>.<hueco>`): una tarde de cine en el salón de actos en un colegio, un entrenamiento especial en un club, un ensayo abierto en una
+ * entidad cultural.
+ */
+export const REWARD_PRESET_SECTION: Record<StudioVertical, string> = { SCHOOL: 'rewardPresets', SPORTS_CLUB: 'rewardPresetsClub', CULTURAL: 'rewardPresetsCultural' };
 
 export function templatesFor(vertical: StudioVertical): CampaignTemplate[] {
   return CAMPAIGN_TEMPLATES.filter((template) => template.verticals.includes(vertical));

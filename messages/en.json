@@ -14,7 +14,8 @@
     "close": "Close",
     "retry": "Try again",
     "loading": "Loading…",
-    "footerNote": "KORUM is a technology platform. Payments and refunds are handled by PAYCOMET."
+    "footerNote": "KORUM is a technology platform. Payments and refunds are handled by PAYCOMET.",
+    "sending": "Sending…"
   },
   "languageSwitcher": {
     "label": "Language",
@@ -756,7 +757,8 @@
         "title": "We did it!",
         "body": "“{initiative}” by {organization} has reached its goal thanks to {count, plural, one {one contribution: yours} other {# contributions, and one of them is yours}}. Thank you!",
         "next": "The money stays in the initiative’s piggy bank at PAYCOMET until {organization} signs its payout. Once it’s done, we’ll show you the Before and After.",
-        "cta": "Share the achievement"
+        "cta": "Share the achievement",
+        "nextSettled": "{organization} has already signed the payout and the money has left the initiative’s piggy bank for the project. We’ll show you the Before and After very soon."
       },
       "photos": {
         "subject": "See how it turned out: “{initiative}”",
@@ -870,6 +872,19 @@
         "cta": "Go to the panel support page",
         "footnote": "This message was written by a member of the KORUM team for the people who sign for your organisation. You can reply from Support, in the panel."
       }
+    },
+    "expiredReminder": {
+      "subject": "{days, plural, one {# day} other {# days}} left to decide what to do with “{initiative}”",
+      "subjectUrgent": "Urgent: “{initiative}” still has no decision ({days, plural, one {# day} other {# days}})",
+      "preheader": "The campaign ended without reaching its goal and the money is still in the initiative’s piggy bank at PAYCOMET.",
+      "title": "Your decision is still pending",
+      "titleUrgent": "Please decide as soon as possible",
+      "body": "“{initiative}” ended without reaching its goal and you haven’t decided what to do yet. There {days, plural, one {is # day} other {are # days}} left of the 90 that PAYCOMET allows for paying out the money from the first payment.",
+      "canVote": "You can still ask the people who contributed whether to go ahead with a smaller project: the vote can be launched {days, plural, =0 {today only} one {today and tomorrow} other {for # more days}}. You can also refund 100% to each person.",
+      "refundOnly": "There’s no time left for a vote: the next step is to refund 100% to each person, to the payment method they used.",
+      "why": "Until you decide, families don’t know what will happen to their contribution.",
+      "wallet": "Initiative piggy bank",
+      "cta": "Decide now"
     }
   },
   "nav": {
@@ -887,7 +902,8 @@
       "comoFunciona": "How it works",
       "precios": "Pricing",
       "seguridad": "Security and transparency",
-      "faq": "Frequently asked questions"
+      "faq": "Frequently asked questions",
+      "accesibilidad": "Accessibility"
     },
     "account": "My account"
   },
@@ -1407,6 +1423,39 @@
         "ctaTitle": "Ready to start?",
         "ctaText": "Register your organisation for free and sort out the rest as you go."
       }
+    },
+    "accessibility": {
+      "metaTitle": "Accessibility statement",
+      "metaDescription": "How we make KORUM accessible (WCAG 2.2 AA), what we’re still improving and how to report a problem.",
+      "h1": "Accessibility statement",
+      "intro": "We want anyone to be able to contribute, vote, buy a ticket or run their organisation on KORUM, whatever device they use and whatever assistance they need.",
+      "dateLabel": "Date of this statement and of its last review:",
+      "statusTitle": "Compliance status",
+      "statusText": "KORUM is partially conformant with the Web Content Accessibility Guidelines (WCAG) 2.2, level AA. We meet most of the requirements; we still need to test payments and gate mode with screen readers on real phones.",
+      "checksTitle": "How we check it",
+      "checks": [
+        "Every release passes an automated accessibility review of the public pages in Spanish, Catalan and English, and of the dashboard, console and gate screens, on desktop and on mobile.",
+        "Every action can be done with the keyboard and the focus is always visible.",
+        "Text has enough contrast and buttons are at least 44 × 44 pixels. We design pages so they can be zoomed to 200% without losing information.",
+        "Form errors are shown next to their field and announced by screen readers.",
+        "Animations stop if the device asks for reduced motion.",
+        "States (fundraising, achieved, pending…) are never shown only by colour or an emoji."
+      ],
+      "limitsTitle": "What we’re still improving",
+      "limits": [
+        "We haven’t yet completed the screen reader test (VoiceOver on iPhone and TalkBack on Android) of paying a contribution and of gate mode.",
+        "The text and images each school, club or organisation publishes (descriptions, Before and After photos) are written by that organisation: we ask them to describe their images, but we can’t always guarantee it.",
+        "Some PDF documents (certificates, receipts and invoices) don’t yet have all the structure screen readers need. If you need one in another format, just ask.",
+        "The gate ticket reader uses the phone’s camera; anyone who can’t use it can type the ticket code in by hand."
+      ],
+      "contactTitle": "Found a problem?",
+      "contactText": "If something doesn’t work for you or you need the information in another format, write to us. We’ll help you finish what you were doing and fix the problem.",
+      "contactFallback": "We’ll publish the email address to report problems here very soon.",
+      "contactInclude": "Tell us which page you were on, what you were trying to do and which device or assistive technology you use (for example, a screen reader or zoom).",
+      "responseTime": "We’ll reply as soon as possible and within 20 working days at the latest.",
+      "enforcementTitle": "If you’re not happy with our reply",
+      "enforcementText": "If we don’t reply in time or you’re not satisfied with the reply, you can file a complaint with the consumer affairs authorities of your region.",
+      "mailSubject": "Accessibility problem on KORUM"
     }
   },
   "auth": {
@@ -1508,7 +1557,15 @@
       "backupIntro": "Keep them somewhere safe (for example, printed). They let you in if you lose your phone; each one works once. We won’t show them again.",
       "backupSaved": "I’ve saved the backup codes",
       "firstCode": "First code from the app",
-      "confirm": "Turn on and continue"
+      "confirm": "Turn on and continue",
+      "backupCopy": "Copy the codes",
+      "backupPrint": "Print them",
+      "backupDownload": "Download them (.txt)",
+      "backupCopied": "Codes copied. Paste them somewhere safe, away from this device.",
+      "backupCopyFailed": "They couldn’t be copied. Download them or write them down.",
+      "backupDownloaded": "File downloaded. Keep it somewhere safe, away from this device.",
+      "backupFileTitle": "KORUM · Two-step verification backup codes",
+      "backupFileIntro": "Each code works once to sign in if you lose your phone. Don’t share them with anyone."
     },
     "invitation": {
       "metaTitle": "Activate your account",
@@ -2944,7 +3001,7 @@
           "name": "Grants and solidarity",
           "summary": "Support so nobody is left out.",
           "title": "Grants so nobody is left out",
-          "description": "We are creating a support fund so that no family gives up the year’s activities for financial reasons."
+          "description": "We are creating a support fund so that no family has to give up activities for financial reasons."
         },
         "festival": {
           "name": "Festival with tickets",
@@ -2957,6 +3014,60 @@
           "summary": "Numbered tickets with a certified draw.",
           "title": "Community charity raffle",
           "description": "Numbered tickets with an on-screen draw and a record. What we raise goes to the community’s activities."
+        },
+        "playgroundClub": {
+          "name": "Club facilities",
+          "summary": "Goals, hoops, nets and improvements to the court or pitch.",
+          "title": "Better facilities to train and play",
+          "description": "We want to renovate the club’s facilities so every team can train and play safely. The budget is our supplier’s."
+        },
+        "scoreboard": {
+          "name": "Sports hall scoreboard",
+          "summary": "An electronic scoreboard for home games.",
+          "title": "A new scoreboard for the sports hall",
+          "description": "We want to install an electronic scoreboard so home games feel the way they deserve. The budget is our supplier’s."
+        },
+        "techCultural": {
+          "name": "Equipment and sound",
+          "summary": "Sound, lights, projector and resources for rehearsals and shows.",
+          "title": "Equipment to rehearse and perform better",
+          "description": "With this campaign we’ll renew the sound, lights and resources we use in rehearsals and performances. The budget is our supplier’s."
+        },
+        "instruments": {
+          "name": "Instruments",
+          "summary": "Instruments for the band, the choir or the music school.",
+          "title": "Instruments for the band and the music school",
+          "description": "We want more people to be able to learn and play on instruments in good condition. The budget is our supplier’s and is detailed on the page."
+        },
+        "tripClub": {
+          "name": "Tournament or away trip",
+          "summary": "Trips to tournaments and team camps.",
+          "title": "Every team to the tournament",
+          "description": "We want no player to miss the trip to the tournament. The money raised covers transport and entry fees."
+        },
+        "tripCultural": {
+          "name": "Gathering or tour",
+          "summary": "Trips to gatherings, competitions or performances away.",
+          "title": "On tour with the whole organisation",
+          "description": "We want the whole group to travel to the gathering and perform away. The money raised covers transport and entry fees."
+        },
+        "solidarityClub": {
+          "name": "Sports grants",
+          "summary": "Fees and kit so nobody has to give up sport.",
+          "title": "Grants so nobody leaves the team",
+          "description": "We’re creating a grant fund so no family has to stop their children playing at the club for financial reasons."
+        },
+        "festivalClub": {
+          "name": "Club party with tickets",
+          "summary": "Tickets with controlled capacity and a QR code.",
+          "title": "End-of-season party",
+          "description": "Ticket sales with controlled capacity and a QR code for the club party. The money raised goes to the teams’ activities."
+        },
+        "festivalCultural": {
+          "name": "Concert or show with tickets",
+          "summary": "Tickets with controlled capacity and a QR code.",
+          "title": "Charity concert",
+          "description": "Ticket sales with controlled capacity and a QR code for our concert. The money raised goes to the organisation’s activities."
         }
       },
       "rewardPresets": {
@@ -3011,7 +3122,7 @@
         "showBreakdown": "Show the 100%-balanced budget breakdown on the public page",
         "rewardEnabled": "Attach a group-challenge prize",
         "rewardHint": "Shown only in a positive way, without singling anyone out.",
-        "plaque": "Include a commemorative plaque for the year group",
+        "plaque": "Include a commemorative thank-you plaque",
         "rewardPreset": "Challenge prize",
         "rewardCustom": "Write your own prize…",
         "rewardCustomLabel": "Challenge prize",
@@ -3118,7 +3229,9 @@
       },
       "published": {
         "title": "Campaign published in piggy bank {wallet}!",
-        "body": "Families can now see it and contribute. Print the poster with its QR code or share the link."
+        "body": "Families can now see it and contribute. Print the poster with its QR code or share the link.",
+        "whatsapp": "Share on WhatsApp",
+        "whatsappText": "You can now support “{title}”! Every contribution counts and, if the goal isn’t reached, 100% is refunded: {url}"
       },
       "lock": {
         "soft": "The campaign is already collecting: only the description, the public breakdown, the challenge and the plaque can be changed. The budget, price and date are already used by contributions.",
@@ -3196,6 +3309,16 @@
           "generic": "We could not do it. Please try again in a few seconds."
         },
         "afterSave": "You can add the campaign image as soon as you save the draft."
+      },
+      "rewardPresetsClub": {
+        "cinema": "Special training session with a snack for the whole team",
+        "games": "Friendly match: families against players",
+        "noHomework": "Official team photo in the new kit"
+      },
+      "rewardPresetsCultural": {
+        "cinema": "Open rehearsal with a snack for the whole group",
+        "games": "A performance dedicated to the families",
+        "noHomework": "An afternoon of games and music for the group"
       }
     },
     "payouts": {
@@ -3583,7 +3706,8 @@
       "errors": {
         "FORBIDDEN": "You do not have permission to do that.",
         "NOT_FOUND": "That event no longer exists.",
-        "NOT_ALLOWED": "The PIN cannot be created: the event has already ended or its date is not valid."
+        "NOT_ALLOWED": "The PIN cannot be created: the event has already ended or its date is not valid.",
+        "RATE_LIMITED": "You’ve created a lot of PINs in a row. Wait a while before creating another: each new PIN closes the gate sessions."
       },
       "raffle": {
         "title": "Draw and extra rounds",
@@ -3839,7 +3963,8 @@
       "ACTIVITY_FUND_WINDOW": "Activity Fund close to (or past) the 90-day deadline",
       "SPONSOR_MONEY_BLOCKED": "A business’s money is blocked while its deadline runs",
       "PAYOUT_BLOCKED": "Campaign payout blocked: some splits cannot be sent or re-planned",
-      "SIGNER_HANDOVER_EXPIRED": "A signer handover expired without closing (legacy alert: it is no longer raised; the daily task closes expired handovers)"
+      "SIGNER_HANDOVER_EXPIRED": "A signer handover expired without closing (legacy alert: it is no longer raised; the daily task closes expired handovers)",
+      "EXPIRED_DECISION_PENDING": "Expired campaign undecided near the end of the window"
     },
     "fundsTitle": "{count, plural, =0 {Activity Funds} one {Activity Funds · # organisation} other {Activity Funds · # organisations}}",
     "fundsNone": "No organisation has money in its Activity Fund.",
@@ -5449,7 +5574,8 @@
   "forbidden": {
     "title": "You don’t have access to this page",
     "description": "You’re signed in with an account that doesn’t have permission here. If you sign for another organisation or use another account, sign in with it.",
-    "switchAccount": "Sign in with another account"
+    "switchAccount": "Sign in with another account",
+    "goToMyPanel": "Go to my dashboard"
   },
   "demo": {
     "label": "Demo environment",
@@ -5569,7 +5695,7 @@
         "independence": "Full independence from suppliers",
         "deadline": "Deadline"
       },
-      "plaque": "Includes a commemorative class plaque",
+      "plaque": "Includes a commemorative thank-you plaque",
       "matching": "Matching 2x is on: your contribution is doubled while the pool lasts.",
       "matchingBy": "Thanks to {sponsor}, your contribution is doubled while the pool lasts.",
       "goal": "Goal: {goal} ({pct}%)",
@@ -6400,6 +6526,22 @@
         "INVALID_CHOICE": "Choose an option before voting.",
         "RATE_LIMITED": "There are many votes from your network right now. Please try again in a few minutes.",
         "FAILED": "We could not record your vote. Please try again in a few seconds."
+      },
+      "noLink": {
+        "title": "Campaign vote",
+        "description": "To vote you need the personal link we emailed you. If you can’t find it, ask for it below."
+      },
+      "resend": {
+        "title": "Send me my voting link again",
+        "intro": "Enter the email you used to contribute. If you contributed to a campaign that’s being voted on, we’ll send your link to that email.",
+        "email": "Your email",
+        "submit": "Send me the link",
+        "invalidEmail": "Enter a valid email, for example name@mail.com.",
+        "rateLimited": "You’ve asked for the link several times. Wait a while and check your inbox, including the spam folder.",
+        "failed": "We couldn’t send it right now. Try again in a few minutes.",
+        "sentTitle": "Check your inbox",
+        "sentBody": "If that email contributed to a campaign that’s being voted on, you’ll get your personal link in a few minutes. Check the spam folder too. Don’t share the link: it votes for you.",
+        "another": "Use a different email"
       }
     }
   },

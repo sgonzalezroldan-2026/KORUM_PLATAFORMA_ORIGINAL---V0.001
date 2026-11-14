@@ -45,6 +45,8 @@ export interface TemplateContext {
     totalContributions: number;
     ticketSubtype: 'EVENT' | 'RAFFLE' | null;
     ticketVenue: string | null;
+    /** Estado al enviar el mensaje (no al escribirlo): un aviso que sale tarde dice lo que ya es verdad (Sprint 5.5b). */
+    status?: string;
   };
   /** `QR_HMAC_SECRET`: solo lo usa la entrada, para componer su QR al enviar (el mensaje no lo lleva). */
   qrSecret?: string;

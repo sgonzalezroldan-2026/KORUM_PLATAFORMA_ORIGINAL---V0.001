@@ -16,6 +16,9 @@ export const PILLAR_PAGES = [
   { key: 'faq', path: '/preguntas-frecuentes', priority: 0.8, group: 'info' }
 ] as const;
 
+/** Declaración de accesibilidad (Sprint 5.5b, EXPERIENCIA §7): enlazada desde el pie de todas las páginas y en el sitemap; no es una página pilar. */
+export const ACCESSIBILITY_PATH = '/accesibilidad';
+
 export type PillarKey = (typeof PILLAR_PAGES)[number]['key'];
 
 export function pillarByKey(key: PillarKey) {

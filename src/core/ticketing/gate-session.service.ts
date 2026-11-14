@@ -4,7 +4,7 @@ import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import type { Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { clearAttempts, countAttempts, lastAttemptAt, releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
-import { GATE_ENTRY_RULE } from '@/lib/rate-limit-rules';
+import { GATE_ENTRY_RULE, GATE_PIN_SET_RULE } from '@/lib/rate-limit-rules';
 import { requireOwnedResource } from '@/repositories/ownership';
 import { authorizeTenant, recordAudit, TenantAccessError, type RequestMeta, type SessionActor } from '@/repositories/tenant-guard';
 import { generateGateCode } from './gate-code';
@@ -34,6 +34,14 @@ const ipKey = (initiativeId: number, ipHash: string) => `gate-pin:ip:${initiativ
 const eventKey = (initiativeId: number) => `gate-pin:event:${initiativeId}`;
 const hashToken = (secret: string, token: string) => dataHmac(secret, 'gate-session-token', token);
 
+/** La persona firmante ya ha creado demasiados PIN en la última hora (`GATE_PIN_SET_RULE`). */
+export class GatePinRateLimitedError extends Error {
+  constructor() {
+    super('Demasiados PIN de portería seguidos: espera un poco antes de crear otro.');
+    this.name = 'GatePinRateLimitedError';
+  }
+}
+
 export class GatePinNotAllowedError extends Error {
   constructor(reason: string) {
     super(`No se puede configurar el PIN de portería: ${reason}.`);
@@ -56,6 +64,15 @@ export async function setGatePin(db: KorumPrismaClient, secret: string, actor: S
   const expiresAt = gatePinExpiry(initiative.closesAt);
   if (expiresAt <= now) throw new GatePinNotAllowedError('el evento ya ha terminado');
   if (expiresAt.getTime() > now.getTime() + MAX_PIN_LIFETIME_MS) throw new GatePinNotAllowedError('la fecha del evento es demasiado lejana');
+
+  // Tope por persona y entidad antes de escribir nada: cada PIN cierra las sesiones de la puerta y deja su rastro (M5 del 4.5). El intento rechazado queda en la
+  // auditoría como acceso denegado, una vez por ventana (la misma marca de «ya anotado» que la portería).
+  if (actor.kind === 'user' && !(await reserveAttempt(db, `${GATE_PIN_SET_RULE.prefix}${organizationId}:${actor.userId}`, GATE_PIN_SET_RULE, now))) {
+    if (await firstNotice(db, `gate-pin-set:${organizationId}:${actor.userId}`, now)) {
+      await recordAudit(db, actor, { action: 'tenant.access_denied', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { reason: 'RATE_LIMITED', attempted: 'gate.pin_set', limit: GATE_PIN_SET_RULE.limit } });
+    }
+    throw new GatePinRateLimitedError();
+  }
 
   const pin = generateGatePin();
   const gatePinHash = await hashGatePin(secret, pin);

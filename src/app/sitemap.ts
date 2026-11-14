@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { LOCALES } from '@/i18n/routing';
 import { reportError } from '@/lib/error-reporting';
 import { getPrisma } from '@/lib/prisma';
-import { absoluteUrl, languageAlternates, MARKETING_CONTENT_UPDATED, PILLAR_PAGES } from '@/lib/seo/marketing-routes';
+import { absoluteUrl, ACCESSIBILITY_PATH, languageAlternates, MARKETING_CONTENT_UPDATED, PILLAR_PAGES } from '@/lib/seo/marketing-routes';
 import { achievementsPath, helpPath, initiativePath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
 import { listIndexableInitiatives, listIndexableOrganizations } from '@/repositories/public.repository';
 
@@ -15,7 +15,8 @@ import { listIndexableInitiatives, listIndexableOrganizations } from '@/reposito
 const STATIC_ENTRIES = [
   { path: '/', priority: 1, changeFrequency: 'weekly' as const },
   ...PILLAR_PAGES.map((page) => ({ path: page.path, priority: page.priority, changeFrequency: 'monthly' as const })),
-  { path: '/registro-comunidad', priority: 0.9, changeFrequency: 'monthly' as const }
+  { path: '/registro-comunidad', priority: 0.9, changeFrequency: 'monthly' as const },
+  { path: ACCESSIBILITY_PATH, priority: 0.3, changeFrequency: 'monthly' as const }
 ];
 
 // Las entidades y sus campañas cambian cada día: se calcula en cada petición y no una vez al compilar.

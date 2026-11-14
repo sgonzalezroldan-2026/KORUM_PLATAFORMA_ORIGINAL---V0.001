@@ -27,6 +27,13 @@ export const EXPIRED_DECISION_RULE: RateLimitRule & PurgeRule = { prefix: 'expir
  */
 export const RESIZE_VOTE_RULE: RateLimitRule & PurgeRule = { prefix: 'resize-vote:ip:', limit: 60, windowMs: 15 * 60_000 };
 
+/**
+ * «Reenviarme mi enlace de voto» (Sprint 5.5b): por red (generoso: un colegio comparte wifi) y por email canónico (tres al día: nadie llena el buzón de otra
+ * persona ni la bandeja de salida pidiendo su enlace una y otra vez).
+ */
+export const RESIZE_LINK_IP_RULE: RateLimitRule & PurgeRule = { prefix: 'resize-link:ip:', limit: 20, windowMs: 15 * 60_000 };
+export const RESIZE_LINK_EMAIL_RULE: RateLimitRule & PurgeRule = { prefix: 'resize-link:email:', limit: 3, windowMs: 24 * 3_600_000 };
+
 /** Emails de acceso (enlace, código, invitación) por destinatario: nadie puede llenar la bandeja de otra persona pidiendo enlaces. */
 export const AUTH_EMAIL_RULE: RateLimitRule & PurgeRule = { prefix: 'auth:mail:', limit: 5, windowMs: 15 * 60_000 };
 
@@ -128,6 +135,13 @@ export const GATE_REQUEST_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:req:
 export const GATE_BLOCK_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:notice:', limit: 1, windowMs: 15 * 60_000 };
 /** Marca de «ya anotado» de una sesión de portería cerrada que sigue intentando entrar: una fila por sesión y 6 horas, no una por petición. */
 export const GATE_REJECTED_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:rejected:', limit: 1, windowMs: 6 * 3_600_000 };
+
+/**
+ * PIN de portería creados o cambiados por persona firmante y entidad (Sprint 5.5b, M5 del 4.5). Cada PIN nuevo cierra las sesiones de la puerta y deja una fila
+ * de auditoría (que no se purga): una cuenta firmante robada no puede echar a los voluntarios una y otra vez ni llenar la auditoría. Diez a la hora dan de sobra
+ * para el día del evento (un cambio por si el PIN se filtra, otro por un voluntario que se va).
+ */
+export const GATE_PIN_SET_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:pin-set:', limit: 10, windowMs: 60 * 60_000 };
 
 /** Invitaciones a nuevos Super-Admin y comprobaciones de conexión de la consola (Sprint 5.4): dan acceso total o llaman a proveedores con sus credenciales, así que llevan tope. */
 export const SUPERADMIN_INVITE_RULE: RateLimitRule & PurgeRule = { prefix: 'console:superadmin-invite:', limit: 5, windowMs: 24 * 3_600_000 };
