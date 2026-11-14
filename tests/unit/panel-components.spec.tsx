@@ -87,7 +87,7 @@ describe('cuadro de mandos (QA-S02)', () => {
     const first = screen.getByRole('heading', { level: 3, name: 'Ventiladores para las aulas' }).closest('li')!;
     expect(within(first).getByText('Hucha WLT-ESC-AAAAAA')).toBeInTheDocument();
     expect(within(first).getByText('1.500,00 € de 4.000,00 €')).toBeInTheDocument();
-    expect(within(first).getByRole('progressbar', { name: 'Avance de «Ventiladores para las aulas»: 37 %' })).toBeInTheDocument();
+    expect(within(first).getByRole('progressbar', { name: 'Avance de «Ventiladores para las aulas»: 37 %' })).toBeInTheDocument();
     expect(within(first).getByText('💛 12 aportaciones')).toBeInTheDocument();
     const steps = within(first).getAllByRole('listitem').filter((node) => /^\d\./.test(node.textContent ?? ''));
     expect(steps).toHaveLength(6);

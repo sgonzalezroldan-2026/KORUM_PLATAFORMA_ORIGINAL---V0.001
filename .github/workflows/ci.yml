@@ -83,6 +83,15 @@ jobs:
       - name: Puerta 4 · tests E2E (escritorio y móvil, con accesibilidad)
         run: npm run test:e2e
 
+      # QA-X01 (Sprint 5.5): presupuesto de rendimiento en móvil con la CPU y la red frenadas, con un solo navegador y la máquina libre. Informativo en
+      # GitHub: la velocidad de sus máquinas compartidas varía de una ejecución a otra y daría rojos falsos; se certifica en cada cierre de sprint
+      # en el equipo de desarrollo (bitácora). Las cifras de cada página salen en el registro de este paso.
+      - name: Puerta 4 · presupuesto de rendimiento en móvil (informativo)
+        continue-on-error: true
+        env:
+          E2E_PERF: '1'
+        run: npm run test:e2e:perf
+
       - name: Informe de Playwright
         if: failure()
         uses: actions/upload-artifact@v4

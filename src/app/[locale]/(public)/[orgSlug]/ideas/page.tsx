@@ -7,8 +7,9 @@ import { getEnv } from '@/config/env';
 import { isLocale } from '@/i18n/routing';
 import { getAuthSession } from '@/lib/auth/session';
 import { absoluteUrl, localizedPath } from '@/lib/seo/marketing-routes';
+import { entityCardVersion } from '@/lib/seo/entity-card';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { ideasPath } from '@/lib/seo/portal-routes';
+import { ideasPath, ogEntityUrl } from '@/lib/seo/portal-routes';
 import { loadIdeaBoard } from '@/services/ideas/idea-board-data';
 import { loadPortalOrganization } from '@/services/portal/portal-data';
 
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('ideasTitle', { name: fitText(organization.name, room) }),
     description: fitText(t('ideasDescription', { name: organization.name }), 155),
     imageAlt: t('entityImageAlt', { name: organization.name }),
+    imageUrl: ogEntityUrl(locale, orgSlug, entityCardVersion(organization)),
     // Las propuestas son de familias, no contenido de la entidad: siempre fuera de los buscadores (ficha del Sprint 3.6).
     noindex: true
   });

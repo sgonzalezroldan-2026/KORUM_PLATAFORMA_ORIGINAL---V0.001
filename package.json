@@ -16,6 +16,7 @@
     "test:unit": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
+    "test:e2e:perf": "playwright test tests/e2e/polish-a11y-perf.spec.ts --grep QA-X01 --project=mobile --workers=1 --retries=0",
     "verify:invariants": "node .agents/skills/korum-qa-harness-gatekeeper/scripts/verify-invariants.mjs",
     "sync:ai": "node scripts/sync-ai-context.mjs",
     "setup:env": "node scripts/setup-env.mjs",

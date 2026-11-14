@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AchievementPhotoForm } from '@/components/panel/achievement-photo-form';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -8,6 +9,13 @@ import { getPrisma } from '@/lib/prisma';
 import { achievementsPath } from '@/lib/seo/portal-routes';
 import { listAchievementWorkbench } from '@/repositories/achievements.repository';
 import { MAX_UPLOAD_BYTES, THANKS_MESSAGE_MAX } from '@/services/storage/achievement-photos.service';
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'panel.achievements' });
+  return { title: t('title') };
+}
 
 /**
  * Logros de la entidad (Sprint 3.6): subir las fotos Antes / Después y escribir el agradecimiento que verán las familias en

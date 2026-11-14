@@ -1,9 +1,17 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 
 export const dynamic = 'force-dynamic';
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'gate' });
+  return { title: t('metaTitle') };
+}
 
 /**
  * Entrada general de la portería. **No lista eventos** (Sprint 4.7): el identificador del evento no se muestra en público y la puerta de cada evento se abre con su

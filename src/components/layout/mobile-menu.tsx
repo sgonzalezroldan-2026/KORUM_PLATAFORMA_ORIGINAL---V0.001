@@ -1,20 +1,33 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useId, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { Link } from '@/i18n/navigation';
 import { AccountLink } from './account-link';
+import { NavLink } from './nav-link';
 import { PILLAR_PAGES } from '@/lib/seo/marketing-routes';
 
 /**
  * Menú de la cabecera en móvil y tableta (< 1280 px): un botón que despliega todas las páginas de KORUM. Es un botón con `aria-expanded`
  * (no un menú ARIA complejo): Escape lo cierra y devuelve el foco al botón, y elegir un enlace también lo cierra, porque la cabecera
- * no se vuelve a montar al navegar.
+ * no se vuelve a montar al navegar. Pulsar fuera del menú también lo cierra (heredado del Sprint 3.1), sin mover el foco: quien pulsa fuera ya
+ * ha elegido dónde seguir.
  */
 export function MobileMenu() {
   const t = useTranslations('nav');
   const panelId = useId();
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOnOutsidePointer(event: PointerEvent) {
+      if (event.target instanceof Node && containerRef.current?.contains(event.target)) return;
+      setOpen(false);
+    }
+    document.addEventListener('pointerdown', closeOnOutsidePointer);
+    return () => document.removeEventListener('pointerdown', closeOnOutsidePointer);
+  }, [open]);
 
   function closeOnEscape(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key !== 'Escape' || !open) return;
@@ -23,7 +36,7 @@ export function MobileMenu() {
   }
 
   return (
-    <div className="xl:hidden" onKeyDown={closeOnEscape}>
+    <div ref={containerRef} className="xl:hidden" onKeyDown={closeOnEscape}>
       <button
         type="button"
         aria-expanded={open}
@@ -39,9 +52,9 @@ export function MobileMenu() {
           <ul className="mx-auto flex max-w-6xl flex-col">
             {PILLAR_PAGES.map((page) => (
               <li key={page.key}>
-                <Link href={page.path} onClick={() => setOpen(false)} className="flex min-h-11 items-center font-semibold text-varsity-navy">
+                <NavLink href={page.path} onClick={() => setOpen(false)} className="flex min-h-11 items-center font-semibold text-varsity-navy aria-[current=page]:underline aria-[current=page]:decoration-varsity-gold aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-4">
                   {t(`pages.${page.key}`)}
-                </Link>
+                </NavLink>
               </li>
             ))}
             <li>

@@ -191,7 +191,7 @@ describe('Regla 02 §10 · real frente a proyectado, separados', () => {
   it('dos bloques con su titular: lo cobrado y la proyección, con cifras distintas', () => {
     renderWithIntl(<BiSummary real={real} projection={projection} />);
     expect(screen.getByRole('heading', { name: 'Ingresos reales (lo ya cobrado)' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Proyección al 100 % de las campañas abiertas' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Proyección al 100 % de las campañas abiertas' })).toBeInTheDocument();
     expect(within(screen.getByTestId('kpi-real-net')).getByText('76,50 €').getAttribute('data-cents')).toBe('7650');
     expect(within(screen.getByTestId('kpi-expected-net')).getByText('137,50 €').getAttribute('data-cents')).toBe('13750');
   });

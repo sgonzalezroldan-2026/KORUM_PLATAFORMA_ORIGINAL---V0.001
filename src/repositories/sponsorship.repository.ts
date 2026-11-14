@@ -74,8 +74,8 @@ export async function getSponsorshipResult(db: KorumPrismaClient, slug: string, 
       amountCents: true,
       totalChargedCents: true,
       paymentMethod: true,
-      sponsor: { select: { name: true, categoryLevel: true, isMatchingPool: true, status: true, autoRenew: true } },
-      initiative: { select: { id: true, title: true, translationsJson: true, raisedCents: true, goalCents: true, totalContributions: true, organization: { select: { name: true, contentLocale: true } } } }
+      sponsor: { select: { name: true, categoryLevel: true, isMatchingPool: true, status: true, autoRenew: true, renewedFromId: true, reassignedCents: true } },
+      initiative: { select: { id: true, title: true, status: true, translationsJson: true, raisedCents: true, goalCents: true, totalContributions: true, organization: { select: { name: true, contentLocale: true } } } }
     }
   });
 }

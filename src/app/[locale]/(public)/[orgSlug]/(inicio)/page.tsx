@@ -8,8 +8,9 @@ import { JsonLd } from '@/components/seo/json-ld';
 import { isLocale } from '@/i18n/routing';
 import { breadcrumbJsonLd, entityJsonLd } from '@/lib/seo/json-ld';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
+import { entityCardVersion } from '@/lib/seo/entity-card';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { initiativePath, portalPath } from '@/lib/seo/portal-routes';
+import { initiativePath, ogEntityUrl, portalPath } from '@/lib/seo/portal-routes';
 import { publicFileSrc } from '@/services/portal/achievements-data';
 import { loadPortalHome, loadPortalOrganization } from '@/services/portal/portal-data';
 
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('entityTitle', { name: fitText(organization.name, room) }),
     description: fitText(t(`entityDescription.${organization.vertical}`, { name: organization.name }), 155),
     imageAlt: t('entityImageAlt', { name: organization.name }),
+    imageUrl: ogEntityUrl(locale, orgSlug, entityCardVersion(organization)),
     noindex: !organization.indexable
   });
 }

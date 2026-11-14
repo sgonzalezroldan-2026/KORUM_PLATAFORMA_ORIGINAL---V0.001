@@ -88,8 +88,15 @@ export function SignChallengeResult({ orgSlug, done, resultRef }: { orgSlug: str
       <h1 ref={resultRef} tabIndex={-1} className={warning ? 'font-corp text-2xl font-extrabold text-amber-950' : info ? 'font-corp text-2xl font-extrabold text-varsity-navy' : 'font-corp text-2xl font-extrabold text-emerald-950'}>
         {warning && family ? t(`done.${family}.${outcome}Title`) : done.complete ? t('done.completeTitle') : t('done.partialTitle')}
       </h1>
+      {/* Sello de tampón (EXPERIENCIA §6): la firma ya se anuncia en el título, así que el sello es decorativo. Nunca en un aviso. */}
+      {/* Con las dos firmas pero el dinero aún sin salir (tono informativo), el sello dice «Firmado», no «Aprobado»: no debe leerse como «hecho». */}
+      {!warning ? (
+        <p aria-hidden="true" className="korum-stamp-badge korum-stamp-in self-start text-lg uppercase" data-testid="sign-stamp">
+          {done.complete && !info ? t('done.stamp.complete') : t('done.stamp.partial')}
+        </p>
+      ) : null}
       {celebrate ? (
-        <p className="die-cut-sticker self-start font-joy text-lg font-bold text-varsity-navy">
+        <p className="die-cut-sticker korum-sticker-pop self-start font-joy text-lg font-bold text-varsity-navy">
           <span aria-hidden="true">{'🎉 '}</span>
           {t(done.initiativeId !== null ? 'done.celebrate' : 'done.payout.celebrate')}
         </p>

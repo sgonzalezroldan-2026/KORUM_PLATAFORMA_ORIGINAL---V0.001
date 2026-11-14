@@ -15,7 +15,7 @@ export function ShareButton({ target }: { target: ShareTarget }) {
         <span aria-hidden="true">{'📤'}</span>
         {t('share')}
       </button>
-      <ShareModal target={current} onClose={() => setCurrent(null)} />
+      <ShareModal target={current} prepared={target} onClose={() => setCurrent(null)} />
     </>
   );
 }

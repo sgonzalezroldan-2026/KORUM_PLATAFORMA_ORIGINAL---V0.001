@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { routing } from '@/i18n/routing';
+import { PrivateIntlProvider } from '@/components/layout/private-intl-provider';
 
 /**
  * Entorno 1 · *Mi cuenta* (`/mi-cuenta`, Sprint 3.7): lo de una persona en todas sus comunidades, por eso vive fuera de `[orgSlug]`. Misma
@@ -16,12 +17,14 @@ export default async function AccountLayout({ children, params }: { children: Re
   setRequestLocale(locale);
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <SiteHeader />
-      <main id="contenido" className="korum-paper-dots flex-1 px-4 py-6">
-        <div className="mx-auto w-full max-w-4xl">{children}</div>
-      </main>
-      <SiteFooter />
-    </div>
+    <PrivateIntlProvider zone="account">
+      <div className="flex min-h-dvh flex-col">
+        <SiteHeader />
+        <main id="contenido" className="korum-paper-dots flex-1 px-4 py-6">
+          <div className="mx-auto w-full max-w-4xl">{children}</div>
+        </main>
+        <SiteFooter />
+      </div>
+    </PrivateIntlProvider>
   );
 }

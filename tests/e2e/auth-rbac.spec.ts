@@ -166,7 +166,9 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
     await page.getByRole('button', { name: 'Activar y continuar' }).click();
 
     // Panel: la hucha, los 1.000 € exentos y la doble firma a medias (la segunda persona está invitada).
-    await expect(page).toHaveURL(new RegExp(`/panel/ceip-prueba-${suffix}$`), { timeout: 30_000 });
+    // Tras el alta, el panel abre con su momento de bienvenida (Sprint 5.5) y quita la marca de la URL: recargar o volver a entrar no la repite (abajo).
+    await expect(page.getByTestId('welcome-celebration').getByRole('heading', { level: 2, name: '¡Bienvenidos a KORUM!' })).toBeVisible({ timeout: 30_000 });
+    await expect(page).toHaveURL(new RegExp(`/panel/ceip-prueba-${suffix}$`));
     await expect(page.getByRole('heading', { level: 1, name: `Hola, CEIP Prueba ${suffix}` })).toBeVisible();
     await expect(page.getByText(/^WLT-ESC-[A-Z2-9]{6}$/)).toBeVisible();
     await expect(page.getByText('Invitación enviada: aún no ha activado su cuenta')).toBeVisible();
@@ -185,6 +187,7 @@ test.describe('Alta autónoma de una entidad (QA-M02)', () => {
     await page.getByLabel('Código de la app').fill(totpCode(secret, Date.now() + 30_000));
     await page.getByRole('button', { name: 'Verificar' }).click();
     await expect(page).toHaveURL(new RegExp(`/panel/ceip-prueba-${suffix}$`), { timeout: 30_000 });
+    await expect(page.getByTestId('welcome-celebration')).toHaveCount(0);
     await checkPage(page, errors);
 
     // La segunda firma abre su invitación en otro navegador: el token sale de la barra, crea su contraseña y activa su TOTP.

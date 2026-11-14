@@ -150,7 +150,7 @@ test.describe('Panel de la entidad: documentos del titular y ajustes', () => {
 
     // --- En catalán ---
     await page.goto(`/ca/panel/${slug}/ajustes`);
-    await expect(page.getByRole('heading', { level: 1, name: "Configuració de l'entitat" })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: "Configuració de l’entitat" })).toBeVisible();
     await expect(page.getByTestId('kyb-status')).toContainText('Estan en revisió');
     await expect(page.getByRole('link', { name: 'Configuració' })).toHaveAttribute('aria-current', 'page');
     await checkPage(page, errors, isMobile);

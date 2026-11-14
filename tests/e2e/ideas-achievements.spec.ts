@@ -53,7 +53,8 @@ const card = (page: Page, title: string) => page.getByTestId('idea-card').filter
 test.describe('QA-F09 · buzón de ideas (público)', () => {
   test('sin sesión: ideas con código anónimo, sin datos de nadie, "Entra para firmar", noindex, accesible y en una columna en móvil', async ({ page }, testInfo) => {
     const errors = trackConsoleErrors(page);
-    const title = `Toldo para el patio ${testInfo.project.name}`;
+    // Único en cada intento: un reintento de Playwright no debe encontrar la idea que dejó el intento anterior.
+    const title = `Toldo para el patio ${testInfo.project.name} ${testInfo.retry}-${Date.now().toString(36)}`;
     await createIdea(title);
     await page.goto('/cervantes');
     await page.getByRole('navigation', { name: 'Secciones de la comunidad' }).getByRole('link', { name: /Buzón de ideas/ }).click();
@@ -248,11 +249,11 @@ test.describe('QA-F09 · logros conseguidos y comparador Antes / Después', () =
     await expect(closed.getByRole('img', { name: /antes de la mejora/ })).toBeVisible();
     await expect(closed.getByRole('img', { name: /después de la mejora/ })).toBeVisible();
     const slider = closed.getByRole('slider', { name: /Deslizar para comparar/ });
-    await expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 50 % del después y el 50 % del antes');
+    await expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 50 % del después y el 50 % del antes');
     await slider.focus();
     await page.keyboard.press('End');
     await expect(slider).toHaveValue('100');
-    await expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 0 % del después y el 100 % del antes');
+    await expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 0 % del después y el 100 % del antes');
     await page.keyboard.press('Home');
     await expect(slider).toHaveValue('0');
     // El fichero privado de la iniciativa 3 no se publica: sigue sin fotos.

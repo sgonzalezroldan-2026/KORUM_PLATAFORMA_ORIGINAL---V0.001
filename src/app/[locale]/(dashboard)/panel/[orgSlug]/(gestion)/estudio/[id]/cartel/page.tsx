@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import QRCode from 'qrcode';
@@ -19,6 +20,13 @@ import { publicFileSrc } from '@/services/portal/achievements-data';
  * (las familias del centro), y el título y el mensaje por defecto salen en ese mismo idioma. Dinámica: depende de la sesión.
  */
 export const dynamic = 'force-dynamic';
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'panel.studio.poster' });
+  return { title: t('metaTitle') };
+}
 
 export default async function PosterPage({ params }: { params: Promise<{ locale: Locale; orgSlug: string; id: string }> }) {
   const { locale, orgSlug, id } = await params;

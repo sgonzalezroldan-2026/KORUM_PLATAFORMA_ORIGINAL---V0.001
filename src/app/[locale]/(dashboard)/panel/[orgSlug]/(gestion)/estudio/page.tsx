@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { InitiativeCoverForm } from '@/components/panel/initiative-cover-form';
@@ -55,6 +56,13 @@ function draftFromStored(initiative: StudioInitiative, firstReward: string, late
     rafflePrizeCount: initiative.rafflePrizeCount,
     raffleNoticeConfirmed: false
   };
+}
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'panel.studio' });
+  return { title: t('title') };
 }
 
 export default async function StudioPage({ params, searchParams }: { params: Promise<{ locale: Locale; orgSlug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {

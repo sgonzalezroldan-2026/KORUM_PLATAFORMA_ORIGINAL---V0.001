@@ -23,6 +23,11 @@ export interface ShareTarget {
 export interface ShareModalProps {
   target: ShareTarget | null;
   onClose: () => void;
+  /**
+   * Lo que se compartirá cuando se abra, si ya se sabe (la ficha: siempre su iniciativa). Su contenido se monta ya con la página, dentro del diálogo
+   * cerrado (oculto e inaccesible hasta abrirlo): así el primer «Compartir» no paga montarlo ni preparar los textos (QA-X01, Sprint 5.5).
+   */
+  prepared?: ShareTarget;
 }
 
 /** Enlace de la ficha con el grupo elegido: la página sigue teniendo una sola canónica, solo cambia la imagen social. */
@@ -38,7 +43,7 @@ export function buildShareUrl(url: string, groupSlug: string): string {
  * se cierra con Escape y devuelve el foco a quien lo abrió. El grupo opcional hace que la tarjeta del enlace celebre a ese curso o equipo, en
  * positivo y sin nombres (Regla 03 §6).
  */
-export function ShareModal({ target, onClose }: ShareModalProps) {
+export function ShareModal({ target, onClose, prepared }: ShareModalProps) {
   const t = useTranslations('portal.share');
   // El aviso va dentro del diálogo: un aviso global quedaría tapado por el fondo y un lector de pantalla no lo anunciaría.
   const [status, setStatus] = useState('');
@@ -64,9 +69,10 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
     if (!target && node.open) node.close();
   }, [target]);
 
-  // Siempre hay un `<dialog>` en el árbol (el navegador lo abre y cierra); su contenido solo existe mientras hay algo que compartir.
-  const link = target ? buildShareUrl(target.url, group) : '';
-  const message = target ? (target.message ?? t('message', { title: target.title, entity: target.entityName })) : '';
+  // Siempre hay un `<dialog>` en el árbol (el navegador lo abre y cierra); su contenido existe mientras hay algo que compartir o ya preparado.
+  const shown = target ?? prepared ?? null;
+  const link = shown ? buildShareUrl(shown.url, group) : '';
+  const message = shown ? (shown.message ?? t('message', { title: shown.title, entity: shown.entityName })) : '';
   const text = `${message} ${link}`;
 
   async function copyLink() {
@@ -80,7 +86,7 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
 
   async function nativeShare() {
     try {
-      await navigator.share({ title: target?.title, text: message, url: link });
+      await navigator.share({ title: shown?.title, text: message, url: link });
     } catch {
       // Cerrar el menú del móvil sin elegir nada no es un error.
     }
@@ -98,7 +104,7 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
       }}
       className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl bg-white p-0 text-ink shadow-2xl backdrop:bg-varsity-navy-deep/70"
     >
-      {target ? (
+      {shown ? (
       <div className="space-y-4 p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 id={headingId} className="font-joy text-lg font-bold text-varsity-navy">
@@ -110,14 +116,14 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
           </button>
         </div>
 
-        {target.groups.length > 0 ? (
+        {shown.groups.length > 0 ? (
           <div className="space-y-1">
             <label htmlFor={groupId} className="block text-sm font-bold text-varsity-navy">
               {t('groupLabel')}
             </label>
             <select id={groupId} value={group} onChange={(event) => setGroup(event.target.value)} className="min-h-11 w-full rounded-xl border-2 border-patio-rule-strong bg-white px-3 font-semibold">
               <option value="">{t('groupAll')}</option>
-              {target.groups.map((item) => (
+              {shown.groups.map((item) => (
                 <option key={item.slug} value={item.slug}>
                   {item.name}
                 </option>
@@ -140,7 +146,7 @@ export function ShareModal({ target, onClose }: ShareModalProps) {
           <a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noopener noreferrer" className={`${buttonClass} bg-[#0f7a40] text-white`}>
             <span aria-hidden="true">{'📲'}</span> {t('whatsapp')}
           </a>
-          <a href={`mailto:?subject=${encodeURIComponent(t('emailSubject', { title: target.title, entity: target.entityName }))}&body=${encodeURIComponent(text)}`} className={`${buttonClass} bg-sky-700 text-white`}>
+          <a href={`mailto:?subject=${encodeURIComponent(t('emailSubject', { title: shown.title, entity: shown.entityName }))}&body=${encodeURIComponent(text)}`} className={`${buttonClass} bg-sky-700 text-white`}>
             <span aria-hidden="true">{'✉️'}</span> {t('email')}
           </a>
           {canShare ? (

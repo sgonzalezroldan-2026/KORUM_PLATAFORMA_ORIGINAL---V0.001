@@ -134,3 +134,73 @@ export function checkoutOutcome(status: string, createdAt: Date, now: Date): Che
   // Cobro confirmado con la campaña ya cerrada, reembolso o contracargo: el dinero vuelve (o ha vuelto) a quien pagó.
   return 'RETURNED';
 }
+
+/** Estados en que la ficha de una iniciativa es pública (los mismos que `public.repository.ts`): fuera de ellos su URL responde `404`. */
+const PUBLIC_INITIATIVE_STATUSES: ReadonlySet<string> = new Set(['FUNDRAISING', 'GOAL_REACHED', 'CLOSED']);
+/** Venció sin llegar a la meta y aún se decide (votar seguir con lo recaudado o devolver). */
+const DECIDING_STATUSES: ReadonlySet<string> = new Set(['EXPIRED', 'RESIZE_VOTING']);
+/** No llegó a la meta (o se canceló) y se devuelve el 100 % a cada persona. */
+const REFUNDING_STATUSES: ReadonlySet<string> = new Set(['REFUNDING', 'REFUNDED', 'CANCELLED']);
+
+/** Cómo terminó la campaña, para lo que se le cuenta a quien vuelve de pagar: sigue (`NONE`), se decide (`DECIDING`) o se devuelve (`REFUNDING`). */
+export type CampaignEnding = 'NONE' | 'DECIDING' | 'REFUNDING';
+
+/**
+ * Qué puede ofrecer la vuelta del pago según el estado **actual** de la campaña (Sprint 5.5, heredado del 4.2f). Quien paga en los minutos en que
+ * la campaña se cierra no debe acabar en un `404`: si la ficha ya no es pública, se le lleva a la portada de la entidad y no se le invita a
+ * compartirla; solo se ofrece «Probar otra vez» mientras la campaña siga recaudando; y `ended` dice si terminó sin llegar a la meta.
+ */
+export function resultNavigation(initiativeStatus: string): { showInitiative: boolean; canRetry: boolean; ended: CampaignEnding } {
+  const ended: CampaignEnding = DECIDING_STATUSES.has(initiativeStatus) ? 'DECIDING' : REFUNDING_STATUSES.has(initiativeStatus) ? 'REFUNDING' : 'NONE';
+  return { showInitiative: PUBLIC_INITIATIVE_STATUSES.has(initiativeStatus), canRetry: initiativeStatus === 'FUNDRAISING', ended };
+}
+
+/**
+ * Qué se le dice a una familia cuyo pago **ya entró** (`CONFIRMED`) o se le devuelve (`RETURNED`), según cómo está ahora la campaña (auditoría de
+ * seguridad del 5.5a, H2): en una campaña que se devuelve nunca «tu aportación ya suma» (las aportaciones siguen `COMPLETED` hasta que les llega su
+ * lote de devolución) y el motivo «llegó cuando ya no admitía aportaciones» solo cuando es verdad.
+ * - `confirmed`: suma (celebración).
+ * - `deciding`: la campaña venció sin la meta y se decide: le escribiremos para votar o para devolverle el 100 %.
+ * - `failedCampaign`: no llegó a la meta: se le devuelve el 100 %.
+ * - `returnedLate`: llegó con la campaña ya conseguida, cerrada o vencida: se le devuelve entero.
+ * - `returnedGeneric`: se le devuelve con la campaña aún abierta (una devolución puntual): sin inventar el motivo.
+ * - `chargeback`: su banco anuló el pago (contracargo). El dinero ya volvió por la disputa: no se promete otra devolución ni se da otro motivo
+ *   (segunda pasada de la auditoría de seguridad del 5.5a). Va antes que cualquier otra regla.
+ */
+export type PaidNotice = 'confirmed' | 'deciding' | 'failedCampaign' | 'returnedLate' | 'returnedGeneric' | 'chargeback';
+
+export function paidNotice(outcome: 'CONFIRMED' | 'RETURNED', initiativeStatus: string, contributionStatus: string): PaidNotice {
+  if (contributionStatus === 'CHARGEBACK') return 'chargeback';
+  const { ended } = resultNavigation(initiativeStatus);
+  if (ended === 'REFUNDING') return 'failedCampaign';
+  if (outcome === 'CONFIRMED') return ended === 'DECIDING' ? 'deciding' : 'confirmed';
+  return initiativeStatus === 'FUNDRAISING' ? 'returnedGeneric' : 'returnedLate';
+}
+
+/**
+ * Lo que se le dice a un comercio sobre **su dinero** tras pagar (auditoría de seguridad del 5.5a, H1). El dinero de un comercio admitido nunca se
+ * le devuelve (Regla 02 §5); solo se devuelve el 100 % si la entidad no lo admite.
+ * - `creditPool`: pagó con la campaña ya cerrada y espera la moderación (mismo criterio que `lateCharge` de la moderación).
+ * - `moved`: su dinero ya salió de esta campaña (o va a salir, porque ya no es pública) hacia otra campaña o el Fondo de actividades.
+ * - `pool`: bolsa Matching 2x de una campaña abierta. `escrow`: suma íntegro a la hucha de la iniciativa.
+ * - `notAdmitted`: la entidad no lo admitió (`REJECTED`): se le devuelve el 100 % con su factura rectificativa.
+ * - `chargeback`: su banco anuló el pago: ni otra devolución ni rectificativa prometidas.
+ * - `returnedGeneric`: se le devuelve por otro motivo (una devolución desde Paycomet, una renovación que ya no procedía), sin inventarlo.
+ */
+export type SponsorshipNotice = 'creditPool' | 'moved' | 'pool' | 'escrow' | 'notAdmitted' | 'chargeback' | 'returnedGeneric';
+
+export interface SponsorshipFacts {
+  status: string;
+  renewedFromId: number | null;
+  reassignedCents: number;
+  isMatchingPool: boolean;
+}
+
+export function sponsorshipNotice(outcome: 'CONFIRMED' | 'RETURNED', amountCents: number, sponsor: SponsorshipFacts | null, initiativeStatus: string, contributionStatus: string): SponsorshipNotice {
+  if (contributionStatus === 'CHARGEBACK') return 'chargeback';
+  if (outcome === 'RETURNED') return sponsor?.status === 'REJECTED' ? 'notAdmitted' : 'returnedGeneric';
+  if (!sponsor) return 'escrow';
+  if (sponsor.status === 'PENDING' && sponsor.renewedFromId === null && amountCents > 0 && sponsor.reassignedCents >= amountCents) return 'creditPool';
+  if (sponsor.reassignedCents > 0 || !resultNavigation(initiativeStatus).showInitiative) return 'moved';
+  return sponsor.isMatchingPool ? 'pool' : 'escrow';
+}

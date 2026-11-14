@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { RaffleStage } from '@/components/gate/raffle-stage';
@@ -9,6 +10,13 @@ import type { Locale } from '@/i18n/routing';
 import { resolveGateAccess } from '../../gate-request';
 
 export const dynamic = 'force-dynamic';
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'gate.raffle' });
+  return { title: t('title') };
+}
 
 /**
  * Sorteo certificado de una rifa (QA-S04, QA-REG01), para proyectar en la fiesta. Solo con sesión de portería de este evento; sin ella vuelve a pedir el PIN.

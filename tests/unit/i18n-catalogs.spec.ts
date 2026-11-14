@@ -38,6 +38,33 @@ describe('QA-C05 · catálogos de traducción', () => {
     }
   });
 
+  it('catalán e inglés usan siempre el apóstrofo tipográfico (’), nunca el recto (Sprint 5.5)', () => {
+    // Antes convivían «d'una» y «d’una», y «families'». El recto, además, es el carácter de escape de ICU: ningún texto lo usa así.
+    for (const locale of ['ca', 'en']) {
+      for (const [key, text] of Object.entries(flat[locale]!)) {
+        expect(text, `${locale}:${key}`).not.toContain("'");
+      }
+    }
+  });
+
+  it('en inglés el porcentaje va pegado a la cifra: 100%, nunca 100 % (Sprint 5.5)', () => {
+    // En castellano y catalán conviven las dos formas porque los textos oficiales de la Regla 03 §3 escriben «100%» y no se tocan sin aprobación.
+    for (const [key, text] of Object.entries(flat.en!)) expect(text, `en:${key}`).not.toMatch(/(\d|\}) %/);
+  });
+
+  it('en castellano y catalán, entre la cifra y «%» va un espacio duro: «100 %» no se parte en dos líneas (Sprint 5.5)', () => {
+    for (const locale of ['es', 'ca']) {
+      for (const [key, text] of Object.entries(flat[locale]!)) expect(text, `${locale}:${key}`).not.toMatch(/(d|}) %/);
+    }
+  });
+
+  it('sin espacios dobles dentro de un texto (Sprint 5.5)', () => {
+    // Un espacio al principio o al final sí puede ser a propósito: hay fragmentos que se añaden tras otro texto (« (se abre en una pestaña nueva)»).
+    for (const [locale, entries] of Object.entries(flat)) {
+      for (const [key, text] of Object.entries(entries)) expect(text, `${locale}:${key}`).not.toMatch(/\S {2,}\S/);
+    }
+  });
+
   it('las variables {nombre} coinciden en los tres idiomas', () => {
     for (const key of spanishKeys) {
       const expected = placeholders(flat.es![key]!);

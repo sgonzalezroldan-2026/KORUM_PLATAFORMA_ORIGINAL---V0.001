@@ -10,8 +10,9 @@ import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
 import { breadcrumbJsonLd } from '@/lib/seo/json-ld';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
+import { entityCardVersion } from '@/lib/seo/entity-card';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { checkoutPath, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
+import { checkoutPath, ogEntityUrl, portalPath, sponsorsPath } from '@/lib/seo/portal-routes';
 import { publicLogoSrc } from '@/services/portal/achievements-data';
 import { loadPortalOrganization, loadSponsorDirectory } from '@/services/portal/portal-data';
 
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('sponsorsTitle', { name: fitText(organization.name, room) }),
     description: fitText(t('sponsorsDescription', { name: organization.name }), 155),
     imageAlt: t('entityImageAlt', { name: organization.name }),
+    imageUrl: ogEntityUrl(locale, orgSlug, entityCardVersion(organization)),
     noindex: !organization.indexable
   });
 }

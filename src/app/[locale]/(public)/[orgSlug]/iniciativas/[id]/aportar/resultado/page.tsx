@@ -6,7 +6,7 @@ import { SponsorshipResult } from '@/components/checkout/sponsorship-result';
 import { ShareButton } from '@/components/portal/share-button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getEnv } from '@/config/env';
-import { checkoutOutcome, verifyCheckoutResult } from '@/core/checkout/checkout-rules';
+import { checkoutOutcome, paidNotice, resultNavigation, verifyCheckoutResult } from '@/core/checkout/checkout-rules';
 import { formatCents } from '@/core/finance/money';
 import { percentOf } from '@/core/public/catalog';
 import { groupSlug, orderedGroupNames } from '@/core/public/course-challenge';
@@ -16,7 +16,7 @@ import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
 import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
-import { checkoutPath, INITIATIVE_ID_PATTERN, initiativePath, passPath } from '@/lib/seo/portal-routes';
+import { checkoutPath, INITIATIVE_ID_PATTERN, initiativePath, passPath, portalPath } from '@/lib/seo/portal-routes';
 import { getCheckoutResult } from '@/repositories/checkout.repository';
 import { getSponsorshipResult } from '@/repositories/sponsorship.repository';
 
@@ -57,14 +57,21 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
     const sponsorship = await getSponsorshipResult(getPrisma(), orgSlug, initiativeId, order);
     if (sponsorship) return <SponsorshipResult row={sponsorship} orgSlug={orgSlug} initiativeId={initiativeId} locale={locale} order={order} signature={signature} />;
   }
-  if (!row) return <EmptyState icon="🧾" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" action={<Link href={initiativePath(orgSlug, initiativeId)} className={`${linkClass} bg-varsity-navy text-white`}>{t('back')}</Link>} />;
+  // Sin pedido válido no se sabe si la ficha sigue abierta: se lleva a la portada, que existe siempre que exista la entidad.
+  if (!row) return <EmptyState icon="🧾" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" action={<Link href={portalPath(orgSlug)} className={`${linkClass} bg-varsity-navy text-white`}>{t('toPortal')}</Link>} />;
 
   const { initiative } = row;
   const title = localizeRow({ title: initiative.title, description: '', translationsJson: initiative.translationsJson }, locale, initiative.organization.contentLocale).row.title;
   const outcome = checkoutOutcome(row.status, row.createdAt, new Date());
   const method = row.paymentMethod === 'BIZUM' ? 'BIZUM' : 'CARD';
   const otherMethod = method === 'BIZUM' ? 'CARD' : 'BIZUM';
-  const back = <Link href={initiativePath(orgSlug, initiativeId)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`}>{t('back')}</Link>;
+  // La campaña pudo cerrarse mientras se pagaba (Sprint 5.5): su ficha ya no es pública y su enlace daría un 404.
+  const nav = resultNavigation(initiative.status);
+  const back = nav.showInitiative ? (
+    <Link href={initiativePath(orgSlug, initiativeId)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`}>{t('back')}</Link>
+  ) : (
+    <Link href={portalPath(orgSlug)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`} data-testid="result-to-portal">{t('backToEntity', { entity: initiative.organization.name })}</Link>
+  );
 
   if (outcome === 'FAILED' || outcome === 'UNCONFIRMED') {
     // Lo elegido viaja también en la URL (sin email ni NIF): si al volver de Bizum se abre otra pestaña, no se pierde.
@@ -83,25 +90,47 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
         <p role="alert" className="font-semibold text-ink">
           {outcome === 'FAILED' ? t('failed.description') : t('unconfirmed.description')}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <Link href={`${retry}&metodo=${method}`} className={`${linkClass} bg-varsity-emerald text-white`}>{t('failed.retry')}</Link>
-          <Link href={`${retry}&metodo=${otherMethod}`} className={`${linkClass} bg-varsity-navy text-white`}>{t(`failed.switchTo.${otherMethod}`)}</Link>
-        </div>
+        {nav.canRetry ? (
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Link href={`${retry}&metodo=${method}`} className={`${linkClass} bg-varsity-emerald text-white`}>{t('failed.retry')}</Link>
+            <Link href={`${retry}&metodo=${otherMethod}`} className={`${linkClass} bg-varsity-navy text-white`}>{t(`failed.switchTo.${otherMethod}`)}</Link>
+          </div>
+        ) : (
+          <p className="rounded-xl bg-patio-cream p-3 text-ink" data-testid="result-closed">{t('closedNoRetry')}</p>
+        )}
         {back}
       </section>
     );
   }
 
-  if (outcome === 'PENDING' || outcome === 'RETURNED') {
+  if (outcome === 'PENDING') {
     return (
       <section className="korum-trust-vault mx-auto max-w-lg space-y-4 p-6 text-center" aria-labelledby="result-title">
         <h1 id="result-title" className="font-joy text-2xl font-bold text-varsity-navy">
-          {outcome === 'PENDING' ? t('pending.title') : t('returned.title')}
+          {t('pending.title')}
         </h1>
         <p role="status" className="text-ink">
-          {outcome === 'PENDING' ? t('pending.description') : t('returned.description')}
+          {t('pending.description')}
         </p>
-        {outcome === 'PENDING' ? <PendingRefresh /> : null}
+        <PendingRefresh />
+        {back}
+      </section>
+    );
+  }
+
+  // El pago entró o se devuelve: lo que se cuenta depende de cómo está ahora la campaña (nunca «ya suma» en una que se está devolviendo).
+  const notice = paidNotice(outcome, initiative.status, row.status);
+  if (notice !== 'confirmed') {
+    return (
+      <section className="korum-trust-vault mx-auto max-w-lg space-y-4 p-6 text-center" aria-labelledby="result-title" data-testid="result-notice" data-notice={notice}>
+        {outcome === 'CONFIRMED' ? <ClearCheckoutDraft initiativeId={initiativeId} /> : null}
+        <h1 id="result-title" className="font-joy text-2xl font-bold text-varsity-navy">
+          {t(`paid.${notice}.title`)}
+        </h1>
+        <p role="status" className="text-ink">
+          {t(`paid.${notice}.description`)}
+        </p>
+        {notice === 'deciding' || notice === 'failedCampaign' ? <p className="text-sm text-ink-soft">{t('confirmed.receipt')}</p> : null}
         {back}
       </section>
     );
@@ -136,7 +165,17 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
           {reached ? (ticketing ? t('confirmed.soldOut') : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
         </p>
       </div>
-      {course ? <p className="die-cut-sticker mx-auto inline-flex text-sm">{t('confirmed.group', { group: course.groupName, count: course.familiesCount, target: initiative.targetFamiliesPerCourse })}</p> : null}
+      {course ? (
+        // Reto del curso conseguido: la pegatina «salta» (EXPERIENCIA §6). Siempre en positivo y sin comparar con otros cursos (Regla 03 §6).
+        course.familiesCount >= Math.max(1, initiative.targetFamiliesPerCourse) ? (
+          <p className="die-cut-sticker korum-sticker-pop mx-auto inline-flex text-sm" data-testid="course-reached">
+            <span aria-hidden="true">{'🏆 '}</span>
+            {t('confirmed.groupReached', { group: course.groupName, count: course.familiesCount })}
+          </p>
+        ) : (
+          <p className="die-cut-sticker mx-auto inline-flex text-sm">{t('confirmed.group', { group: course.groupName, count: course.familiesCount, target: initiative.targetFamiliesPerCourse })}</p>
+        )
+      ) : null}
       {pass ? (
         <div className="space-y-2 rounded-2xl border border-sky-300 bg-sky-50 p-4">
           <p className="font-mono text-sm text-ink-soft">{t('confirmed.serial', { serial: pass.serialCode })}</p>
@@ -149,12 +188,15 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
       ) : (
         <p className="text-sm text-ink-soft">{t('confirmed.receipt')}</p>
       )}
-      <div className="space-y-2 rounded-2xl bg-patio-cream p-4">
-        <p className="font-semibold text-ink">{t('confirmed.share')}</p>
-        <div className="flex justify-center">
-          <ShareButton target={{ title, entityName: initiative.organization.name, url: absoluteUrl(locale, initiativePath(orgSlug, initiativeId)), groups: shareGroups }} />
+      {/* «Para que se sumen más familias» solo mientras la campaña recauda: conseguida o cerrada ya no admite aportaciones. */}
+      {nav.canRetry ? (
+        <div className="space-y-2 rounded-2xl bg-patio-cream p-4">
+          <p className="font-semibold text-ink">{t('confirmed.share')}</p>
+          <div className="flex justify-center">
+            <ShareButton target={{ title, entityName: initiative.organization.name, url: absoluteUrl(locale, initiativePath(orgSlug, initiativeId)), groups: shareGroups }} />
+          </div>
         </div>
-      </div>
+      ) : null}
       {back}
     </section>
   );

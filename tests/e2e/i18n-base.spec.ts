@@ -65,7 +65,7 @@ test.describe('QA-C05 · idiomas operativos', () => {
     await expectNoMissingTranslations(page);
     await expectNoSeriousA11yViolations(page);
 
-    await page.getByRole('link', { name: 'Tornar a l\'inici' }).click();
+    await page.getByRole('link', { name: 'Tornar a l’inici' }).click();
     await expect(page).toHaveURL(/\/ca$/);
     expect(errors.filter((message) => !message.includes('404'))).toEqual([]);
   });

@@ -274,7 +274,7 @@ test.describe('Sprint 4.4b · campañas vencidas sin llegar a la meta', () => {
     await expect(page.getByRole('link', { name: 'Campañas vencidas' })).toHaveAttribute('aria-current', 'page');
     const voteCard = page.getByTestId(`expired-card-${voteId}`);
     await expect(voteCard).toContainText('Vencida · falta vuestra decisión');
-    await expect(voteCard).toContainText(/Recaudado 20,00\s€ de 50,00\s€ \(40 %\)/);
+    await expect(voteCard).toContainText(/Recaudado 20,00\s€ de 50,00\s€ \(40\s%\)/);
     await checkPage(page, isMobile);
 
     // --- Lanzar la votación: sin opciones se dice junto al campo; con ellas, se confirma ---
@@ -346,7 +346,7 @@ test.describe('Sprint 4.4b · campañas vencidas sin llegar a la meta', () => {
     const result = page.getByTestId(`expired-result-${voteId}`);
     await server(result).toContainText('La votación eligió: «Comprar 4 tablets con lo recaudado»');
     await expect(result).toContainText(/Meta nueva \(lo que aportaron quienes votaron un proyecto\): 10,00\s€/);
-    await expect(page.getByTestId(`expired-refund-${refundId}`)).toContainText(/Devuelto el 100 %: 1 aportación \(10,00\s€\)/);
+    await expect(page.getByTestId(`expired-refund-${refundId}`)).toContainText(/Devuelto el 100\s%: 1 aportación \(10,00\s€\)/);
     await checkPage(page, isMobile);
 
     // --- A liquidar con la comisión proporcional: 10 € − 0,50 € de tramo − 0,50 € de pasarela ---

@@ -251,6 +251,29 @@
   animation: korum-confetti-fall 1.6s ease-in forwards;
 }
 
+/*
+ * Sello de tampón al registrar una firma y pegatina que salta al conseguir un reto (EXPERIENCIA_DE_PRODUCTO §6, Sprint 5.5): 300 ms, una sola vez.
+ * Terminan en el mismo giro que su clase de reposo (`.korum-stamp-badge`, `.die-cut-sticker`), así que no hay salto al acabar. Con
+ * `prefers-reduced-motion` la regla general de arriba las deja en 0,01 ms: el sello y la pegatina aparecen ya en su sitio, sin desplazarse.
+ */
+@keyframes korum-stamp-in {
+  0% { opacity: 0; transform: rotate(-9deg) scale(1.9); }
+  65% { opacity: 1; transform: rotate(-2deg) scale(0.92); }
+  100% { opacity: 1; transform: rotate(-2deg) scale(1); }
+}
+.korum-stamp-in {
+  animation: korum-stamp-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes korum-sticker-pop {
+  0% { opacity: 0; transform: rotate(-6deg) scale(0.6); }
+  60% { opacity: 1; transform: rotate(2deg) scale(1.12); }
+  100% { opacity: 1; transform: rotate(-1.5deg) scale(1); }
+}
+.korum-sticker-pop {
+  animation: korum-sticker-pop 300ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
 /* Cartel A4 del Estudio (Sprint 4.3): hoja A4 vertical con margen estrecho; solo afecta a la página que lleva esta clase (página con nombre) */
 @page korum-poster {
   size: A4 portrait;

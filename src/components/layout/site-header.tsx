@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { PILLAR_PAGES, type PillarKey } from '@/lib/seo/marketing-routes';
 import { AccountLink } from './account-link';
 import { MobileMenu } from './mobile-menu';
+import { NavLink } from './nav-link';
 
 /**
  * Enlaces que caben en la cabecera de escritorio a 1280 px en los tres idiomas (el catalán es el más largo); las páginas para cada público
@@ -32,9 +33,13 @@ export function SiteHeader() {
           <ul className="flex items-center gap-1">
             {PILLAR_PAGES.filter((page) => HEADER_LINKS.includes(page.key)).map((page) => (
               <li key={page.key}>
-                <Link href={page.path} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 font-semibold text-varsity-navy hover:bg-varsity-navy/10">
+                {/* min-w-11: «Preus» en catalán medía 43 px de ancho (objetivo táctil de 44 × 44, heredado del 3.1). */}
+                <NavLink
+                  href={page.path}
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-lg px-3 font-semibold text-varsity-navy hover:bg-varsity-navy/10 aria-[current=page]:bg-varsity-navy/10 aria-[current=page]:underline aria-[current=page]:decoration-varsity-gold aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-4"
+                >
                   {t(`pages.${page.key}`)}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>

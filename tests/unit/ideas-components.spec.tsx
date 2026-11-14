@@ -141,9 +141,9 @@ describe('comparador Antes / Después', () => {
     expect(screen.getByRole('img', { name: 'Estado de «Toldos» antes de la mejora' })).toHaveAttribute('src', '/api/files/public/aaaaaaaaaaaaaaaaaaaaaaaa');
     expect(screen.getByRole('img', { name: 'Estado de «Toldos» después de la mejora' })).toBeInTheDocument();
     const slider = screen.getByRole('slider', { name: 'Deslizar para comparar el antes y el después' });
-    expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 50 % del después y el 50 % del antes');
+    expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 50 % del después y el 50 % del antes');
     fireEvent.change(slider, { target: { value: '80' } });
-    expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 20 % del después y el 80 % del antes');
+    expect(slider).toHaveAttribute('aria-valuetext', 'Se ve el 20 % del después y el 80 % del antes');
   });
 
   it('con una sola foto la enseña con su etiqueta; sin ninguna, explica que llegarán', () => {

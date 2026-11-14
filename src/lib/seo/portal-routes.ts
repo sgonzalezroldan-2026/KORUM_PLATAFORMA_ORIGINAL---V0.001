@@ -39,6 +39,21 @@ export function ogInitiativeUrl(locale: Locale, initiativeId: number, version: n
   return `${siteUrl()}/api/og/initiative/${initiativeId}?${query.toString()}`;
 }
 
+/**
+ * Forma de un identificador de entidad en una URL que no pasa por el portal (la tarjeta social). Es algo más amplia que la del alta
+ * (`registration-rules.ts`) para no dejar fuera entidades anteriores; lo que no la cumple responde `404` sin consultar la base de datos.
+ */
+export const ORG_SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
+
+/**
+ * Tarjeta social de la portada de una entidad (1200×630; heredado del Sprint 3.3). La comparten la portada, los logros, los comercios amigos, el
+ * buzón de ideas y la ayuda. `version` es la huella de lo que se dibuja (`entityCardVersion`, solo servidor): la tarjeta no lleva cifras.
+ */
+export function ogEntityUrl(locale: Locale, orgSlug: string, version: string): string {
+  const query = new URLSearchParams({ locale, v: version });
+  return `${siteUrl()}/api/og/entity/${encodeURIComponent(orgSlug)}?${query.toString()}`;
+}
+
 /** Buzón de ideas de la entidad (Sprint 3.6). Las ideas llevan `noindex`: son propuestas de familias, no contenido de la entidad. */
 export const ideasPath = (orgSlug: string): string => `/${orgSlug}/ideas`;
 /** Logros conseguidos con su comparador Antes / Después (Sprint 3.6). */

@@ -35,7 +35,7 @@ export function ImpactCalculator({ pricing }: { pricing: PublicPricing }) {
   const t = useTranslations('calculator');
   const current = useLocale();
   const locale: MoneyLocale = isLocale(current) ? current : 'es';
-  const ids = { vertical: useId(), objective: useId(), cost: useId(), families: useId(), sponsors: useId(), costError: useId(), familiesError: useId() };
+  const ids = { vertical: useId(), objective: useId(), cost: useId(), families: useId(), sponsors: useId(), costError: useId(), costHint: useId(), familiesError: useId() };
 
   const [vertical, setVertical] = useState<Vertical>('SCHOOL');
   const [objective, setObjective] = useState<Objective>('scoreboard');
@@ -56,20 +56,26 @@ export function ImpactCalculator({ pricing }: { pricing: PublicPricing }) {
     const families = /^\d{1,6}$/.test(familiesText.trim()) ? Number(familiesText.trim()) : null;
     const costError = costCents === null || costCents <= 0 || costCents > SIMULATOR_LIMITS.maxCostCents;
     const familiesError = families === null || families < SIMULATOR_LIMITS.minFamilies || families > SIMULATOR_LIMITS.maxFamilies;
-    if (costError || familiesError || costCents === null || families === null) return { costError, familiesError, result: null };
-    return { costError, familiesError, result: simulateImpact(pricing, { costCents, families, sponsors }) };
+    if (costError || familiesError || costCents === null || families === null) return { costError, familiesError, costCents, result: null };
+    return { costError, familiesError, costCents, result: simulateImpact(pricing, { costCents, families, sponsors }) };
   }, [costText, familiesText, sponsors, pricing, locale]);
 
   const result = outcome.result;
+  // «4.5» se lee como 4,50 € (el otro separador decimal): si lo escrito no es ya el importe con su formato, se dice cómo se ha entendido (heredado del 3.1).
+  // Se compara sin distinguir espacios (el importe con formato lleva un espacio duro antes de «€»): «4.500,00 €» escrito a mano no es una reinterpretación.
+  const sameText = (a: string, b: string) => a.replace(/\s+/g, ' ').trim() === b.replace(/\s+/g, ' ').trim();
+  const readAs = !outcome.costError && outcome.costCents !== null && !sameText(costText, formatCents(outcome.costCents, locale)) ? formatCents(outcome.costCents, locale) : null;
   const presets = PRESETS_BY_VERTICAL[vertical];
   const announceGoal = result ? formatCents(result.goalCents, locale) : null;
   const announceRemaining = result ? formatCents(result.remainingCents, locale) : null;
 
   useEffect(() => {
     if (!touched.current) return;
-    const timer = setTimeout(() => setAnnouncement(announceGoal && announceRemaining ? t('announce', { goal: announceGoal, remaining: announceRemaining }) : t('needData')), ANNOUNCE_DELAY_MS);
+    // Cómo se ha leído el importe va delante del resultado, en el mismo aviso con retardo: el lector de pantalla no lo repite a cada tecla.
+    const readAsText = readAs ? `${t('costReadAs', { amount: readAs })} ` : '';
+    const timer = setTimeout(() => setAnnouncement(announceGoal && announceRemaining ? `${readAsText}${t('announce', { goal: announceGoal, remaining: announceRemaining })}` : t('needData')), ANNOUNCE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [announceGoal, announceRemaining, t]);
+  }, [announceGoal, announceRemaining, readAs, t]);
 
   function chooseVertical(next: Vertical) {
     touched.current = true;
@@ -136,7 +142,7 @@ export function ImpactCalculator({ pricing }: { pricing: PublicPricing }) {
               setObjective('custom');
             }}
             aria-invalid={outcome.costError}
-            aria-describedby={outcome.costError ? ids.costError : undefined}
+            aria-describedby={outcome.costError ? ids.costError : ids.costHint}
             className={fieldClass}
           />
           {outcome.costError ? (
@@ -144,7 +150,7 @@ export function ImpactCalculator({ pricing }: { pricing: PublicPricing }) {
               {t('costError', { max: formatCents(SIMULATOR_LIMITS.maxCostCents, locale) })}
             </p>
           ) : (
-            <p className="text-sm text-ink-soft">{t('costHint')}</p>
+            <p id={ids.costHint} className="text-sm text-ink-soft" data-testid="cost-read-as">{readAs ? t('costReadAs', { amount: readAs }) : t('costHint')}</p>
           )}
         </div>
 

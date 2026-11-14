@@ -8,8 +8,9 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { Link } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
 import { breadcrumbJsonLd } from '@/lib/seo/json-ld';
+import { entityCardVersion } from '@/lib/seo/entity-card';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { achievementsPath, portalPath } from '@/lib/seo/portal-routes';
+import { achievementsPath, ogEntityUrl, portalPath } from '@/lib/seo/portal-routes';
 import { loadAchievements } from '@/services/portal/achievements-data';
 import { loadPortalOrganization } from '@/services/portal/portal-data';
 
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('achievementsTitle', { name: fitText(organization.name, room) }),
     description: fitText(t('achievementsDescription', { name: organization.name }), 155),
     imageAlt: t('entityImageAlt', { name: organization.name }),
+    imageUrl: ogEntityUrl(locale, orgSlug, entityCardVersion(organization)),
     noindex: !organization.indexable
   });
 }

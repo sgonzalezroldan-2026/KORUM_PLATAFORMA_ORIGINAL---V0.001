@@ -130,12 +130,12 @@
     }
   },
   "error": {
-    "title": "Something didn't go as expected",
-    "description": "We couldn't load this page. Please try again in a few seconds.",
+    "title": "Something didn’t go as expected",
+    "description": "We couldn’t load this page. Please try again in a few seconds.",
     "reference": "Support reference: {reference}"
   },
   "notFound": {
-    "title": "We can't find this page",
+    "title": "We can’t find this page",
     "description": "The link may be mistyped or the page may no longer exist.",
     "backHome": "Back to home"
   },
@@ -416,10 +416,10 @@
     },
     "sponsor": {
       "renewalNotice": {
-        "subject": "Your Friendly Business badge for {organization} expires on {date}",
+        "subject": "Your local partner badge for {organization} expires on {date}",
         "preheader": "Renew in one click without losing a single day.",
         "title": "Your badge expires soon",
-        "body": "Your Friendly Business badge for {organization} ({amount} sponsorship) expires on {date}. We never charge you automatically: if you want to carry on, renew with the button below. Your new year starts when the current one ends, so you do not lose a single day.",
+        "body": "Your local partner badge for {organization} ({amount} sponsorship) expires on {date}. We never charge you automatically: if you want to carry on, renew with the button below. Your new year starts when the current one ends, so you do not lose a single day.",
         "amount": "Amount",
         "date": "Expiry date",
         "cta": "Renew my sponsorship"
@@ -430,10 +430,10 @@
         "BRONCE": "Bronze"
       },
       "welcome": {
-        "subject": "You’re now a Friendly business of {organization}!",
+        "subject": "You’re now a local partner of {organization}!",
         "preheader": "Your badge is already on their page.",
-        "title": "Welcome to the friendly businesses!",
-        "body": "{organization} has approved your sponsorship. Your {level} badge now appears on its friendly businesses page and is valid until {date}.",
+        "title": "Welcome to our local partners!",
+        "body": "{organization} has approved your sponsorship. Your {level} badge now appears on its local partners page and is valid until {date}.",
         "matching": "Your Matching 2x pool is now active: every donation from a family is doubled with it until it runs out.",
         "documents": "The button takes you to your sponsorship receipt and, from there, to the management invoice and the poster for your shop window. Keep this email: the link is personal. If you want to share the poster, share only its page: it doesn’t open your documents.",
         "levelLabel": "Tier",
@@ -453,10 +453,10 @@
         "footnote": "Paycomet processes the refund and it may take a few days to appear on your payment method. We’ll let you know when it goes through."
       },
       "renewalLink": {
-        "subject": "Your Friendly Business badge for {organization} has expired",
+        "subject": "Your local partner badge for {organization} has expired",
         "preheader": "You can still renew with this link.",
         "title": "Shall we carry on for another year?",
-        "body": "Your Friendly Business badge for {organization} ({amount} sponsorship) expired on {date}. If you would like to keep supporting its families, you can renew with the button below until {until}. We never charge you automatically.",
+        "body": "Your local partner badge for {organization} ({amount} sponsorship) expired on {date}. If you would like to keep supporting its families, you can renew with the button below until {until}. We never charge you automatically.",
         "amount": "Amount",
         "date": "You can renew until",
         "cta": "Renew my sponsorship"
@@ -465,10 +465,10 @@
         "footnote": "Payment is made on the secure page of PAYCOMET, the authorised payment institution that processes the charge. 100% of your sponsorship goes to the organisation’s campaigns according to its rule; the advertising management fee and its VAT are separate, with their own invoice."
       },
       "renewed": {
-        "subject": "Renewed: you are still a Friendly Business of {organization}",
+        "subject": "Renewed: you are still a local partner of {organization}",
         "preheader": "Thank you for another year.",
         "title": "Thank you for another year!",
-        "body": "We have received your renewal. Your {level} Friendly Business badge for {organization} is valid until {date}.",
+        "body": "We have received your renewal. Your {level} local partner badge for {organization} is valid until {date}.",
         "placed": "Your {amount} in full is already adding up in: {list}.",
         "chained": "You had already renewed this year: this second payment renews the following year, until {date}. If it was a mistake, write to us from the support page."
       },
@@ -477,9 +477,9 @@
         "preheader": "Your contribution has moved to another campaign.",
         "title": "Your contribution keeps adding up",
         "body": "Following the rule set by {organization}, your {amount} in full has gone to: {list}.",
-        "why": "This is how sponsorship works: if the campaign you supported does not go ahead or, when it ends, has part of your Matching 2x contribution left over, your money is not lost: it moves to another campaign of the organisation. You still appear as a friendly business.",
+        "why": "This is how sponsorship works: if the campaign you supported does not go ahead or, when it ends, has part of your Matching 2x contribution left over, your money is not lost: it moves to another campaign of the organisation. You still appear as a local partner.",
         "listMore": "{list} and {more, plural, one {# more} other {# more}}",
-        "cta": "See the friendly businesses"
+        "cta": "See the local partners"
       },
       "creditPool": {
         "subject": "Your sponsorship of {organization} is waiting for a new campaign",
@@ -487,14 +487,14 @@
         "title": "Your contribution is waiting for a campaign",
         "bodyWaiting": "Right now {organization} has no campaign to take your {amount} to. It remains held by PAYCOMET until {deadline}: as soon as a campaign opens, it will go there. If it has not been placed by then, it will go to the organisation for its activities this school year.",
         "bodyManual": "{organization} will choose which campaign to take your {amount} to. It remains held by PAYCOMET until {deadline}; if it has not been placed by then, it will go to the organisation for its activities this school year.",
-        "visible": "In the meantime you still appear as a friendly business.",
+        "visible": "In the meantime you still appear as a local partner.",
         "deadline": "Held until"
       },
       "renewalInvite": {
-        "subject": "{organization} invites you to remain a Friendly business",
+        "subject": "{organization} invites you to remain a local partner",
         "preheader": "An invitation, with no commitment and no automatic charges.",
         "title": "Shall we carry on for another year?",
-        "body": "{organization} would like to invite you to renew your Friendly business badge ({amount} sponsorship), which {verb} on {date}. It is only an invitation: if you would like to continue, you can renew it with the button below until {until}. There are no automatic charges and we will not write to you about this again this year.",
+        "body": "{organization} would like to invite you to renew your local partner badge ({amount} sponsorship), which {verb} on {date}. It is only an invitation: if you would like to continue, you can renew it with the button below until {until}. There are no automatic charges and we will not write to you about this again this year.",
         "amount": "Amount",
         "date": "You can renew until",
         "cta": "See the renewal",
@@ -509,7 +509,7 @@
         "why": "This is what the sponsorship terms provide: your contribution is for the organisation and is not returned once the business has been accepted. Your advertising stays the same."
       },
       "awaitingDecision": {
-        "subject": "A friendly business is waiting for your decision at {organization}",
+        "subject": "A local partner is waiting for your decision at {organization}",
         "preheader": "Its money cannot be moved until you decide.",
         "title": "Your decision on a business is pending",
         "body": "A business has paid its {amount} sponsorship in a campaign that is no longer raising money. Until you decide whether to accept it, its money cannot be taken to another campaign. If you accept it after {deadline}, it can only go to your Activity Fund; if you do not accept it, we will refund 100%.",
@@ -521,7 +521,7 @@
         "subject": "Your payment to {organization} arrived after the campaign had closed",
         "preheader": "The organisation will decide; your money is still held by PAYCOMET.",
         "title": "Your payment arrived a little late",
-        "body": "We have received your {amount} sponsorship, but when it arrived the campaign of {organization} was no longer raising money. Your money is still held by PAYCOMET while the organisation decides whether to accept you as a friendly business.",
+        "body": "We have received your {amount} sponsorship, but when it arrived the campaign of {organization} was no longer raising money. Your money is still held by PAYCOMET while the organisation decides whether to accept you as a local partner.",
         "next": "If {organization} accepts you, your contribution will go to another of its campaigns or, if there is none in time, to its Activity Fund. If it does not accept you, we will refund 100% of what you paid, including the management fee and its VAT."
       }
     },
@@ -553,10 +553,10 @@
     "account": {
       "passkeyAdded": {
         "subject": "A passkey has been added to your account",
-        "preheader": "If it wasn't you, let us know.",
+        "preheader": "If it wasn’t you, let us know.",
         "title": "New passkey",
-        "body": "A passkey has just been added to your KORUM account: it can be used to sign in without an email or password. If it was you, there's nothing you need to do.",
-        "footnote": "If it wasn't you, go to My account, remove the passkey and contact support.",
+        "body": "A passkey has just been added to your KORUM account: it can be used to sign in without an email or password. If it was you, there’s nothing you need to do.",
+        "footnote": "If it wasn’t you, go to My account, remove the passkey and contact support.",
         "cta": "Review my passkeys"
       }
     },
@@ -702,9 +702,9 @@
       "cta": "Open the Activity Fund",
       "received": {
         "subject": "{amount} has gone to the Activity Fund of {organization}",
-        "preheader": "Money from a friendly business for your activities.",
+        "preheader": "Money from a local partner for your activities.",
         "title": "New money in your Activity Fund",
-        "body": "{amount} from a friendly business has gone to your Activity Fund: there was no campaign to take it to in time. It is money for the organisation’s activities. Pay it out before {deadline}: after that, PAYCOMET could no longer send it."
+        "body": "{amount} from a local partner has gone to your Activity Fund: there was no campaign to take it to in time. It is money for the organisation’s activities. Pay it out before {deadline}: after that, PAYCOMET could no longer send it."
       },
       "reminder": {
         "subject": "Pay out the Activity Fund of {organization} before {deadline}",
@@ -967,7 +967,8 @@
     "ifHalf": "If one in every two families takes part, the average contribution would be <strong>{average}</strong>.",
     "disclaimer": "Indicative figures with the current rates: the first {exempt} of each school year pays no commission. The final goal is calculated by the Studio with your real quote.",
     "needData": "Fill in the quote and the number of people to see the calculation.",
-    "announce": "Goal to publish: {goal}. Left for families to raise: {remaining}."
+    "announce": "Goal to publish: {goal}. Left for families to raise: {remaining}.",
+    "costReadAs": "We’re reading this as {amount}."
   },
   "marketing": {
     "ogAlt": "KORUM: where good ideas add up and get done",
@@ -1163,7 +1164,7 @@
           {
             "title": "What your business gets",
             "bullets": [
-              "A place as a friendly business on the organisation’s page, in the Gold, Silver or Bronze category, with no amounts shown publicly.",
+              "A place as a local partner on the organisation’s page, in the Gold, Silver or Bronze category, with no amounts shown publicly.",
               "Visibility among neighbourhood families throughout the school year.",
               "Your own offer or coupon for families, if you want to give one.",
               "A sponsorship receipt and the invoice for the management fee, by email straight away."
@@ -1185,7 +1186,7 @@
                 "text": "The sponsorship receipt and the fee invoice reach you by email straight away, with no paperwork."
               },
               {
-                "title": "Appear as a friendly business",
+                "title": "Appear as a local partner",
                 "text": "Your business is shown in its category during the school year."
               }
             ]
@@ -1394,7 +1395,7 @@
               },
               {
                 "q": "What does a sponsoring business receive?",
-                "a": "It appears as a friendly business in its category (Gold, Silver or Bronze), receives the sponsorship receipt and the fee invoice straight away, and 100% of the chosen level reaches the initiative."
+                "a": "It appears as a local partner in its category (Gold, Silver or Bronze), receives the sponsorship receipt and the fee invoice straight away, and 100% of the chosen level reaches the initiative."
               },
               {
                 "q": "How is my data protected?",
@@ -1431,23 +1432,23 @@
         "reset-request": "Recover your password",
         "reset-code": "Create a new password"
       },
-      "emailIntro": "We'll send you a link to sign in with one click. If you prefer, we'll send you a 6-digit code.",
+      "emailIntro": "We’ll send you a link to sign in with one click. If you prefer, we’ll send you a 6-digit code.",
       "email": "Your email",
       "sendLink": "Send me the link",
-      "sendCode": "I'd rather have a 6-digit code",
+      "sendCode": "I’d rather have a 6-digit code",
       "linkSent": "If {email} can sign in to KORUM, a link is already in its inbox. It expires in {minutes} minutes and works only once.",
       "useCodeInstead": "Send me a code instead",
       "changeEmail": "Use another email",
-      "codeSent": "We've sent a code to {email}. It expires in {minutes} minutes.",
+      "codeSent": "We’ve sent a code to {email}. It expires in {minutes} minutes.",
       "code": "6-digit code",
       "enter": "Sign in",
-      "passwordIntro": "For the head, treasurer or chair of the organisation and for the KORUM team. Next we'll ask for the code from your app.",
+      "passwordIntro": "For the head, treasurer or chair of the organisation and for the KORUM team. Next we’ll ask for the code from your app.",
       "password": "Password",
-      "forgot": "I've forgotten my password",
-      "resetIntro": "We'll email you a code to create a new password. Your two-step verification stays on.",
+      "forgot": "I’ve forgotten my password",
+      "resetIntro": "We’ll email you a code to create a new password. Your two-step verification stays on.",
       "back": "Back",
       "newPassword": "New password",
-      "passwordHint": "At least 12 characters. A sentence you'll remember makes a good password.",
+      "passwordHint": "At least 12 characters. A sentence you’ll remember makes a good password.",
       "savePassword": "Save the new password",
       "resetDone": "Password changed. You can now sign in with it.",
       "sendResetCode": "Send me the code",
@@ -1456,7 +1457,7 @@
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "The email or password is not correct.",
-      "EMAIL_NOT_VERIFIED": "You haven't verified your email yet. We've sent you a message to do so.",
+      "EMAIL_NOT_VERIFIED": "You haven’t verified your email yet. We’ve sent you a message to do so.",
       "INVALID_OTP": "The code is not correct. Check it and try again.",
       "OTP_EXPIRED": "The code has expired. Ask for a new one.",
       "TOO_MANY_ATTEMPTS": "Too many attempts with this code. Ask for a new one.",
@@ -1465,20 +1466,20 @@
       "INVALID_PASSWORD": "The password is not correct.",
       "RATE_LIMITED": "Too many attempts in a row. Wait a few minutes and try again.",
       "KORUM_SAME_INBOX": "You already have an account with this same inbox. Sign in with the email you used the first time.",
-      "KORUM_DISPOSABLE_EMAIL": "We don't accept temporary email addresses. Use your usual email.",
+      "KORUM_DISPOSABLE_EMAIL": "We don’t accept temporary email addresses. Use your usual email.",
       "KORUM_INVALID_EMAIL": "Enter a valid email.",
-      "KORUM_ACCOUNT_CLOSED": "This account was closed at its holder's request and can no longer be used.",
+      "KORUM_ACCOUNT_CLOSED": "This account was closed at its holder’s request and can no longer be used.",
       "LINK_INVALID": "The link no longer works: it has expired or was already used. Ask for another one.",
-      "INVALID_CODE": "The app code is not correct. Check that your phone's clock is right.",
+      "INVALID_CODE": "The app code is not correct. Check that your phone’s clock is right.",
       "INVALID_BACKUP_CODE": "That backup code is not valid or was already used.",
       "ACCOUNT_TEMPORARILY_LOCKED": "For security, verification is locked for a few minutes after several failed attempts.",
       "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Too many attempts. Enter your password again to start over.",
       "INVALID_TWO_FACTOR_COOKIE": "Too much time has passed. Enter your password again.",
       "KORUM_SECOND_FACTOR_LIMIT": "Too many codes in a row. Wait 15 minutes and try again.",
       "TOTP_ALREADY_ENABLED": "Two-step verification is already on for your account.",
-      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Your account has no password. Create one with “I've forgotten my password”.",
-      "UNKNOWN": "That didn't work. Try again in a few seconds.",
-      "PASSKEY_FAILED": "We couldn't check the passkey. Try again or sign in with an email link."
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Your account has no password. Create one with “I’ve forgotten my password”.",
+      "UNKNOWN": "That didn’t work. Try again in a few seconds.",
+      "PASSKEY_FAILED": "We couldn’t check the passkey. Try again or sign in with an email link."
     },
     "secondFactor": {
       "intro": "Open your authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) and enter the KORUM code.",
@@ -1487,25 +1488,25 @@
       "code": "App code",
       "verify": "Verify",
       "useApp": "Use the app code",
-      "useBackup": "I've lost my phone: use a backup code",
+      "useBackup": "I’ve lost my phone: use a backup code",
       "back": "Back to password"
     },
     "twoFactor": {
       "metaTitle": "Two-step verification",
       "setupTitle": "Turn on two-step verification",
-      "verifyTitle": "Confirm it's you",
-      "why": "Anyone who signs for an organisation or runs KORUM needs two proofs: their password and a code from their phone. So even if someone gets into your email, they can't approve or release funds in your name.",
-      "intro": "Confirm your password to begin. You'll need an authenticator app on your phone.",
+      "verifyTitle": "Confirm it’s you",
+      "why": "Anyone who signs for an organisation or runs KORUM needs two proofs: their password and a code from their phone. So even if someone gets into your email, they can’t approve or release funds in your name.",
+      "intro": "Confirm your password to begin. You’ll need an authenticator app on your phone.",
       "password": "Your password",
       "start": "Start",
       "scanTitle": "Scan the code with your app",
-      "scanIntro": "Open your authenticator app, add an account and scan this code. If you can't scan it, type the key in by hand.",
+      "scanIntro": "Open your authenticator app, add an account and scan this code. If you can’t scan it, type the key in by hand.",
       "qrAlt": "QR code to add KORUM to your authenticator app",
       "qrLoading": "Preparing the code…",
       "manualKey": "Key to type in by hand",
       "backupTitle": "Your backup codes",
-      "backupIntro": "Keep them somewhere safe (for example, printed). They let you in if you lose your phone; each one works once. We won't show them again.",
-      "backupSaved": "I've saved the backup codes",
+      "backupIntro": "Keep them somewhere safe (for example, printed). They let you in if you lose your phone; each one works once. We won’t show them again.",
+      "backupSaved": "I’ve saved the backup codes",
       "firstCode": "First code from the app",
       "confirm": "Turn on and continue"
     },
@@ -1518,14 +1519,14 @@
       "goToLogin": "Go to sign in",
       "platformIntro": "You are about to activate the KORUM Super-Admin account for {email}.",
       "intro": "{organization} has appointed you {role}. You are about to activate the account for {email}.",
-      "nextSteps": "Create your password. Next you'll turn on two-step verification with a phone app: without it you can't sign.",
+      "nextSteps": "Create your password. Next you’ll turn on two-step verification with a phone app: without it you can’t sign.",
       "password": "Create your password",
-      "passwordHint": "At least 12 characters. A sentence you'll remember makes a good password.",
+      "passwordHint": "At least 12 characters. A sentence you’ll remember makes a good password.",
       "repeat": "Repeat the password",
-      "mismatch": "The two passwords don't match.",
+      "mismatch": "The two passwords don’t match.",
       "submit": "Create password and continue",
       "weak": "The password must be between 12 and 128 characters long.",
-      "unknown": "That didn't work. Try again in a few seconds.",
+      "unknown": "That didn’t work. Try again in a few seconds.",
       "otherAccount": "You are signed in with another account. This invitation is for {email}: sign in with it and open the email link again.",
       "acceptRole": "Accept the role"
     }
@@ -1699,7 +1700,7 @@
     "intro": "From here you’ll manage ideas, campaigns and payments, always with the signatures the organisation has chosen.",
     "wallet": {
       "title": "Organisation piggy bank",
-      "explain": "This is the identifier of your piggy bank on KORUM. Each campaign's money is held by PAYCOMET until the goal is reached."
+      "explain": "This is the identifier of your piggy bank on KORUM. Each campaign’s money is held by PAYCOMET until the goal is reached."
     },
     "signers": {
       "title": "Dual signature ({ready} of {total} ready)",
@@ -1717,17 +1718,17 @@
         "SENT": "Invitation sent again.",
         "NOT_NEEDED": "Not needed: the account is already active, or it was sent very recently.",
         "FORBIDDEN": "Only the Director can resend the invitation.",
-        "ERROR": "It couldn't be sent. Try again in a few seconds."
+        "ERROR": "It couldn’t be sent. Try again in a few seconds."
       },
       "titleSingle": "Single signature ({ready} of 1 ready)"
     },
     "kyb": {
-      "title": "Holder's documents",
+      "title": "Holder’s documents",
       "status": {
         "PENDING": "Pending. You can prepare ideas and campaigns; to publish the first one with payments you need the documents.",
-        "SUBMITTED": "Sent. We're reviewing them.",
+        "SUBMITTED": "Sent. We’re reviewing them.",
         "VERIFIED": "Verified. You can publish campaigns with payments.",
-        "REJECTED": "A document needs correcting. Check the message we've sent you."
+        "REJECTED": "A document needs correcting. Check the message we’ve sent you."
       },
       "documents": "Tax ID, statutes or minutes, ID of the person representing the organisation and account ownership certificate (plus proof of Law 49/2002 if you ticked it). They are uploaded privately."
     },
@@ -1925,7 +1926,8 @@
         }
       },
       "newInitiative": "+ New initiative",
-      "newTicketing": "+ New ticketing / raffle"
+      "newTicketing": "+ New ticketing / raffle",
+      "metaTitle": "Dashboard"
     },
     "medals": {
       "title": "KORUM medals",
@@ -2181,6 +2183,10 @@
           "provider": "PAYCOMET hasn’t confirmed direct payments to suppliers yet. Change the destination to the organisation’s account in Payouts.",
           "expiredTitle": "Some payments are out of time",
           "expired": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you."
+        },
+        "stamp": {
+          "complete": "Approved",
+          "partial": "Signed"
         }
       },
       "what": "What you are signing",
@@ -2230,10 +2236,10 @@
       "payoutRequestedBy": "Last requested or changed by {name} on {date}. If you did not expect this destination, do not sign."
     },
     "sponsors": {
-      "title": "{count, plural, =0 {Friendly businesses} one {Friendly businesses · # to review} other {Friendly businesses · # to review}}",
+      "title": "{count, plural, =0 {Local partners} one {Local partners · # to review} other {Local partners · # to review}}",
       "intro": "Local businesses sponsoring your campaigns. Their payment is already in the initiative’s fund (or its Matching 2x pool), but they don’t appear on your page until you approve them. If you don’t accept them, we refund 100% of what they paid.",
       "empty": {
-        "title": "No friendly businesses yet",
+        "title": "No local partners yet",
         "description": "When a business sponsors one of your campaigns from its page, it will appear here for you to review.",
         "cta": "See your businesses page"
       },
@@ -2278,8 +2284,8 @@
       },
       "readOnly": "Only the organisation’s signatories can approve or decline businesses.",
       "notices": {
-        "approved": "{name} is now a friendly business: it appears on your page for 12 months and we’ve sent its welcome email.",
-        "approvedMatching": "{name} is now a friendly business and its Matching 2x pool is active: every donation is doubled until it runs out.",
+        "approved": "{name} is now a local partner: it appears on your page for 12 months and we’ve sent its welcome email.",
+        "approvedMatching": "{name} is now a local partner and its Matching 2x pool is active: every donation is doubled until it runs out.",
         "rejected": "{name} has not been accepted. We’re refunding {amount} and have emailed them the reason."
       },
       "logo": {
@@ -2308,7 +2314,7 @@
       },
       "metaUnpaid": "{level} tier · {sector}",
       "returnedAmount": "Sponsorship refunded to the business",
-      "jump": "{count, plural, one {Go to friendly businesses · # to review} other {Go to friendly businesses · # to review}}",
+      "jump": "{count, plural, one {Go to local partners · # to review} other {Go to local partners · # to review}}",
       "moved": "This business’s sponsorship in full",
       "rule": {
         "label": "Where renewal money, and money from campaigns that don’t go ahead, is sent",
@@ -2361,7 +2367,7 @@
     "settings": {
       "metaTitle": "Entity settings",
       "title": "Entity settings",
-      "intro": "The holder's documents, the amounts families and businesses see, the entity's phone number and how your portal is shown.",
+      "intro": "The holder’s documents, the amounts families and businesses see, the entity’s phone number and how your portal is shown.",
       "readOnly": "Read only: these settings are changed by the people who sign for the entity.",
       "kyb": {
         "title": "Holder’s documents",
@@ -2500,14 +2506,14 @@
         "portal": {
           "legend": "Public portal",
           "contentLocale": "Language you write your campaigns in",
-          "contentLocaleHint": "KORUM's screens are translated automatically; your texts are shown in this language.",
+          "contentLocaleHint": "KORUM’s screens are translated automatically; your texts are shown in this language.",
           "locales": {
             "es": "Spanish",
             "ca": "Catalan",
             "en": "English"
           },
           "publicIndexing": "Show the portal in search engines (Google, Bing…) and AI assistants",
-          "publicIndexingHint": "It only appears once the holder's documents are verified. Unticked, the portal stays open to anyone with the link."
+          "publicIndexingHint": "It only appears once the holder’s documents are verified. Unticked, the portal stays open to anyone with the link."
         },
         "save": "Save settings",
         "saving": "Saving…",
@@ -2521,8 +2527,8 @@
           "sponsorTiersEuros": "Three amounts from €{min} to €{max}, in whole euros, lowest to highest, no repeats.",
           "phone": "Enter a phone number of 9 to 15 digits (it may start with +).",
           "form": "Check the highlighted fields.",
-          "FORBIDDEN": "You don't have permission to change these settings.",
-          "generic": "They couldn't be saved. Please try again in a few seconds."
+          "FORBIDDEN": "You don’t have permission to change these settings.",
+          "generic": "They couldn’t be saved. Please try again in a few seconds."
         }
       },
       "team": {
@@ -2674,7 +2680,7 @@
         "items": "Groups in this block",
         "itemsHint": "One group per line, up to {max}.",
         "removeBlock": "Remove block {n}",
-        "renameNote": "If you rename a group, its challenge count starts again; what it had already counted under the old name still shows at the end of that campaign's challenge.",
+        "renameNote": "If you rename a group, its challenge count starts again; what it had already counted under the old name still shows at the end of that campaign’s challenge.",
         "save": "Save the groups",
         "addBlock": "Add a block",
         "useTemplate": "Load the official template (then save)",
@@ -2694,7 +2700,7 @@
       },
       "brand": {
         "title": "Visual identity",
-        "intro": "Your organisation's logo, cover photo and colour in the header of its portal and on WhatsApp cards.",
+        "intro": "Your organisation’s logo, cover photo and colour in the header of its portal and on WhatsApp cards.",
         "previewCaption": "This is how your portal header looks now (changes appear once saved).",
         "accent": {
           "legend": "Organisation colour",
@@ -2720,7 +2726,7 @@
         "logo": {
           "label": "Organisation logo or crest",
           "replaceLabel": "New organisation logo",
-          "help": "JPG, PNG or WebP up to {max} MB, ideally square with a light background. We publish it without the photo's hidden data (such as location). On WhatsApp cards it only appears if it is JPG or PNG.",
+          "help": "JPG, PNG or WebP up to {max} MB, ideally square with a light background. We publish it without the photo’s hidden data (such as location). On WhatsApp cards it only appears if it is JPG or PNG.",
           "upload": "Upload logo",
           "uploading": "Uploading…",
           "saved": "Logo published: it now shows on your portal.",
@@ -2771,7 +2777,7 @@
       "empty": {
         "title": "Your Fund is empty",
         "text": "When money from an accepted business cannot be taken to any campaign in time, it will arrive here and we will let you know by email.",
-        "cta": "See the friendly businesses"
+        "cta": "See the local partners"
       },
       "deposits": {
         "title": "{count, plural, =0 {What has arrived in the Fund} one {What has arrived in the Fund · # entry} other {What has arrived in the Fund · # entries}}",
@@ -2874,7 +2880,7 @@
         "amount": "Amount sent",
         "requestedAt": "Requested on",
         "executedAt": "Sent on",
-        "originIntro": "Contributions from friendly businesses accepted by the organisation that could not be taken to any campaign before their deadline. They are not returned to the business: they are for the organisation’s activities.",
+        "originIntro": "Contributions from local partners accepted by the organisation that could not be taken to any campaign before their deadline. They are not returned to the business: they are for the organisation’s activities.",
         "originLine": "{name} ({level}): {amount}, paid on {charged}",
         "signatureLine": "{role}: {name}, on {date}",
         "legal": "KORUM is a technology platform and does not hold funds. Charges and transfers are executed by PAYCOMET, an authorised payment institution. The purpose is declared by the organisation; KORUM does not check how the money is used. This receipt is not an invoice or a tax certificate.",
@@ -3148,7 +3154,8 @@
         },
         "defaultMessageTickets": "Scan the QR code with your phone, choose your ticket and pay by card or Bizum in 10 seconds.",
         "defaultMessageRaffle": "Scan the QR code with your phone, choose your raffle tickets and pay by card or Bizum in 10 seconds.",
-        "guaranteeTickets": "Secure payment with PAYCOMET. If the event is cancelled, we refund 100% of what you paid to the same payment method. Initiative piggy bank {wallet}."
+        "guaranteeTickets": "Secure payment with PAYCOMET. If the event is cancelled, we refund 100% of what you paid to the same payment method. Initiative piggy bank {wallet}.",
+        "metaTitle": "A4 poster with QR code"
       },
       "discard": {
         "title": "Discard this draft?",
@@ -3629,6 +3636,11 @@
         "noneWaiting": "You will be able to replace an unclaimed prize from {date}: that is the minimum time KORUM has set for it to be claimed. If your raffle rules allow more time, wait until it ends.",
         "replacesText": "replaces {replaced}"
       }
+    },
+    "welcomeCelebration": {
+      "title": "Welcome to KORUM!",
+      "body": "{name} now has its own space. From today, your community’s good ideas can add up and come true.",
+      "next": "Below are the steps left before you publish your first campaign. We’ll be with you at every one."
     }
   },
   "gate": {
@@ -3638,7 +3650,7 @@
     "emptyText": "The event organiser gives you a link and a 6-digit PIN. Open the link on this phone and type the PIN.",
     "capacityTitle": "Live attendance",
     "capacity": "{checkedIn} of {capacity} people inside",
-    "insideHint": "You're on the door for this event. When you finish, close the session.",
+    "insideHint": "You’re on the door for this event. When you finish, close the session.",
     "pinIntro": "Enter the 6-digit PIN the event organiser gave you.",
     "pin": "Event PIN",
     "enter": "Open the door",
@@ -3788,7 +3800,8 @@
       }
     },
     "organiserHint": "Are you organising the event? Create the PIN and the door check-in link in “Box office and door”.",
-    "organiserLink": "Go to Box office and door"
+    "organiserLink": "Go to Box office and door",
+    "metaTitle": "Door check-in"
   },
   "admin": {
     "headerTitle": "KORUM console",
@@ -4305,7 +4318,7 @@
       "negativeTextBoth": "This initiative leaves no revenue for KORUM: KORUM takes on {loss} of payment gateway cost and has already spent {sunk} between Auto-Boost and chargebacks on this campaign."
     },
     "entities": {
-      "metaTitle": "Entities · KORUM console",
+      "metaTitle": "Entities · Console",
       "back": "← Back to the console",
       "title": "Entities",
       "waitingTitle": "{count, plural, =0 {Documents waiting for review} one {1 entity is waiting for its documents to be reviewed} other {# entities are waiting for their documents to be reviewed}}",
@@ -4341,7 +4354,7 @@
       "open360": "Open 360º file"
     },
     "org360": {
-      "metaTitle": "360º file · KORUM console",
+      "metaTitle": "360º file · Console",
       "back": "← All entities",
       "archived": "Archived",
       "medal": {
@@ -4638,7 +4651,7 @@
       "confirmBack": "No, go back"
     },
     "rules": {
-      "metaTitle": "Rules and prices · KORUM console",
+      "metaTitle": "Rules and prices · Console",
       "back": "Back to the console",
       "title": "Rules and prices",
       "intro": "What the platform charges. As you type, the price health warnings are recalculated with the exact figure. No warning stops you saving: they are there so you decide with the numbers in front of you.",
@@ -4651,7 +4664,7 @@
         "duracion": "Duration",
         "medallas": "Medals",
         "categorias": "Categories",
-        "campanas-exentas": "0 % campaigns"
+        "campanas-exentas": "0% campaigns"
       },
       "unit": {
         "eur": "€",
@@ -4742,7 +4755,7 @@
       },
       "medals": {
         "title": "Medals and exemption grants",
-        "hint": "How many campaigns closed during the school year each medal needs, and the exempt grant (at 0 %) it gives.",
+        "hint": "How many campaigns closed during the school year each medal needs, and the exempt grant (at 0%) it gives.",
         "name": {
           "bronze": "Bronze medal",
           "silver": "Silver medal",
@@ -4760,11 +4773,11 @@
       },
       "categories": {
         "title": "Global categories",
-        "hint": "Each category is exempt (0 %) or goes by bands. An organisation’s own category with the same name still takes precedence over the global one.",
-        "ruleEXEMPT": "0 % commission-exempt",
+        "hint": "Each category is exempt (0%) or goes by bands. An organisation’s own category with the same name still takes precedence over the global one.",
+        "ruleEXEMPT": "0% commission-exempt",
         "ruleBRACKETS": "By bands (scale)",
         "confirmTitle": "Confirm the rule change",
-        "confirmExempt": "“{name}” will become exempt (0 %) in all new campaigns on the platform. Those already published do not change.",
+        "confirmExempt": "“{name}” will become exempt (0%) in all new campaigns on the platform. Those already published do not change.",
         "confirmBrackets": "“{name}” will start paying the banded fee in all new campaigns on the platform. Those already published do not change.",
         "confirmYes": "Yes, change the rule",
         "confirmNo": "No, leave it as it is",
@@ -4778,16 +4791,16 @@
         "added": "Category “{name}” added.",
         "addHint": "Enter at least 2 characters to be able to add it.",
         "confirmAddTitle": "Confirm the exempt category",
-        "confirmAddExempt": "“{name}” will be created as exempt (0 %): no new campaign in that category will pay the banded commission. Create it?",
+        "confirmAddExempt": "“{name}” will be created as exempt (0%): no new campaign in that category will pay the banded commission. Create it?",
         "confirmAddYes": "Yes, create it as exempt",
         "confirmAddNo": "No, go back"
       },
       "exempt": {
-        "title": "0 % campaigns to review",
+        "title": "0% campaigns to review",
         "hint": "The equipment lock is a good-faith filter. Here are the budget campaigns that are still in an exempt category, most recent first, with a mark if the lock ever triggered.",
-        "none": "There are no budget campaigns in 0 % categories.",
+        "none": "There are no budget campaigns in 0% categories.",
         "scrollHint": "Swipe the table sideways to see all the columns.",
-        "region": "Campaigns in 0 % categories",
+        "region": "Campaigns in 0% categories",
         "caption": "Budget campaigns in exempt categories, with their organisation, category, status and whether the equipment filter triggered",
         "columns": {
           "organization": "Organisation",
@@ -4815,7 +4828,7 @@
       "fieldErrorServer": "This value cannot be saved right now. Leave it as it was and save again."
     },
     "support": {
-      "metaTitle": "Support · KORUM console",
+      "metaTitle": "Support · Console",
       "back": "Back to the console",
       "title": "KORUM support",
       "intro": "Enquiries addressed to the platform (payments, account, rectification and others) and what organisations write from their panel, those first. Each enquiry is answered once and its status only moves forward.",
@@ -4912,7 +4925,7 @@
       "resolveConfirmAlreadyReplied": "This enquiry already has an answer. It will be closed and cannot be answered again."
     },
     "settings": {
-      "metaTitle": "Platform settings",
+      "metaTitle": "Settings · Console",
       "back": "← Back to the console",
       "title": "Platform settings",
       "intro": "This is where you configure what keeps the service running: payments with Paycomet, email, invoices, Mi Hucha, search visibility, legal texts, the team with access and the encryption keys. Each block is saved on its own and every change is recorded in the history. Any change (not only keys) requires you to have confirmed your second factor in the last 10 minutes.",
@@ -5434,8 +5447,8 @@
     }
   },
   "forbidden": {
-    "title": "You don't have access to this page",
-    "description": "You're signed in with an account that doesn't have permission here. If you sign for another organisation or use another account, sign in with it.",
+    "title": "You don’t have access to this page",
+    "description": "You’re signed in with an account that doesn’t have permission here. If you sign for another organisation or use another account, sign in with it.",
     "switchAccount": "Sign in with another account"
   },
   "demo": {
@@ -5487,7 +5500,7 @@
     "nav": {
       "label": "Community sections",
       "initiatives": "Initiatives and tickets",
-      "sponsors": "Friendly businesses",
+      "sponsors": "Local partners",
       "ideas": "Idea box",
       "achievements": "Achievements",
       "help": "FAQ and support"
@@ -5642,7 +5655,7 @@
       "initiativeTitle": "{title} · {entity}",
       "initiativeDescription": "{pct}% reached. {text}",
       "initiativeImageAlt": "{title}: {pct}% reached",
-      "sponsorsTitle": "{name} · Friendly businesses",
+      "sponsorsTitle": "{name} · Local partners",
       "sponsorsDescription": "The local businesses that support {name}, by Gold, Silver and Bronze category, with perks for families.",
       "ideasTitle": "{name} · Idea box",
       "ideasDescription": "Ideas from families to improve {name}. Each idea is signed with a verified email and only an anonymous code is shown.",
@@ -5660,7 +5673,16 @@
       "challengeMissingNoReward": "{missing, plural, one {Just # family to go} other {Just # families to go}} for {group} to reach the challenge!",
       "challengeReached": "{group} has already unlocked “{reward}”",
       "challengeReachedNoReward": "{group} has already reached the challenge",
-      "forEntity": "with {entity}"
+      "forEntity": "with {entity}",
+      "entity": {
+        "kicker": {
+          "SCHOOL": "School community",
+          "SPORTS_CLUB": "Sports club",
+          "CULTURAL": "Cultural association"
+        },
+        "promise": "Ideas, campaigns and achievements from the whole community. If the goal isn’t reached, 100% is refunded.",
+        "poweredBy": "Powered by {brand}"
+      }
     },
     "pass": {
       "title": "Your ticket",
@@ -5790,16 +5812,16 @@
       "custodyTickets": "Secure payment with Paycomet",
       "tabs": {
         "label": "Who is contributing",
-        "family": "I'm a family or neighbour",
-        "sponsor": "I'm a local business"
+        "family": "I’m a family or neighbour",
+        "sponsor": "I’m a local business"
       },
       "sponsor": {
         "intro": {
-          "title": "100 % whole sponsorship + Bronze, Silver or Gold category",
-          "body": "The amount you choose reaches the initiative in full, and your business will appear with its category for 12 months in the Friendly businesses directory."
+          "title": "100% whole sponsorship + Bronze, Silver or Gold category",
+          "body": "The amount you choose reaches the initiative in full, and your business will appear with its category for 12 months in the local partners directory."
         },
         "tier": {
-          "legend": "1. Choose your Friendly business category",
+          "legend": "1. Choose your local partner category",
           "ORO": "Gold",
           "PLATA": "Silver (suggested)",
           "BRONCE": "Bronze",
@@ -5807,7 +5829,7 @@
         },
         "matching": {
           "label": "Put my sponsorship into the Matching 2x pool",
-          "help": "It will double families' donations until your amount runs out, once the school or club approves your business."
+          "help": "It will double families’ donations until your amount runs out, once the school or club approves your business."
         },
         "fields": {
           "businessName": "Business name",
@@ -5818,7 +5840,7 @@
           "sector": "Type of business (optional)",
           "sectorPlaceholder": "Bakery, bookshop…",
           "promo": "Discount or perk for families (optional)",
-          "promoPlaceholder": "15 % off in store",
+          "promoPlaceholder": "15% off in store",
           "promoCode": "Code or coupon (optional)",
           "promoCodePlaceholder": "CERVANTES15",
           "promoCodeHint": "Letters without accents, numbers, hyphen and underscore only."
@@ -5827,8 +5849,8 @@
           "legend": "Optional: perk for families"
         },
         "renewal": "Annual renewal: email me the link to renew (30 days before my badge expires and on the day it expires). There are no automatic charges.",
-        "legal": "The school or club will check that your business fits its values and rules; if it is not admitted, we refund 100 % of what you paid (amount, advertising management and VAT). Once admitted, your sponsorship is a contribution to the organisation: if the initiative does not go ahead (or, with Matching 2x, has part left over), it moves to another active initiative; if there is none in time, the organisation keeps it for its activities. We let you know at every step.",
-        "summary": "{amount} in full to the initiative + {fee} advertising management ({pct} %) + {vat} VAT",
+        "legal": "The school or club will check that your business fits its values and rules; if it is not admitted, we refund 100% of what you paid (amount, advertising management and VAT). Once admitted, your sponsorship is a contribution to the organisation: if the initiative does not go ahead (or, with Matching 2x, has part left over), it moves to another active initiative; if there is none in time, the organisation keeps it for its activities. We let you know at every step.",
+        "summary": "{amount} in full to the initiative + {fee} advertising management ({pct}%) + {vat} VAT",
         "errors": {
           "form": "Check the highlighted fields.",
           "required": "This field is required.",
@@ -5836,7 +5858,7 @@
           "taxId": "Check the tax ID: it does not look valid.",
           "phone": "Enter a valid phone number.",
           "tier": "Choose one of the levels.",
-          "matching": "This initiative's Matching 2x pool is already taken.",
+          "matching": "This initiative’s Matching 2x pool is already taken.",
           "closed": "This initiative no longer accepts sponsorships.",
           "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
           "unavailable": "We could not open the payment page. You have not been charged; please try again in a few minutes.",
@@ -5887,7 +5909,8 @@
         },
         "serial": "Code {serial}",
         "share": "Share the initiative so more families join in.",
-        "pct": "{pct}% reached"
+        "pct": "{pct}% reached",
+        "groupReached": "{group} has reached its challenge with {count, plural, one {# family} other {# families}}!"
       },
       "pending": {
         "title": "We are confirming your payment…",
@@ -5911,50 +5934,87 @@
           "CARD": "Pay by card"
         }
       },
-      "returned": {
-        "title": "We are refunding 100%",
-        "description": "The payment arrived when the initiative no longer accepted contributions. We are refunding everything to the same payment method, with nothing for you to do."
-      },
       "invalid": {
         "title": "We cannot open this result",
-        "description": "Check that you opened the full link, or go back to the initiative."
+        "description": "Check that you opened the full link. Your payment receipt is sent to you by email."
       },
       "sponsor": {
         "title": "Thank you, {name}!",
         "whole": {
-          "escrow": "Your {amount} reaches the initiative's piggy bank in full",
-          "pool": "Your {amount} stays in the Matching 2x pool: it will double families' donations once the school or club approves your business"
+          "escrow": "Your {amount} reaches the initiative’s piggy bank in full",
+          "pool": "Your {amount} stays in the Matching 2x pool: it will double families’ donations once the school or club approves your business",
+          "creditPool": "The campaign was no longer raising money when your payment arrived: your {amount} is still held by PAYCOMET until the organisation decides. If it accepts you, it will go in full to another of its campaigns or, if none is in time, to its Activity Fund (the organisation’s money for its activities during the year). If it does not accept you, we refund 100%.",
+          "moved": "Your {amount} contribution still goes in full to the organisation: as this campaign is no longer raising money, it moves to another of its open campaigns or to its Activity Fund. We’ll email you where it goes."
         },
-        "review": "The school or club will review your business. As soon as it approves it, you will appear in the directory as a {level} Friendly business. If it were not admitted, we would refund 100 % of what you paid.",
+        "review": "The school or club will review your business. As soon as it approves it, you will appear in the directory as a {level} local partner. If it were not admitted, we would refund 100% of what you paid.",
         "documents": "Download your documents (you can print them or save them as PDF):",
         "justificante": "Sponsorship receipt",
         "factura": "KORUM invoice",
-        "directory": "See Friendly businesses",
+        "directory": "See the local partners",
         "level": {
           "ORO": "GOLD",
           "PLATA": "SILVER",
           "BRONCE": "BRONZE"
         },
-        "reminder": "We will email you a reminder 30 days before your badge expires."
+        "reminder": "We will email you a reminder 30 days before your badge expires.",
+        "returned": {
+          "notAdmitted": {
+            "title": "We are refunding 100%",
+            "description": "The school or club has not accepted your business, so we are refunding everything you paid (the sponsorship, the advertising management fee and its VAT) to the same payment method, with a corrective invoice."
+          },
+          "returnedGeneric": {
+            "title": "We are refunding 100%",
+            "description": "This payment has been cancelled and we are refunding all of it to the same payment method, with nothing for you to do."
+          },
+          "chargeback": {
+            "title": "This payment was cancelled",
+            "description": "This charge was reversed after a dispute about the card, so it no longer counts as a sponsorship and the money has already gone back to the card that way. If you have any questions, write to us from Help."
+          }
+        }
+      },
+      "toPortal": "Go to the organisation’s home page",
+      "backToEntity": "Go to {entity}’s home page",
+      "closedNoRetry": "This initiative is no longer accepting contributions, so you can’t try again. You can see the others on the home page.",
+      "paid": {
+        "deciding": {
+          "title": "The initiative ended without reaching its goal",
+          "description": "Your payment is recorded. We’ll email you about what happens next: if the organisation proposes going ahead with what was raised, you’ll be able to vote; if not, we refund 100% with nothing for you to do."
+        },
+        "failedCampaign": {
+          "title": "It wasn’t possible this time",
+          "description": "The initiative didn’t reach its goal, so we are refunding 100% of what you paid to the same payment method, with nothing for you to do. Thank you for trying with us!"
+        },
+        "returnedLate": {
+          "title": "We are refunding 100%",
+          "description": "The payment arrived when the initiative no longer accepted contributions. We are refunding everything to the same payment method, with nothing for you to do."
+        },
+        "returnedGeneric": {
+          "title": "We are refunding 100%",
+          "description": "This payment has been cancelled and we are refunding all of it to the same payment method, with nothing for you to do."
+        },
+        "chargeback": {
+          "title": "This payment was cancelled",
+          "description": "This charge was reversed after a dispute about the card, so it no longer counts as a contribution and the money has already gone back to the card that way. If you have any questions, write to us from Help."
+        }
       }
     },
     "sponsors": {
-      "breadcrumb": "Friendly businesses",
+      "breadcrumb": "Local partners",
       "badge": "Committed local business",
       "title": "Local businesses backing {name}",
-      "intro": "We recognise, by category (Gold, Silver and Bronze), the friendly businesses that support our initiatives and offer perks to families.",
+      "intro": "We recognise, by category (Gold, Silver and Bronze), the local partners that support our initiatives and offer perks to families.",
       "share": "Share",
       "sharePage": "Meet the local businesses that support {name} on KORUM!",
       "collaborate": "Support as a business",
-      "listLabel": "Friendly businesses",
+      "listLabel": "Local partners",
       "empty": {
-        "title": "No friendly businesses yet",
+        "title": "No local partners yet",
         "description": "Once a local business backs an initiative and the school or club approves it, it will appear here with its category and its perks for families."
       },
       "level": {
-        "ORO": "Friendly business · GOLD category",
-        "PLATA": "Friendly business · SILVER category",
-        "BRONCE": "Friendly business · BRONZE category"
+        "ORO": "Local partner · GOLD category",
+        "PLATA": "Local partner · SILVER category",
+        "BRONCE": "Local partner · BRONZE category"
       },
       "sectorFallback": "Local business",
       "noPerk": "Supports our community.",
@@ -5988,13 +6048,13 @@
         "recipient": "Organisation receiving the amount",
         "initiative": "Initiative",
         "destination": "Destination",
-        "pool": "The initiative's Matching 2x pool",
-        "escrow": "The initiative's piggy bank",
+        "pool": "The initiative’s Matching 2x pool",
+        "escrow": "The initiative’s piggy bank",
         "category": "Category",
         "amount": "Amount in full",
         "date": "Payment date",
-        "whole": "100 % of this amount ({amount}) reaches the initiative in full. KORUM's advertising management fee and its VAT are charged separately and appear on the invoice.",
-        "notInvoice": "This receipt proves your sponsorship; it does not replace KORUM's invoice and it is not a tax certificate.",
+        "whole": "100% of this amount ({amount}) reaches the initiative in full. KORUM’s advertising management fee and its VAT are charged separately and appear on the invoice.",
+        "notInvoice": "This receipt proves your sponsorship; it does not replace KORUM’s invoice and it is not a tax certificate.",
         "renewal": "Annual renewal: the organisation’s campaigns, according to its rule",
         "wholeRenewal": "100% of this amount ({amount}) is for the organisation: it goes to its campaigns according to its rule and, if there is none in time, to its activities. The KORUM advertising management fee and its VAT are charged separately and appear on the invoice."
       },
@@ -6008,7 +6068,7 @@
         "recipientTaxId": "Recipient tax ID",
         "concept": "Description",
         "base": "Taxable amount",
-        "vat": "VAT ({rate} %)",
+        "vat": "VAT ({rate}%)",
         "total": "Invoice total",
         "verifactu": "Invoice registered for verification (Veri*factu)",
         "verify": "Verify with the Tax Agency",
@@ -6024,11 +6084,11 @@
       },
       "cartel": {
         "title": "Poster for your shop window",
-        "label": "Friendly business poster",
+        "label": "Local partner poster",
         "unavailable": "The poster is available while your business is approved and current.",
-        "friendOf": "Friendly business of {entity}",
+        "friendOf": "Local partner of {entity}",
         "promoWithCode": "{promo} · code {code}",
-        "scan": "Scan the code to see {entity}’s campaigns and its friendly businesses.",
+        "scan": "Scan the code to see {entity}’s campaigns and its local partners.",
         "validUntil": "Badge valid until {date}."
       }
     },
@@ -6234,8 +6294,8 @@
     },
     "sponsorRenewal": {
       "metaTitle": "Renew my sponsorship",
-      "title": "{name}: renew your year as a friendly business",
-      "intro": "You will keep supporting {organization} as a {level} friendly business until {date}. Your new year starts when the current one ends, so you do not lose a single day.",
+      "title": "{name}: renew your year as a local partner",
+      "intro": "You will keep supporting {organization} as a {level} local partner until {date}. Your new year starts when the current one ends, so you do not lose a single day.",
       "levels": {
         "ORO": "Gold",
         "PLATA": "Silver",
@@ -6279,13 +6339,13 @@
       },
       "result": {
         "doneTitle": "Renewed! Thank you for another year",
-        "done": "{name} remains a friendly business until {date}. We have emailed you your documents and the campaign your sponsorship goes to (or the deadline, if it is still waiting).",
+        "done": "{name} remains a local partner until {date}. We have emailed you your documents and the campaign your sponsorship goes to (or the deadline, if it is still waiting).",
         "failedTitle": "The payment was not completed",
         "failed": "Nothing has been charged. You can try again with the link in the email.",
         "pendingTitle": "We are confirming your payment",
         "pending": "As soon as PAYCOMET confirms it, we will email you. There is no need to pay again.",
         "documents": "See my receipt and invoice",
-        "directory": "See the friendly businesses",
+        "directory": "See the local partners",
         "duplicateTitle": "You had already renewed",
         "duplicate": "This second payment was not needed: we are refunding it in full to your original payment method and will email you when it is done."
       }
@@ -6374,7 +6434,7 @@
         "CHARGEBACK": "Reversed (payment dispute)",
         "FAILED": "Not completed"
       },
-      "emptyTitle": "You haven't contributed with this account yet",
+      "emptyTitle": "You haven’t contributed with this account yet",
       "emptyText": "When you support an initiative or buy tickets with this email, they will show up here.",
       "emptyAction": "Find my school or club"
     },
@@ -6393,13 +6453,13 @@
     "documents": {
       "metaTitle": "Certificates and receipts",
       "summary": "{count, plural, one {You have # donation with a document} other {You have # donations with a document}}: tax certificate or receipt, ready to print.",
-      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets and raffle tickets don't come with a donation document.",
+      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets and raffle tickets don’t come with a donation document.",
       "open": "View certificates and receipts",
       "openOne": "View document",
       "back": "Back to My account",
       "backToList": "Back to certificates and receipts",
       "title": "Certificates and receipts",
-      "intro": "One per donation. The tax certificate is for your income tax return if the organisation is under Spain's Law 49/2002 and you gave your tax ID when contributing; otherwise you get a named receipt, with no tax effect. Tickets and raffle tickets don't come with a donation document.",
+      "intro": "One per donation. The tax certificate is for your income tax return if the organisation is under Spain’s Law 49/2002 and you gave your tax ID when contributing; otherwise you get a named receipt, with no tax effect. Tickets and raffle tickets don’t come with a donation document.",
       "year": "Tax year {year}",
       "line": "{initiative} · {date}",
       "kind": {
@@ -6424,12 +6484,12 @@
         "amount": "Amount donated",
         "date": "Date",
         "fiscalYear": "Tax year",
-        "certificateText": "The organisation, under the tax regime of Spain's Law 49/2002, certifies that it has received this donation irrevocably.",
+        "certificateText": "The organisation, under the tax regime of Spain’s Law 49/2002, certifies that it has received this donation irrevocably.",
         "receiptText": "Receipt for the contribution received by the organisation. It has no tax effect: the organisation is not under Law 49/2002 or no tax ID was given when contributing.",
         "guaranteeNote": "Your voluntary contribution to KORUM, if you made one, is not part of the donation and does not appear on this document.",
         "print": "Print or save as PDF"
       },
-      "maskedTaxId": "Your tax ID is hidden. To see it in full and print the certificate, confirm it's you.",
+      "maskedTaxId": "Your tax ID is hidden. To see it in full and print the certificate, confirm it’s you.",
       "revealTaxId": "Show the full tax ID"
     },
     "privacy": {
@@ -6444,17 +6504,17 @@
       },
       "export": {
         "title": "Download my data",
-        "text": "A copy of everything KORUM keeps about you: in JSON, to take it to another service, and in PDF, to read it. If needed, we'll ask for an email code to confirm it's you.",
+        "text": "A copy of everything KORUM keeps about you: in JSON, to take it to another service, and in PDF, to read it. If needed, we’ll ask for an email code to confirm it’s you.",
         "json": "Download as JSON",
         "pdf": "Download as PDF",
         "preparing": "Preparing…",
-        "downloaded": "Download ready. Look for it in your browser's downloads folder.",
+        "downloaded": "Download ready. Look for it in your browser’s downloads folder.",
         "rateLimited": "You have downloaded your data many times today. Please try again tomorrow.",
-        "failed": "We couldn't prepare the download. Please try again in a few minutes."
+        "failed": "We couldn’t prepare the download. Please try again in a few minutes."
       },
       "requests": {
         "title": "My requests",
-        "none": "You haven't made any requests yet.",
+        "none": "You haven’t made any requests yet.",
         "type": {
           "ACCESS": "Access",
           "EXPORT": "Data download",
@@ -6478,12 +6538,12 @@
       "understand": "I understand my account will be deleted forever",
       "button": "Delete my account",
       "blocked": {
-        "SUPERADMIN_ACCOUNT": "A Super-Admin account can't be deleted from here.",
-        "ACTIVE_SIGNER": "You sign for an organisation. Before deleting your account, someone else must take over your role from the organisation's dashboard.",
+        "SUPERADMIN_ACCOUNT": "A Super-Admin account can’t be deleted from here.",
+        "ACTIVE_SIGNER": "You sign for an organisation. Before deleting your account, someone else must take over your role from the organisation’s dashboard.",
         "WALLET_BALANCE": "You have a balance in your Piggy Bank. It must be returned to your payment method first."
       },
       "rateLimited": "You have made many attempts today. Please try again tomorrow.",
-      "failed": "We couldn't delete the account. Please try again in a few minutes.",
+      "failed": "We couldn’t delete the account. Please try again in a few minutes.",
       "done": {
         "title": "Your account has been deleted",
         "text": "We no longer keep your name or your email. Only an irreversible code remains, which stops the same idea being signed twice. Thank you for adding up with us.",
@@ -6495,7 +6555,7 @@
     "passkeys": {
       "title": "Passkeys",
       "intro": "Sign in with the fingerprint, face or PIN of your phone or computer, without waiting for an email. The passkey stays on your device: KORUM never sees your fingerprint or your face.",
-      "signerNote": "As your account has two-step verification, to add a passkey we'll ask for the code from your authenticator app.",
+      "signerNote": "As your account has two-step verification, to add a passkey we’ll ask for the code from your authenticator app.",
       "none": "You have no saved passkeys.",
       "unnamed": "Unnamed passkey",
       "added": "Added on {date}",
@@ -6505,13 +6565,13 @@
       "nameLabel": "Passkey name (optional)",
       "nameHint": "For example, “Home phone”. It helps you recognise it.",
       "add": "Add a passkey on this device",
-      "unsupported": "This browser doesn't support passkeys. You can keep signing in with an email link or code.",
+      "unsupported": "This browser doesn’t support passkeys. You can keep signing in with an email link or code.",
       "messages": {
         "added": "Passkey added. Next time you can sign in with it.",
         "removed": "Passkey removed.",
         "cancelled": "You cancelled creating the passkey. Nothing was saved.",
         "alreadyRegistered": "This device already has a passkey saved for your account.",
-        "failed": "We couldn't save the passkey. Please try again.",
+        "failed": "We couldn’t save the passkey. Please try again.",
         "twoFactorFirst": "As you sign for an organisation, first turn on two-step verification (your code app) and then you can add a passkey."
       }
     },
@@ -6521,11 +6581,11 @@
       "label": "Account language",
       "save": "Save language",
       "saved": "Language saved.",
-      "failed": "We couldn't save the language. Please try again."
+      "failed": "We couldn’t save the language. Please try again."
     },
     "reauth": {
-      "title": "Confirm it's you",
-      "intro": "To protect your data, we'll send a 6-digit code to {email}.",
+      "title": "Confirm it’s you",
+      "intro": "To protect your data, we’ll send a 6-digit code to {email}.",
       "send": "Send code",
       "codeSent": "Enter the code we sent to {email}. It expires in {minutes} minutes.",
       "code": "6-digit code",

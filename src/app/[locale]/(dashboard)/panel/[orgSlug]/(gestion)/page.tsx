@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { DashboardBoard } from '@/components/panel/dashboard-board';
 import { MedalKit } from '@/components/panel/medal-kit';
 import { Model182Card } from '@/components/panel/model182-card';
+import { WelcomeCelebration } from '@/components/panel/welcome-celebration';
+import { WelcomeUrlCleanup } from '@/components/panel/welcome-url-cleanup';
 import { medalLevels } from '@/core/medals/medal-kit';
 import type { DashboardInitiative } from '@/core/panel/dashboard';
 import { normalizeContactPhone } from '@/core/tax/contact-phone';
@@ -19,8 +22,16 @@ import { getDashboardData } from '@/repositories/panel.repository';
  */
 export const dynamic = 'force-dynamic';
 
-export default async function PanelHomePage({ params }: { params: Promise<{ locale: Locale; orgSlug: string }> }) {
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'panel.dashboard' });
+  return { title: t('metaTitle') };
+}
+
+export default async function PanelHomePage({ params, searchParams }: { params: Promise<{ locale: Locale; orgSlug: string }>; searchParams: Promise<{ bienvenida?: string | string[] }> }) {
   const { locale, orgSlug } = await params;
+  const { bienvenida } = await searchParams;
   setRequestLocale(locale);
   const { actor, organization } = await requirePanelAccess(locale, orgSlug);
   const now = new Date();
@@ -50,6 +61,8 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
   // (`contactPhone` es de esa persona: nunca se le enseña a la cofirma).
   const isDirector = memberships.some((membership) => membership.role === 'DIRECTOR');
   const defaultPhone = normalizeContactPhone(org.phone ?? (isDirector ? (org.contactPhone ?? '') : ''));
+  // Bienvenida tras el alta (heredado del 3.2): solo con la marca que añade el alta y mientras no haya ninguna campaña.
+  const welcome = bienvenida === '1' && initiatives.length === 0;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
@@ -57,6 +70,9 @@ export default async function PanelHomePage({ params }: { params: Promise<{ loca
         <h1 className="font-joy text-3xl font-bold text-varsity-navy">{t('welcome', { name: organization.name })}</h1>
         <p className="max-w-3xl text-ink-soft">{t('intro')}</p>
       </header>
+
+      {welcome ? <WelcomeCelebration locale={locale} entityName={organization.name} /> : null}
+      {bienvenida !== undefined ? <WelcomeUrlCleanup /> : null}
 
       <MedalKit orgSlug={org.slug} entityName={org.name} vertical={org.vertical} period={org.quotaPeriod ?? ''} levels={levels} />
 

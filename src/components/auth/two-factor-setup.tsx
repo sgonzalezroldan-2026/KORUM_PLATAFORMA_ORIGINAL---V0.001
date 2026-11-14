@@ -81,6 +81,8 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
       <form onSubmit={start} className="flex flex-col gap-4">
         <p className="text-ink-soft">{t('intro')}</p>
         {alert}
+        {/* Los gestores de contraseñas esperan un usuario junto a la contraseña (aviso de Chrome): campo oculto, nunca se envía. */}
+        <input type="text" name="username" autoComplete="username" hidden readOnly value="" tabIndex={-1} aria-hidden="true" />
         <Field label={t('password')} type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} />
         <button type="submit" className={primaryButton} disabled={busy || password === ''}>
           {t('start')}

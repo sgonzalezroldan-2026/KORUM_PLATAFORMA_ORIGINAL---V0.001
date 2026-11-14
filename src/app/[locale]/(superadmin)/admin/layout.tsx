@@ -8,6 +8,7 @@ import { ConsoleHeader } from '@/components/panel/console-header';
 import { routing } from '@/i18n/routing';
 import { requireSuperadminAccess } from '@/lib/auth/guards';
 import { getPricingHealthForRequest } from '@/lib/console-pricing';
+import { PrivateIntlProvider } from '@/components/layout/private-intl-provider';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -20,11 +21,13 @@ export default async function AdminLayout({ children, params }: { children: Reac
   const t = await getTranslations({ locale, namespace: 'admin' });
   const pricing = await getPricingHealthForRequest();
   return (
-    <div className="flex min-h-dvh flex-col">
-      <ConsoleHeader title={t('headerTitle')} subtitle={session.email} badge={<PricingBadge open={pricing.open} openCritical={pricing.openCritical} />} />
-      <main id="contenido" className="flex-1 bg-varsity-ivory">
-        {children}
-      </main>
-    </div>
+    <PrivateIntlProvider zone="admin">
+      <div className="flex min-h-dvh flex-col">
+        <ConsoleHeader title={t('headerTitle')} subtitle={session.email} badge={<PricingBadge open={pricing.open} openCritical={pricing.openCritical} />} />
+        <main id="contenido" className="flex-1 bg-varsity-ivory">
+          {children}
+        </main>
+      </div>
+    </PrivateIntlProvider>
   );
 }

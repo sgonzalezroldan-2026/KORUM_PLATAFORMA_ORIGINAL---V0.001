@@ -1,12 +1,12 @@
 {
   "brand": {
     "name": "KORUM",
-    "tagline": "On les bones idees sumen i s'aconsegueixen.",
+    "tagline": "On les bones idees sumen i s’aconsegueixen.",
     "markLabel": "Logotip de KORUM"
   },
   "metadata": {
-    "title": "KORUM · On les bones idees sumen i s'aconsegueixen",
-    "description": "Bústia d’idees, campanyes «tot o res» i taquilla amb QR per a escoles, clubs i entitats culturals. Si no s’arriba a la meta, es retorna el 100 %."
+    "title": "KORUM · On les bones idees sumen i s’aconsegueixen",
+    "description": "Bústia d’idees, campanyes «tot o res» i taquilla amb QR per a escoles, clubs i entitats culturals. Si no s’arriba a la meta, es retorna el 100 %."
   },
   "common": {
     "skipToContent": "Salta al contingut",
@@ -29,7 +29,7 @@
     "ctaSignup": "🏫 Dona d’alta la meva escola, AMPA o club gratis",
     "ctaFind": "🔍 Cerca la meva escola o club",
     "ctaLogin": "🔐 Inicia la sessió",
-    "badgeRefund": "Si no s’arriba a la meta, es retorna el 100 %",
+    "badgeRefund": "Si no s’arriba a la meta, es retorna el 100 %",
     "badgeProvider": "L’entitat tria lliurement el seu proveïdor",
     "badgePayments": "Cobraments i devolucions gestionats per PAYCOMET",
     "finder": {
@@ -49,7 +49,7 @@
         },
         {
           "title": "Aporten en 10 segons",
-          "text": "Les famílies aporten amb Bizum o targeta. És tot o res: si no s’arriba a la meta, es retorna el 100 %."
+          "text": "Les famílies aporten amb Bizum o targeta. És tot o res: si no s’arriba a la meta, es retorna el 100 %."
         },
         {
           "title": "Gaudiu de l’Abans i el Després",
@@ -79,7 +79,7 @@
           "title": "Famílies",
           "bullets": [
             "Aportar en 10 segons, sense registre",
-            "Devolució automàtica del 100 % si no s’arriba a la meta",
+            "Devolució automàtica del 100 % si no s’arriba a la meta",
             "Reptes per curs o equip, sempre en positiu",
             "Entrades amb QR al mòbil"
           ],
@@ -90,7 +90,7 @@
           "bullets": [
             "Visibilitat davant les famílies del barri",
             "Categoria Or, Plata o Bronze",
-            "El 100 % del patrocini arriba a la iniciativa",
+            "El 100 % del patrocini arriba a la iniciativa",
             "Justificant del patrocini i factura del fee, a l’instant"
           ],
           "link": "Veure com participen els comerços"
@@ -99,7 +99,7 @@
     },
     "money": {
       "title": "Com es tracten els diners",
-      "text": "Els pagaments els processa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és la tecnologia: no guarda els vostres diners. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona.",
+      "text": "Els pagaments els processa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM és la tecnologia: no guarda els vostres diners. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona.",
       "link": "Llegeix més sobre seguretat i transparència"
     },
     "final": {
@@ -123,7 +123,7 @@
   "ui": {
     "toast": {
       "region": "Avisos",
-      "dismiss": "Tancar l'avís"
+      "dismiss": "Tancar l’avís"
     },
     "table": {
       "sortBy": "Ordenar per {column}"
@@ -131,13 +131,13 @@
   },
   "error": {
     "title": "Alguna cosa no ha anat com esperàvem",
-    "description": "No hem pogut carregar aquesta pàgina. Torna-ho a provar d'aquí a uns segons.",
+    "description": "No hem pogut carregar aquesta pàgina. Torna-ho a provar d’aquí a uns segons.",
     "reference": "Referència per al suport: {reference}"
   },
   "notFound": {
     "title": "No trobem aquesta pàgina",
-    "description": "Potser l'enllaç està mal escrit o la pàgina ja no existeix.",
-    "backHome": "Tornar a l'inici"
+    "description": "Potser l’enllaç està mal escrit o la pàgina ja no existeix.",
+    "backHome": "Tornar a l’inici"
   },
   "ideas": {
     "audit": {
@@ -150,7 +150,7 @@
   "privacy": {
     "export": {
       "title": "Les teves dades a KORUM",
-      "intro": "Còpia de les dades personals que KORUM guarda sobre tu (RGPD, articles 15 i 20). El fitxer JSON que l'acompanya conté el mateix en un format que pots portar a un altre servei.",
+      "intro": "Còpia de les dades personals que KORUM guarda sobre tu (RGPD, articles 15 i 20). El fitxer JSON que l’acompanya conté el mateix en un format que pots portar a un altre servei.",
       "generatedAt": "Generat el {date}",
       "empty": "Sense dades.",
       "yes": "Sí",
@@ -162,13 +162,13 @@
         "consents": "Consentiments",
         "privacyRequests": "Sol·licituds de privacitat",
         "memberships": "Càrrecs en entitats",
-        "ideaSignatures": "Signatures d'idees",
-        "devices": "Dispositius (antifrau de la bústia d'idees)",
+        "ideaSignatures": "Signatures d’idees",
+        "devices": "Dispositius (antifrau de la bústia d’idees)",
         "savedCards": "Targetes desades",
         "monthlyPledges": "Aportacions mensuals",
-        "notifications": "Correus que t'hem enviat",
+        "notifications": "Correus que t’hem enviat",
         "supportTickets": "Consultes de suport",
-        "passkeys": "Claus d'accés",
+        "passkeys": "Claus d’accés",
         "ideaProposals": "Propostes d’idees i xat amb el centre"
       },
       "fields": {
@@ -178,7 +178,7 @@
         "taxId": "NIF",
         "province": "Província",
         "postalCode": "Codi postal",
-        "createdAt": "Data d'alta",
+        "createdAt": "Data d’alta",
         "lastActiveAt": "Darrera activitat",
         "twoFactor": "Verificació en dos passos",
         "date": "Data",
@@ -242,7 +242,7 @@
         "CHARGEBACK": "Retrocessió"
       },
       "purposes": {
-        "ANALYTICS_COOKIES": "Galetes d'analítica",
+        "ANALYTICS_COOKIES": "Galetes d’analítica",
         "DEVICE_FINGERPRINT": "Empremta del dispositiu (antifrau)",
         "MARKETING_EMAILS": "Correus informatius",
         "PUBLIC_SUPPORTER_NAME": "Mostrar el meu nom entre qui dona suport"
@@ -258,13 +258,13 @@
         "RECEIVED": "Rebuda",
         "IN_PROGRESS": "En curs",
         "COMPLETED": "Completada",
-        "REJECTED": "No s'ha pogut atendre"
+        "REJECTED": "No s’ha pogut atendre"
       },
       "emailStatuses": {
         "PENDING": "Pendent",
-        "SENDING": "S'està enviant",
+        "SENDING": "S’està enviant",
         "SENT": "Enviat",
-        "FAILED": "No s'ha pogut enviar",
+        "FAILED": "No s’ha pogut enviar",
         "CANCELLED": "Cancel·lat"
       },
       "pledgeStatuses": {
@@ -325,7 +325,7 @@
       "preheader": "Gràcies per sumar. Aquí tens el teu rebut.",
       "title": "Gràcies per sumar!",
       "body": "Hem rebut la teva aportació de {amount} per a «{initiative}», de {organization}.",
-      "guarantee": "Els diners queden retinguts a Paycomet fins a assolir la meta. Si la iniciativa no s’aconsegueix, et retornem el 100 % del que has pagat pel mateix mitjà de pagament.",
+      "guarantee": "Els diners queden retinguts a Paycomet fins a assolir la meta. Si la iniciativa no s’aconsegueix, et retornem el 100 % del que has pagat pel mateix mitjà de pagament.",
       "fiscalCertificate": "Si has indicat el teu NIF, la part donada a l’entitat s’inclourà al teu certificat fiscal de donació (Llei 49/2002), que podràs descarregar al gener. L’aportació voluntària a KORUM no compta per al certificat.",
       "fiscalReceipt": "Guarda aquest correu: serveix com a justificant nominatiu de la teva aportació.",
       "contribution": "Aportació",
@@ -371,9 +371,9 @@
     },
     "expired": {
       "subject": "«{initiative}» no ha arribat a la meta",
-      "preheader": "Podeu redimensionar-la o retornar el 100 %.",
+      "preheader": "Podeu redimensionar-la o retornar el 100 %.",
       "title": "La campanya ha acabat sense assolir la meta",
-      "body": "«{initiative}» ha vençut amb {raised} dels {goal} necessaris. Cap aportació no es perd: podeu redimensionar la iniciativa o retornar el 100 % a les famílies.",
+      "body": "«{initiative}» ha vençut amb {raised} dels {goal} necessaris. Cap aportació no es perd: podeu redimensionar la iniciativa o retornar el 100 % a les famílies.",
       "cta": "Decidir ara"
     },
     "refund": {
@@ -442,9 +442,9 @@
       },
       "rejected": {
         "subject": "{organization} no ha admès el teu patrocini",
-        "preheader": "Et retornem el 100 % del que vas pagar.",
+        "preheader": "Et retornem el 100 % del que vas pagar.",
         "title": "El teu patrocini no ha estat admès",
-        "body": "{organization} ha revisat el teu patrocini i no l’ha admès. Et retornem el 100 % del que vas pagar ({amount}: patrocini, gestió i IVA) al mateix mitjà de pagament.",
+        "body": "{organization} ha revisat el teu patrocini i no l’ha admès. Et retornem el 100 % del que vas pagar ({amount}: patrocini, gestió i IVA) al mateix mitjà de pagament.",
         "reason": "La seva explicació: «{reason}»",
         "rectified": "Hem anul·lat la factura de la gestió amb una factura rectificativa.",
         "amount": "Import que et retornem",
@@ -462,7 +462,7 @@
         "cta": "Renovar el meu patrocini"
       },
       "renewal": {
-        "footnote": "El pagament es fa a la pàgina segura de PAYCOMET, l’entitat de pagament autoritzada que processa el cobrament. El 100 % del teu patrocini va a les campanyes de l’entitat segons la seva regla; la gestió publicitària i el seu IVA van a part, amb la seva factura."
+        "footnote": "El pagament es fa a la pàgina segura de PAYCOMET, l’entitat de pagament autoritzada que processa el cobrament. El 100 % del teu patrocini va a les campanyes de l’entitat segons la seva regla; la gestió publicitària i el seu IVA van a part, amb la seva factura."
       },
       "renewed": {
         "subject": "Renovat: continues sent Comerç amic de {organization}",
@@ -512,7 +512,7 @@
         "subject": "Un comerç amic espera la vostra decisió a {organization}",
         "preheader": "Els seus diners no es poden moure fins que decidiu.",
         "title": "Falta la vostra decisió sobre un comerç",
-        "body": "Un comerç ha pagat el seu patrocini de {amount} en una campanya que ja no recapta. Mentre no decidiu si l’admeteu, els seus diners no es poden portar a una altra campanya. Si l’admeteu després del {deadline}, ja només podran anar al vostre Fons d’activitats; si no l’admeteu, li retornarem el 100 %.",
+        "body": "Un comerç ha pagat el seu patrocini de {amount} en una campanya que ja no recapta. Mentre no decidiu si l’admeteu, els seus diners no es poden portar a una altra campanya. Si l’admeteu després del {deadline}, ja només podran anar al vostre Fons d’activitats; si no l’admeteu, li retornarem el 100 %.",
         "what": "Si l’admeteu abans, anirà a les vostres campanyes segons la vostra regla.",
         "deadline": "Decidiu abans del",
         "cta": "Revisar el comerç"
@@ -522,7 +522,7 @@
         "preheader": "L’entitat decidirà; els teus diners continuen retinguts a PAYCOMET.",
         "title": "El teu pagament va arribar una mica tard",
         "body": "Hem rebut el teu patrocini de {amount}, però quan va arribar la campanya de {organization} ja no recaptava. Els teus diners continuen retinguts a PAYCOMET mentre l’entitat decideix si t’admet com a comerç amic.",
-        "next": "Si {organization} t’admet, la teva aportació anirà a una altra de les seves campanyes o, si no n’hi ha cap a temps, al seu Fons d’activitats. Si no t’admet, et retornarem el 100 % del que vas pagar, també la gestió i el seu IVA."
+        "next": "Si {organization} t’admet, la teva aportació anirà a una altra de les seves campanyes o, si no n’hi ha cap a temps, al seu Fons d’activitats. Si no t’admet, et retornarem el 100 % del que vas pagar, també la gestió i el seu IVA."
       }
     },
     "tax": {
@@ -552,10 +552,10 @@
     },
     "account": {
       "passkeyAdded": {
-        "subject": "S'ha afegit una clau d'accés al teu compte",
-        "preheader": "Si no has estat tu, avisa'ns.",
-        "title": "Nova clau d'accés",
-        "body": "S'acaba d'afegir una clau d'accés al teu compte de KORUM: amb ella es pot entrar sense correu ni contrasenya. Si has estat tu, no cal que facis res.",
+        "subject": "S’ha afegit una clau d’accés al teu compte",
+        "preheader": "Si no has estat tu, avisa’ns.",
+        "title": "Nova clau d’accés",
+        "body": "S’acaba d’afegir una clau d’accés al teu compte de KORUM: amb ella es pot entrar sense correu ni contrasenya. Si has estat tu, no cal que facis res.",
         "footnote": "Si no has estat tu, entra a El meu compte, treu la clau i escriu-nos al suport.",
         "cta": "Revisar les meves claus"
       }
@@ -752,7 +752,7 @@
     "supporter": {
       "goalReached": {
         "subject": "Ho hem aconseguit! «{initiative}»",
-        "preheader": "{organization} ha arribat al 100 % gràcies a tu i a les altres famílies.",
+        "preheader": "{organization} ha arribat al 100 % gràcies a tu i a les altres famílies.",
         "title": "Ho hem aconseguit!",
         "body": "«{initiative}» de {organization} ha arribat a la seva meta gràcies a {count, plural, one {una aportació: la teva} other {# aportacions, i una és la teva}}. Gràcies!",
         "next": "Els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que {organization} signi la liquidació. Quan estigui feta, t’ensenyarem l’Abans i el Després.",
@@ -769,10 +769,10 @@
     },
     "resize": {
       "decided": {
-        "refundSubject": "Es retorna el 100 % de «{initiative}»",
+        "refundSubject": "Es retorna el 100 % de «{initiative}»",
         "refundPreheader": "Una persona signant ha decidit retornar el que s’ha recaptat.",
-        "refundTitle": "Decidit: es retorna el 100 %",
-        "refundBody": "S’ha decidit retornar el 100 % del que s’ha recaptat a «{initiative}». Cada aportació torna al seu mitjà de pagament original, per lots; podeu seguir-ne el progrés al tauler.",
+        "refundTitle": "Decidit: es retorna el 100 %",
+        "refundBody": "S’ha decidit retornar el 100 % del que s’ha recaptat a «{initiative}». Cada aportació torna al seu mitjà de pagament original, per lots; podeu seguir-ne el progrés al tauler.",
         "voteSubject": "Votació oberta: «{initiative}»",
         "votePreheader": "Qui va fer un donatiu decideix què es fa amb el que s’ha recaptat.",
         "voteTitle": "Decidit: preguntem a qui va fer un donatiu",
@@ -788,19 +788,19 @@
         "newGoal": "Meta nova",
         "settleCta": "Anar a Liquidacions",
         "refundSubject": "La votació de «{initiative}» acaba sense projecte",
-        "refundPreheader": "Es retorna el 100 % a totes les persones.",
-        "refundTitle": "Es retorna el 100 %",
+        "refundPreheader": "Es retorna el 100 % a totes les persones.",
+        "refundTitle": "Es retorna el 100 %",
         "reasonNO_VOTES": "La votació de «{initiative}» ha acabat sense vots a cap opció de projecte.",
         "reasonTIE": "La votació de «{initiative}» ha acabat en empat.",
         "reasonNOTHING_LEFT": "Després de les devolucions demanades, a «{initiative}» no queda res amb què fer el projecte.",
-        "refundNext": "Tal com estava previst, es retorna el 100 % a totes les persones que van fer una aportació, al seu mitjà de pagament original."
+        "refundNext": "Tal com estava previst, es retorna el 100 % a totes les persones que van fer una aportació, al seu mitjà de pagament original."
       },
       "poll": {
         "subject": "Tu decideixes: què fem amb «{initiative}»?",
         "preheader": "Vota fins al {date}. També pots demanar que et retornem la teva aportació.",
         "title": "El teu vot decideix",
         "body": "«{initiative}» de {organization} no va arribar a la meta. Abans de retornar els diners, {organization} vol saber si prefereixes que es faci una versió més petita del projecte amb el que s’ha recaptat.",
-        "rules": "Un vot per persona, fins al {date}. Guanya l’opció més votada i es fa amb el que aportin qui vota un projecte. Si no votes, et retornem el 100 %. Aquest enllaç és només teu: no el reenviïs.",
+        "rules": "Un vot per persona, fins al {date}. Guanya l’opció més votada i es fa amb el que aportin qui vota un projecte. Si no votes, et retornem el 100 %. Aquest enllaç és només teu: no el reenviïs.",
         "refund": "Si prefereixes recuperar la teva aportació, tria «Prefereixo que em retorneu la meva aportació»: te la retornem sencera, passi el que passi.",
         "until": "Pots votar fins al",
         "cta": "Votar ara"
@@ -816,7 +816,7 @@
       "refunding": {
         "subject": "Et retornem la teva aportació a «{initiative}»",
         "preheader": "Torna sencera al teu mitjà de pagament original.",
-        "title": "Et retornem el 100 %",
+        "title": "Et retornem el 100 %",
         "body": "«{initiative}» de {organization} no va arribar a la meta, així que et retornem tot el que vas aportar, també l’aportació voluntària a KORUM si la vas fer.",
         "how": "Torna al teu mitjà de pagament original (targeta o Bizum) sense que hagis de fer res. T’avisarem quan estigui fet; pot trigar uns dies a aparèixer a la teva targeta o a Bizum.",
         "thanks": "Gràcies per donar suport a {organization}.",
@@ -967,7 +967,8 @@
     "ifHalf": "Si participa una de cada dues famílies, l’aportació mitjana seria de <strong>{average}</strong>.",
     "disclaimer": "Xifres orientatives amb les tarifes vigents: els primers {exempt} de cada curs no paguen comissió. La meta final la calcula l’Estudi amb el vostre pressupost real.",
     "needData": "Completa el pressupost i el nombre de persones per veure el càlcul.",
-    "announce": "Meta que es publicarà: {goal}. Per reunir entre les famílies: {remaining}."
+    "announce": "Meta que es publicarà: {goal}. Per reunir entre les famílies: {remaining}.",
+    "costReadAs": "Ho llegim com a {amount}."
   },
   "marketing": {
     "ogAlt": "KORUM: on les bones idees sumen i s’aconsegueixen",
@@ -981,14 +982,14 @@
     },
     "llms": {
       "summary": "KORUM és una plataforma tecnològica per a escoles (a través de la seva AMPA/AFA o del seu titular), clubs esportius de base i entitats culturals. Reuneix una bústia d’idees amb quòrum, campanyes de mecenatge «tot o res», taquilla i rifes amb QR, comerços amics i Mi Hucha.",
-      "money": "Els cobraments, les retencions i les devolucions els executa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM no és una entitat financera ni custodia fons. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona, al mitjà de pagament original. KORUM mai no intermedia ni cobra comissions a proveïdors d’obres o equipament: l’entitat tria lliurement.",
+      "money": "Els cobraments, les retencions i les devolucions els executa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM no és una entitat financera ni custodia fons. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona, al mitjà de pagament original. KORUM mai no intermedia ni cobra comissions a proveïdors d’obres o equipament: l’entitat tria lliurement.",
       "figuresTitle": "Tarifes vigents",
       "figures": [
         "Alta d’entitats: gratuïta.",
         "Els primers {exempt} de cada curs no paguen comissió; després, {t1Rate}, {t2Rate} o {t3Rate} segons la mida de la iniciativa (trams fins a {t1Max} i {t2Max}).",
         "Passarel·la de pagament: {gatewayRate} més {gatewayFixed} per aportació, inclosa a la meta que veuen les famílies.",
         "Entrades i butlletes: «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu.",
-        "Patrocini de comerços: el 100 % del nivell triat arriba a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre.",
+        "Patrocini de comerços: el 100 % del nivell triat arriba a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre.",
         "Durada màxima d’una campanya: {maxDays} dies."
       ],
       "pagesTitle": "Pàgines"
@@ -1016,7 +1017,7 @@
       "ticketsLabel": "Entrades i butlletes",
       "ticketsValue": "«Despeses de gestió digital»: {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar",
       "sponsorsLabel": "Patrocini de comerços",
-      "sponsorsValue": "El 100 % del nivell triat arriba a la iniciativa. El fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i el paga el comerç",
+      "sponsorsValue": "El 100 % del nivell triat arriba a la iniciativa. El fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i el paga el comerç",
       "voluntaryLabel": "Aportació voluntària a KORUM",
       "voluntaryValue": "Opcional i desmarcada per defecte; l’import es tria des de zero. No canvia res de la donació",
       "setupLabel": "Alta de l’entitat",
@@ -1028,9 +1029,9 @@
     "pages": {
       "colegios": {
         "title": "Recaptar fons per a escoles i AMPA/AFA",
-        "description": "Financia climatització, ombra o pissarres digitals amb campanyes tot o res, doble signatura per defecte i devolució del 100 % si no s’arriba.",
+        "description": "Financia climatització, ombra o pissarres digitals amb campanyes tot o res, doble signatura per defecte i devolució del 100 % si no s’arriba.",
         "h1": "Com finançar millores a la teva escola sense manejar efectiu",
-        "answer": "KORUM permet que una escola o la seva AMPA/AFA proposi una millora, l’aprovi amb les signatures que decideixi l’entitat (per defecte, doble signatura) i la financi amb les aportacions de les famílies en una campanya «tot o res»: si no s’arriba a la meta, es retorna el 100 % a cada persona. Els primers {exempt} de cada curs no paguen comissió.",
+        "answer": "KORUM permet que una escola o la seva AMPA/AFA proposi una millora, l’aprovi amb les signatures que decideixi l’entitat (per defecte, doble signatura) i la financi amb les aportacions de les famílies en una campanya «tot o res»: si no s’arriba a la meta, es retorna el 100 % a cada persona. Els primers {exempt} de cada curs no paguen comissió.",
         "sections": [
           {
             "title": "Què pot fer la teva escola",
@@ -1069,13 +1070,13 @@
           }
         ],
         "ctaTitle": "Comença amb la bústia d’idees de la teva escola",
-        "ctaText": "L’alta és gratuïta i porta uns minuts. Sense manejar efectiu i amb la devolució del 100 % si no s’arriba a la meta."
+        "ctaText": "L’alta és gratuïta i porta uns minuts. Sense manejar efectiu i amb la devolució del 100 % si no s’arriba a la meta."
       },
       "clubes": {
         "title": "Recaptar fons per a clubs esportius",
-        "description": "Financia material, desplaçaments o instal·lacions del club amb campanyes tot o res, entrades i rifes amb QR, i devolució del 100 % si no s’arriba.",
+        "description": "Financia material, desplaçaments o instal·lacions del club amb campanyes tot o res, entrades i rifes amb QR, i devolució del 100 % si no s’arriba.",
         "h1": "Com recaptar fons per a un club esportiu de base",
-        "answer": "KORUM dona a un club esportiu de base una manera ordenada de recaptar: campanyes «tot o res» per a material, desplaçaments o instal·lacions, entrades i rifes amb QR per als seus esdeveniments i reptes per equip en positiu. Si una campanya no arriba a la meta, es retorna el 100 %. Els primers {exempt} de cada temporada no paguen comissió.",
+        "answer": "KORUM dona a un club esportiu de base una manera ordenada de recaptar: campanyes «tot o res» per a material, desplaçaments o instal·lacions, entrades i rifes amb QR per als seus esdeveniments i reptes per equip en positiu. Si una campanya no arriba a la meta, es retorna el 100 %. Els primers {exempt} de cada temporada no paguen comissió.",
         "sections": [
           {
             "title": "Pensat per a com funciona un club",
@@ -1117,9 +1118,9 @@
       },
       "culturales": {
         "title": "Finançar projectes d’entitats culturals",
-        "description": "Bandes, corals, teatres i associacions: financia projectes amb campanyes tot o res, entrades QR i devolució del 100 % si no s’arriba a la meta.",
+        "description": "Bandes, corals, teatres i associacions: financia projectes amb campanyes tot o res, entrades QR i devolució del 100 % si no s’arriba a la meta.",
         "h1": "Com finançar els projectes d’una entitat cultural",
-        "answer": "KORUM ajuda una associació, banda, coral, escola o grup de teatre a finançar instruments, vestuari, gires o activitats amb campanyes «tot o res»: els diners només s’utilitzen si s’assoleix la meta i, si no, es retorna el 100 % a cada persona. Els primers {exempt} de cada any no paguen comissió.",
+        "answer": "KORUM ajuda una associació, banda, coral, escola o grup de teatre a finançar instruments, vestuari, gires o activitats amb campanyes «tot o res»: els diners només s’utilitzen si s’assoleix la meta i, si no, es retorna el 100 % a cada persona. Els primers {exempt} de cada any no paguen comissió.",
         "sections": [
           {
             "title": "Per a qui és",
@@ -1152,13 +1153,13 @@
           }
         ],
         "ctaTitle": "Dona d’alta la teva entitat cultural",
-        "ctaText": "Obre la bústia d’idees de la teva comunitat i llança la teva primera campanya amb la devolució del 100 % si no s’arriba a la meta."
+        "ctaText": "Obre la bústia d’idees de la teva comunitat i llança la teva primera campanya amb la devolució del 100 % si no s’arriba a la meta."
       },
       "comercios": {
         "title": "Patrocinar l’escola o club del teu barri",
-        "description": "Patrocina l’escola o el club del teu barri: el 100 % arriba a la iniciativa, guanyes visibilitat davant les famílies i reps el justificant a l’instant.",
+        "description": "Patrocina l’escola o el club del teu barri: el 100 % arriba a la iniciativa, guanyes visibilitat davant les famílies i reps el justificant a l’instant.",
         "h1": "Com patrocinar l’escola o el club del teu barri",
-        "answer": "Un comerç patrocina una iniciativa triant un nivell de 100, 250 o 500 €. El 100 % d’aquest import arriba íntegre a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i l’assumeix el comerç, que rep a l’instant el justificant del patrocini i la factura del fee.",
+        "answer": "Un comerç patrocina una iniciativa triant un nivell de 100, 250 o 500 €. El 100 % d’aquest import arriba íntegre a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i l’assumeix el comerç, que rep a l’instant el justificant del patrocini i la factura del fee.",
         "sections": [
           {
             "title": "Què obté el teu comerç",
@@ -1202,9 +1203,9 @@
       },
       "comoFunciona": {
         "title": "Com funciona la plataforma",
-        "description": "De la idea a la millora en 4 passos: idees amb quòrum, signatura de l’entitat, aportacions tot o res amb Paycomet i devolució del 100 % si no s’arriba.",
+        "description": "De la idea a la millora en 4 passos: idees amb quòrum, signatura de l’entitat, aportacions tot o res amb Paycomet i devolució del 100 % si no s’arriba.",
         "h1": "Com funciona KORUM, pas a pas",
-        "answer": "A KORUM una comunitat proposa una millora, la recolza amb signatures, l’entitat l’aprova amb les signatures que decideixi (per defecte, doble signatura) i les famílies la financen amb aportacions «tot o res»: els diners es cobren amb Paycomet i, si no s’arriba a la meta en termini, es retorna el 100 % a cada persona.",
+        "answer": "A KORUM una comunitat proposa una millora, la recolza amb signatures, l’entitat l’aprova amb les signatures que decideixi (per defecte, doble signatura) i les famílies la financen amb aportacions «tot o res»: els diners es cobren amb Paycomet i, si no s’arriba a la meta en termini, es retorna el 100 % a cada persona.",
         "sections": [
           {
             "title": "De la idea a la millora",
@@ -1236,7 +1237,7 @@
           {
             "title": "I si no s’arriba a la meta",
             "paragraphs": [
-              "Una campanya dura com a màxim {maxDays} dies. Si en aquest termini no arriba al 100 % i l’entitat no decideix redimensionar-la, Paycomet retorna automàticament el 100 % del que s’ha cobrat a cada persona, aportació voluntària inclosa, al mitjà de pagament original."
+              "Una campanya dura com a màxim {maxDays} dies. Si en aquest termini no arriba al 100 % i l’entitat no decideix redimensionar-la, Paycomet retorna automàticament el 100 % del que s’ha cobrat a cada persona, aportació voluntària inclosa, al mitjà de pagament original."
             ]
           },
           {
@@ -1283,7 +1284,7 @@
           {
             "title": "L’aportació voluntària a KORUM",
             "paragraphs": [
-              "És opcional i no canvia res de la donació. Amb ella es manté el servei que garanteix a totes les famílies que el 100 % de la seva donació arriba al centre, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del seu certificat o justificant."
+              "És opcional i no canvia res de la donació. Amb ella es manté el servei que garanteix a totes les famílies que el 100 % de la seva donació arriba al centre, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del seu certificat o justificant."
             ]
           }
         ],
@@ -1312,7 +1313,7 @@
           {
             "title": "Si no s’arriba a la meta",
             "paragraphs": [
-              "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica."
+              "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica."
             ]
           },
           {
@@ -1344,7 +1345,7 @@
               },
               {
                 "q": "Què passa si no s’arriba a la meta?",
-                "a": "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica, inclosa l’aportació voluntària a KORUM."
+                "a": "Es retorna el 100 % del que s’ha cobrat a cada persona, al mitjà de pagament original i de manera automàtica, inclosa l’aportació voluntària a KORUM."
               },
               {
                 "q": "Què passa si se supera la meta?",
@@ -1394,7 +1395,7 @@
               },
               {
                 "q": "Què rep un comerç que patrocina?",
-                "a": "Apareix com a comerç amic a la seva categoria (Or, Plata o Bronze), rep a l’instant el justificant del patrocini i la factura del fee, i el 100 % del nivell triat arriba a la iniciativa."
+                "a": "Apareix com a comerç amic a la seva categoria (Or, Plata o Bronze), rep a l’instant el justificant del patrocini i la factura del fee, i el 100 % del nivell triat arriba a la iniciativa."
               },
               {
                 "q": "Com es protegeixen les meves dades?",
@@ -1416,7 +1417,7 @@
       "title": "Entra a KORUM",
       "subtitle": "Les famílies i els comerços entren sense contrasenya. Qui signa per una entitat fa servir contrasenya i la seva app de verificació.",
       "noAccount": "La vostra entitat encara no és a KORUM?",
-      "register": "Doneu-la d'alta gratis",
+      "register": "Doneu-la d’alta gratis",
       "modeLabel": "Com vols entrar",
       "mode": {
         "email": "Famílies i comerços",
@@ -1431,35 +1432,35 @@
         "reset-request": "Recupera la teva contrasenya",
         "reset-code": "Crea una contrasenya nova"
       },
-      "emailIntro": "T'enviem un enllaç per entrar amb un sol clic. Si ho prefereixes, t'enviem un codi de 6 xifres.",
+      "emailIntro": "T’enviem un enllaç per entrar amb un sol clic. Si ho prefereixes, t’enviem un codi de 6 xifres.",
       "email": "El teu correu",
-      "sendLink": "Envieu-me l'enllaç",
+      "sendLink": "Envieu-me l’enllaç",
       "sendCode": "Prefereixo un codi de 6 xifres",
-      "linkSent": "Si {email} pot entrar a KORUM, ja té un enllaç al correu. Caduca d'aquí a {minutes} minuts i només serveix una vegada.",
+      "linkSent": "Si {email} pot entrar a KORUM, ja té un enllaç al correu. Caduca d’aquí a {minutes} minuts i només serveix una vegada.",
       "useCodeInstead": "Millor envieu-me un codi",
       "changeEmail": "Fer servir un altre correu",
-      "codeSent": "Hem enviat un codi a {email}. Caduca d'aquí a {minutes} minuts.",
+      "codeSent": "Hem enviat un codi a {email}. Caduca d’aquí a {minutes} minuts.",
       "code": "Codi de 6 xifres",
       "enter": "Entrar",
-      "passwordIntro": "Per a la direcció, la tresoreria o la presidència de l'entitat i per a l'equip de KORUM. Després et demanarem el codi de la teva app.",
+      "passwordIntro": "Per a la direcció, la tresoreria o la presidència de l’entitat i per a l’equip de KORUM. Després et demanarem el codi de la teva app.",
       "password": "Contrasenya",
       "forgot": "He oblidat la contrasenya",
-      "resetIntro": "T'enviarem un codi al correu per crear una contrasenya nova. La verificació en dos passos continuarà activa.",
+      "resetIntro": "T’enviarem un codi al correu per crear una contrasenya nova. La verificació en dos passos continuarà activa.",
       "back": "Tornar",
       "newPassword": "Contrasenya nova",
       "passwordHint": "Almenys 12 caràcters. Una frase que recordis és una bona contrasenya.",
       "savePassword": "Desar la contrasenya nova",
       "resetDone": "Contrasenya canviada. Ja pots entrar-hi.",
       "sendResetCode": "Envieu-me el codi",
-      "passkey": "Entrar amb clau d'accés",
-      "passkeyIntro": "Vas desar una clau d'accés en aquest mòbil o ordinador? Entra amb l'empremta, la cara o el PIN."
+      "passkey": "Entrar amb clau d’accés",
+      "passkeyIntro": "Vas desar una clau d’accés en aquest mòbil o ordinador? Entra amb l’empremta, la cara o el PIN."
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "El correu o la contrasenya no són correctes.",
-      "EMAIL_NOT_VERIFIED": "Encara no has verificat el teu correu. T'hem enviat un missatge per fer-ho.",
-      "INVALID_OTP": "El codi no és correcte. Revisa'l i torna-ho a provar.",
-      "OTP_EXPIRED": "El codi ha caducat. Demana'n un de nou.",
-      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana'n un de nou.",
+      "EMAIL_NOT_VERIFIED": "Encara no has verificat el teu correu. T’hem enviat un missatge per fer-ho.",
+      "INVALID_OTP": "El codi no és correcte. Revisa’l i torna-ho a provar.",
+      "OTP_EXPIRED": "El codi ha caducat. Demana’n un de nou.",
+      "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana’n un de nou.",
       "INVALID_EMAIL": "Escriu un correu vàlid.",
       "PASSWORD_TOO_SHORT": "La contrasenya ha de tenir almenys 12 caràcters.",
       "INVALID_PASSWORD": "La contrasenya no és correcta.",
@@ -1468,25 +1469,25 @@
       "KORUM_DISPOSABLE_EMAIL": "No admetem correus temporals. Fes servir el teu correu habitual.",
       "KORUM_INVALID_EMAIL": "Escriu un correu vàlid.",
       "KORUM_ACCOUNT_CLOSED": "Aquest compte es va tancar a petició del seu titular i ja no es pot fer servir.",
-      "LINK_INVALID": "L'enllaç ja no serveix: ha caducat o ja es va fer servir. Demana'n un altre.",
-      "INVALID_CODE": "El codi de l'app no és correcte. Comprova que l'hora del mòbil és la correcta.",
+      "LINK_INVALID": "L’enllaç ja no serveix: ha caducat o ja es va fer servir. Demana’n un altre.",
+      "INVALID_CODE": "El codi de l’app no és correcte. Comprova que l’hora del mòbil és la correcta.",
       "INVALID_BACKUP_CODE": "Aquest codi de recuperació no és vàlid o ja es va fer servir.",
       "ACCOUNT_TEMPORARILY_LOCKED": "Per seguretat, la verificació queda bloquejada uns minuts després de diversos errors.",
       "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Massa intents. Torna a escriure la contrasenya per començar de nou.",
       "INVALID_TWO_FACTOR_COOKIE": "Ha passat massa temps. Torna a escriure la contrasenya.",
       "KORUM_SECOND_FACTOR_LIMIT": "Massa codis seguits. Espera 15 minuts i torna-ho a provar.",
       "TOTP_ALREADY_ENABLED": "La verificació en dos passos ja és activa al teu compte.",
-      "CREDENTIAL_ACCOUNT_NOT_FOUND": "El teu compte no té contrasenya. Crea'n una amb «He oblidat la contrasenya».",
-      "UNKNOWN": "No ha funcionat. Torna-ho a provar d'aquí a uns segons.",
-      "PASSKEY_FAILED": "No hem pogut comprovar la clau d'accés. Torna-ho a provar o entra amb un enllaç per correu."
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "El teu compte no té contrasenya. Crea’n una amb «He oblidat la contrasenya».",
+      "UNKNOWN": "No ha funcionat. Torna-ho a provar d’aquí a uns segons.",
+      "PASSKEY_FAILED": "No hem pogut comprovar la clau d’accés. Torna-ho a provar o entra amb un enllaç per correu."
     },
     "secondFactor": {
       "intro": "Obre la teva app de verificació (Google Authenticator, Microsoft Authenticator, 1Password…) i escriu el codi de KORUM.",
       "backupIntro": "Escriu un dels codis de recuperació que vas desar. Cadascun serveix una sola vegada.",
       "backupCode": "Codi de recuperació",
-      "code": "Codi de l'app",
+      "code": "Codi de l’app",
       "verify": "Verificar",
-      "useApp": "Fer servir el codi de l'app",
+      "useApp": "Fer servir el codi de l’app",
       "useBackup": "He perdut el mòbil: fer servir un codi de recuperació",
       "back": "Tornar a la contrasenya"
     },
@@ -1499,25 +1500,25 @@
       "password": "La teva contrasenya",
       "start": "Començar",
       "scanTitle": "Escaneja el codi amb la teva app",
-      "scanIntro": "Obre l'app de verificació, afegeix un compte i escaneja aquest codi. Si no el pots escanejar, escriu la clau a mà.",
+      "scanIntro": "Obre l’app de verificació, afegeix un compte i escaneja aquest codi. Si no el pots escanejar, escriu la clau a mà.",
       "qrAlt": "Codi QR per afegir KORUM a la teva app de verificació",
       "qrLoading": "Preparant el codi…",
       "manualKey": "Clau per escriure a mà",
       "backupTitle": "Els teus codis de recuperació",
-      "backupIntro": "Desa'ls en un lloc segur (per exemple, impresos). Serveixen per entrar si perds el mòbil; cadascun, una sola vegada. No els tornarem a mostrar.",
+      "backupIntro": "Desa’ls en un lloc segur (per exemple, impresos). Serveixen per entrar si perds el mòbil; cadascun, una sola vegada. No els tornarem a mostrar.",
       "backupSaved": "He desat els codis de recuperació",
-      "firstCode": "Primer codi de l'app",
+      "firstCode": "Primer codi de l’app",
       "confirm": "Activar i continuar"
     },
     "invitation": {
       "metaTitle": "Activa el teu compte",
       "title": "Activa el teu compte",
       "checking": "Comprovant la invitació…",
-      "invalid": "Aquesta invitació ja no serveix: ha caducat o ja es va fer servir. Demana a la persona que dirigeix la vostra entitat que te n'enviï una altra.",
-      "alreadyActive": "Ja tens compte a KORUM amb {email}. Inicia sessió amb ell i torna a obrir l'enllaç del correu per acceptar el càrrec.",
+      "invalid": "Aquesta invitació ja no serveix: ha caducat o ja es va fer servir. Demana a la persona que dirigeix la vostra entitat que te n’enviï una altra.",
+      "alreadyActive": "Ja tens compte a KORUM amb {email}. Inicia sessió amb ell i torna a obrir l’enllaç del correu per acceptar el càrrec.",
       "goToLogin": "Anar a iniciar sessió",
       "platformIntro": "Activaràs el compte de Super-Admin de KORUM per a {email}.",
-      "intro": "{organization} t'ha nomenat {role}. Activaràs el compte de {email}.",
+      "intro": "{organization} t’ha nomenat {role}. Activaràs el compte de {email}.",
       "nextSteps": "Crea la teva contrasenya. Després activaràs la verificació en dos passos amb una app del mòbil: sense ella no es pot signar.",
       "password": "Crea la teva contrasenya",
       "passwordHint": "Almenys 12 caràcters. Una frase que recordis és una bona contrasenya.",
@@ -1525,8 +1526,8 @@
       "mismatch": "Les dues contrasenyes no coincideixen.",
       "submit": "Crear la contrasenya i continuar",
       "weak": "La contrasenya ha de tenir entre 12 i 128 caràcters.",
-      "unknown": "No ha funcionat. Torna-ho a provar d'aquí a uns segons.",
-      "otherAccount": "Has iniciat sessió amb un altre compte. Aquesta invitació és per a {email}: entra-hi i torna a obrir l'enllaç del correu.",
+      "unknown": "No ha funcionat. Torna-ho a provar d’aquí a uns segons.",
+      "otherAccount": "Has iniciat sessió amb un altre compte. Aquesta invitació és per a {email}: entra-hi i torna a obrir l’enllaç del correu.",
       "acceptRole": "Acceptar el càrrec"
     }
   },
@@ -1694,12 +1695,12 @@
     }
   },
   "panel": {
-    "headerSubtitle": "Panell de l'entitat",
+    "headerSubtitle": "Panell de l’entitat",
     "welcome": "Hola, {name}",
     "intro": "Des d’aquí gestionareu les idees, les campanyes i els pagaments, sempre amb les signatures que hagi decidit l’entitat.",
     "wallet": {
-      "title": "Guardiola de l'entitat",
-      "explain": "És l'identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta."
+      "title": "Guardiola de l’entitat",
+      "explain": "És l’identificador de la vostra guardiola a KORUM. Els diners de cada campanya queden retinguts a PAYCOMET fins a assolir la meta."
     },
     "signers": {
       "title": "Doble signatura ({ready} de {total} a punt)",
@@ -1715,11 +1716,11 @@
       "resend": "Tornar a enviar la invitació",
       "resendResult": {
         "SENT": "Invitació enviada de nou.",
-        "NOT_NEEDED": "No cal: ja ha activat el compte, o s'ha enviat fa molt poc.",
+        "NOT_NEEDED": "No cal: ja ha activat el compte, o s’ha enviat fa molt poc.",
         "FORBIDDEN": "Només Direcció pot tornar a enviar la invitació.",
-        "ERROR": "No s'ha pogut enviar. Torneu-ho a provar d'aquí a uns segons."
+        "ERROR": "No s’ha pogut enviar. Torneu-ho a provar d’aquí a uns segons."
       },
-      "titleSingle": "Signatura única ({ready} d'1 a punt)"
+      "titleSingle": "Signatura única ({ready} d’1 a punt)"
     },
     "kyb": {
       "title": "Documents del titular",
@@ -1729,7 +1730,7 @@
         "VERIFIED": "Verificats. Podeu publicar campanyes amb cobrament.",
         "REJECTED": "Cal corregir algun document. Reviseu el missatge que us hem enviat."
       },
-      "documents": "CIF, estatuts o acta, DNI de qui representa l'entitat i certificat de titularitat del compte (i l'acreditació de la Llei 49/2002 si la vau marcar). Es pugen de manera privada."
+      "documents": "CIF, estatuts o acta, DNI de qui representa l’entitat i certificat de titularitat del compte (i l’acreditació de la Llei 49/2002 si la vau marcar). Es pugen de manera privada."
     },
     "achievements": {
       "cardTitle": "Èxits i fotos Abans / Després",
@@ -1798,7 +1799,7 @@
       "gate": "Taquilla i porteria"
     },
     "header": {
-      "label": "Gestió de l'entitat",
+      "label": "Gestió de l’entitat",
       "kyb": {
         "PENDING": "Documents pendents",
         "SUBMITTED": "Documents en revisió",
@@ -1862,7 +1863,7 @@
         "formatTicketing": "Taquilla o rifa",
         "hucha": "Guardiola {id}",
         "raised": "{raised} de {goal}",
-        "progress": "Avenç de «{title}»: {percent} %",
+        "progress": "Avenç de «{title}»: {percent} %",
         "contributions": "{count, plural, =0 {Encara sense aportacions} one {💛 1 aportació} other {💛 # aportacions}}",
         "closes": "Tanca el {date}",
         "viewPublic": "Veure la fitxa pública de «{title}»",
@@ -1925,32 +1926,33 @@
         }
       },
       "newInitiative": "+ Nova iniciativa",
-      "newTicketing": "+ Nova taquilla / rifa"
+      "newTicketing": "+ Nova taquilla / rifa",
+      "metaTitle": "Quadre de comandament"
     },
     "medals": {
       "title": "Medalles KORUM",
-      "intro": "Cada curs, les campanyes assolides pugen la medalla de l'entitat i amb ella la beca d'import exempt de comissió. Amb la medalla assolida, el kit dona l'informe, el segell i un text per a les vostres xarxes.",
+      "intro": "Cada curs, les campanyes assolides pugen la medalla de l’entitat i amb ella la beca d’import exempt de comissió. Amb la medalla assolida, el kit dona l’informe, el segell i un text per a les vostres xarxes.",
       "level": "Medalla {name}",
       "grantLine": "+{amount} exempts de comissió",
       "state": {
         "EARNED": "Assolida: ja teniu el kit.",
         "NEXT": "Següent medalla: {missing, plural, =0 {gairebé la teniu} one {us falta # campanya assolida} other {us falten # campanyes assolides}} aquest curs.",
-        "LOCKED": "S'assoleix amb {required, plural, one {# campanya assolida} other {# campanyes assolides}} al curs."
+        "LOCKED": "S’assoleix amb {required, plural, one {# campanya assolida} other {# campanyes assolides}} al curs."
       },
       "kit": {
         "open": "Segell i text per a xarxes",
         "title": "Kit oficial · Medalla {name}",
         "badge": "Segell Comunitat Impulsora KORUM · Nivell {name} ({period})",
-        "report": "Descarrega l'informe (PDF)",
+        "report": "Descarrega l’informe (PDF)",
         "seal": "Descarrega el segell per al web (SVG)",
-        "postLabel": "Text per a les xarxes de l'entitat (el podeu editar)",
+        "postLabel": "Text per a les xarxes de l’entitat (el podeu editar)",
         "copy": "Copia el text",
         "copied": "Text copiat",
-        "copiedDescription": "Ja el podeu enganxar a les xarxes de l'entitat.",
-        "copyManual": "No s'ha pogut copiar: seleccioneu el text i copieu-lo a mà.",
+        "copiedDescription": "Ja el podeu enganxar a les xarxes de l’entitat.",
+        "copyManual": "No s’ha pogut copiar: seleccioneu el text i copieu-lo a mà.",
         "share": "Comparteix per WhatsApp",
         "close": "Tanca",
-        "newTab": " (s'obre en una pestanya nova)"
+        "newTab": " (s’obre en una pestanya nova)"
       },
       "post": {
         "SCHOOL": "🌟 Orgull de comunitat a {entity}! Hem assolit el Segell Comunitat Impulsora KORUM, nivell {tier} {icon}, gràcies a la participació de les nostres famílies i dels comerços veïns. Continuem sumant millores! 💛 {hashtags}",
@@ -1958,7 +1960,7 @@
         "CULTURAL": "🌟 Orgull de comunitat a {entity}! Hem assolit el Segell Comunitat Impulsora KORUM, nivell {tier} {icon}, gràcies a la participació de qui ens acompanyeu i dels comerços veïns. Continuem sumant millores! 💛 {hashtags}"
       },
       "report": {
-        "title": "Informe d'impacte · Medalla {tier}",
+        "title": "Informe d’impacte · Medalla {tier}",
         "intro": "{entity} ha assolit la medalla {tier} de KORUM al curs {period}. Aquest informe resumeix el que la comunitat ha fet possible, amb les xifres reals de la plataforma.",
         "sections": {
           "impact": "Impacte del curs",
@@ -1972,9 +1974,9 @@
         },
         "achievementsEmpty": "Encara no hi ha campanyes assolides en aquest curs.",
         "transparency": {
-          "retained": "Els diners de cada campanya queden retinguts a PAYCOMET, entitat de pagament autoritzada pel Banc d'Espanya, fins a assolir la meta. KORUM és una plataforma tecnològica: no és una entitat financera ni custodia fons.",
-          "refund": "Si una campanya no assoleix la meta, es retorna el 100 % del cobrat a cada persona, al mitjà de pagament original.",
-          "independence": "KORUM mai no intermedia ni cobra comissions a proveïdors d'obres o equipament: l'entitat tria lliurement."
+          "retained": "Els diners de cada campanya queden retinguts a PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya, fins a assolir la meta. KORUM és una plataforma tecnològica: no és una entitat financera ni custodia fons.",
+          "refund": "Si una campanya no assoleix la meta, es retorna el 100 % del cobrat a cada persona, al mitjà de pagament original.",
+          "independence": "KORUM mai no intermedia ni cobra comissions a proveïdors d’obres o equipament: l’entitat tria lliurement."
         },
         "generatedAt": "Informe generat el {date}."
       },
@@ -1990,26 +1992,26 @@
     },
     "model182": {
       "title": "Model 182 (donatius)",
-      "intro": "Fitxer per presentar a l'Agència Tributària amb els donatius completats i sense devolució de l'exercici. Les entrades, les rifes i les recàrregues mai no hi entren.",
+      "intro": "Fitxer per presentar a l’Agència Tributària amb els donatius completats i sense devolució de l’exercici. Les entrades, les rifes i les recàrregues mai no hi entren.",
       "year": "Exercici",
       "phone": "Telèfon de contacte",
       "phoneHint": "Nou xifres: és el que figurarà com a contacte al fitxer. El nom de contacte és el del vostre compte.",
       "download": "Descarrega el fitxer",
       "downloading": "Preparant el fitxer…",
-      "notVerified": "La vostra entitat no té acreditada la Llei 49/2002, de manera que les famílies reben un justificant nominatiu d'aportació, sense efectes fiscals, i no hi ha cap Model 182 per presentar. Si l'acrediteu, aquesta descàrrega s'activa.",
+      "notVerified": "La vostra entitat no té acreditada la Llei 49/2002, de manera que les famílies reben un justificant nominatiu d’aportació, sense efectes fiscals, i no hi ha cap Model 182 per presentar. Si l’acrediteu, aquesta descàrrega s’activa.",
       "result": {
-        "done": "Fitxer de l'exercici {year} descarregat: {donors, plural, one {# persona declarada} other {# persones declarades}} per un total de {total}.",
+        "done": "Fitxer de l’exercici {year} descarregat: {donors, plural, one {# persona declarada} other {# persones declarades}} per un total de {total}.",
         "excluded": "{count, plural, one {Queda fora # aportació} other {Queden fora # aportacions}} ({amount}) per no tenir un NIF, un nom o una província vàlids: aquestes persones no es poden declarar.",
-        "unresolved": "{count, plural, one {Inclou # donatiu} other {Inclou # donatius}} ({amount}) de campanyes que encara no s'han resolt. Si alguna acaba retornant-se, consulteu amb la vostra assessoria abans de presentar el fitxer.",
-        "returned": "{count, plural, one {Queda fora # donatiu} other {Queden fora # donatius}} ({amount}) de campanyes que s'estan retornant o es van cancel·lar: aquells diners no són un donatiu i no es declaren."
+        "unresolved": "{count, plural, one {Inclou # donatiu} other {Inclou # donatius}} ({amount}) de campanyes que encara no s’han resolt. Si alguna acaba retornant-se, consulteu amb la vostra assessoria abans de presentar el fitxer.",
+        "returned": "{count, plural, one {Queda fora # donatiu} other {Queden fora # donatius}} ({amount}) de campanyes que s’estan retornant o es van cancel·lar: aquells diners no són un donatiu i no es declaren."
       },
       "errors": {
         "PHONE_INVALID": "Escriviu un telèfon de 9 xifres.",
-        "LEY49_NOT_VERIFIED": "La Llei 49/2002 de l'entitat encara no està verificada.",
-        "DECLARANT_INCOMPLETE": "Falta el CIF de l'entitat.",
-        "FORMAT": "No s'ha pogut generar el fitxer amb aquestes dades. Reviseu el telèfon i torneu-ho a provar.",
+        "LEY49_NOT_VERIFIED": "La Llei 49/2002 de l’entitat encara no està verificada.",
+        "DECLARANT_INCOMPLETE": "Falta el CIF de l’entitat.",
+        "FORMAT": "No s’ha pogut generar el fitxer amb aquestes dades. Reviseu el telèfon i torneu-ho a provar.",
         "FORBIDDEN": "No teniu permís per descarregar aquest fitxer.",
-        "GENERIC": "No s'ha pogut descarregar. Torneu-ho a provar d'aquí a uns segons."
+        "GENERIC": "No s’ha pogut descarregar. Torneu-ho a provar d’aquí a uns segons."
       }
     },
     "approvals": {
@@ -2181,6 +2183,10 @@
           "provider": "PAYCOMET encara no ha confirmat el pagament directe a proveïdors. Canvieu la destinació al compte de l’entitat a Liquidacions.",
           "expiredTitle": "Hi ha cobraments fora de termini",
           "expired": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres."
+        },
+        "stamp": {
+          "complete": "Aprovat",
+          "partial": "Signat"
         }
       },
       "what": "El que signaràs",
@@ -2231,7 +2237,7 @@
     },
     "sponsors": {
       "title": "{count, plural, =0 {Comerços amics} one {Comerços amics · # per revisar} other {Comerços amics · # per revisar}}",
-      "intro": "Els comerços del barri que patrocinen les vostres campanyes. El seu pagament ja és a la guardiola de la iniciativa (o a la seva bossa Matching 2x), però no surten a la vostra pàgina fins que els aproveu. Si no els admeteu, els retornem el 100 % del que van pagar.",
+      "intro": "Els comerços del barri que patrocinen les vostres campanyes. El seu pagament ja és a la guardiola de la iniciativa (o a la seva bossa Matching 2x), però no surten a la vostra pàgina fins que els aproveu. Si no els admeteu, els retornem el 100 % del que van pagar.",
       "empty": {
         "title": "Encara no hi ha comerços amics",
         "description": "Quan un comerç patrocini una de les vostres campanyes des de la seva fitxa, apareixerà aquí perquè el reviseu.",
@@ -2356,13 +2362,13 @@
         "invitedOn": "Li vau enviar la invitació a renovar el {date}."
       },
       "renewedElsewhere": "Ja ha renovat: el seu nou any apareix en una altra targeta d’aquesta llista.",
-      "lateCharge": "El seu pagament va arribar quan la campanya ja no recaptava. Els seus diners esperen a la seva borsa: si l’admeteu, aniran a les vostres campanyes segons la vostra regla (o, si venç el termini, al vostre Fons d’activitats); si no l’admeteu, li retornarem el 100 %."
+      "lateCharge": "El seu pagament va arribar quan la campanya ja no recaptava. Els seus diners esperen a la seva borsa: si l’admeteu, aniran a les vostres campanyes segons la vostra regla (o, si venç el termini, al vostre Fons d’activitats); si no l’admeteu, li retornarem el 100 %."
     },
     "settings": {
-      "metaTitle": "Configuració de l'entitat",
-      "title": "Configuració de l'entitat",
-      "intro": "Els documents del titular, els imports que veuen les famílies i els comerços, el telèfon de l'entitat i com es mostra el vostre portal.",
-      "readOnly": "Només lectura: aquesta configuració la canvien les persones que signen per l'entitat.",
+      "metaTitle": "Configuració de l’entitat",
+      "title": "Configuració de l’entitat",
+      "intro": "Els documents del titular, els imports que veuen les famílies i els comerços, el telèfon de l’entitat i com es mostra el vostre portal.",
+      "readOnly": "Només lectura: aquesta configuració la canvien les persones que signen per l’entitat.",
       "kyb": {
         "title": "Documents del titular",
         "intro": "Serveixen per comprovar qui rep els diners abans de cobrar la primera campanya. Es guarden en privat: només els veieu les persones signants i l’equip de verificació.",
@@ -2477,11 +2483,11 @@
           "defaultOption": "Botó {n}: {amount} €"
         },
         "ideas": {
-          "legend": "Bústia d'idees",
+          "legend": "Bústia d’idees",
           "minVotes": "Signatures mínimes perquè una idea arribi a la signatura de l’entitat",
           "minVotesHint": "Entre {min} i {max}. Si el baixeu, les idees que ja l’assoleixen passen a la signatura de l’entitat en desar.",
           "maxIdeaDays": "Dies per recollir signatures",
-          "maxIdeaDaysHint": "Entre {min} i {max}. Val per a les idees que aproveu d'ara endavant."
+          "maxIdeaDaysHint": "Entre {min} i {max}. Val per a les idees que aproveu d’ara endavant."
         },
         "sponsors": {
           "legend": "Nivells de patrocini dels comerços",
@@ -2506,7 +2512,7 @@
             "ca": "Català",
             "en": "Anglès"
           },
-          "publicIndexing": "Mostrar el portal als cercadors (Google, Bing…) i als assistents d'IA",
+          "publicIndexing": "Mostrar el portal als cercadors (Google, Bing…) i als assistents d’IA",
           "publicIndexingHint": "Només hi apareix quan els documents del titular estiguin verificats. Sense marcar, el portal continua obert a qui tingui l’enllaç."
         },
         "save": "Desar la configuració",
@@ -2522,7 +2528,7 @@
           "phone": "Escriviu un telèfon de 9 a 15 xifres (pot començar per +).",
           "form": "Reviseu els camps marcats.",
           "FORBIDDEN": "No teniu permís per canviar aquesta configuració.",
-          "generic": "No s'ha pogut desar. Torneu-ho a provar d'aquí a uns segons."
+          "generic": "No s’ha pogut desar. Torneu-ho a provar d’aquí a uns segons."
         }
       },
       "team": {
@@ -2669,12 +2675,12 @@
       },
       "groups": {
         "title": "Grups de participació",
-        "intro": "Els cursos, equips o grups que trien les famílies en aportar i que sumen als reptes. Canviar-los val des d'ara: cada aportació ja feta conserva el seu grup.",
+        "intro": "Els cursos, equips o grups que trien les famílies en aportar i que sumen als reptes. Canviar-los val des d’ara: cada aportació ja feta conserva el seu grup.",
         "blockName": "Nom del bloc {n}",
         "items": "Grups del bloc",
         "itemsHint": "Un grup per línia, fins a {max}.",
         "removeBlock": "Treure el bloc {n}",
-        "renameNote": "Si canvieu el nom d'un grup, comença el seu compte als reptes; el que ja sumava amb el nom anterior es continua veient al final del repte d'aquella campanya.",
+        "renameNote": "Si canvieu el nom d’un grup, comença el seu compte als reptes; el que ja sumava amb el nom anterior es continua veient al final del repte d’aquella campanya.",
         "save": "Desar els grups",
         "addBlock": "Afegir un bloc",
         "useTemplate": "Carregar la plantilla oficial (després, deseu)",
@@ -2685,8 +2691,8 @@
           "duplicate": "«{first}» i «{second}» són el mateix grup per als enllaços. Canvieu-ne un dels dos.",
           "emptySlug": "«{name}» necessita alguna lletra o xifra.",
           "tooMany": "Hi ha {total} grups; el màxim és {max}.",
-          "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
-          "generic": "No els hem pogut desar. Torneu-ho a provar d'aquí a uns segons.",
+          "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+          "generic": "No els hem pogut desar. Torneu-ho a provar d’aquí a uns segons.",
           "blockName": "Bloc {n}: falta el nom.",
           "blockItems": "Bloc {n}: posa entre 1 i {max} grups, un per línia, sense repetir-ne cap."
         },
@@ -2694,10 +2700,10 @@
       },
       "brand": {
         "title": "Identitat visual",
-        "intro": "El logotip, la portada i el color de l'entitat a la capçalera del seu portal i a les targetes per a WhatsApp.",
+        "intro": "El logotip, la portada i el color de l’entitat a la capçalera del seu portal i a les targetes per a WhatsApp.",
         "previewCaption": "Així es veu ara la capçalera del vostre portal (els canvis apareixen en desar-los).",
         "accent": {
-          "legend": "Color de l'entitat",
+          "legend": "Color de l’entitat",
           "hint": "Colors triats perquè la capçalera es llegeixi sempre bé sobre el blau marí.",
           "save": "Desar el color",
           "saved": "Color desat: ja es veu al vostre portal.",
@@ -2713,13 +2719,13 @@
           },
           "errors": {
             "choose": "Trieu un color.",
-            "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
-            "generic": "No l'hem pogut desar. Torneu-ho a provar d'aquí a uns segons."
+            "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+            "generic": "No l’hem pogut desar. Torneu-ho a provar d’aquí a uns segons."
           }
         },
         "logo": {
-          "label": "Logotip o escut de l'entitat",
-          "replaceLabel": "Nou logotip de l'entitat",
+          "label": "Logotip o escut de l’entitat",
+          "replaceLabel": "Nou logotip de l’entitat",
           "help": "JPG, PNG o WebP de fins a {max} MB, millor quadrat i amb fons clar. El publiquem sense les dades amagades de la foto (com la ubicació). A les targetes per a WhatsApp només surt si és JPG o PNG.",
           "upload": "Pujar el logotip",
           "uploading": "Pujant…",
@@ -2742,16 +2748,16 @@
           "noFile": "Trieu primer una imatge.",
           "TOO_LARGE": "La imatge pesa més de {max} MB.",
           "UNREADABLE_IMAGE": "No hem pogut llegir la imatge. Proveu-ne una altra.",
-          "FORBIDDEN": "Per fer aquest canvi has d'haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
-          "CONFLICT": "L'altra persona signant l'ha canviada alhora. Recarregueu la pàgina i torneu-ho a provar.",
-          "FILE_TYPE_NOT_ALLOWED": "Només s'admeten JPG, PNG o WebP.",
+          "FORBIDDEN": "Per fer aquest canvi has d’haver entrat amb el teu codi de verificació. Tanca la sessió, torna a entrar-hi amb el codi i prova-ho de nou.",
+          "CONFLICT": "L’altra persona signant l’ha canviada alhora. Recarregueu la pàgina i torneu-ho a provar.",
+          "FILE_TYPE_NOT_ALLOWED": "Només s’admeten JPG, PNG o WebP.",
           "FILE_UNRECOGNIZED_TYPE": "No reconeixem aquest fitxer com a imatge.",
           "FILE_MIME_MISMATCH": "El fitxer no és la imatge que sembla. Proveu-ne una altra.",
           "FILE_EXTENSION_MISMATCH": "El nom del fitxer no correspon al seu tipus. Proveu una altra imatge.",
           "FILE_TOO_LARGE": "La imatge pesa més de {max} MB.",
-          "generic": "No ho hem pogut fer. Torneu-ho a provar d'aquí a uns segons.",
+          "generic": "No ho hem pogut fer. Torneu-ho a provar d’aquí a uns segons.",
           "MINORS_NOT_CONFIRMED": "Confirma que a la foto no hi apareix cap menor reconeixible.",
-          "RATE_LIMITED": "Heu pujat moltes imatges en poc temps. Proveu-ho d'aquí a una hora."
+          "RATE_LIMITED": "Heu pujat moltes imatges en poc temps. Proveu-ho d’aquí a una hora."
         }
       }
     },
@@ -3002,7 +3008,7 @@
         "costInst": "Instal·lació o obra (€)",
         "contingency": "% de reserva de manteniment, riscos i contingència",
         "rewardTitle": "Repte col·lectiu i placa",
-        "showBreakdown": "Publicar a la fitxa pública el desglossament del pressupost quadrat al 100 %",
+        "showBreakdown": "Publicar a la fitxa pública el desglossament del pressupost quadrat al 100 %",
         "rewardEnabled": "Associar un premi de repte col·lectiu per grup",
         "rewardHint": "Es mostra només en positiu, sense assenyalar ningú.",
         "plaque": "Incloure placa commemorativa de la promoció",
@@ -3028,11 +3034,11 @@
         "net": "Net garantit per a l’entitat",
         "internalTitle": "Desglossament intern d’exempcions i passarel·la",
         "line1": "1. Import exempt per defecte",
-        "atZero": "{amount} al 0 %",
+        "atZero": "{amount} al 0 %",
         "line2": "2. Beca exempta per medalla",
-        "atZeroMedal": "{amount} al 0 % (medalla {medal} · estalvi {saved})",
+        "atZeroMedal": "{amount} al 0 % (medalla {medal} · estalvi {saved})",
         "line3": "3. Resta subjecta a tram ({taxable} al {rate})",
-        "line3Exempt": "3. Comissió de la plataforma (categoria al 0 %)",
+        "line3Exempt": "3. Comissió de la plataforma (categoria al 0 %)",
         "line4": "4. Càrrec de manteniment de la plataforma",
         "line5": "5. Cost de la passarel·la de pagament (Paycomet)",
         "gatewayFormula": "Com es calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportació estimada} other {# aportacions estimades}} (segons l’aportació suggerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} d’arrodoniment a l’euro. Suma quadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
@@ -3048,7 +3054,7 @@
         "maintShortfall": "La recaptació no arriba a cobrir el manteniment: faltarien {amount}.",
         "gatewayNotCovered": "Amb aquests preus les despeses de gestió no cobreixen la passarel·la ({amount} per entrada). Ho revisa KORUM; no canvia el que rep l’entitat.",
         "badgeTicketing": "Taquilla o rifa amb QR",
-        "badgeExempt": "Categoria al 0 % de comissió",
+        "badgeExempt": "Categoria al 0 % de comissió",
         "badgeBracket": "Tram {rate}",
         "badgeExact": "Desglossament exacte",
         "goalLabel": "Meta pública final exacta",
@@ -3086,7 +3092,7 @@
         "TOO_MANY_DRAFTS": "Hi ha massa esborranys oberts. Publiqueu o acabeu-ne algun abans de crear-ne un altre.",
         "FORBIDDEN": "No teniu permís per fer això.",
         "generic": "Alguna cosa ha fallat. No s’ha perdut res: torneu-ho a provar.",
-        "SEMANTIC_LOCK": "No s’ha desat: el text parla d’equipament o infraestructura i aquesta campanya es va publicar en una categoria al 0 % de comissió. Mantingueu la descripció original."
+        "SEMANTIC_LOCK": "No s’ha desat: el text parla d’equipament o infraestructura i aquesta campanya es va publicar en una categoria al 0 % de comissió. Mantingueu la descripció original."
       },
       "actions": {
         "publish": "Desar i publicar a KORUM",
@@ -3104,7 +3110,7 @@
         "body": "En publicar es reserven les quotes de l’entitat i ja no es poden canviar el pressupost, el preu, l’aforament ni la data de tancament ({date}). Les famílies podran participar des d’aquest moment.",
         "yes": "Sí, publicar",
         "no": "No, continuar editant",
-        "refund": "Si no s’arriba a la meta, es retorna el 100 % a cada família."
+        "refund": "Si no s’arriba a la meta, es retorna el 100 % a cada família."
       },
       "saved": {
         "draft": "Esborrany desat. Meta actual: {goal}.",
@@ -3139,7 +3145,7 @@
         "payments": "Pagaments amb PAYCOMET",
         "withKorum": "{entity} × KORUM",
         "qrLabel": "Codi QR que porta a la campanya",
-        "guarantee": "Guardiola de la iniciativa {wallet}: els diners queden retinguts a PAYCOMET fins a assolir la meta i es retorna el 100 % si no s’aconsegueix. Sense intermediació de proveïdors.",
+        "guarantee": "Guardiola de la iniciativa {wallet}: els diners queden retinguts a PAYCOMET fins a assolir la meta i es retorna el 100 % si no s’aconsegueix. Sense intermediació de proveïdors.",
         "defaultTitle": "Suma’t i millorem la nostra comunitat!",
         "defaultMessage": "Escaneja el codi QR amb el mòbil per veure el projecte i aportar amb Bizum o targeta en 10 segons.",
         "unavailable": {
@@ -3148,7 +3154,8 @@
         },
         "defaultMessageTickets": "Escaneja el codi QR amb el mòbil, tria la teva entrada i paga amb Bizum o targeta en 10 segons.",
         "defaultMessageRaffle": "Escaneja el codi QR amb el mòbil, tria les teves butlletes i paga amb Bizum o targeta en 10 segons.",
-        "guaranteeTickets": "Pagament segur amb PAYCOMET. Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament. Guardiola de la iniciativa {wallet}."
+        "guaranteeTickets": "Pagament segur amb PAYCOMET. Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament. Guardiola de la iniciativa {wallet}.",
+        "metaTitle": "Cartell A4 amb QR"
       },
       "discard": {
         "title": "Voleu descartar aquest esborrany?",
@@ -3195,7 +3202,7 @@
       "metaTitle": "Liquidacions",
       "title": "Liquidacions de les campanyes aconseguides",
       "intro": "Quan una campanya arriba a la seva meta, els diners continuen a la guardiola de la iniciativa a PAYCOMET fins que l’entitat signa la liquidació (dues persones diferents, o només Direcció si l’entitat va triar signatura única). Trieu la destinació, adjunteu la factura del proveïdor i signeu amb el vostre codi.",
-      "badge": "100 % aconseguit · liquidació",
+      "badge": "100 % aconseguit · liquidació",
       "figures": {
         "raised": "Recaptat",
         "korumFee": "Comissió de KORUM",
@@ -3221,7 +3228,7 @@
       "photosHint": "Fotos Abans i Després i agraïment (les famílies les veuran quan acabi la liquidació)",
       "empty": {
         "title": "Encara no hi ha campanyes per liquidar",
-        "text": "Quan una campanya arribi al 100 %, apareixerà aquí per enviar els diners al projecte amb les signatures de l’entitat.",
+        "text": "Quan una campanya arribi al 100 %, apareixerà aquí per enviar els diners al projecte amb les signatures de l’entitat.",
         "cta": "Anar al quadre de comandament"
       },
       "form": {
@@ -3347,7 +3354,7 @@
     "expired": {
       "metaTitle": "Campanyes vençudes",
       "title": "Campanyes que van vèncer sense arribar a la meta",
-      "intro": "Quan una campanya acaba sense arribar a la meta, els diners continuen retinguts a PAYCOMET. Decidiu vosaltres: preguntar a qui va fer un donatiu si es fa una versió més petita del projecte amb el que s’ha recaptat, o retornar el 100 % a cada persona.",
+      "intro": "Quan una campanya acaba sense arribar a la meta, els diners continuen retinguts a PAYCOMET. Decidiu vosaltres: preguntar a qui va fer un donatiu si es fa una versió més petita del projecte amb el que s’ha recaptat, o retornar el 100 % a cada persona.",
       "empty": {
         "title": "Cap campanya no ha vençut sense arribar-hi",
         "text": "Si alguna acaba sense assolir la meta, apareixerà aquí perquè decidiu què fer.",
@@ -3358,12 +3365,12 @@
         "EXPIRED": "Vençuda · falta la vostra decisió",
         "RESIZE_VOTING": "Votació oberta",
         "REFUNDING": "Retornant",
-        "REFUNDED": "Retornada al 100 %",
+        "REFUNDED": "Retornada al 100 %",
         "GOAL_REACHED": "Redimensionada · per liquidar",
         "CLOSED": "Redimensionada i liquidada"
       },
       "closedOn": "Va vèncer el {date}",
-      "raised": "Recaptat {raised} de {goal} ({percent} %)",
+      "raised": "Recaptat {raised} de {goal} ({percent} %)",
       "decideIntro": "Decideix una persona signant i, si n’hi ha una altra, rep un avís. Cap de les dues opcions no envia diners a l’entitat: per a això continuarà fent falta la signatura de la liquidació.",
       "readOnly": "Només les persones que signen a l’entitat poden decidir què fer amb aquesta campanya.",
       "poll": {
@@ -3371,7 +3378,7 @@
         "turnout": "{votes, plural, =0 {Encara no ha votat ningú} one {Ha votat 1 persona} other {Han votat # persones}} · {refunds, plural, =0 {ningú no ha demanat la devolució} one {1 ha demanat la devolució} other {# han demanat la devolució}}",
         "hidden": "El recompte de cada opció es veurà quan es tanqui la votació. Qui demana la devolució la té en marxa tan bon punt vota (pot trigar uns dies a veure’s a la seva targeta o a Bizum) i la seva aportació deixa de comptar.",
         "won": "La votació va triar: «{option}»",
-        "noWinner": "La votació va acabar sense cap opció guanyadora (sense vots o amb empat): es retorna el 100 % a totes les persones.",
+        "noWinner": "La votació va acabar sense cap opció guanyadora (sense vots o amb empat): es retorna el 100 % a totes les persones.",
         "count": "{option}: {votes, plural, one {1 vot} other {# vots}}",
         "refundCount": "Van demanar la devolució: {votes}",
         "newGoal": "Meta nova (el que van aportar qui va votar un projecte):",
@@ -3380,14 +3387,14 @@
       },
       "refund": {
         "progress": "Retornades {done} de {total} aportacions ({amount} de {totalAmount})",
-        "done": "Retornat el 100 %: {count, plural, one {1 aportació} other {# aportacions}} ({amount})",
+        "done": "Retornat el 100 %: {count, plural, one {1 aportació} other {# aportacions}} ({amount})",
         "howItWorks": "Cada aportació torna al seu mitjà de pagament original (targeta o Bizum), per lots. Als comerços amics no se’ls retorna: el seu patrocini passa a una altra campanya segons la vostra regla, o a la seva bossa. En acabar, les quotes de la campanya tornen a l’entitat.",
         "quotasBack": "Les quotes que feia servir la campanya (exempt, beca de medalla i manteniment) han tornat a l’entitat.",
         "closed": "La campanya està tancada. Les seves quotes eren d’un curs ja acabat, així que no se sumen a les d’aquest curs."
       },
       "decide": {
         "voteTitle": "Preguntar a qui va fer un donatiu",
-        "voteRules": "Durant {days} dies, cada persona que va fer un donatiu vota una sola vegada entre les vostres opcions; proposeu una cosa que es pugui fer amb el que s’ha recaptat. Guanya l’opció més votada i es fa amb el que van aportar qui va votar una opció de projecte. A qui no voti o triï «Prefereixo que em retorneu la meva aportació» se li retorna el 100 %; sense vots o amb empat, es retorna tot. La comissió de KORUM baixa en proporció al que quedi. {donors, plural, one {Hi ha 1 donatiu que pot votar.} other {Hi ha # donatius que poden votar.}}",
+        "voteRules": "Durant {days} dies, cada persona que va fer un donatiu vota una sola vegada entre les vostres opcions; proposeu una cosa que es pugui fer amb el que s’ha recaptat. Guanya l’opció més votada i es fa amb el que van aportar qui va votar una opció de projecte. A qui no voti o triï «Prefereixo que em retorneu la meva aportació» se li retorna el 100 %; sense vots o amb empat, es retorna tot. La comissió de KORUM baixa en proporció al que quedi. {donors, plural, one {Hi ha 1 donatiu que pot votar.} other {Hi ha # donatius que poden votar.}}",
         "optionsLegend": "Opcions de projecte (de {min} a {max})",
         "optionLabel": "Opció {letter}",
         "optionPlaceholderA": "Per exemple: comprar 14 tauletes amb el que s’ha recaptat",
@@ -3404,15 +3411,15 @@
           "WINDOW_TOO_SHORT": "Queda poc dels 90 dies en què PAYCOMET pot enviar els diners: no hi ha temps per votar i liquidar. Només es pot retornar.",
           "POLL_EXISTS": "Aquesta campanya ja va tenir la seva votació."
         },
-        "refundTitle": "Retornar el 100 % a totes les persones",
+        "refundTitle": "Retornar el 100 % a totes les persones",
         "refundText": "Cada persona recupera tot el que va pagar, al seu mitjà de pagament original i sense haver-ho de demanar. Els patrocinis de comerços passen a una altra campanya o a la seva bossa, i les quotes tornen a l’entitat.",
-        "refundButton": "Retornar el 100 %",
+        "refundButton": "Retornar el 100 %",
         "confirmVoteTitle": "Llançar la votació de «{title}»?",
         "confirmVoteText": "Enviarem la papereta a qui va fer un donatiu. Durarà {days} dies i les opcions no es podran canviar. Qui demani la devolució la tindrà en marxa tan bon punt voti, i a qui no voti se li retornarà quan es tanqui.",
-        "confirmRefundTitle": "Retornar el 100 % de «{title}»?",
+        "confirmRefundTitle": "Retornar el 100 % de «{title}»?",
         "confirmRefundText": "Començarem a retornar cada aportació al seu mitjà de pagament original. Els patrocinis de comerços passaran a una altra campanya o a la seva bossa. No es pot desfer.",
         "confirmVote": "Sí, llançar la votació",
-        "confirmRefund": "Sí, retornar el 100 %",
+        "confirmRefund": "Sí, retornar el 100 %",
         "cancel": "No, tornar",
         "sending": "Enviant…",
         "voteLaunched": "Votació llançada. Qui va fer un donatiu rep la papereta per correu; es tanca el {date}.",
@@ -3629,6 +3636,11 @@
         "noneWaiting": "Podràs substituir un premi sense reclamar a partir del {date}: és el termini mínim que ha fixat KORUM perquè es pugui reclamar. Si les bases de la teva rifa donen més temps, espera que acabi.",
         "replacesText": "substitueix {replaced}"
       }
+    },
+    "welcomeCelebration": {
+      "title": "Benvinguts a KORUM!",
+      "body": "{name} ja té el seu espai. Des d’avui, les bones idees de la vostra comunitat poden sumar i fer-se realitat.",
+      "next": "Aquí sota teniu els passos que falten per publicar la primera campanya. Us acompanyem en cadascun."
     }
   },
   "gate": {
@@ -3638,9 +3650,9 @@
     "emptyText": "Qui organitza l’esdeveniment et dona un enllaç i un PIN de 6 xifres. Obre l’enllaç en aquest mòbil i escriu el PIN.",
     "capacityTitle": "Aforament en directe",
     "capacity": "{checkedIn} de {capacity} persones a dins",
-    "insideHint": "Ets a la porteria d'aquest esdeveniment. En acabar, tanca la sessió.",
-    "pinIntro": "Escriu el PIN de 6 xifres que t'ha donat qui organitza l'esdeveniment.",
-    "pin": "PIN de l'esdeveniment",
+    "insideHint": "Ets a la porteria d’aquest esdeveniment. En acabar, tanca la sessió.",
+    "pinIntro": "Escriu el PIN de 6 xifres que t’ha donat qui organitza l’esdeveniment.",
+    "pin": "PIN de l’esdeveniment",
     "enter": "Entrar a la porteria",
     "leave": "Tancar la porteria en aquest mòbil",
     "errors": {
@@ -3788,7 +3800,8 @@
       }
     },
     "organiserHint": "Organitzes l’esdeveniment? Crea el PIN i l’enllaç de la porteria a «Taquilla i porteria».",
-    "organiserLink": "Anar a Taquilla i porteria"
+    "organiserLink": "Anar a Taquilla i porteria",
+    "metaTitle": "Porteria"
   },
   "admin": {
     "headerTitle": "Consola de KORUM",
@@ -3816,10 +3829,10 @@
       "CREDIT_POOL_EXPIRED": "Bossa de patrocini vençuda",
       "MONTHLY_TOPUP_DUE": "Cobraments mensuals de la Guardiola sense confirmar",
       "ESCROW_LEFTOVER": "Diners pendents en una guardiola retornada",
-      "CARD_DELETE_FAILED": "No s'ha pogut esborrar una targeta desada",
+      "CARD_DELETE_FAILED": "No s’ha pogut esborrar una targeta desada",
       "PRIVACY_REQUEST_OVERDUE": "Sol·licitud de privacitat fora de termini",
       "ENCRYPTION_KEY_MISSING": "Falta una clau de xifratge",
-      "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d'un compte inactiu",
+      "PRIVACY_ERASURE_FAILED": "Ha fallat la supressió d’un compte inactiu",
       "EMAIL_DELIVERY_FAILED": "Hi ha correus que no es poden enviar",
       "TRUSTED_IP_MISSING": "No arriba la IP de les famílies en signar idees: totes quedarien al mateix grup",
       "INVOICE_RECTIFY_PENDING": "Factura del fee d’un comerç retornat o amb retrocessió, pendent de rectificar",
@@ -3875,14 +3888,14 @@
       "realSources": "Ingressos de les 6 fonts",
       "realCosts": "Costos assumits per KORUM",
       "realNet": "Ingrés net real",
-      "projectionTitle": "Projecció al 100 % de les campanyes obertes",
-      "projectionHelp": "És una estimació: suma les campanyes que estan recaptant o que ja han arribat a la meta, com si totes es completessin. Inclou el que ja s’ha cobrat d’aquestes campanyes, així que no sumis la xifra real i la projectada. «Ponderat» compta cada campanya segons el que ja du recaptat (una al 50 % compta la meitat).",
-      "potentialGoal": "Meta potencial (100 %)",
+      "projectionTitle": "Projecció al 100 % de les campanyes obertes",
+      "projectionHelp": "És una estimació: suma les campanyes que estan recaptant o que ja han arribat a la meta, com si totes es completessin. Inclou el que ja s’ha cobrat d’aquestes campanyes, així que no sumis la xifra real i la projectada. «Ponderat» compta cada campanya segons el que ja du recaptat (una al 50 % compta la meitat).",
+      "potentialGoal": "Meta potencial (100 %)",
       "raised": "Recaptat ara",
-      "expectedNet": "Ingrés net esperat (100 %)",
+      "expectedNet": "Ingrés net esperat (100 %)",
       "weightedNet": "Ingrés net ponderat",
       "averageProgress": "Progrés mitjà de la xarxa",
-      "percent": "{value} %"
+      "percent": "{value} %"
     },
     "sources": {
       "title": "Procedència dels ingressos per font",
@@ -3891,7 +3904,7 @@
       "caption": "Ingressos de KORUM per font: reals i projectats",
       "source": "Font",
       "real": "Real (cobrat)",
-      "projected": "Projectat (al 100 %)",
+      "projected": "Projectat (al 100 %)",
       "label": {
         "supportGuaranteeCents": "Aportacions voluntàries de garantia KORUM",
         "bracketFeeCents": "Comissions per trams (obres i equipament)",
@@ -3947,10 +3960,10 @@
       "quarterTitle": "Tancaments: {quarter}",
       "count": "{count, plural, =0 {Cap iniciativa} one {# iniciativa} other {# iniciatives}} en aquest trimestre",
       "goal": "Meta potencial de tancament",
-      "unweighted": "Net total (sense ponderar, al 100 %)",
+      "unweighted": "Net total (sense ponderar, al 100 %)",
       "weighted": "Net ponderat (per progrés)",
       "totalTitle": "Consolidat de la selecció",
-      "totalUnweighted": "Net total sense ponderar (100 %):",
+      "totalUnweighted": "Net total sense ponderar (100 %):",
       "totalWeighted": "Net ponderat:"
     },
     "initiatives": {
@@ -3968,7 +3981,7 @@
       "statusFinished": "Només acabades (fita assolida i tancades)",
       "none": "No hi ha iniciatives amb els filtres triats.",
       "truncated": "Hi ha més iniciatives de les que caben en aquesta vista: només es mostren les més recents. Acota amb els filtres per veure la resta.",
-      "percent": "{value} %",
+      "percent": "{value} %",
       "col": {
         "position": "Núm.",
         "title": "Iniciativa",
@@ -3990,7 +4003,7 @@
     "diagnosis": {
       "negative": "🚨 Perill de retorn negatiu! ({net}) · Ajustar preus",
       "boost": "💎 Autoimpuls rendible! Aportar {missing} ➔ Retorn +{profit}",
-      "complete": "✅ 100 % assolida",
+      "complete": "✅ 100 % assolida",
       "missing": "Falten {missing}: completar-los {sign, select, gain {deixaria a KORUM +{profit}} loss {costaria a KORUM {profit} més del que guanya} other {no canviaria res per a KORUM}}"
     },
     "alerts": {
@@ -4211,7 +4224,7 @@
       },
       "wallet": "Guardiola i estat",
       "progress": "Progrés",
-      "percent": "{value} %",
+      "percent": "{value} %",
       "contributions": "Aportacions",
       "contributionsCount": "{count, plural, one {# aportació} other {# aportacions}}",
       "closesAt": "Data límit",
@@ -4241,7 +4254,7 @@
       "negativeText": "Aquesta iniciativa no deixa ingressos a KORUM i KORUM està assumint {loss} de cost de passarel·la de pagament.",
       "analysisTitle": "Rendibilitat i Autoimpuls de KORUM",
       "analysisProfitable": "Autoimpuls rendible!",
-      "missing": "Falta per arribar al 100 %",
+      "missing": "Falta per arribar al 100 %",
       "netAt100": "Net de KORUM en completar-se la meta",
       "returnAfterBoost": "Retorn després d’aportar el que falta",
       "returnHint": "El retorn compta el que ja s’ha cobrat més la comissió de trams i el manteniment que es liquiden en completar la meta. No compta res de projectat ni el fee de patrocini ja cobrat, que KORUM conserva aporti o no.",
@@ -4268,7 +4281,7 @@
         "confirm": "Sí, aporta {amount}",
         "running": "Aportant…",
         "cancel": "Cancel·la",
-        "done": "Autoimpuls aportat: {amount}. La iniciativa ha arribat al 100 %.",
+        "done": "Autoimpuls aportat: {amount}. La iniciativa ha arribat al 100 %.",
         "problem": {
           "FAILED": "No s’ha pogut aportar. Revisa la fitxa i torna-ho a provar.",
           "AMOUNT_CHANGED": "El que falta ha canviat mentre miraves la fitxa (ha arribat una altra aportació). No s’ha gastat res: revisa la xifra nova.",
@@ -4305,7 +4318,7 @@
       "negativeTextBoth": "Aquesta iniciativa no deixa ingressos a KORUM: KORUM assumeix {loss} de cost de passarel·la de pagament i ja ha gastat {sunk} entre Autoimpuls i contracàrrecs d’aquesta campanya."
     },
     "entities": {
-      "metaTitle": "Entitats · Consola KORUM",
+      "metaTitle": "Entitats · Consola",
       "back": "← Torna a la consola",
       "title": "Entitats",
       "waitingTitle": "{count, plural, =0 {Documents esperant revisió} one {1 entitat espera la revisió dels seus documents} other {# entitats esperen la revisió dels seus documents}}",
@@ -4341,7 +4354,7 @@
       "open360": "Obre la fitxa 360º"
     },
     "org360": {
-      "metaTitle": "Fitxa 360º · Consola KORUM",
+      "metaTitle": "Fitxa 360º · Consola",
       "back": "← Totes les entitats",
       "archived": "Arxivada",
       "medal": {
@@ -4528,13 +4541,13 @@
       },
       "categories": {
         "title": "Categories de l’entitat",
-        "hint": "Exemptes (0 %) o per trams. Una categoria global amb una altra regla aquí només canvia per a aquesta entitat.",
+        "hint": "Exemptes (0 %) o per trams. Una categoria global amb una altra regla aquí només canvia per a aquesta entitat.",
         "source": {
           "OVERRIDE": "regla pròpia",
           "CUSTOM": "pròpia"
         },
         "rule": {
-          "EXEMPT": "💚 0 % exempta",
+          "EXEMPT": "💚 0 % exempta",
           "BRACKETS": "🏗️ Per trams"
         },
         "doneRule": "Regla de la categoria desada.",
@@ -4638,7 +4651,7 @@
       "confirmBack": "No, tornar"
     },
     "rules": {
-      "metaTitle": "Regles i preus · Consola KORUM",
+      "metaTitle": "Regles i preus · Consola",
       "back": "Tornar a la consola",
       "title": "Regles i preus",
       "intro": "El que cobra la plataforma. Mentre escrius, els avisos de la salut de preus es recalculen amb la xifra concreta. Cap avís no impedeix desar: són perquè decideixis amb els números al davant.",
@@ -4651,7 +4664,7 @@
         "duracion": "Durada",
         "medallas": "Medalles",
         "categorias": "Categories",
-        "campanas-exentas": "Campanyes al 0 %"
+        "campanas-exentas": "Campanyes al 0 %"
       },
       "unit": {
         "eur": "€",
@@ -4742,7 +4755,7 @@
       },
       "medals": {
         "title": "Medalles i beques d’exempció",
-        "hint": "Quantes campanyes tancades durant el curs calen per a cada medalla i la beca exempta (al 0 %) que dona.",
+        "hint": "Quantes campanyes tancades durant el curs calen per a cada medalla i la beca exempta (al 0 %) que dona.",
         "name": {
           "bronze": "Medalla de Bronze",
           "silver": "Medalla de Plata",
@@ -4760,11 +4773,11 @@
       },
       "categories": {
         "title": "Categories globals",
-        "hint": "Cada categoria és exempta (0 %) o va per trams. Una categoria pròpia d’una entitat amb el mateix nom continua manant sobre la global.",
-        "ruleEXEMPT": "0 % exempta de comissió",
+        "hint": "Cada categoria és exempta (0 %) o va per trams. Una categoria pròpia d’una entitat amb el mateix nom continua manant sobre la global.",
+        "ruleEXEMPT": "0 % exempta de comissió",
         "ruleBRACKETS": "Per trams (escala)",
         "confirmTitle": "Confirma el canvi de regla",
-        "confirmExempt": "«{name}» passarà a ser exempta (0 %) en totes les campanyes noves de la plataforma. Les ja publicades no canvien.",
+        "confirmExempt": "«{name}» passarà a ser exempta (0 %) en totes les campanyes noves de la plataforma. Les ja publicades no canvien.",
         "confirmBrackets": "«{name}» passarà a pagar comissió per trams en totes les campanyes noves de la plataforma. Les ja publicades no canvien.",
         "confirmYes": "Sí, canviar la regla",
         "confirmNo": "No, deixar-la com està",
@@ -4778,16 +4791,16 @@
         "added": "Categoria «{name}» afegida.",
         "addHint": "Escriu almenys 2 caràcters per poder afegir-la.",
         "confirmAddTitle": "Confirma la categoria exempta",
-        "confirmAddExempt": "«{name}» es crearà exempta (0 %): cap campanya nova d’aquesta categoria pagarà comissió per trams. Crear-la?",
+        "confirmAddExempt": "«{name}» es crearà exempta (0 %): cap campanya nova d’aquesta categoria pagarà comissió per trams. Crear-la?",
         "confirmAddYes": "Sí, crear-la exempta",
         "confirmAddNo": "No, tornar"
       },
       "exempt": {
-        "title": "Campanyes al 0 % per revisar",
+        "title": "Campanyes al 0 % per revisar",
         "hint": "El pany d’equipament és un filtre de bona fe. Aquí hi ha les campanyes de pressupost que continuen en una categoria exempta, les més recents primer, amb una marca si el pany va saltar alguna vegada.",
-        "none": "No hi ha campanyes de pressupost en categories al 0 %.",
+        "none": "No hi ha campanyes de pressupost en categories al 0 %.",
         "scrollHint": "Llisca la taula cap als costats per veure totes les columnes.",
-        "region": "Campanyes en categories al 0 %",
+        "region": "Campanyes en categories al 0 %",
         "caption": "Campanyes de pressupost en categories exemptes, amb la seva entitat, categoria, estat i si el filtre d’equipament va saltar",
         "columns": {
           "organization": "Entitat",
@@ -4815,7 +4828,7 @@
       "fieldErrorServer": "Aquest valor no es pot desar ara. Deixa’l com estava i desa de nou."
     },
     "support": {
-      "metaTitle": "Suport · Consola KORUM",
+      "metaTitle": "Suport · Consola",
       "back": "Tornar a la consola",
       "title": "Suport de KORUM",
       "intro": "Les consultes adreçades a la plataforma (pagaments, compte, rectificació i d’altres) i el que escriuen les entitats des del seu panell, aquestes primer. Es respon una vegada per consulta i l’estat només avança.",
@@ -4912,7 +4925,7 @@
       "resolveConfirmAlreadyReplied": "Aquesta consulta ja té resposta. Es tancarà i no es podrà tornar a respondre."
     },
     "settings": {
-      "metaTitle": "Configuració de la plataforma",
+      "metaTitle": "Configuració · Consola",
       "back": "← Tornar a la consola",
       "title": "Configuració de la plataforma",
       "intro": "Aquí es configura el que sosté el servei: els cobraments amb Paycomet, el correu electrònic, les factures, Mi Hucha, la visibilitat als cercadors, els textos legals, l’equip amb accés i les claus de xifratge. Cada bloc es desa per separat i cada canvi queda registrat a l’historial. Qualsevol canvi (no només les claus) demana haver confirmat el teu segon factor en els últims 10 minuts.",
@@ -5443,7 +5456,7 @@
     "notice": "Demostració · cobraments simulats",
     "environments": "Entorns de la demostració",
     "family": "Famílies",
-    "panel": "Panell de l'entitat",
+    "panel": "Panell de l’entitat",
     "console": "Consola"
   },
   "portal": {
@@ -5472,7 +5485,7 @@
         "SPORTS_CLUB": "{amount} sumats entre socis i comerços amics",
         "CULTURAL": "{amount} sumats entre la comunitat i comerços amics"
       },
-      "refund": "Devolució del 100 % si una iniciativa no assoleix la meta",
+      "refund": "Devolució del 100 % si una iniciativa no assoleix la meta",
       "achievements": "{count, plural, =0 {Aquí hi anirà el que s’aconsegueixi} one {1 millora aconseguida} other {# millores aconseguides}}"
     },
     "hucha": {
@@ -5504,7 +5517,7 @@
       "urgencyOptions": {
         "ALL": "Qualsevol data",
         "SOON": "Tancament proper (menys de 20 dies)",
-        "ALMOST": "Recta final (75 % o més)",
+        "ALMOST": "Recta final (75 % o més)",
         "TICKETING": "Només taquilla i rifes"
       },
       "clear": "Neteja els filtres",
@@ -5530,18 +5543,18 @@
       "price": "Entrada {price}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
-      "zeroCommission": "0 % de comissió de la plataforma",
+      "zeroCommission": "0 % de comissió de la plataforma",
       "raisedOf": "{raised} de {goal}",
-      "percent": "{pct} %",
+      "percent": "{pct} %",
       "progress": "Progrés de {title}",
       "ticketsSold": "{sold} venudes · aforament {max}",
       "ticketsLeft": "{count, plural, =0 {Ja exhaurides} one {# disponible} other {# disponibles}}",
       "contributions": "{count, plural, one {# aportació} other {# aportacions}}",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "completed": "Completada!",
-      "refund": "Devolució del 100 % si no s’assoleix la meta",
+      "refund": "Devolució del 100 % si no s’assoleix la meta",
       "soldOut": "Aforament complet · entrades exhaurides",
-      "goalReached": "100 % aconseguit! Tancada",
+      "goalReached": "100 % aconseguit! Tancada",
       "contribute": "Aporta ara",
       "buyTickets": "Compra entrades",
       "buyRaffle": "Compra butlletes",
@@ -5552,19 +5565,19 @@
       "share": "Comparteix",
       "vault": {
         "label": "Guardiola de la iniciativa",
-        "refund": "Devolució del 100 % si no s’assoleix la meta",
+        "refund": "Devolució del 100 % si no s’assoleix la meta",
         "independence": "Independència total de proveïdors",
         "deadline": "Data límit"
       },
       "plaque": "Inclou placa commemorativa de la promoció",
       "matching": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
       "matchingBy": "Gràcies a {sponsor}, la teva aportació es duplica mentre quedi bossa.",
-      "goal": "Meta: {goal} ({pct} %)",
+      "goal": "Meta: {goal} ({pct} %)",
       "ticketsOf": "{sold} / {max}",
       "ticketsAvailable": "Disponibles: {count}",
       "contributionsDone": "{count, plural, one {# aportació feta} other {# aportacions fetes}}",
-      "completedFull": "Completada al 100 %",
-      "closed": "100 % aconseguit! Aportacions tancades",
+      "completedFull": "Completada al 100 %",
+      "closed": "100 % aconseguit! Aportacions tancades",
       "ticketsSoldOut": "Aforament complet! Entrades exhaurides",
       "ticketsHeading": "Informació de taquilla digital",
       "ticketLines": {
@@ -5584,8 +5597,8 @@
         "contingency": "Reserva de manteniment, riscos i contingència ({percent})",
         "gateway": "Passarel·la de pagament, plataforma, gestió i garantia de devolució",
         "total": "Total objectiu a recaptar",
-        "footnote": "💡 Transparència total: l’import total ja inclou el cost de la passarel·la de pagament, el servei de la plataforma, la gestió i la devolució del 100 % si la iniciativa no s’aconsegueix, perquè al centre li quedi exactament el necessari per pagar els costos reals.",
-        "hidden": "Pressupost validat per l’entitat ({goal}): l’import sol·licitat ja inclou la passarel·la de pagament, la plataforma, la gestió i la devolució del 100 % si no s’aconsegueix dins de termini."
+        "footnote": "💡 Transparència total: l’import total ja inclou el cost de la passarel·la de pagament, el servei de la plataforma, la gestió i la devolució del 100 % si la iniciativa no s’aconsegueix, perquè al centre li quedi exactament el necessari per pagar els costos reals.",
+        "hidden": "Pressupost validat per l’entitat ({goal}): l’import sol·licitat ja inclou la passarel·la de pagament, la plataforma, la gestió i la devolució del 100 % si no s’aconsegueix dins de termini."
       },
       "challenge": {
         "heading": "Repte col·lectiu: desbloquegem «{reward}»",
@@ -5634,14 +5647,14 @@
     "meta": {
       "entityTitle": "{name} · Iniciatives i èxits",
       "entityDescription": {
-        "SCHOOL": "Dona suport a les millores de {name}: iniciatives obertes amb la meta clara i la devolució del 100 % si no s’assoleix.",
-        "SPORTS_CLUB": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix.",
-        "CULTURAL": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix."
+        "SCHOOL": "Dona suport a les millores de {name}: iniciatives obertes amb la meta clara i la devolució del 100 % si no s’assoleix.",
+        "SPORTS_CLUB": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix.",
+        "CULTURAL": "Dona suport a {name}: iniciatives i entrades obertes, amb la meta clara i la devolució del 100 % si no s’assoleix."
       },
       "entityImageAlt": "Portada de {name} a KORUM",
       "initiativeTitle": "{title} · {entity}",
-      "initiativeDescription": "{pct} % aconseguit. {text}",
-      "initiativeImageAlt": "{title}: {pct} % aconseguit",
+      "initiativeDescription": "{pct} % aconseguit. {text}",
+      "initiativeImageAlt": "{title}: {pct} % aconseguit",
       "sponsorsTitle": "{name} · Comerços amics",
       "sponsorsDescription": "Els negocis del barri que donen suport a {name}, per categoria Or, Plata i Bronze, amb avantatges per a les famílies.",
       "ideasTitle": "{name} · Bústia d’idees",
@@ -5652,7 +5665,7 @@
       "helpDescription": "Respostes als dubtes més habituals de les famílies de {name} i un formulari per escriure al centre o a KORUM."
     },
     "og": {
-      "progress": "{pct} % aconseguit",
+      "progress": "{pct} % aconseguit",
       "tickets": "{sold} de {max} entrades venudes",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "goalReached": "Meta aconseguida!",
@@ -5660,7 +5673,16 @@
       "challengeMissingNoReward": "{missing, plural, one {Només falta # família} other {Només falten # famílies}} a {group} per assolir el repte!",
       "challengeReached": "{group} ja ha aconseguit «{reward}»",
       "challengeReachedNoReward": "{group} ja ha aconseguit el repte",
-      "forEntity": "amb {entity}"
+      "forEntity": "amb {entity}",
+      "entity": {
+        "kicker": {
+          "SCHOOL": "Comunitat escolar",
+          "SPORTS_CLUB": "Club esportiu",
+          "CULTURAL": "Entitat cultural"
+        },
+        "promise": "Idees, campanyes i fites de tota la comunitat. Si no s’arriba a la meta, es retorna el 100 %.",
+        "poweredBy": "Amb la tecnologia de {brand}"
+      }
     },
     "pass": {
       "title": "La teva entrada",
@@ -5771,8 +5793,8 @@
         "pending": "Obrint el pagament segur…",
         "secure": "Pagues a la pàgina segura de Paycomet. KORUM no veu mai les dades de la teva targeta."
       },
-      "refundNote": "Si no s’arriba a la meta dins el termini, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
-      "refundNoteTickets": "Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
+      "refundNote": "Si no s’arriba a la meta dins el termini, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
+      "refundNoteTickets": "Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
       "errors": {
         "form": "Revisa les dades marcades i torna-ho a provar.",
         "quantity": "Tria entre 1 i {max}.",
@@ -5795,15 +5817,15 @@
       },
       "sponsor": {
         "intro": {
-          "title": "Patrocini 100 % íntegre + categoria Bronze, Plata o Or",
-          "body": "L'import que triïs arriba íntegre a la iniciativa i el teu negoci figurarà amb la seva distinció durant 12 mesos al directori de Comerços amics."
+          "title": "Patrocini 100 % íntegre + categoria Bronze, Plata o Or",
+          "body": "L’import que triïs arriba íntegre a la iniciativa i el teu negoci figurarà amb la seva distinció durant 12 mesos al directori de Comerços amics."
         },
         "tier": {
           "legend": "1. Tria la teva categoria de Comerç amic",
           "ORO": "Or",
           "PLATA": "Plata (suggerit)",
           "BRONCE": "Bronze",
-          "whole": "L'import arriba íntegre a la iniciativa. La gestió publicitària i el seu IVA se sumen a part."
+          "whole": "L’import arriba íntegre a la iniciativa. La gestió publicitària i el seu IVA se sumen a part."
         },
         "matching": {
           "label": "Destinar el meu patrocini a la borsa Matching 2x",
@@ -5818,7 +5840,7 @@
           "sector": "Tipus de negoci (opcional)",
           "sectorPlaceholder": "Fleca, llibreria…",
           "promo": "Descompte o avantatge per a les famílies (opcional)",
-          "promoPlaceholder": "15 % de descompte a la botiga",
+          "promoPlaceholder": "15 % de descompte a la botiga",
           "promoCode": "Codi o cupó (opcional)",
           "promoCodePlaceholder": "CERVANTES15",
           "promoCodeHint": "Només lletres sense accent, números, guió i guió baix."
@@ -5827,8 +5849,8 @@
           "legend": "Opcional: avantatge per a les famílies"
         },
         "renewal": "Renovació anual: envia’m per correu l’enllaç per renovar (30 dies abans que venci el meu distintiu i el dia que venç). No hi ha cobraments automàtics.",
-        "legal": "El centre revisarà si el teu comerç s'ajusta als seus valors i normativa; si no l'admet, et retornem el 100 % del que has pagat (import, gestió publicitària i IVA). Un cop admès, el teu patrocini és una aportació a l'entitat: si la iniciativa no tira endavant (o, amb Matching 2x, li'n sobra una part), passa a una altra iniciativa activa; si no n'hi ha cap a temps, se'l queda l'entitat per a les seves activitats. T'avisem a cada pas.",
-        "summary": "{amount} íntegres a la iniciativa + {fee} de gestió publicitària ({pct} %) + {vat} d'IVA",
+        "legal": "El centre revisarà si el teu comerç s’ajusta als seus valors i normativa; si no l’admet, et retornem el 100 % del que has pagat (import, gestió publicitària i IVA). Un cop admès, el teu patrocini és una aportació a l’entitat: si la iniciativa no tira endavant (o, amb Matching 2x, li’n sobra una part), passa a una altra iniciativa activa; si no n’hi ha cap a temps, se’l queda l’entitat per a les seves activitats. T’avisem a cada pas.",
+        "summary": "{amount} íntegres a la iniciativa + {fee} de gestió publicitària ({pct} %) + {vat} d’IVA",
         "errors": {
           "form": "Revisa les dades marcades.",
           "required": "Aquesta dada és obligatòria.",
@@ -5836,11 +5858,11 @@
           "taxId": "Revisa el CIF o NIF: no sembla vàlid.",
           "phone": "Escriu un telèfon vàlid.",
           "tier": "Tria un dels nivells.",
-          "matching": "La borsa Matching 2x d'aquesta iniciativa ja està reservada.",
+          "matching": "La borsa Matching 2x d’aquesta iniciativa ja està reservada.",
           "closed": "Aquesta iniciativa ja no admet patrocinis.",
           "rateLimited": "Massa intents seguits. Espera uns minuts i torna-ho a provar.",
-          "unavailable": "No hem pogut obrir la pàgina de pagament. No se t'ha cobrat res; torna-ho a provar d'aquí a uns minuts.",
-          "network": "No hem pogut connectar. No se t'ha cobrat res; torna-ho a provar."
+          "unavailable": "No hem pogut obrir la pàgina de pagament. No se t’ha cobrat res; torna-ho a provar d’aquí a uns minuts.",
+          "network": "No hem pogut connectar. No se t’ha cobrat res; torna-ho a provar."
         }
       }
     },
@@ -5874,7 +5896,7 @@
           "RAFFLE": "Fet! Les butlletes ja són teves"
         },
         "paid": "Has pagat {total}",
-        "goalReached": "Amb la teva aportació s’ha assolit el 100 %!",
+        "goalReached": "Amb la teva aportació s’ha assolit el 100 %!",
         "soldOut": "Amb la teva compra s’ha completat l’aforament!",
         "count": "Ja sumen {count, plural, one {# aportació} other {# aportacions}}",
         "progressLabel": "Avanç de «{title}»",
@@ -5887,7 +5909,8 @@
         },
         "serial": "Codi {serial}",
         "share": "Comparteix la iniciativa perquè s’hi sumin més famílies.",
-        "pct": "{pct} % aconseguit"
+        "pct": "{pct} % aconseguit",
+        "groupReached": "{group} ha aconseguit el seu repte amb {count, plural, one {# família} other {# famílies}}!"
       },
       "pending": {
         "title": "Estem confirmant el teu pagament…",
@@ -5911,21 +5934,19 @@
           "CARD": "Pagar amb targeta"
         }
       },
-      "returned": {
-        "title": "Et retornem el 100 %",
-        "description": "El pagament va arribar quan la iniciativa ja no admetia més aportacions. T’ho retornem tot al mateix mitjà de pagament, sense que hagis de fer res."
-      },
       "invalid": {
         "title": "No podem obrir aquest resultat",
-        "description": "Comprova que has obert l’enllaç complet o torna a la iniciativa."
+        "description": "Comprova que has obert l’enllaç complet. El rebut del pagament t’arriba per correu."
       },
       "sponsor": {
         "title": "Gràcies, {name}!",
         "whole": {
           "escrow": "Els teus {amount} arriben íntegres a la guardiola de la iniciativa",
-          "pool": "Els teus {amount} queden a la borsa Matching 2x: duplicaran les donacions de les famílies quan el centre aprovi el teu comerç"
+          "pool": "Els teus {amount} queden a la borsa Matching 2x: duplicaran les donacions de les famílies quan el centre aprovi el teu comerç",
+          "creditPool": "La campanya ja no recaptava quan va arribar el teu pagament: els teus {amount} continuen retinguts a PAYCOMET fins que el centre decideixi. Si t’admet, aniran íntegres a una altra de les seves campanyes o, si no n’hi ha cap a temps, al seu Fons d’activitats (els diners del centre per a les activitats del curs). Si no t’admet, et retornem el 100 %.",
+          "moved": "La teva aportació de {amount} continua sent íntegra per a l’entitat: com que aquesta campanya ja no recapta, passa a una altra de les seves campanyes obertes o al seu Fons d’activitats. T’avisem per correu d’on va."
         },
-        "review": "El centre revisarà el teu comerç. Tan bon punt l'aprovi, apareixeràs al directori com a Comerç amic {level}. Si no l'admetés, et retornaríem el 100 % del que has pagat.",
+        "review": "El centre revisarà el teu comerç. Tan bon punt l’aprovi, apareixeràs al directori com a Comerç amic {level}. Si no l’admetés, et retornaríem el 100 % del que has pagat.",
         "documents": "Descarrega els teus documents (els pots imprimir o desar en PDF):",
         "justificante": "Justificant del patrocini",
         "factura": "Factura de KORUM",
@@ -5935,7 +5956,46 @@
           "PLATA": "PLATA",
           "BRONCE": "BRONZE"
         },
-        "reminder": "T'enviarem un recordatori per email 30 dies abans que caduqui el teu distintiu."
+        "reminder": "T’enviarem un recordatori per email 30 dies abans que caduqui el teu distintiu.",
+        "returned": {
+          "notAdmitted": {
+            "title": "Et retornem el 100 %",
+            "description": "El centre no ha admès el teu comerç, així que et retornem tot el que vas pagar (el patrocini, la gestió publicitària i el seu IVA) al mateix mitjà de pagament, amb la factura rectificativa."
+          },
+          "returnedGeneric": {
+            "title": "Et retornem el 100 %",
+            "description": "Aquest pagament s’ha anul·lat i t’ho retornem tot al mateix mitjà de pagament, sense que hagis de fer res."
+          },
+          "chargeback": {
+            "title": "Aquest pagament s’ha anul·lat",
+            "description": "Aquest càrrec s’ha anul·lat després d’una reclamació sobre la targeta, així que ja no compta com a patrocini i els diners ja han tornat a la targeta per aquesta via. Si tens dubtes, escriu-nos des d’Ajuda."
+          }
+        }
+      },
+      "toPortal": "Anar a la portada de l’entitat",
+      "backToEntity": "Anar a la portada de {entity}",
+      "closedNoRetry": "Aquesta iniciativa ja no admet aportacions, així que no es pot tornar a provar. Pots veure les altres a la portada.",
+      "paid": {
+        "deciding": {
+          "title": "La iniciativa ha acabat sense arribar a la meta",
+          "description": "El teu pagament està registrat. T’escriurem per correu amb el que passa ara: si l’entitat proposa tirar endavant amb el que s’ha recaptat, podràs votar; si no, et retornem el 100 % sense que hagis de fer res."
+        },
+        "failedCampaign": {
+          "title": "Aquesta vegada no ha estat possible",
+          "description": "La iniciativa no ha arribat a la meta, així que et retornem el 100 % del que vas pagar al mateix mitjà de pagament, sense que hagis de fer res. Gràcies per intentar-ho amb nosaltres!"
+        },
+        "returnedLate": {
+          "title": "Et retornem el 100 %",
+          "description": "El pagament va arribar quan la iniciativa ja no admetia més aportacions. T’ho retornem tot al mateix mitjà de pagament, sense que hagis de fer res."
+        },
+        "returnedGeneric": {
+          "title": "Et retornem el 100 %",
+          "description": "Aquest pagament s’ha anul·lat i t’ho retornem tot al mateix mitjà de pagament, sense que hagis de fer res."
+        },
+        "chargeback": {
+          "title": "Aquest pagament s’ha anul·lat",
+          "description": "Aquest càrrec s’ha anul·lat després d’una reclamació sobre la targeta, així que ja no compta com a aportació i els diners ja han tornat a la targeta per aquesta via. Si tens dubtes, escriu-nos des d’Ajuda."
+        }
       }
     },
     "sponsors": {
@@ -5949,7 +6009,7 @@
       "listLabel": "Comerços amics",
       "empty": {
         "title": "Encara no hi ha comerços amics",
-        "description": "Quan un comerç del barri doni suport a una iniciativa i el centre l'aprovi, apareixerà aquí amb la seva categoria i els seus avantatges per a les famílies."
+        "description": "Quan un comerç del barri doni suport a una iniciativa i el centre l’aprovi, apareixerà aquí amb la seva categoria i els seus avantatges per a les famílies."
       },
       "level": {
         "ORO": "Comerç amic · Categoria OR",
@@ -5970,11 +6030,11 @@
     },
     "sponsorDocs": {
       "platform": "KORUM · plataforma tecnològica",
-      "returned": "Aquest cobrament s'ha retornat: el document es conserva només com a constància.",
+      "returned": "Aquest cobrament s’ha retornat: el document es conserva només com a constància.",
       "print": "Imprimir o desar en PDF",
       "invalid": {
         "title": "No trobem aquest document",
-        "description": "L'enllaç no és vàlid o ha caducat. Obre el que et vam enviar en pagar o escriu-nos des del suport."
+        "description": "L’enllaç no és vàlid o ha caducat. Obre el que et vam enviar en pagar o escriu-nos des del suport."
       },
       "level": {
         "ORO": "Or",
@@ -5985,7 +6045,7 @@
         "title": "Justificant de patrocini",
         "sponsor": "Comerç",
         "taxId": "CIF o NIF",
-        "recipient": "Entitat que rep l'import",
+        "recipient": "Entitat que rep l’import",
         "initiative": "Iniciativa",
         "destination": "Destí",
         "pool": "Borsa Matching 2x de la iniciativa",
@@ -5993,25 +6053,25 @@
         "category": "Categoria",
         "amount": "Import íntegre",
         "date": "Data del pagament",
-        "whole": "El 100 % d'aquest import ({amount}) arriba íntegre a la iniciativa. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura.",
+        "whole": "El 100 % d’aquest import ({amount}) arriba íntegre a la iniciativa. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura.",
         "notInvoice": "Aquest justificant acredita el teu patrocini; no substitueix la factura de KORUM ni és un certificat fiscal.",
         "renewal": "Renovació anual: campanyes de l’entitat segons la seva regla",
-        "wholeRenewal": "El 100 % d’aquest import ({amount}) és per a l’entitat: va a les seves campanyes segons la seva regla i, si no n’hi ha cap a temps, a les seves activitats. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura."
+        "wholeRenewal": "El 100 % d’aquest import ({amount}) és per a l’entitat: va a les seves campanyes segons la seva regla i, si no n’hi ha cap a temps, a les seves activitats. La gestió publicitària de KORUM i el seu IVA es cobren a part i consten a la factura."
       },
       "factura": {
         "title": "Factura",
         "number": "Número",
         "date": "Data",
         "issuer": "Emissor",
-        "issuerTaxId": "NIF de l'emissor",
+        "issuerTaxId": "NIF de l’emissor",
         "recipient": "Destinatari",
         "recipientTaxId": "CIF o NIF del destinatari",
         "concept": "Concepte",
         "base": "Base imposable",
-        "vat": "IVA ({rate} %)",
+        "vat": "IVA ({rate} %)",
         "total": "Total de la factura",
         "verifactu": "Factura registrada per a la seva verificació (Veri*factu)",
-        "verify": "Verificar a l'Agència Tributària",
+        "verify": "Verificar a l’Agència Tributària",
         "none": "Aquest patrocini no genera factura de KORUM.",
         "issuerFallback": "KORUM (plataforma tecnològica)"
       },
@@ -6019,7 +6079,7 @@
       "rectificativa": {
         "title": "Factura rectificativa",
         "rectifies": "Rectifica la factura",
-        "explain": "L’entitat no ha admès el teu patrocini: aquesta factura anul·la la de la gestió publicitària. Et retornem el 100 % del que vas pagar al mateix mitjà de pagament.",
+        "explain": "L’entitat no ha admès el teu patrocini: aquesta factura anul·la la de la gestió publicitària. Et retornem el 100 % del que vas pagar al mateix mitjà de pagament.",
         "none": "Aquest patrocini no té factura rectificativa."
       },
       "cartel": {
@@ -6141,7 +6201,7 @@
       "beforeAlt": "Estat de «{title}» abans de la millora",
       "afterAlt": "Estat de «{title}» després de la millora",
       "compareLabel": "Llisca per comparar l’abans i el després",
-      "compareValue": "Es veu el {after} % del després i el {before} % de l’abans",
+      "compareValue": "Es veu el {after} % del després i el {before} % de l’abans",
       "noPhotos": "El centre publicarà aquí les fotos de l’abans i el després.",
       "empty": {
         "title": "Encara no hi ha èxits per mostrar",
@@ -6158,7 +6218,7 @@
       "items": {
         "guarantee": {
           "q": "Què inclou l’aportació voluntària a KORUM?",
-          "a": "És opcional i no canvia res de la teva donació. Amb ella se sosté el servei que garanteix a totes les famílies que el 100 % de la donació arriba al centre sense descomptes bancaris, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del teu certificat o justificant."
+          "a": "És opcional i no canvia res de la teva donació. Amb ella se sosté el servei que garanteix a totes les famílies que el 100 % de la donació arriba al centre sense descomptes bancaris, la devolució automàtica si no s’assoleix la meta i l’emissió automàtica del teu certificat o justificant."
         },
         "family": {
           "q": "Poden signar el pare i la mare des del mateix dispositiu?",
@@ -6166,7 +6226,7 @@
         },
         "refund": {
           "q": "Què passa si la iniciativa no arriba a la meta?",
-          "a": "Se’t torna el 100 % del que vas pagar, inclosa l’aportació voluntària, a la targeta o al mitjà de pagament original. No cal que ho demanis: la devolució és automàtica."
+          "a": "Se’t torna el 100 % del que vas pagar, inclosa l’aportació voluntària, a la targeta o al mitjà de pagament original. No cal que ho demanis: la devolució és automàtica."
         },
         "payments": {
           "q": "Qui guarda els diners?",
@@ -6246,9 +6306,9 @@
       "vat": "IVA de la gestió",
       "total": "Total",
       "destination": {
-        "SOONEST": "El 100 % del teu patrocini anirà a la campanya activa de l’entitat que tanca abans. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
-        "PROPORTIONAL": "El 100 % del teu patrocini es repartirà entre les campanyes actives de l’entitat, segons el que li falti a cadascuna. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
-        "MANUAL": "El 100 % del teu patrocini esperarà retingut a PAYCOMET fins que l’entitat triï a quina campanya portar-lo; si no ho fa a temps, se’l queda l’entitat per a les seves activitats."
+        "SOONEST": "El 100 % del teu patrocini anirà a la campanya activa de l’entitat que tanca abans. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
+        "PROPORTIONAL": "El 100 % del teu patrocini es repartirà entre les campanyes actives de l’entitat, segons el que li falti a cadascuna. Si ara no en té cap, esperarà retingut a PAYCOMET fins que n’obri una; si no l’obre a temps, se’l queda l’entitat per a les seves activitats.",
+        "MANUAL": "El 100 % del teu patrocini esperarà retingut a PAYCOMET fins que l’entitat triï a quina campanya portar-lo; si no ho fa a temps, se’l queda l’entitat per a les seves activitats."
       },
       "method": "Forma de pagament",
       "methods": {
@@ -6293,16 +6353,16 @@
     "resizeVote": {
       "metaTitle": "El teu vot",
       "title": "Què fem amb «{initiative}»?",
-      "intro": "{organization} va recaptar {raised} dels {goal} que necessitava ({percent} %). No va arribar a la meta, així que qui va fer un donatiu decideix què es fa amb els diners.",
+      "intro": "{organization} va recaptar {raised} dels {goal} que necessitava ({percent} %). No va arribar a la meta, així que qui va fer un donatiu decideix què es fa amb els diners.",
       "rules": {
         "oneVote": "Un vot per persona, encara que fessis més d’un donatiu. No es pot canviar.",
         "refund": "Si prefereixes que et retornem la teva aportació, te la retornem sencera, passi el que passi.",
-        "result": "Guanya l’opció més votada i es fa amb el que aportin qui vota una opció de projecte. Si no votes, et retornem el 100 %; sense vots o amb empat, es retorna a totes les persones.",
+        "result": "Guanya l’opció més votada i es fa amb el que aportin qui vota una opció de projecte. Si no votes, et retornem el 100 %; sense vots o amb empat, es retorna a totes les persones.",
         "until": "Pots votar fins al {date}."
       },
       "legend": "Tria una opció",
       "refundOption": "Prefereixo que em retorneu la meva aportació",
-      "refundAmount": "Et retornem el 100 % del que vas aportar al teu mitjà de pagament original (targeta o Bizum).",
+      "refundAmount": "Et retornem el 100 % del que vas aportar al teu mitjà de pagament original (targeta o Bizum).",
       "submit": "Vota",
       "confirmTitle": "El teu vot: «{choice}»",
       "confirmRefund": "{amount} La teva aportació deixarà de comptar per a la campanya. No es pot desfer.",
@@ -6326,7 +6386,7 @@
       "closed": {
         "title": "La votació ja està tancada",
         "won": "Va guanyar «{option}»: el projecte es fa amb el que van aportar qui va votar, i a qui no va votar se li retorna la seva aportació.",
-        "refund": "Va acabar sense cap opció guanyadora: es retorna el 100 % a totes les persones."
+        "refund": "Va acabar sense cap opció guanyadora: es retorna el 100 % a totes les persones."
       },
       "noDonation": {
         "title": "No trobem el teu donatiu",
@@ -6347,13 +6407,13 @@
     "metaTitle": "El meu compte",
     "title": "El meu compte",
     "signedInAs": "Has entrat com a {email}",
-    "sectionsLabel": "Apartats d'El meu compte",
+    "sectionsLabel": "Apartats d’El meu compte",
     "sections": {
       "contributions": "Aportacions",
       "passes": "Entrades",
       "documents": "Certificats",
       "privacy": "Privadesa",
-      "security": "Claus d'accés",
+      "security": "Claus d’accés",
       "language": "Idioma",
       "ideas": "Propostes i signatures",
       "support": "Les meves consultes"
@@ -6399,23 +6459,23 @@
       "back": "Tornar a El meu compte",
       "backToList": "Tornar a certificats i justificants",
       "title": "Certificats i justificants",
-      "intro": "Un per donació. El certificat fiscal serveix per a la declaració de la renda si l'entitat està acollida a la Llei 49/2002 i vas donar el teu NIF en aportar; si no, tens un justificant nominatiu, sense efectes fiscals. Les entrades i paperetes no donen document de donació.",
+      "intro": "Un per donació. El certificat fiscal serveix per a la declaració de la renda si l’entitat està acollida a la Llei 49/2002 i vas donar el teu NIF en aportar; si no, tens un justificant nominatiu, sense efectes fiscals. Les entrades i paperetes no donen document de donació.",
       "year": "Exercici {year}",
       "line": "{initiative} · {date}",
       "kind": {
         "TAX_CERTIFICATE": "Certificat fiscal (Llei 49/2002)",
-        "NOMINATIVE_RECEIPT": "Justificant nominatiu d'aportació"
+        "NOMINATIVE_RECEIPT": "Justificant nominatiu d’aportació"
       },
       "emptyTitle": "Encara no hi ha documents",
       "emptyText": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant.",
       "sheet": {
         "platform": "Emès a través de KORUM, plataforma tecnològica",
-        "draft": "ESBORRANY · Text pendent de revisió per l'assessoria fiscal. Encara no té validesa.",
+        "draft": "ESBORRANY · Text pendent de revisió per l’assessoria fiscal. Encara no té validesa.",
         "certificateTitle": "Certificat de donació",
-        "receiptTitle": "Justificant nominatiu d'aportació",
+        "receiptTitle": "Justificant nominatiu d’aportació",
         "reference": "Referència",
         "recipient": "Entitat que rep la donació",
-        "recipientTaxId": "NIF de l'entitat",
+        "recipientTaxId": "NIF de l’entitat",
         "donor": "Donant",
         "donorUnknown": "No indicat",
         "donorTaxId": "NIF del donant",
@@ -6424,22 +6484,22 @@
         "amount": "Import donat",
         "date": "Data",
         "fiscalYear": "Exercici",
-        "certificateText": "L'entitat, acollida al règim fiscal de la Llei 49/2002, certifica que ha rebut aquesta donació de manera irrevocable.",
-        "receiptText": "Justificant de l'aportació rebuda per l'entitat. No té efectes fiscals: l'entitat no està acollida a la Llei 49/2002 o no es va indicar el NIF en aportar.",
-        "guaranteeNote": "L'aportació voluntària a KORUM, si la vas fer, no forma part de la donació i no apareix en aquest document.",
+        "certificateText": "L’entitat, acollida al règim fiscal de la Llei 49/2002, certifica que ha rebut aquesta donació de manera irrevocable.",
+        "receiptText": "Justificant de l’aportació rebuda per l’entitat. No té efectes fiscals: l’entitat no està acollida a la Llei 49/2002 o no es va indicar el NIF en aportar.",
+        "guaranteeNote": "L’aportació voluntària a KORUM, si la vas fer, no forma part de la donació i no apareix en aquest document.",
         "print": "Imprimir o desar en PDF"
       },
-      "maskedTaxId": "El NIF apareix ocult. Per veure'l sencer i imprimir el certificat, confirma que ets tu.",
+      "maskedTaxId": "El NIF apareix ocult. Per veure’l sencer i imprimir el certificat, confirma que ets tu.",
       "revealTaxId": "Mostrar el NIF sencer"
     },
     "privacy": {
       "title": "Privadesa i les teves dades",
       "consents": {
         "title": "Permisos",
-        "fingerprintText": "Empremta del navegador per a la bústia d'idees: ajuda a comprovar que ningú signa diverses vegades des del mateix dispositiu. Només s'utilitza si l'acceptes en signar una idea i es desa com un codi irreversible, mai tal qual.",
+        "fingerprintText": "Empremta del navegador per a la bústia d’idees: ajuda a comprovar que ningú signa diverses vegades des del mateix dispositiu. Només s’utilitza si l’acceptes en signar una idea i es desa com un codi irreversible, mai tal qual.",
         "granted": "Estat: permesa.",
         "notGranted": "Estat: no permesa. Si vols, la pots permetre en signar una idea a la bústia.",
-        "withdrawn": "Permís retirat. Hem esborrat l'empremta de tots els teus dispositius.",
+        "withdrawn": "Permís retirat. Hem esborrat l’empremta de tots els teus dispositius.",
         "withdraw": "Retirar el permís"
       },
       "export": {
@@ -6450,7 +6510,7 @@
         "preparing": "Preparant…",
         "downloaded": "Descàrrega a punt. Cerca-la a la carpeta de descàrregues del navegador.",
         "rateLimited": "Avui has descarregat les teves dades moltes vegades. Torna-ho a provar demà.",
-        "failed": "No hem pogut preparar la descàrrega. Torna-ho a provar d'aquí a uns minuts."
+        "failed": "No hem pogut preparar la descàrrega. Torna-ho a provar d’aquí a uns minuts."
       },
       "requests": {
         "title": "Les meves sol·licituds",
@@ -6466,26 +6526,26 @@
           "RECEIVED": "Rebuda",
           "IN_PROGRESS": "En curs",
           "COMPLETED": "Completada",
-          "REJECTED": "No s'ha pogut atendre"
+          "REJECTED": "No s’ha pogut atendre"
         }
       }
     },
     "erase": {
       "title": "Suprimir el meu compte",
-      "deleted": "Esborrarem el teu nom, el teu correu, les teves sessions, les teves claus d'accés i les teves targetes desades, i traurem el teu correu de les teves compres, entrades, signatures i idees. No es pot desfer.",
-      "kept": "Per llei conservem, sense res que t'identifiqui, els imports i les dates de les teves aportacions. I si vas donar el teu NIF per a un certificat fiscal, l'entitat ha de desar aquest NIF, el teu nom i la teva província durant 6 anys per a Hisenda (Model 182).",
+      "deleted": "Esborrarem el teu nom, el teu correu, les teves sessions, les teves claus d’accés i les teves targetes desades, i traurem el teu correu de les teves compres, entrades, signatures i idees. No es pot desfer.",
+      "kept": "Per llei conservem, sense res que t’identifiqui, els imports i les dates de les teves aportacions. I si vas donar el teu NIF per a un certificat fiscal, l’entitat ha de desar aquest NIF, el teu nom i la teva província durant 6 anys per a Hisenda (Model 182).",
       "signIn": "Després podràs crear un altre compte amb el mateix correu, però començarà buit.",
-      "understand": "Entenc que el meu compte s'esborra per sempre",
+      "understand": "Entenc que el meu compte s’esborra per sempre",
       "button": "Suprimir el meu compte",
       "blocked": {
-        "SUPERADMIN_ACCOUNT": "Un compte de Super-Admin no es pot suprimir des d'aquí.",
-        "ACTIVE_SIGNER": "Signes per una entitat. Abans de suprimir el teu compte, una altra persona ha d'ocupar el teu càrrec des del panell de l'entitat.",
-        "WALLET_BALANCE": "Tens saldo a la teva Guardiola. Primer te l'hem de retornar al teu mitjà de pagament."
+        "SUPERADMIN_ACCOUNT": "Un compte de Super-Admin no es pot suprimir des d’aquí.",
+        "ACTIVE_SIGNER": "Signes per una entitat. Abans de suprimir el teu compte, una altra persona ha d’ocupar el teu càrrec des del panell de l’entitat.",
+        "WALLET_BALANCE": "Tens saldo a la teva Guardiola. Primer te l’hem de retornar al teu mitjà de pagament."
       },
       "rateLimited": "Avui has fet molts intents. Torna-ho a provar demà.",
-      "failed": "No hem pogut suprimir el compte. Torna-ho a provar d'aquí a uns minuts.",
+      "failed": "No hem pogut suprimir el compte. Torna-ho a provar d’aquí a uns minuts.",
       "done": {
-        "title": "El teu compte s'ha suprimit",
+        "title": "El teu compte s’ha suprimit",
         "text": "Ja no desem el teu nom ni el teu correu. Només queda un codi irreversible que impedeix signar dues vegades la mateixa idea. Gràcies per haver sumat.",
         "retained": "{count, plural, one {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donació amb certificat, que la llei obliga a conservar.} other {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donacions amb certificat, que la llei obliga a conservar.}}",
         "home": "Anar a la portada"
@@ -6493,8 +6553,8 @@
       "erasing": "Suprimint…"
     },
     "passkeys": {
-      "title": "Claus d'accés",
-      "intro": "Entra amb l'empremta, la cara o el PIN del teu mòbil o ordinador, sense esperar cap correu. La clau es queda al teu dispositiu: KORUM mai no veu la teva empremta ni la teva cara.",
+      "title": "Claus d’accés",
+      "intro": "Entra amb l’empremta, la cara o el PIN del teu mòbil o ordinador, sense esperar cap correu. La clau es queda al teu dispositiu: KORUM mai no veu la teva empremta ni la teva cara.",
       "signerNote": "Com que el teu compte té verificació en dos passos, per afegir una clau et demanarem el codi de la teva app de verificació.",
       "none": "No tens cap clau desada.",
       "unnamed": "Clau sense nom",
@@ -6503,13 +6563,13 @@
       "remove": "Treure",
       "removeLabel": "Treure la clau {name}",
       "nameLabel": "Nom de la clau (opcional)",
-      "nameHint": "Per exemple, «Mòbil de casa». T'ajuda a reconèixer-la.",
+      "nameHint": "Per exemple, «Mòbil de casa». T’ajuda a reconèixer-la.",
       "add": "Afegir una clau en aquest dispositiu",
-      "unsupported": "Aquest navegador no admet claus d'accés. Pots continuar entrant amb un enllaç o un codi per correu.",
+      "unsupported": "Aquest navegador no admet claus d’accés. Pots continuar entrant amb un enllaç o un codi per correu.",
       "messages": {
         "added": "Clau afegida. La propera vegada podràs entrar amb ella.",
         "removed": "Clau treta.",
-        "cancelled": "Has cancel·lat la creació de la clau. No s'ha desat res.",
+        "cancelled": "Has cancel·lat la creació de la clau. No s’ha desat res.",
         "alreadyRegistered": "Aquest dispositiu ja té una clau desada per al teu compte.",
         "failed": "No hem pogut desar la clau. Torna-ho a provar.",
         "twoFactorFirst": "Com que signes per una entitat, primer activa la verificació en dos passos (la teva app de codis) i després podràs afegir una clau."
@@ -6517,17 +6577,17 @@
     },
     "language": {
       "title": "Idioma",
-      "intro": "L'idioma dels teus correus i d'aquesta pàgina.",
+      "intro": "L’idioma dels teus correus i d’aquesta pàgina.",
       "label": "Idioma del compte",
-      "save": "Desar l'idioma",
+      "save": "Desar l’idioma",
       "saved": "Idioma desat.",
-      "failed": "No hem pogut desar l'idioma. Torna-ho a provar."
+      "failed": "No hem pogut desar l’idioma. Torna-ho a provar."
     },
     "reauth": {
       "title": "Confirma que ets tu",
-      "intro": "Per protegir les teves dades, t'enviarem un codi de 6 xifres a {email}.",
+      "intro": "Per protegir les teves dades, t’enviarem un codi de 6 xifres a {email}.",
       "send": "Enviar codi",
-      "codeSent": "Escriu el codi que t'hem enviat a {email}. Caduca d'aquí a {minutes} minuts.",
+      "codeSent": "Escriu el codi que t’hem enviat a {email}. Caduca d’aquí a {minutes} minuts.",
       "code": "Codi de 6 xifres",
       "confirm": "Confirmar",
       "resend": "Enviar un altre codi",

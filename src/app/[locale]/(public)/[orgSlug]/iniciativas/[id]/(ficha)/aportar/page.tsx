@@ -13,7 +13,7 @@ import { getSponsorshipContext } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { buildCheckoutOffer } from '@/services/checkout/checkout-offer';
 import { loadInitiativePage, loadPortalOrganization } from '@/services/portal/portal-data';
-import { startCheckoutAction, startSponsorshipAction } from './actions';
+import { startCheckoutAction, startSponsorshipAction } from '../../aportar/actions';
 
 interface PageProps {
   params: Promise<{ locale: string; orgSlug: string; id: string }>;

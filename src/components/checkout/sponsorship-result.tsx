@@ -1,12 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import { ShareButton } from '@/components/portal/share-button';
-import { checkoutOutcome } from '@/core/checkout/checkout-rules';
+import { checkoutOutcome, resultNavigation, sponsorshipNotice } from '@/core/checkout/checkout-rules';
 import { formatCents } from '@/core/finance/money';
 import { localizeRow } from '@/core/public/view-model';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
-import { checkoutPath, initiativePath, sponsorDocumentPath, sponsorsPath } from '@/lib/seo/portal-routes';
+import { checkoutPath, initiativePath, portalPath, sponsorDocumentPath, sponsorsPath } from '@/lib/seo/portal-routes';
 import type { getSponsorshipResult } from '@/repositories/sponsorship.repository';
 import { ClearCheckoutDraft, PendingRefresh } from './checkout-celebration';
 
@@ -26,9 +26,15 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
   const title = localizeRow({ title: initiative.title, description: '', translationsJson: initiative.translationsJson }, locale, initiative.organization.contentLocale).row.title;
   const method = row.paymentMethod === 'BIZUM' ? 'BIZUM' : 'CARD';
   const otherMethod = method === 'BIZUM' ? 'CARD' : 'BIZUM';
-  const back = (
+  // La campaña pudo cerrarse mientras se pagaba (Sprint 5.5): su ficha ya no es pública y su enlace daría un 404.
+  const nav = resultNavigation(initiative.status);
+  const back = nav.showInitiative ? (
     <Link href={initiativePath(orgSlug, initiativeId)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`}>
       {t('back')}
+    </Link>
+  ) : (
+    <Link href={portalPath(orgSlug)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`} data-testid="result-to-portal">
+      {t('backToEntity', { entity: initiative.organization.name })}
     </Link>
   );
 
@@ -42,10 +48,14 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
         <p role="alert" className="font-semibold text-ink">
           {outcome === 'FAILED' ? t('failed.description') : t('unconfirmed.description')}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <Link href={`${retry}&metodo=${method}`} className={`${linkClass} bg-varsity-emerald text-white`}>{t('failed.retry')}</Link>
-          <Link href={`${retry}&metodo=${otherMethod}`} className={`${linkClass} bg-varsity-navy text-white`}>{t(`failed.switchTo.${otherMethod}`)}</Link>
-        </div>
+        {nav.canRetry ? (
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Link href={`${retry}&metodo=${method}`} className={`${linkClass} bg-varsity-emerald text-white`}>{t('failed.retry')}</Link>
+            <Link href={`${retry}&metodo=${otherMethod}`} className={`${linkClass} bg-varsity-navy text-white`}>{t(`failed.switchTo.${otherMethod}`)}</Link>
+          </div>
+        ) : (
+          <p className="rounded-xl bg-patio-cream p-3 text-ink" data-testid="result-closed">{t('closedNoRetry')}</p>
+        )}
         {back}
       </section>
     );
@@ -55,10 +65,10 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
     return (
       <section className="korum-trust-vault mx-auto max-w-lg space-y-4 p-6 text-center" aria-labelledby="result-title">
         <h1 id="result-title" className="font-joy text-2xl font-bold text-varsity-navy">
-          {outcome === 'PENDING' ? t('pending.title') : t('returned.title')}
+          {outcome === 'PENDING' ? t('pending.title') : t(`sponsor.returned.${sponsorshipNotice('RETURNED', row.amountCents, sponsor, initiative.status, row.status)}.title`)}
         </h1>
         <p role="status" className="text-ink">
-          {outcome === 'PENDING' ? t('pending.description') : t('returned.description')}
+          {outcome === 'PENDING' ? t('pending.description') : t(`sponsor.returned.${sponsorshipNotice('RETURNED', row.amountCents, sponsor, initiative.status, row.status)}.description`)}
         </p>
         {outcome === 'PENDING' ? <PendingRefresh /> : null}
         {back}
@@ -67,7 +77,8 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
   }
 
   const query = `?${new URLSearchParams({ pedido: order, sig: signature }).toString()}`;
-  const pool = sponsor?.isMatchingPool === true;
+  // Adónde va su dinero según cómo están ahora el comercio y la campaña (auditoría de seguridad del 5.5a): nunca se dice que suma a una campaña cerrada.
+  const wholeKey = sponsorshipNotice('CONFIRMED', row.amountCents, sponsor, initiative.status, row.status);
   return (
     <section className="korum-trust-vault mx-auto max-w-lg space-y-5 p-6 text-center" aria-labelledby="result-title" data-testid="sponsorship-celebration">
       <ClearCheckoutDraft initiativeId={initiativeId} />
@@ -79,11 +90,13 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
         {title}
       </p>
       <p className="font-corp font-bold tabular-nums text-ink">{t('confirmed.paid', { total: formatCents(row.totalChargedCents, locale) })}</p>
-      <p role="status" className="font-joy text-lg font-bold text-emerald-900">
+      {/* Lleva un importe: zona de dinero, con Plus Jakarta y cifras tabulares (nunca Fredoka en cifras, Regla 01). */}
+      <p role="status" className="font-corp text-lg font-bold tabular-nums text-emerald-900">
         <span aria-hidden="true">{'💛 '}</span>
-        {pool ? t('sponsor.whole.pool', { amount: formatCents(row.amountCents, locale) }) : t('sponsor.whole.escrow', { amount: formatCents(row.amountCents, locale) })}
+        {t(`sponsor.whole.${wholeKey}`, { amount: formatCents(row.amountCents, locale) })}
       </p>
-      <p className="rounded-2xl bg-patio-cream p-4 text-ink">{t('sponsor.review', { level: t(`sponsor.level.${sponsor?.categoryLevel ?? 'PLATA'}`) })}</p>
+      {/* «El centro revisará tu comercio» solo mientras esté por revisar: un comercio ya admitido no tiene nada pendiente. */}
+      {sponsor?.status === 'PENDING' ? <p className="rounded-2xl bg-patio-cream p-4 text-ink">{t('sponsor.review', { level: t(`sponsor.level.${sponsor.categoryLevel}`) })}</p> : null}
       {sponsor?.autoRenew ? <p className="text-sm text-ink-soft">{t('sponsor.reminder')}</p> : null}
       <div className="space-y-2 rounded-2xl border border-sky-300 bg-sky-50 p-4">
         <p className="font-semibold text-ink">{t('sponsor.documents')}</p>
@@ -98,12 +111,15 @@ export async function SponsorshipResult({ row, orgSlug, initiativeId, locale, or
           </Link>
         </div>
       </div>
-      <div className="space-y-2 rounded-2xl bg-patio-cream p-4">
-        <p className="font-semibold text-ink">{t('confirmed.share')}</p>
-        <div className="flex justify-center">
-          <ShareButton target={{ title, entityName: initiative.organization.name, url: absoluteUrl(locale, initiativePath(orgSlug, initiativeId)), groups: [] }} />
+      {/* Invitar a compartir solo mientras la campaña recauda: con ella cerrada se contradiría con el aviso de arriba (auditoría de experiencia). */}
+      {nav.canRetry ? (
+        <div className="space-y-2 rounded-2xl bg-patio-cream p-4">
+          <p className="font-semibold text-ink">{t('confirmed.share')}</p>
+          <div className="flex justify-center">
+            <ShareButton target={{ title, entityName: initiative.organization.name, url: absoluteUrl(locale, initiativePath(orgSlug, initiativeId)), groups: [] }} />
+          </div>
         </div>
-      </div>
+      ) : null}
       <div className="grid gap-2 sm:grid-cols-2">
         {back}
         <Link href={sponsorsPath(orgSlug)} className={`${linkClass} border-2 border-patio-rule-strong bg-white text-varsity-navy`}>

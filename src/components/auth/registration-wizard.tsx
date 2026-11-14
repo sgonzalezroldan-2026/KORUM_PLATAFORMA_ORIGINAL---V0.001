@@ -120,7 +120,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       const result = await registerCommunityAction(locale, payloadOf(draft));
       if (result.ok) {
         setDone(result);
-        if (!result.needsVerification) router.push(`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(localizedPath(locale, `/panel/${result.slug}`))}`);
+        if (!result.needsVerification) router.push(`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(localizedPath(locale, `/panel/${result.slug}?bienvenida=1`))}`);
         return;
       }
       const failure = result.failure;
@@ -151,7 +151,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       const result = await authClient.emailOtp.verifyEmail({ email: done.email, otp: code }, localeHeaders(locale)).catch(() => ({ error: { code: 'UNKNOWN' } }));
       setBusy(false);
       if (result.error) return setFormError(t(`codeErrors.${['INVALID_OTP', 'OTP_EXPIRED', 'TOO_MANY_ATTEMPTS', 'RATE_LIMITED'].includes(authErrorCode(result.error)) ? authErrorCode(result.error) : 'UNKNOWN'}`));
-      router.push(`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(localizedPath(locale, `/panel/${done.slug}`))}`);
+      router.push(`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(localizedPath(locale, `/panel/${done.slug}?bienvenida=1`))}`);
     };
     const resend = async () => {
       await authClient.emailOtp.sendVerificationOtp({ email: done.email, type: 'email-verification' }, localeHeaders(locale)).catch(() => undefined);

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { GateScanner } from '@/components/gate/gate-scanner';
@@ -11,6 +12,13 @@ import { getPrisma } from '@/lib/prisma';
 import { resolveGateAccess } from '../gate-request';
 
 export const dynamic = 'force-dynamic';
+
+/** Título propio de la pestaña (WCAG 2.4.2; antes heredaba el genérico de KORUM, auditoría de experiencia del 5.5a). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'gate' });
+  return { title: t('metaTitle') };
+}
 
 /**
  * Puerta de un evento (QA-SEC05, QA-S04). La dirección lleva el **código de la puerta** (no adivinable), no el identificador numérico. Sin sesión de portería válida

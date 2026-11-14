@@ -8,8 +8,9 @@ import { SupportForm } from '@/components/support/support-form';
 import { isLocale } from '@/i18n/routing';
 import { breadcrumbJsonLd, faqJsonLd } from '@/lib/seo/json-ld';
 import { localizedPath } from '@/lib/seo/marketing-routes';
+import { entityCardVersion } from '@/lib/seo/entity-card';
 import { buildPageMetadata, fitText, TITLE_MAX, TITLE_SUFFIX } from '@/lib/seo/metadata';
-import { helpPath, portalPath } from '@/lib/seo/portal-routes';
+import { helpPath, ogEntityUrl, portalPath } from '@/lib/seo/portal-routes';
 import { loadHuchaMode, loadPortalOrganization } from '@/services/portal/portal-data';
 
 interface PageProps {
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('helpTitle', { name: fitText(organization.name, room) }),
     description: fitText(t('helpDescription', { name: organization.name }), 155),
     imageAlt: t('entityImageAlt', { name: organization.name }),
+    imageUrl: ogEntityUrl(locale, orgSlug, entityCardVersion(organization)),
     noindex: !organization.indexable
   });
 }

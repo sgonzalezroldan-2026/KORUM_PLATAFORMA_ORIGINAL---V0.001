@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Link } from '@/i18n/navigation';
+
+/**
+ * Título propio de la pestaña de la 404 (auditoría de experiencia del 5.5a): «404 · KORUM» en lugar del genérico de la portada. Es fijo a propósito:
+ * leer el idioma aquí obliga a mirar las cabeceras de la petición, y la 404 de una ruta estática no puede hacerlo (Next responde 500). La cifra
+ * no necesita traducción; el texto de la página sí sale en el idioma de la URL.
+ */
+export const metadata: Metadata = { title: '404' };
 
 export default function NotFound() {
   const t = useTranslations('notFound');
