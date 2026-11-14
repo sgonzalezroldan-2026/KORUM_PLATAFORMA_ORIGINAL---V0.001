@@ -72,7 +72,8 @@ La recomendación exacta de cada sprint está en su línea `🤖` del [plan](PLA
 
 | Tipo de sprint | Constructor | Auditoría |
 | :--- | :--- | :--- |
-| Libro mayor (1.2), Paycomet (2.1), certificación final (5.6) | Opus 5.5 · extra alto | Opus 5.5 · alto (+ Gemini Argon · alto como revisión cruzada) |
+| Libro mayor (1.2), Paycomet (2.1) | Opus 5.5 · extra alto | Opus 5.5 · alto (+ Gemini Argon · alto como revisión cruzada) |
+| Certificación final (5.6) | Fable 5.2 · alto | Opus 5.5 · alto (+ Gemini Argon · alto como revisión cruzada) |
 | TCO/BI, seguridad, fiscalidad, privacidad, autenticación, checkout, Mi Hucha, doble firma, liquidaciones | Opus 5.5 · alto | Opus 5.5 · alto |
 | Interfaz, portal público, comercios, ideas, panel, portería, BI, ajustes, emails, operación | Sonnet 5.5 · alto | Opus 5.5 · alto para dinero y seguridad; Sonnet 5.5 · alto para experiencia |
 | Reglas globales y tareas repetitivas | Sonnet 5.5 · medio o Gemini Flash 3.8 · alto | Opus 5.5 · alto si toca dinero |
