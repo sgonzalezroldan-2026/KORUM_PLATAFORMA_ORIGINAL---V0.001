@@ -1,5 +1,6 @@
 'use server';
 
+import { after } from 'next/server';
 import { z } from 'zod';
 import { getEnv } from '@/config/env';
 import { getKeyring } from '@/config/keyring';
@@ -7,10 +8,11 @@ import { recordConsent } from '@/core/privacy/consents';
 import { SuperadminRequiredError } from '@/core/security/superadmin-guard';
 import { accountReauthIsFresh } from '@/core/security/verified-actor';
 import { isLocale } from '@/i18n/routing';
-import { getAuthSession, requireVerifiedAccount } from '@/lib/auth/session';
+import { currentRequestMeta, getAuthSession, requireVerifiedAccount } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { eraseOwnAccount, type EraseOutcome } from '@/services/account/account-privacy.service';
 import { getPaymentProvider } from '@/services/payments/provider-factory';
+import { recordForeignPasskeyAttempt } from '@/services/audit/account-probes';
 import { writeAudit } from '@/services/audit/audit.service';
 import { getSetting } from '@/services/settings/settings.service';
 
@@ -83,7 +85,14 @@ export async function deletePasskeyAction(payload: unknown): Promise<{ status: '
   if (!parsed.success) return { status: 'NOT_FOUND' };
   const db = getPrisma();
   const { count } = await db.passkey.deleteMany({ where: { id: parsed.data.id, userId: session.userId } });
-  if (count === 0) return { status: 'NOT_FOUND' };
+  if (count === 0) {
+    // La llave de otra cuenta responde igual que una que no existe, pero el intento queda anotado (Sprint 5.8a), después de responder para que el
+    // tiempo de respuesta no distinga un caso del otro.
+    const requestMeta = await currentRequestMeta();
+    const passkeyId = parsed.data.id;
+    after(() => recordForeignPasskeyAttempt(db, { userId: session.userId, requestMeta }, passkeyId).then(() => undefined));
+    return { status: 'NOT_FOUND' };
+  }
   await writeAudit(db, { actorType: 'USER', actorUserId: session.userId, action: 'account.passkey_deleted', targetType: 'Passkey', targetId: parsed.data.id });
   return { status: 'DELETED' };
 }

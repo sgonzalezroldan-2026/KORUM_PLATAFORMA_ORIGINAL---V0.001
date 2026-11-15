@@ -1853,7 +1853,8 @@
       "expired": "Expired campaigns",
       "support": "Support",
       "supportPending": "{count, plural, one {# enquiry waiting} other {# enquiries waiting}}",
-      "gate": "Box office and door"
+      "gate": "Box office and door",
+      "audit": "Activity log"
     },
     "header": {
       "label": "Organisation management",
@@ -4008,7 +4009,8 @@
       "rules": "Rules and prices",
       "support": "Support ({count, plural, =0 {nothing pending} one {# enquiry} other {# enquiries}})",
       "repartos": "Payouts to resolve",
-      "settings": "Settings"
+      "settings": "Settings",
+      "audit": "Audit log"
     },
     "sections": {
       "business": "Business: actual and projected revenue"
@@ -5591,6 +5593,16 @@
       "fieldInvalid": "This value is not valid: check its format.",
       "backToIndex": "Back to the list of blocks",
       "unsavedLeave": "There are unsaved changes. If you leave now they will be lost. Leave anyway?"
+    },
+    "audit": {
+      "personLabel": "Search by person (their email)",
+      "personHint": "The email is only used to find the account: it is not stored and does not stay in the page address.",
+      "personSearch": "Find person",
+      "personSearching": "Searching…",
+      "personNotFound": "There is no account with that email.",
+      "personInvalid": "Type a full email, for example name@example.com.",
+      "personForbidden": "Your session no longer allows this search. Sign in to the console again.",
+      "personFailed": "The search could not be completed. Check your connection and try again."
     }
   },
   "forbidden": {
@@ -6981,6 +6993,426 @@
       "notActive": {
         "title": "Your contribution has arrived",
         "text": "This month went in full to a campaign run by {organization}, but the monthly pledge did not become active (you already had another one or replaced it). Check your pledges below."
+      }
+    }
+  },
+  "audit": {
+    "console": {
+      "metaTitle": "Audit log",
+      "back": "← Back to the console",
+      "title": "Platform audit log",
+      "intro": "Who did what, when and from where. This log cannot be edited or deleted from the platform. It only stores identifiers, never emails or tax IDs: names are looked up when the page is shown. If two entries carry the same network code, they come from the same connection.",
+      "organization": "Organisation",
+      "allOrganizations": "All organisations",
+      "personFiltered": "Showing what {name} ({email}) did or what affects them.",
+      "personFilteredNoName": "Showing what {email} did or what affects them.",
+      "personErased": "Showing what a now-deleted account did or what affects it.",
+      "personNotFound": "There is no account with that email.",
+      "personClear": "Remove the person filter",
+      "korumHidden": "KORUM’s own lookups from this console are not shown (every page you open leaves one).",
+      "korumShow": "See KORUM lookups"
+    },
+    "entity": {
+      "metaTitle": "Activity log",
+      "title": "Activity log",
+      "intro": "What has happened in your organisation: signatures, payouts, campaigns, handovers and denied access. It cannot be edited or deleted from the platform. KORUM’s lookups of your data are also recorded and you can ask for them.",
+      "privacy": "Only the people who sign for the organisation today are shown by name. Families and any other account appear as “someone else”, and what each family does with its account or its monthly contribution is not shown here.",
+      "person": "Signer",
+      "allPeople": "Anyone",
+      "initiative": "Campaign",
+      "allInitiatives": "All campaigns",
+      "initiativeOption": "No. {id} · {title}",
+      "probe": "Something that does not exist, or does not belong to the organisation, was requested",
+      "memberOption": "{role} · {name}"
+    },
+    "filters": {
+      "toggle": "Filter",
+      "active": "{count, plural, one {# active filter} other {# active filters}}",
+      "category": "Type of activity",
+      "allCategories": "All activity",
+      "action": "What exactly happened",
+      "allActions": "Anything",
+      "initiativeNumber": "Campaign number",
+      "from": "From date",
+      "to": "To date (inclusive)",
+      "apply": "Apply filters",
+      "clear": "Remove all filters",
+      "hint": "Filters add up: if you pick a type of activity and something specific from another type, the list will be empty."
+    },
+    "list": {
+      "title": "What happened, newest first (Spanish time)",
+      "count": "{count, plural, one {Showing # entry.} other {Showing # entries.}}",
+      "empty": "Nothing has been recorded yet.",
+      "emptyFiltered": "Nothing recorded matches those filters. Try removing one or widening the dates.",
+      "older": "See earlier entries",
+      "newest": "Back to the newest",
+      "who": "Who",
+      "about": "About",
+      "organization": "Organisation",
+      "from": "From where",
+      "device": "Device {device}",
+      "network": "Network code {network}",
+      "originUnknown": "No origin details",
+      "targetWithId": "{type} {id}",
+      "unknownAction": "Unclassified activity ({code})",
+      "statusChange": "From “{from}” to “{to}”",
+      "statusReason": "Reason: {reason}.",
+      "details": "See the stored detail",
+      "code": "Internal code: {code}",
+      "targetWithName": "{type} {id} · {name}",
+      "originAutomatic": "Not applicable (automatic)",
+      "pagerTop": "More entries, at the top of the list",
+      "pagerBottom": "More entries, at the bottom of the list"
+    },
+    "actor": {
+      "system": "The system (automatic)",
+      "webhook": "Paycomet (automatic payment notice)",
+      "gate": "A door session",
+      "anonymous": "Someone not signed in",
+      "korum": "KORUM",
+      "korumNamed": "KORUM · {name} ({email})",
+      "member": "{name} · {role}",
+      "person": "{name} ({email})",
+      "personNoName": "{email}",
+      "other": "Someone else",
+      "erased": "A now-deleted account",
+      "formerMember": "Someone who used to sign for the organisation"
+    },
+    "categories": {
+      "security": "Security and denied access",
+      "korumAccess": "KORUM lookups",
+      "signatures": "Signatures and signers",
+      "money": "Money and invoices",
+      "campaigns": "Campaigns",
+      "ideas": "Ideas box",
+      "gate": "Tickets, door and raffles",
+      "sponsors": "Partner businesses",
+      "entity": "The organisation and its holder",
+      "account": "Accounts and privacy",
+      "support": "Support",
+      "platform": "Platform settings and rules",
+      "system": "Automatic tasks",
+      "unclassified": "Unclassified"
+    },
+    "targets": {
+      "Initiative": "Campaign",
+      "Organization": "Organisation",
+      "EscrowPayout": "Payout",
+      "ActivityFundPayout": "Fund payout",
+      "Idea": "Idea",
+      "IdeaApproval": "Idea approval",
+      "Contribution": "Contribution",
+      "Sponsor": "Business",
+      "User": "Account",
+      "Passkey": "Passkey",
+      "Invoice": "Invoice",
+      "KybDocument": "Holder document",
+      "FileAsset": "File",
+      "GateSession": "Door session",
+      "SupportTicket": "Enquiry",
+      "PrivacyRequest": "Privacy request",
+      "SignerHandover": "Signer handover",
+      "ResizePoll": "Vote",
+      "WalletSubscription": "Monthly contribution",
+      "PlatformSetting": "Platform setting",
+      "PlatformSecret": "Platform secret",
+      "GlobalConfig": "Global rules",
+      "GlobalCategory": "Global category",
+      "MedalTier": "Medal",
+      "OpsAlert": "Alert",
+      "PricingAlert": "Pricing notice",
+      "Job": "Scheduled task",
+      "Console": "Console",
+      "Route": "A panel page or download",
+      "SuperadminSession": "Super-Admin session",
+      "Account": "Account that does not exist",
+      "TicketPass": "Pass",
+      "AuditLog": "Audit log",
+      "OrganizationMember": "A signer’s role",
+      "PaymentOrder": "Payment order",
+      "PaymentMethodToken": "Saved card",
+      "WebhookEvent": "Paycomet notice",
+      "MedalTierConfig": "Medal rules",
+      "Gate": "Door",
+      "EscrowPayoutSplit": "Payout transfer",
+      "ActivityFundSplit": "Activity fund transfer"
+    },
+    "reasons": {
+      "PUBLISHED": "the organisation published it",
+      "GOAL_REACHED": "the goal was reached",
+      "DEADLINE_PASSED": "the deadline passed without reaching the goal",
+      "DRAFT_DISCARDED": "the organisation discarded the draft",
+      "PAYOUT_SENT": "its payout was sent",
+      "ENTITY_CHOSE_REFUND": "the organisation chose to refund",
+      "RESIZE_VOTE_OPENED": "the organisation launched the vote",
+      "RESIZE_VOTE_WITHOUT_PROJECT": "the vote closed without a project",
+      "RESIZE_VOTE_APPROVED": "the vote chose a project",
+      "RESIZED_LEFT_EMPTY": "a forced refund left it with no funds",
+      "ALL_REFUNDED": "everything contributed was refunded",
+      "REOPENED_BY_REVERSAL": "a forced refund left it below its goal"
+    },
+    "actions": {
+      "tenant": {
+        "access_denied": "Access denied: someone without permission tried to get in or do something",
+        "resource_not_found": "Something that does not exist was requested",
+        "resource_outside_tenant": "An attempt to use something that belongs to another organisation",
+        "access_denied_over_cap": "Denied access beyond the limit of notices the organisation sees"
+      },
+      "auth": {
+        "sign_in_failed_repeatedly": "Several failed sign-ins in a row"
+      },
+      "account": {
+        "certificate_denied": "Attempt to open another person’s certificate",
+        "passkey_delete_denied": "Attempt to remove another person’s passkey",
+        "invitation_accepted": "Invitation accepted",
+        "passkey_added": "Passkey added",
+        "passkey_deleted": "Passkey removed"
+      },
+      "api": {
+        "panel_cover_denied": "Campaign cover upload denied",
+        "panel_entity_image_denied": "Organisation image upload denied",
+        "panel_fund_receipt_denied": "Denied: download of the activity fund receipt",
+        "panel_kyb_open_denied": "Opening of a holder document denied",
+        "panel_kyb_upload_denied": "Holder document upload denied",
+        "panel_logros_denied": "Achievement photo upload denied",
+        "panel_medalla_denied": "Medal kit download denied",
+        "panel_modelo182_denied": "Form 182 download denied",
+        "panel_payout_invoice_denied": "Payout invoice upload denied",
+        "panel_payout_invoice_open_denied": "Opening of a payout invoice denied",
+        "panel_sponsor_logo_denied": "Business logo upload denied"
+      },
+      "double_check": {
+        "denied": "Signature denied",
+        "otp_locked": "Too many wrong signing codes: signing was locked",
+        "request_rate_limited": "Signing link: too many attempts in a row to request it",
+        "wrong_signer": "Attempt to sign with another person’s link",
+        "challenge_issued": "A signing link and code were sent",
+        "signed": "Signature recorded",
+        "signature_superseded": "An earlier signature was replaced by a new one"
+      },
+      "activity_fund": {
+        "rate_limited": "Activity fund: too many attempts in a row",
+        "payout_requested": "Fund payout requested",
+        "payout_approved": "Fund payout approved",
+        "payout_cancelled": "Fund payout withdrawn",
+        "receipt_downloaded": "Activity fund: receipt downloaded",
+        "signatures_rejected": "Activity fund: a payout’s signatures stopped being valid",
+        "split_resolved": "Activity fund: a money transfer was checked and resolved by hand"
+      },
+      "expired": {
+        "rate_limited": "Expired campaigns: too many attempts in a row to decide"
+      },
+      "payout": {
+        "rate_limited": "Payouts: too many attempts in a row to request them",
+        "requested": "Payout requested",
+        "approved": "Payout approved",
+        "invoice_opened": "Payout invoice opened",
+        "invoice_uploaded": "Payout invoice uploaded",
+        "signatures_rejected": "Payout signatures that stopped being valid",
+        "split_resolved": "Payout: transfer resolved by hand after checking it",
+        "splits_replanned": "Payout: reorganised its money transfers",
+        "updated": "Payout requested again with changes"
+      },
+      "file": {
+        "not_available": "A file that is not available was requested"
+      },
+      "gate": {
+        "pin_blocked": "Door: connection blocked after several wrong PINs",
+        "pin_failed": "Door: wrong PIN",
+        "qr_invalid": "Door: altered or forged QR",
+        "qr_other_event": "Door: QR from another event",
+        "request_limited": "Door: too many attempts in a row from one connection",
+        "session_rejected": "Door: session rejected",
+        "check_in": "Door: ticket checked in",
+        "code_rotated": "Door: code renewed",
+        "pin_revoked": "Door: PIN revoked",
+        "pin_set": "Door: PIN created",
+        "session_opened": "Door: session opened",
+        "session_revoked": "Door: session closed",
+        "sync": "Door: offline check-ins synchronised"
+      },
+      "idea": {
+        "chat_access_denied": "Access denied to an idea’s conversation",
+        "approved": "Idea approved by the organisation",
+        "converted": "Idea turned into a campaign",
+        "rejected": "Idea not accepted",
+        "replied": "Organisation’s reply to an idea",
+        "signature_revalidated": "An idea’s signature reviewed and accepted"
+      },
+      "kyb": {
+        "document_not_found": "A holder document that does not exist was requested",
+        "cif_released": "KORUM freed a tax ID held by an earlier unfinished registration",
+        "document_opened": "Holder document opened",
+        "document_uploaded": "Holder document uploaded",
+        "identity_updated": "Holder details changed",
+        "rejected": "Holder documents rejected",
+        "submitted": "Holder documents sent for review",
+        "verified": "Holder documents verified"
+      },
+      "panel": {
+        "medal_kit_denied": "Medal kit: download not allowed",
+        "medal_kit_downloaded": "Medal kit downloaded"
+      },
+      "pledge": {
+        "access_denied": "Monthly contribution: access denied",
+        "started": "Monthly contribution started",
+        "paused": "Monthly contribution paused",
+        "resumed": "Monthly contribution resumed",
+        "cancelled": "Monthly contribution cancelled",
+        "campaign_changed": "Monthly contribution: campaign changed"
+      },
+      "tax": {
+        "model182_denied": "Form 182 export not allowed",
+        "model182_exported": "Form 182 exported"
+      },
+      "studio": {
+        "semantic_lock_triggered": "0% notice: a campaign’s text seems to be about building work or equipment",
+        "semantic_lock_after_publish": "0% notice after publishing: a campaign seems to be about building work or equipment",
+        "initiative_saved": "Campaign saved in the Studio",
+        "initiative_published": "Campaign published",
+        "draft_discarded": "Draft discarded",
+        "exempt_category_saved": "0% category: campaign saved with it",
+        "raffle_notice_confirmed": "Raffle regulatory notice confirmed"
+      },
+      "superadmin": {
+        "access": "KORUM lookup from its console",
+        "bootstrapped": "First Super-Admin set up",
+        "invitation_cancelled": "Super-Admin invitation withdrawn",
+        "invited": "Super-Admin invited",
+        "revoked": "Super-Admin removed"
+      },
+      "signer": {
+        "cosigner_invitation_corrected": "The second signer’s invitation was corrected",
+        "handover_cancelled": "Signer handover withdrawn",
+        "handover_completed": "Signer handover completed",
+        "handover_proposed": "Signer handover proposed",
+        "handover_resent": "Handover invitation sent again",
+        "role_label_updated": "Role name changed",
+        "signature_mode_changed": "Signing mode changed (one or two signatures)"
+      },
+      "organization": {
+        "resend_invitation": "Invitation sent again",
+        "registered": "Organisation registered",
+        "branding_updated": "Organisation branding changed",
+        "category_added": "Category added to the organisation",
+        "category_rule_set": "Rule of one of the organisation’s categories changed",
+        "groups_updated": "Participation groups changed",
+        "image_published": "Organisation image published",
+        "image_removed": "Organisation image removed",
+        "settings_updated": "Organisation settings changed",
+        "tariffs_updated": "Organisation fees changed"
+      },
+      "payment": {
+        "chargeback": "A charge was returned to the person who paid (chargeback)",
+        "refund_after_settlement": "Refund of a charge that had already been paid out",
+        "refund_reactivated": "Refund reactivated",
+        "refund_rejected": "Paycomet rejected a refund",
+        "refund_resolved": "Refund resolved by hand",
+        "refund_unknown": "Refund with an unknown outcome"
+      },
+      "selfboost": {
+        "executed": "KORUM Auto-Boost carried out"
+      },
+      "invoice": {
+        "issued": "Invoice issued",
+        "rectified": "Invoice corrected",
+        "accepted": "Invoice registered correctly in the Veri*factu system",
+        "rejected": "The Veri*factu system rejected an invoice",
+        "registration_issue": "Problem registering an invoice with Veri*factu",
+        "registration_resolved": "An invoice’s Veri*factu registration was resolved by hand",
+        "registration_retry": "Registering an invoice with Veri*factu was tried again",
+        "registration_unknown": "It is not known whether an invoice was registered with Veri*factu"
+      },
+      "initiative": {
+        "status_changed": "Campaign status change",
+        "closed": "Campaign closed once its payout was sent",
+        "expired": "Campaign expired without reaching its goal",
+        "refund_decided": "The organisation chose to refund an expired campaign",
+        "refunded": "Campaign fully refunded",
+        "resize_vote_launched": "Vote opened to rework a campaign with what was raised",
+        "resize_rejected": "Vote closed without a project: refunding",
+        "resized": "Campaign reworked by vote",
+        "resized_emptied": "No funds left: a reworked campaign dropped to zero and is being refunded",
+        "resized_rescaled": "Goal lowered on a reworked campaign: a charge was returned to the person who paid",
+        "cover_published": "Campaign cover published",
+        "cover_removed": "Campaign cover removed"
+      },
+      "resize": {
+        "link_resent": "Voting link sent again",
+        "non_voters_refunded": "Money was refunded to those who did not vote for any project",
+        "tallied": "Vote counted",
+        "vote_option": "Vote for an option",
+        "vote_refund": "Vote for a refund"
+      },
+      "achievement": {
+        "photo_published": "Achievement photo published",
+        "thanks_saved": "Thank-you message saved"
+      },
+      "raffle": {
+        "drawn": "Raffle drawn"
+      },
+      "sponsor": {
+        "approved": "Business accepted",
+        "rejected": "Business not accepted",
+        "late_charge_pooled": "A business’s payment arrived after the campaign closed and was kept for another one",
+        "logo_published": "Business logo published",
+        "pool_assigned": "A business’s kept money was assigned to a campaign",
+        "renewal_chained": "Renewal paid twice: it counts for the following year",
+        "renewal_invited": "Renewal invitation sent to a business",
+        "renewal_link_sent": "Renewal link sent to a business",
+        "renewal_refunded": "A business’s renewal refunded",
+        "renewal_rule_saved": "Business reassignment rule saved"
+      },
+      "privacy": {
+        "account_name_rectified": "An account’s name corrected",
+        "erasure_blocked": "Account deletion blocked",
+        "erasure_completed": "Account deleted",
+        "export": "Personal data exported",
+        "request_closed": "Privacy request closed",
+        "request_opened": "Privacy request opened"
+      },
+      "support": {
+        "direct_email_sent": "Direct email from KORUM to the organisation",
+        "korum_message_created": "Organisation’s enquiry to KORUM",
+        "platform_answered": "KORUM answered an enquiry",
+        "ticket_answered": "The organisation answered an enquiry",
+        "ticket_created": "Enquiry received"
+      },
+      "settings": {
+        "connection_tested": "Connection to a provider tested",
+        "secret": {
+          "deleted": "Platform secret deleted",
+          "updated": "Platform secret changed"
+        },
+        "setting": {
+          "cleared": "Platform setting cleared",
+          "updated": "Platform setting changed"
+        }
+      },
+      "rules": {
+        "category_added": "Global category added",
+        "category_rule_set": "A global category’s rule changed",
+        "global_updated": "Global rules changed",
+        "medals_updated": "Medals changed"
+      },
+      "tariff": {
+        "negative_return_fixed": "Fee fixed after a negative return"
+      },
+      "ops_alert": {
+        "resolved": "Alert resolved",
+        "resolved_with_note": "Alert resolved with a note"
+      },
+      "outbox": {
+        "requeued": "Failed emails queued again"
+      },
+      "PRICING_ALERT_ACKNOWLEDGED": "Pricing notice reviewed",
+      "job": {
+        "completed": "Scheduled task finished",
+        "failed": "Scheduled task failed"
+      },
+      "quota": {
+        "period_assigned": "Commission-free quota: its school year was set",
+        "renewed": "Commission-free quota renewed for the new school year"
       }
     }
   }

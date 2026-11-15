@@ -11,6 +11,7 @@ import { MAX_OPEN_DRAFTS, loadFreshStudioContext } from '@/repositories/studio.r
 import { requireOwnedResource } from '@/repositories/ownership';
 import { recordAudit, type SessionActor } from '@/repositories/tenant-guard';
 import { requireSigner } from './kyb.service';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Guardar y publicar desde el Estudio (Sprint 4.3: `saveInitiativeFromStudio` del prototipo). Las dos personas firmantes, con el segundo factor.
@@ -259,7 +260,7 @@ export async function publishStudioInitiative(db: KorumPrismaClient, actor: Sess
     const accepted: StudioDraft = { ...draft, initiativeId: saved.initiativeId };
     const result = await inTransaction(db, async (tx) => {
       await persistDraft(tx, signer, organizationId, accepted, context, board, now, { audit: false });
-      const published = await publishInitiative(tx, saved.initiativeId, now, { expectedGoalCents: board.goalCents });
+      const published = await publishInitiative(tx, saved.initiativeId, now, { expectedGoalCents: board.goalCents, actorUserId: signer.userId });
       // Publicar reservó los cupos y, con ello, tomó la fila de la entidad: si el motor de reglas del Super-Admin cambió a la vez los gastos de gestión digital de las
       // entradas, ya están confirmados y se ven aquí. Con otra tarifa que la de la pizarra aceptada, la meta de una taquilla `INC` no sumaría: no se publica (auditoría
       // financiera del 5.3, M3).
@@ -293,6 +294,7 @@ export async function discardStudioDraft(db: KorumPrismaClient, actor: SessionAc
   await inTransaction(db, async (tx) => {
     const { count } = await tx.initiative.updateMany({ where: { id: initiativeId, organizationId, status: 'BUDGETING', raisedCents: 0, quotaReservedAt: null }, data: { status: 'CANCELLED' } });
     if (count === 0) throw new StudioError('NOT_EDITABLE', [], initiativeId);
+    await recordStatusChange(tx, { initiativeId, organizationId, from: 'BUDGETING', to: 'CANCELLED', reason: 'DRAFT_DISCARDED', actorUserId: signer.userId });
     await recordAudit(tx, signer, { action: 'studio.draft_discarded', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { initiativeId } }, { required: true });
   });
 }

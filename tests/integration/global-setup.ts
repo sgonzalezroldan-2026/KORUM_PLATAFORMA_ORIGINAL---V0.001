@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import pg from 'pg';
 import type { TestProject } from 'vitest/node';
+import { isKnownAuditAction } from '../../src/core/audit/audit-catalog';
 import { DEFAULT_TEST_DATABASE_URL, TEST_SCHEMA, withSchema } from './test-schema';
 
 declare module 'vitest' {
@@ -57,6 +58,26 @@ export default async function setup(project: TestProject) {
   await reserveSeedIdentifiers(baseUrl);
   await resetSearchPath(baseUrl);
   project.provide('testDatabaseUrl', baseUrl);
+  return () => assertAuditActionsAreCatalogued(baseUrl);
+}
+
+/**
+ * Al terminar toda la ejecución (Sprint 5.8a): cada acción que las pruebas han escrito en `AuditLog` tiene que estar en el catálogo de la auditoría
+ * (`src/core/audit/audit-catalog.ts`), que es de donde el visor saca su texto y lo que decide si una entidad puede verla. Una acción nueva sin clasificar
+ * hace fallar la Puerta 2 con su nombre. Las acciones `prueba.*` y `test.*` son de las propias pruebas (la aplicación no escribe ninguna con esos prefijos).
+ */
+async function assertAuditActionsAreCatalogued(connectionString: string) {
+  const client = new pg.Client({ connectionString });
+  await client.connect();
+  try {
+    const { rows } = await client.query<{ action: string }>(`SELECT DISTINCT action FROM "${TEST_SCHEMA}"."AuditLog" ORDER BY 1`);
+    const unknown = rows.map((row) => row.action).filter((action) => !/^(prueba|test)\./.test(action) && !isKnownAuditAction(action));
+    if (unknown.length > 0) {
+      throw new Error(`Acciones escritas en AuditLog que no están en src/core/audit/audit-catalog.ts (añádelas con su familia y su texto en messages/{es,ca,en}.json): ${unknown.join(', ')}`);
+    }
+  } finally {
+    await client.end();
+  }
 }
 
 /**

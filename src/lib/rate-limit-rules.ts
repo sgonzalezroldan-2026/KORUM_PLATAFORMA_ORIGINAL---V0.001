@@ -146,3 +146,30 @@ export const GATE_PIN_SET_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:pin-
 /** Invitaciones a nuevos Super-Admin y comprobaciones de conexión de la consola (Sprint 5.4): dan acceso total o llaman a proveedores con sus credenciales, así que llevan tope. */
 export const SUPERADMIN_INVITE_RULE: RateLimitRule & PurgeRule = { prefix: 'console:superadmin-invite:', limit: 5, windowMs: 24 * 3_600_000 };
 export const CONNECTION_TEST_RULE: RateLimitRule & PurgeRule = { prefix: 'console:connection-test:', limit: 10, windowMs: 10 * 60_000 };
+
+/**
+ * Inicios de sesión fallidos seguidos (Sprint 5.8a, trazabilidad): no frenan a nadie (de eso se ocupan los límites por red de Better Auth y el bloqueo del
+ * segundo factor), solo cuentan los fallos de una misma cuenta, o de una misma red si la cuenta no existe, para dejar constancia en la auditoría cuando se
+ * repiten (`src/lib/auth/failed-sign-in.ts`). El contador vuelve a cero al entrar bien o tras 15 minutos sin fallos.
+ */
+export const AUTH_SIGN_IN_FAILURE_RULE: RateLimitRule & PurgeRule = { prefix: 'auth:fail:', limit: 1_000_000, windowMs: 15 * 60_000 };
+
+/**
+ * Rastro de quien prueba recursos de otra persona desde *Mi cuenta* (el certificado de otra donación, la llave de acceso de otra cuenta; Sprint 5.8a):
+ * las primeras de cada ventana quedan en la auditoría; el resto no, para que recorrer identificadores no la llene de filas.
+ */
+export const ACCOUNT_PROBE_RULE: RateLimitRule & PurgeRule = { prefix: 'account:probe:', limit: 20, windowMs: 15 * 60_000 };
+
+/**
+ * Filas `tenant.access_denied` que una misma cuenta (o, sin sesión, una misma red) puede hacer **visibles en el registro de una entidad** en una hora
+ * (auditoría de seguridad del 5.8a). La denegación ocurre siempre y **siempre se anota**: lo que pasa del tope se guarda como `tenant.access_denied_over_cap` y lo ve
+ * la consola, pero no la entidad, para que nadie le llene el registro de ruido con el que tapar lo importante. Es generoso: una revisión de seguridad
+ * legítima deja decenas, no cientos.
+ */
+export const TENANT_DENIED_AUDIT_RULE: RateLimitRule & PurgeRule = { prefix: 'tenant-denied:', limit: 300, windowMs: 60 * 60_000 };
+
+/**
+ * Lo mismo, sumando a **todas** las cuentas y redes que no pertenecen a la entidad: cambiar de cuenta, de dirección o falsear la cabecera de la red no
+ * sirve para pasar de aquí. Mil filas por hora siguen siendo un registro que se puede leer con el filtro de fechas.
+ */
+export const TENANT_DENIED_ENTITY_RULE: RateLimitRule & PurgeRule = { prefix: 'tenant-denied-all:', limit: 1000, windowMs: 60 * 60_000 };

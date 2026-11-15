@@ -1853,7 +1853,8 @@
       "expired": "Campañas vencidas",
       "support": "Soporte",
       "supportPending": "{count, plural, one {# consulta espera respuesta} other {# consultas esperan respuesta}}",
-      "gate": "Taquilla y portería"
+      "gate": "Taquilla y portería",
+      "audit": "Registro de actividad"
     },
     "header": {
       "label": "Gestión de la entidad",
@@ -4008,7 +4009,8 @@
       "rules": "Reglas y precios",
       "support": "Soporte ({count, plural, =0 {nada pendiente} one {# consulta} other {# consultas}})",
       "repartos": "Repartos por resolver",
-      "settings": "Ajustes"
+      "settings": "Ajustes",
+      "audit": "Auditoría"
     },
     "sections": {
       "business": "Negocio: ingresos reales y proyectados"
@@ -5591,6 +5593,16 @@
       "fieldInvalid": "Este valor no es válido: revisa su formato.",
       "backToIndex": "Volver al índice de bloques",
       "unsavedLeave": "Hay cambios sin guardar. Si sales ahora se perderán. ¿Salir igualmente?"
+    },
+    "audit": {
+      "personLabel": "Buscar por persona (su email)",
+      "personHint": "El email solo se usa para encontrar la cuenta: no se guarda ni queda en la dirección de la página.",
+      "personSearch": "Buscar persona",
+      "personSearching": "Buscando…",
+      "personNotFound": "No hay ninguna cuenta con ese email.",
+      "personInvalid": "Escribe un email completo, por ejemplo nombre@ejemplo.com.",
+      "personForbidden": "Tu sesión ya no permite esta búsqueda. Vuelve a entrar en la consola.",
+      "personFailed": "No se ha podido hacer la búsqueda. Comprueba la conexión y vuelve a intentarlo."
     }
   },
   "forbidden": {
@@ -6981,6 +6993,426 @@
       "notActive": {
         "title": "Tu aportación ha llegado",
         "text": "Este mes ha ido íntegro a una campaña de {organization}, pero la aportación mensual no ha quedado activa (ya tenías otra o la sustituiste). Revisa tus aportaciones más abajo."
+      }
+    }
+  },
+  "audit": {
+    "console": {
+      "metaTitle": "Auditoría",
+      "back": "← Volver a la consola",
+      "title": "Auditoría de la plataforma",
+      "intro": "Quién hizo qué, cuándo y desde dónde. Este registro no se puede editar ni borrar desde la plataforma. Solo guarda identificadores, nunca emails ni NIF: los nombres se consultan al mostrar la página. Si dos registros llevan el mismo código de red, vienen de la misma conexión.",
+      "organization": "Entidad",
+      "allOrganizations": "Todas las entidades",
+      "personFiltered": "Viendo lo que hizo o lo que afecta a {name} ({email}).",
+      "personFilteredNoName": "Viendo lo que hizo o lo que afecta a {email}.",
+      "personErased": "Viendo lo que hizo o lo que afecta a una cuenta ya suprimida.",
+      "personNotFound": "No hay ninguna cuenta con ese email.",
+      "personClear": "Quitar el filtro de persona",
+      "korumHidden": "No se muestran las consultas que KORUM hace desde esta consola (cada página que abres deja una).",
+      "korumShow": "Ver las consultas de KORUM"
+    },
+    "entity": {
+      "metaTitle": "Registro de actividad",
+      "title": "Registro de actividad",
+      "intro": "Lo que ha pasado en vuestra entidad: firmas, liquidaciones, campañas, relevos y accesos denegados. No se puede editar ni borrar desde la plataforma. Las consultas que KORUM hace a vuestros datos también quedan registradas y podéis pedirlas.",
+      "privacy": "Solo aparecen por su nombre las personas que firman hoy por la entidad. Las familias y cualquier otra cuenta salen como «otra persona», y lo que cada familia hace con su cuenta o con su aportación mensual no aparece aquí.",
+      "person": "Persona firmante",
+      "allPeople": "Cualquier persona",
+      "initiative": "Campaña",
+      "allInitiatives": "Todas las campañas",
+      "initiativeOption": "N.º {id} · {title}",
+      "probe": "Se pidió algo que no existe o que no es de la entidad",
+      "memberOption": "{role} · {name}"
+    },
+    "filters": {
+      "toggle": "Filtrar",
+      "active": "{count, plural, one {# filtro activo} other {# filtros activos}}",
+      "category": "Tipo de actividad",
+      "allCategories": "Toda la actividad",
+      "action": "Qué pasó exactamente",
+      "allActions": "Cualquier cosa",
+      "initiativeNumber": "Número de campaña",
+      "from": "Desde el día",
+      "to": "Hasta el día (incluido)",
+      "apply": "Aplicar filtros",
+      "clear": "Quitar todos los filtros",
+      "hint": "Los filtros se suman: si eliges un tipo de actividad y algo concreto de otro tipo, la lista saldrá vacía."
+    },
+    "list": {
+      "title": "Lo ocurrido, de lo más reciente a lo más antiguo (hora de España)",
+      "count": "{count, plural, one {Se muestra # registro.} other {Se muestran # registros.}}",
+      "empty": "Todavía no hay nada registrado.",
+      "emptyFiltered": "No hay nada registrado con esos filtros. Prueba a quitar alguno o a ampliar las fechas.",
+      "older": "Ver registros anteriores",
+      "newest": "Volver a los más recientes",
+      "who": "Quién",
+      "about": "Sobre qué",
+      "organization": "Entidad",
+      "from": "Desde dónde",
+      "device": "Dispositivo {device}",
+      "network": "Código de red {network}",
+      "originUnknown": "Sin datos de origen",
+      "targetWithId": "{type} {id}",
+      "unknownAction": "Actividad sin clasificar ({code})",
+      "statusChange": "De «{from}» a «{to}»",
+      "statusReason": "Motivo: {reason}.",
+      "details": "Ver el detalle guardado",
+      "code": "Código interno: {code}",
+      "targetWithName": "{type} {id} · {name}",
+      "originAutomatic": "No aplica (es automático)",
+      "pagerTop": "Más registros, al principio de la lista",
+      "pagerBottom": "Más registros, al final de la lista"
+    },
+    "actor": {
+      "system": "El sistema (automático)",
+      "webhook": "Paycomet (aviso automático de un pago)",
+      "gate": "Una sesión de portería",
+      "anonymous": "Alguien sin identificar",
+      "korum": "KORUM",
+      "korumNamed": "KORUM · {name} ({email})",
+      "member": "{name} · {role}",
+      "person": "{name} ({email})",
+      "personNoName": "{email}",
+      "other": "Otra persona",
+      "erased": "Una cuenta ya suprimida",
+      "formerMember": "Una persona que antes firmaba por la entidad"
+    },
+    "categories": {
+      "security": "Seguridad y accesos denegados",
+      "korumAccess": "Consultas de KORUM",
+      "signatures": "Firmas y firmantes",
+      "money": "Dinero y facturas",
+      "campaigns": "Campañas",
+      "ideas": "Buzón de ideas",
+      "gate": "Taquilla, portería y sorteos",
+      "sponsors": "Comercios amigos",
+      "entity": "La entidad y su titular",
+      "account": "Cuentas y privacidad",
+      "support": "Soporte",
+      "platform": "Ajustes y reglas de la plataforma",
+      "system": "Tareas automáticas",
+      "unclassified": "Sin clasificar"
+    },
+    "targets": {
+      "Initiative": "Campaña",
+      "Organization": "Entidad",
+      "EscrowPayout": "Liquidación",
+      "ActivityFundPayout": "Liquidación del Fondo",
+      "Idea": "Idea",
+      "IdeaApproval": "Aprobación de idea",
+      "Contribution": "Aportación",
+      "Sponsor": "Comercio",
+      "User": "Cuenta",
+      "Passkey": "Llave de acceso",
+      "Invoice": "Factura",
+      "KybDocument": "Documento del titular",
+      "FileAsset": "Fichero",
+      "GateSession": "Sesión de portería",
+      "SupportTicket": "Consulta",
+      "PrivacyRequest": "Solicitud de privacidad",
+      "SignerHandover": "Relevo de firmante",
+      "ResizePoll": "Votación",
+      "WalletSubscription": "Aportación mensual",
+      "PlatformSetting": "Ajuste de la plataforma",
+      "PlatformSecret": "Secreto de la plataforma",
+      "GlobalConfig": "Reglas globales",
+      "GlobalCategory": "Categoría global",
+      "MedalTier": "Medalla",
+      "OpsAlert": "Alerta",
+      "PricingAlert": "Aviso de precios",
+      "Job": "Tarea programada",
+      "Console": "Consola",
+      "Route": "Una página o descarga del panel",
+      "SuperadminSession": "Sesión de Super-Admin",
+      "Account": "Cuenta que no existe",
+      "TicketPass": "Pase",
+      "AuditLog": "Auditoría",
+      "OrganizationMember": "Cargo de una persona firmante",
+      "PaymentOrder": "Pedido de pago",
+      "PaymentMethodToken": "Tarjeta guardada",
+      "WebhookEvent": "Aviso de Paycomet",
+      "MedalTierConfig": "Reglas de las medallas",
+      "Gate": "Portería",
+      "EscrowPayoutSplit": "Envío de una liquidación",
+      "ActivityFundSplit": "Envío del Fondo de actividades"
+    },
+    "reasons": {
+      "PUBLISHED": "la entidad la publicó",
+      "GOAL_REACHED": "se alcanzó la meta",
+      "DEADLINE_PASSED": "llegó la fecha límite sin alcanzar la meta",
+      "DRAFT_DISCARDED": "la entidad descartó el borrador",
+      "PAYOUT_SENT": "se envió su liquidación",
+      "ENTITY_CHOSE_REFUND": "la entidad eligió reembolsar",
+      "RESIZE_VOTE_OPENED": "la entidad lanzó la votación",
+      "RESIZE_VOTE_WITHOUT_PROJECT": "la votación se cerró sin proyecto",
+      "RESIZE_VOTE_APPROVED": "la votación eligió un proyecto",
+      "RESIZED_LEFT_EMPTY": "una devolución forzosa la dejó sin fondos",
+      "ALL_REFUNDED": "se devolvió todo lo aportado",
+      "REOPENED_BY_REVERSAL": "una devolución forzosa la dejó por debajo de la meta"
+    },
+    "actions": {
+      "tenant": {
+        "access_denied": "Acceso denegado: alguien sin permiso intentó entrar o hacer algo",
+        "resource_not_found": "Se pidió algo que no existe",
+        "resource_outside_tenant": "Se intentó usar algo que pertenece a otra entidad",
+        "access_denied_over_cap": "Acceso denegado que pasó del tope de avisos que ve la entidad"
+      },
+      "auth": {
+        "sign_in_failed_repeatedly": "Varios inicios de sesión fallidos seguidos"
+      },
+      "account": {
+        "certificate_denied": "Intento de abrir el certificado de otra persona",
+        "passkey_delete_denied": "Intento de quitar la llave de acceso de otra persona",
+        "invitation_accepted": "Invitación aceptada",
+        "passkey_added": "Llave de acceso añadida",
+        "passkey_deleted": "Llave de acceso quitada"
+      },
+      "api": {
+        "panel_cover_denied": "Subida de la portada de una campaña denegada",
+        "panel_entity_image_denied": "Subida de una imagen de la entidad denegada",
+        "panel_fund_receipt_denied": "Descarga del justificante del Fondo de actividades denegada",
+        "panel_kyb_open_denied": "Apertura de un documento del titular denegada",
+        "panel_kyb_upload_denied": "Subida de un documento del titular denegada",
+        "panel_logros_denied": "Subida de una foto de logros denegada",
+        "panel_medalla_denied": "Descarga del kit de medallas denegada",
+        "panel_modelo182_denied": "Descarga del Modelo 182 denegada",
+        "panel_payout_invoice_denied": "Subida de la factura de una liquidación denegada",
+        "panel_payout_invoice_open_denied": "Apertura de la factura de una liquidación denegada",
+        "panel_sponsor_logo_denied": "Subida del logotipo de un comercio denegada"
+      },
+      "double_check": {
+        "denied": "Firma denegada",
+        "otp_locked": "Demasiados códigos de firma incorrectos: la firma quedó bloqueada",
+        "request_rate_limited": "Enlace de firma: demasiados intentos seguidos de pedirlo",
+        "wrong_signer": "Intento de firmar con el enlace de otra persona",
+        "challenge_issued": "Se envió un enlace y un código para firmar",
+        "signed": "Firma registrada",
+        "signature_superseded": "Una firma anterior quedó sustituida por otra nueva"
+      },
+      "activity_fund": {
+        "rate_limited": "Demasiados intentos seguidos en el Fondo de actividades",
+        "payout_requested": "Liquidación del Fondo pedida",
+        "payout_approved": "Liquidación del Fondo aprobada",
+        "payout_cancelled": "Liquidación del Fondo retirada",
+        "receipt_downloaded": "Justificante del Fondo de actividades descargado",
+        "signatures_rejected": "Fondo de actividades: las firmas de una liquidación dejaron de valer",
+        "split_resolved": "Fondo de actividades: un envío de dinero se comprobó y se resolvió a mano"
+      },
+      "expired": {
+        "rate_limited": "Campañas vencidas: demasiados intentos seguidos de decidir"
+      },
+      "payout": {
+        "rate_limited": "Liquidaciones: demasiados intentos seguidos de pedirlas",
+        "requested": "Liquidación pedida",
+        "approved": "Liquidación aprobada",
+        "invoice_opened": "Factura de liquidación abierta",
+        "invoice_uploaded": "Factura de liquidación subida",
+        "signatures_rejected": "Firmas de una liquidación que dejaron de valer",
+        "split_resolved": "Liquidación: envío resuelto a mano tras comprobarlo",
+        "splits_replanned": "Liquidación: reorganizados sus envíos de dinero",
+        "updated": "Liquidación pedida de nuevo con cambios"
+      },
+      "file": {
+        "not_available": "Se pidió un fichero que no está disponible"
+      },
+      "gate": {
+        "pin_blocked": "Portería: conexión bloqueada tras varios PIN incorrectos",
+        "pin_failed": "Portería: PIN incorrecto",
+        "qr_invalid": "Portería: QR alterado o falsificado",
+        "qr_other_event": "Portería: QR de otro evento",
+        "request_limited": "Portería: demasiados intentos seguidos desde una misma conexión",
+        "session_rejected": "Portería: sesión rechazada",
+        "check_in": "Portería: entrada validada",
+        "code_rotated": "Portería: código renovado",
+        "pin_revoked": "Portería: PIN revocado",
+        "pin_set": "Portería: PIN creado",
+        "session_opened": "Portería: sesión abierta",
+        "session_revoked": "Portería: sesión cerrada",
+        "sync": "Portería: validaciones sin conexión sincronizadas"
+      },
+      "idea": {
+        "chat_access_denied": "Acceso denegado a la conversación de una idea",
+        "approved": "Idea aprobada por la entidad",
+        "converted": "Idea convertida en campaña",
+        "rejected": "Idea no admitida",
+        "replied": "Respuesta de la entidad a una idea",
+        "signature_revalidated": "Firma de una idea revisada y dada por buena"
+      },
+      "kyb": {
+        "document_not_found": "Se pidió un documento del titular que no existe",
+        "cif_released": "KORUM dejó libre un CIF que tenía ocupado un alta anterior sin terminar",
+        "document_opened": "Documento del titular abierto",
+        "document_uploaded": "Documento del titular subido",
+        "identity_updated": "Datos del titular cambiados",
+        "rejected": "Rechazada la documentación del titular",
+        "submitted": "Enviada a revisión la documentación del titular",
+        "verified": "Verificada la documentación del titular"
+      },
+      "panel": {
+        "medal_kit_denied": "Kit de medallas: descarga no permitida",
+        "medal_kit_downloaded": "Kit de medallas descargado"
+      },
+      "pledge": {
+        "access_denied": "Aportación mensual: acceso denegado",
+        "started": "Aportación mensual iniciada",
+        "paused": "Aportación mensual en pausa",
+        "resumed": "Aportación mensual reanudada",
+        "cancelled": "Aportación mensual cancelada",
+        "campaign_changed": "Aportación mensual: cambio de campaña"
+      },
+      "tax": {
+        "model182_denied": "Exportación del Modelo 182 no permitida",
+        "model182_exported": "Modelo 182 exportado"
+      },
+      "studio": {
+        "semantic_lock_triggered": "Aviso del 0 %: el texto de una campaña parece hablar de obras o equipamiento",
+        "semantic_lock_after_publish": "Aviso del 0 % tras publicar: una campaña parece hablar de obras o equipamiento",
+        "initiative_saved": "Campaña guardada en el Estudio",
+        "initiative_published": "Campaña publicada",
+        "draft_discarded": "Borrador descartado",
+        "exempt_category_saved": "Categoría al 0 %: campaña guardada con ella",
+        "raffle_notice_confirmed": "Aviso normativo de rifas confirmado"
+      },
+      "superadmin": {
+        "access": "Consulta de KORUM desde su consola",
+        "bootstrapped": "Primer Super-Admin dado de alta",
+        "invitation_cancelled": "Invitación de Super-Admin retirada",
+        "invited": "Super-Admin invitado",
+        "revoked": "Super-Admin dado de baja"
+      },
+      "signer": {
+        "cosigner_invitation_corrected": "Se corrigió la invitación de la segunda persona firmante",
+        "handover_cancelled": "Relevo de firmante retirado",
+        "handover_completed": "Relevo de firmante completado",
+        "handover_proposed": "Relevo de firmante propuesto",
+        "handover_resent": "Invitación de relevo reenviada",
+        "role_label_updated": "Nombre del cargo cambiado",
+        "signature_mode_changed": "Modo de firma cambiado (una o dos firmas)"
+      },
+      "organization": {
+        "resend_invitation": "Invitación reenviada",
+        "registered": "Entidad dada de alta",
+        "branding_updated": "Marca de la entidad cambiada",
+        "category_added": "Categoría añadida a la entidad",
+        "category_rule_set": "Regla de una categoría de la entidad cambiada",
+        "groups_updated": "Grupos de participación cambiados",
+        "image_published": "Imagen de la entidad publicada",
+        "image_removed": "Imagen de la entidad retirada",
+        "settings_updated": "Ajustes de la entidad cambiados",
+        "tariffs_updated": "Tarifas de la entidad cambiadas"
+      },
+      "payment": {
+        "chargeback": "Un cobro fue devuelto a quien pagó (contracargo)",
+        "refund_after_settlement": "Devolución de un cobro que ya se había liquidado",
+        "refund_reactivated": "Devolución reactivada",
+        "refund_rejected": "Paycomet rechazó una devolución",
+        "refund_resolved": "Devolución resuelta a mano",
+        "refund_unknown": "Devolución con resultado desconocido"
+      },
+      "selfboost": {
+        "executed": "Auto-Impulso de KORUM ejecutado"
+      },
+      "invoice": {
+        "issued": "Factura emitida",
+        "rectified": "Factura rectificada",
+        "accepted": "Factura registrada correctamente en el sistema Veri*factu",
+        "rejected": "El sistema Veri*factu rechazó una factura",
+        "registration_issue": "Problema al registrar una factura en Veri*factu",
+        "registration_resolved": "El registro de una factura en Veri*factu se resolvió a mano",
+        "registration_retry": "Se volvió a intentar registrar una factura en Veri*factu",
+        "registration_unknown": "No se sabe si una factura quedó registrada en Veri*factu"
+      },
+      "initiative": {
+        "status_changed": "Cambio de estado de una campaña",
+        "closed": "Campaña cerrada al enviarse su liquidación",
+        "expired": "Campaña vencida sin llegar a la meta",
+        "refund_decided": "La entidad decidió reembolsar una campaña vencida",
+        "refunded": "Campaña reembolsada por completo",
+        "resize_vote_launched": "Votación abierta para rehacer una campaña con lo recaudado",
+        "resize_rejected": "Votación cerrada sin proyecto: se reembolsa",
+        "resized": "Campaña rehecha por votación",
+        "resized_emptied": "Sin fondos: una campaña rehecha se quedó a cero y se reembolsa",
+        "resized_rescaled": "Meta rebajada en una campaña rehecha: un cobro fue devuelto a quien pagó",
+        "cover_published": "Portada de campaña publicada",
+        "cover_removed": "Portada de campaña retirada"
+      },
+      "resize": {
+        "link_resent": "Enlace de voto reenviado",
+        "non_voters_refunded": "Se devolvió su dinero a quienes no votaron por ningún proyecto",
+        "tallied": "Recuento de una votación",
+        "vote_option": "Voto por una opción",
+        "vote_refund": "Voto por la devolución"
+      },
+      "achievement": {
+        "photo_published": "Foto de logros publicada",
+        "thanks_saved": "Mensaje de agradecimiento guardado"
+      },
+      "raffle": {
+        "drawn": "Sorteo realizado"
+      },
+      "sponsor": {
+        "approved": "Comercio admitido",
+        "rejected": "Comercio no admitido",
+        "late_charge_pooled": "El pago de un comercio llegó con la campaña cerrada y se guardó para otra",
+        "logo_published": "Logotipo de un comercio publicado",
+        "pool_assigned": "El dinero guardado de un comercio se asignó a una campaña",
+        "renewal_chained": "Renovación pagada dos veces: vale para el año siguiente",
+        "renewal_invited": "Invitación a renovar enviada a un comercio",
+        "renewal_link_sent": "Enlace de renovación enviado a un comercio",
+        "renewal_refunded": "Renovación de un comercio devuelta",
+        "renewal_rule_saved": "Regla de reasignación de comercios guardada"
+      },
+      "privacy": {
+        "account_name_rectified": "Nombre de una cuenta corregido",
+        "erasure_blocked": "Supresión de una cuenta bloqueada",
+        "erasure_completed": "Cuenta suprimida",
+        "export": "Datos personales exportados",
+        "request_closed": "Privacidad: solicitud cerrada",
+        "request_opened": "Privacidad: solicitud abierta"
+      },
+      "support": {
+        "direct_email_sent": "Email directo de KORUM a la entidad",
+        "korum_message_created": "Consulta de la entidad a KORUM",
+        "platform_answered": "KORUM respondió a una consulta",
+        "ticket_answered": "La entidad respondió a una consulta",
+        "ticket_created": "Consulta recibida"
+      },
+      "settings": {
+        "connection_tested": "Conexión con un proveedor probada",
+        "secret": {
+          "deleted": "Secreto de plataforma borrado",
+          "updated": "Secreto de plataforma cambiado"
+        },
+        "setting": {
+          "cleared": "Ajuste de plataforma vaciado",
+          "updated": "Ajuste de plataforma cambiado"
+        }
+      },
+      "rules": {
+        "category_added": "Categoría global añadida",
+        "category_rule_set": "Regla de una categoría global cambiada",
+        "global_updated": "Reglas globales cambiadas",
+        "medals_updated": "Medallas cambiadas"
+      },
+      "tariff": {
+        "negative_return_fixed": "Tarifa corregida por retorno negativo"
+      },
+      "ops_alert": {
+        "resolved": "Alerta resuelta",
+        "resolved_with_note": "Alerta resuelta con una nota"
+      },
+      "outbox": {
+        "requeued": "Emails fallidos puestos otra vez en cola"
+      },
+      "PRICING_ALERT_ACKNOWLEDGED": "Aviso de precios revisado",
+      "job": {
+        "completed": "Tarea programada terminada",
+        "failed": "Tarea programada fallida"
+      },
+      "quota": {
+        "period_assigned": "Cupos sin comisión: se fijó el curso al que pertenecen",
+        "renewed": "Cupos sin comisión renovados para el curso nuevo"
       }
     }
   }

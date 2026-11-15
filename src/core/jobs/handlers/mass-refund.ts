@@ -7,6 +7,7 @@ import { sweepSponsorMoney } from '@/services/sponsors/sponsor-sweeps';
 import { retryDelayMs } from '../job-schedule';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert, resolveAlertsNotIn } from '../ops-alerts';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * `MASS_REFUND`: devuelve el 100 % de lo cobrado, al medio de pago original, en lotes idempotentes (QA-OPS01, QA-P02). Recoge:
@@ -93,6 +94,7 @@ async function closeFinishedRefunds(db: Db, limit: number, now: Date): Promise<n
       if (count !== 1) return false;
       await releaseInitiativeQuotas(tx, id);
       const initiative = await tx.initiative.findUniqueOrThrow({ where: { id }, select: { organizationId: true } });
+      await recordStatusChange(tx, { initiativeId: id, organizationId: initiative.organizationId, from: 'REFUNDING', to: 'REFUNDED', reason: 'ALL_REFUNDED' });
       await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: initiative.organizationId, action: 'initiative.refunded', targetType: 'Initiative', targetId: String(id), metadataJson: {} } });
       // Un patrocinio o un Auto-Impulso no se devuelven con esta tarea y siguen en la hucha: que nadie lo pierda de vista. Se avisa en la misma
       // transacción que el cierre, para que no pueda quedar cerrada sin el aviso.

@@ -1,6 +1,7 @@
 import { notifySigners } from '@/core/jobs/notify';
 import type { Db } from '@/lib/db';
 import { queuePhotosBroadcastIfReady } from '@/services/notifications/supporter-broadcast';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Cierre de una iniciativa al terminar de enviarse su liquidación (PRD §4.1, `GOAL_REACHED ──doble firma + split transfer──► CLOSED`, Sprint 4.4a), en la
@@ -14,6 +15,7 @@ export async function closeInitiativeAfterPayout(
 ): Promise<boolean> {
   const { count } = await tx.initiative.updateMany({ where: { id: payout.initiativeId, status: 'GOAL_REACHED' }, data: { status: 'CLOSED', closedAt: now, stepIndex: 6 } });
   if (count === 0) return false;
+  await recordStatusChange(tx, { initiativeId: payout.initiativeId, organizationId: payout.organizationId, from: 'GOAL_REACHED', to: 'CLOSED', reason: 'PAYOUT_SENT' });
   await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: payout.organizationId, action: 'initiative.closed', targetType: 'Initiative', targetId: String(payout.initiativeId), metadataJson: { payoutId: payout.payoutId, netPaidCents: payout.netPaidCents } } });
   await notifySigners(tx, payout.organizationId, 'payout.executed', `payout:${payout.payoutId}`, {
     initiativeId: payout.initiativeId,

@@ -2,6 +2,7 @@ import { getAccountBalance } from '@/core/finance/ledger-balances';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
 import type { Db } from '@/lib/db';
 import { isFailedInitiative, lockInitiatives, payoutSettled } from '@/services/sponsors/sponsor-money';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Deshacer el cobro de un comercio cuyo dinero ya no está (todo) donde lo puso su cobro (Sprint 4.2d, heredado del 4.2b, punto 1): reasignado a otras
@@ -96,9 +97,12 @@ export async function applyMovedUndo(tx: Db, undo: MovedUndo, at: Date): Promise
     const initiative = await tx.initiative.update({
       where: { id: initiativeId },
       data: { raisedCents: { decrement: cents }, totalContributions: { decrement: 1 } },
-      select: { status: true, raisedCents: true, goalCents: true }
+      select: { organizationId: true, status: true, raisedCents: true, goalCents: true }
     });
     // Como con cualquier aportación deshecha: si una campaña de presupuesto sin liquidar baja de su meta, vuelve a recaudar.
-    if (initiative.status === 'GOAL_REACHED' && initiative.raisedCents < initiative.goalCents) await tx.initiative.update({ where: { id: initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
+    if (initiative.status === 'GOAL_REACHED' && initiative.raisedCents < initiative.goalCents) {
+      await tx.initiative.update({ where: { id: initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
+      await recordStatusChange(tx, { initiativeId, organizationId: initiative.organizationId, from: 'GOAL_REACHED', to: 'FUNDRAISING', reason: 'REOPENED_BY_REVERSAL' });
+    }
   }
 }

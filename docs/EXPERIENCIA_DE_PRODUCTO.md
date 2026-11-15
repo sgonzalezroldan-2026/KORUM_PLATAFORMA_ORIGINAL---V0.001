@@ -104,6 +104,7 @@ Reglas: solo emails **transaccionales** por defecto (los comerciales exigen cons
 | Panel de una entidad nueva | Guía de 3 pasos: *Crea tu primera campaña* (con plantillas) · *Invita a tu cofirmante* · *Completa el KYB* | — |
 | Portería sin conexión | — | Banda ámbar: *"Sin conexión: seguimos validando con la lista descargada."* |
 | Super-Admin sin alertas | *"Todo en orden. Ninguna alerta pendiente."* | — |
+| Registro de actividad de la entidad y auditoría de la consola (Sprint 5.8a) | Sin registros: *"Todavía no hay nada registrado."* Con filtros: *"No hay nada registrado con esos filtros. Prueba a quitar alguno o a ampliar las fechas."* → *Quitar todos los filtros* | La página de error general del panel o de la consola, con *Reintentar*. En el buscador por persona de la consola, junto al campo: *"No hay ninguna cuenta con ese email."* |
 
 Carga: siempre **esqueletos** con la forma del contenido; nunca pantallas en blanco ni spinners a pantalla completa.
 

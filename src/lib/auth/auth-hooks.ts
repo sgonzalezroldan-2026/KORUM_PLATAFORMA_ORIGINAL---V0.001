@@ -7,6 +7,7 @@ import { clearAttempts, countAttempts, lastAttemptAt, reserveAttempt } from '@/l
 import { AUTH_REQUEST_PREFIX, AUTH_SECOND_FACTOR_FAILURE_RULE, AUTH_SECOND_FACTOR_RULE } from '@/lib/rate-limit-rules';
 import { coarseUserAgent } from '@/repositories/tenant-guard';
 import type { AuthEmailDeps } from './auth-emails';
+import { trackSignInAttempt } from './failed-sign-in';
 import { guardPasskeyRegistration, PASSKEY_REGISTRATION_PATHS, recordPasskeyAdded, retirePreviousSession, SESSION_REPLACING_PATHS } from './passkey-hooks';
 import { hashAuditIp } from '@/services/audit/audit.service';
 import { dataHmac } from '@/core/security/data-hmac';
@@ -195,6 +196,8 @@ async function trackSessionSecondFactor(deps: HookDeps, context: { newSession?: 
 export function buildIdentityProofHook(deps: HookDeps, emails: AuthEmailDeps) {
   return createAuthMiddleware(async (ctx) => {
     if (ctx.path && SECOND_FACTOR_PATHS.has(ctx.path)) await trackSessionSecondFactor(deps, ctx.context, (await getSessionFromCtx(ctx).catch(() => null))?.user.id ?? null);
+    // Fallos repetidos al entrar: constancia en la auditoría (Sprint 5.8a). Nunca cambia la respuesta.
+    await trackSignInAttempt(deps, ctx);
     if (ctx.path === '/passkey/verify-registration') return recordPasskeyAdded(ctx, deps, emails);
     const proof = ctx.path ? IDENTITY_PROOF_PATHS[ctx.path] : undefined;
     if (!proof) return;

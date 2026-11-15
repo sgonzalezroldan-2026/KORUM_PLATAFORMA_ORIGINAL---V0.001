@@ -1,6 +1,8 @@
 import type { Prisma } from '@/generated/prisma/client';
 import type { MemberRole } from '@/generated/prisma/enums';
-import { isTransactionDb } from '@/lib/db';
+import { isTransactionDb, type Db } from '@/lib/db';
+import { reserveAttempt } from '@/lib/rate-limit';
+import { TENANT_DENIED_AUDIT_RULE, TENANT_DENIED_ENTITY_RULE } from '@/lib/rate-limit-rules';
 import type { KorumPrismaClient } from '@/lib/prisma';
 
 /**
@@ -147,12 +149,14 @@ export function coarseUserAgent(userAgent: string | undefined): string | null {
  */
 export async function recordAudit(db: AuditDb, actor: SessionActor, entry: AuditEntry, options: { required?: boolean } = {}): Promise<void> {
   try {
+    // Una denegación se anota siempre; si pasa del tope de lo que la entidad ve, se guarda con otra acción (la consola la ve; el registro de la entidad, no).
+    const overCap = entry.action === 'tenant.access_denied' && entry.organizationId !== null && !(await denialFitsCap(db, actor, entry.organizationId));
     await db.auditLog.create({
       data: {
         actorType: actor.kind === 'gate' ? 'GATE_SESSION' : 'USER',
         actorUserId: actor.kind === 'user' ? actor.userId : null,
         organizationId: entry.organizationId === null ? null : clip(entry.organizationId),
-        action: entry.action,
+        action: overCap ? ACCESS_DENIED_OVER_CAP : entry.action,
         targetType: clip(entry.targetType),
         targetId: clip(entry.targetId),
         ipHash: actor.requestMeta?.ipHash?.slice(0, 128) ?? null,
@@ -164,6 +168,38 @@ export async function recordAudit(db: AuditDb, actor: SessionActor, entry: Audit
     // Dentro de una transacción un error de base de datos la deja abortada: seguir adelante solo haría fallar lo siguiente con un «transacción abortada» que oculta la causa.
     if (options.required || isTransactionDb(db)) throw error;
     console.error('No se pudo escribir en AuditLog', entry.action, error);
+  }
+}
+
+/**
+ * Acción con la que se guarda una denegación que pasa del tope de lo que la entidad ve en su registro. Es la misma denegación, con todo su detalle; lleva
+ * otro nombre para que la lista cerrada de la entidad la deje fuera sin depender de comparar un dato del detalle (una fila sin ese dato no supera la
+ * comparación en la base de datos, y la entidad dejaría de ver todas las denegaciones).
+ */
+export const ACCESS_DENIED_OVER_CAP = 'tenant.access_denied_over_cap';
+
+/**
+ * ¿Cabe otra fila `tenant.access_denied` de este actor en lo que **la entidad ve**? (Sprint 5.8a). El acceso se deniega igual y la fila se escribe igual: lo
+ * que pasa del tope se guarda como `ACCESS_DENIED_OVER_CAP` y solo lo ve la consola, para que nadie llene de ruido el registro del panel ni, llenándolo, deje de quedar rastro. Dos topes:
+ * por actor (cuenta, sesión de portería o, sin sesión, red) y, para quien no pertenece a la entidad, uno común a todos, que no se esquiva cambiando de
+ * cuenta ni de dirección. Un doble de prueba sin la tabla de contadores, o un fallo del contador fuera de una transacción, no impiden anotar.
+ */
+async function denialFitsCap(db: AuditDb, actor: SessionActor, organizationId: string): Promise<boolean> {
+  if (!('rateLimit' in db)) return true;
+  // Lo que se deniega al equipo de KORUM no llega al registro de la entidad (`audit-viewer.service.ts`), así que no gasta su tope ni queda aparte.
+  if (actor.kind === 'user' && actor.isSuperadmin) return true;
+  const limiter = db as unknown as Db;
+  const entity = clip(organizationId);
+  const who = actor.kind === 'user' ? `u:${actor.userId}` : actor.kind === 'gate' ? `g:${actor.gateSessionId}` : `a:${actor.requestMeta?.ipHash ?? 'unknown'}`;
+  const outsider = actor.kind === 'anonymous' || (actor.kind === 'user' && !actor.memberships.some((membership) => membership.organizationId === organizationId)) || (actor.kind === 'gate' && actor.organizationId !== organizationId);
+  try {
+    const own = await reserveAttempt(limiter, `${TENANT_DENIED_AUDIT_RULE.prefix}${entity}:${who}`, TENANT_DENIED_AUDIT_RULE);
+    // El tope común solo cuenta lo que de verdad llegaría al registro de la entidad.
+    const shared = !own || !outsider || (await reserveAttempt(limiter, `${TENANT_DENIED_ENTITY_RULE.prefix}${entity}`, TENANT_DENIED_ENTITY_RULE));
+    return own && shared;
+  } catch (error) {
+    if (isTransactionDb(db)) throw error;
+    return true;
   }
 }
 

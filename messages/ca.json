@@ -1853,7 +1853,8 @@
       "expired": "Campanyes vençudes",
       "support": "Suport",
       "supportPending": "{count, plural, one {# consulta espera resposta} other {# consultes esperen resposta}}",
-      "gate": "Taquilla i porteria"
+      "gate": "Taquilla i porteria",
+      "audit": "Registre d’activitat"
     },
     "header": {
       "label": "Gestió de l’entitat",
@@ -4008,7 +4009,8 @@
       "rules": "Regles i preus",
       "support": "Suport ({count, plural, =0 {res pendent} one {# consulta} other {# consultes}})",
       "repartos": "Repartiments per resoldre",
-      "settings": "Configuració"
+      "settings": "Configuració",
+      "audit": "Auditoria"
     },
     "sections": {
       "business": "Negoci: ingressos reals i projectats"
@@ -5591,6 +5593,16 @@
       "fieldInvalid": "Aquest valor no és vàlid: revisa’n el format.",
       "backToIndex": "Tornar a l’índex de blocs",
       "unsavedLeave": "Hi ha canvis sense desar. Si surts ara es perdran. Vols sortir igualment?"
+    },
+    "audit": {
+      "personLabel": "Cercar per persona (el seu correu)",
+      "personHint": "El correu només es fa servir per trobar el compte: no es desa ni queda a l’adreça de la pàgina.",
+      "personSearch": "Cercar persona",
+      "personSearching": "Cercant…",
+      "personNotFound": "No hi ha cap compte amb aquest correu.",
+      "personInvalid": "Escriu un correu complet, per exemple nom@exemple.com.",
+      "personForbidden": "La teva sessió ja no permet aquesta cerca. Torna a entrar a la consola.",
+      "personFailed": "No s’ha pogut fer la cerca. Comprova la connexió i torna-ho a provar."
     }
   },
   "forbidden": {
@@ -6981,6 +6993,426 @@
       "notActive": {
         "title": "La teva aportació ha arribat",
         "text": "Aquest mes ha anat íntegre a una campanya de {organization}, però l’aportació mensual no ha quedat activa (ja en tenies una altra o la vas substituir). Revisa les teves aportacions més avall."
+      }
+    }
+  },
+  "audit": {
+    "console": {
+      "metaTitle": "Auditoria",
+      "back": "← Tornar a la consola",
+      "title": "Auditoria de la plataforma",
+      "intro": "Qui va fer què, quan i des d’on. Aquest registre no es pot editar ni esborrar des de la plataforma. Només desa identificadors, mai correus ni NIF: els noms es consulten en mostrar la pàgina. Si dos registres porten el mateix codi de xarxa, venen de la mateixa connexió.",
+      "organization": "Entitat",
+      "allOrganizations": "Totes les entitats",
+      "personFiltered": "Veient el que va fer o el que afecta {name} ({email}).",
+      "personFilteredNoName": "Veient el que va fer o el que afecta {email}.",
+      "personErased": "Veient el que va fer o el que afecta un compte ja suprimit.",
+      "personNotFound": "No hi ha cap compte amb aquest correu.",
+      "personClear": "Treure el filtre de persona",
+      "korumHidden": "No es mostren les consultes que KORUM fa des d’aquesta consola (cada pàgina que obres en deixa una).",
+      "korumShow": "Veure les consultes de KORUM"
+    },
+    "entity": {
+      "metaTitle": "Registre d’activitat",
+      "title": "Registre d’activitat",
+      "intro": "El que ha passat a la vostra entitat: signatures, liquidacions, campanyes, relleus i accessos denegats. No es pot editar ni esborrar des de la plataforma. Les consultes que KORUM fa a les vostres dades també queden registrades i les podeu demanar.",
+      "privacy": "Només apareixen pel seu nom les persones que signen avui per l’entitat. Les famílies i qualsevol altre compte surten com a «una altra persona», i el que cada família fa amb el seu compte o amb la seva aportació mensual no apareix aquí.",
+      "person": "Persona signant",
+      "allPeople": "Qualsevol persona",
+      "initiative": "Campanya",
+      "allInitiatives": "Totes les campanyes",
+      "initiativeOption": "Núm. {id} · {title}",
+      "probe": "Es va demanar una cosa que no existeix o que no és de l’entitat",
+      "memberOption": "{role} · {name}"
+    },
+    "filters": {
+      "toggle": "Filtrar",
+      "active": "{count, plural, one {# filtre actiu} other {# filtres actius}}",
+      "category": "Tipus d’activitat",
+      "allCategories": "Tota l’activitat",
+      "action": "Què va passar exactament",
+      "allActions": "Qualsevol cosa",
+      "initiativeNumber": "Número de campanya",
+      "from": "Des del dia",
+      "to": "Fins al dia (inclòs)",
+      "apply": "Aplicar filtres",
+      "clear": "Treure tots els filtres",
+      "hint": "Els filtres se sumen: si tries un tipus d’activitat i una cosa concreta d’un altre tipus, la llista sortirà buida."
+    },
+    "list": {
+      "title": "El que ha passat, del més recent al més antic (hora d’Espanya)",
+      "count": "{count, plural, one {Es mostra # registre.} other {Es mostren # registres.}}",
+      "empty": "Encara no hi ha res registrat.",
+      "emptyFiltered": "No hi ha res registrat amb aquests filtres. Prova de treure’n algun o d’ampliar les dates.",
+      "older": "Veure registres anteriors",
+      "newest": "Tornar als més recents",
+      "who": "Qui",
+      "about": "Sobre què",
+      "organization": "Entitat",
+      "from": "Des d’on",
+      "device": "Dispositiu {device}",
+      "network": "Codi de xarxa {network}",
+      "originUnknown": "Sense dades d’origen",
+      "targetWithId": "{type} {id}",
+      "unknownAction": "Activitat sense classificar ({code})",
+      "statusChange": "De «{from}» a «{to}»",
+      "statusReason": "Motiu: {reason}.",
+      "details": "Veure el detall desat",
+      "code": "Codi intern: {code}",
+      "targetWithName": "{type} {id} · {name}",
+      "originAutomatic": "No aplica (és automàtic)",
+      "pagerTop": "Més registres, al principi de la llista",
+      "pagerBottom": "Més registres, al final de la llista"
+    },
+    "actor": {
+      "system": "El sistema (automàtic)",
+      "webhook": "Paycomet (avís automàtic d’un pagament)",
+      "gate": "Una sessió de porteria",
+      "anonymous": "Algú sense identificar",
+      "korum": "KORUM",
+      "korumNamed": "KORUM · {name} ({email})",
+      "member": "{name} · {role}",
+      "person": "{name} ({email})",
+      "personNoName": "{email}",
+      "other": "Una altra persona",
+      "erased": "Un compte ja suprimit",
+      "formerMember": "Una persona que abans signava per l’entitat"
+    },
+    "categories": {
+      "security": "Seguretat i accessos denegats",
+      "korumAccess": "Consultes de KORUM",
+      "signatures": "Signatures i signants",
+      "money": "Diners i factures",
+      "campaigns": "Campanyes",
+      "ideas": "Bústia d’idees",
+      "gate": "Taquilla, porteria i sortejos",
+      "sponsors": "Comerços amics",
+      "entity": "L’entitat i el seu titular",
+      "account": "Comptes i privacitat",
+      "support": "Suport",
+      "platform": "Configuració i regles de la plataforma",
+      "system": "Tasques automàtiques",
+      "unclassified": "Sense classificar"
+    },
+    "targets": {
+      "Initiative": "Campanya",
+      "Organization": "Entitat",
+      "EscrowPayout": "Liquidació",
+      "ActivityFundPayout": "Liquidació del Fons",
+      "Idea": "Idea",
+      "IdeaApproval": "Aprovació d’idea",
+      "Contribution": "Aportació",
+      "Sponsor": "Comerç",
+      "User": "Compte",
+      "Passkey": "Clau d’accés",
+      "Invoice": "Factura",
+      "KybDocument": "Document del titular",
+      "FileAsset": "Fitxer",
+      "GateSession": "Sessió de porteria",
+      "SupportTicket": "Consulta",
+      "PrivacyRequest": "Sol·licitud de privacitat",
+      "SignerHandover": "Relleu de signant",
+      "ResizePoll": "Votació",
+      "WalletSubscription": "Aportació mensual",
+      "PlatformSetting": "Paràmetre de la plataforma",
+      "PlatformSecret": "Secret de la plataforma",
+      "GlobalConfig": "Regles globals",
+      "GlobalCategory": "Categoria global",
+      "MedalTier": "Medalla",
+      "OpsAlert": "Alerta",
+      "PricingAlert": "Avís de preus",
+      "Job": "Tasca programada",
+      "Console": "Consola",
+      "Route": "Una pàgina o descàrrega del panell",
+      "SuperadminSession": "Sessió de Super-Admin",
+      "Account": "Compte que no existeix",
+      "TicketPass": "Passi",
+      "AuditLog": "Auditoria",
+      "OrganizationMember": "Càrrec d’una persona signant",
+      "PaymentOrder": "Comanda de pagament",
+      "PaymentMethodToken": "Targeta desada",
+      "WebhookEvent": "Avís de Paycomet",
+      "MedalTierConfig": "Regles de les medalles",
+      "Gate": "Porteria",
+      "EscrowPayoutSplit": "Enviament d’una liquidació",
+      "ActivityFundSplit": "Enviament del Fons d’activitats"
+    },
+    "reasons": {
+      "PUBLISHED": "l’entitat la va publicar",
+      "GOAL_REACHED": "es va assolir l’objectiu",
+      "DEADLINE_PASSED": "va arribar la data límit sense assolir l’objectiu",
+      "DRAFT_DISCARDED": "l’entitat va descartar l’esborrany",
+      "PAYOUT_SENT": "es va enviar la liquidació",
+      "ENTITY_CHOSE_REFUND": "l’entitat va triar reemborsar",
+      "RESIZE_VOTE_OPENED": "l’entitat va llançar la votació",
+      "RESIZE_VOTE_WITHOUT_PROJECT": "la votació es va tancar sense projecte",
+      "RESIZE_VOTE_APPROVED": "la votació va triar un projecte",
+      "RESIZED_LEFT_EMPTY": "una devolució forçosa la va deixar sense fons",
+      "ALL_REFUNDED": "es va retornar tot el que es va aportar",
+      "REOPENED_BY_REVERSAL": "una devolució forçosa la va deixar per sota de l’objectiu"
+    },
+    "actions": {
+      "tenant": {
+        "access_denied": "Accés denegat: algú sense permís va intentar entrar o fer alguna cosa",
+        "resource_not_found": "Es va demanar una cosa que no existeix",
+        "resource_outside_tenant": "Es va intentar fer servir una cosa que pertany a una altra entitat",
+        "access_denied_over_cap": "Accés denegat que va passar del límit d’avisos que veu l’entitat"
+      },
+      "auth": {
+        "sign_in_failed_repeatedly": "Diversos inicis de sessió fallits seguits"
+      },
+      "account": {
+        "certificate_denied": "Intent d’obrir el certificat d’una altra persona",
+        "passkey_delete_denied": "Intent de treure la clau d’accés d’una altra persona",
+        "invitation_accepted": "Invitació acceptada",
+        "passkey_added": "Clau d’accés afegida",
+        "passkey_deleted": "Clau d’accés treta"
+      },
+      "api": {
+        "panel_cover_denied": "Pujada de la portada d’una campanya denegada",
+        "panel_entity_image_denied": "Pujada d’una imatge de l’entitat denegada",
+        "panel_fund_receipt_denied": "Descàrrega del justificant del Fons d’activitats denegada",
+        "panel_kyb_open_denied": "Obertura d’un document del titular denegada",
+        "panel_kyb_upload_denied": "Pujada d’un document del titular denegada",
+        "panel_logros_denied": "Pujada d’una foto d’èxits denegada",
+        "panel_medalla_denied": "Descàrrega del kit de medalles denegada",
+        "panel_modelo182_denied": "Descàrrega del Model 182 denegada",
+        "panel_payout_invoice_denied": "Pujada de la factura d’una liquidació denegada",
+        "panel_payout_invoice_open_denied": "Obertura de la factura d’una liquidació denegada",
+        "panel_sponsor_logo_denied": "Pujada del logotip d’un comerç denegada"
+      },
+      "double_check": {
+        "denied": "Signatura denegada",
+        "otp_locked": "Massa codis de signatura incorrectes: la signatura va quedar bloquejada",
+        "request_rate_limited": "Enllaç de signatura: massa intents seguits de demanar-lo",
+        "wrong_signer": "Intent de signar amb l’enllaç d’una altra persona",
+        "challenge_issued": "Es va enviar un enllaç i un codi per signar",
+        "signed": "Signatura registrada",
+        "signature_superseded": "Una signatura anterior va quedar substituïda per una de nova"
+      },
+      "activity_fund": {
+        "rate_limited": "Massa intents seguits al Fons d’activitats",
+        "payout_requested": "Liquidació del Fons demanada",
+        "payout_approved": "Liquidació del Fons aprovada",
+        "payout_cancelled": "Liquidació del Fons retirada",
+        "receipt_downloaded": "Justificant del Fons d’activitats descarregat",
+        "signatures_rejected": "Fons d’activitats: les signatures d’una liquidació van deixar de valer",
+        "split_resolved": "Fons d’activitats: un enviament de diners es va comprovar i es va resoldre a mà"
+      },
+      "expired": {
+        "rate_limited": "Campanyes vençudes: massa intents seguits de decidir"
+      },
+      "payout": {
+        "rate_limited": "Liquidacions: massa intents seguits de demanar-les",
+        "requested": "Liquidació demanada",
+        "approved": "Liquidació aprovada",
+        "invoice_opened": "Factura de liquidació oberta",
+        "invoice_uploaded": "Factura de liquidació pujada",
+        "signatures_rejected": "Signatures d’una liquidació que van deixar de valer",
+        "split_resolved": "Liquidació: enviament resolt a mà després de comprovar-lo",
+        "splits_replanned": "Liquidació: reorganitzats els seus enviaments de diners",
+        "updated": "Liquidació demanada de nou amb canvis"
+      },
+      "file": {
+        "not_available": "Es va demanar un fitxer que no està disponible"
+      },
+      "gate": {
+        "pin_blocked": "Porteria: connexió bloquejada després de diversos PIN incorrectes",
+        "pin_failed": "Porteria: PIN incorrecte",
+        "qr_invalid": "Porteria: QR alterat o falsificat",
+        "qr_other_event": "Porteria: QR d’un altre esdeveniment",
+        "request_limited": "Porteria: massa intents seguits des d’una mateixa connexió",
+        "session_rejected": "Porteria: sessió rebutjada",
+        "check_in": "Porteria: entrada validada",
+        "code_rotated": "Porteria: codi renovat",
+        "pin_revoked": "Porteria: PIN revocat",
+        "pin_set": "Porteria: PIN creat",
+        "session_opened": "Porteria: sessió oberta",
+        "session_revoked": "Porteria: sessió tancada",
+        "sync": "Porteria: validacions sense connexió sincronitzades"
+      },
+      "idea": {
+        "chat_access_denied": "Accés denegat a la conversa d’una idea",
+        "approved": "Idea aprovada per l’entitat",
+        "converted": "Idea convertida en campanya",
+        "rejected": "Idea no admesa",
+        "replied": "Resposta de l’entitat a una idea",
+        "signature_revalidated": "Signatura d’una idea revisada i donada per bona"
+      },
+      "kyb": {
+        "document_not_found": "Es va demanar un document del titular que no existeix",
+        "cif_released": "KORUM va deixar lliure un CIF que tenia ocupat una alta anterior sense acabar",
+        "document_opened": "Document del titular obert",
+        "document_uploaded": "Document del titular pujat",
+        "identity_updated": "Dades del titular canviades",
+        "rejected": "Rebutjada la documentació del titular",
+        "submitted": "Enviada a revisió la documentació del titular",
+        "verified": "Verificada la documentació del titular"
+      },
+      "panel": {
+        "medal_kit_denied": "Kit de medalles: descàrrega no permesa",
+        "medal_kit_downloaded": "Kit de medalles descarregat"
+      },
+      "pledge": {
+        "access_denied": "Aportació mensual: accés denegat",
+        "started": "Aportació mensual iniciada",
+        "paused": "Aportació mensual en pausa",
+        "resumed": "Aportació mensual represa",
+        "cancelled": "Aportació mensual cancel·lada",
+        "campaign_changed": "Aportació mensual: canvi de campanya"
+      },
+      "tax": {
+        "model182_denied": "Exportació del Model 182 no permesa",
+        "model182_exported": "Model 182 exportat"
+      },
+      "studio": {
+        "semantic_lock_triggered": "Avís del 0 %: el text d’una campanya sembla parlar d’obres o equipament",
+        "semantic_lock_after_publish": "Avís del 0 % després de publicar: una campanya sembla parlar d’obres o equipament",
+        "initiative_saved": "Campanya desada a l’Estudi",
+        "initiative_published": "Campanya publicada",
+        "draft_discarded": "Esborrany descartat",
+        "exempt_category_saved": "Categoria al 0 %: campanya desada amb ella",
+        "raffle_notice_confirmed": "Avís normatiu de rifes confirmat"
+      },
+      "superadmin": {
+        "access": "Consulta de KORUM des de la seva consola",
+        "bootstrapped": "Primer Super-Admin donat d’alta",
+        "invitation_cancelled": "Invitació de Super-Admin retirada",
+        "invited": "Super-Admin convidat",
+        "revoked": "Super-Admin donat de baixa"
+      },
+      "signer": {
+        "cosigner_invitation_corrected": "Es va corregir la invitació de la segona persona signant",
+        "handover_cancelled": "Relleu de signant retirat",
+        "handover_completed": "Relleu de signant completat",
+        "handover_proposed": "Relleu de signant proposat",
+        "handover_resent": "Invitació de relleu reenviada",
+        "role_label_updated": "Nom del càrrec canviat",
+        "signature_mode_changed": "Mode de signatura canviat (una o dues signatures)"
+      },
+      "organization": {
+        "resend_invitation": "Invitació reenviada",
+        "registered": "Entitat donada d’alta",
+        "branding_updated": "Marca de l’entitat canviada",
+        "category_added": "Categoria afegida a l’entitat",
+        "category_rule_set": "Regla d’una categoria de l’entitat canviada",
+        "groups_updated": "Grups de participació canviats",
+        "image_published": "Imatge de l’entitat publicada",
+        "image_removed": "Imatge de l’entitat retirada",
+        "settings_updated": "Configuració de l’entitat canviada",
+        "tariffs_updated": "Tarifes de l’entitat canviades"
+      },
+      "payment": {
+        "chargeback": "Un cobrament va ser retornat a qui va pagar (contracàrrec)",
+        "refund_after_settlement": "Devolució d’un cobrament que ja s’havia liquidat",
+        "refund_reactivated": "Devolució reactivada",
+        "refund_rejected": "Paycomet va rebutjar una devolució",
+        "refund_resolved": "Devolució resolta a mà",
+        "refund_unknown": "Devolució amb resultat desconegut"
+      },
+      "selfboost": {
+        "executed": "Autoimpuls de KORUM executat"
+      },
+      "invoice": {
+        "issued": "Factura emesa",
+        "rectified": "Factura rectificada",
+        "accepted": "Factura registrada correctament al sistema Veri*factu",
+        "rejected": "El sistema Veri*factu va rebutjar una factura",
+        "registration_issue": "Problema en registrar una factura a Veri*factu",
+        "registration_resolved": "El registre d’una factura a Veri*factu es va resoldre a mà",
+        "registration_retry": "Es va tornar a intentar registrar una factura a Veri*factu",
+        "registration_unknown": "No se sap si una factura va quedar registrada a Veri*factu"
+      },
+      "initiative": {
+        "status_changed": "Canvi d’estat d’una campanya",
+        "closed": "Campanya tancada en enviar-se la liquidació",
+        "expired": "Campanya vençuda sense arribar a l’objectiu",
+        "refund_decided": "L’entitat va decidir reemborsar una campanya vençuda",
+        "refunded": "Campanya reemborsada del tot",
+        "resize_vote_launched": "Votació oberta per refer una campanya amb el que s’ha recaptat",
+        "resize_rejected": "Votació tancada sense projecte: es reemborsa",
+        "resized": "Campanya refeta per votació",
+        "resized_emptied": "Sense fons: una campanya refeta es va quedar a zero i es reemborsa",
+        "resized_rescaled": "Objectiu rebaixat en una campanya refeta: un cobrament va ser retornat a qui va pagar",
+        "cover_published": "Portada de campanya publicada",
+        "cover_removed": "Portada de campanya retirada"
+      },
+      "resize": {
+        "link_resent": "Enllaç de vot reenviat",
+        "non_voters_refunded": "Es van retornar els diners a qui no va votar per cap projecte",
+        "tallied": "Recompte d’una votació",
+        "vote_option": "Vot per una opció",
+        "vote_refund": "Vot per la devolució"
+      },
+      "achievement": {
+        "photo_published": "Foto d’èxits publicada",
+        "thanks_saved": "Missatge d’agraïment desat"
+      },
+      "raffle": {
+        "drawn": "Sorteig fet"
+      },
+      "sponsor": {
+        "approved": "Comerç admès",
+        "rejected": "Comerç no admès",
+        "late_charge_pooled": "El pagament d’un comerç va arribar amb la campanya tancada i es va guardar per a una altra",
+        "logo_published": "Logotip d’un comerç publicat",
+        "pool_assigned": "Els diners guardats d’un comerç es van assignar a una campanya",
+        "renewal_chained": "Renovació pagada dues vegades: val per a l’any següent",
+        "renewal_invited": "Invitació a renovar enviada a un comerç",
+        "renewal_link_sent": "Enllaç de renovació enviat a un comerç",
+        "renewal_refunded": "Renovació d’un comerç retornada",
+        "renewal_rule_saved": "Regla de reassignació de comerços desada"
+      },
+      "privacy": {
+        "account_name_rectified": "Nom d’un compte corregit",
+        "erasure_blocked": "Supressió d’un compte bloquejada",
+        "erasure_completed": "Compte suprimit",
+        "export": "Dades personals exportades",
+        "request_closed": "Privacitat: petició tancada",
+        "request_opened": "Privacitat: petició oberta"
+      },
+      "support": {
+        "direct_email_sent": "Correu directe de KORUM a l’entitat",
+        "korum_message_created": "Consulta de l’entitat a KORUM",
+        "platform_answered": "KORUM va respondre una consulta",
+        "ticket_answered": "L’entitat va respondre una consulta",
+        "ticket_created": "Consulta rebuda"
+      },
+      "settings": {
+        "connection_tested": "Connexió amb un proveïdor provada",
+        "secret": {
+          "deleted": "Secret de plataforma esborrat",
+          "updated": "Secret de plataforma canviat"
+        },
+        "setting": {
+          "cleared": "Paràmetre de plataforma buidat",
+          "updated": "Paràmetre de plataforma canviat"
+        }
+      },
+      "rules": {
+        "category_added": "Categoria global afegida",
+        "category_rule_set": "Regla d’una categoria global canviada",
+        "global_updated": "Regles globals canviades",
+        "medals_updated": "Medalles canviades"
+      },
+      "tariff": {
+        "negative_return_fixed": "Tarifa corregida per retorn negatiu"
+      },
+      "ops_alert": {
+        "resolved": "Alerta resolta",
+        "resolved_with_note": "Alerta resolta amb una nota"
+      },
+      "outbox": {
+        "requeued": "Correus fallits posats una altra vegada a la cua"
+      },
+      "PRICING_ALERT_ACKNOWLEDGED": "Avís de preus revisat",
+      "job": {
+        "completed": "Tasca programada acabada",
+        "failed": "Tasca programada fallida"
+      },
+      "quota": {
+        "period_assigned": "Quotes sense comissió: es va fixar el curs al qual pertanyen",
+        "renewed": "Quotes sense comissió renovades per al curs nou"
       }
     }
   }

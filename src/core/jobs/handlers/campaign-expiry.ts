@@ -6,6 +6,7 @@ import { closeDueResizePolls } from '@/services/resize/resize-close';
 import { notifyIndexNow } from '@/services/seo/indexnow.service';
 import type { JobHandler } from '../job-types';
 import { notifySigners } from '../notify';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * `CAMPAIGN_EXPIRY` (PRD §4.1): una iniciativa `FUNDRAISING` cuya fecha límite ha pasado sin llegar a la meta pasa a `EXPIRED`, una
@@ -69,6 +70,7 @@ async function expireIfDue(db: Db, id: number, now: Date): Promise<boolean> {
     if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative) || initiative._count.raffleDraws > 0) return false;
     const { count } = await tx.initiative.updateMany({ where: { id, status: 'FUNDRAISING' }, data: { status: 'EXPIRED' } });
     if (count !== 1) return false;
+    await recordStatusChange(tx, { initiativeId: id, organizationId: initiative.organizationId, from: 'FUNDRAISING', to: 'EXPIRED', reason: 'DEADLINE_PASSED' });
     const selfBoostReturnedCents = await returnSelfBoostToKorum(tx, id, now);
     const raisedCents = initiative.raisedCents - selfBoostReturnedCents;
     await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: initiative.organizationId, action: 'initiative.expired', targetType: 'Initiative', targetId: String(id), metadataJson: { raisedCents, goalCents: initiative.goalCents, selfBoostReturnedCents } } });

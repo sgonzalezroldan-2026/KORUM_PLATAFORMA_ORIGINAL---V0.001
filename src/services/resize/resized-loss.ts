@@ -1,6 +1,7 @@
 import { shrinkReservedMaintenance } from '@/core/finance/quota-reservation';
 import { resizedFigures } from '@/core/resize/resize-figures';
 import type { Db } from '@/lib/db';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Una campaña redimensionada por votación (Sprint 4.4b) que pierde dinero antes de liquidarse (un contracargo): no vuelve a recaudar, así que su meta baja
@@ -19,6 +20,7 @@ export async function rescaleResizedAfterLoss(tx: Db, initiativeId: number): Pro
     tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: initiative.organizationId, action, targetType: 'Initiative', targetId: String(initiativeId), metadataJson: metadata } });
   if (initiative.raisedCents <= 0) {
     await tx.initiative.update({ where: { id: initiativeId }, data: { status: 'REFUNDING' } });
+    await recordStatusChange(tx, { initiativeId, organizationId: initiative.organizationId, from: 'GOAL_REACHED', to: 'REFUNDING', reason: 'RESIZED_LEFT_EMPTY' });
     await audit('initiative.resized_emptied', { goalCents: initiative.goalCents });
     return 'REFUNDING';
   }

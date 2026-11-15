@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { after } from 'next/server';
 import { DonationDocumentView } from '@/components/account/donation-document-view';
 import { RevealTaxId } from '@/components/account/reveal-tax-id';
 import { getKeyring } from '@/config/keyring';
@@ -12,10 +13,12 @@ import { openDonorTaxId } from '@/core/tax/tax-id-vault';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { requireSession } from '@/lib/auth/guards';
+import { currentRequestMeta } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import { INITIATIVE_ID_PATTERN } from '@/lib/seo/portal-routes';
 import { AccountNotFoundError, findOwnDonationDocument } from '@/repositories/account.repository';
+import { recordForeignCertificateAttempt } from '@/services/audit/account-probes';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,7 +53,14 @@ export default async function DonationDocumentPage({ params }: Params) {
     if (error instanceof AccountNotFoundError) notFound();
     throw error;
   }
-  if (!row) notFound();
+  if (!row) {
+    // La donación de otra persona responde el mismo 404 que una que no existe, pero el intento queda anotado (Sprint 5.8a). Se anota **después** de
+    // responder (`after`): comprobar de quién es y escribir la fila cuesta varias consultas, y si se hiciera antes el tiempo de respuesta diría si el
+    // número existe.
+    const requestMeta = await currentRequestMeta();
+    after(() => recordForeignCertificateAttempt(getPrisma(), { userId: session.userId, requestMeta }, Number(id)).then(() => undefined));
+    notFound();
+  }
 
   const document = buildDonationDocument(row.organization, row);
   const revealed = await accountReauthIsFresh(getPrisma(), { userId: session.userId, sessionId: session.sessionId });

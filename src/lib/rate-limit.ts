@@ -32,6 +32,19 @@ export async function reserveUnits(db: Db, key: string, rule: RateLimitRule, uni
   return count === 1;
 }
 
+/**
+ * Suma un intento y devuelve **el número exacto que le ha tocado**, en una sola escritura (la fila queda bloqueada mientras se suma). Para contadores que no
+ * limitan nada pero deciden algo según la cuenta (los inicios de sesión fallidos): con «reservar y después leer», varios intentos a la vez leían todos el
+ * mismo número ya avanzado y se saltaban el aviso (auditoría de seguridad del 5.8a). El contador vuelve a cero tras `windowMs` sin intentos.
+ */
+export async function countAttempt(db: Db, key: string, windowMs: number, now: Date = new Date()): Promise<number> {
+  const nowMs = BigInt(now.getTime());
+  await db.rateLimit.createMany({ data: [{ id: key, key, count: 0, lastRequest: nowMs }], skipDuplicates: true });
+  await db.rateLimit.updateMany({ where: { key, lastRequest: { lte: nowMs - BigInt(windowMs) } }, data: { count: 0, lastRequest: nowMs } });
+  const row = await db.rateLimit.update({ where: { key }, data: { count: { increment: 1 }, lastRequest: nowMs }, select: { count: true } });
+  return row.count;
+}
+
 export async function releaseAttempt(db: Db, key: string): Promise<void> {
   await releaseUnits(db, key, 1);
 }

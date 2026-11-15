@@ -424,7 +424,9 @@ export function consolePayload(name: string, victim: Victim): unknown {
     acknowledgePricingAlertAction: { target: { code: 'BRACKET_CLIFF', fingerprint: 'x', source: 'GLOBAL' }, note: 'Nota escrita por la entidad A.' },
     answerPlatformTicketAction: { ticketCode: victim.ticketCode, reply: 'Respuesta de la entidad A en nombre de KORUM.', status: 'RESOLVED' },
     closeRectificationAction: { requestId: 1, outcome: 'COMPLETED', note: 'Nota escrita por la entidad A.' },
-    rectifyNameAction: { requestId: 1, name: 'Nombre cambiado por la entidad A' }
+    rectifyNameAction: { requestId: 1, name: 'Nombre cambiado por la entidad A' },
+    // Sprint 5.8a: buscar a una persona en la auditoría. Con un email bien formado tampoco pasa, ni dice si existe.
+    findAuditPersonAction: { email: 'una-familia-de-b@familias.example' }
   };
   return (
     byName[name] ?? {

@@ -15,6 +15,7 @@ import { reserveAttempt } from '@/lib/rate-limit';
 import { EXPIRED_DECISION_RULE } from '@/lib/rate-limit-rules';
 import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { queueSupporterBroadcast } from '@/services/notifications/supporter-broadcast';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Qué hacer con una campaña que venció sin llegar a la meta (Sprint 4.4b, prototipo `sendResizePollToDonors` y `executeAutomaticRefundAndSponsorReassign`).
@@ -96,6 +97,7 @@ export async function decideRefund(db: KorumPrismaClient, actor: SessionActor, o
   return inTransaction(db, async (tx) => {
     const initiative = await lockExpired(tx, initiativeId);
     await tx.initiative.update({ where: { id: initiativeId }, data: { status: 'REFUNDING' } });
+    await recordStatusChange(tx, { initiativeId, organizationId, from: 'EXPIRED', to: 'REFUNDING', reason: 'ENTITY_CHOSE_REFUND', actorUserId: user.userId });
     await tx.auditLog.create({ data: auditData(user, organizationId, initiativeId, 'initiative.refund_decided', { raisedCents: initiative.raisedCents, goalCents: initiative.goalCents }) });
     await notifySigners(tx, organizationId, 'initiative.expiredDecided', `${initiativeId}:refund`, { initiativeId, decision: 'REFUND' });
     await queueSupporterBroadcast(tx, initiativeId, 'initiative.refundingSupporter', now);
@@ -120,6 +122,7 @@ export async function launchResizeVote(db: KorumPrismaClient, actor: SessionActo
       select: { id: true }
     });
     await tx.initiative.update({ where: { id: initiative.id }, data: { status: 'RESIZE_VOTING' } });
+    await recordStatusChange(tx, { initiativeId: initiative.id, organizationId, from: 'EXPIRED', to: 'RESIZE_VOTING', reason: 'RESIZE_VOTE_OPENED', actorUserId: user.userId });
     await tx.auditLog.create({ data: auditData(user, organizationId, initiative.id, 'initiative.resize_vote_launched', { pollId: poll.id, options: input.options.length, raisedCents: initiative.raisedCents, goalCents: initiative.goalCents, closesAt: closesAt.toISOString() }) });
     await notifySigners(tx, organizationId, 'initiative.expiredDecided', `${initiative.id}:vote`, { initiativeId: initiative.id, decision: 'RESIZE_VOTE', closesAt: closesAt.toISOString() });
     await queueSupporterBroadcast(tx, initiative.id, 'initiative.resizePoll', now);

@@ -9,6 +9,7 @@ import { rescaleResizedAfterLoss } from '@/services/resize/resized-loss';
 import { applyMovedUndo, movedPayinLines } from './moved-sponsor-reversals';
 import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 import { retireMatchingPool, splitReleasedPool, type PayinToUndo } from './sponsor-reversals';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Lo que deshace un cobro: reembolsos al medio de pago original y contracargos (Regla 02 §7). El reembolso devuelve siempre el 100 % de
@@ -154,6 +155,7 @@ export async function removeFromInitiative(tx: Db, contribution: ContributionRow
   const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
   if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0 && !eventAlreadyHeld && !resized) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
+    await recordStatusChange(tx, { initiativeId: contribution.initiativeId, organizationId: contribution.organizationId, from: 'GOAL_REACHED', to: 'FUNDRAISING', reason: 'REOPENED_BY_REVERSAL' });
   }
   // Redimensionada y sin liquidar: la meta y las comisiones bajan con lo que se pierde (auditoría financiera del 4.4b, H1).
   if (resized && initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)) await rescaleResizedAfterLoss(tx, contribution.initiativeId);

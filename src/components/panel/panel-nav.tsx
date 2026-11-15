@@ -22,6 +22,7 @@ export function PanelNav({ orgSlug, pendingApprovals = 0, pendingSupport = 0 }: 
     { key: 'achievements', href: `${base}/logros`, active: pathname.startsWith(`${base}/logros`) },
     { key: 'support', href: `${base}/soporte`, active: pathname.startsWith(`${base}/soporte`) },
     { key: 'fund', href: `${base}/fondo`, active: pathname.startsWith(`${base}/fondo`) },
+    { key: 'audit', href: `${base}/auditoria`, active: pathname.startsWith(`${base}/auditoria`) },
     { key: 'settings', href: `${base}/ajustes`, active: pathname.startsWith(`${base}/ajustes`) }
   ] as const;
 

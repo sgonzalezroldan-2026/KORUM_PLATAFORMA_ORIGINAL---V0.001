@@ -138,7 +138,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
     // ───────────── 3. Páginas, documentos y subidas de B ─────────────
     await test.step('páginas del panel, documentos, facturas, Modelo 182 y subidas de otra entidad', async () => {
       const clean = (body: string, what: string) => expect.soft(leaksIn(body, victim), `${what}: datos de B en la respuesta`).toEqual([]);
-      for (const section of ['', '/aprobaciones', '/estudio', `/estudio?iniciativa=${victim.draftId}`, `/estudio/${victim.campaignId}/cartel`, '/liquidaciones', '/logros', '/taquilla', '/vencidas', '/fondo', '/soporte', '/ajustes']) {
+      for (const section of ['', '/aprobaciones', '/estudio', `/estudio?iniciativa=${victim.draftId}`, `/estudio/${victim.campaignId}/cartel`, '/liquidaciones', '/logros', '/taquilla', '/vencidas', '/fondo', '/soporte', '/ajustes', '/auditoria', '/auditoria?familia=money']) {
         const response = await page.request.get(`/panel/${victimEntity.slug}${section}`);
         expect.soft(response.status(), `/panel/{B}${section}`).toBe(403);
         clean(await response.text(), `/panel/{B}${section}`);
@@ -154,7 +154,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
         expect.soft(html, route).toContain('NEXT_HTTP_ERROR_FALLBACK;404');
       }
       // La consola es solo del Super-Admin.
-      for (const route of ['/admin', '/admin/entidades', `/admin/entidades/${victim.organizationId}`, '/admin/reglas', '/admin/soporte', '/admin/ajustes']) {
+      for (const route of ['/admin', '/admin/entidades', `/admin/entidades/${victim.organizationId}`, '/admin/reglas', '/admin/soporte', '/admin/ajustes', '/admin/auditoria', `/admin/auditoria?entidad=${victim.organizationId}`]) {
         const response = await page.request.get(route);
         expect.soft(response.status(), route).toBe(403);
         clean(await response.text(), route);
@@ -255,7 +255,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       const sameSite = { origin, 'sec-fetch-site': 'same-origin' };
       const clean = (body: string, what: string) => expect.soft(leaksIn(body, victim), `${what} sin sesión: datos de B en la respuesta`).toEqual([]);
       // El panel y la consola mandan a entrar, con la ruta de vuelta y sin pintar nada.
-      for (const route of [...['', '/aprobaciones', '/estudio', '/liquidaciones', '/logros', '/taquilla', '/vencidas', '/fondo', '/soporte', '/ajustes'].map((section) => `/panel/${victimEntity.slug}${section}`), '/admin', `/admin/entidades/${victim.organizationId}`, '/admin/ajustes']) {
+      for (const route of [...['', '/aprobaciones', '/estudio', '/liquidaciones', '/logros', '/taquilla', '/vencidas', '/fondo', '/soporte', '/ajustes', '/auditoria'].map((section) => `/panel/${victimEntity.slug}${section}`), '/admin', `/admin/entidades/${victim.organizationId}`, '/admin/ajustes', '/admin/auditoria']) {
         const response = await anonymous.request.get(route, { maxRedirects: 0 });
         expect.soft([response.status(), /\/login\?next=/.test(response.headers()['location'] ?? '')], `${route} sin sesión`).toEqual([307, true]);
         clean(await response.text(), route);

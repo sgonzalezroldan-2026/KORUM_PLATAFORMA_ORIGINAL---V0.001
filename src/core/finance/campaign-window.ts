@@ -1,5 +1,6 @@
 import { inTransaction, type Db } from '@/lib/db';
 import { reserveInitiativeQuotas } from './quota-reservation';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Ventana de 90 días de Paycomet y duración de las campañas (Regla 02 §4): solo se puede repartir un cobro durante los 90 días
@@ -103,7 +104,7 @@ export function planPayoutSplits(candidates: readonly SplitCandidate[], netCents
  * Con `expectedGoalCents` (el Estudio manda la meta que aceptó quien publica) la fila se bloquea **antes** de leer nada y solo si sigue valiendo esa meta: un
  * guardado a la vez espera su turno y ya no puede cambiar presupuesto ni cupos entre la comprobación y la reserva.
  */
-export async function publishInitiative(db: Db, initiativeId: number, now: Date = new Date(), options: { expectedGoalCents?: number } = {}): Promise<{ published: boolean }> {
+export async function publishInitiative(db: Db, initiativeId: number, now: Date = new Date(), options: { expectedGoalCents?: number; actorUserId?: string } = {}): Promise<{ published: boolean }> {
   return inTransaction(db, async (tx) => {
     if (options.expectedGoalCents !== undefined) {
       const locked = await tx.initiative.updateMany({ where: { id: initiativeId, status: 'BUDGETING', goalCents: options.expectedGoalCents }, data: { updatedAt: now } });
@@ -114,7 +115,7 @@ export async function publishInitiative(db: Db, initiativeId: number, now: Date 
     }
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id: initiativeId },
-      select: { status: true, closesAt: true, goalCents: true, stage: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true, organization: { select: { kybStatus: true } } }
+      select: { organizationId: true, status: true, closesAt: true, goalCents: true, stage: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true, organization: { select: { kybStatus: true } } }
     });
     if (initiative.status === 'FUNDRAISING') return { published: false };
     if (initiative.status !== 'BUDGETING') throw new InitiativeNotPublishableError(initiativeId, `está en estado ${initiative.status}`);
@@ -134,6 +135,7 @@ export async function publishInitiative(db: Db, initiativeId: number, now: Date 
     await reserveInitiativeQuotas(tx, initiativeId, now);
     const { count } = await tx.initiative.updateMany({ where: { id: initiativeId, status: 'BUDGETING' }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
     if (count === 0) throw new InitiativeNotPublishableError(initiativeId, 'ha cambiado de estado mientras se publicaba');
+    await recordStatusChange(tx, { initiativeId, organizationId: initiative.organizationId, from: 'BUDGETING', to: 'FUNDRAISING', reason: 'PUBLISHED', actorUserId: options.actorUserId });
     return { published: true };
   });
 }

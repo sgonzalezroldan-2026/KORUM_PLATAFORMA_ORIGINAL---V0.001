@@ -6,6 +6,7 @@ import { inTransaction, QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import { DONOR_RECIPIENT_SELECT, donorRecipient } from '@/services/notifications/donor-recipient';
 import { queueSupporterBroadcast } from '@/services/notifications/supporter-broadcast';
 import { approveRefundInTx } from '@/services/payments/payment-reversals';
+import { recordStatusChange } from '@/services/audit/status-change-audit';
 
 /**
  * Cierre de las votaciones de redimensionamiento a los 7 días (Sprint 4.4b), desde la tarea `CAMPAIGN_EXPIRY` (corre antes que `MASS_REFUND`). Cada paso en
@@ -117,6 +118,7 @@ async function closeWithoutProject(tx: Db, pollId: number, initiative: { id: num
   // Si la campaña ya no estaba en votación (no debería pasar: nada la saca de ahí salvo este cierre), se cierra la votación sin tocar su estado.
   if (initiative.status !== 'RESIZE_VOTING') return outcome;
   await tx.initiative.update({ where: { id: initiative.id }, data: { status: 'REFUNDING' } });
+  await recordStatusChange(tx, { initiativeId: initiative.id, organizationId: initiative.organizationId, from: 'RESIZE_VOTING', to: 'REFUNDING', reason: 'RESIZE_VOTE_WITHOUT_PROJECT' });
   await auditOf(tx, initiative.organizationId, initiative.id, pollId)('initiative.resize_rejected', { outcome });
   await notifySigners(tx, initiative.organizationId, 'initiative.resizeClosed', `${initiative.id}`, { initiativeId: initiative.id, outcome });
   await queueSupporterBroadcast(tx, initiative.id, 'initiative.refundingSupporter', now);
@@ -168,6 +170,7 @@ async function refundNonVotersOrFinish(db: Db, pollId: number, now: Date): Promi
         costInstCents: figures.costInstCents
       }
     });
+    await recordStatusChange(tx, { initiativeId: initiative.id, organizationId: initiative.organizationId, from: 'RESIZE_VOTING', to: 'GOAL_REACHED', reason: 'RESIZE_VOTE_APPROVED' });
     const { releasedCents } = await shrinkReservedMaintenance(tx, initiative.id, figures.maintFeeCents);
     await tx.resizePoll.update({
       where: { id: pollId },

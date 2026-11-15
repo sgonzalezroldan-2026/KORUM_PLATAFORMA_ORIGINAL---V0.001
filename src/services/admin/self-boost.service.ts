@@ -93,7 +93,8 @@ export async function executeSelfBoost(db: Db, actor: VerifiedSuperadminActor, i
     });
     // Suma al contador 💛 como cualquier otra aportación (decisión del promotor, 2026-11-12), pero no a ningún curso: KORUM no pertenece a ninguno (Regla 02 §7).
     await tx.initiative.update({ where: { id: input.initiativeId }, data: { raisedCents: { increment: amountCents }, totalContributions: { increment: 1 } } });
-    await markGoalReached(tx, initiative.organizationId, input.initiativeId, now);
+    // Para la entidad, la meta se completa igual que con cualquier cobro (un cambio del sistema); quién ejecutó el Auto-Impulso queda en el detalle, que solo ve la consola.
+    await markGoalReached(tx, initiative.organizationId, input.initiativeId, now, { triggeredByUserId: actor.userId });
     await tx.auditLog.create({
       data: {
         actorType: 'USER',

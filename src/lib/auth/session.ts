@@ -3,6 +3,7 @@ import { cache } from 'react';
 import { getEnv } from '@/config/env';
 import { verifyAccountSession, verifySuperadminSession, type VerifiedAccountActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { getPrisma } from '@/lib/prisma';
+import { trustedClientIp } from '@/lib/trusted-ip';
 import { loadUserActor } from '@/repositories/actor';
 import type { RequestMeta, SessionActor } from '@/repositories/tenant-guard';
 import { hashAuditIp } from '@/services/audit/audit.service';
@@ -28,7 +29,8 @@ export interface AuthSession {
 /** IP solo como HMAC y navegador completo (la auditoría se queda solo con su familia). */
 export async function currentRequestMeta(): Promise<RequestMeta> {
   const requestHeaders = await headers();
-  const ip = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() || requestHeaders.get('x-real-ip')?.trim();
+  // La misma regla de confianza que el resto de la aplicación (`trustedClientIp`): la cabecera que fija la plataforma antes que las que puede escribir el cliente, y solo IP válidas.
+  const ip = trustedClientIp((name) => requestHeaders.get(name));
   return { ipHash: ip ? hashAuditIp(getEnv().DATA_HMAC_SECRET, ip) : undefined, userAgent: requestHeaders.get('user-agent') ?? undefined };
 }
 
