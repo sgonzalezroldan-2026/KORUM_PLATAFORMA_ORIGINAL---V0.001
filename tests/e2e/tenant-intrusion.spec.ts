@@ -181,6 +181,12 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
           theirs: `/api/panel/fondo/${victim.fundPayoutId}/justificante?org=${victimEntity.slug}&lang=es`,
           ownWithTheirs: `/api/panel/fondo/${victim.fundPayoutId}/justificante?org=${attacker.slug}&lang=es`,
           ownWithMissing: `/api/panel/fondo/${none.fundPayoutId}/justificante?org=${attacker.slug}&lang=es`
+        },
+        {
+          what: 'expediente de una campaña (Sprint 5.8b)',
+          theirs: `/api/panel/expediente?org=${victimEntity.slug}&expediente=campana:${victim.payoutCampaignId}&lang=es`,
+          ownWithTheirs: `/api/panel/expediente?org=${attacker.slug}&expediente=campana:${victim.payoutCampaignId}&lang=es`,
+          ownWithMissing: `/api/panel/expediente?org=${attacker.slug}&expediente=campana:${none.campaignId}&lang=es`
         }
       ];
       for (const download of downloads) {
@@ -194,6 +200,18 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       }
       const medal = await page.request.get(`/api/panel/medalla?orgSlug=${victimEntity.slug}&nivel=plata&tipo=informe&locale=es`, { maxRedirects: 0, headers: sameSite });
       expect.soft(medal.status(), 'informe de medalla').toBe(403);
+      // Expediente exportable (Sprint 5.8b): el de la consola es solo del Super-Admin; el de una aportación no existe para una entidad (tampoco de las suyas);
+      // y el selector del panel, con una campaña de B, dice «no encontrado» sin su título.
+      const consoleDossier = await page.request.get(`/api/admin/expediente?expediente=campana:${victim.payoutCampaignId}&lang=es`, { maxRedirects: 0, headers: sameSite });
+      expect.soft(consoleDossier.status(), 'expediente de la consola').toBe(403);
+      clean(await consoleDossier.text(), 'expediente de la consola');
+      const contributionDossier = await page.request.get(`/api/panel/expediente?org=${attacker.slug}&expediente=aportacion:1&lang=es`, { maxRedirects: 0, headers: sameSite });
+      expect.soft(contributionDossier.status(), 'expediente de una aportación desde el panel').toBe(404);
+      const picker = await page.request.get(`/panel/${attacker.slug}/auditoria?expediente=campana:${victim.payoutCampaignId}`);
+      const pickerHtml = await picker.text();
+      expect.soft(pickerHtml, 'selector de expediente con una campaña de B').toContain('data-status="notFound"');
+      expect.soft(pickerHtml, 'selector de expediente con una campaña de B').not.toContain('/api/panel/expediente');
+      clean(pickerHtml, 'selector de expediente con una campaña de B');
       const model = await page.request.post('/api/panel/modelo-182', { headers: sameSite, data: { orgSlug: victimEntity.slug, fiscalYear: 2026, contactPhone: '934128890' } });
       expect.soft(model.status(), 'Modelo 182').toBe(403);
       clean(await model.text(), 'Modelo 182');
@@ -270,7 +288,9 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
         `/api/panel/documentos/${victim.documentId}?orgSlug=${victimEntity.slug}`,
         `/api/panel/liquidaciones/factura/${victim.invoiceFileId}?orgSlug=${victimEntity.slug}`,
         `/api/panel/fondo/${victim.fundPayoutId}/justificante?org=${victimEntity.slug}&lang=es`,
-        `/api/panel/medalla?orgSlug=${victimEntity.slug}&nivel=plata&tipo=informe&locale=es`
+        `/api/panel/medalla?orgSlug=${victimEntity.slug}&nivel=plata&tipo=informe&locale=es`,
+        `/api/panel/expediente?org=${victimEntity.slug}&expediente=campana:${victim.payoutCampaignId}&lang=es`,
+        `/api/admin/expediente?expediente=campana:${victim.payoutCampaignId}&lang=es`
       ]) {
         const response = await anonymous.request.get(route, { maxRedirects: 0, headers: sameSite });
         expect.soft([response.status(), response.headers()['location']], `${route} sin sesión`).toEqual([403, undefined]);

@@ -7179,7 +7179,8 @@
         "panel_modelo182_denied": "Form 182 download denied",
         "panel_payout_invoice_denied": "Payout invoice upload denied",
         "panel_payout_invoice_open_denied": "Opening of a payout invoice denied",
-        "panel_sponsor_logo_denied": "Business logo upload denied"
+        "panel_sponsor_logo_denied": "Business logo upload denied",
+        "panel_dossier_denied": "Denied: download of a case file as PDF"
       },
       "double_check": {
         "denied": "Signature denied",
@@ -7413,7 +7414,454 @@
       "quota": {
         "period_assigned": "Commission-free quota: its school year was set",
         "renewed": "Commission-free quota renewed for the new school year"
+      },
+      "dossier": {
+        "downloaded": "Case file downloaded as PDF"
       }
+    },
+    "dossier": {
+      "title": {
+        "contribution": "Case file for a contribution",
+        "initiative": "Case file for a campaign",
+        "payout": "Case file for a payout"
+      },
+      "intro": {
+        "console": "This case file brings together what the KORUM platform has on record: the charge, the ledger entries, the signatures, the Paycomet notices, the emails sent and the status changes. It is meant for handling a complaint, a chargeback (a payment reversed by the payer’s card issuer) or an inspection. It carries no emails, tax IDs or names of contributors. It is an internal KORUM document: it includes the platform’s own accounts and contributions.",
+        "entity": "This case file brings together what the KORUM platform has on record about your organisation: the movements of the campaign’s piggy bank, the signatures, the emails sent and the status changes. It is meant for handling a complaint or an inspection. It carries no emails, tax IDs or names of contributors."
+      },
+      "none": "not on record",
+      "yes": "yes",
+      "no": "no",
+      "sections": {
+        "initiative": "Campaign",
+        "breakdown": "Public breakdown of the goal (4 lines)",
+        "contributions": "Contributions received, by type and status",
+        "contribution": "Contribution",
+        "notifications": "Paycomet notices about this order",
+        "contributionSplits": "Payouts that have transferred this charge",
+        "payout": "Payout",
+        "splits": "Transfers of the payout",
+        "signatures": "Signatures",
+        "ledger": "Ledger",
+        "checks": "Check against the ledger",
+        "emails": "Emails sent",
+        "statusChanges": "Status changes of the campaign",
+        "audit": "Activity log",
+        "notes": "Notes",
+        "ledgerEntity": "Piggy bank movements",
+        "checksEntity": "Check against the movements"
+      },
+      "labels": {
+        "reference": "Case file reference",
+        "generatedAt": "Generated on",
+        "entity": "Organisation",
+        "initiative": "Campaign",
+        "wallet": "Initiative piggy bank",
+        "format": "Format",
+        "status": "Status",
+        "createdAt": "Created on",
+        "closesAt": "Deadline",
+        "firstPayinAt": "First charge",
+        "closedAt": "Closed on",
+        "goal": "Goal",
+        "raised": "Raised",
+        "contributionCount": "Number of contributions",
+        "contribution": "Contribution number",
+        "type": "Type",
+        "method": "Payment method",
+        "payer": "Who pays",
+        "amount": "Amount for the campaign",
+        "guarantee": "Voluntary contribution to KORUM",
+        "totalCharged": "Total charged",
+        "matchedBonus": "Added by a business’s Matching 2x",
+        "ticketQuantity": "Tickets or raffle tickets",
+        "refunded": "Refunded",
+        "order": "Paycomet order",
+        "authCode": "Authorisation code",
+        "fiscalYear": "Tax year",
+        "taxCertificate": "Asked for a tax certificate",
+        "payout": "Payout number",
+        "destination": "Destination",
+        "beneficiary": "Receiving account holder",
+        "iban": "Supplier’s IBAN",
+        "providerInvoice": "Supplier invoice attached",
+        "netPaid": "Amount for the project",
+        "korumFee": "KORUM fee",
+        "requestedAt": "Requested on",
+        "approvedAt": "Approved on",
+        "executedAt": "Sent on",
+        "gatewayInGoal": "Gateway cost included in the goal",
+        "escrowOut": "Total that left the piggy bank (sum of the three figures above)"
+      },
+      "values": {
+        "numbered": "No. {id} · {name}",
+        "refunded": "{amount}, on {date}",
+        "ibanWithBank": "institution code {bank}, ending in {last4}",
+        "iban": "ending in {last4}",
+        "between": "between {from} and {to}",
+        "member": "{name} · {role}",
+        "targetNamed": "{type} {id} · {name}",
+        "target": "{type} {id}",
+        "reason": "reason: {reason}",
+        "noReason": "no reason on record",
+        "notRefunded": "nothing refunded",
+        "notYet": "not yet",
+        "period": "{from} to {to}",
+        "noDate": "no date on record"
+      },
+      "formats": {
+        "BUDGET": "Budget",
+        "TICKETING": "Ticketing or raffle"
+      },
+      "breakdown": {
+        "line1": "Supplier and equipment budget",
+        "line2": "Installation and technical fit-out",
+        "line3": "Maintenance, risk and contingency reserve",
+        "line4": "Payment gateway, platform, handling and refund guarantee",
+        "total": "Sum of the 4 lines (equal to the goal)",
+        "mismatch": "WARNING: the figures stored for this campaign do not add up to its goal, so its breakdown is not shown. They need to be reviewed."
+      },
+      "empty": {
+        "contributions": "There are no contributions yet.",
+        "notifications": "No Paycomet notice is stored for this order.",
+        "contributionSplits": "This charge has not been transferred in any payout yet.",
+        "splits": "There are no transfers yet: they are set when the payout is approved.",
+        "signatures": "No signatures on record.",
+        "ledger": "There are no entries.",
+        "emails": "No emails on record.",
+        "statusChanges": "No status changes on record (they have been recorded since November 2026).",
+        "audit": "Nothing on record.",
+        "movements": "There are no movements.",
+        "splitsMissing": "No transfers are on record for this payout. The ledger needs to be reviewed."
+      },
+      "contributionGroup": "{type} · {status}: {count, plural, one {# contribution} other {# contributions}} · {total}",
+      "contributionsAnonymous": "Contributions are anonymous to the organisation: their totals appear here and, further down, the piggy bank movements added up by type for the whole campaign, never one by one.",
+      "contributionTypes": {
+        "DONATION": "Donation",
+        "TICKET": "Ticket or raffle ticket",
+        "SPONSORSHIP": "Business sponsorship",
+        "SELF_BOOST": "KORUM Auto-Boost",
+        "MATCHING_FUND": "A business’s Matching 2x pool"
+      },
+      "contributionStatuses": {
+        "PENDING": "payment not finished",
+        "COMPLETED": "charged",
+        "FAILED": "payment failed",
+        "REFUND_PENDING": "refund pending",
+        "REFUNDED": "refunded",
+        "CHARGEBACK": "charge reversed (chargeback)",
+        "MOVED": "charged here; the money moved to the business’s pool. What is placed from that pool in this campaign appears in the line of placed sponsorships",
+        "POOL": "charged here as a Matching 2x pool; it enters the piggy bank as donations are matched and already appears in the pool’s line",
+        "POOL_PARTLY_MOVED": "charged here as a Matching 2x pool; what has been matched appears in the pool’s line and the remainder moved to the business’s pool",
+        "CHARGEBACK_AFTER_PAYOUT": "charge reversed (chargeback) after the payout; KORUM absorbed it and it still counts towards the amount raised",
+        "REFUNDED_AFTER_PAYOUT": "refunded after the payout; KORUM absorbed it and it still counts towards the amount raised"
+      },
+      "methods": {
+        "CARD": "Card",
+        "BIZUM": "Bizum",
+        "APPLE_PAY": "Apple Pay",
+        "GOOGLE_PAY": "Google Pay",
+        "HUCHA": "My Piggy Bank",
+        "PLATFORM": "Contribution from the platform (no gateway)"
+      },
+      "payer": {
+        "account": "a registered account",
+        "guest": "a guest, with no account",
+        "sponsor": "the business {name}",
+        "korum": "the KORUM platform (Auto-Boost)",
+        "erasedAccount": "a now-deleted account",
+        "matching": "a business’s Matching 2x pool (charged earlier with its sponsorship)"
+      },
+      "contributionPrivacy": "This case file does not carry the contributor’s email, tax ID or name. If they are needed for the complaint, whoever is entitled to them asks for them separately.",
+      "notificationLine": "{date} · {operation} · {result} · {amount} · {status}",
+      "notificationStatuses": {
+        "RECEIVED": "received, not processed",
+        "PROCESSED": "processed",
+        "REJECTED": "rejected",
+        "FAILED": "failed while processing"
+      },
+      "contributionSplitLine": {
+        "campaign": "Campaign payout No. {id}: {amount} · {status} · {date}",
+        "fund": "Activity fund payout No. {id}: {amount} · {status} · {date}"
+      },
+      "splitStatuses": {
+        "PENDING": "pending",
+        "SENDING": "being sent, unconfirmed",
+        "DONE": "sent",
+        "FAILED": "failed",
+        "CANCELLED": "cancelled"
+      },
+      "payoutStatuses": {
+        "PENDING_DOUBLE_CHECK": "waiting for signatures",
+        "APPROVED": "approved",
+        "PROCESSING": "being sent",
+        "EXECUTED": "sent",
+        "FAILED": "failed"
+      },
+      "destinations": {
+        "PROVIDER": "The supplier chosen by the organisation",
+        "ORGANIZATION": "The organisation’s account"
+      },
+      "splitsIntro": "Paycomet transfers the money charge by charge: each transfer is the share of one original charge.",
+      "splitLine": "Contribution No. {id}, charged on {charged}: {amount} · {status} · {date}",
+      "truncated": "The list shows the {shown, number} most recent of {total, number}. The checks cover all of them.",
+      "signatureTargets": {
+        "IDEA_APPROVAL": "Idea approval",
+        "ESCROW_PAYOUT": "Payout"
+      },
+      "signatureLine": "{target} · {role}: {name}, signed on {date} (one-time code: {otp}).",
+      "signerUnnamed": "someone who no longer signs for the organisation",
+      "signatureHash": "Signature fingerprint (it identifies the signature and detects any change to what was signed): {hash}",
+      "journal": {
+        "title": "Entry {id} · {date} · {kind}",
+        "reference": "order {reference}",
+        "reverses": "corrects entry {id}",
+        "DEBIT": "Debit",
+        "CREDIT": "Credit",
+        "in": "In",
+        "out": "Out"
+      },
+      "journalKinds": {
+        "PAYIN_DONATION": "Donation charged",
+        "PAYIN_TICKET": "Tickets or raffle tickets charged",
+        "PAYIN_SPONSOR": "Business sponsorship charged",
+        "PAYIN_HUCHA_TOPUP": "My Piggy Bank top-up",
+        "HUCHA_SPEND": "Payment with My Piggy Bank",
+        "HUCHA_REFUND_ORIGIN": "My Piggy Bank balance refunded",
+        "GATEWAY_FEE": "Paycomet fee",
+        "SELF_BOOST_INJECTION": "KORUM Auto-Boost",
+        "MATCHING_RELEASE": "Matching 2x: a business’s money added to the campaign",
+        "PAYOUT_APPROVAL": "Payout approved",
+        "SPLIT_PAYOUT_ORGANIZATION": "Transfer to the organisation’s account",
+        "SPLIT_PAYOUT_PROVIDER": "Transfer to the supplier",
+        "ESCROW_REFUND_DONOR": "Refund to the contributor",
+        "CREDIT_POOL_TRANSFER": "A business’s sponsorship moved",
+        "CHARGEBACK": "Charge reversed (chargeback)",
+        "INVOICE_VAT": "VAT on a KORUM invoice",
+        "REVERSAL": "Correction of an earlier entry",
+        "ACTIVITY_FUND_DEPOSIT": "Moved to the Activity fund",
+        "ACTIVITY_FUND_PAYOUT_APPROVAL": "Activity fund payout approved"
+      },
+      "accounts": {
+        "PSP_CLEARING": "Money charged that is held at Paycomet",
+        "INITIATIVE_ESCROW": "Initiative piggy bank",
+        "FAMILY_WALLET": "My Piggy Bank balance",
+        "SPONSOR_CREDIT_POOL": "A business’s pool waiting to be placed",
+        "MATCHING_POOL": "A business’s Matching 2x pool",
+        "ORG_PAYABLE": "Approved and waiting to be sent to the organisation or its supplier",
+        "REFUNDS_PAYABLE": "Approved refunds waiting to be sent",
+        "TAX_PAYABLE_VAT": "VAT on KORUM invoices",
+        "KORUM_REVENUE_GUARANTEE": "KORUM revenue: voluntary contributions",
+        "KORUM_REVENUE_BRACKET": "KORUM revenue: bracket fee",
+        "KORUM_REVENUE_SPONSOR_FEE": "KORUM revenue: advertising handling for businesses",
+        "KORUM_REVENUE_TICKET_FEE": "KORUM revenue: Digital handling fees",
+        "KORUM_REVENUE_MAINTENANCE": "KORUM revenue: platform maintenance",
+        "KORUM_REVENUE_TOPUP_FEE": "KORUM revenue: My Piggy Bank handling",
+        "GATEWAY_FEES_RECOVERED": "Gateway cost included in the goal and recovered",
+        "GATEWAY_FEES_EXPENSE": "Expense: Paycomet fees",
+        "AUTO_BOOST_EXPENSE": "Expense: KORUM Auto-Boost",
+        "CHARGEBACK_LOSSES": "Expense: chargebacks and refunds after payout borne by KORUM",
+        "ORG_ACTIVITY_FUND": "The organisation’s Activity fund"
+      },
+      "ledgerIntro": {
+        "console": "Every movement of money is an entry with its lines: the debits add up to the same as the credits. Entries are never edited or deleted; a mistake is corrected with another entry.",
+        "entity": "What goes into and out of the campaign’s piggy bank and of what has been approved to be sent to the organisation or its supplier. Movements that depend on contributions from families (charges, what the Matching 2x pool adds, refunds and transfers) are added up by type for the whole campaign, between their first and last day, without the time or the amount of each contribution. What the Matching 2x pool adds is shown without days or a count. The rest are shown by day. They are never edited or deleted; a mistake is corrected with another movement.",
+        "entityGap": "When more leaves the piggy bank than is approved for sending, the difference is the KORUM fee and the gateway cost, which were already included in the goal."
+      },
+      "ledgerBalanced": "Checked: in {count, plural, one {the entry listed} other {the # entries listed}} the debits equal the credits.",
+      "ledgerUnbalanced": "WARNING: {count, plural, one {there is # entry} other {there are # entries}} in the list whose debits do not equal its credits.",
+      "checksIntro": {
+        "console": "Each figure on record is worked out again by adding up the ledger lines. They must match to the cent.",
+        "entity": "Each figure on record is worked out again by adding up all the movements recorded. They must match to the cent."
+      },
+      "checkLine": {
+        "console": "{what}: record {record} · ledger {ledger} · {result}",
+        "entity": "{what}: record {record} · movements {ledger} · {result}"
+      },
+      "checkOk": "MATCHES",
+      "checkMismatch": "DOES NOT MATCH",
+      "checks": {
+        "raised": "Raised by the campaign",
+        "charged": "Total charged",
+        "payoutNet": "Amount approved for the project",
+        "payoutSent": "Amount already sent",
+        "refunded": "Amount refunded"
+      },
+      "emailsIntro": "Notices the platform has put in its outbox, by type of notice and status. Neither the recipient’s email address nor the content appears here.",
+      "emailLine": "{template} · {status} · {count, plural, one {# email} other {# emails}} · {when}",
+      "emailStatuses": {
+        "PENDING": "queued",
+        "SENDING": "being sent",
+        "SENT": "sent",
+        "FAILED": "could not be sent",
+        "CANCELLED": "cancelled"
+      },
+      "statusChangeLine": "{date}: from “{from}” to “{to}” ({why})",
+      "auditIntro": {
+        "console": "What happened in the organisation about this case file according to the platform audit, oldest first. Only those who sign for the organisation today are named. It does not include lookups or downloads (case files included), or what each person does with their own account.",
+        "entity": "What the organisation’s activity log has on record about this case file, oldest first, with the day of each record. Only those who sign for the organisation today are named."
+      },
+      "auditLine": "Who: {who} · About: {about}",
+      "auditTruncated": "The list shows the {shown, number} most recent records. Earlier ones can be looked up in the activity log.",
+      "notes": {
+        "personalData": {
+          "console": "This case file contains no emails, tax IDs, network addresses or names of contributors. It names, with their role, those who sign for the organisation; the account holder who receives a payout (the organisation or its supplier); and the business that pays a sponsorship.",
+          "entity": "This case file contains no emails, tax IDs, network addresses or names of contributors. It names, with their role, those who sign for the organisation today and the account holder who receives a payout (the organisation or its supplier)."
+        },
+        "platform": "KORUM is a technology platform and does not hold funds. Charges, transfers and refunds are executed by PAYCOMET, an authorised payment institution. This case file is not an invoice or a tax certificate.",
+        "times": "Times are mainland Spain times. Amounts are in euros."
+      },
+      "sponsorAllocations": "Sponsorships placed in this campaign from each business’s pool: {count, plural, one {# business} other {# businesses}} · {total}",
+      "operations": {
+        "1": "charge",
+        "2": "refund",
+        "106": "chargeback",
+        "other": "operation No. {type}"
+      },
+      "responses": {
+        "ok": "accepted",
+        "other": "declined ({response})"
+      },
+      "splitSummaryLine": "{status}: {count, plural, one {# transfer} other {# transfers}} · {total}",
+      "movementLine": "{period} · {kind} ({count, plural, one {# movement} other {# movements}}) · {side} · {account} · {total}",
+      "emailTemplateOther": "another notice",
+      "footer": "{reference} · Page {page} of {total}",
+      "emailTemplates": {
+        "auth": {
+          "magicLink": "Sign-in link",
+          "otp": "Sign-in code",
+          "invitation": "Invitation to sign for the organisation"
+        },
+        "contribution": {
+          "receipt": "Receipt for a contribution"
+        },
+        "ticket": {
+          "pass": "Tickets or raffle tickets with their QR"
+        },
+        "gate": {
+          "pinRevoked": "Door PIN cancelled notice"
+        },
+        "raffle": {
+          "extraRound": "Extra raffle round notice"
+        },
+        "initiative": {
+          "goalReached": "Goal reached notice",
+          "expired": "Campaign expired without its goal notice",
+          "goalReachedSupporter": "Notice to contributors that the goal was reached",
+          "achievementPhotos": "Notice to contributors about the result photos",
+          "expiredDecided": "Notice to contributors about what was decided for an expired campaign",
+          "resizeClosed": "Vote closed notice",
+          "resizePoll": "Link to vote on what to do with an expired campaign",
+          "resizeResult": "Vote result",
+          "refundingSupporter": "Notice to contributors that their money is being refunded"
+        },
+        "refund": {
+          "issued": "Refund notice"
+        },
+        "doubleCheck": {
+          "pending": "Pending signature link"
+        },
+        "split": {
+          "windowExpiring": "Payout deadline about to expire notice",
+          "windowExpired": "Payout deadline expired notice"
+        },
+        "sponsor": {
+          "renewalNotice": "Renewal reminder to a business",
+          "welcome": "Welcome message to a business",
+          "rejected": "Notice to a business that was not accepted",
+          "renewalLink": "Renewal link to a business",
+          "renewed": "Business renewal notice",
+          "reassigned": "Notice to a business that its contribution moves to another campaign",
+          "creditPool": "Notice to a business that its contribution is on hold",
+          "renewalInvite": "Invitation to renew to a business",
+          "toEntityFund": "Notice to a business that its contribution moves to the Activity fund",
+          "awaitingDecision": "Business awaiting a decision notice",
+          "lateReceived": "Notice to a business of a payment received after the campaign closed"
+        },
+        "activityFund": {
+          "received": "Money received in the Activity fund notice",
+          "reminder": "Reminder to pay out the Activity fund",
+          "paid": "Activity fund payout sent notice"
+        },
+        "tax": {
+          "certificateReady": "Tax certificate available notice"
+        },
+        "privacy": {
+          "inactivityNotice": "Inactive account notice"
+        },
+        "account": {
+          "passkeyAdded": "Passkey added notice"
+        },
+        "support": {
+          "received": "Enquiry received notice",
+          "replied": "Reply to an enquiry"
+        },
+        "platform": {
+          "message": "Message from KORUM to the organisation"
+        },
+        "pledge": {
+          "charged": "Receipt for a monthly contribution",
+          "skipped": "Month without charge for a monthly contribution notice",
+          "failed": "Failed charge for a monthly contribution notice"
+        },
+        "idea": {
+          "quorumReached": "Idea reached quorum notice",
+          "centerReplied": "Reply from the organisation to an idea"
+        },
+        "signer": {
+          "handover": "Signer handover notice"
+        },
+        "org": {
+          "kybStatus": "Holder verification notice"
+        },
+        "payout": {
+          "executed": "Payout sent notice",
+          "changed": "Payout changed notice"
+        },
+        "expired": {
+          "decisionReminder": "Reminder to decide about an expired campaign"
+        }
+      },
+      "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",
+      "matchingAdded": "What a business’s Matching 2x pool has added: {total}",
+      "matchingUndone": "Matching 2x pool: what it stopped adding when donations were refunded",
+      "movementLineUncounted": "Over the whole campaign · {kind} · {side} · {account} · {total}",
+      "movementsOmitted": "This campaign has {total, number} movements: too many to add up here. The checks further down do cover all of them.",
+      "matchingDetail": "Detail, not added (already in the line above): {count, plural, one {# release from the pool} other {# releases from the pool}} · {status} · {total}"
+    },
+    "dossierUi": {
+      "title": "Case files in PDF",
+      "introConsole": "Brings together in one PDF what is on record about a contribution, a campaign or a payout (charge, ledger, signatures, Paycomet notices, emails and status changes), for a complaint, a chargeback or an inspection. It carries no emails, tax IDs or names of contributors.",
+      "introEntity": "Brings together in one PDF what is on record about one of your campaigns or its payouts (piggy bank movements, signatures, emails and status changes), for a complaint or an inspection. It carries no emails, tax IDs or names of contributors.",
+      "emptyEntity": "You do not have any campaign to prepare a case file for yet.",
+      "kind": "What the case file is about",
+      "kinds": {
+        "contribution": "A contribution",
+        "initiative": "A campaign",
+        "payout": "A payout"
+      },
+      "reference": "Number or order",
+      "referenceHint": "The number of the campaign, the payout or the contribution. For a contribution, its Paycomet order also works.",
+      "choose": "What you want the case file for",
+      "chooseNone": "Choose a campaign or a payout",
+      "groupInitiatives": "Campaigns",
+      "groupPayouts": "Payouts",
+      "optionInitiative": "Campaign No. {id} · {title}",
+      "optionPayout": "Payout · campaign No. {id} · {title}",
+      "find": "Prepare the case file",
+      "ready": {
+        "contribution": "Ready: case file for contribution No. {id}, of campaign No. {initiativeId} · {title}.",
+        "initiative": "Ready: case file for campaign No. {id} · {title}.",
+        "payout": "Ready: case file for payout No. {id}, of campaign No. {initiativeId} · {title}."
+      },
+      "download": "Download the case file (PDF)",
+      "downloadNote": "Every download is recorded in this log.",
+      "notFoundConsole": "There is nothing with that number. Check the type and the number.",
+      "notFoundEntity": "We could not find that among what is yours. Choose it from the list.",
+      "open": "Prepare a case file",
+      "invalidConsole": "That is not a valid number. Type only the number (or the Paycomet order, for a contribution).",
+      "invalidEntity": "We did not understand what you asked for. Choose it from the list.",
+      "limited": "Too many case files have been requested in a short time. You can ask again in an hour."
     }
   }
 }

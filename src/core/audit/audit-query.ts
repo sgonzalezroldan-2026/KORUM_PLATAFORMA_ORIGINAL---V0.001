@@ -173,3 +173,25 @@ export function distinctShortOptions(texts: readonly string[], max = AUDIT_OPTIO
     return `${prefix}${shortOption(texts[index]!, max - prefix.length)}`;
   });
 }
+
+/** Palabras que no pueden quedar colgando justo antes de los puntos suspensivos («Canchas de…»), en los tres idiomas. */
+const DANGLING = new Set([
+  ...['y', 'e', 'o', 'u', 'ni', 'de', 'del', 'la', 'el', 'lo', 'los', 'las', 'un', 'una', 'unos', 'unas', 'su', 'sus', 'para', 'por', 'en', 'con', 'sin', 'sobre', 'entre', 'como', 'que', 'a', 'al'],
+  ...['i', 'dels', 'les', 'els', 'uns', 'unes', 'per', 'pel', 'pels', 'amb', 'sense', 'des', 'com', 'seu', 'seva', 'seus', 'seves', "d'", "l'", 'd’', 'l’'],
+  ...['and', 'or', 'of', 'the', 'an', 'for', 'in', 'on', 'at', 'to', 'by', 'from', 'with', 'about', 'its', 'our']
+]);
+/** Lo que no puede quedar justo delante de los puntos suspensivos: espacios y puntuación que abre o separa. */
+const TRAILING = /[\s·:,;(«“\-–—&/+]+$/u;
+
+/** Recorta un título, como `shortOption`, sin dejar al final un conector suelto. */
+export function shortTitle(title: string, max: number): string {
+  const short = shortOption(title, max);
+  if (short === title) return short;
+  let head = short.slice(0, -1).replace(TRAILING, '');
+  for (;;) {
+    const space = head.lastIndexOf(' ');
+    if (space < 0 || !DANGLING.has(head.slice(space + 1).toLocaleLowerCase())) break;
+    head = head.slice(0, space).replace(TRAILING, '');
+  }
+  return head ? `${head}${short.slice(-1)}` : short;
+}

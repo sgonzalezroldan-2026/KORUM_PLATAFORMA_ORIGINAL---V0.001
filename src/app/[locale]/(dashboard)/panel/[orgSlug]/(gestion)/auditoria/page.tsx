@@ -2,12 +2,15 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AuditEntryList } from '@/components/audit/audit-entry-list';
 import { AUDIT_FIELD, AUDIT_LABEL, AuditFilters, AuditPager } from '@/components/audit/audit-filters';
+import { DossierPicker } from '@/components/audit/dossier-picker';
 import { ENTITY_CATEGORIES } from '@/core/audit/audit-catalog';
 import { activeAuditFilters, AUDIT_QUERY_KEYS, auditQueryString, distinctShortOptions, parseAuditQuery, shortOption } from '@/core/audit/audit-query';
 import type { Locale } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
+import { dossierPickerResult } from '@/lib/dossier/dossier-picker-result';
 import { getPrisma } from '@/lib/prisma';
 import { getEntityAudit } from '@/repositories/audit.repository';
+import { listEntityDossierOptions } from '@/repositories/dossier.repository';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,17 +25,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * Registro de actividad de la entidad (Sprint 5.8a, trazabilidad): la misma vista que la auditoría de la consola, pero **solo con lo suyo**. La entidad sale
  * de la ruta ya comprobada por la guardia del panel y toda la consulta lleva su identificador; no aparecen las consultas de KORUM, los ajustes de la
- * plataforma ni las tareas automáticas, y de las personas solo se nombran quienes firman hoy por ella. Solo lectura.
+ * plataforma ni las tareas automáticas, y de las personas solo se nombran quienes firman hoy por ella. Solo lectura. Desde aquí se descarga también el
+ * expediente en PDF de una campaña o de una liquidación de la entidad (Sprint 5.8b).
  */
 export default async function PanelAuditPage({ params, searchParams }: Props) {
   const { locale, orgSlug } = await params;
   setRequestLocale(locale);
   const { actor, organization } = await requirePanelAccess(locale, orgSlug);
-  const requested = parseAuditQuery(await searchParams, { allowUnclassified: false });
+  const raw = await searchParams;
+  const requested = parseAuditQuery(raw, { allowUnclassified: false });
   const [view, t, roles] = await Promise.all([
     getEntityAudit(getPrisma(), actor, organization.id, requested),
     getTranslations({ locale, namespace: 'audit' }),
     getTranslations({ locale, namespace: 'panel.approvals.doubleCheck.roles' })
+  ]);
+  // Después de `getEntityAudit`, que es quien comprueba que la sesión firma por esta entidad con su segundo factor.
+  const [dossier, dossierOptions] = await Promise.all([
+    dossierPickerResult(getPrisma(), actor, { scope: 'entity', organizationId: organization.id }, raw, locale, organization.slug),
+    listEntityDossierOptions(getPrisma(), organization.id)
   ]);
   const query = view.applied;
   const base = `/panel/${organization.slug}/auditoria`;
@@ -51,6 +61,8 @@ export default async function PanelAuditPage({ params, searchParams }: Props) {
         <p className="max-w-3xl text-ink-soft">{t('entity.intro')}</p>
         <p className="max-w-3xl text-sm text-ink-soft">{t('entity.privacy')}</p>
       </header>
+
+      <DossierPicker variant="entity" locale={locale} options={dossierOptions} result={dossier} />
 
       <AuditFilters query={query} categories={ENTITY_CATEGORIES} basePath={base} variant="entity">
         <label className={AUDIT_LABEL}>

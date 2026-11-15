@@ -22,7 +22,8 @@ export interface AccountBalance {
   balanceCents: number;
 }
 
-const toSafeNumber = (value: number | bigint | null | undefined): number => {
+/** Una suma de apuntes como entero seguro de céntimos: si no cabe, falla en vez de dar una cifra inexacta. */
+export const toSafeNumber = (value: number | bigint | null | undefined): number => {
   const result = Number(value ?? 0);
   if (!Number.isSafeInteger(result)) throw new RangeError('Un saldo del libro mayor no cabe en un entero seguro de céntimos');
   return result;

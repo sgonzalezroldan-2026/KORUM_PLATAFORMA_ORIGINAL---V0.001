@@ -46,12 +46,12 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
    - Estudio de edición con pizarra TCO cuadrada al céntimo (presupuesto con proveedor libre, o taquilla/rifa con aviso normativo).
    - Liquidaciones con factura del proveedor, fotos Antes/Después, redimensionamiento o reembolso del 100 %.
    - **Modo portería** (`/panel/[orgSlug]/porteria`) con PIN por evento, escáner QR y sorteo certificado; exportación del Modelo 182 y cartel A4 con QR.
-   - **Registro de actividad** (`/panel/[orgSlug]/auditoria`): lo ocurrido en la entidad, solo lo suyo y sin nombres ajenos.
+   - **Registro de actividad** (`/panel/[orgSlug]/auditoria`): lo ocurrido en la entidad, solo lo suyo y sin nombres ajenos, y el expediente en PDF de sus campañas y liquidaciones.
 4. **Entorno 3 · Consola del Super-Admin** (`/admin`):
    - Cuadro de mandos con ingresos reales (libro mayor) frente a proyectados, 6 fuentes de ingresos, tablas ordenables y alertas 💎 Auto-Impulso / 🚨 Retorno negativo.
    - Ficha 360º de cada entidad, facturas Veri\*factu, motor de reglas globales, medallas y bandeja de soporte.
    - **Ajustes de la plataforma** (`/admin/ajustes`): credenciales de Paycomet, email, Veri\*factu, modo de Mi Hucha, divulgación del Auto-Impulso, textos legales y límites.
-   - **Auditoría** (`/admin/auditoria`): quién hizo qué, cuándo y desde dónde, con búsqueda por persona, entidad, campaña, acción y fechas.
+   - **Auditoría** (`/admin/auditoria`): quién hizo qué, cuándo y desde dónde, con búsqueda por persona, entidad, campaña, acción y fechas, y el expediente exportable en PDF de una aportación, una campaña o una liquidación (cuadrado con el libro mayor y sin datos personales de más).
 
 ---
 

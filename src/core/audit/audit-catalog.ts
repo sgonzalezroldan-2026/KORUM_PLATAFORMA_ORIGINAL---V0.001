@@ -21,6 +21,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'account.certificate_denied',
     'account.passkey_delete_denied',
     'api.panel_cover_denied',
+    'api.panel_dossier_denied',
     'api.panel_entity_image_denied',
     'api.panel_fund_receipt_denied',
     'api.panel_kyb_open_denied',
@@ -97,6 +98,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'invoice.registration_retry',
     'invoice.registration_unknown',
     'tax.model182_exported',
+    'dossier.downloaded',
     'pledge.started',
     'pledge.paused',
     'pledge.resumed',
@@ -253,10 +255,10 @@ export const ENTITY_CATEGORIES: readonly AuditCategory[] = AUDIT_CATEGORIES.filt
 export const ANONYMOUS_AUTHOR_ACTIONS: ReadonlySet<string> = new Set(['support.ticket_created', 'resize.vote_option', 'resize.vote_refund', 'resize.link_resent']);
 
 /**
- * Lecturas que también puede hacer el Super-Admin (abrir un documento del titular o una factura, descargar un justificante, el Modelo 182 o el kit de medallas).
+ * Lecturas que también puede hacer el Super-Admin (abrir un documento del titular o una factura, descargar un justificante, un expediente, el Modelo 182 o el kit de medallas).
  * La entidad solo las ve cuando las hizo una persona que firma hoy por ella: si no, serían una forma indirecta de ver las consultas de KORUM.
  */
-export const READ_ACTIONS: readonly string[] = ['kyb.document_opened', 'payout.invoice_opened', 'activity_fund.receipt_downloaded', 'tax.model182_exported', 'panel.medal_kit_downloaded'];
+export const READ_ACTIONS: readonly string[] = ['kyb.document_opened', 'payout.invoice_opened', 'activity_fund.receipt_downloaded', 'tax.model182_exported', 'panel.medal_kit_downloaded', 'dossier.downloaded'];
 
 /**
  * Sondeos de recursos. La aplicación responde igual a «no existe» y a «es de otra entidad»; el registro de la entidad tampoco los distingue (los dos salen como

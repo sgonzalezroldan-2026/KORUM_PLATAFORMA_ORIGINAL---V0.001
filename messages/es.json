@@ -7179,7 +7179,8 @@
         "panel_modelo182_denied": "Descarga del Modelo 182 denegada",
         "panel_payout_invoice_denied": "Subida de la factura de una liquidación denegada",
         "panel_payout_invoice_open_denied": "Apertura de la factura de una liquidación denegada",
-        "panel_sponsor_logo_denied": "Subida del logotipo de un comercio denegada"
+        "panel_sponsor_logo_denied": "Subida del logotipo de un comercio denegada",
+        "panel_dossier_denied": "Descarga de un expediente en PDF denegada"
       },
       "double_check": {
         "denied": "Firma denegada",
@@ -7413,7 +7414,454 @@
       "quota": {
         "period_assigned": "Cupos sin comisión: se fijó el curso al que pertenecen",
         "renewed": "Cupos sin comisión renovados para el curso nuevo"
+      },
+      "dossier": {
+        "downloaded": "Expediente en PDF descargado"
       }
+    },
+    "dossier": {
+      "title": {
+        "contribution": "Expediente de una aportación",
+        "initiative": "Expediente de una campaña",
+        "payout": "Expediente de una liquidación"
+      },
+      "intro": {
+        "console": "Este expediente reúne lo que la plataforma KORUM tiene registrado: el cobro, los asientos del libro mayor, las firmas, los avisos de Paycomet, los emails enviados y los cambios de estado. Sirve para atender una reclamación, un contracargo (una devolución que impone la entidad emisora de la tarjeta de quien pagó) o una inspección. No lleva emails, NIF ni nombres de quienes aportan. Es un documento interno de KORUM: incluye cuentas y aportaciones de la propia plataforma.",
+        "entity": "Este expediente reúne lo que la plataforma KORUM tiene registrado de vuestra entidad: los movimientos de la hucha de la campaña, las firmas, los emails enviados y los cambios de estado. Sirve para atender una reclamación o una inspección. No lleva emails, NIF ni nombres de quienes aportan."
+      },
+      "none": "no consta",
+      "yes": "sí",
+      "no": "no",
+      "sections": {
+        "initiative": "Campaña",
+        "breakdown": "Desglose público de la meta (4 líneas)",
+        "contributions": "Aportaciones recibidas, por tipo y estado",
+        "contribution": "Aportación",
+        "notifications": "Avisos de Paycomet sobre este pedido",
+        "contributionSplits": "Liquidaciones que han enviado este cobro",
+        "payout": "Liquidación",
+        "splits": "Envíos de la liquidación",
+        "signatures": "Firmas",
+        "ledger": "Libro mayor",
+        "checks": "Comprobación con el libro mayor",
+        "emails": "Emails enviados",
+        "statusChanges": "Cambios de estado de la campaña",
+        "audit": "Registro de actividad",
+        "notes": "Notas",
+        "ledgerEntity": "Movimientos de la hucha",
+        "checksEntity": "Comprobación con los movimientos"
+      },
+      "labels": {
+        "reference": "Referencia del expediente",
+        "generatedAt": "Generado el",
+        "entity": "Entidad",
+        "initiative": "Campaña",
+        "wallet": "Hucha de la iniciativa",
+        "format": "Formato",
+        "status": "Estado",
+        "createdAt": "Creada el",
+        "closesAt": "Fecha límite",
+        "firstPayinAt": "Primer cobro",
+        "closedAt": "Cerrada el",
+        "goal": "Meta",
+        "raised": "Recaudado",
+        "contributionCount": "Número de aportaciones",
+        "contribution": "Número de la aportación",
+        "type": "Tipo",
+        "method": "Medio de pago",
+        "payer": "Quién paga",
+        "amount": "Importe para la campaña",
+        "guarantee": "Aportación voluntaria a KORUM",
+        "totalCharged": "Total cobrado",
+        "matchedBonus": "Sumado por el Matching 2x de un comercio",
+        "ticketQuantity": "Entradas o papeletas",
+        "refunded": "Devuelto",
+        "order": "Pedido de Paycomet",
+        "authCode": "Código de autorización",
+        "fiscalYear": "Ejercicio fiscal",
+        "taxCertificate": "Pidió certificado fiscal",
+        "payout": "Número de la liquidación",
+        "destination": "Destino",
+        "beneficiary": "Titular que recibe",
+        "iban": "IBAN del proveedor",
+        "providerInvoice": "Factura del proveedor adjunta",
+        "netPaid": "Importe para el proyecto",
+        "korumFee": "Comisión de KORUM",
+        "requestedAt": "Pedida el",
+        "approvedAt": "Aprobada el",
+        "executedAt": "Enviada el",
+        "gatewayInGoal": "Coste de la pasarela incluido en la meta",
+        "escrowOut": "Total que salió de la hucha (suma de las tres cifras anteriores)"
+      },
+      "values": {
+        "numbered": "n.º {id} · {name}",
+        "refunded": "{amount}, el {date}",
+        "ibanWithBank": "código de entidad {bank}, termina en {last4}",
+        "iban": "termina en {last4}",
+        "between": "entre el {from} y el {to}",
+        "member": "{name} · {role}",
+        "targetNamed": "{type} {id} · {name}",
+        "target": "{type} {id}",
+        "reason": "motivo: {reason}",
+        "noReason": "sin motivo anotado",
+        "notRefunded": "no se ha devuelto nada",
+        "notYet": "todavía no",
+        "period": "del {from} al {to}",
+        "noDate": "sin fecha anotada"
+      },
+      "formats": {
+        "BUDGET": "Presupuesto",
+        "TICKETING": "Taquilla o rifa"
+      },
+      "breakdown": {
+        "line1": "Presupuesto de proveedor y equipamiento",
+        "line2": "Instalación y adecuación técnica",
+        "line3": "Reserva de mantenimiento, riesgos y contingencia",
+        "line4": "Pasarela de pago, plataforma, gestión y garantía de devolución",
+        "total": "Suma de las 4 líneas (igual a la meta)",
+        "mismatch": "ATENCIÓN: las cifras guardadas de esta campaña no cuadran con su meta, así que no se enseña su desglose. Hay que revisarlas."
+      },
+      "empty": {
+        "contributions": "Todavía no hay ninguna aportación.",
+        "notifications": "No hay ningún aviso de Paycomet guardado para este pedido.",
+        "contributionSplits": "Este cobro no se ha enviado todavía en ninguna liquidación.",
+        "splits": "Todavía no hay envíos: se fijan al aprobarse la liquidación.",
+        "signatures": "No hay firmas registradas.",
+        "ledger": "No hay asientos.",
+        "emails": "No hay emails registrados.",
+        "statusChanges": "No hay cambios de estado anotados (se anotan desde noviembre de 2026).",
+        "audit": "No hay nada anotado.",
+        "movements": "No hay movimientos.",
+        "splitsMissing": "No constan envíos de esta liquidación. Hay que revisar el libro mayor."
+      },
+      "contributionGroup": "{type} · {status}: {count, plural, one {# aportación} other {# aportaciones}} · {total}",
+      "contributionsAnonymous": "Las aportaciones son anónimas para la entidad: aquí aparecen sus totales y, más abajo, los movimientos de la hucha sumados por tipo para toda la campaña, nunca una a una.",
+      "contributionTypes": {
+        "DONATION": "Donación",
+        "TICKET": "Entrada o papeleta",
+        "SPONSORSHIP": "Patrocinio de un comercio",
+        "SELF_BOOST": "Auto-Impulso de KORUM",
+        "MATCHING_FUND": "Bolsa Matching 2x de un comercio"
+      },
+      "contributionStatuses": {
+        "PENDING": "pago sin terminar",
+        "COMPLETED": "cobrada",
+        "FAILED": "pago fallido",
+        "REFUND_PENDING": "devolución pendiente",
+        "REFUNDED": "devuelta",
+        "CHARGEBACK": "devolución forzosa (contracargo)",
+        "MOVED": "cobrada aquí; el dinero pasó a la bolsa del comercio. Lo que de esa bolsa se destina a esta campaña consta en la línea de patrocinios colocados",
+        "POOL": "cobrada aquí como bolsa Matching 2x; entra en la hucha al emparejar donaciones y ya figura en la línea de la bolsa",
+        "POOL_PARTLY_MOVED": "cobrada aquí como bolsa Matching 2x; lo emparejado figura en la línea de la bolsa y el sobrante pasó a la bolsa del comercio",
+        "CHARGEBACK_AFTER_PAYOUT": "devolución forzosa (contracargo) después de liquidar; la asumió KORUM y sigue en lo recaudado",
+        "REFUNDED_AFTER_PAYOUT": "devuelta después de liquidar; la asumió KORUM y sigue en lo recaudado"
+      },
+      "methods": {
+        "CARD": "Tarjeta",
+        "BIZUM": "Bizum",
+        "APPLE_PAY": "Apple Pay",
+        "GOOGLE_PAY": "Google Pay",
+        "HUCHA": "Mi Hucha",
+        "PLATFORM": "Aportación de la plataforma (sin pasarela)"
+      },
+      "payer": {
+        "account": "una cuenta registrada",
+        "guest": "una persona invitada, sin cuenta",
+        "sponsor": "el comercio {name}",
+        "korum": "la plataforma KORUM (Auto-Impulso)",
+        "erasedAccount": "una cuenta ya suprimida",
+        "matching": "la bolsa Matching 2x de un comercio (cobrada antes con su patrocinio)"
+      },
+      "contributionPrivacy": "Este expediente no lleva el email, el NIF ni el nombre de quien aporta. Si hacen falta para la reclamación, los pide por separado quien tenga derecho a ellos.",
+      "notificationLine": "{date} · {operation} · {result} · {amount} · {status}",
+      "notificationStatuses": {
+        "RECEIVED": "recibido, sin procesar",
+        "PROCESSED": "procesado",
+        "REJECTED": "rechazado",
+        "FAILED": "falló al procesarse"
+      },
+      "contributionSplitLine": {
+        "campaign": "Liquidación de campaña n.º {id}: {amount} · {status} · {date}",
+        "fund": "Liquidación del Fondo de actividades n.º {id}: {amount} · {status} · {date}"
+      },
+      "splitStatuses": {
+        "PENDING": "pendiente",
+        "SENDING": "enviándose, sin confirmar",
+        "DONE": "enviado",
+        "FAILED": "falló",
+        "CANCELLED": "anulado"
+      },
+      "payoutStatuses": {
+        "PENDING_DOUBLE_CHECK": "esperando firmas",
+        "APPROVED": "aprobada",
+        "PROCESSING": "enviándose",
+        "EXECUTED": "enviada",
+        "FAILED": "falló"
+      },
+      "destinations": {
+        "PROVIDER": "El proveedor elegido por la entidad",
+        "ORGANIZATION": "La cuenta de la entidad"
+      },
+      "splitsIntro": "Paycomet envía el dinero cobro a cobro: cada envío es la parte de un cobro original.",
+      "splitLine": "Aportación n.º {id}, cobrada el {charged}: {amount} · {status} · {date}",
+      "truncated": "La lista enseña los {shown, number} más recientes de {total, number}. Las comprobaciones se hacen sobre todos.",
+      "signatureTargets": {
+        "IDEA_APPROVAL": "Aprobación de la idea",
+        "ESCROW_PAYOUT": "Liquidación"
+      },
+      "signatureLine": "{target} · {role}: {name}, firmó el {date} (código de un solo uso: {otp}).",
+      "signerUnnamed": "una persona que ya no firma por la entidad",
+      "signatureHash": "Huella de la firma (la identifica y detecta cualquier cambio en lo firmado): {hash}",
+      "journal": {
+        "title": "Asiento {id} · {date} · {kind}",
+        "reference": "pedido {reference}",
+        "reverses": "corrige el asiento {id}",
+        "DEBIT": "Debe",
+        "CREDIT": "Haber",
+        "in": "Entra",
+        "out": "Sale"
+      },
+      "journalKinds": {
+        "PAYIN_DONATION": "Cobro de una donación",
+        "PAYIN_TICKET": "Cobro de entradas o papeletas",
+        "PAYIN_SPONSOR": "Cobro del patrocinio de un comercio",
+        "PAYIN_HUCHA_TOPUP": "Recarga de Mi Hucha",
+        "HUCHA_SPEND": "Pago con Mi Hucha",
+        "HUCHA_REFUND_ORIGIN": "Devolución del saldo de Mi Hucha",
+        "GATEWAY_FEE": "Comisión de Paycomet",
+        "SELF_BOOST_INJECTION": "Auto-Impulso de KORUM",
+        "MATCHING_RELEASE": "Matching 2x: dinero de un comercio que se suma a la campaña",
+        "PAYOUT_APPROVAL": "Liquidación aprobada",
+        "SPLIT_PAYOUT_ORGANIZATION": "Envío a la cuenta de la entidad",
+        "SPLIT_PAYOUT_PROVIDER": "Envío al proveedor",
+        "ESCROW_REFUND_DONOR": "Devolución a quien aportó",
+        "CREDIT_POOL_TRANSFER": "Traslado del patrocinio de un comercio",
+        "CHARGEBACK": "Devolución forzosa (contracargo)",
+        "INVOICE_VAT": "IVA de una factura de KORUM",
+        "REVERSAL": "Corrección de un asiento anterior",
+        "ACTIVITY_FUND_DEPOSIT": "Paso al Fondo de actividades",
+        "ACTIVITY_FUND_PAYOUT_APPROVAL": "Liquidación del Fondo de actividades aprobada"
+      },
+      "accounts": {
+        "PSP_CLEARING": "Dinero cobrado que está en Paycomet",
+        "INITIATIVE_ESCROW": "Hucha de la iniciativa",
+        "FAMILY_WALLET": "Saldo de Mi Hucha",
+        "SPONSOR_CREDIT_POOL": "Bolsa de un comercio pendiente de colocar",
+        "MATCHING_POOL": "Bolsa Matching 2x de un comercio",
+        "ORG_PAYABLE": "Aprobado y pendiente de enviar a la entidad o a su proveedor",
+        "REFUNDS_PAYABLE": "Devoluciones aprobadas pendientes de enviar",
+        "TAX_PAYABLE_VAT": "IVA de las facturas de KORUM",
+        "KORUM_REVENUE_GUARANTEE": "Ingreso de KORUM: aportaciones voluntarias",
+        "KORUM_REVENUE_BRACKET": "Ingreso de KORUM: comisión por tramos",
+        "KORUM_REVENUE_SPONSOR_FEE": "Ingreso de KORUM: gestión publicitaria de comercios",
+        "KORUM_REVENUE_TICKET_FEE": "Ingreso de KORUM: Gastos de gestión digital",
+        "KORUM_REVENUE_MAINTENANCE": "Ingreso de KORUM: mantenimiento de la plataforma",
+        "KORUM_REVENUE_TOPUP_FEE": "Ingreso de KORUM: gestión de Mi Hucha",
+        "GATEWAY_FEES_RECOVERED": "Coste de la pasarela incluido en la meta y recuperado",
+        "GATEWAY_FEES_EXPENSE": "Gasto: comisiones de Paycomet",
+        "AUTO_BOOST_EXPENSE": "Gasto: Auto-Impulso de KORUM",
+        "CHARGEBACK_LOSSES": "Gasto: contracargos y devoluciones tras liquidar que asume KORUM",
+        "ORG_ACTIVITY_FUND": "Fondo de actividades de la entidad"
+      },
+      "ledgerIntro": {
+        "console": "Cada movimiento de dinero es un asiento con sus apuntes: lo que suma el debe es igual a lo que suma el haber. Los asientos no se editan ni se borran; un error se corrige con otro asiento.",
+        "entity": "Lo que entra y lo que sale de la hucha de la campaña y de lo aprobado para enviar a la entidad o a su proveedor. Los movimientos que dependen de aportaciones de familias (cobros, lo que añade la bolsa Matching 2x, devoluciones y envíos) se suman por tipo para toda la campaña, entre su primer y su último día, sin la hora ni el importe de cada aportación. Lo que añade la bolsa Matching 2x va sin días ni número. Los demás se muestran por día. No se editan ni se borran; un error se corrige con otro movimiento.",
+        "entityGap": "Cuando sale de la hucha más de lo que se aprueba enviar, la diferencia es la comisión de KORUM y el coste de la pasarela, que ya estaban incluidos en la meta."
+      },
+      "ledgerBalanced": "Comprobado: en {count, plural, one {el asiento de la lista} other {los # asientos de la lista}} el debe es igual al haber.",
+      "ledgerUnbalanced": "ATENCIÓN: {count, plural, one {hay # asiento} other {hay # asientos}} en la lista cuyo debe no es igual a su haber.",
+      "checksIntro": {
+        "console": "Cada cifra de la ficha se vuelve a calcular sumando los apuntes del libro mayor. Tienen que coincidir al céntimo.",
+        "entity": "Cada cifra de la ficha se vuelve a calcular sumando todos los movimientos registrados. Tienen que coincidir al céntimo."
+      },
+      "checkLine": {
+        "console": "{what}: ficha {record} · libro mayor {ledger} · {result}",
+        "entity": "{what}: ficha {record} · movimientos {ledger} · {result}"
+      },
+      "checkOk": "COINCIDE",
+      "checkMismatch": "NO COINCIDE",
+      "checks": {
+        "raised": "Recaudado por la campaña",
+        "charged": "Total cobrado",
+        "payoutNet": "Importe aprobado para el proyecto",
+        "payoutSent": "Importe ya enviado",
+        "refunded": "Importe devuelto"
+      },
+      "emailsIntro": "Avisos que la plataforma ha puesto en su bandeja de salida, por tipo de aviso y estado. Aquí no figuran ni el email del destinatario ni el contenido.",
+      "emailLine": "{template} · {status} · {count, plural, one {# email} other {# emails}} · {when}",
+      "emailStatuses": {
+        "PENDING": "en cola",
+        "SENDING": "enviándose",
+        "SENT": "enviado",
+        "FAILED": "no se pudo enviar",
+        "CANCELLED": "anulado"
+      },
+      "statusChangeLine": "{date}: de «{from}» a «{to}» ({why})",
+      "auditIntro": {
+        "console": "Lo ocurrido en la entidad sobre este expediente según la auditoría de la plataforma, de más antiguo a más reciente. Solo se nombra a quien firma hoy por la entidad. No incluye consultas ni descargas (tampoco las de expedientes), ni lo que cada persona hace con su cuenta.",
+        "entity": "Lo anotado en el registro de actividad de la entidad sobre este expediente, de más antiguo a más reciente, con el día de cada registro. Solo se nombra a quien firma hoy por la entidad."
+      },
+      "auditLine": "Quién: {who} · Sobre qué: {about}",
+      "auditTruncated": "La lista enseña los {shown, number} registros más recientes. Los anteriores se pueden consultar en el registro de actividad.",
+      "notes": {
+        "personalData": {
+          "console": "Este expediente no contiene emails, NIF, direcciones de red ni nombres de quienes aportan. Nombra, con su cargo, a quienes firman por la entidad; al titular que recibe una liquidación (la entidad o su proveedor); y al comercio que paga un patrocinio.",
+          "entity": "Este expediente no contiene emails, NIF, direcciones de red ni nombres de quienes aportan. Nombra, con su cargo, a quienes firman hoy por la entidad y al titular que recibe una liquidación (la entidad o su proveedor)."
+        },
+        "platform": "KORUM es una plataforma tecnológica y no custodia fondos. Los cobros, los envíos y las devoluciones los ejecuta PAYCOMET, entidad de pago autorizada. Este expediente no es una factura ni un certificado fiscal.",
+        "times": "Las horas son horas peninsulares españolas. Los importes están en euros."
+      },
+      "sponsorAllocations": "Patrocinios colocados en esta campaña desde la bolsa de cada comercio: {count, plural, one {# comercio} other {# comercios}} · {total}",
+      "operations": {
+        "1": "cobro",
+        "2": "devolución",
+        "106": "contracargo",
+        "other": "operación n.º {type}"
+      },
+      "responses": {
+        "ok": "aceptado",
+        "other": "rechazado ({response})"
+      },
+      "splitSummaryLine": "{status}: {count, plural, one {# envío} other {# envíos}} · {total}",
+      "movementLine": "{period} · {kind} ({count, plural, one {# movimiento} other {# movimientos}}) · {side} · {account} · {total}",
+      "emailTemplateOther": "otro aviso",
+      "footer": "{reference} · Página {page} de {total}",
+      "emailTemplates": {
+        "auth": {
+          "magicLink": "Enlace para entrar",
+          "otp": "Código para entrar",
+          "invitation": "Invitación a firmar por la entidad"
+        },
+        "contribution": {
+          "receipt": "Recibo de una aportación"
+        },
+        "ticket": {
+          "pass": "Entradas o papeletas con su QR"
+        },
+        "gate": {
+          "pinRevoked": "Aviso de PIN de portería anulado"
+        },
+        "raffle": {
+          "extraRound": "Aviso de ronda extra de un sorteo"
+        },
+        "initiative": {
+          "goalReached": "Aviso de meta conseguida",
+          "expired": "Aviso de campaña vencida sin meta",
+          "goalReachedSupporter": "Aviso a quienes aportaron de que se logró la meta",
+          "achievementPhotos": "Aviso a quienes aportaron de las fotos del resultado",
+          "expiredDecided": "Aviso a quienes aportaron de lo decidido con una campaña vencida",
+          "resizeClosed": "Aviso de cierre de una votación",
+          "resizePoll": "Enlace para votar qué hacer con una campaña vencida",
+          "resizeResult": "Resultado de una votación",
+          "refundingSupporter": "Aviso a quienes aportaron de que se les devuelve el dinero"
+        },
+        "refund": {
+          "issued": "Aviso de devolución"
+        },
+        "doubleCheck": {
+          "pending": "Enlace de firma pendiente"
+        },
+        "split": {
+          "windowExpiring": "Aviso de plazo de liquidación a punto de vencer",
+          "windowExpired": "Aviso de plazo de liquidación vencido"
+        },
+        "sponsor": {
+          "renewalNotice": "Preaviso de renovación a un comercio",
+          "welcome": "Bienvenida a un comercio",
+          "rejected": "Aviso a un comercio no admitido",
+          "renewalLink": "Enlace de renovación a un comercio",
+          "renewed": "Aviso de renovación de un comercio",
+          "reassigned": "Aviso a un comercio de que su aportación pasa a otra campaña",
+          "creditPool": "Aviso a un comercio de que su aportación queda en espera",
+          "renewalInvite": "Invitación a renovar a un comercio",
+          "toEntityFund": "Aviso a un comercio de que su aportación pasa al Fondo de actividades",
+          "awaitingDecision": "Aviso de comercio pendiente de admitir",
+          "lateReceived": "Aviso a un comercio de un pago recibido con la campaña cerrada"
+        },
+        "activityFund": {
+          "received": "Aviso de dinero recibido en el Fondo de actividades",
+          "reminder": "Recordatorio de liquidar el Fondo de actividades",
+          "paid": "Aviso de liquidación del Fondo de actividades enviada"
+        },
+        "tax": {
+          "certificateReady": "Aviso de certificado fiscal disponible"
+        },
+        "privacy": {
+          "inactivityNotice": "Aviso de cuenta sin actividad"
+        },
+        "account": {
+          "passkeyAdded": "Aviso de llave de acceso añadida"
+        },
+        "support": {
+          "received": "Acuse de una consulta",
+          "replied": "Respuesta a una consulta"
+        },
+        "platform": {
+          "message": "Mensaje de KORUM a la entidad"
+        },
+        "pledge": {
+          "charged": "Recibo de una aportación mensual",
+          "skipped": "Aviso de mes sin cobro de una aportación mensual",
+          "failed": "Aviso de cobro fallido de una aportación mensual"
+        },
+        "idea": {
+          "quorumReached": "Aviso de idea que alcanza el quórum",
+          "centerReplied": "Respuesta de la entidad a una idea"
+        },
+        "signer": {
+          "handover": "Aviso de relevo de firmante"
+        },
+        "org": {
+          "kybStatus": "Aviso sobre la verificación del titular"
+        },
+        "payout": {
+          "executed": "Aviso de liquidación enviada",
+          "changed": "Aviso de liquidación modificada"
+        },
+        "expired": {
+          "decisionReminder": "Recordatorio de decidir sobre una campaña vencida"
+        }
+      },
+      "payoutGapMismatch": "ATENCIÓN: de la hucha salió menos que el importe para el proyecto y la comisión juntos. Hay que revisar el libro mayor.",
+      "matchingAdded": "Lo que ha añadido la bolsa Matching 2x de un comercio: {total}",
+      "matchingUndone": "Bolsa Matching 2x: lo que dejó de añadir al devolverse donaciones",
+      "movementLineUncounted": "En toda la campaña · {kind} · {side} · {account} · {total}",
+      "movementsOmitted": "Esta campaña tiene {total, number} movimientos: son demasiados para sumarlos aquí. Las comprobaciones de más abajo sí se hacen sobre todos.",
+      "matchingDetail": "Detalle, que no suma (ya está en la línea anterior): {count, plural, one {# liberación} other {# liberaciones}} · {status} · {total}"
+    },
+    "dossierUi": {
+      "title": "Expedientes en PDF",
+      "introConsole": "Reúne en un PDF lo registrado sobre una aportación, una campaña o una liquidación (cobro, libro mayor, firmas, avisos de Paycomet, emails y cambios de estado), para una reclamación, un contracargo o una inspección. No lleva emails, NIF ni nombres de quienes aportan.",
+      "introEntity": "Reúne en un PDF lo registrado sobre una de vuestras campañas o de sus liquidaciones (movimientos de la hucha, firmas, emails y cambios de estado), para una reclamación o una inspección. No lleva emails, NIF ni nombres de quienes aportan.",
+      "emptyEntity": "Todavía no tenéis ninguna campaña de la que preparar un expediente.",
+      "kind": "De qué es el expediente",
+      "kinds": {
+        "contribution": "Una aportación",
+        "initiative": "Una campaña",
+        "payout": "Una liquidación"
+      },
+      "reference": "Número o pedido",
+      "referenceHint": "El número de la campaña, de la liquidación o de la aportación. De una aportación vale también su pedido de Paycomet.",
+      "choose": "De qué queréis el expediente",
+      "chooseNone": "Elegid una campaña o una liquidación",
+      "groupInitiatives": "Campañas",
+      "groupPayouts": "Liquidaciones",
+      "optionInitiative": "Campaña n.º {id} · {title}",
+      "optionPayout": "Liquidación · campaña n.º {id} · {title}",
+      "find": "Preparar el expediente",
+      "ready": {
+        "contribution": "Listo: expediente de la aportación n.º {id}, de la campaña n.º {initiativeId} · {title}.",
+        "initiative": "Listo: expediente de la campaña n.º {id} · {title}.",
+        "payout": "Listo: expediente de la liquidación n.º {id}, de la campaña n.º {initiativeId} · {title}."
+      },
+      "download": "Descargar el expediente (PDF)",
+      "downloadNote": "Cada descarga queda anotada en este registro.",
+      "notFoundConsole": "No hay nada con ese número. Revisa el tipo y el número.",
+      "notFoundEntity": "No hemos encontrado eso entre lo vuestro. Elegidlo de la lista.",
+      "open": "Preparar un expediente",
+      "invalidConsole": "Eso no es un número válido. Escribe solo el número (o el pedido de Paycomet, si es una aportación).",
+      "invalidEntity": "No hemos entendido lo que pedíais. Elegidlo de la lista.",
+      "limited": "Se han pedido demasiados expedientes en poco tiempo. Se podrá volver a pedir dentro de una hora."
     }
   }
 }

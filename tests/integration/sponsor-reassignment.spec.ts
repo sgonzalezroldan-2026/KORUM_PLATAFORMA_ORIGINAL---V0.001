@@ -6,6 +6,7 @@ import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature
 import { ACTIVITY_FUND_DAY, SponsorReassignmentError } from '@/core/sponsors/sponsor-reassignment-rules';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
+import { downloadDossier } from '@/repositories/dossier.repository';
 import { listFriendlySponsors } from '@/repositories/sponsorship.repository';
 import { ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { loadRenewalOffer, startSponsorRenewal } from '@/services/checkout/sponsor-renewal.service';
@@ -99,6 +100,14 @@ const linesOf = async (where: { contributionId: number; kind: 'CHARGEBACK' | 'ES
   const journal = await db.ledgerJournal.findFirstOrThrow({ where, orderBy: { id: 'asc' }, include: { entries: true } });
   return Object.fromEntries(journal.entries.map((entry) => [`${entry.direction}:${entry.account}${entry.initiativeId ? `:${entry.initiativeId}` : ''}`, entry.amountCents]));
 };
+/** Sprint 5.8b · La tabla de aportaciones del expediente de la entidad: lo recaudado y lo que suman sus líneas (cobradas + bolsa Matching + colocados). */
+const dossierTable = async (actor: SessionActor, organizationId: string, initiativeId: number) => {
+  const data = await downloadDossier(db, actor, { scope: 'entity', organizationId }, { kind: 'initiative', ref: { by: 'id', id: initiativeId } });
+  if (!data || data.kind !== 'initiative') throw new Error('se esperaba el expediente de una campaña');
+  const { contributions, matchingAddedCents, sponsorAllocations, raisedCents } = data.initiative;
+  const charged = contributions.filter((group) => group.status === 'COMPLETED' || group.status.endsWith('_AFTER_PAYOUT')).reduce((sum, group) => sum + group.totalCents, 0);
+  return { raised: raisedCents, lines: charged + matchingAddedCents + sponsorAllocations.totalCents, pool: matchingAddedCents, placed: sponsorAllocations.totalCents, ledgerMatches: data.checks.every((check) => check.recordCents === check.ledgerCents) };
+};
 const inTransactionRelocate = (sponsorId: number, now: Date) => inTransaction(db, (tx) => relocateSponsor(tx, sponsorId, now));
 const fail = (initiativeId: number) => db.initiative.update({ where: { id: initiativeId }, data: { status: 'REFUNDING' } });
 
@@ -185,6 +194,7 @@ describe('Reasignación según la regla de la entidad', () => {
     const payout = await signedPayout(organization, soon.id, 25_000);
     expect(await approvePayout(db, payout.id, TEST_HMAC_SECRET)).toMatchObject({ approved: true, splits: 1 });
     expect(await db.escrowPayoutSplit.findMany({ where: { payoutId: payout.id }, select: { contributionId: true, amountCents: true } })).toEqual([{ contributionId: contribution.id, amountCents: 25_000 }]);
+    expect(await dossierTable(directorActor, organization.id, soon.id)).toEqual({ raised: 25_000, lines: 25_000, pool: 0, placed: 25_000, ledgerMatches: true });
 
     // Contracargo tras liquidar la campaña que lo recibió: el nivel ya salió (lo asume KORUM) y el fee y su IVA se deshacen como en un cobro en la hucha.
     expect(await deliver('CHARGEBACK', contribution.paycometOrder!, contribution.totalChargedCents)).toMatchObject({ status: 200 });
@@ -195,6 +205,9 @@ describe('Reasignación según la regla de la entidad', () => {
       'CREDIT:PSP_CLEARING': contribution.totalChargedCents
     });
     expect(await sponsorOf(sponsorId)).toMatchObject({ status: 'REFUNDED' });
+    // Sprint 5.8b · La asignación se cierra, pero ese dinero ya se envió y sigue en lo recaudado: la tabla del expediente lo sigue sumando.
+    expect(await db.sponsorAllocation.count({ where: { sponsorId, withdrawnAt: null } })).toBe(0);
+    expect(await dossierTable(directorActor, organization.id, soon.id)).toEqual({ raised: 25_000, lines: 25_000, pool: 0, placed: 25_000, ledgerMatches: true });
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
@@ -381,6 +394,67 @@ describe('Bolsa Matching 2x en una campaña que ya no recauda (heredado del 4.2b
   });
 });
 
+describe('Sprint 5.8b · La tabla del expediente con bolsas Matching trasladadas', () => {
+  it('el contracargo de una bolsa cuyo sobrante se colocó en otra campaña no resta de la línea de la bolsa propia de esa campaña', async () => {
+    const { organization, origin, directorActor } = await team();
+    const target = await campaign(organization.id, 'Biblioteca de aula', 20);
+    // Cada campaña tiene su bolsa: la de origen (P1) libera 100,00 € y la de destino (P2), 50,00 €.
+    const first = await paidSponsor(organization.slug, origin.id, directorActor, { matchingPool: true });
+    await paidSponsor(organization.slug, target.id, directorActor, { matchingPool: true });
+    for (const [initiativeId, amountCents] of [[origin.id, 10_000], [target.id, 5_000]] as const) {
+      const donation = await db.contribution.create({ data: { organizationId: organization.id, initiativeId, fiscalYear: 2026, type: 'DONATION', amountCents, totalChargedCents: amountCents, paymentMethod: 'BIZUM', paycometOrder: uniqueId('ORD'), status: 'PENDING' } });
+      expect(await deliver('PAYMENT', donation.paycometOrder!, amountCents)).toMatchObject({ outcome: 'PROCESSED' });
+    }
+    expect(await dossierTable(directorActor, organization.id, target.id)).toEqual({ raised: 10_000, lines: 10_000, pool: 5_000, placed: 0, ledgerMatches: true });
+
+    // El origen se liquida y el sobrante de P1 (150,00 €) se coloca en la otra campaña.
+    await db.initiative.update({ where: { id: origin.id }, data: { status: 'GOAL_REACHED' } });
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: origin.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents: 20_000, korumFeeSettledCents: 0, status: 'APPROVED' } });
+    await sweepSponsorMoney(db, new Date(), 50);
+    expect(await dossierTable(directorActor, organization.id, target.id)).toEqual({ raised: 25_000, lines: 25_000, pool: 5_000, placed: 15_000, ledgerMatches: true });
+
+    // Contracargo a P1: sale de la campaña nueva lo colocado, no lo que añadió su propia bolsa.
+    expect(await deliver('CHARGEBACK', first.contribution.paycometOrder!, first.contribution.totalChargedCents)).toMatchObject({ status: 200 });
+    expect(await dossierTable(directorActor, organization.id, target.id)).toEqual({ raised: 10_000, lines: 10_000, pool: 5_000, placed: 0, ledgerMatches: true });
+    // Y el origen, ya liquidado, sigue sumando lo que su bolsa añadió y se envió.
+    expect(await dossierTable(directorActor, organization.id, origin.id)).toEqual({ raised: 20_000, lines: 20_000, pool: 10_000, placed: 0, ledgerMatches: true });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+});
+
+describe('Sprint 5.8b · La línea de la bolsa del expediente, bolsa a bolsa', () => {
+  it('una segunda bolsa en la misma campaña conserva lo que añade aunque la primera se llevara, al contracargarse, el sobrante que había vuelto', async () => {
+    const { organization, origin, directorActor } = await team();
+    await db.initiative.update({ where: { id: origin.id }, data: { goalCents: 30_000 } });
+    const donate = async (amountCents: number) => {
+      const donation = await db.contribution.create({ data: { organizationId: organization.id, initiativeId: origin.id, fiscalYear: 2026, type: 'DONATION', amountCents, totalChargedCents: amountCents, paymentMethod: 'BIZUM', paycometOrder: uniqueId('ORD'), status: 'PENDING' } });
+      expect(await deliver('PAYMENT', donation.paycometOrder!, amountCents)).toMatchObject({ outcome: 'PROCESSED' });
+      return donation;
+    };
+    const table = () => dossierTable(directorActor, organization.id, origin.id);
+    // Bolsa P1 de 250,00 €: dos donaciones de 100,00 € liberan 200,00 € y la campaña llega a su meta; el sobrante (50,00 €) pasa a la bolsa del comercio.
+    const first = await paidSponsor(organization.slug, origin.id, directorActor, { matchingPool: true });
+    await donate(10_000);
+    const second = await donate(10_000);
+    expect(await initiativeOf(origin.id)).toMatchObject({ raisedCents: 40_000, status: 'GOAL_REACHED' });
+    await sweepSponsorMoney(db, new Date(), 50);
+    expect(await poolOf(organization.id, first.sponsorId)).toBe(5_000);
+    // El banco retira la segunda donación: su bonus va a la bolsa del comercio, la campaña vuelve a recaudar y todo lo de la bolsa (150,00 €) vuelve a ella.
+    expect(await deliver('CHARGEBACK', second.paycometOrder!, 10_000)).toMatchObject({ status: 200 });
+    await sweepSponsorMoney(db, new Date(), 50);
+    expect(await table()).toEqual({ raised: 35_000, lines: 35_000, pool: 10_000, placed: 15_000, ledgerMatches: true });
+    // Contracargo a P1 (sin liquidar): salen de la hucha sus 100,00 € liberados y los 150,00 € colocados.
+    await db.initiative.update({ where: { id: origin.id }, data: { status: 'FUNDRAISING' } });
+    expect(await deliver('CHARGEBACK', first.contribution.paycometOrder!, first.contribution.totalChargedCents)).toMatchObject({ status: 200 });
+    expect(await table()).toEqual({ raised: 10_000, lines: 10_000, pool: 0, placed: 0, ledgerMatches: true });
+    // Entra una segunda bolsa, P2, y una donación de 100,00 € libera 100,00 €: lo que P1 se llevó de más no se le resta a P2.
+    await paidSponsor(organization.slug, origin.id, directorActor, { matchingPool: true });
+    await donate(10_000);
+    expect(await table()).toEqual({ raised: 30_000, lines: 30_000, pool: 10_000, placed: 0, ledgerMatches: true });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+});
+
 describe('Liquidaciones con dinero reasignado (auditoría financiera del 4.2d, B1)', () => {
   it('el origen y la campaña que recibe el sobrante de la bolsa Matching se liquidan sin repartir el mismo cobro por encima de lo cobrado', async () => {
     const { organization, origin, directorActor } = await team();
@@ -517,6 +591,8 @@ describe('Renovación anual con enlace de pago', () => {
     expect(await initiativeOf(origin.id)).toMatchObject({ raisedCents: 50_000, totalContributions: 2 });
     expect(await db.sponsorAllocation.findMany({ where: { sponsorId: renewal.id }, select: { initiativeId: true, amountCents: true } })).toEqual([{ initiativeId: origin.id, amountCents: 25_000 }]);
     expect(await sponsorOf(sponsorId)).toMatchObject({ autoRenew: false });
+    // Sprint 5.8b · En el expediente de esa campaña, la renovación cuenta por su asignación (su cobro pasó a la bolsa): la tabla suma lo recaudado.
+    expect(await dossierTable(directorActor, organization.id, origin.id)).toEqual({ raised: 50_000, lines: 50_000, pool: 0, placed: 25_000, ledgerMatches: true });
     expect(await db.invoice.findFirstOrThrow({ where: { sponsorId: renewal.id } })).toMatchObject({ invoiceType: 'F1', concept: expect.stringContaining('Renovación anual') });
     const renewed = await db.outboxMessage.findFirstOrThrow({ where: { templateKey: 'sponsor.renewed', organizationId: organization.id } });
     expect(renewed).toMatchObject({ locale: 'ca', toAddress: 'rosa@elfaro.example', payloadJson: { sponsorId: renewal.id, placed: ['Toldos para el patio'], order } });

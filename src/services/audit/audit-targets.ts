@@ -33,6 +33,8 @@ const READABLE_ID = /^(\d{1,10}|[A-Z]{2,5}-[A-Z0-9-]{3,20})$/;
 const NUMERIC_ID = /^[1-9]\d{0,9}$/;
 const MAX_INT = 2_147_483_647;
 
+const ENTITY_HIDDEN_IDS: ReadonlySet<string> = new Set(['Invoice', 'Contribution', 'EscrowPayoutSplit', 'ActivityFundSplit', 'WebhookEvent', 'PaymentOrder']);
+
 const NAMED = ['Initiative', 'Sponsor', 'Idea'] as const;
 type NamedKey = (typeof NAMED)[number];
 const namedKeyOf = (targetType: string): NamedKey | null => {
@@ -51,11 +53,10 @@ export async function loadTargetNames(db: Db, scope: AuditScope, rows: readonly 
     if (key && NUMERIC_ID.test(row.targetId) && Number(row.targetId) <= MAX_INT) ids[key].add(Number(row.targetId));
   }
   const own = scope.kind === 'entity' ? { organizationId: scope.organizationId } : {};
-  const [initiatives, sponsors, ideas] = await Promise.all([
-    ids.Initiative.size > 0 ? db.initiative.findMany({ where: { id: { in: [...ids.Initiative] }, ...own }, select: { id: true, title: true } }) : [],
-    ids.Sponsor.size > 0 ? db.sponsor.findMany({ where: { id: { in: [...ids.Sponsor] }, ...own }, select: { id: true, name: true } }) : [],
-    ids.Idea.size > 0 ? db.idea.findMany({ where: { id: { in: [...ids.Idea] }, ...own }, select: { id: true, title: true } }) : []
-  ]);
+  // Una detrás de otra (ver `searchAudit`).
+  const initiatives = ids.Initiative.size > 0 ? await db.initiative.findMany({ where: { id: { in: [...ids.Initiative] }, ...own }, select: { id: true, title: true } }) : [];
+  const sponsors = ids.Sponsor.size > 0 ? await db.sponsor.findMany({ where: { id: { in: [...ids.Sponsor] }, ...own }, select: { id: true, name: true } }) : [];
+  const ideas = ids.Idea.size > 0 ? await db.idea.findMany({ where: { id: { in: [...ids.Idea] }, ...own }, select: { id: true, title: true } }) : [];
   const names = new Map<string, string>();
   for (const row of initiatives) if (row.title.trim()) names.set(nameKey('Initiative', row.id), clip(row.title.trim()));
   for (const row of sponsors) if (row.name.trim()) names.set(nameKey('Sponsor', row.id), clip(row.name.trim()));
@@ -77,8 +78,9 @@ export function auditTargetOf(row: RawTarget, scope: AuditScope, accounts: Map<s
     if (!account || account.gdprAnonymizedAt) return bare;
     return { type, id: account.name ? `${account.name} (${account.email})` : account.email, name: null };
   }
-  // El número interno de una factura de KORUM es común a toda la plataforma: en el panel diría cuánto factura KORUM.
-  if (scope.kind === 'entity' && (key === 'Invoice' || !READABLE_ID.test(row.targetId))) return bare;
+  // El número interno de una factura de KORUM, de una aportación o de sus envíos es común a toda la plataforma: en el panel diría cuánto factura o cuánto
+  // cobra KORUM en total, y el de una aportación permitiría seguirla (para la entidad son anónimas).
+  if (scope.kind === 'entity' && ((key !== null && ENTITY_HIDDEN_IDS.has(key)) || !READABLE_ID.test(row.targetId))) return bare;
   const named = namedKeyOf(type);
   const name = named && NUMERIC_ID.test(row.targetId) ? (names.get(nameKey(named, Number(row.targetId))) ?? null) : null;
   return { type, id: row.targetId.slice(0, ID_MAX), name };

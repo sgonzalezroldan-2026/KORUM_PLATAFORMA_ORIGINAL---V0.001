@@ -7179,7 +7179,8 @@
         "panel_modelo182_denied": "Descàrrega del Model 182 denegada",
         "panel_payout_invoice_denied": "Pujada de la factura d’una liquidació denegada",
         "panel_payout_invoice_open_denied": "Obertura de la factura d’una liquidació denegada",
-        "panel_sponsor_logo_denied": "Pujada del logotip d’un comerç denegada"
+        "panel_sponsor_logo_denied": "Pujada del logotip d’un comerç denegada",
+        "panel_dossier_denied": "Descàrrega d’un expedient en PDF denegada"
       },
       "double_check": {
         "denied": "Signatura denegada",
@@ -7413,7 +7414,454 @@
       "quota": {
         "period_assigned": "Quotes sense comissió: es va fixar el curs al qual pertanyen",
         "renewed": "Quotes sense comissió renovades per al curs nou"
+      },
+      "dossier": {
+        "downloaded": "Expedient en PDF descarregat"
       }
+    },
+    "dossier": {
+      "title": {
+        "contribution": "Expedient d’una aportació",
+        "initiative": "Expedient d’una campanya",
+        "payout": "Expedient d’una liquidació"
+      },
+      "intro": {
+        "console": "Aquest expedient reuneix allò que la plataforma KORUM té registrat: el cobrament, els assentaments del llibre major, les signatures, els avisos de Paycomet, els correus enviats i els canvis d’estat. Serveix per atendre una reclamació, un contracàrrec (una devolució que imposa l’entitat emissora de la targeta de qui va pagar) o una inspecció. No porta correus, NIF ni noms de les persones que aporten. És un document intern de KORUM: inclou comptes i aportacions de la mateixa plataforma.",
+        "entity": "Aquest expedient reuneix allò que la plataforma KORUM té registrat de la vostra entitat: els moviments de la guardiola de la campanya, les signatures, els correus enviats i els canvis d’estat. Serveix per atendre una reclamació o una inspecció. No porta correus, NIF ni noms de les persones que aporten."
+      },
+      "none": "no consta",
+      "yes": "sí",
+      "no": "no",
+      "sections": {
+        "initiative": "Campanya",
+        "breakdown": "Desglossament públic de la meta (4 línies)",
+        "contributions": "Aportacions rebudes, per tipus i estat",
+        "contribution": "Aportació",
+        "notifications": "Avisos de Paycomet sobre aquesta comanda",
+        "contributionSplits": "Liquidacions que han enviat aquest cobrament",
+        "payout": "Liquidació",
+        "splits": "Enviaments de la liquidació",
+        "signatures": "Signatures",
+        "ledger": "Llibre major",
+        "checks": "Comprovació amb el llibre major",
+        "emails": "Correus enviats",
+        "statusChanges": "Canvis d’estat de la campanya",
+        "audit": "Registre d’activitat",
+        "notes": "Notes",
+        "ledgerEntity": "Moviments de la guardiola",
+        "checksEntity": "Comprovació amb els moviments"
+      },
+      "labels": {
+        "reference": "Referència de l’expedient",
+        "generatedAt": "Generat el",
+        "entity": "Entitat",
+        "initiative": "Campanya",
+        "wallet": "Guardiola de la iniciativa",
+        "format": "Format",
+        "status": "Estat",
+        "createdAt": "Creada el",
+        "closesAt": "Data límit",
+        "firstPayinAt": "Primer cobrament",
+        "closedAt": "Tancada el",
+        "goal": "Meta",
+        "raised": "Recaptat",
+        "contributionCount": "Nombre d’aportacions",
+        "contribution": "Número de l’aportació",
+        "type": "Tipus",
+        "method": "Mitjà de pagament",
+        "payer": "Qui paga",
+        "amount": "Import per a la campanya",
+        "guarantee": "Aportació voluntària a KORUM",
+        "totalCharged": "Total cobrat",
+        "matchedBonus": "Sumat pel Matching 2x d’un comerç",
+        "ticketQuantity": "Entrades o butlletes",
+        "refunded": "Retornat",
+        "order": "Comanda de Paycomet",
+        "authCode": "Codi d’autorització",
+        "fiscalYear": "Exercici fiscal",
+        "taxCertificate": "Va demanar certificat fiscal",
+        "payout": "Número de la liquidació",
+        "destination": "Destinació",
+        "beneficiary": "Titular que rep",
+        "iban": "IBAN del proveïdor",
+        "providerInvoice": "Factura del proveïdor adjunta",
+        "netPaid": "Import per al projecte",
+        "korumFee": "Comissió de KORUM",
+        "requestedAt": "Demanada el",
+        "approvedAt": "Aprovada el",
+        "executedAt": "Enviada el",
+        "gatewayInGoal": "Cost de la passarel·la inclòs a la meta",
+        "escrowOut": "Total que va sortir de la guardiola (suma de les tres xifres anteriors)"
+      },
+      "values": {
+        "numbered": "núm. {id} · {name}",
+        "refunded": "{amount}, el {date}",
+        "ibanWithBank": "codi d’entitat {bank}, acaba en {last4}",
+        "iban": "acaba en {last4}",
+        "between": "entre el {from} i el {to}",
+        "member": "{name} · {role}",
+        "targetNamed": "{type} {id} · {name}",
+        "target": "{type} {id}",
+        "reason": "motiu: {reason}",
+        "noReason": "sense motiu anotat",
+        "notRefunded": "no s’ha retornat res",
+        "notYet": "encara no",
+        "period": "del {from} al {to}",
+        "noDate": "sense data anotada"
+      },
+      "formats": {
+        "BUDGET": "Pressupost",
+        "TICKETING": "Taquilla o rifa"
+      },
+      "breakdown": {
+        "line1": "Pressupost de proveïdor i equipament",
+        "line2": "Instal·lació i adequació tècnica",
+        "line3": "Reserva de manteniment, riscos i contingència",
+        "line4": "Passarel·la de pagament, plataforma, gestió i garantia de devolució",
+        "total": "Suma de les 4 línies (igual a la meta)",
+        "mismatch": "ATENCIÓ: les xifres desades d’aquesta campanya no quadren amb la seva meta, de manera que no se n’ensenya el desglossament. Cal revisar-les."
+      },
+      "empty": {
+        "contributions": "Encara no hi ha cap aportació.",
+        "notifications": "No hi ha cap avís de Paycomet desat per a aquesta comanda.",
+        "contributionSplits": "Aquest cobrament encara no s’ha enviat en cap liquidació.",
+        "splits": "Encara no hi ha enviaments: es fixen quan s’aprova la liquidació.",
+        "signatures": "No hi ha signatures registrades.",
+        "ledger": "No hi ha assentaments.",
+        "emails": "No hi ha correus registrats.",
+        "statusChanges": "No hi ha canvis d’estat anotats (s’anoten des de novembre del 2026).",
+        "audit": "No hi ha res anotat.",
+        "movements": "No hi ha moviments.",
+        "splitsMissing": "No consten enviaments d’aquesta liquidació. Cal revisar el llibre major."
+      },
+      "contributionGroup": "{type} · {status}: {count, plural, one {# aportació} other {# aportacions}} · {total}",
+      "contributionsAnonymous": "Les aportacions són anònimes per a l’entitat: aquí n’apareixen els totals i, més avall, els moviments de la guardiola sumats per tipus per a tota la campanya, mai una per una.",
+      "contributionTypes": {
+        "DONATION": "Donació",
+        "TICKET": "Entrada o butlleta",
+        "SPONSORSHIP": "Patrocini d’un comerç",
+        "SELF_BOOST": "Autoimpuls de KORUM",
+        "MATCHING_FUND": "Bossa Matching 2x d’un comerç"
+      },
+      "contributionStatuses": {
+        "PENDING": "pagament sense acabar",
+        "COMPLETED": "cobrada",
+        "FAILED": "pagament fallit",
+        "REFUND_PENDING": "devolució pendent",
+        "REFUNDED": "retornada",
+        "CHARGEBACK": "devolució forçosa (contracàrrec)",
+        "MOVED": "cobrada aquí; els diners van passar a la bossa del comerç. Allò que d’aquesta bossa es destina a aquesta campanya consta a la línia de patrocinis col·locats",
+        "POOL": "cobrada aquí com a bossa Matching 2x; entra a la guardiola quan s’aparellen donacions i ja consta a la línia de la bossa",
+        "POOL_PARTLY_MOVED": "cobrada aquí com a bossa Matching 2x; allò que s’ha aparellat consta a la línia de la bossa i el sobrant va passar a la bossa del comerç",
+        "CHARGEBACK_AFTER_PAYOUT": "devolució forçosa (contracàrrec) després de liquidar; l’ha assumit KORUM i continua comptant en allò recaptat",
+        "REFUNDED_AFTER_PAYOUT": "retornada després de liquidar; l’ha assumit KORUM i continua comptant en allò recaptat"
+      },
+      "methods": {
+        "CARD": "Targeta",
+        "BIZUM": "Bizum",
+        "APPLE_PAY": "Apple Pay",
+        "GOOGLE_PAY": "Google Pay",
+        "HUCHA": "La Meva Guardiola",
+        "PLATFORM": "Aportació de la plataforma (sense passarel·la)"
+      },
+      "payer": {
+        "account": "un compte registrat",
+        "guest": "una persona convidada, sense compte",
+        "sponsor": "el comerç {name}",
+        "korum": "la plataforma KORUM (Autoimpuls)",
+        "erasedAccount": "un compte ja suprimit",
+        "matching": "la bossa Matching 2x d’un comerç (cobrada abans amb el seu patrocini)"
+      },
+      "contributionPrivacy": "Aquest expedient no porta el correu, el NIF ni el nom de qui aporta. Si calen per a la reclamació, els demana a part qui hi tingui dret.",
+      "notificationLine": "{date} · {operation} · {result} · {amount} · {status}",
+      "notificationStatuses": {
+        "RECEIVED": "rebut, sense processar",
+        "PROCESSED": "processat",
+        "REJECTED": "rebutjat",
+        "FAILED": "va fallar en processar-se"
+      },
+      "contributionSplitLine": {
+        "campaign": "Liquidació de campanya núm. {id}: {amount} · {status} · {date}",
+        "fund": "Liquidació del Fons d’activitats núm. {id}: {amount} · {status} · {date}"
+      },
+      "splitStatuses": {
+        "PENDING": "pendent",
+        "SENDING": "enviant-se, sense confirmar",
+        "DONE": "enviat",
+        "FAILED": "va fallar",
+        "CANCELLED": "anul·lat"
+      },
+      "payoutStatuses": {
+        "PENDING_DOUBLE_CHECK": "esperant signatures",
+        "APPROVED": "aprovada",
+        "PROCESSING": "enviant-se",
+        "EXECUTED": "enviada",
+        "FAILED": "va fallar"
+      },
+      "destinations": {
+        "PROVIDER": "El proveïdor triat per l’entitat",
+        "ORGANIZATION": "El compte de l’entitat"
+      },
+      "splitsIntro": "Paycomet envia els diners cobrament a cobrament: cada enviament és la part d’un cobrament original.",
+      "splitLine": "Aportació núm. {id}, cobrada el {charged}: {amount} · {status} · {date}",
+      "truncated": "La llista ensenya els {shown, number} més recents de {total, number}. Les comprovacions es fan sobre tots.",
+      "signatureTargets": {
+        "IDEA_APPROVAL": "Aprovació de la idea",
+        "ESCROW_PAYOUT": "Liquidació"
+      },
+      "signatureLine": "{target} · {role}: {name}, va signar el {date} (codi d’un sol ús: {otp}).",
+      "signerUnnamed": "una persona que ja no signa per l’entitat",
+      "signatureHash": "Empremta de la signatura (la identifica i detecta qualsevol canvi en allò que s’ha signat): {hash}",
+      "journal": {
+        "title": "Assentament {id} · {date} · {kind}",
+        "reference": "comanda {reference}",
+        "reverses": "corregeix l’assentament {id}",
+        "DEBIT": "Deure",
+        "CREDIT": "Haver",
+        "in": "Entra",
+        "out": "Surt"
+      },
+      "journalKinds": {
+        "PAYIN_DONATION": "Cobrament d’una donació",
+        "PAYIN_TICKET": "Cobrament d’entrades o butlletes",
+        "PAYIN_SPONSOR": "Cobrament del patrocini d’un comerç",
+        "PAYIN_HUCHA_TOPUP": "Recàrrega de La Meva Guardiola",
+        "HUCHA_SPEND": "Pagament amb La Meva Guardiola",
+        "HUCHA_REFUND_ORIGIN": "Devolució del saldo de La Meva Guardiola",
+        "GATEWAY_FEE": "Comissió de Paycomet",
+        "SELF_BOOST_INJECTION": "Autoimpuls de KORUM",
+        "MATCHING_RELEASE": "Matching 2x: diners d’un comerç que se sumen a la campanya",
+        "PAYOUT_APPROVAL": "Liquidació aprovada",
+        "SPLIT_PAYOUT_ORGANIZATION": "Enviament al compte de l’entitat",
+        "SPLIT_PAYOUT_PROVIDER": "Enviament al proveïdor",
+        "ESCROW_REFUND_DONOR": "Devolució a qui va aportar",
+        "CREDIT_POOL_TRANSFER": "Trasllat del patrocini d’un comerç",
+        "CHARGEBACK": "Devolució forçosa (contracàrrec)",
+        "INVOICE_VAT": "IVA d’una factura de KORUM",
+        "REVERSAL": "Correcció d’un assentament anterior",
+        "ACTIVITY_FUND_DEPOSIT": "Pas al Fons d’activitats",
+        "ACTIVITY_FUND_PAYOUT_APPROVAL": "Liquidació del Fons d’activitats aprovada"
+      },
+      "accounts": {
+        "PSP_CLEARING": "Diners cobrats que són a Paycomet",
+        "INITIATIVE_ESCROW": "Guardiola de la iniciativa",
+        "FAMILY_WALLET": "Saldo de La Meva Guardiola",
+        "SPONSOR_CREDIT_POOL": "Bossa d’un comerç pendent de col·locar",
+        "MATCHING_POOL": "Bossa Matching 2x d’un comerç",
+        "ORG_PAYABLE": "Aprovat i pendent d’enviar a l’entitat o al seu proveïdor",
+        "REFUNDS_PAYABLE": "Devolucions aprovades pendents d’enviar",
+        "TAX_PAYABLE_VAT": "IVA de les factures de KORUM",
+        "KORUM_REVENUE_GUARANTEE": "Ingrés de KORUM: aportacions voluntàries",
+        "KORUM_REVENUE_BRACKET": "Ingrés de KORUM: comissió per trams",
+        "KORUM_REVENUE_SPONSOR_FEE": "Ingrés de KORUM: gestió publicitària de comerços",
+        "KORUM_REVENUE_TICKET_FEE": "Ingrés de KORUM: Despeses de gestió digital",
+        "KORUM_REVENUE_MAINTENANCE": "Ingrés de KORUM: manteniment de la plataforma",
+        "KORUM_REVENUE_TOPUP_FEE": "Ingrés de KORUM: gestió de La Meva Guardiola",
+        "GATEWAY_FEES_RECOVERED": "Cost de la passarel·la inclòs a la meta i recuperat",
+        "GATEWAY_FEES_EXPENSE": "Despesa: comissions de Paycomet",
+        "AUTO_BOOST_EXPENSE": "Despesa: Autoimpuls de KORUM",
+        "CHARGEBACK_LOSSES": "Despesa: contracàrrecs i devolucions després de liquidar que assumeix KORUM",
+        "ORG_ACTIVITY_FUND": "Fons d’activitats de l’entitat"
+      },
+      "ledgerIntro": {
+        "console": "Cada moviment de diners és un assentament amb els seus apunts: allò que suma el deure és igual a allò que suma l’haver. Els assentaments no s’editen ni s’esborren; un error es corregeix amb un altre assentament.",
+        "entity": "Allò que entra i allò que surt de la guardiola de la campanya i d’allò que s’ha aprovat per enviar a l’entitat o al seu proveïdor. Els moviments que depenen d’aportacions de famílies (cobraments, allò que afegeix la bossa Matching 2x, devolucions i enviaments) se sumen per tipus per a tota la campanya, entre el primer i l’últim dia, sense l’hora ni l’import de cada aportació. Allò que afegeix la bossa Matching 2x va sense dies ni nombre. Els altres es mostren per dia. No s’editen ni s’esborren; un error es corregeix amb un altre moviment.",
+        "entityGap": "Quan surt de la guardiola més del que s’aprova enviar, la diferència és la comissió de KORUM i el cost de la passarel·la, que ja estaven inclosos a la meta."
+      },
+      "ledgerBalanced": "Comprovat: en {count, plural, one {l’assentament de la llista} other {els # assentaments de la llista}} el deure és igual a l’haver.",
+      "ledgerUnbalanced": "ATENCIÓ: {count, plural, one {hi ha # assentament} other {hi ha # assentaments}} a la llista en què el deure no és igual a l’haver.",
+      "checksIntro": {
+        "console": "Cada xifra de la fitxa es torna a calcular sumant els apunts del llibre major. Han de coincidir al cèntim.",
+        "entity": "Cada xifra de la fitxa es torna a calcular sumant tots els moviments registrats. Han de coincidir al cèntim."
+      },
+      "checkLine": {
+        "console": "{what}: fitxa {record} · llibre major {ledger} · {result}",
+        "entity": "{what}: fitxa {record} · moviments {ledger} · {result}"
+      },
+      "checkOk": "COINCIDEIX",
+      "checkMismatch": "NO COINCIDEIX",
+      "checks": {
+        "raised": "Recaptat per la campanya",
+        "charged": "Total cobrat",
+        "payoutNet": "Import aprovat per al projecte",
+        "payoutSent": "Import ja enviat",
+        "refunded": "Import retornat"
+      },
+      "emailsIntro": "Avisos que la plataforma ha posat a la seva safata de sortida, per tipus d’avís i estat. Aquí no hi consten ni el correu electrònic del destinatari ni el contingut.",
+      "emailLine": "{template} · {status} · {count, plural, one {# correu} other {# correus}} · {when}",
+      "emailStatuses": {
+        "PENDING": "a la cua",
+        "SENDING": "enviant-se",
+        "SENT": "enviat",
+        "FAILED": "no s’ha pogut enviar",
+        "CANCELLED": "anul·lat"
+      },
+      "statusChangeLine": "{date}: de «{from}» a «{to}» ({why})",
+      "auditIntro": {
+        "console": "Allò que ha passat a l’entitat sobre aquest expedient segons l’auditoria de la plataforma, de més antic a més recent. Només s’anomena qui signa avui per l’entitat. No inclou consultes ni descàrregues (tampoc les d’expedients), ni allò que cada persona fa amb el seu compte.",
+        "entity": "Allò que hi ha anotat al registre d’activitat de l’entitat sobre aquest expedient, de més antic a més recent, amb el dia de cada registre. Només s’anomena qui signa avui per l’entitat."
+      },
+      "auditLine": "Qui: {who} · Sobre què: {about}",
+      "auditTruncated": "La llista ensenya els {shown, number} registres més recents. Els anteriors es poden consultar al registre d’activitat.",
+      "notes": {
+        "personalData": {
+          "console": "Aquest expedient no conté correus, NIF, adreces de xarxa ni noms de les persones que aporten. Anomena, amb el seu càrrec, les persones que signen per l’entitat; el titular que rep una liquidació (l’entitat o el seu proveïdor); i el comerç que paga un patrocini.",
+          "entity": "Aquest expedient no conté correus, NIF, adreces de xarxa ni noms de les persones que aporten. Anomena, amb el seu càrrec, les persones que signen avui per l’entitat i el titular que rep una liquidació (l’entitat o el seu proveïdor)."
+        },
+        "platform": "KORUM és una plataforma tecnològica i no custodia fons. Els cobraments, els enviaments i les devolucions els executa PAYCOMET, entitat de pagament autoritzada. Aquest expedient no és una factura ni un certificat fiscal.",
+        "times": "Les hores són hores peninsulars espanyoles. Els imports són en euros."
+      },
+      "sponsorAllocations": "Patrocinis col·locats en aquesta campanya des de la bossa de cada comerç: {count, plural, one {# comerç} other {# comerços}} · {total}",
+      "operations": {
+        "1": "cobrament",
+        "2": "devolució",
+        "106": "contracàrrec",
+        "other": "operació núm. {type}"
+      },
+      "responses": {
+        "ok": "acceptat",
+        "other": "rebutjat ({response})"
+      },
+      "splitSummaryLine": "{status}: {count, plural, one {# enviament} other {# enviaments}} · {total}",
+      "movementLine": "{period} · {kind} ({count, plural, one {# moviment} other {# moviments}}) · {side} · {account} · {total}",
+      "emailTemplateOther": "un altre avís",
+      "footer": "{reference} · Pàgina {page} de {total}",
+      "emailTemplates": {
+        "auth": {
+          "magicLink": "Enllaç per entrar",
+          "otp": "Codi per entrar",
+          "invitation": "Invitació a signar per l’entitat"
+        },
+        "contribution": {
+          "receipt": "Rebut d’una aportació"
+        },
+        "ticket": {
+          "pass": "Entrades o butlletes amb el seu QR"
+        },
+        "gate": {
+          "pinRevoked": "Avís de PIN de porteria anul·lat"
+        },
+        "raffle": {
+          "extraRound": "Avís de ronda extra d’un sorteig"
+        },
+        "initiative": {
+          "goalReached": "Avís de meta aconseguida",
+          "expired": "Avís de campanya vençuda sense meta",
+          "goalReachedSupporter": "Avís a qui va aportar que s’ha assolit la meta",
+          "achievementPhotos": "Avís a qui va aportar de les fotos del resultat",
+          "expiredDecided": "Avís a qui va aportar d’allò que s’ha decidit amb una campanya vençuda",
+          "resizeClosed": "Avís de tancament d’una votació",
+          "resizePoll": "Enllaç per votar què fer amb una campanya vençuda",
+          "resizeResult": "Resultat d’una votació",
+          "refundingSupporter": "Avís a qui va aportar que se li retornen els diners"
+        },
+        "refund": {
+          "issued": "Avís de devolució"
+        },
+        "doubleCheck": {
+          "pending": "Enllaç de signatura pendent"
+        },
+        "split": {
+          "windowExpiring": "Avís de termini de liquidació a punt de vèncer",
+          "windowExpired": "Avís de termini de liquidació vençut"
+        },
+        "sponsor": {
+          "renewalNotice": "Preavís de renovació a un comerç",
+          "welcome": "Benvinguda a un comerç",
+          "rejected": "Avís a un comerç no admès",
+          "renewalLink": "Enllaç de renovació a un comerç",
+          "renewed": "Avís de renovació d’un comerç",
+          "reassigned": "Avís a un comerç que la seva aportació passa a una altra campanya",
+          "creditPool": "Avís a un comerç que la seva aportació queda en espera",
+          "renewalInvite": "Invitació a renovar a un comerç",
+          "toEntityFund": "Avís a un comerç que la seva aportació passa al Fons d’activitats",
+          "awaitingDecision": "Avís de comerç pendent d’admetre",
+          "lateReceived": "Avís a un comerç d’un pagament rebut amb la campanya tancada"
+        },
+        "activityFund": {
+          "received": "Avís de diners rebuts al Fons d’activitats",
+          "reminder": "Recordatori de liquidar el Fons d’activitats",
+          "paid": "Avís de liquidació del Fons d’activitats enviada"
+        },
+        "tax": {
+          "certificateReady": "Avís de certificat fiscal disponible"
+        },
+        "privacy": {
+          "inactivityNotice": "Avís de compte sense activitat"
+        },
+        "account": {
+          "passkeyAdded": "Avís de clau d’accés afegida"
+        },
+        "support": {
+          "received": "Justificant d’una consulta",
+          "replied": "Resposta a una consulta"
+        },
+        "platform": {
+          "message": "Missatge de KORUM a l’entitat"
+        },
+        "pledge": {
+          "charged": "Rebut d’una aportació mensual",
+          "skipped": "Avís de mes sense cobrament d’una aportació mensual",
+          "failed": "Avís de cobrament fallit d’una aportació mensual"
+        },
+        "idea": {
+          "quorumReached": "Avís d’idea que arriba al quòrum",
+          "centerReplied": "Resposta de l’entitat a una idea"
+        },
+        "signer": {
+          "handover": "Avís de relleu de signant"
+        },
+        "org": {
+          "kybStatus": "Avís sobre la verificació del titular"
+        },
+        "payout": {
+          "executed": "Avís de liquidació enviada",
+          "changed": "Avís de liquidació modificada"
+        },
+        "expired": {
+          "decisionReminder": "Recordatori de decidir sobre una campanya vençuda"
+        }
+      },
+      "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",
+      "matchingAdded": "Allò que ha afegit la bossa Matching 2x d’un comerç: {total}",
+      "matchingUndone": "Bossa Matching 2x: allò que va deixar d’afegir en retornar-se donacions",
+      "movementLineUncounted": "En tota la campanya · {kind} · {side} · {account} · {total}",
+      "movementsOmitted": "Aquesta campanya té {total, number} moviments: són massa per sumar-los aquí. Les comprovacions de més avall sí que es fan sobre tots.",
+      "matchingDetail": "Detall, que no suma (ja és a la línia anterior): {count, plural, one {# alliberament} other {# alliberaments}} · {status} · {total}"
+    },
+    "dossierUi": {
+      "title": "Expedients en PDF",
+      "introConsole": "Reuneix en un PDF allò que hi ha registrat sobre una aportació, una campanya o una liquidació (cobrament, llibre major, signatures, avisos de Paycomet, correus i canvis d’estat), per a una reclamació, un contracàrrec o una inspecció. No porta correus, NIF ni noms de les persones que aporten.",
+      "introEntity": "Reuneix en un PDF allò que hi ha registrat sobre una de les vostres campanyes o de les seves liquidacions (moviments de la guardiola, signatures, correus i canvis d’estat), per a una reclamació o una inspecció. No porta correus, NIF ni noms de les persones que aporten.",
+      "emptyEntity": "Encara no teniu cap campanya de la qual preparar un expedient.",
+      "kind": "De què és l’expedient",
+      "kinds": {
+        "contribution": "Una aportació",
+        "initiative": "Una campanya",
+        "payout": "Una liquidació"
+      },
+      "reference": "Número o comanda",
+      "referenceHint": "El número de la campanya, de la liquidació o de l’aportació. D’una aportació també val la seva comanda de Paycomet.",
+      "choose": "De què voleu l’expedient",
+      "chooseNone": "Trieu una campanya o una liquidació",
+      "groupInitiatives": "Campanyes",
+      "groupPayouts": "Liquidacions",
+      "optionInitiative": "Campanya núm. {id} · {title}",
+      "optionPayout": "Liquidació · campanya núm. {id} · {title}",
+      "find": "Preparar l’expedient",
+      "ready": {
+        "contribution": "Preparat: expedient de l’aportació núm. {id}, de la campanya núm. {initiativeId} · {title}.",
+        "initiative": "Preparat: expedient de la campanya núm. {id} · {title}.",
+        "payout": "Preparat: expedient de la liquidació núm. {id}, de la campanya núm. {initiativeId} · {title}."
+      },
+      "download": "Descarregar l’expedient (PDF)",
+      "downloadNote": "Cada descàrrega queda anotada en aquest registre.",
+      "notFoundConsole": "No hi ha res amb aquest número. Revisa el tipus i el número.",
+      "notFoundEntity": "No hem trobat això entre allò que és vostre. Trieu-ho de la llista.",
+      "open": "Preparar un expedient",
+      "invalidConsole": "Això no és un número vàlid. Escriu només el número (o la comanda de Paycomet, si és una aportació).",
+      "invalidEntity": "No hem entès allò que demaneu. Trieu-ho de la llista.",
+      "limited": "S’han demanat massa expedients en poc temps. Es podrà tornar a demanar d’aquí a una hora."
     }
   }
 }

@@ -173,3 +173,9 @@ export const TENANT_DENIED_AUDIT_RULE: RateLimitRule & PurgeRule = { prefix: 'te
  * sirve para pasar de aquí. Mil filas por hora siguen siendo un registro que se puede leer con el filtro de fechas.
  */
 export const TENANT_DENIED_ENTITY_RULE: RateLimitRule & PurgeRule = { prefix: 'tenant-denied-all:', limit: 1000, windowMs: 60 * 60_000 };
+
+/**
+ * Expediente exportable (Sprint 5.8b): cada petición lee mucho y deja su fila en la auditoría (la descarga, o el intento sobre algo ajeno). Tope por cuenta,
+ * contado antes de leer o de anotar nada: ni se carga la base pidiéndolos en bucle ni se llena de ruido el registro.
+ */
+export const DOSSIER_RULE: RateLimitRule & PurgeRule = { prefix: 'dossier:user:', limit: 60, windowMs: 60 * 60_000 };

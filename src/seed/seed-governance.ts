@@ -79,9 +79,8 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         beneficiaryName: org.legalName,
         netPaidCents: netPaid,
         korumFeeSettledCents: korumFee,
-        status: closed ? 'EXECUTED' : 'PENDING_DOUBLE_CHECK',
-        paycometTransferId: closed ? `SEED-TRF-${initiative.id}` : null,
-        executedAt: closed ? notAfter(new Date(closesAt.getTime() + 2 * DAY_MS), seedNow) : null,
+        // Una liquidación enviada recorre después sus estados, como una real (`settleSeedPayout`): solo aprobada admite sus envíos.
+        status: 'PENDING_DOUBLE_CHECK',
         createdAt: notAfter(new Date(closesAt.getTime() + DAY_MS), seedNow)
       },
       update: {}
@@ -94,6 +93,10 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
     if (closed) await sign(db, secrets, { ...target, role: 'COSIGNER', signedAt: notAfter(new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000), seedNow) });
 
     if (closed) {
+      const approvedAt = notAfter(new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000), seedNow);
+      const executedAt = notAfter(new Date(closesAt.getTime() + 2 * DAY_MS), seedNow);
+      const transferId = `SEED-TRF-${initiative.id}`;
+      await settleSeedPayout(db, { payoutId: payout.id, initiativeId: initiative.id, netPaidCents: netPaid, destinationSplitId: paycometSplitId, approvedAt, executedAt, transferId });
       const scope = { organizationId: initiative.organizationId, initiativeId: initiative.id };
       const approval: JournalLine[] = [
         { account: 'INITIATIVE_ESCROW', direction: 'DEBIT', amountCents: initiative.raisedCents, ...scope },
@@ -108,7 +111,7 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         idempotencyKey: `seed:payout-${initiative.id}:approval`,
         kind: 'PAYOUT_APPROVAL',
         description: `Liquidación aprobada con doble firma: ${initiative.title}`,
-        occurredAt: notAfter(new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000), seedNow),
+        occurredAt: approvedAt,
         createdById: SEED_ACTOR,
         lines: approval
       });
@@ -118,8 +121,8 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         idempotencyKey: `seed:payout-${initiative.id}:split`,
         kind: 'SPLIT_PAYOUT_ORGANIZATION',
         description: `Transferencia a la entidad ${org.legalName}`,
-        occurredAt: payout.executedAt ?? closesAt,
-        paycometReference: payout.paycometTransferId,
+        occurredAt: executedAt,
+        paycometReference: transferId,
         createdById: SEED_ACTOR,
         lines: [
           { account: 'ORG_PAYABLE', direction: 'DEBIT', amountCents: netPaid, organizationId: scope.organizationId },
@@ -129,6 +132,44 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
     }
   }
   return payoutIds;
+}
+
+/**
+ * Lleva una liquidación sembrada hasta «enviada» por los mismos pasos que una real (Sprint 5.8b): aprobada, con sus envíos cobro a cobro (del cobro más
+ * antiguo al más reciente, hasta el importe neto, como `planPayoutSplits`), enviándose y enviada. Antes se creaba ya enviada, sin fecha de aprobación ni
+ * envíos, y su expediente no podía contrastar lo enviado con el libro mayor. Se puede repetir: sigue desde el estado en que esté. Una base sembrada antes
+ * de este cambio conserva su liquidación sin envíos (una ya enviada no admite ninguno): se renueva con `npm run db:reset`.
+ */
+async function settleSeedPayout(
+  db: KorumPrismaClient,
+  input: { payoutId: number; initiativeId: number; netPaidCents: number; destinationSplitId: string | null; approvedAt: Date; executedAt: Date; transferId: string }
+): Promise<void> {
+  // La campaña se cierra al enviarse su liquidación (como en `closeInitiativeAfterPayout`): su ficha lleva esa fecha.
+  await db.initiative.updateMany({ where: { id: input.initiativeId, closedAt: null }, data: { closedAt: input.executedAt } });
+  const statusOf = async () => (await db.escrowPayout.findUniqueOrThrow({ where: { id: input.payoutId }, select: { status: true } })).status;
+  if ((await statusOf()) === 'EXECUTED') return;
+  if ((await statusOf()) === 'PENDING_DOUBLE_CHECK') {
+    await db.escrowPayout.update({ where: { id: input.payoutId }, data: { status: 'APPROVED', approvedAt: input.approvedAt, destinationSplitId: input.destinationSplitId } });
+  }
+  if ((await db.escrowPayoutSplit.count({ where: { payoutId: input.payoutId } })) === 0) {
+    const charges = await db.contribution.findMany({
+      where: { initiativeId: input.initiativeId, status: 'COMPLETED', totalChargedCents: { gt: 0 } },
+      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+      select: { id: true, totalChargedCents: true }
+    });
+    const splits: Array<{ contributionId: number; amountCents: number }> = [];
+    let missing = input.netPaidCents;
+    for (const charge of charges) {
+      if (missing === 0) break;
+      const amountCents = Math.min(charge.totalChargedCents, missing);
+      splits.push({ contributionId: charge.id, amountCents });
+      missing -= amountCents;
+    }
+    if (missing > 0) throw new Error(`La semilla no tiene cobros suficientes para repartir la liquidación de la iniciativa ${input.initiativeId} (faltan ${missing} céntimos)`);
+    await db.escrowPayoutSplit.createMany({ data: splits.map((split) => ({ payoutId: input.payoutId, ...split, status: 'DONE' as const, sentAt: input.executedAt, executedAt: input.executedAt, createdAt: input.approvedAt })) });
+  }
+  if ((await statusOf()) === 'APPROVED') await db.escrowPayout.update({ where: { id: input.payoutId }, data: { status: 'PROCESSING' } });
+  await db.escrowPayout.update({ where: { id: input.payoutId }, data: { status: 'EXECUTED', executedAt: input.executedAt, paycometTransferId: input.transferId } });
 }
 
 /**

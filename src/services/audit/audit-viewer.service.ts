@@ -58,6 +58,27 @@ export interface AuditFilters {
   to?: Date;
   /** Paginación: filas anteriores a este identificador. */
   before?: number;
+  /** Solo el expediente exportable (Sprint 5.8b): lo ocurrido sobre un objeto concreto (una liquidación, una aportación). */
+  subject?: AuditSubject;
+  /** Solo el expediente exportable: acciones que no entran (las lecturas y lo que cada persona hace con su cuenta). */
+  excludeActions?: readonly string[];
+}
+
+/** Un objeto por el que buscar: las filas que lo tienen como objetivo (con cualquiera de las formas en que se ha escrito su tipo) o que lo citan en su detalle. */
+export interface AuditSubject {
+  targetTypes: readonly string[];
+  id: number;
+  /** Clave del detalle guardado que lleva ese mismo número (`payoutId`, `contributionId`). */
+  metadataKey: string;
+}
+
+/**
+ * Cómo se pinta lo encontrado. El expediente exportable pide más filas de una vez y, también en la consola, las personas y los objetivos como los ve una
+ * entidad (`presentAs`): el PDF no lleva emails ni nombres de quien no firma hoy por ella. Qué filas se encuentran lo sigue decidiendo el alcance.
+ */
+export interface AuditSearchOptions {
+  pageSize?: number;
+  presentAs?: { organizationId: string };
 }
 
 export interface AuditRowView {
@@ -146,6 +167,15 @@ function whereOf(scope: AuditScope, filters: AuditFilters, people: EntityPeopleI
       ]
     });
   }
+  if (filters.excludeActions && filters.excludeActions.length > 0) and.push({ action: { notIn: [...filters.excludeActions] } });
+  if (filters.subject) {
+    and.push({
+      OR: [
+        { targetType: { in: [...filters.subject.targetTypes] }, targetId: String(filters.subject.id) },
+        { metadataJson: { path: [filters.subject.metadataKey], equals: filters.subject.id } }
+      ]
+    });
+  }
   if (filters.from || filters.to) and.push({ occurredAt: { ...(filters.from ? { gte: filters.from } : {}), ...(filters.to ? { lt: filters.to } : {}) } });
   if (filters.before !== undefined && Number.isSafeInteger(filters.before) && filters.before > 0 && filters.before <= MAX_INT) and.push({ id: { lt: filters.before } });
   return { AND: and };
@@ -172,26 +202,28 @@ export function auditDetailsOf(metadata: Prisma.JsonValue): Array<{ key: string;
     });
 }
 
-export async function searchAudit(db: Db, scope: AuditScope, filters: AuditFilters): Promise<AuditPage> {
+export async function searchAudit(db: Db, searchScope: AuditScope, filters: AuditFilters, options: AuditSearchOptions = {}): Promise<AuditPage> {
+  const pageSize = Math.max(1, Math.min(options.pageSize ?? AUDIT_PAGE_SIZE, 1_000));
+  // Qué filas se buscan lo decide el alcance real; cómo se pintan, `scope` (el de una entidad si se pidió `presentAs`).
+  const scope: AuditScope = options.presentAs ? { kind: 'entity', organizationId: options.presentAs.organizationId } : searchScope;
   // En el panel, quienes firman hoy por la entidad se cargan antes: la propia consulta depende de ellos (las lecturas).
   const members = scope.kind === 'entity' ? await loadEntityMembers(db, scope.organizationId) : [];
   const korum: KorumPeriods = scope.kind === 'entity' ? await loadKorumPeriods(db) : new Map();
   const found = await db.auditLog.findMany({
-    where: whereOf(scope, filters, { memberIds: members.map((member) => member.userId), korum }),
+    where: whereOf(searchScope, filters, { memberIds: members.map((member) => member.userId), korum }),
     orderBy: { id: 'desc' },
-    take: AUDIT_PAGE_SIZE + 1,
+    take: pageSize + 1,
     select: { id: true, occurredAt: true, actorType: true, actorUserId: true, organizationId: true, action: true, targetType: true, targetId: true, ipHash: true, userAgent: true, metadataJson: true }
   });
-  const page = found.slice(0, AUDIT_PAGE_SIZE);
+  const page = found.slice(0, pageSize);
   // Las cuentas que actuaron y, en la consola, también aquellas sobre las que se actuó (para decir de quién es en vez de enseñar su código).
   const userIds = [...new Set(page.flatMap((row) => [...(row.actorUserId ? [row.actorUserId] : []), ...(scope.kind === 'console' && auditTargetKeyOf(row.targetType) === 'User' ? [row.targetId] : [])]))];
   const organizationIds = scope.kind === 'console' ? [...new Set(page.flatMap((row) => (row.organizationId ? [row.organizationId] : [])))] : [];
-  const [accounts, organizations, names, former] = await Promise.all([
-    loadAccounts(db, userIds),
-    organizationIds.length > 0 ? db.organization.findMany({ where: { id: { in: organizationIds } }, select: { id: true, name: true } }) : Promise.resolve([]),
-    loadTargetNames(db, scope, page),
-    scope.kind === 'entity' ? loadFormerSignerIds(db, scope.organizationId, members) : Promise.resolve(new Set<string>())
-  ]);
+  // Una detrás de otra: el expediente exportable busca dentro de una transacción, y en una misma conexión no caben dos consultas a la vez.
+  const accounts = await loadAccounts(db, userIds);
+  const organizations = organizationIds.length > 0 ? await db.organization.findMany({ where: { id: { in: organizationIds } }, select: { id: true, name: true } }) : [];
+  const names = await loadTargetNames(db, scope, page);
+  const former = scope.kind === 'entity' ? await loadFormerSignerIds(db, scope.organizationId, members) : new Set<string>();
   const organizationById = new Map(organizations.map((organization) => [organization.id, organization]));
   const people = { members: new Map(members.map((member) => [member.userId, member])), former, korum };
 
@@ -214,7 +246,7 @@ export async function searchAudit(db: Db, scope: AuditScope, filters: AuditFilte
       details: scope.kind === 'console' ? auditDetailsOf(row.metadataJson) : []
     };
   });
-  return { rows, nextBefore: found.length > AUDIT_PAGE_SIZE ? (page[page.length - 1]?.id ?? null) : null };
+  return { rows, nextBefore: found.length > pageSize ? (page[page.length - 1]?.id ?? null) : null };
 }
 
 /** Cuenta con ese email, para buscar por persona desde la consola. El email no se guarda ni se anota en ninguna parte: solo se traduce a su identificador. */

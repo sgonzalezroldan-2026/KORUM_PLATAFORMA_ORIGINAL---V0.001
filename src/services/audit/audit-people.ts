@@ -80,17 +80,16 @@ const EPOCH = new Date(0);
  * acaban con `superadmin.revoked`. Una cuenta que es Super-Admin sin que conste desde cuándo lo es «desde siempre» (ante la duda, se oculta).
  */
 export async function loadKorumPeriods(db: Db): Promise<KorumPeriods> {
-  const [current, events] = await Promise.all([
-    db.user.findMany({ where: { isSuperadmin: true }, select: { id: true } }),
-    db.auditLog.findMany({
-      where: {
-        targetType: 'User',
-        OR: [{ action: { in: ['superadmin.revoked', 'superadmin.bootstrapped'] } }, { action: 'account.invitation_accepted', metadataJson: { path: ['purpose'], equals: 'SUPERADMIN' } }]
-      },
-      orderBy: { id: 'asc' },
-      select: { action: true, targetId: true, occurredAt: true }
-    })
-  ]);
+  // Una detrás de otra (ver `searchAudit`).
+  const current = await db.user.findMany({ where: { isSuperadmin: true }, select: { id: true } });
+  const events = await db.auditLog.findMany({
+    where: {
+      targetType: 'User',
+      OR: [{ action: { in: ['superadmin.revoked', 'superadmin.bootstrapped'] } }, { action: 'account.invitation_accepted', metadataJson: { path: ['purpose'], equals: 'SUPERADMIN' } }]
+    },
+    orderBy: { id: 'asc' },
+    select: { action: true, targetId: true, occurredAt: true }
+  });
   const today = new Set(current.map((user) => user.id));
   const periods: KorumPeriods = new Map();
   const open = new Map<string, Date>();

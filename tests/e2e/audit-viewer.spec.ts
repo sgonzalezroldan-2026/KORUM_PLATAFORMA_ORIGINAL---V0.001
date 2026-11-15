@@ -90,6 +90,12 @@ test('QA-SEC11 · la entidad ve su registro de actividad: solo lo suyo, en lengu
   await expect(change.getByTestId('audit-status-change')).toHaveText('De «Recaudando» a «¡Conseguido!» · Motivo: se alcanzó la meta.');
   await expect(change.getByTestId('audit-actor')).toHaveText('El sistema (automático)');
   await expect(change).toContainText('Campaña 987654');
+  // Esa fila se anota en el instante de la aportación que completa la meta: en el panel va solo con su día (Sprint 5.8b, como en el expediente en PDF).
+  await expect(change.locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
+  await expect(change.locator('time')).not.toContainText(/\d{1,2}:\d{2}/);
+  // Lo que hace la propia entidad conserva su hora.
+  await expect(rowsOf(page, 'payout.requested').locator('time')).toHaveAttribute('datetime', /T\d{2}:\d{2}:\d{2}/);
+  await expect(rowsOf(page, 'payout.requested').locator('time')).toContainText(/\d{1,2}:\d{2}:\d{2}/);
   // Quien firma por la entidad sale con su nombre y su cargo; cualquier otra cuenta, sin nombre.
   await expect(rowsOf(page, 'payout.requested')).toHaveCount(1);
   await expect(rowsOf(page, 'payout.requested').getByTestId('audit-actor')).toContainText('Carla Puig');

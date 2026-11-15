@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { auditTargetKeyOf, ENTITY_PROBE_ACTION, isKnownAuditAction } from '@/core/audit/audit-catalog';
+import { isContributionInstant } from '@/core/audit/contribution-instant';
 import { Link } from '@/i18n/navigation';
 import type { AuditActorView, AuditRowView } from '@/services/audit/audit-viewer.service';
 
@@ -12,6 +13,8 @@ import type { AuditActorView, AuditRowView } from '@/services/audit/audit-viewer
  */
 
 const WHEN = { dateStyle: 'medium', timeStyle: 'medium', timeZone: 'Europe/Madrid' } as const;
+const WHEN_DAY = { dateStyle: 'medium', timeZone: 'Europe/Madrid' } as const;
+const SPAIN_DAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' });
 
 export async function AuditEntryList({ rows, variant }: { rows: AuditRowView[]; variant: 'console' | 'entity' }) {
   const [t, actions, statuses, roles, format] = await Promise.all([
@@ -59,12 +62,13 @@ export async function AuditEntryList({ rows, variant }: { rows: AuditRowView[]; 
   return (
     <ol className="flex flex-col gap-3" data-testid="audit-rows">
       {rows.map((row) => {
-        const when = `${format.dateTime(row.occurredAt, WHEN)} · ${t(`categories.${row.category ?? 'unclassified'}`)}`;
+        const dayOnly = variant === 'entity' && isContributionInstant(row);
+        const when = `${format.dateTime(row.occurredAt, dayOnly ? WHEN_DAY : WHEN)} · ${t(`categories.${row.category ?? 'unclassified'}`)}`;
         const origin = originText(row);
         return (
           <li key={row.id} className="korum-trust-vault flex flex-col gap-2 p-4" data-testid="audit-row" data-action={row.action}>
             <p className="text-sm font-semibold text-ink-soft">
-              <time dateTime={row.occurredAt.toISOString()}>{when}</time>
+              <time dateTime={dayOnly ? SPAIN_DAY.format(row.occurredAt) : row.occurredAt.toISOString()}>{when}</time>
             </p>
             <h3 className="font-corp text-lg font-extrabold text-varsity-navy">{titleOf(row)}</h3>
             {row.statusChange ? (

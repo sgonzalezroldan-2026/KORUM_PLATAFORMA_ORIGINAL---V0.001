@@ -12,7 +12,8 @@ import { Link } from '@/i18n/navigation';
  * los textos con la API de servidor).
  */
 
-export const AUDIT_FIELD = 'min-h-11 w-full rounded-lg border-2 border-varsity-navy/30 bg-white px-3 text-base text-varsity-navy';
+/** Con `aria-invalid`, el borde pasa a ser más grueso y del todo opaco: el error se ve en el propio campo, no solo en el aviso. */
+export const AUDIT_FIELD = 'min-h-11 w-full rounded-lg border-2 border-varsity-navy/60 bg-white px-3 text-base text-varsity-navy aria-invalid:border-4 aria-invalid:border-varsity-navy';
 export const AUDIT_LABEL = 'flex flex-col gap-1 text-sm font-semibold text-ink-soft';
 
 export async function AuditFilters({
