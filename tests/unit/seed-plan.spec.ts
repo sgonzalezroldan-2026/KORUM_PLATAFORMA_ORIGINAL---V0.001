@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildPassQrPayload, parsePassQrPayload, signPass, verifyPassSignature } from '@/core/ticketing/qr-signature';
-import { planAllFunding, planInitiativeFunding, SEED_NOW, SEED_VAT_BPS, SeedPlanError } from '@/seed/funding-plan';
+import { planAllFunding, planInitiativeFunding, SEED_VAT_BPS, SeedPlanError } from '@/seed/funding-plan';
+import { SEED_REFERENCE_NOW as SEED_NOW } from '@/seed/seed-clock';
 import { createRandom, seedFromText, splitEuros, uuidFromKey } from '@/seed/random';
 import { loadSeedData } from '@/seed/seed-types';
 

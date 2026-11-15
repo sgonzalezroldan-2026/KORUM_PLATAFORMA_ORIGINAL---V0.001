@@ -211,7 +211,37 @@ async function verifyQuotas(db: KorumPrismaClient, seed: KorumSeedData, check: C
   }
 }
 
-export async function verifySeed(db: KorumPrismaClient, seed: KorumSeedData): Promise<SeedReport> {
+/**
+ * Nada sembrado ocurre después del «hoy» de la semilla (Sprint 5.7: con fechas relativas, un hecho del futuro se vería en el panel). Solo se
+ * miran fechas que escribe la semilla y que la aplicación no cambia después: así una demostración en uso (con firmas, mensajes o
+ * liquidaciones nuevas) no hace fallar una nueva ejecución.
+ */
+async function verifySeededPast(db: KorumPrismaClient, seed: KorumSeedData, seedNow: Date, check: Check): Promise<void> {
+  const initiativeIds = seed.initiatives.map((initiative) => initiative.id);
+  const latest: Array<[string, Promise<{ _max: Record<string, Date | null> }>]> = [
+    ['asientos sembrados', db.ledgerJournal.aggregate({ where: SEEDED, _max: { occurredAt: true } })],
+    ['aportaciones sembradas', db.contribution.aggregate({ where: { paycometOrder: { startsWith: 'SEED-' } }, _max: { createdAt: true } })],
+    ['pases sembrados', db.ticketPass.aggregate({ where: { contribution: { paycometOrder: { startsWith: 'SEED-' } } }, _max: { createdAt: true } })],
+    ['publicación de las campañas', db.initiative.aggregate({ where: { id: { in: initiativeIds } }, _max: { createdAt: true } })],
+    ['primer cobro de las campañas', db.initiative.aggregate({ where: { id: { in: initiativeIds } }, _max: { firstPayinAt: true } })],
+    // Solo las de las campañas que la semilla trae conseguidas: una campaña sembrada que la demostración lleve a la meta tendrá su liquidación de hoy.
+    ['liquidaciones sembradas', db.escrowPayout.aggregate({ where: { initiativeId: { in: seed.initiatives.filter((initiative) => initiative.status === 'GOAL_REACHED' || initiative.status === 'CLOSED').map((initiative) => initiative.id) } }, _max: { createdAt: true } })],
+    ['facturas sembradas', db.invoice.aggregate({ where: { invoiceNumber: { in: seed.invoices.map((invoice) => invoice.invoiceNumber) } }, _max: { issuedAt: true } })],
+    ['ideas sembradas', db.idea.aggregate({ where: { id: { in: seed.ideas.map((idea) => idea.id) } }, _max: { createdAt: true } })],
+    ['soporte sembrado', db.supportTicket.aggregate({ where: { ticketCode: { in: seed.supportTickets.map((ticket) => ticket.ticketCode) } }, _max: { createdAt: true } })]
+  ];
+  for (const [label, rows] of latest) {
+    const date = Object.values((await rows)._max)[0];
+    check(!date || date.getTime() <= seedNow.getTime(), `${label}: hay una fecha (${date?.toISOString()}) posterior al «hoy» de la semilla (${seedNow.toISOString()}); ejecuta npm run db:reset`);
+  }
+}
+
+export interface VerifySeedOptions {
+  /** «Hoy» de la semilla: si se indica, se comprueba además que nada sembrado es posterior (lo hace siempre `seedDatabase`). */
+  seedNow?: Date;
+}
+
+export async function verifySeed(db: KorumPrismaClient, seed: KorumSeedData, options: VerifySeedOptions = {}): Promise<SeedReport> {
   const problems: string[] = [];
   const check: Check = (condition, message) => {
     if (!condition) problems.push(message);
@@ -232,6 +262,7 @@ export async function verifySeed(db: KorumPrismaClient, seed: KorumSeedData): Pr
   }
   await verifyAccounts(db, seed, check);
   await verifyQuotas(db, seed, check);
+  if (options.seedNow) await verifySeededPast(db, seed, options.seedNow, check);
 
   const trial = await getTrialBalance(db);
   check(trial.balanced, `el libro no cuadra: debe ${trial.debitCents} y haber ${trial.creditCents}`);

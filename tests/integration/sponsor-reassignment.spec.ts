@@ -151,7 +151,7 @@ describe('QA-S02 · sin campañas activas, el patrocinio va a la bolsa con su pl
   it('un comercio que lleva 50 días cobrado solo espera hasta el día 70 desde su cobro (Sprint 4.2f)', async () => {
     const { organization, origin, directorActor } = await team();
     const { sponsorId, contribution } = await paidSponsor(organization.slug, origin.id, directorActor);
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '50 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 50 * 86_400_000).toISOString());
     await db.sponsor.update({ where: { id: sponsorId }, data: { paidAt: new Date(Date.now() - 50 * DAY) } });
     await fail(origin.id);
     await sweepSponsorMoney(db, new Date(), 50);

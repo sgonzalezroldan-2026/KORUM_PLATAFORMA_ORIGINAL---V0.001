@@ -2,10 +2,12 @@ import { getEnv } from '@/config/env';
 import { getKeyring } from '@/config/keyring';
 import { createPrismaClient } from '@/lib/prisma';
 import { seedDatabase } from '@/seed/seed';
+import { seedDay } from '@/seed/seed-clock';
 import { assertSeedAllowed } from '@/seed/seed-guard';
 
 /**
- * Carga los datos de demostración (`npm run db:seed`). Es idempotente: se puede ejecutar varias veces. Solo se ejecuta contra
+ * Carga los datos de demostración (`npm run db:seed`). Sus fechas se calculan respecto al día de la carga; en una base ya sembrada se
+ * conservan las de la primera carga (para fechas de hoy, `npm run db:reset`). Es idempotente: se puede ejecutar varias veces. Solo se ejecuta contra
  * una base local o en el entorno de demostración (`NEXT_PUBLIC_DEMO_MODE=true`), y nunca con cobros reales (ver `seed-guard`).
  */
 async function main() {
@@ -24,7 +26,8 @@ async function main() {
     const report = await seedDatabase(db, { hmacSecret: env.DATA_HMAC_SECRET, qrSecret: env.QR_HMAC_SECRET, keyring: getKeyring(), schema, log: (message) => console.log(message) });
     console.log(
       `\n✅ Semilla lista en ${((Date.now() - startedAt) / 1000).toFixed(1)} s: ${report.organizations} entidades, ${report.initiatives.length} iniciativas, ` +
-        `${report.contributions} aportaciones, ${report.ticketPasses} pases QR y ${report.journals} asientos (debe = haber = ${report.ledgerDebitCents} céntimos).`
+        `${report.contributions} aportaciones, ${report.ticketPasses} pases QR y ${report.journals} asientos (debe = haber = ${report.ledgerDebitCents} céntimos), ` +
+        `con fechas respecto al ${seedDay(report.clock)}.`
     );
   } finally {
     await db.$disconnect();

@@ -3,23 +3,26 @@ import { ideaTargetDigest, payoutDigestFor } from '@/core/security/signature-has
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { calculateRealRevenueFromLedger } from '@/core/finance/bi-analytics.service';
 import { ACCOUNT_RULES } from '@/core/finance/ledger-accounts';
+import { quarterOf } from '@/core/ideas/idea-conversion';
 import { releaseInitiativeQuotas, reserveInitiativeQuotas } from '@/core/finance/quota-reservation';
 import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { openInvoiceRecipientTaxId, openSponsorTaxId } from '@/core/tax/tax-id-vault';
 import { verifyPassSignature } from '@/core/ticketing/qr-signature';
-import { seedDatabase } from '@/seed/seed';
+import { seedDatabase, type SeedRunReport } from '@/seed/seed';
+import { seedCourseInstant, shiftCourse, shiftSeedData } from '@/seed/seed-clock';
 import { loadSeedData } from '@/seed/seed-types';
-import { SeedReconciliationError, verifySeed, type SeedReport } from '@/seed/seed-verify';
+import { SeedReconciliationError, verifySeed } from '@/seed/seed-verify';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { createInitiative, createTestClient, TEST_KEYRING, TEST_SCHEMA } from './test-database';
 
 const SECRETS = { hmacSecret: 'integration-data-hmac-secret-0123456789', qrSecret: 'integration-qr-hmac-secret-0123456789ab', keyring: TEST_KEYRING };
 const seed = loadSeedData();
-/** Un día dentro del curso 2026-2027 de la semilla: la reserva de cupos renueva el curso de la entidad si el reloj real ya lo ha pasado. */
-const SEED_DAY = new Date('2026-11-04T10:00:00Z');
+const DAY = 86_400_000;
+/** Un instante dentro del curso de la semilla (Sprint 5.7: el curso en marcha el día en que se sembró), para reservar cupos sin renovarlo. */
+const seedDay = () => seedCourseInstant(report.clock);
 
 let db: KorumPrismaClient;
-let report: SeedReport;
+let report: SeedRunReport;
 let firstRunMs = 0;
 
 beforeAll(async () => {
@@ -40,7 +43,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     for (const org of orgs) {
       expect(org.legalName).toBeTruthy();
       expect(org.kybStatus).toBe('VERIFIED');
-      expect(org.quotaPeriod).toBe('2026-2027');
+      expect(org.quotaPeriod).toBe(report.clock.academicYear);
       const signers = org.members.filter((member) => member.role === 'DIRECTOR' || member.role === 'COSIGNER');
       expect(new Set(signers.map((member) => member.userId)).size).toBe(2);
     }
@@ -49,13 +52,29 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     expect(orgs.find((org) => org.id === 'MEDITERRANEO')!.ley49VerifiedAt).toBeNull();
   });
 
+  it('Sprint 5.7 · las fechas se calculan respecto al día de la siembra: lo que recauda cierra después de hoy y todo lo cobrado es anterior', async () => {
+    const now = Date.now();
+    // Otra suite puede haber sembrado antes esta base compartida en la misma ejecución: entonces se reutiliza su reloj, que es de hoy.
+    expect(now - report.clock.now.getTime()).toBeGreaterThanOrEqual(0);
+    expect(now - report.clock.now.getTime()).toBeLessThan(2 * DAY);
+    const shifted = shiftSeedData(seed, report.clock);
+    for (const initiative of shifted.initiatives) {
+      const row = await db.initiative.findUniqueOrThrow({ where: { id: initiative.id }, select: { closesAt: true, academicYear: true, quarter: true } });
+      expect(row).toEqual({ closesAt: new Date(initiative.closesAt), academicYear: initiative.academicYear, quarter: initiative.quarter });
+      if (initiative.status === 'FUNDRAISING') expect(row.closesAt.getTime(), `iniciativa ${initiative.id}`).toBeGreaterThan(now);
+    }
+    const seeded = { idempotencyKey: { startsWith: 'seed:' } };
+    expect((await db.ledgerJournal.aggregate({ where: seeded, _max: { occurredAt: true } }))._max.occurredAt!.getTime()).toBeLessThanOrEqual(now);
+    expect((await db.contribution.aggregate({ where: { paycometOrder: { startsWith: 'SEED-' } }, _max: { createdAt: true } }))._max.createdAt!.getTime()).toBeLessThanOrEqual(now);
+  });
+
   it('crea 8 iniciativas, 5 comercios, 3 ideas con chat, facturas, soporte y el Super-Admin', async () => {
     expect(await db.initiative.count({ where: { id: { in: [1, 2, 3, 4, 5, 6, 7, 8] } } })).toBe(8);
     expect(await db.sponsor.count({ where: { id: { in: seed.sponsors.map((sponsor) => sponsor.id) } } })).toBe(5);
     expect(await db.idea.count({ where: { id: { in: [501, 502, 503] } } })).toBe(3);
     for (const ideaId of [501, 502, 503]) expect(await db.ideaMessage.count({ where: { ideaId } }), `chat de la idea ${ideaId}`).toBe(1);
     expect(await db.ideaSignatureAudit.count({ where: { ideaId: 502 } })).toBe(3);
-    expect(await db.invoice.count({ where: { invoiceNumber: { in: ['DEMO-2025-0014', 'DEMO-2026-0019'] } } })).toBe(2);
+    expect(await db.invoice.count({ where: { invoiceNumber: { in: shiftSeedData(seed, report.clock).invoices.map((invoice) => invoice.invoiceNumber) } } })).toBe(2);
     expect(await db.supportTicket.count({ where: { ticketCode: 'TCK-901' } })).toBe(1);
     expect(await db.user.count({ where: { isSuperadmin: true, id: 'user-superadmin' } })).toBe(1);
   });
@@ -67,7 +86,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
       expect(row.cifEnc).not.toContain(compact(sponsor.cif));
       expect(openSponsorTaxId(TEST_KEYRING, { ...row, cifEnc: row.cifEnc! })).toBe(compact(sponsor.cif));
     }
-    for (const invoice of seed.invoices) {
+    for (const invoice of shiftSeedData(seed, report.clock).invoices) {
       const row = await db.invoice.findUniqueOrThrow({ where: { invoiceNumber: invoice.invoiceNumber }, select: { invoiceNumber: true, recipientTaxIdEnc: true, recipientTaxIdKeyVersion: true } });
       expect(openInvoiceRecipientTaxId(TEST_KEYRING, { ...row, recipientTaxIdEnc: row.recipientTaxIdEnc! })).toBe(compact(invoice.recipientTaxId));
     }
@@ -191,13 +210,13 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
     // La iniciativa 8 está exenta por categoría: no consume el exento anual.
     expect(await quotas('MEDITERRANEO')).toEqual({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 50_000, maintPaidCents: 0 });
     const cervantes = await db.initiative.findMany({ where: { organizationId: 'CERVANTES', quotaReservedExemptCents: { gt: 0 } }, select: { quotaReservedPeriod: true } });
-    expect(cervantes.map((row) => row.quotaReservedPeriod).sort()).toEqual(['2024-2025', '2025-2026', '2026-2027']);
+    expect(cervantes.map((row) => row.quotaReservedPeriod).sort()).toEqual(['2024-2025', '2025-2026', '2026-2027'].map((course) => shiftCourse(course, report.clock.courseOffset)));
   });
 
   it('QA-FIN01 · cancelar una campaña sembrada devuelve sus cupos; una de un curso pasado no abona nada', async () => {
     expect(await releaseInitiativeQuotas(db, 1)).toEqual({ released: true, credited: true });
     expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true, medalGrantAvailableCents: true } })).toEqual({ exemptRemainingCents: 100_000, medalGrantAvailableCents: 100_000 });
-    await expect(reserveInitiativeQuotas(db, 1, SEED_DAY)).resolves.toEqual({ reserved: true });
+    await expect(reserveInitiativeQuotas(db, 1, seedDay())).resolves.toEqual({ reserved: true });
 
     expect(await releaseInitiativeQuotas(db, 3)).toEqual({ released: true, credited: false });
     expect(await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' }, select: { exemptRemainingCents: true } })).toEqual({ exemptRemainingCents: 0 });
@@ -207,7 +226,7 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
 
   it('una campaña de desarrollo publicada después no hace fallar la conciliación, y su cupo cuenta', async () => {
     const extra = await createInitiative(db, 'MEDITERRANEO', { defaultExemptAppliedCents: 100_000 });
-    await reserveInitiativeQuotas(db, extra.id, SEED_DAY);
+    await reserveInitiativeQuotas(db, extra.id, seedDay());
     await expect(verifySeed(db, seed)).resolves.toBeDefined();
     await releaseInitiativeQuotas(db, extra.id);
     await expect(verifySeed(db, seed)).resolves.toBeDefined();
@@ -309,7 +328,10 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
       members: await db.organizationMember.count()
     });
     const before = await counts();
-    const again = await seedDatabase(db, { ...SECRETS, schema: TEST_SCHEMA });
+    // Otro día (Sprint 5.7): la base conserva las fechas con las que se sembró.
+    const again = await seedDatabase(db, { ...SECRETS, schema: TEST_SCHEMA, now: new Date(Date.now() + 5 * DAY) });
+    expect(again.reusedClock).toBe(true);
+    expect(again.clock).toEqual(report.clock);
     expect(await counts()).toEqual(before);
     expect(again.contributions).toBe(report.contributions);
     await expect(verifySeed(db, seed)).resolves.toBeTruthy();
@@ -317,23 +339,24 @@ describe('QA-C04 · semilla completa cuadrada al céntimo', () => {
 
   it('las altas posteriores a la semilla no chocan con los identificadores fijos de la semilla', async () => {
     const organization = await db.organization.findUniqueOrThrow({ where: { id: 'CERVANTES' } });
+    const closesAt = new Date(Date.now() + 20 * DAY);
     const initiative = await db.initiative.create({
       data: {
         walletEscrowId: 'WLT-ESC-900',
         organizationId: organization.id,
-        academicYear: '2026-2027',
+        academicYear: report.clock.academicYear,
         title: 'Alta posterior a la semilla',
         category: 'Patios y Deporte',
         stage: 'Primaria',
-        closesAt: new Date('2026-12-01T00:00:00Z'),
-        quarter: '2026-Q4',
+        closesAt,
+        quarter: quarterOf(closesAt),
         goalCents: 100_000,
         description: 'Comprueba la secuencia de identificadores'
       }
     });
     expect(initiative.id).toBeGreaterThan(8);
     const sponsor = await db.sponsor.create({
-      data: { organizationId: organization.id, name: 'Nuevo', contactPerson: 'x', phone: '0', email: 'n@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: 'NUEVO', expiresAt: new Date('2027-01-01') }
+      data: { organizationId: organization.id, name: 'Nuevo', contactPerson: 'x', phone: '0', email: 'n@x.test', sector: 's', tierLabel: 't', amountCents: 10_000, feeGeneratedCents: 1_500, promo: 'p', code: 'NUEVO', expiresAt: new Date(Date.now() + 365 * DAY) }
     });
     expect(sponsor.id).toBeGreaterThan(5);
   });

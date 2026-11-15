@@ -10,6 +10,9 @@ import { SEED_ACTOR, signerUserId } from './seed-base';
 import type { SeedSecrets } from './seed-funding';
 import type { KorumSeedData } from './seed-types';
 
+/** Lo que la semilla da por ocurrido nunca queda después de su «hoy» (Sprint 5.7: con fechas relativas, una firma futura se vería en el panel). */
+const notAfter = (date: Date, seedNow: Date): Date => (date.getTime() > seedNow.getTime() ? new Date(seedNow) : date);
+
 /**
  * Gobierno de la semilla: liquidaciones con doble firma, facturas, buzón de ideas con su auditoría y soporte.
  * Mismos principios que `seed-funding`: idempotente y sin datos personales reales.
@@ -56,7 +59,7 @@ async function sign(db: KorumPrismaClient, secrets: SeedSecrets, input: Signatur
  * (PROVIDER_INVOICE) no se adjunta en la semilla (no sube ficheros al almacén): en la que espera la 2ª firma, la entidad la adjunta desde
  * Liquidaciones (Sprint 4.4a) antes de que pueda firmar la segunda persona, y las firmas se vuelven a pedir.
  */
-export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets): Promise<Map<number, number>> {
+export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets, seedNow: Date): Promise<Map<number, number>> {
   const payoutIds = new Map<number, number>();
   for (const initiative of seed.initiatives.filter((candidate) => candidate.status === 'GOAL_REACHED' || candidate.status === 'CLOSED')) {
     const org = seed.schools.find((candidate) => candidate.id === initiative.organizationId);
@@ -78,8 +81,8 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         korumFeeSettledCents: korumFee,
         status: closed ? 'EXECUTED' : 'PENDING_DOUBLE_CHECK',
         paycometTransferId: closed ? `SEED-TRF-${initiative.id}` : null,
-        executedAt: closed ? new Date(closesAt.getTime() + 2 * DAY_MS) : null,
-        createdAt: new Date(closesAt.getTime() + DAY_MS)
+        executedAt: closed ? notAfter(new Date(closesAt.getTime() + 2 * DAY_MS), seedNow) : null,
+        createdAt: notAfter(new Date(closesAt.getTime() + DAY_MS), seedNow)
       },
       update: {}
     });
@@ -87,8 +90,8 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
 
     const { paycometSplitId } = await db.organization.findUniqueOrThrow({ where: { id: initiative.organizationId }, select: { paycometSplitId: true } });
     const target = { organizationId: initiative.organizationId, targetType: 'ESCROW_PAYOUT' as const, targetId: payout.id, targetDigest: payoutDigestFor(secrets.hmacSecret, { ...payout, providerInvoiceFile: null }, paycometSplitId) };
-    await sign(db, secrets, { ...target, role: 'DIRECTOR', signedAt: new Date(closesAt.getTime() + DAY_MS + 9 * 3_600_000) });
-    if (closed) await sign(db, secrets, { ...target, role: 'COSIGNER', signedAt: new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000) });
+    await sign(db, secrets, { ...target, role: 'DIRECTOR', signedAt: notAfter(new Date(closesAt.getTime() + DAY_MS + 9 * 3_600_000), seedNow) });
+    if (closed) await sign(db, secrets, { ...target, role: 'COSIGNER', signedAt: notAfter(new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000), seedNow) });
 
     if (closed) {
       const scope = { organizationId: initiative.organizationId, initiativeId: initiative.id };
@@ -105,7 +108,7 @@ export async function seedPayouts(db: KorumPrismaClient, seed: KorumSeedData, se
         idempotencyKey: `seed:payout-${initiative.id}:approval`,
         kind: 'PAYOUT_APPROVAL',
         description: `Liquidación aprobada con doble firma: ${initiative.title}`,
-        occurredAt: new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000),
+        occurredAt: notAfter(new Date(closesAt.getTime() + DAY_MS + 12 * 3_600_000), seedNow),
         createdById: SEED_ACTOR,
         lines: approval
       });
@@ -182,7 +185,7 @@ function seedReasonKey(entry: { status: string; accountOrder: number }): Signatu
 }
 
 /** Buzón de ideas: cada idea con su auditoría de firmas, su chat anónimo y, la que espera doble firma, la 1ª firma. */
-export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets): Promise<void> {
+export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secrets: SeedSecrets, seedNow: Date): Promise<void> {
   for (const idea of seed.ideas) {
     const expiresAt = new Date(idea.expiresAt);
     const createdAt = new Date(expiresAt.getTime() - 45 * DAY_MS);
@@ -212,7 +215,7 @@ export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secr
         accountOrder: entry.accountOrder,
         status: entry.status,
         reason: seedReasonKey(entry),
-        createdAt: new Date(createdAt.getTime() + (index + 1) * DAY_MS)
+        createdAt: notAfter(new Date(createdAt.getTime() + (index + 1) * DAY_MS), seedNow)
       })),
       skipDuplicates: true
     });
@@ -223,12 +226,12 @@ export async function seedIdeas(db: KorumPrismaClient, seed: KorumSeedData, secr
           senderRole: message.senderRole,
           senderLabel: message.senderLabel,
           body: message.body,
-          createdAt: message.createdAt ? new Date(message.createdAt) : new Date(createdAt.getTime() + (index + 1) * 3_600_000)
+          createdAt: notAfter(message.createdAt ? new Date(message.createdAt) : new Date(createdAt.getTime() + (index + 1) * 3_600_000), seedNow)
         }))
       });
     }
     if (idea.phase === 'DOUBLE_CHECK') {
-      await sign(db, secrets, { organizationId: idea.organizationId, targetType: 'IDEA_APPROVAL', targetId: idea.id, targetDigest: ideaTargetDigest(secrets.hmacSecret, { organizationId: idea.organizationId, title: idea.title, category: idea.category, description: idea.description }), role: 'DIRECTOR', signedAt: new Date(expiresAt.getTime() - 10 * DAY_MS) });
+      await sign(db, secrets, { organizationId: idea.organizationId, targetType: 'IDEA_APPROVAL', targetId: idea.id, targetDigest: ideaTargetDigest(secrets.hmacSecret, { organizationId: idea.organizationId, title: idea.title, category: idea.category, description: idea.description }), role: 'DIRECTOR', signedAt: notAfter(new Date(expiresAt.getTime() - 10 * DAY_MS), seedNow) });
     }
   }
 }

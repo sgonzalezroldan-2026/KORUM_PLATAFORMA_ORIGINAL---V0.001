@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { expect, test, type Browser, type BrowserContext, type Page } from '@playwright/test';
+import { academicYearFor } from '@/core/finance/academic-year';
+import { quarterOf } from '@/core/ideas/idea-conversion';
 import { buildPassQrPayload, signPass } from '@/core/ticketing/qr-signature';
 import { verifyDrawAct } from '@/core/ticketing/raffle-draw';
 import { withE2eDb } from './auth-support';
@@ -44,10 +46,10 @@ async function createTicketEvent(slug: string, options: { title: string; subtype
     const { rows } = await db.query(
       `INSERT INTO "Initiative" ("walletEscrowId", "format", "organizationId", "academicYear", "title", "category", "stage", "status", "stepIndex", "closesAt", "quarter", "goalCents", "description",
          "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketsSold", "ticketFeeMode", "rafflePrizeCount", "ticketVenue", "raisedCents", "updatedAt")
-       VALUES ($1, 'TICKETING'::"InitiativeFormat", (SELECT id FROM "Organization" WHERE slug = $2), '2026-2027', $3, 'Fiesta', 'Infantil', $4::"InitiativeStatus", $5,
-         ${options.closes === 'today' ? 'now()' : "now() + interval '3 days'"}, '2026-Q4', $6, 'Prueba E2E de portería', $7::"TicketSubtype", 500, $8, $9, 'ADD'::"TicketFeeMode", $10, 'Patio central', $11, now())
+       VALUES ($1, 'TICKETING'::"InitiativeFormat", (SELECT id FROM "Organization" WHERE slug = $2), $12, $3, 'Fiesta', 'Infantil', $4::"InitiativeStatus", $5,
+         ${options.closes === 'today' ? 'now()' : "now() + interval '3 days'"}, $13, $6, 'Prueba E2E de portería', $7::"TicketSubtype", 500, $8, $9, 'ADD'::"TicketFeeMode", $10, 'Patio central', $11, now())
        RETURNING id`,
-      [walletId, slug, options.title, raffle ? 'GOAL_REACHED' : 'FUNDRAISING', raffle ? 5 : 4, total * 500, options.subtype, raffle ? total : total + 50, total, raffle ? (options.prizes ?? 1) : null, raffle ? total * 500 : 0]
+      [walletId, slug, options.title, raffle ? 'GOAL_REACHED' : 'FUNDRAISING', raffle ? 5 : 4, total * 500, options.subtype, raffle ? total : total + 50, total, raffle ? (options.prizes ?? 1) : null, raffle ? total * 500 : 0, academicYearFor(new Date()), quarterOf(new Date(Date.now() + (options.closes === 'today' ? 0 : 3 * 86_400_000)))]
     );
     const initiativeId = Number(rows[0].id);
     const passes: SeedPass[] = [];

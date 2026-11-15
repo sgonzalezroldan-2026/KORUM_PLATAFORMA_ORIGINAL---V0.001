@@ -236,14 +236,14 @@ describe('Ventana de 90 días, recordatorios y reintentos de Paycomet', () => {
   it('a 10 días del final se recuerda una vez a quienes firman; pasado el día 90 ese dinero ya no entra y abre una alerta crítica', async () => {
     const context = await team();
     const { contribution } = await toFund(context);
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '85 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 85 * 86_400_000).toISOString());
     const now = new Date();
     await checkActivityFunds(db, now);
     await checkActivityFunds(db, now);
     expect(await db.outboxMessage.count({ where: { templateKey: 'activityFund.reminder', organizationId: context.organization.id } })).toBe(2);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `ACTIVITY_FUND_WINDOW:${context.organization.id}` } })).toMatchObject({ status: 'OPEN', severity: 'WARNING' });
 
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '95 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 95 * 86_400_000).toISOString());
     await checkActivityFunds(db, now);
     expect(await db.opsAlert.findUniqueOrThrow({ where: { dedupeKey: `ACTIVITY_FUND_WINDOW:${context.organization.id}` } })).toMatchObject({ status: 'OPEN', severity: 'CRITICAL', detailJson: { stuckCents: 25_000, availableCents: 0 } });
     expect(await loadActivityFund(db, TEST_HMAC_SECRET, context.director, context.organization.id, now)).toMatchObject({ availableCents: 0, stuckCents: 25_000 });
@@ -316,7 +316,7 @@ describe('Firma única (decisión de la entidad, Sprint 5.2) en el Fondo de acti
 
   it('la alerta crítica de «firmada y sin aprobar» también salta con una sola firma cuando la entidad firma así, y no salta con dos firmas exigidas y una sola puesta', async () => {
     const { context, contribution, payoutId } = await onlyDirectorSigned();
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '85 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 85 * 86_400_000).toISOString());
     const now = new Date();
     await checkActivityFunds(db, now);
     expect(await db.opsAlert.findUnique({ where: { dedupeKey: `ACTIVITY_FUND_WINDOW:payout:${payoutId}` } })).toBeNull();
@@ -356,7 +356,7 @@ describe('Cobro tardío de un comercio (decisión del promotor, 2026-11-10: no s
     const context = await team();
     const { sponsorId, contribution } = await paidSponsor(context.organization.slug, context.origin.id, null);
     await db.initiative.update({ where: { id: context.origin.id }, data: { status: 'REFUNDING' } });
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '55 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 55 * 86_400_000).toISOString());
     await checkBlockedSponsorMoney(db, new Date(), 500);
     await checkBlockedSponsorMoney(db, new Date(), 500);
     expect(await db.outboxMessage.count({ where: { templateKey: 'sponsor.awaitingDecision', organizationId: context.organization.id } })).toBe(2);

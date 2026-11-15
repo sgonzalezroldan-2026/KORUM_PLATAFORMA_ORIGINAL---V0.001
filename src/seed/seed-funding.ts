@@ -1,3 +1,4 @@
+import { spanishFiscalYear } from '@/core/checkout/checkout-rules';
 import type { JournalLine, PostJournalInput } from '@/core/finance/ledger-accounts';
 import type { Keyring } from '@/core/security/crypto';
 import { signPass } from '@/core/ticketing/qr-signature';
@@ -31,7 +32,7 @@ const PAYIN_KIND: Record<PlannedPayment['type'], LedgerJournalKind> = { DONATION
 const REVENUE_ACCOUNT = { TICKET: 'KORUM_REVENUE_TICKET_FEE', SPONSORSHIP: 'KORUM_REVENUE_SPONSOR_FEE' } as const;
 export const contributionOrder = (key: string) => `SEED-${key}`;
 
-interface Scope {
+export interface Scope {
   organizationId: string;
   initiativeId: number;
 }
@@ -58,14 +59,15 @@ function gatewayFeeLines(feeCents: number, organizationId: string): JournalLine[
   ];
 }
 
-function contributionRow(payment: PlannedPayment, scope: Scope, locale: 'es' | 'ca' | 'en', taxDeductible: boolean): Prisma.ContributionCreateManyInput {
+/** Fila de la aportación de un cobro sembrado. El ejercicio fiscal es el de la hora de España, como en un cobro real (`spanishFiscalYear`). */
+export function contributionRow(payment: PlannedPayment, scope: Scope, locale: 'es' | 'ca' | 'en', taxDeductible: boolean): Prisma.ContributionCreateManyInput {
   return {
     organizationId: scope.organizationId,
     initiativeId: scope.initiativeId,
     guestEmail: payment.email,
     canonicalEmail: payment.email,
     locale,
-    fiscalYear: payment.createdAt.getUTCFullYear(),
+    fiscalYear: spanishFiscalYear(payment.createdAt),
     type: payment.type,
     groupName: payment.groupName,
     ticketQuantity: payment.type === 'TICKET' ? payment.quantity : null,
@@ -92,7 +94,7 @@ function poolPayinRow(payin: PlannedPoolPayin, scope: Scope, locale: 'es' | 'ca'
     guestEmail: email,
     canonicalEmail: email,
     locale,
-    fiscalYear: payin.paidAt.getUTCFullYear(),
+    fiscalYear: spanishFiscalYear(payin.paidAt),
     type: 'SPONSORSHIP',
     amountCents: payin.poolCents,
     totalChargedCents: payin.poolCents + payin.serviceFeeCents + payin.taxCents,
@@ -110,7 +112,7 @@ function matchingRow(release: PlannedMatching, scope: Scope, locale: 'es' | 'ca'
     organizationId: scope.organizationId,
     initiativeId: scope.initiativeId,
     locale,
-    fiscalYear: release.createdAt.getUTCFullYear(),
+    fiscalYear: spanishFiscalYear(release.createdAt),
     type: 'MATCHING_FUND',
     amountCents: release.amountCents,
     totalChargedCents: 0,
@@ -209,7 +211,7 @@ export async function seedFunding(
           uuid,
           contributionId: contributionId(payment.key),
           initiativeId: plan.initiativeId,
-          serialCode: `PASE-${payment.createdAt.getUTCFullYear()}-${String(ticketNumber).padStart(4, '0')}`,
+          serialCode: `PASE-${spanishFiscalYear(payment.createdAt)}-${String(ticketNumber).padStart(4, '0')}`,
           subtype: initiative.ticketSubtype ?? 'EVENT',
           holderEmail: payment.email,
           quantity: payment.quantity,

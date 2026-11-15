@@ -1,16 +1,18 @@
 import { bpsOf } from '@/core/finance/money';
 import type { ContributionType, PaymentMethod } from '@/generated/prisma/enums';
 import { createRandom, pickWeighted, seedFromText, splitEuros, type Random } from './random';
+import { SEED_REFERENCE_NOW } from './seed-clock';
 import type { KorumSeedData } from './seed-types';
 
 /**
  * Reparto determinista de lo recaudado por cada iniciativa en pagos concretos. Es una función PURA: dado el JSON de la
  * semilla produce siempre los mismos pagos, y comprueba que suman exactamente `raisedCents`, que su número es
  * `totalContributions` y que las entradas vendidas son `ticketsSold`. Cualquier descuadre lanza `SeedPlanError`.
+ *
+ * Planifica SIEMPRE con las fechas del archivo y su «hoy» fijo (`SEED_REFERENCE_NOW`), para que el resultado no dependa del reloj de quien
+ * la ejecute; la carga desplaza después las fechas al día en que se siembra (`shiftFundingPlans`, Sprint 5.7).
  */
 
-/** «Hoy» de la semilla: fija, para que los datos no dependan del reloj de quien la ejecute. */
-export const SEED_NOW = new Date('2026-10-29T12:00:00.000Z');
 const DAY_MS = 86_400_000;
 /** Duración de las campañas de la semilla: por debajo del máximo (`GlobalConfig.maxCampaignDays`, 60 días). */
 const CAMPAIGN_DAYS = 50;
@@ -107,7 +109,7 @@ export function planInitiativeFunding(seed: KorumSeedData, initiativeId: number)
   const random = createRandom(seedFromText(`funding:${initiativeId}`));
 
   const closes = new Date(initiative.closesAt).getTime();
-  const end = Math.min(closes, SEED_NOW.getTime());
+  const end = Math.min(closes, SEED_REFERENCE_NOW.getTime());
   const start = closes - CAMPAIGN_DAYS * DAY_MS;
   const span = end - start;
   // Las campañas duran CAMPAIGN_DAYS (menos que el máximo de 60 de la ventana de 90 días de Paycomet): si una cierra tan

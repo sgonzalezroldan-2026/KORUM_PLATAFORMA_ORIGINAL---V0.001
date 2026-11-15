@@ -1,5 +1,7 @@
 import { inject } from 'vitest';
 import type { Prisma } from '@/generated/prisma/client';
+import { academicYearFor } from '@/core/finance/academic-year';
+import { quarterOf } from '@/core/ideas/idea-conversion';
 import { createKeyring } from '@/core/security/crypto';
 import { markSessionReauthenticated, verifySuperadminSession } from '@/core/security/verified-actor';
 import type { SessionActor } from '@/repositories/tenant-guard';
@@ -77,18 +79,22 @@ export function createUser(db: KorumPrismaClient, overrides: Partial<Prisma.User
   return db.user.create({ data: { id, name: 'Persona de pruebas', email, canonicalEmail: email, emailVerified: true, ...overrides } });
 }
 
+/** Curso en marcha (`AAAA-AAAA`) según el reloj: las pruebas no fijan un curso del calendario (Sprint 5.7). */
+export const currentCourse = (now: Date = new Date()) => academicYearFor(now);
+
 export function createInitiative(db: KorumPrismaClient, organizationId: string, overrides: Partial<Prisma.InitiativeUncheckedCreateInput> = {}) {
+  const closesAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   return db.initiative.create({
     data: {
       walletEscrowId: uniqueId('WLT-ESC'),
       organizationId,
-      academicYear: '2026-2027',
+      academicYear: currentCourse(),
       title: 'Toldos para el patio',
       category: 'Patios y Deporte',
       stage: 'Recaudando',
       status: 'BUDGETING',
-      closesAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      quarter: '2026-Q4',
+      closesAt,
+      quarter: quarterOf(closesAt),
       goalCents: 583_300,
       description: 'Iniciativa creada por las pruebas de integración',
       ...overrides

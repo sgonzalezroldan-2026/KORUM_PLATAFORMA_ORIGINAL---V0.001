@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { InsufficientQuotaError, releaseInitiativeQuotas, reserveInitiativeQuotas } from '@/core/finance/quota-reservation';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { createInitiative, createOrganization, createTestClient } from './test-database';
+import { shiftCourse } from '@/seed/seed-clock';
+import { createInitiative, createOrganization, createTestClient, currentCourse } from './test-database';
 
 let db: KorumPrismaClient;
 
@@ -109,11 +110,12 @@ describe('QA-FIN01 · reversibilidad de exenciones y medallas', () => {
   });
 
   it('si los cupos ya son de otro curso, la reserva se cierra sin abonar al curso nuevo', async () => {
-    const organization = await createOrganization(db, { quotaPeriod: '2026-2027', exemptRemainingCents: 100_000, maintPaidCents: 0, maintAnnualCapCents: 14_700 });
+    const course = currentCourse();
+    const organization = await createOrganization(db, { quotaPeriod: course, exemptRemainingCents: 100_000, maintPaidCents: 0, maintAnnualCapCents: 14_700 });
     const initiative = await createInitiative(db, organization.id, { defaultExemptAppliedCents: 60_000, maintFeeCents: 4_900 });
     await reserveInitiativeQuotas(db, initiative.id);
     // Renovación anual: cupos nuevos para el curso siguiente.
-    await db.organization.update({ where: { id: organization.id }, data: { quotaPeriod: '2027-2028', exemptRemainingCents: 100_000, maintPaidCents: 0 } });
+    await db.organization.update({ where: { id: organization.id }, data: { quotaPeriod: shiftCourse(course, 1), exemptRemainingCents: 100_000, maintPaidCents: 0 } });
 
     expect(await releaseInitiativeQuotas(db, initiative.id)).toEqual({ released: true, credited: false });
     expect(await quotasOf(organization.id)).toMatchObject({ exemptRemainingCents: 100_000, maintPaidCents: 0 });

@@ -168,7 +168,7 @@ describe('Auditoría financiera del 4.2f', () => {
     const context = await team();
     const { contribution, later } = await toFund(context);
     const payoutId = await signed(context, later);
-    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = now() - interval '95 days' WHERE id = ${contribution.id}`);
+    await db.$executeRawUnsafe(`UPDATE ${table('Contribution')} SET "createdAt" = $1::timestamptz AT TIME ZONE 'UTC' WHERE id = ${contribution.id}`, new Date(Date.now() - 95 * 86_400_000).toISOString());
     expect(await settleSignedFundPayout(db, async () => mock, payoutId, TEST_HMAC_SECRET, new Date())).toEqual({ status: 'NOT_APPROVED', reason: 'WINDOW_EXPIRED' });
     expect(await db.activityFundPayout.findUniqueOrThrow({ where: { id: payoutId } })).toMatchObject({ status: 'CANCELLED', cancelReason: 'WINDOW_EXPIRED' });
   });

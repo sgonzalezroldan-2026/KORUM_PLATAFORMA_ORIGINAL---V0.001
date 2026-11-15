@@ -7,7 +7,11 @@ import { loadUserActor } from '@/repositories/actor';
 import { getDashboardData, getMedalImpact, getPanelOverview } from '@/repositories/panel.repository';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { buildMedalKitFile, MedalKitUnavailableError, type MedalKitRequest } from '@/services/panel/medal-kit.service';
-import { TEST_HMAC_SECRET, TEST_KEYRING, createInitiative, createOrganization, createTestClient, createUser, uniqueId } from './test-database';
+import { shiftCourse } from '@/seed/seed-clock';
+import { TEST_HMAC_SECRET, TEST_KEYRING, createInitiative, createOrganization, createTestClient, createUser, currentCourse, uniqueId } from './test-database';
+
+/** Curso vigente de las entidades de la prueba: el de hoy, como el que ponen por defecto las campañas de prueba (Sprint 5.7). */
+const COURSE = currentCourse();
 
 /**
  * Sprint 4.1 · cabecera de gestión, cuadro de mandos, kit de medallas y Modelo 182 contra PostgreSQL real (QA-SEC01, QA-S02, QA-S05, QA-REG02):
@@ -47,7 +51,7 @@ const TIERS = [
 ];
 
 async function createTenant(overrides: Parameters<typeof createOrganization>[1]): Promise<Tenant> {
-  const organization = await createOrganization(db, { iban: 'ES91 2100 0418 4502 0005 1332', cif: uniqueId('G'), contactEmail: `${uniqueId('c')}@entidad.example`, quotaPeriod: '2026-2027', ...overrides });
+  const organization = await createOrganization(db, { iban: 'ES91 2100 0418 4502 0005 1332', cif: uniqueId('G'), contactEmail: `${uniqueId('c')}@entidad.example`, quotaPeriod: COURSE, ...overrides });
   const members = await Promise.all(
     (['DIRECTOR', 'COSIGNER', 'GATEKEEPER'] as const).map(async (role) => {
       const user = await createUser(db, { twoFactorEnabled: true });
@@ -68,7 +72,7 @@ beforeAll(async () => {
   await createInitiative(db, silverOrg.orgId, { status: 'FUNDRAISING', stepIndex: 4, raisedCents: 100_000, title: 'Campaña viva' });
   await createInitiative(db, silverOrg.orgId, { status: 'GOAL_REACHED', stepIndex: 5, raisedCents: 583_300, title: 'Campaña conseguida' });
   await createInitiative(db, silverOrg.orgId, { status: 'CLOSED', stepIndex: 5, raisedCents: 300_000, title: 'Campaña cerrada' });
-  await createInitiative(db, silverOrg.orgId, { status: 'CLOSED', stepIndex: 5, raisedCents: 777_700, title: 'Campaña del curso pasado', academicYear: '2025-2026' });
+  await createInitiative(db, silverOrg.orgId, { status: 'CLOSED', stepIndex: 5, raisedCents: 777_700, title: 'Campaña del curso pasado', academicYear: shiftCourse(COURSE, -1) });
   await createInitiative(db, silverOrg.orgId, { status: 'BUDGETING', stepIndex: 3, title: 'Borrador' });
   await createInitiative(db, otherOrg.orgId, { status: 'GOAL_REACHED', stepIndex: 5, raisedCents: 999_900, title: 'Campaña de otra entidad' });
 
@@ -96,7 +100,7 @@ const denied = (organizationId: string, attempted: string) =>
 describe('cabecera de gestión (QA-S02)', () => {
   it('da la entidad, las dos personas firmantes con su cargo y los niveles de medalla, sin IBAN ni CIF', async () => {
     const overview = await getPanelOverview(db, silverOrg.director, silverOrg.orgId);
-    expect(overview.organization).toMatchObject({ medalRank: 2, completedThisYear: 2, medalGrantAvailableCents: 100_000, exemptRemainingCents: 40_000, quotaPeriod: '2026-2027' });
+    expect(overview.organization).toMatchObject({ medalRank: 2, completedThisYear: 2, medalGrantAvailableCents: 100_000, exemptRemainingCents: 40_000, quotaPeriod: COURSE });
     expect(Object.keys(overview.organization)).not.toContain('iban');
     expect(Object.keys(overview.organization)).not.toContain('cif');
     expect(overview.signers.map((signer) => [signer.role, signer.status])).toEqual([
@@ -162,7 +166,7 @@ describe('kit de medallas (QA-S05)', () => {
     const svgText = new TextDecoder().decode(svg.bytes);
     expect(svgText).toContain('BRONCE');
     expect(svgText).toContain('CEIP Plata');
-    expect(svgText).toContain('2026-2027');
+    expect(svgText).toContain(COURSE);
 
     const downloads = await db.auditLog.findMany({ where: { action: 'panel.medal_kit_downloaded', organizationId: silverOrg.orgId } });
     expect(downloads.map((row) => (row.metadataJson as { kind: string }).kind).sort()).toEqual(['report', 'seal']);

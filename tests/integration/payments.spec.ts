@@ -4,7 +4,7 @@ import { getAccountBalance, getBalancesByAccount, getRaisedFromLedger, getTrialB
 import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { loadCardToken, tokenizeAndStoreCard } from '@/services/payments/card-tokens';
-import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
+import { formatBankDateTime, MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
 import { PaymentProviderError } from '@/services/payments/payment-provider';
 import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
@@ -85,9 +85,21 @@ describe('QA-P01 · webhooks firmados e idempotentes', () => {
   it('una firma falsa no puede reservar el identificador de un pago real', async () => {
     const { organization, initiative } = await setup();
     const contribution = await pendingDonation(organization.id, initiative.id);
-    const forged = new MockPaycometProvider({ secrets: { ...secrets, password: 'la-del-atacante' } }).buildNotification({ kind: 'PAYMENT', order: contribution.paycometOrder!, amountCents: contribution.totalChargedCents });
+    // El mismo aviso que el bueno salvo la firma: misma fecha del banco, así que el mismo identificador de evento (Sprint 5.7: cada simulador pone por
+    // defecto su propia hora y, sin fijarla, los dos avisos dejarían de competir por el mismo identificador y la prueba no vigilaría nada).
+    const bankDateTime = formatBankDateTime(new Date());
+    const notice = { kind: 'PAYMENT' as const, order: contribution.paycometOrder!, amountCents: contribution.totalChargedCents, bankDateTime };
+    const forged = new MockPaycometProvider({ secrets: { ...secrets, password: 'la-del-atacante' } }).buildNotification(notice);
+    const genuine = mock.buildNotification(notice);
+    const withoutHash = (rawBody: string) => {
+      const fields = new URLSearchParams(rawBody);
+      fields.delete('NotificationHash');
+      return fields.toString();
+    };
+    expect(withoutHash(forged.rawBody)).toBe(withoutHash(genuine.rawBody));
+    expect(forged.rawBody).not.toBe(genuine.rawBody);
     await handlePaymentWebhook(db, mock, forged.rawBody, forged.contentType);
-    expect(await deliver('PAYMENT', contribution.paycometOrder!, contribution.totalChargedCents)).toEqual({ status: 200, outcome: 'PROCESSED' });
+    expect(await handlePaymentWebhook(db, mock, genuine.rawBody, genuine.contentType)).toEqual({ status: 200, outcome: 'PROCESSED' });
     expect(await counters(initiative.id)).toMatchObject({ raisedCents: 2_500 });
   });
 

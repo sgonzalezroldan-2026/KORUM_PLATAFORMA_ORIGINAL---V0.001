@@ -3,16 +3,17 @@ import { normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import { sealSponsorTaxId } from '@/core/tax/tax-id-vault';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import type { InitiativeFundingPlan } from './funding-plan';
+import { seededPublicationDate, shiftDate, type SeedClock } from './seed-clock';
 import type { KorumSeedData } from './seed-types';
 
 /**
  * Datos de base de la semilla: reglas globales, usuarios, entidades con sus firmantes, iniciativas y comercios.
  * Todo con `upsert` sin actualización (`update: {}`): volver a ejecutar la semilla no pisa lo que ya exista.
+ * Reciben la semilla ya desplazada al día de la carga (`shiftSeedData`) y su reloj (`SeedClock`).
  */
 
-export const SEED_ACADEMIC_YEAR = '2026-2027';
-/** Fecha de la revisión KYB de las entidades de la semilla. */
-const KYB_REVIEWED_AT = new Date('2025-02-01T10:00:00.000Z');
+/** Fecha de la revisión KYB de las entidades en el calendario del archivo (antes de su primera campaña); se desplaza con el resto. */
+const KYB_REVIEWED_AT_REFERENCE = new Date('2025-02-01T10:00:00.000Z');
 export const SEED_ACTOR = 'seed';
 
 export const SUPERADMIN_USER_ID = 'user-superadmin';
@@ -42,7 +43,8 @@ export async function seedPlatformConfig(db: KorumPrismaClient, seed: KorumSeedD
 }
 
 /** Usuarios (firmantes de cada entidad y Super-Admin de demostración), entidades, miembros y categorías propias. */
-export async function seedOrganizations(db: KorumPrismaClient, seed: KorumSeedData): Promise<void> {
+export async function seedOrganizations(db: KorumPrismaClient, seed: KorumSeedData, clock: SeedClock): Promise<void> {
+  const KYB_REVIEWED_AT = shiftDate(clock, KYB_REVIEWED_AT_REFERENCE);
   await db.user.upsert({
     where: { id: SUPERADMIN_USER_ID },
     create: {
@@ -89,7 +91,7 @@ export async function seedOrganizations(db: KorumPrismaClient, seed: KorumSeedDa
         kybReviewedAt: KYB_REVIEWED_AT,
         kybReviewedById: SUPERADMIN_USER_ID,
         ley49VerifiedAt: org.ley49 ? KYB_REVIEWED_AT : null,
-        quotaPeriod: SEED_ACADEMIC_YEAR,
+        quotaPeriod: clock.academicYear,
         medalGrantUsedInTitle: org.medalGrantUsedInTitle ?? null
       },
       update: {}
@@ -112,14 +114,13 @@ export async function seedOrganizations(db: KorumPrismaClient, seed: KorumSeedDa
   }
 }
 
-const dayMs = 86_400_000;
-
 /** Iniciativas (con su número fijo de la semilla), fecha de su primer cobro y progreso por curso. */
 export async function seedInitiatives(db: KorumPrismaClient, seed: KorumSeedData, plans: InitiativeFundingPlan[]): Promise<void> {
   for (const initiative of seed.initiatives) {
     const plan = plans.find((candidate) => candidate.initiativeId === initiative.id);
     const closesAt = new Date(initiative.closesAt);
-    const createdAt = new Date(closesAt.getTime() - 55 * dayMs);
+    // La fecha de publicación de la iniciativa 1 guarda el desplazamiento de la carga (`resolveSeedClock`): no cambiar sin cambiar ambos.
+    const createdAt = seededPublicationDate(closesAt);
     const columns = omit(initiative, ['courses', 'schoolName', 'province', 'coverImage', 'beforeImage', 'afterImage', 'thanksMessage']);
 
     await db.initiative.upsert({

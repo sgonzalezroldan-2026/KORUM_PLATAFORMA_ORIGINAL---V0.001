@@ -30,6 +30,12 @@ const DAY_MS = 86_400_000;
 
 type MockFailure = PaymentProviderError | ((request: string) => PaymentProviderError | null);
 
+const pad = (value: number) => String(value).padStart(2, '0');
+
+/** `BankDateTime` de una notificación de Paycomet (`AAAAMMDDhhmmss`, en hora UTC). */
+export const formatBankDateTime = (date: Date): string =>
+  `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}`;
+
 export interface MockPaycometOptions {
   secrets: NotificationSecrets;
   now?: () => Date;
@@ -59,9 +65,16 @@ export class MockPaycometProvider implements PaymentProvider {
   readonly deletedCards: number[] = [];
   private readonly charges = new Map<string, MockCharge>();
   private readonly now: () => Date;
+  /**
+   * `BankDateTime` de las notificaciones que no lo indican: la hora a la que se creó el simulador. Es fija, para que repetir un aviso sea el
+   * mismo aviso (idempotencia), y relativa al día en que se ejecuta (Sprint 5.7: era el 2026-10-29 fijo y, al pasar 90 días, las pruebas
+   * que miden la ventana de Paycomet desde el primer cobro empezaban a fallar solas). La página de pago simulada siempre pasa la hora real.
+   */
+  private readonly defaultBankDateTime: string;
 
   constructor(private readonly options: MockPaycometOptions) {
     this.now = options.now ?? (() => new Date());
+    this.defaultBankDateTime = formatBankDateTime(this.now());
   }
 
   /** Da de alta un cobro en el simulador. `authCode` permite fabricar una diferencia con lo guardado en KORUM (pruebas de conciliación). */
@@ -160,7 +173,7 @@ export class MockPaycometProvider implements PaymentProvider {
       Order: input.order,
       Amount: String(input.amountCents),
       Currency: 'EUR',
-      BankDateTime: input.bankDateTime ?? '20261029120000',
+      BankDateTime: input.bankDateTime ?? this.defaultBankDateTime,
       Response: input.response ?? 'OK'
     };
     const body = new URLSearchParams({

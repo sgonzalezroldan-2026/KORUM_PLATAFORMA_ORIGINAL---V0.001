@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { APIRequestContext, Page } from '@playwright/test';
+import { academicYearFor } from '@/core/finance/academic-year';
+import { quarterOf } from '@/core/ideas/idea-conversion';
 import { generateTicketCode } from '@/core/support/support-rules';
 import { withE2eDb } from './auth-support';
 import { E2E_SCHEMA } from './e2e-database';
@@ -152,9 +154,9 @@ export async function prepareVictim(entity: RegisteredEntity): Promise<Victim> {
       const { rows } = await db.query(
         `INSERT INTO "Initiative" ("walletEscrowId", "format", "organizationId", "academicYear", "title", "category", "stage", "status", "stepIndex", "closesAt", "quarter", "goalCents", "description",
            "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketFeeMode", "rafflePrizeCount", "updatedAt")
-         VALUES ($1, $2::"InitiativeFormat", $3, '2026-2027', $4, 'Fiesta', 'Infantil', $5::"InitiativeStatus", 4, now() + interval '30 days', '2026-Q4', 50000, 'Datos de la entidad B',
+         VALUES ($1, $2::"InitiativeFormat", $3, $11, $4, 'Fiesta', 'Infantil', $5::"InitiativeStatus", 4, now() + interval '30 days', $12, 50000, 'Datos de la entidad B',
            $6::"TicketSubtype", $7, $8, $9::"TicketFeeMode", $10, now()) RETURNING id`,
-        [wallet, ticket ? 'TICKETING' : 'BUDGET', organizationId, title, status, ticket?.subtype ?? null, ticket ? 500 : null, ticket ? 100 : null, ticket ? 'ADD' : null, ticket?.prizes ?? null]
+        [wallet, ticket ? 'TICKETING' : 'BUDGET', organizationId, title, status, ticket?.subtype ?? null, ticket ? 500 : null, ticket ? 100 : null, ticket ? 'ADD' : null, ticket?.prizes ?? null, academicYearFor(new Date()), quarterOf(new Date(Date.now() + 30 * 86_400_000))]
       );
       return Number(rows[0].id);
     };
@@ -343,7 +345,9 @@ export async function outboxOf(organizationId: string, addresses: string[]): Pro
 // ───────────── Argumentos de las acciones del panel ─────────────
 
 const TEXT = 'Texto escrito por la entidad A que no es suyo decidir.';
-const studioDraft = (initiativeId: number) => ({ initiativeId, format: 'BUDGET', title: 'Título cambiado por la entidad A', category: 'Patios y Deporte', stage: 'Infantil', closesOn: '2026-12-10', description: 'Descripción cambiada por la entidad A', showPublicBreakdown: true, plaqueEnabled: false, rewardEnabled: false, rewardText: null, targetFamiliesPerCourse: 20, costMatCents: 100, costInstCents: 0, contingencyBps: 1000, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 200, ticketFeeMode: 'ADD', ticketVenue: null, rafflePrizeCount: null, raffleNoticeConfirmed: false });
+/** Cierre válido de un borrador del Estudio: 30 días después de hoy (Sprint 5.7: una fecha fija dejaría de ser un borrador bien formado al pasar). */
+const closesOnInAMonth = () => new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+const studioDraft = (initiativeId: number) => ({ initiativeId, format: 'BUDGET', title: 'Título cambiado por la entidad A', category: 'Patios y Deporte', stage: 'Infantil', closesOn: closesOnInAMonth(), description: 'Descripción cambiada por la entidad A', showPublicBreakdown: true, plaqueEnabled: false, rewardEnabled: false, rewardText: null, targetFamiliesPerCourse: 20, costMatCents: 100, costInstCents: 0, contingencyBps: 1000, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 200, ticketFeeMode: 'ADD', ticketVenue: null, rafflePrizeCount: null, raffleNoticeConfirmed: false });
 
 /** Acciones del panel que reciben el identificador de un recurso (además de la entidad): sus argumentos bien formados para una entidad y unos recursos dados. */
 export function resourceArguments(slug: string, target: Targets): Record<string, unknown[]> {

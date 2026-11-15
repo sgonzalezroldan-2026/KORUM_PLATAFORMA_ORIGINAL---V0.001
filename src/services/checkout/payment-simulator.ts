@@ -1,7 +1,7 @@
 import { verifyPaymentSimulator } from '@/core/checkout/checkout-rules';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { getSimulatedPayment } from '@/repositories/checkout.repository';
-import type { MockPaycometProvider } from '@/services/payments/mock-paycomet';
+import { formatBankDateTime, type MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import type { Keyring } from '@/core/security/crypto';
 import type { InvoicingContext } from '@/services/payments/sponsorship-events';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
@@ -12,9 +12,6 @@ import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.servi
  * así que el asiento, el pase y los emails siguen exactamente el camino real. No hay ningún atajo que acredite dinero sin esa notificación.
  */
 
-const pad = (value: number) => String(value).padStart(2, '0');
-const bankDateTime = (date: Date) =>
-  `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}`;
 
 export type SimulatorOutcome = 'SETTLED' | 'NOT_PENDING' | 'INVALID';
 
@@ -32,7 +29,7 @@ export async function settleSimulatedPayment(
 
   // El primer pago de Mi Hucha guarda la tarjeta: como Paycomet, la notificación trae su token.
   const card = payment.walletSubscriptionId !== null && input.approve ? provider.savedCardFor(input.order) : undefined;
-  const notification = provider.buildNotification({ kind: 'PAYMENT', order: input.order, amountCents: payment.totalChargedCents, response: input.approve ? 'OK' : 'KO', bankDateTime: bankDateTime(now), card });
+  const notification = provider.buildNotification({ kind: 'PAYMENT', order: input.order, amountCents: payment.totalChargedCents, response: input.approve ? 'OK' : 'KO', bankDateTime: formatBankDateTime(now), card });
   const { keyring } = secrets;
   const result = await handlePaymentWebhook(db, provider, notification.rawBody, notification.contentType, now, { qrSecret: secrets.qrSecret, invoicing: secrets.invoicing, keyring: keyring ? () => keyring : undefined, documentsSecret: secrets.hmacSecret });
   return result.outcome === 'PROCESSED' || result.outcome === 'DUPLICATE' ? 'SETTLED' : 'INVALID';
