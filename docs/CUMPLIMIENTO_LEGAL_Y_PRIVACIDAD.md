@@ -183,6 +183,8 @@ La tarea `DATA_RETENTION_PURGE` aplica esta tabla (semanal, Sprint 2.5; los núm
 
 > **Estado: aplazada por decisión del promotor (29-10-2026)**, junto con las 8 preguntas a Paycomet del §2. Hasta que se resuelvan se desarrolla contra el simulador y con los textos legales en borrador; no se cobra dinero real. Ver «Tareas externas aplazadas» en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
+> **Prerrevisión (2026-11-17):** cada punto de esta lista tiene un dictamen y una propuesta de respuesta en [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) (IDs `L-nnn` del [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md)). No sustituye al profesional: los puntos se tachan aquí solo con la aprobación del promotor y, en los que lo necesitan, la respuesta del abogado, la asesoría o Paycomet.
+
 **Abogado:**
 
 - [ ] Condiciones de uso, política de privacidad, aviso legal y política de cookies (en es, ca y en).

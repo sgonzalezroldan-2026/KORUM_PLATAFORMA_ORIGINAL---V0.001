@@ -25,6 +25,7 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 | Sprints, alcance y modelo de IA recomendado por sprint | [docs/PLAN_IMPLEMENTACION_ATOMICO.md](docs/PLAN_IMPLEMENTACION_ATOMICO.md) |
 | Criterios de aceptación | [docs/QA_ACCEPTANCE_CRITERIA.md](docs/QA_ACCEPTANCE_CRITERIA.md) |
 | Estado del proyecto y traspaso entre sesiones o modelos | [docs/BITACORA_SPRINTS.md](docs/BITACORA_SPRINTS.md) |
+| Deuda, puntos abiertos y su prioridad (qué queda, quién lo hace y en qué orden) | [docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md](docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md) |
 | Significado de cada término | [docs/GLOSARIO.md](docs/GLOSARIO.md) |
 | Cómo trabajar con Claude Code o con Gemini, imágenes incluidas | [docs/GUIA_IA_CLAUDE_Y_GEMINI.md](docs/GUIA_IA_CLAUDE_Y_GEMINI.md) |
 | Modelo de datos | [schema/schema.prisma](schema/schema.prisma) |
