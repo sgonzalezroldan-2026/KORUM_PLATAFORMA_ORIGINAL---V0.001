@@ -87,7 +87,7 @@ export function SignatureModeForm({ orgSlug, mode, canChange, email }: { orgSlug
               </ul>
             ) : null}
             <label className="flex min-h-11 items-start gap-2 text-sm">
-              <input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="mt-1 size-5" data-testid="signature-mode-confirm" />
+              <input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="korum-check korum-check-start" data-testid="signature-mode-confirm" />
               <span>{t(`change.${target}.confirm`)}</span>
             </label>
             {error ? <FormAlert>{error}</FormAlert> : null}

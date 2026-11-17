@@ -16,6 +16,7 @@ import { CurrencyText } from '@/components/ui/currency-text';
 import { FUND_PURPOSE_MAX, FUND_PURPOSE_MIN } from '@/core/sponsors/activity-fund-rules';
 import type { ActivityFundView } from '@/services/panel/activity-fund-data';
 import { useApprovalsNotice } from './approvals-notice';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Lo que se hace con el Fondo de actividades desde el panel (Sprint 4.2f). Nunca se firma aquí: el enlace de un solo uso y el código llegan por email
@@ -130,6 +131,7 @@ export function ActivityFundRequestForm({ orgSlug, availableCents }: { orgSlug: 
 
 /** Liquidación que espera la doble firma: casillas de las dos personas, pedir (otra vez) el enlace propio y retirarla. */
 export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: string; payout: NonNullable<ActivityFundView['pending']>; canAct: boolean }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('panel.fund.pending');
   const tSlots = useTranslations('panel.approvals.doubleCheck');
   const format = useFormatter();
@@ -140,7 +142,7 @@ export function ActivityFundPending({ orgSlug, payout, canAct }: { orgSlug: stri
   const openConfirm = (open: boolean) => {
     setConfirmCancel(open);
     // El botón pulsado desaparece: el foco va a la siguiente decisión (o vuelve a «Retirar»), no al documento.
-    requestAnimationFrame(() => (open ? confirmButton.current : cancelButton.current)?.focus());
+    focusPainted(() => (open ? confirmButton.current : cancelButton.current));
   };
   const { error, pending, run } = useFundAction();
   const date = (iso: string) =>

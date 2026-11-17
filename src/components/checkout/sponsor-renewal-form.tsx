@@ -4,12 +4,14 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useId, useRef, useState, useTransition } from 'react';
 import { startSponsorRenewalAction } from '@/app/[locale]/(public)/[orgSlug]/comercios/renovar/actions';
 import { useHydrated } from '@/components/ui/use-hydrated';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Pago de la renovación (Sprint 4.2d): el comercio solo elige tarjeta o Bizum. El importe, el fee y a quién renovar los decide el servidor con el enlace
  * firmado. Va a la página de pago de Paycomet; si algo falla, el error se anuncia aquí y el foco va a él.
  */
 export function SponsorRenewalForm({ orgSlug, token, totalLabel }: { orgSlug: string; token: string; totalLabel: string }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('portal.sponsorRenewal');
   const locale = useLocale();
   const ready = useHydrated();
@@ -33,7 +35,7 @@ export function SponsorRenewalForm({ orgSlug, token, totalLabel }: { orgSlug: st
       } catch {
         setError(t('errors.UNAVAILABLE'));
       }
-      requestAnimationFrame(() => errorRef.current?.focus());
+      focusPainted(() => errorRef.current);
     });
   };
 

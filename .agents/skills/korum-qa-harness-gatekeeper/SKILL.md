@@ -54,7 +54,11 @@ En todo sprint con interfaz:
 ```text
 [Construcción] ──► [P1 invariantes + tipos + lint] ──► [P2 Vitest] ──► [P3 War Room] ──► [P4 Playwright + MCP]
        ▲                                                                                          │
-       └────────────────── SI HAY ≥ 1 FALLO: corregir la causa raíz y REPETIR TODO ◄──────────────┘
+       └─ SI HAY ≥ 1 FALLO: corregir la causa raíz ─► repetir P1+unitarias (siempre) + área afectada ◄──┘
+
+[Sin correcciones pendientes] ──► PASADA FINAL COMPLETA (todas las puertas desde la 1, todos los auditores) ──► 0 fallos
 ```
+
+Repetición por niveles (decisión del promotor, 2026-11-17, detalle en la Regla 04 §4): P1 y unitarias **siempre completas**; integración, E2E, recorrido manual y el auditor que falló, **solo el área afectada y sus vecinas**; y **una pasada final completa** antes de cerrar. Si esa pasada encuentra algo, se corrige y se hace otra completa.
 
 Prohibido entregar un sprint con fallos pendientes o pedir al usuario que depure un error reproducible.

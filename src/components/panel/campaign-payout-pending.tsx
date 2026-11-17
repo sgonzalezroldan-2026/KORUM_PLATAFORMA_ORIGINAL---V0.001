@@ -11,6 +11,7 @@ import type { PendingPayoutView } from '@/services/panel/campaign-payouts-data';
 import type { NoticeTone } from './approvals-notice';
 import { useApprovalsNotice } from './approvals-notice';
 import { usePayoutAction } from './campaign-payout-form';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /** Qué decir tras reintentar: hecha, por qué no se aprueba (con su motivo) o que sigue pendiente y se reintenta sola. */
 function settlementNotice(t: ReturnType<typeof useTranslations<'panel.payouts.pending'>>, settlement: PayoutSettlement | undefined): [string, NoticeTone] {
@@ -43,6 +44,7 @@ export function CampaignPayoutPending({
   blocked: boolean;
   editor: ReactNode;
 }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('panel.payouts.pending');
   const tSlots = useTranslations('panel.approvals.doubleCheck');
   const format = useFormatter();
@@ -136,7 +138,7 @@ export function CampaignPayoutPending({
                 type="button"
                 onClick={() => {
                   setEditing(false);
-                  requestAnimationFrame(() => editButton.current?.focus());
+                  focusPainted(() => editButton.current);
                 }}
                 className="min-h-11 self-start font-semibold text-varsity-navy underline underline-offset-4"
               >
@@ -151,7 +153,7 @@ export function CampaignPayoutPending({
             onClick={() => {
               setEditing(true);
               // El botón desaparece: el foco va a la explicación del cambio, no al documento.
-              requestAnimationFrame(() => editIntro.current?.focus());
+              focusPainted(() => editIntro.current);
             }}
             className="min-h-11 self-start font-semibold text-varsity-navy underline underline-offset-4"
           >

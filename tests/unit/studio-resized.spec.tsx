@@ -205,7 +205,7 @@ describe('Estudio · campaña rehecha por votación (solo lectura)', () => {
     const figures = resizedFigures({ ...ORIGINAL, originalGoalCents: 579_500, newGoalCents: 200_000, absorbsGatewayCostByKorum: true });
     renderWithIntl(<StudioWorkbench {...resizedProps({ figures, absorbs: true })} />);
     const lines = within(screen.getByTestId('studio-tco-lines'));
-    expect(lines.getByText('Coste de la pasarela de pago (lo asume KORUM: no sale de la meta)')).toBeInTheDocument();
+    expect(lines.getByText('Coste de la pasarela de pago (cubierto: no se resta de la meta)')).toBeInTheDocument();
     const board = resizedBudgetBoard({ ...figures, originalGoalCents: 579_500, contingencyBps: 1_000, absorbsGatewayCostByKorum: true });
     expect(board.feesCents).toBe(figures.bracketFeeCents);
     // Tres sumandos (proyecto, tramo y mantenimiento) más, si lo hay, el céntimo del redondeo: la pasarela no está.

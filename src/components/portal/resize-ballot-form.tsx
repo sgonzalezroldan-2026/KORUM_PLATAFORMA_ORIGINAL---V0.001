@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { castResizeVoteAction } from '@/app/[locale]/(public)/[orgSlug]/votacion/actions';
 import { useHydrated } from '@/components/ui/use-hydrated';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Papeleta de la votación de redimensionamiento (Sprint 4.4b): las opciones de proyecto y, siempre, «Prefiero que me devolváis mi aportación». Un voto por
@@ -14,6 +15,7 @@ import { useHydrated } from '@/components/ui/use-hydrated';
 type Choice = { kind: 'OPTION'; index: number } | { kind: 'REFUND' };
 
 export function ResizeBallotForm({ orgSlug, token, options, refundLabel }: { orgSlug: string; token: string; options: string[]; refundLabel: string }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('portal.resizeVote');
   const ready = useHydrated();
   const legend = useId();
@@ -36,7 +38,7 @@ export function ResizeBallotForm({ orgSlug, token, options, refundLabel }: { org
 
   const back = () => {
     setConfirming(false);
-    requestAnimationFrame(() => submitRef.current?.focus());
+    focusPainted(() => submitRef.current);
   };
 
   const value = (option: Choice) => (option.kind === 'REFUND' ? 'refund' : `option-${option.index}`);
@@ -58,7 +60,7 @@ export function ResizeBallotForm({ orgSlug, token, options, refundLabel }: { org
         setConfirming(false);
         setError(t('errors.FAILED'));
       }
-      requestAnimationFrame(() => errorRef.current?.focus());
+      focusPainted(() => errorRef.current);
     });
   };
 
@@ -79,7 +81,7 @@ export function ResizeBallotForm({ orgSlug, token, options, refundLabel }: { org
         event.preventDefault();
         if (!choice) {
           setError(t('errors.INVALID_CHOICE'));
-          requestAnimationFrame(() => errorRef.current?.focus());
+          focusPainted(() => errorRef.current);
           return;
         }
         setConfirming(true);

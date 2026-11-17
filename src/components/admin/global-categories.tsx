@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { addGlobalCategoryAction, setGlobalCategoryRuleAction } from '@/app/[locale]/(superadmin)/admin/reglas/actions';
 import { FIELD, OUTLINE, PRIMARY } from './entity-action';
 import { focusLater, RulesOutcome, useRulesAction } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 export interface GlobalCategoryView {
   name: string;
@@ -18,6 +19,7 @@ export interface GlobalCategoryView {
  * campañas al 0 % se revisan más abajo.
  */
 export function GlobalCategories({ categories }: { categories: GlobalCategoryView[] }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.rules.categories');
   const id = useId();
   const rule = useRulesAction({ successFocusId: null, failureFocusId: 'global-category-confirm-yes' });
@@ -59,7 +61,7 @@ export function GlobalCategories({ categories }: { categories: GlobalCategoryVie
     event.preventDefault();
     if (newRule === 'EXEMPT') {
       setConfirmingAdd(true);
-      requestAnimationFrame(() => confirmAddTitle.current?.focus());
+      focusPainted(() => confirmAddTitle.current);
       return;
     }
     create();
@@ -84,7 +86,7 @@ export function GlobalCategories({ categories }: { categories: GlobalCategoryVie
               disabled={rule.pending || pendingRule !== null}
               onChange={(event) => {
                 setPendingRule({ name: category.name, rule: event.target.value === 'EXEMPT' ? 'EXEMPT' : 'BRACKETS' });
-                requestAnimationFrame(() => confirmTitle.current?.focus());
+                focusPainted(() => confirmTitle.current);
               }}
               className={`${FIELD} sm:w-72`}
               data-testid={`category-rule-${index}`}

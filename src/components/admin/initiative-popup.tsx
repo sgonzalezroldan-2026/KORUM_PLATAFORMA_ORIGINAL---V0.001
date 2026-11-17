@@ -11,6 +11,7 @@ import { isLocale, type Locale } from '@/i18n/routing';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { InitiativePopupView } from '@/services/admin/initiative-popup';
 import { SelfBoostPanel, TariffFixPanel } from './popup-actions';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 const DATE = { dateStyle: 'medium', timeZone: 'Europe/Madrid' } as const;
 
@@ -30,6 +31,7 @@ function Line({ label, children }: { label: string; children: React.ReactNode })
  * la fila que lo abrió. Pide sus datos al abrirse (la misma fila del BI que la tabla: las cifras no pueden diferir) y, tras una acción, los recarga.
  */
 export function InitiativePopup({ initiativeId, onClose }: { initiativeId: number | null; onClose: () => void }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.popup');
   const format = useFormatter();
   const current = useLocale();
@@ -72,9 +74,9 @@ export function InitiativePopup({ initiativeId, onClose }: { initiativeId: numbe
       setNotice(message);
       setReload((value) => value + 1);
       router.refresh();
-      requestAnimationFrame(() => noticeRef.current?.focus());
+      focusPainted(() => noticeRef.current);
     },
-    [router]
+    [router, focusPainted]
   );
 
   const view = load.state === 'ready' ? load.view : null;

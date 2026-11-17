@@ -142,7 +142,7 @@ export function HuchaSettings({ fields, secrets }: { fields: Fields; secrets: Se
         </p>
         {entering ? (
           <label htmlFor={confirmId} className={`${NOTICE} flex min-h-11 items-start gap-3`}>
-            <input id={confirmId} type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="mt-1 size-5 shrink-0" data-testid="hucha-wallet-confirm" />
+            <input id={confirmId} type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="korum-check korum-check-start" data-testid="hucha-wallet-confirm" />
             <span>{t('hucha.walletConfirm')}</span>
           </label>
         ) : null}

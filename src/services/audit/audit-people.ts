@@ -122,13 +122,17 @@ function automaticActor(row: RawActor): AuditActorView | null {
   return null;
 }
 
-export function consoleActor(row: RawActor, accounts: Map<string, AccountRow>): AuditActorView {
+/**
+ * Quién actuó en una fila de la consola. Si era del equipo de KORUM se juzga por la fecha de la fila (`wasKorum`), no por lo que sea hoy (Sprint 5.9): una
+ * firma de quien después entró en el equipo no sale como «KORUM · nombre», y lo que hizo como KORUM antes de salir sigue saliendo como de KORUM.
+ */
+export function consoleActor(row: RawActor, accounts: Map<string, AccountRow>, korum: KorumPeriods): AuditActorView {
   const automatic = automaticActor(row);
   if (automatic) return automatic;
   const account = accounts.get(row.actorUserId!);
   if (!account || account.gdprAnonymizedAt) return { kind: 'erased' };
   const identity = { name: account.name || null, email: account.email };
-  return account.isSuperadmin ? { kind: 'korum', ...identity } : { kind: 'person', ...identity };
+  return wasKorum(korum, row.actorUserId!, row.occurredAt) ? { kind: 'korum', ...identity } : { kind: 'person', ...identity };
 }
 
 export interface EntityPeople {

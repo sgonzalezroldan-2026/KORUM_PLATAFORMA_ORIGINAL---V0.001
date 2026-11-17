@@ -11,6 +11,7 @@ import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { SplitToResolve } from '@/services/admin/payout-review.service';
 import { FIELD, OUTLINE, PRIMARY } from './entity-action';
 import { focusLater } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Repartos de resultado desconocido (campaña y Fondo de actividades): Paycomet no confirmó si el reparto salió y **nadie lo reenvía solo** (podría pagar dos veces). Una persona
@@ -30,6 +31,7 @@ export function SplitsToResolve({ splits }: { splits: SplitToResolve[] }) {
 }
 
 function SplitRow({ split }: { split: SplitToResolve }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.splits');
   const format = useFormatter();
   const current = useLocale();
@@ -75,7 +77,7 @@ function SplitRow({ split }: { split: SplitToResolve }) {
     event.preventDefault();
     // Una confirmación final para las dos opciones: marcar «sí salió» sin que sea cierto deja a la entidad sin cobrar y marcar «no salió» cuando sí salió la hace cobrar dos veces.
     setConfirming(true);
-    requestAnimationFrame(() => confirmTitle.current?.focus());
+    focusPainted(() => confirmTitle.current);
   };
 
   return (

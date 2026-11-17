@@ -273,7 +273,7 @@ export function GateScanner({ eventId, initialSummary }: { eventId: number; init
       <section className="flex flex-col gap-2 rounded-2xl bg-varsity-ivory p-5 text-sm text-ink">
         <p data-testid="gate-list-info">{sync.list && listTime ? t('list.info', { count: sync.list.passes.length, time: listTime }) : t('list.missing')}</p>
         <label className="flex min-h-11 items-center gap-3 font-semibold">
-          <input type="checkbox" className="size-5" checked={sound} onChange={(event) => setSound(event.target.checked)} />
+          <input type="checkbox" className="korum-check" checked={sound} onChange={(event) => setSound(event.target.checked)} />
           {t('sound')}
         </label>
         {confirmLeave && sync.pending > 0 ? (

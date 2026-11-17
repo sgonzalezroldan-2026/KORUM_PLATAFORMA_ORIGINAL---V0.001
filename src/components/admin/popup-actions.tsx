@@ -8,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { isLocale, type Locale } from '@/i18n/routing';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { InitiativePopupView } from '@/services/admin/initiative-popup';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 const BUTTON = 'min-h-11 rounded-xl px-4 font-bold disabled:opacity-60';
 const PRIMARY = `${BUTTON} bg-varsity-navy text-white hover:bg-varsity-navy-deep`;
@@ -39,6 +40,7 @@ function ActionProblem({ status, scope }: { status: string | null; scope: 'boost
  * aceptar la pérdida), salta además un segundo mensaje de confirmación que dice lo que se pierde (decisión del promotor, 2026-11-12).
  */
 export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopupView; onDone: (message: string) => void; onStale: () => void }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.popup.boost');
   const tp = useTranslations('admin.popup');
   const current = useLocale();
@@ -60,7 +62,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
   const backFromLoss = () => {
     setConfirming(false);
     setLossAsked(false);
-    requestAnimationFrame(() => startButton.current?.focus());
+    focusPainted(() => startButton.current);
   };
 
   const run = () =>
@@ -86,7 +88,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
       // La cifra que se vio ya no vale (llegó otra aportación o la campaña cambió): se recarga la ficha para enseñar la nueva.
       if (outcome.status === 'AMOUNT_CHANGED' || outcome.status === 'NOT_ALLOWED') onStale();
       // El panel de confirmación desaparece: el foco vuelve al botón que lo abrió.
-      requestAnimationFrame(() => startButton.current?.focus());
+      focusPainted(() => startButton.current);
     });
 
   return (
@@ -107,7 +109,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
       </fieldset>
       {losing ? (
         <label className="flex min-h-11 items-start gap-2 rounded-xl border-2 border-amber-400 bg-amber-50 p-2 text-amber-950">
-          <input type="checkbox" checked={acceptLoss} disabled={pending || confirming} onChange={(event) => setAcceptLoss(event.target.checked)} className="mt-1 size-5" data-testid="boost-accept-loss" />
+          <input type="checkbox" checked={acceptLoss} disabled={pending || confirming} onChange={(event) => setAcceptLoss(event.target.checked)} className="korum-check korum-check-start" data-testid="boost-accept-loss" />
           <span>{t('acceptLoss', { profit: formatCents(view.row.netProfitAfterBoostCents, locale) })}</span>
         </label>
       ) : null}
@@ -154,7 +156,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
                 }
                 setLossAsked(true);
                 // El panel se sustituye por el aviso de pérdida: el foco pasa a su título.
-                requestAnimationFrame(() => lossTitle.current?.focus());
+                focusPainted(() => lossTitle.current);
               }}
               disabled={pending}
               className={PRIMARY}
@@ -166,7 +168,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
               type="button"
               onClick={() => {
                 setConfirming(false);
-                requestAnimationFrame(() => startButton.current?.focus());
+                focusPainted(() => startButton.current);
               }}
               disabled={pending}
               className={OUTLINE}
@@ -182,7 +184,7 @@ export function SelfBoostPanel({ view, onDone, onStale }: { view: InitiativePopu
           onClick={() => {
             setConfirming(true);
             // El botón se sustituye por la confirmación: el foco pasa a su título para que no caiga al documento.
-            requestAnimationFrame(() => confirmTitle.current?.focus());
+            focusPainted(() => confirmTitle.current);
           }}
           disabled={losing && !acceptLoss}
           className={`${PRIMARY} self-start`}

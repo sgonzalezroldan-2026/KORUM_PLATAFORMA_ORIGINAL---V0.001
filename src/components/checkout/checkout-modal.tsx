@@ -106,7 +106,7 @@ export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startA
         {offer.closedReason ? (
           <div role="status" className="space-y-3 rounded-2xl bg-emerald-50 p-4 text-center">
             <p className="font-joy text-lg font-bold text-emerald-950">{t('closed.title')}</p>
-            <p className="text-ink">{t(`closed.${offer.closedReason}`)}</p>
+            <p className="text-ink">{t(`closed.${offer.closedReason}`, { kind: offer.ticket?.subtype ?? 'EVENT' })}</p>
             <button type="button" onClick={() => dialog.current?.close()} className="tactile-btn w-full rounded-2xl! py-3!">
               {t('close')}
             </button>

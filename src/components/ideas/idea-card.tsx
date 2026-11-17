@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { ProgressBar } from '@/components/portal/progress-bar';
+import { useCategoryLabel } from '@/components/portal/use-category-label';
 import type { IdeaAction } from '@/core/ideas/idea-rules';
 import { Link } from '@/i18n/navigation';
 
@@ -36,6 +37,7 @@ export interface IdeaCardProps {
  * solo el recuento de firmas **verificadas** (las sospechosas no suman al quórum y no se enseñan). Todo estado va también en texto, no solo en color.
  */
 export function IdeaCard({ idea, needed, contentLang, signedIn, loginHref, busy, onSign, onShare }: IdeaCardProps) {
+  const category = useCategoryLabel(contentLang)(idea.category);
   const t = useTranslations('portal.ideas.card');
   const approved = idea.quorumReached || idea.phase === 'DOUBLE_CHECK';
   const actionClass = 'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-3 text-center text-sm font-bold';
@@ -46,8 +48,8 @@ export function IdeaCard({ idea, needed, contentLang, signedIn, loginHref, busy,
         <div className="flex items-center justify-between gap-2 text-xs font-extrabold">
           <div className="flex min-w-0 items-center gap-2">
             <span aria-hidden="true" className="inline-block h-2 w-6 shrink-0 -rotate-3 rounded-xs border border-amber-400 bg-amber-300/70" />
-            <span lang={contentLang} className="die-cut-sticker truncate rounded-full bg-amber-100 px-2.5 py-0.5 text-amber-900">
-              {idea.category}
+            <span lang={category.lang} className="die-cut-sticker truncate rounded-full bg-amber-100 px-2.5 py-0.5 text-amber-900">
+              {category.text}
             </span>
           </div>
           <span className="shrink-0 font-mono text-ink-soft">{t('code', { alias: idea.alias })}</span>

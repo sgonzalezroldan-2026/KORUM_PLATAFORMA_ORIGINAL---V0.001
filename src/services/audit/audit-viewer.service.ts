@@ -208,7 +208,9 @@ export async function searchAudit(db: Db, searchScope: AuditScope, filters: Audi
   const scope: AuditScope = options.presentAs ? { kind: 'entity', organizationId: options.presentAs.organizationId } : searchScope;
   // En el panel, quienes firman hoy por la entidad se cargan antes: la propia consulta depende de ellos (las lecturas).
   const members = scope.kind === 'entity' ? await loadEntityMembers(db, scope.organizationId) : [];
-  const korum: KorumPeriods = scope.kind === 'entity' ? await loadKorumPeriods(db) : new Map();
+  const korumPeriods = await loadKorumPeriods(db);
+  // Para filtrar las filas de una entidad; en la consola solo se usan para decir quién era del equipo de KORUM al actuar.
+  const korum: KorumPeriods = scope.kind === 'entity' ? korumPeriods : new Map();
   const found = await db.auditLog.findMany({
     where: whereOf(searchScope, filters, { memberIds: members.map((member) => member.userId), korum }),
     orderBy: { id: 'desc' },
@@ -228,7 +230,7 @@ export async function searchAudit(db: Db, searchScope: AuditScope, filters: Audi
   const people = { members: new Map(members.map((member) => [member.userId, member])), former, korum };
 
   const rows: AuditRowView[] = page.map((row) => {
-    const actor = scope.kind === 'console' ? consoleActor(row, accounts) : entityActor(row, people);
+    const actor = scope.kind === 'console' ? consoleActor(row, accounts, korumPeriods) : entityActor(row, people);
     // El panel no distingue «no existe» de «es de otra entidad»: las dos filas salen con la misma acción.
     const action = scope.kind === 'entity' && PROBE_ACTIONS.includes(row.action) ? ENTITY_PROBE_ACTION : row.action;
     return {

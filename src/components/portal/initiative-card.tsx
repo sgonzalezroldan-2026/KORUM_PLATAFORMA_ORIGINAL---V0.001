@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { checkoutPath, initiativePath } from '@/lib/seo/portal-routes';
 import type { InitiativeCardData } from '@/core/public/view-model';
 import { ProgressBar } from './progress-bar';
+import { useCategoryLabel } from './use-category-label';
 import { useMoney } from './use-money';
 
 export interface InitiativeCardProps {
@@ -31,6 +32,8 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
   const t = useTranslations('portal.card');
   const money = useMoney();
   const ticketing = card.format === 'TICKETING';
+  const kind = card.subtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT';
+  const category = useCategoryLabel(contentLang)(card.category);
   const href = initiativePath(orgSlug, card.id);
 
   return (
@@ -48,8 +51,8 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
           )}
         >
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <span lang={contentLang} className="die-cut-sticker px-3! text-sm">
-              {card.category}
+            <span lang={category.lang} className="die-cut-sticker px-3! text-sm">
+              {category.text}
             </span>
             <div className="flex items-center gap-2">
               {card.matching ? (
@@ -62,7 +65,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
               {ticketing ? (
                 <span className="font-corp rounded-full bg-sky-800 px-3 py-1 text-sm font-extrabold tabular-nums text-white">
                   <span aria-hidden="true">{'🎟️ '}</span>
-                  {t('price', { price: money(card.ticketBuyerCents) })}
+                  {t('price', { kind, price: money(card.ticketBuyerCents) })}
                 </span>
               ) : card.zeroCommission ? (
                 <span className="rounded-full bg-emerald-800 px-3 py-1 text-sm font-extrabold text-white">
@@ -86,7 +89,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
 
         <div className="space-y-3 p-5 pb-3">
           <h3 lang={contentLang} className="font-joy text-lg font-bold leading-snug text-varsity-navy wrap-anywhere">
-            <Link href={href} className="rounded underline-offset-4 after:absolute after:inset-0 after:content-[''] hover:underline" aria-label={t('open', { title: card.title })}>
+            <Link href={href} className="-my-2.5 inline-block rounded py-2.5 underline-offset-4 after:absolute after:inset-0 after:content-[''] hover:underline" aria-label={t('open', { title: card.title })}>
               {card.title}
             </Link>
           </h3>
@@ -94,7 +97,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
             <div className="flex justify-between gap-2 text-sm font-extrabold tabular-nums">
               {ticketing ? (
                 <>
-                  <span className="text-sky-900">{t('ticketsSold', { sold: card.ticketsSold, max: card.ticketMax })}</span>
+                  <span className="text-sky-900">{t('ticketsSold', { kind, sold: card.ticketsSold, max: card.ticketMax })}</span>
                   <span className="text-varsity-navy">{t('ticketsLeft', { count: card.ticketsAvailable })}</span>
                 </>
               ) : (
@@ -123,7 +126,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
         </p>
         {card.achieved || card.closed ? (
           <p className="flex min-h-11 items-center justify-center rounded-2xl bg-emerald-100 px-3 text-center font-joy text-sm font-bold text-emerald-950">
-            {card.achieved ? (ticketing ? t('soldOut') : t('goalReached')) : t('closed')}
+            {card.achieved ? (ticketing ? t('soldOut', { kind }) : t('goalReached')) : t('closed')}
           </p>
         ) : (
           <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn relative z-10 w-full rounded-2xl! font-joy">

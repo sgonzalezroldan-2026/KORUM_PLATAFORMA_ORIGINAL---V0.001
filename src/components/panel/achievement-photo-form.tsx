@@ -111,7 +111,7 @@ export function AchievementPhotoForm({ orgSlug, initiativeId, title, hasBefore, 
           {t('fileHelp', { max: Math.floor(maxBytes / (1024 * 1024)) })}
         </p>
         <label htmlFor={ids.minors} className="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border-2 border-amber-300 bg-amber-50 p-3">
-          <input id={ids.minors} name="noMinors" type="checkbox" required aria-required="true" aria-describedby={ids.minorsHelp} className="mt-0.5 size-6 shrink-0 accent-varsity-emerald" />
+          <input id={ids.minors} name="noMinors" type="checkbox" required aria-required="true" aria-describedby={ids.minorsHelp} className="korum-check korum-check-start text-varsity-emerald" />
           <span>
             <span className="font-bold text-varsity-navy">{`${t('minorsLabel')} (${t('required')})`}</span>
             <span id={ids.minorsHelp} className="block text-sm text-ink-soft">

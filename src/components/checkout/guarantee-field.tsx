@@ -40,17 +40,15 @@ export function GuaranteeField({ offer, draft, update }: { offer: CheckoutOffer;
   return (
     <div className="space-y-2.5 rounded-2xl border border-emerald-300 bg-emerald-50 p-3.5">
       <div className="flex items-start gap-3">
-        <label htmlFor={checkId} className="-mx-2.5 -my-2 flex size-11 shrink-0 cursor-pointer items-center justify-center">
         <input
           id={checkId}
           type="checkbox"
           checked={draft.guaranteeOn}
           onChange={(event) => update({ guaranteeOn: event.target.checked, guaranteeCents: event.target.checked && draft.guaranteeCents === 0 ? offer.guarantee.suggestedCents : draft.guaranteeCents })}
           aria-describedby={descriptionId}
-          className="size-5 accent-emerald-700"
+          className="korum-check korum-check-start text-emerald-700"
           data-testid="guarantee-check"
         />
-        </label>
         <div className="space-y-1">
           <label htmlFor={checkId} className="block cursor-pointer font-extrabold text-varsity-navy" data-testid="guarantee-title">
             {t('title', { amount: money(draft.guaranteeCents) })}

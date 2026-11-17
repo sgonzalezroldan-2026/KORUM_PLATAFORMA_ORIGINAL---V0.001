@@ -120,7 +120,7 @@ export function SupportTicketCard({ orgSlug, ticket, canAct }: { orgSlug: string
                 </p>
               ) : null}
               <label htmlFor={ids.resolve} className="flex min-h-11 items-center gap-3 font-semibold text-varsity-navy">
-                <input id={ids.resolve} type="checkbox" checked={resolveToo} onChange={(event) => setResolveToo(event.target.checked)} className="size-5" />
+                <input id={ids.resolve} type="checkbox" checked={resolveToo} onChange={(event) => setResolveToo(event.target.checked)} className="korum-check" />
                 {t('alsoResolve')}
               </label>
               {error ? <FormAlert key={error.at}>{error.text}</FormAlert> : null}

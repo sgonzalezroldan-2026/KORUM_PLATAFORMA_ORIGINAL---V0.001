@@ -9,6 +9,7 @@ import { isLocale } from '@/i18n/routing';
 import { FIELD, PRIMARY } from './entity-action';
 import { toInputText } from './global-rules-model';
 import { RulesOutcome, useRulesAction } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 export interface MedalsFormProps {
   tiers: Array<{ key: string; icon: string; campaignsRequired: number; grantCents: number }>;
@@ -23,6 +24,7 @@ type Texts = Record<MedalKey, { campaigns: string; grant: string }>;
  * ahora**: la beca disponible este curso puede estar ya en parte reservada por una campaña.
  */
 export function MedalsForm({ tiers, updatedAt }: MedalsFormProps) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.rules.medals');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -54,7 +56,7 @@ export function MedalsForm({ tiers, updatedAt }: MedalsFormProps) {
     if (wrongFields.length > 0 || orderWrong) {
       setShowInvalid(true);
       const first = wrongFields[0];
-      requestAnimationFrame(() => document.getElementById(first ? `${id}-${first.replace(':', '-')}` : `${id}-bronze-campaigns`)?.focus());
+      focusPainted(() => document.getElementById(first ? `${id}-${first.replace(':', '-')}` : `${id}-bronze-campaigns`));
       return;
     }
     setShowInvalid(false);

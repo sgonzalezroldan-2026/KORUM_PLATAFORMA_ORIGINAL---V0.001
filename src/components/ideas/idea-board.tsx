@@ -12,6 +12,7 @@ import { computeDeviceFingerprint } from '@/lib/device-fingerprint';
 import { DeviceProtectionNotice } from './device-protection-notice';
 import { IdeaCard, type IdeaCardData } from './idea-card';
 import { ProposeIdeaDialog } from './propose-idea-dialog';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 export interface IdeaBoardProps {
   orgSlug: string;
@@ -40,6 +41,7 @@ const NOTICE_TONE = { ok: 'border-emerald-300 bg-emerald-50 text-emerald-950', i
  * las firmas: aquí nunca se suma un voto por cuenta propia.
  */
 export function IdeaBoard({ orgSlug, locale, entityName, contentLang, ideas, needed, maxDays, categories, signedIn, loginHref, fingerprintGranted, pageUrl }: IdeaBoardProps) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('portal.ideas');
   const router = useRouter();
   const [notice, setNotice] = useState<Notice>(null);
@@ -84,7 +86,7 @@ export function IdeaBoard({ orgSlug, locale, entityName, contentLang, ideas, nee
     } finally {
       setBusyId(null);
       // La acción cambia el botón por un texto: el foco se queda en la tarjeta de esa idea y no se pierde en la cabecera (WCAG 2.4.3).
-      requestAnimationFrame(() => document.getElementById(`idea-${ideaId}`)?.focus());
+      focusPainted(() => document.getElementById(`idea-${ideaId}`));
     }
   }
 

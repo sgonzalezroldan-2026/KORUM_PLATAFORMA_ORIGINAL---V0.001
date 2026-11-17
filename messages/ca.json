@@ -3154,6 +3154,7 @@
         "line3Exempt": "3. Comissió de la plataforma (categoria al 0 %)",
         "line4": "4. Càrrec de manteniment de la plataforma",
         "line5": "5. Cost de la passarel·la de pagament (Paycomet)",
+        "gatewayCoveredNote": "El cost de la passarel·la de pagament està cobert: no es resta del que rep l’entitat.",
         "gatewayFormula": "Com es calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportació estimada} other {# aportacions estimades}} (segons l’aportació suggerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} d’arrodoniment a l’euro. Suma quadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Recaptació bruta de l’aforament (aforament × preu)",
         "ticketGrossRaffle": "Recaptació bruta de les butlletes (butlletes × preu)",
@@ -3326,6 +3327,7 @@
       },
       "resized": {
         "notice": "Aquesta campanya es va refer per votació: la seva meta és fixa.",
+        "mismatch": "No podem mostrar la pissarra d’aquesta campanya refeta: les xifres guardades no quadren amb la seva meta. No s’ha canviat res ni s’ha mogut diners. Escriu al suport de KORUM amb el número de la campanya i la revisem.",
         "detail": "Qui hi va aportar va decidir tirar endavant amb el que s’havia recaptat: la meta va passar de {original} a {goal} i les comissions van baixar en la mateixa proporció. Les xifres es mostren sense poder-se canviar.",
         "originalGoal": "Meta amb què es va publicar",
         "provider": "Pressupost de proveïdor i equipament (ajustat a la meta nova)",
@@ -3339,7 +3341,7 @@
         "rounding": "Arrodoniment de la reserva (també arriba a l’entitat)",
         "sum": "Suma quadrada: {parts} = {goal}.",
         "entity": "Per al projecte en liquidar (meta menys comissions)",
-        "gatewayAbsorbed": "Cost de la passarel·la de pagament (l’assumeix KORUM: no surt de la meta)",
+        "gatewayAbsorbed": "Cost de la passarel·la de pagament (cobert: no es resta de la meta)",
         "detailAfterLoss": "Qui hi va aportar va decidir tirar endavant amb el que s’havia recaptat: la meta va passar de {original} a {voted} i les comissions van baixar en la mateixa proporció. Després, una retrocessió (un cobrament que es va retornar al seu titular) la va deixar en {goal}, amb les comissions una altra vegada en proporció. Les xifres es mostren sense poder-se canviar.",
         "entitySame": "Per al projecte en liquidar: la meta menys les comissions (el mateix import que el cost del projecte)"
       }
@@ -5700,25 +5702,33 @@
       "open": "Obre la fitxa de {title}",
       "share": "Comparteix {title}",
       "stage": "Etapa: {stage}",
-      "price": "Entrada {price}",
+      "price": "{kind, select, RAFFLE {Butlleta {price}} other {Entrada {price}}}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
       "zeroCommission": "0 % de comissió de la plataforma",
       "raisedOf": "{raised} de {goal}",
       "percent": "{pct} %",
       "progress": "Progrés de {title}",
-      "ticketsSold": "{sold} venudes · aforament {max}",
+      "ticketsSold": "{kind, select, RAFFLE {{sold} venudes de {max}} other {{sold} venudes · aforament {max}}}",
       "ticketsLeft": "{count, plural, =0 {Ja exhaurides} one {# disponible} other {# disponibles}}",
       "contributions": "{count, plural, one {# aportació} other {# aportacions}}",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "completed": "Completada!",
       "refund": "Devolució del 100 % si no s’assoleix la meta",
-      "soldOut": "Aforament complet · entrades exhaurides",
+      "soldOut": "{kind, select, RAFFLE {Butlletes exhaurides} other {Aforament complet · entrades exhaurides}}",
       "goalReached": "100 % aconseguit! Tancada",
       "contribute": "Aporta ara",
       "buyTickets": "Compra entrades",
       "buyRaffle": "Compra butlletes",
       "closed": "Tancada"
+    },
+    "categories": {
+      "comfort": "Infraestructura i confort",
+      "courts": "Patis i esport",
+      "tech": "Tecnologia i recursos",
+      "community": "Comunitat i viatges",
+      "solidarity": "Solidaritat i beques",
+      "ticketing": "Taquilla i rifes"
     },
     "detail": {
       "back": "Torna a les iniciatives",
@@ -5738,15 +5748,15 @@
       "contributionsDone": "{count, plural, one {# aportació feta} other {# aportacions fetes}}",
       "completedFull": "Completada al 100 %",
       "closed": "100 % aconseguit! Aportacions tancades",
-      "ticketsSoldOut": "Aforament complet! Entrades exhaurides",
-      "ticketsHeading": "Informació de taquilla digital",
+      "ticketsSoldOut": "{kind, select, RAFFLE {Butlletes exhaurides!} other {Aforament complet! Entrades exhaurides}}",
+      "ticketsHeading": "{kind, select, RAFFLE {Informació de les butlletes} other {Informació de taquilla digital}}",
       "ticketLines": {
-        "price": "Import íntegre per entrada per a l’entitat",
+        "price": "{kind, select, RAFFLE {Import íntegre per butlleta per a l’entitat} other {Import íntegre per entrada per a l’entitat}}",
         "fee": "Despeses de gestió digital",
-        "total": "Total per entrada",
-        "priceInc": "Preu de l’entrada",
+        "total": "{kind, select, RAFFLE {Total per butlleta} other {Total per entrada}}",
+        "priceInc": "{kind, select, RAFFLE {Preu de la butlleta} other {Preu de l’entrada}}",
         "feeInc": "Inclou despeses de gestió digital",
-        "center": "L’entitat rep per entrada",
+        "center": "{kind, select, RAFFLE {L’entitat rep per butlleta} other {L’entitat rep per entrada}}",
         "venue": "Lloc: {venue}"
       },
       "breakdown": {
@@ -5826,7 +5836,7 @@
     },
     "og": {
       "progress": "{pct} % aconseguit",
-      "tickets": "{sold} de {max} entrades venudes",
+      "tickets": "{kind, select, RAFFLE {{sold} de {max} butlletes venudes} other {{sold} de {max} entrades venudes}}",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "goalReached": "Meta aconseguida!",
       "challengeMissing": "{missing, plural, one {Només falta # família} other {Només falten # famílies}} a {group} per a {reward}!",
@@ -5856,6 +5866,10 @@
         "title": "Aquesta entrada ja no és vàlida",
         "description": "S’ha reemborsat o anul·lat, així que no obrirà la porta. Si creus que és un error, escriu a l’entitat."
       },
+      "revokedRaffle": {
+        "title": "Aquestes butlletes ja no són vàlides",
+        "description": "S’han reemborsat o anul·lat, així que ja no valen per al sorteig. Si creus que és un error, escriu a l’entitat."
+      },
       "invalid": {
         "title": "No podem obrir aquesta entrada",
         "description": "Comprova que has obert l’enllaç complet del correu o demana que te’l tornin a enviar."
@@ -5869,10 +5883,18 @@
       "quantityRaffle": "{count, plural, one {# butlleta} other {# butlletes}}",
       "qrAltRaffle": "Codi QR de les teves butlletes",
       "showRaffle": "{count, plural, one {Guarda-la: si surt el teu número, ensenya-la al mòbil o impresa per reclamar el premi. L’entitat et dirà com recollir-lo.} other {Guarda-les: si surt un dels teus números, ensenya-les al mòbil o impreses per reclamar el premi. L’entitat et dirà com recollir-lo.}}",
+      "showRaffleWon": "{count, plural, one {Ensenya aquest pas, al mòbil o imprès, per reclamar el teu premi. L’entitat t’explicarà com recollir-lo.} other {Ensenya aquest pas, al mòbil o imprès, per reclamar els teus premis. L’entitat t’explicarà com recollir-los.}}",
       "shareWarningRaffle": "Qui tingui aquest enllaç pot ensenyar aquestes butlletes com a seves: envia’l només a algú de confiança.",
       "shareMessageRaffle": "Les teves butlletes de «{title}»: {url}",
       "actionsRaffle": "Accions de les butlletes",
-      "drawOn": "Sorteig: {date}"
+      "drawOn": "Sorteig: {date}",
+      "outcome": {
+        "notDrawn": "Encara no s’ha fet el sorteig: quan es faci, aquí veuràs si ha sortit algun dels teus números.",
+        "inProgress": "El sorteig ja ha començat i encara queden premis per sortejar. Torna a obrir aquesta pàgina per veure si t’ha tocat.",
+        "won": "{count, plural, one {El teu número {numbers} ha sortit premiat!} other {Els teus números {numbers} han sortit premiats!}}",
+        "replaced": "{count, plural, one {El teu número {numbers} va sortir al sorteig, però l’entitat ha tornat a sortejar aquest premi. Si creus que és un error, escriu a l’entitat.} other {Els teus números {numbers} van sortir al sorteig, però l’entitat ha tornat a sortejar aquests premis. Si creus que és un error, escriu a l’entitat.}}",
+        "notWon": "El sorteig ja s’ha fet i aquesta vegada no ha sortit cap dels teus números. Gràcies per sumar!"
+      }
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",
@@ -5907,8 +5929,8 @@
         "unitAdd": "Preu: {price} + {fee} de Despeses de gestió digital",
         "unitInc": "Preu: {price} (Despeses de gestió digital incloses)",
         "limit": "En aquesta compra en pots triar com a màxim {max}.",
-        "soldOut": "{count, plural, =0 {Ja no queden places lliures. Gràcies per intentar-ho!} one {Només queda # plaça lliure.} other {Només queden # places lliures.}}",
-        "useAvailable": "{count, plural, one {Triar # plaça} other {Triar # places}}"
+        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {Ja no queden butlletes. Gràcies per intentar-ho!} one {Només queda # butlleta.} other {Només queden # butlletes.}}} other {{count, plural, =0 {Ja no queden places lliures. Gràcies per intentar-ho!} one {Només queda # plaça lliure.} other {Només queden # places lliures.}}}}",
+        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Triar # butlleta} other {Triar # butlletes}}} other {{count, plural, one {Triar # plaça} other {Triar # places}}}}"
       },
       "group": {
         "label": {
@@ -5961,7 +5983,7 @@
         "secure": "Pagues a la pàgina segura de Paycomet. KORUM no veu mai les dades de la teva targeta."
       },
       "refundNote": "Si no s’arriba a la meta dins el termini, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
-      "refundNoteTickets": "Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
+      "refundNoteTickets": "{kind, select, RAFFLE {Si la rifa es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.} other {Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.}}",
       "errors": {
         "form": "Revisa les dades marcades i torna-ho a provar.",
         "quantity": "Tria entre 1 i {max}.",
@@ -5973,7 +5995,7 @@
       "closed": {
         "title": "Ja no s’hi pot aportar",
         "achieved": "Meta assolida! Aquesta iniciativa ja no necessita més aportacions.",
-        "soldOut": "Aforament complet! Ja no queden places.",
+        "soldOut": "{kind, select, RAFFLE {Butlletes exhaurides! Ja no en queden.} other {Aforament complet! Ja no queden places.}}",
         "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions."
       },
       "custodyTickets": "Pagament segur amb Paycomet",
@@ -6064,7 +6086,7 @@
         },
         "paid": "Has pagat {total}",
         "goalReached": "Amb la teva aportació s’ha assolit el 100 %!",
-        "soldOut": "Amb la teva compra s’ha completat l’aforament!",
+        "soldOut": "{kind, select, RAFFLE {Amb la teva compra s’han exhaurit les butlletes!} other {Amb la teva compra s’ha completat l’aforament!}}",
         "count": "Ja sumen {count, plural, one {# aportació} other {# aportacions}}",
         "progressLabel": "Avanç de «{title}»",
         "group": "{group} ja suma {count, plural, one {# família} other {# famílies}} · repte: {target}",
@@ -7197,8 +7219,8 @@
         "payout_approved": "Liquidació del Fons aprovada",
         "payout_cancelled": "Liquidació del Fons retirada",
         "receipt_downloaded": "Justificant del Fons d’activitats descarregat",
-        "signatures_rejected": "Fons d’activitats: les signatures d’una liquidació van deixar de valer",
-        "split_resolved": "Fons d’activitats: un enviament de diners es va comprovar i es va resoldre a mà"
+        "signatures_rejected": "Signatures del Fons que van deixar de valer",
+        "split_resolved": "Enviament del Fons resolt a mà després de comprovar-lo"
       },
       "expired": {
         "rate_limited": "Campanyes vençudes: massa intents seguits de decidir"
@@ -7412,7 +7434,7 @@
         "failed": "Tasca programada fallida"
       },
       "quota": {
-        "period_assigned": "Quotes sense comissió: es va fixar el curs al qual pertanyen",
+        "period_assigned": "Curs fixat per a les quotes sense comissió",
         "renewed": "Quotes sense comissió renovades per al curs nou"
       },
       "dossier": {

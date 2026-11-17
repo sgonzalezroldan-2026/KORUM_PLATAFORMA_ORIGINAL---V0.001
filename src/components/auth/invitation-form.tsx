@@ -6,13 +6,14 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { acceptInvitationAction, acceptInvitationWithSessionAction, inspectInvitationAction, type InvitationPageView } from '@/app/[locale]/(auth)/invitacion/actions';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { Locale } from '@/i18n/routing';
-import { Field, focusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
+import { Field, useFocusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
 
 /**
  * Activación de la cuenta de la segunda persona firmante (o del primer Super-Admin). Lee el token del fragmento (`#t=`) y lo quita de la
  * barra de direcciones al momento: no queda en el historial ni se envía en el `Referer`.
  */
 export function InvitationForm() {
+  const focusFirstInvalid = useFocusFirstInvalid();
   const t = useTranslations('auth.invitation');
   const locale = useLocale() as Locale;
   const [token, setToken] = useState<string | null>(null);

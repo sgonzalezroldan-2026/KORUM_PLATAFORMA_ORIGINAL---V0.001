@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { authClient, authErrorCode } from '@/lib/auth/auth-client';
-import { CodeField, Field, focusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
+import { CodeField, Field, useFocusFirstInvalid, FormAlert, SubmitButton } from './auth-ui';
 import { BACKUP_SHEET_ID, BackupCodesActions } from './backup-codes-actions';
 import { SecondFactorForm } from './second-factor-form';
 
@@ -18,6 +18,7 @@ import { SecondFactorForm } from './second-factor-form';
 const KNOWN = new Set(['INVALID_PASSWORD', 'INVALID_CODE', 'TOTP_ALREADY_ENABLED', 'RATE_LIMITED', 'KORUM_SECOND_FACTOR_LIMIT', 'CREDENTIAL_ACCOUNT_NOT_FOUND']);
 
 export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl: string }) {
+  const focusFirstInvalid = useFocusFirstInvalid();
   const t = useTranslations('auth.twoFactor');
   const te = useTranslations('auth.errors');
   const [password, setPassword] = useState('');
@@ -34,7 +35,7 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
   const codeError = error === 'INVALID_CODE' ? te(error) : null;
   useEffect(() => {
     if (error === 'INVALID_PASSWORD' || error === 'INVALID_CODE') focusFirstInvalid(formRef.current);
-  }, [error]);
+  }, [error, focusFirstInvalid]);
   const router = useRouter();
   const done = () => router.push(nextUrl);
 
@@ -129,7 +130,7 @@ export function TwoFactorSetup({ enabled, nextUrl }: { enabled: boolean; nextUrl
         </ol>
         <BackupCodesActions codes={setup.backupCodes} />
         <label className="flex min-h-11 items-center gap-3 font-semibold text-varsity-navy print:hidden">
-          <input type="checkbox" className="size-5 accent-varsity-emerald" checked={saved} onChange={(event) => setSaved(event.target.checked)} />
+          <input type="checkbox" className="korum-check text-varsity-emerald" checked={saved} onChange={(event) => setSaved(event.target.checked)} />
           {t('backupSaved')}
         </label>
       </section>

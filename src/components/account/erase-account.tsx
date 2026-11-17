@@ -92,7 +92,7 @@ export function EraseAccount({
               type="checkbox"
               checked={understood}
               onChange={(event) => setUnderstood(event.target.checked)}
-              className="mt-0.5 size-6 shrink-0 accent-red-800"
+              className="korum-check korum-check-start text-red-800"
             />
             <span>{t('understand')}</span>
           </label>

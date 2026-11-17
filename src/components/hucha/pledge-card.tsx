@@ -8,6 +8,7 @@ import { useMoney } from '@/components/portal/use-money';
 import { CurrencyText } from '@/components/ui/currency-text';
 import { Link } from '@/i18n/navigation';
 import { portalPath } from '@/lib/seo/portal-routes';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Una aportación mensual de Mi Hucha (Sprint 3.8): cuánto y cuándo se cobra, a qué campaña va, cuánto ha llegado ya y sus meses. Pausar,
@@ -43,6 +44,7 @@ const STATUS_CLASS: Record<PledgeCardData['status'], string> = {
 const REASONS_SHOWN = new Set(['CHARGE_FAILED', 'CARD_UNAVAILABLE', 'CARD_NOT_SAVED', 'ACCOUNT_ERASED', 'CHARGEBACK', 'PAUSE_EXPIRED']);
 
 export function PledgeCard({ pledge, manage }: { pledge: PledgeCardData; manage: typeof managePledgeAction }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('hucha.pledge');
   const format = useFormatter();
   const money = useMoney();
@@ -61,12 +63,12 @@ export function PledgeCard({ pledge, manage }: { pledge: PledgeCardData; manage:
   function openConfirm() {
     setMessage(null);
     setConfirming(true);
-    requestAnimationFrame(() => confirmRef.current?.focus());
+    focusPainted(() => confirmRef.current);
   }
 
   function closeConfirm() {
     setConfirming(false);
-    requestAnimationFrame(() => cancelRef.current?.focus());
+    focusPainted(() => cancelRef.current);
   }
 
   function run(payload: Parameters<typeof managePledgeAction>[0], done: string) {

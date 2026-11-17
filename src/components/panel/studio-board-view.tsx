@@ -37,7 +37,7 @@ function Row({ label, value, tone = 'plain', phrase = false }: { label: ReactNod
   );
 }
 
-function BudgetRows({ board, context, contingencyBps }: { board: BudgetBoard; context: StudioContext; contingencyBps: number }) {
+function BudgetRows({ board, context, contingencyBps, gatewayCovered }: { board: BudgetBoard; context: StudioContext; contingencyBps: number; gatewayCovered: boolean }) {
   const t = useTranslations('panel.studio.board');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -70,6 +70,11 @@ function BudgetRows({ board, context, contingencyBps }: { board: BudgetBoard; co
         <Row label={t('line4')} value={money(board.maintFeeCents)} tone="sky" />
         <div className="flex flex-col gap-1 border-t border-slate-600 pt-2">
           <Row label={t('line5')} value={money(board.gatewayFeeCents)} />
+          {gatewayCovered ? (
+            <p className="text-xs leading-snug text-emerald-200" data-testid="studio-gateway-covered">
+              {t('gatewayCoveredNote')}
+            </p>
+          ) : null}
           {detail ? (
             <p className="text-xs leading-snug text-slate-300" data-testid="studio-gateway-formula">
               {t('gatewayFormula', {
@@ -178,9 +183,11 @@ export interface StudioBoardViewProps {
   resized?: ResizedBoard | null;
   /** La campaña rehecha se liquida o ya se liquidó (conseguida o cerrada): se enseña lo que recibe el proyecto. */
   resizedSettles?: boolean;
+  /** La pasarela de esta campaña ya publicada está cubierta (`absorbsGatewayCostByKorum`): no sale de la meta ni se resta a la entidad. */
+  gatewayCovered?: boolean;
 }
 
-export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode, ticketSubtype, footer, resized = null, resizedSettles = false }: StudioBoardViewProps) {
+export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode, ticketSubtype, footer, resized = null, resizedSettles = false, gatewayCovered = false }: StudioBoardViewProps) {
   const t = useTranslations('panel.studio.board');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -200,7 +207,7 @@ export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode,
         {resized ? (
           <ResizedRows board={resized} contingencyBps={contingencyBps} settles={resizedSettles} />
         ) : board.kind === 'BUDGET' ? (
-          <BudgetRows board={board} context={context} contingencyBps={contingencyBps} />
+          <BudgetRows board={board} context={context} contingencyBps={contingencyBps} gatewayCovered={gatewayCovered} />
         ) : (
           <TicketingRows board={board} mode={ticketFeeMode} subtype={ticketSubtype} />
         )}

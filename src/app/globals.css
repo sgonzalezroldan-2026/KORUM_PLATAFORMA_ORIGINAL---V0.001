@@ -190,6 +190,68 @@
     transform: rotate(1deg) scale(1.03);
   }
 
+  /*
+   * Casilla de verificación con zona táctil de 44 × 44 px (Sprint 5.9, WCAG 2.5.8 y Regla 03 §8). El propio <input> mide 44 px; lo que se ve sigue siendo
+   * una casilla de 20 px (el margen negativo devuelve el espacio al diseño). El color de la casilla es el `color` del elemento (p. ej. `text-emerald-700`);
+   * `korum-check-start` la baja 4 px para alinearla con la primera línea de un texto de varias líneas.
+   */
+  .korum-check {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -0.75rem;
+    border-radius: 0.75rem;
+    background: transparent;
+    color: var(--color-varsity-navy);
+    cursor: pointer;
+  }
+  .korum-check-start {
+    margin-top: -0.5rem;
+  }
+  .korum-check::before {
+    content: '';
+    position: absolute;
+    inset: 0.75rem;
+    box-sizing: border-box;
+    border: 2px solid currentColor;
+    border-radius: 0.3rem;
+    background-color: #ffffff;
+  }
+  .korum-check:checked::before {
+    background-color: currentColor;
+  }
+  .korum-check:checked::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    width: 0.4rem;
+    height: 0.7rem;
+    border: solid #ffffff;
+    border-width: 0 2.5px 2.5px 0;
+    transform: translate(-50%, -55%) rotate(45deg);
+  }
+  .korum-check[aria-invalid='true']::before {
+    border-color: #b91c1c;
+  }
+  .korum-check:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  @media (forced-colors: active) {
+    .korum-check::before {
+      border-color: ButtonText;
+    }
+    .korum-check:checked::before {
+      background-color: Highlight;
+    }
+    .korum-check:checked::after {
+      border-color: HighlightText;
+    }
+  }
+
   /* Botón de conversión con relieve y respuesta amortiguada al pulsar */
   .tactile-btn {
     display: inline-flex;

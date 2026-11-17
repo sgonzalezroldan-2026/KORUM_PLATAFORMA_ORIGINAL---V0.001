@@ -5,12 +5,14 @@ import { useId, useRef, useState } from 'react';
 import { addCategoryAction, setCategoryRuleAction } from '@/app/[locale]/(superadmin)/admin/entidades/actions';
 import type { Org360View } from '@/services/admin/org-360-data';
 import { ActionOutcome, FIELD, OUTLINE, PRIMARY, useEntityAction } from './entity-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Categorías de la entidad (exentas al 0 % o por tramos): las globales de la plataforma con la regla que esta entidad les da y las propias que ha creado.
  * Una global «sobrescrita» por la entidad lleva su propia fila (el Estudio da prioridad a la de la entidad). Cambia lo que se cobra en campañas **nuevas**.
  */
 export function OrgCategories({ organizationId, categories }: { organizationId: string; categories: Org360View['categories'] }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.org360.categories');
   const action = useEntityAction();
   const nameId = useId();
@@ -23,7 +25,7 @@ export function OrgCategories({ organizationId, categories }: { organizationId: 
   const selectors = useRef<Map<string, HTMLSelectElement>>(new Map());
   const closeConfirmation = (name: string) => {
     setPendingRule(null);
-    requestAnimationFrame(() => selectors.current.get(name)?.focus());
+    focusPainted(() => selectors.current.get(name));
   };
 
   return (
@@ -49,7 +51,7 @@ export function OrgCategories({ organizationId, categories }: { organizationId: 
                 disabled={action.pending || pendingRule !== null}
                 onChange={(event) => {
                   setPendingRule({ name: category.name, rule: event.target.value === 'EXEMPT' ? 'EXEMPT' : 'BRACKETS' });
-                  requestAnimationFrame(() => confirmTitle.current?.focus());
+                  focusPainted(() => confirmTitle.current);
                 }}
                 className={`min-h-11 rounded-lg border-2 px-2 text-sm font-bold ${category.rule === 'EXEMPT' ? 'border-emerald-400 bg-emerald-100 text-emerald-950' : 'border-amber-400 bg-amber-100 text-amber-950'}`}
               >

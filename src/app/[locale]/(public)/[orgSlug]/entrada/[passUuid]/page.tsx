@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import { PassActions } from '@/components/checkout/pass-actions';
 import { EmptyState } from '@/components/ui/empty-state';
 import { buildPassQrPayload, verifyPassViewSignature } from '@/core/ticketing/qr-signature';
+import { raffleOutcomeForPass } from '@/core/ticketing/raffle-pass-outcome';
 import { getEnv } from '@/config/env';
 import { isLocale } from '@/i18n/routing';
 import { getPrisma } from '@/lib/prisma';
@@ -56,7 +57,9 @@ export default async function PassPage({ params, searchParams }: PageProps) {
     return <EmptyState icon="🎟️" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" />;
   }
   if (pass.revokedAt) {
-    return <EmptyState icon="↩️" title={t('revoked.title')} description={t('revoked.description')} headingLevel={1} role="alert" />;
+    // Una rifa no tiene puerta: sus papeletas anuladas dejan de valer para el sorteo (Sprint 5.9).
+    const revokedKey = pass.subtype === 'RAFFLE' ? 'revokedRaffle' : 'revoked';
+    return <EmptyState icon="↩️" title={t(`${revokedKey}.title`)} description={t(`${revokedKey}.description`)} headingLevel={1} role="alert" />;
   }
 
   // Un SVG de la propia biblioteca de QR (sin datos del usuario en el marcado): se incrusta tal cual.
@@ -67,6 +70,15 @@ export default async function PassPage({ params, searchParams }: PageProps) {
   const when = raffle
     ? t('drawOn', { date: format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeZone: 'Europe/Madrid' }) })
     : format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Madrid' });
+
+  // Solo una rifa: si ya hubo sorteo y si alguno de sus números ha salido (solo números de las actas, nunca personas).
+  const outcome = raffle
+    ? raffleOutcomeForPass({
+        numbers: pass.raffleNumbers,
+        prizeCount: pass.initiative.rafflePrizeCount,
+        draws: pass.initiative.raffleDraws.map((draw) => ({ winningNumbers: draw.winningNumbers, replacedNumbers: draw.replacedNumbers, extra: draw.extraRoundReason !== null }))
+      })
+    : null;
 
   return (
     <section className="korum-trust-vault mx-auto max-w-md space-y-4 p-6 text-center" aria-labelledby="pass-title">
@@ -86,8 +98,26 @@ export default async function PassPage({ params, searchParams }: PageProps) {
           <p className="font-corp text-lg font-extrabold tabular-nums text-varsity-navy">{pass.raffleNumbers.join(' · ')}</p>
         </div>
       ) : null}
+      {outcome ? (
+        <p
+          role="status"
+          data-testid="raffle-outcome"
+          data-state={outcome.state}
+          className={`rounded-xl border-2 p-3 text-sm font-bold ${outcome.state === 'WON' ? 'border-emerald-700 bg-emerald-50 text-emerald-950' : 'border-patio-rule-strong bg-patio-cream text-varsity-navy'}`}
+        >
+          <span aria-hidden="true">{outcome.state === 'WON' ? '🎉 ' : '🎟️ '}</span>
+          {outcome.state === 'WON' || outcome.state === 'REPLACED'
+            ? t(`outcome.${outcome.state === 'WON' ? 'won' : 'replaced'}`, { count: outcome.numbers.length, numbers: outcome.numbers.join(' · ') })
+            : t(`outcome.${outcome.state === 'NOT_DRAWN' ? 'notDrawn' : outcome.state === 'IN_PROGRESS' ? 'inProgress' : 'notWon'}`)}
+        </p>
+      ) : null}
       <p className="font-mono text-sm text-ink-soft">{t('serial', { serial: pass.serialCode })}</p>
-      <p className="text-sm font-semibold text-emerald-900">{raffle ? t('showRaffle', { count: pass.quantity }) : t('show')}</p>
+      {/* El pie solo aparece cuando sigue siendo útil: con el sorteo completo y ningún número suyo, «guárdalas por si sale» contradice al resultado (Sprint 5.9). */}
+      {raffle && (outcome?.state === 'NOT_WON' || outcome?.state === 'REPLACED') ? null : (
+        <p className="text-sm font-semibold text-emerald-900">
+          {raffle ? (outcome?.state === 'WON' ? t('showRaffleWon', { count: outcome.numbers.length }) : t('showRaffle', { count: pass.quantity })) : t('show')}
+        </p>
+      )}
       <PassActions raffle={raffle} title={pass.initiative.title} url={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} />
     </section>
   );

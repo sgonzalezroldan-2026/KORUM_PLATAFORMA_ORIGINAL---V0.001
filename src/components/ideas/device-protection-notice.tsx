@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useState, useTransition } from 'react';
 import { withdrawFingerprintConsentAction } from '@/app/[locale]/(public)/[orgSlug]/ideas/actions';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 export interface DeviceProtectionNoticeProps {
   /** La persona ya dio el consentimiento antes. */
@@ -19,6 +20,7 @@ export interface DeviceProtectionNoticeProps {
  * Sin consentimiento, la votación funciona igual con las otras dos señales.
  */
 export function DeviceProtectionNotice({ granted, checked, onCheckedChange, onWithdrawn }: DeviceProtectionNoticeProps) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('portal.ideas.protection');
   const checkboxId = useId();
   const [withdrawn, setWithdrawn] = useState(false);
@@ -31,7 +33,7 @@ export function DeviceProtectionNotice({ granted, checked, onCheckedChange, onWi
         setWithdrawn(true);
         onWithdrawn();
         // El botón de retirar desaparece: el foco pasa a la casilla, que vuelve desmarcada (WCAG 2.4.3).
-        requestAnimationFrame(() => document.getElementById(checkboxId)?.focus());
+        focusPainted(() => document.getElementById(checkboxId));
       }
     });
   }
@@ -60,7 +62,7 @@ export function DeviceProtectionNotice({ granted, checked, onCheckedChange, onWi
       ) : (
         <div className="mt-2 space-y-1">
           <label htmlFor={checkboxId} className="flex min-h-11 cursor-pointer items-start gap-3 py-1">
-            <input id={checkboxId} type="checkbox" checked={checked} onChange={(event) => onCheckedChange(event.target.checked)} className="mt-0.5 size-6 shrink-0 accent-varsity-emerald" />
+            <input id={checkboxId} type="checkbox" checked={checked} onChange={(event) => onCheckedChange(event.target.checked)} className="korum-check korum-check-start text-varsity-emerald" />
             <span>
               <span className="font-bold">{t('checkboxLabel')}</span>
               <span className="block text-ink-soft">{t('checkboxHelp')}</span>

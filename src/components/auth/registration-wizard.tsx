@@ -9,8 +9,9 @@ import { InvalidEmailError, normalizeCanonicalEmail } from '@/core/security/emai
 import type { Locale } from '@/i18n/routing';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
 import { localizedPath } from '@/lib/seo/marketing-routes';
-import { CodeField, focusFirstInvalid, FormAlert, linkButton, QuietFieldErrors, secondaryButton, SubmitButton } from './auth-ui';
+import { CodeField, useFocusFirstInvalid, FormAlert, linkButton, QuietFieldErrors, secondaryButton, SubmitButton } from './auth-ui';
 import { ActivationStep, CommunityStep, SignersStep, type RegistrationDraft } from './registration-steps';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Alta autónoma en 3 pasos (`/registro-comunidad`). Cada paso se comprueba antes de avanzar con las mismas reglas que aplica el servidor; al
@@ -30,6 +31,8 @@ function payloadOf(draft: RegistrationDraft) {
 }
 
 export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitCents: number; appHost: string }) {
+  const focusFirstInvalid = useFocusFirstInvalid();
+  const focusPainted = useFocusPainted();
   const t = useTranslations('registration');
   const locale = useLocale() as Locale;
   const roleDefaults = (vertical: RegistrationDraft['vertical']) => ({ director: t(`roles.${vertical}.director`), cosigner: t(`roles.${vertical}.cosigner`) });
@@ -102,7 +105,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
   const firstStepWith = (found: Record<string, string>) => STEP_FIELDS.findIndex((fields) => Object.keys(found).some((key) => fields.includes(key.split('.')[0]!)));
   const moveTo = (next: number, options: { focusHeading?: boolean } = {}) => {
     setStep(next);
-    if (options.focusHeading !== false) requestAnimationFrame(() => headingRef.current?.focus());
+    if (options.focusHeading !== false) focusPainted(() => headingRef.current);
   };
 
   const next = (event: FormEvent) => {

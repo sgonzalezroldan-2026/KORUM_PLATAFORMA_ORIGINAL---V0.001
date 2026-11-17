@@ -77,3 +77,20 @@ export function resizedBudgetBoard(input: ResizedBoardInput): ResizedBoard {
   if (executionCents > 0 && roundingCents > MAX_RESIZED_ROUNDING_CENTS) throw new RangeError(`La campaña rehecha no cuadra: sobran ${roundingCents} céntimos entre el proyecto y la meta ${goalCents}.`);
   return { originalGoalCents, goalCents, costMatCents, costInstCents, contingencyCents, projectCents, bracketFeeCents, maintFeeCents, gatewayFeeCents, gatewayAbsorbed, feesCents, roundingCents, entityCents: goalCents - feesCents };
 }
+
+/** Resultado de intentar pintar la pizarra: o la pizarra, o el aviso de que lo guardado no cuadra (la página no se cae). */
+export type ResizedBoardResult = { kind: 'OK'; board: ResizedBoard } | { kind: 'MISMATCH'; detail: string };
+
+/**
+ * Como `resizedBudgetBoard`, pero un descuadre (o una cifra no válida) se devuelve como `MISMATCH` en lugar de lanzarse (Sprint 5.9): el Estudio enseña un
+ * aviso en vez de caer entero, y sigue sin enseñar nunca una pizarra de dinero descuadrada. Solo se atrapa lo que lanza `resizedBudgetBoard` (cifras fuera
+ * de rango o que no cuadran); cualquier otro error sigue propagándose.
+ */
+export function tryResizedBudgetBoard(input: ResizedBoardInput): ResizedBoardResult {
+  try {
+    return { kind: 'OK', board: resizedBudgetBoard(input) };
+  } catch (error) {
+    if (error instanceof RangeError) return { kind: 'MISMATCH', detail: error.message };
+    throw error;
+  }
+}

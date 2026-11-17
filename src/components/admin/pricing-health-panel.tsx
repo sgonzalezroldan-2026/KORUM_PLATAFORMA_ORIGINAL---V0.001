@@ -12,6 +12,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { focusLater } from './rules-action';
 import { isLocale, type Locale } from '@/i18n/routing';
 import { localizedPath } from '@/lib/seo/marketing-routes';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /** Un aviso con una marca si sale de valores aún sin guardar (no se puede aceptar: la aceptación se compara con las reglas guardadas). */
 export type PricingAlertItem = ReviewedPricingAlert & { unsaved?: boolean };
@@ -74,6 +75,7 @@ export function PricingHealthPanel({ alerts, onAdjust, emptyText }: { alerts: Pr
 }
 
 function AlertActions({ alert, onAdjust }: { alert: PricingAlertItem; onAdjust?: (settingKey: string) => void }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.pricingHealth');
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -135,7 +137,7 @@ function AlertActions({ alert, onAdjust }: { alert: PricingAlertItem; onAdjust?:
           aria-describedby={alert.unsaved ? `${noteId}-unsaved` : undefined}
           onClick={() => {
             setOpen(true);
-            requestAnimationFrame(() => document.getElementById(noteId)?.focus());
+            focusPainted(() => document.getElementById(noteId));
           }}
           data-testid="pricing-accept"
         >
@@ -184,7 +186,7 @@ function AlertActions({ alert, onAdjust }: { alert: PricingAlertItem; onAdjust?:
               onClick={() => {
                 setOpen(false);
                 setResult(null);
-                requestAnimationFrame(() => openerRef.current?.focus());
+                focusPainted(() => openerRef.current);
               }}
             >
               {t('cancel')}

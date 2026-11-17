@@ -8,6 +8,7 @@ import { ctaKey } from './initiative-card';
 import { ProgressBar } from './progress-bar';
 import { ShareButton } from './share-button';
 import type { ShareGroup } from './share-modal';
+import { useCategoryLabel } from './use-category-label';
 import { useMoney } from './use-money';
 
 export interface InitiativeDetailProps {
@@ -33,6 +34,8 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
   const money = useMoney();
   const { card } = detail;
   const ticketing = card.format === 'TICKETING';
+  const kind = card.subtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT';
+  const category = useCategoryLabel(contentLang)(card.category);
   const deadline = format.dateTime(new Date(detail.closesAtIso), { dateStyle: 'long', timeZone: 'Europe/Madrid' });
 
   return (
@@ -76,8 +79,8 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
             ) : null}
           <div className="space-y-4 p-6">
             <div className="flex flex-wrap gap-2">
-              <span lang={contentLang} className="rounded-full bg-amber-100 px-3 py-0.5 text-sm font-bold text-amber-950">
-                {card.category}
+              <span lang={category.lang} className="rounded-full bg-amber-100 px-3 py-0.5 text-sm font-bold text-amber-950">
+                {category.text}
               </span>
               {card.zeroCommission ? <span className="rounded-full bg-emerald-800 px-3 py-0.5 text-sm font-bold text-white">{`💚 ${t('card.zeroCommission')}`}</span> : null}
               {detail.plaque ? <span className="rounded-full bg-sky-100 px-3 py-0.5 text-sm font-bold text-sky-950">{`🏅 ${t('detail.plaque')}`}</span> : null}
@@ -140,7 +143,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
 
             {card.achieved || card.closed ? (
               <p className="flex min-h-12 items-center justify-center rounded-2xl bg-emerald-100 px-4 text-center font-joy font-bold text-emerald-950">
-                {card.achieved ? (ticketing ? t('detail.ticketsSoldOut') : t('detail.closed')) : t('detail.contributionsClosed')}
+                {card.achieved ? (ticketing ? t('detail.ticketsSoldOut', { kind }) : t('detail.closed')) : t('detail.contributionsClosed')}
               </p>
             ) : (
               <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn w-full rounded-2xl! py-4! font-joy text-base">
@@ -149,7 +152,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
               </Link>
             )}
 
-            {ticketing && detail.ticket ? <TicketDetails ticket={detail.ticket} /> : null}
+            {ticketing && detail.ticket ? <TicketDetails ticket={detail.ticket} kind={kind} /> : null}
             {detail.breakdown.kind === 'shown' ? <PublicBreakdown breakdown={detail.breakdown.data} /> : null}
             {detail.breakdown.kind === 'hidden' ? <HiddenBreakdownNotice goalCents={card.goalCents} /> : null}
           </div>

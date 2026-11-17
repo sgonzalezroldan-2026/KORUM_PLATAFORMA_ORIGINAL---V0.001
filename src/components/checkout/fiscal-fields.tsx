@@ -46,16 +46,14 @@ export function FiscalFields({
   return (
     <div className="space-y-3 rounded-2xl border border-patio-rule-strong bg-white p-3.5">
       <div className="flex items-start gap-3">
-        <label htmlFor={toggleId} className="-mx-2.5 -my-2 flex size-11 shrink-0 cursor-pointer items-center justify-center">
         <input
           id={toggleId}
           type="checkbox"
           checked={draft.wantsCertificate}
           onChange={(event) => update({ wantsCertificate: event.target.checked })}
           aria-describedby={hintId}
-          className="size-5 accent-varsity-navy"
+          className="korum-check korum-check-start text-varsity-navy"
         />
-        </label>
         <div>
           <label htmlFor={toggleId} className="block cursor-pointer font-extrabold text-varsity-navy">
             <span aria-hidden="true">{'🧾 '}</span>

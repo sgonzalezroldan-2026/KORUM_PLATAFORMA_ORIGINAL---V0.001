@@ -21,6 +21,7 @@ import {
 } from '@/core/pledges/pledge-limits';
 import type { MoneyLocale } from '@/core/finance/money';
 import type { PledgeOffer } from '@/repositories/hucha.repository';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Alta de la aportación mensual (Mi Hucha `PLEDGE`, ancla `id="fview-mihucha"` del prototipo, recarga mensual programada). Importe, duración,
@@ -33,6 +34,7 @@ type FormError = { kind: 'amount' | 'campaign' | 'noCampaign' | 'alreadyActive' 
 const inputClass = 'min-h-11 w-full rounded-xl border-2 border-patio-rule-strong bg-white px-3 font-semibold text-ink aria-invalid:border-red-700';
 
 export function PledgeForm({ offer, provinces, start }: { offer: PledgeOffer; provinces: Array<{ code: string; name: string }>; start: typeof startPledgeAction }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('hucha.form');
   const locale = useLocale() as MoneyLocale;
   const money = useMoney();
@@ -72,7 +74,7 @@ export function PledgeForm({ offer, provinces, start }: { offer: PledgeOffer; pr
     if (!amountValid || amountCents === null) {
       setError({ kind: 'amount' });
       // El foco va al campo con el error, que ya lo describe (QA de experiencia del 3.8).
-      requestAnimationFrame(() => amountRef.current?.focus());
+      focusPainted(() => amountRef.current);
       return;
     }
     if (offer.certificate && fiscal.wantsCertificate) {

@@ -3154,6 +3154,7 @@
         "line3Exempt": "3. Comisión de la plataforma (categoría al 0 %)",
         "line4": "4. Cargo de mantenimiento de la plataforma",
         "line5": "5. Coste de la pasarela de pago (Paycomet)",
+        "gatewayCoveredNote": "El coste de la pasarela de pago está cubierto: no se resta de lo que recibe la entidad.",
         "gatewayFormula": "Cómo se calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportación estimada} other {# aportaciones estimadas}} (según la aportación sugerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} de redondeo al euro. Suma cuadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Recaudación bruta del aforo (aforo × precio)",
         "ticketGrossRaffle": "Recaudación bruta de las papeletas (papeletas × precio)",
@@ -3326,6 +3327,7 @@
       },
       "resized": {
         "notice": "Esta campaña se rehízo por votación: su meta es fija.",
+        "mismatch": "No podemos enseñar la pizarra de esta campaña rehecha: las cifras guardadas no cuadran con su meta. No se ha cambiado nada ni se ha movido dinero. Escribe a soporte de KORUM con el número de la campaña y la revisamos.",
         "detail": "Quienes aportaron decidieron seguir adelante con lo recaudado: la meta pasó de {original} a {goal} y las comisiones bajaron en la misma proporción. Las cifras se muestran sin poder cambiarse.",
         "originalGoal": "Meta con la que se publicó",
         "provider": "Presupuesto de proveedor y equipamiento (ajustado a la meta nueva)",
@@ -3339,7 +3341,7 @@
         "rounding": "Redondeo de la reserva (también llega a la entidad)",
         "sum": "Suma cuadrada: {parts} = {goal}.",
         "entity": "Para el proyecto al liquidar (meta menos comisiones)",
-        "gatewayAbsorbed": "Coste de la pasarela de pago (lo asume KORUM: no sale de la meta)",
+        "gatewayAbsorbed": "Coste de la pasarela de pago (cubierto: no se resta de la meta)",
         "detailAfterLoss": "Quienes aportaron decidieron seguir adelante con lo recaudado: la meta pasó de {original} a {voted} y las comisiones bajaron en la misma proporción. Después, un contracargo (un cobro que se devolvió a su titular) la dejó en {goal}, con las comisiones otra vez en proporción. Las cifras se muestran sin poder cambiarse.",
         "entitySame": "Para el proyecto al liquidar: la meta menos las comisiones (el mismo importe que el coste del proyecto)"
       }
@@ -5700,25 +5702,33 @@
       "open": "Abrir la ficha de {title}",
       "share": "Compartir {title}",
       "stage": "Etapa: {stage}",
-      "price": "Entrada {price}",
+      "price": "{kind, select, RAFFLE {Papeleta {price}} other {Entrada {price}}}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
       "zeroCommission": "0 % de comisión de la plataforma",
       "raisedOf": "{raised} de {goal}",
       "percent": "{pct} %",
       "progress": "Progreso de {title}",
-      "ticketsSold": "{sold} vendidas · aforo {max}",
+      "ticketsSold": "{kind, select, RAFFLE {{sold} vendidas de {max}} other {{sold} vendidas · aforo {max}}}",
       "ticketsLeft": "{count, plural, =0 {Ya agotadas} one {# disponible} other {# disponibles}}",
       "contributions": "{count, plural, one {# aportación} other {# aportaciones}}",
       "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
       "completed": "¡Completado!",
       "refund": "Devolución del 100 % si no se logra la meta",
-      "soldOut": "Aforo completo · entradas agotadas",
+      "soldOut": "{kind, select, RAFFLE {Papeletas agotadas} other {Aforo completo · entradas agotadas}}",
       "goalReached": "¡100 % conseguido! Cerrado",
       "contribute": "Aportar ahora",
       "buyTickets": "Comprar entradas",
       "buyRaffle": "Comprar papeletas",
       "closed": "Cerrada"
+    },
+    "categories": {
+      "comfort": "Infraestructura y Confort",
+      "courts": "Patios y Deporte",
+      "tech": "Tecnología y Recursos",
+      "community": "Comunidad y Viajes",
+      "solidarity": "Solidaridad y Becas",
+      "ticketing": "Taquilla y Rifas"
     },
     "detail": {
       "back": "Volver a las iniciativas",
@@ -5738,15 +5748,15 @@
       "contributionsDone": "{count, plural, one {# aportación realizada} other {# aportaciones realizadas}}",
       "completedFull": "Completado al 100 %",
       "closed": "¡100 % conseguido! Aportaciones cerradas",
-      "ticketsSoldOut": "¡Aforo completo! Entradas agotadas",
-      "ticketsHeading": "Información de taquilla digital",
+      "ticketsSoldOut": "{kind, select, RAFFLE {¡Papeletas agotadas!} other {¡Aforo completo! Entradas agotadas}}",
+      "ticketsHeading": "{kind, select, RAFFLE {Información de las papeletas} other {Información de taquilla digital}}",
       "ticketLines": {
-        "price": "Importe íntegro por entrada para la entidad",
+        "price": "{kind, select, RAFFLE {Importe íntegro por papeleta para la entidad} other {Importe íntegro por entrada para la entidad}}",
         "fee": "Gastos de gestión digital",
-        "total": "Total por entrada",
-        "priceInc": "Precio de la entrada",
+        "total": "{kind, select, RAFFLE {Total por papeleta} other {Total por entrada}}",
+        "priceInc": "{kind, select, RAFFLE {Precio de la papeleta} other {Precio de la entrada}}",
         "feeInc": "Incluye gastos de gestión digital",
-        "center": "La entidad recibe por entrada",
+        "center": "{kind, select, RAFFLE {La entidad recibe por papeleta} other {La entidad recibe por entrada}}",
         "venue": "Lugar: {venue}"
       },
       "breakdown": {
@@ -5826,7 +5836,7 @@
     },
     "og": {
       "progress": "{pct} % conseguido",
-      "tickets": "{sold} de {max} entradas vendidas",
+      "tickets": "{kind, select, RAFFLE {{sold} de {max} papeletas vendidas} other {{sold} de {max} entradas vendidas}}",
       "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
       "goalReached": "¡Meta conseguida!",
       "challengeMissing": "{missing, plural, one {¡Solo falta # familia} other {¡Solo faltan # familias}} en {group} para {reward}!",
@@ -5856,6 +5866,10 @@
         "title": "Esta entrada ya no es válida",
         "description": "Se ha reembolsado o anulado, así que no abrirá la puerta. Si crees que es un error, escribe a la entidad."
       },
+      "revokedRaffle": {
+        "title": "Estas papeletas ya no son válidas",
+        "description": "Se han reembolsado o anulado, así que ya no valen para el sorteo. Si crees que es un error, escribe a la entidad."
+      },
       "invalid": {
         "title": "No podemos abrir esta entrada",
         "description": "Comprueba que has abierto el enlace completo del email o pide que te lo reenvíen."
@@ -5869,10 +5883,18 @@
       "quantityRaffle": "{count, plural, one {# papeleta} other {# papeletas}}",
       "qrAltRaffle": "Código QR de tus papeletas",
       "showRaffle": "{count, plural, one {Guárdala: si sale tu número, enséñala en el móvil o impresa para reclamar tu premio. La entidad te dirá cómo recogerlo.} other {Guárdalas: si sale uno de tus números, enséñalas en el móvil o impresas para reclamar tu premio. La entidad te dirá cómo recogerlo.}}",
+      "showRaffleWon": "{count, plural, one {Enseña este pase, en el móvil o impreso, para reclamar tu premio. La entidad te dirá cómo recogerlo.} other {Enseña este pase, en el móvil o impreso, para reclamar tus premios. La entidad te dirá cómo recogerlos.}}",
       "shareWarningRaffle": "Quien tenga este enlace puede enseñar estas papeletas como suyas: envíalo solo a alguien de confianza.",
       "shareMessageRaffle": "Tus papeletas de «{title}»: {url}",
       "actionsRaffle": "Acciones de las papeletas",
-      "drawOn": "Sorteo: {date}"
+      "drawOn": "Sorteo: {date}",
+      "outcome": {
+        "notDrawn": "Aún no se ha hecho el sorteo: cuando se haga, aquí verás si ha salido alguno de tus números.",
+        "inProgress": "El sorteo ya ha empezado y aún quedan premios por sortear. Vuelve a abrir esta página para ver si te ha tocado.",
+        "won": "{count, plural, one {¡Tu número {numbers} ha salido premiado!} other {¡Tus números {numbers} han salido premiados!}}",
+        "replaced": "{count, plural, one {Tu número {numbers} salió en el sorteo, pero la entidad ha vuelto a sortear ese premio. Si crees que es un error, escribe a la entidad.} other {Tus números {numbers} salieron en el sorteo, pero la entidad ha vuelto a sortear esos premios. Si crees que es un error, escribe a la entidad.}}",
+        "notWon": "El sorteo ya se ha hecho y esta vez no ha salido ninguno de tus números. ¡Gracias por sumar!"
+      }
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",
@@ -5907,8 +5929,8 @@
         "unitAdd": "Precio: {price} + {fee} de Gastos de gestión digital",
         "unitInc": "Precio: {price} (Gastos de gestión digital incluidos)",
         "limit": "Puedes elegir como máximo {max} en esta compra.",
-        "soldOut": "{count, plural, =0 {Ya no quedan plazas libres. ¡Gracias por intentarlo!} one {Solo queda # plaza libre.} other {Solo quedan # plazas libres.}}",
-        "useAvailable": "{count, plural, one {Elegir # plaza} other {Elegir # plazas}}"
+        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {Ya no quedan papeletas. ¡Gracias por intentarlo!} one {Solo queda # papeleta.} other {Solo quedan # papeletas.}}} other {{count, plural, =0 {Ya no quedan plazas libres. ¡Gracias por intentarlo!} one {Solo queda # plaza libre.} other {Solo quedan # plazas libres.}}}}",
+        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Elegir # papeleta} other {Elegir # papeletas}}} other {{count, plural, one {Elegir # plaza} other {Elegir # plazas}}}}"
       },
       "group": {
         "label": {
@@ -5961,7 +5983,7 @@
         "secure": "Pagas en la página segura de Paycomet. KORUM nunca ve los datos de tu tarjeta."
       },
       "refundNote": "Si no se llega a la meta en el plazo, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
-      "refundNoteTickets": "Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
+      "refundNoteTickets": "{kind, select, RAFFLE {Si la rifa se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.} other {Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.}}",
       "errors": {
         "form": "Revisa los datos marcados y vuelve a intentarlo.",
         "quantity": "Elige entre 1 y {max}.",
@@ -5973,7 +5995,7 @@
       "closed": {
         "title": "Ya no se puede aportar",
         "achieved": "¡Meta conseguida! Esta iniciativa ya no necesita más aportaciones.",
-        "soldOut": "¡Aforo completo! Ya no quedan plazas.",
+        "soldOut": "{kind, select, RAFFLE {¡Papeletas agotadas! Ya no quedan.} other {¡Aforo completo! Ya no quedan plazas.}}",
         "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones."
       },
       "custodyTickets": "Pago seguro con Paycomet",
@@ -6064,7 +6086,7 @@
         },
         "paid": "Has pagado {total}",
         "goalReached": "¡Con tu aportación se ha logrado el 100 %!",
-        "soldOut": "¡Con tu compra se ha completado el aforo!",
+        "soldOut": "{kind, select, RAFFLE {¡Con tu compra se han agotado las papeletas!} other {¡Con tu compra se ha completado el aforo!}}",
         "count": "Ya suman {count, plural, one {# aportación} other {# aportaciones}}",
         "progressLabel": "Avance de «{title}»",
         "group": "{group} ya suma {count, plural, one {# familia} other {# familias}} · reto: {target}",
@@ -7197,8 +7219,8 @@
         "payout_approved": "Liquidación del Fondo aprobada",
         "payout_cancelled": "Liquidación del Fondo retirada",
         "receipt_downloaded": "Justificante del Fondo de actividades descargado",
-        "signatures_rejected": "Fondo de actividades: las firmas de una liquidación dejaron de valer",
-        "split_resolved": "Fondo de actividades: un envío de dinero se comprobó y se resolvió a mano"
+        "signatures_rejected": "Firmas del Fondo que dejaron de valer",
+        "split_resolved": "Envío del Fondo resuelto a mano tras comprobarlo"
       },
       "expired": {
         "rate_limited": "Campañas vencidas: demasiados intentos seguidos de decidir"
@@ -7412,7 +7434,7 @@
         "failed": "Tarea programada fallida"
       },
       "quota": {
-        "period_assigned": "Cupos sin comisión: se fijó el curso al que pertenecen",
+        "period_assigned": "Curso fijado para los cupos sin comisión",
         "renewed": "Cupos sin comisión renovados para el curso nuevo"
       },
       "dossier": {

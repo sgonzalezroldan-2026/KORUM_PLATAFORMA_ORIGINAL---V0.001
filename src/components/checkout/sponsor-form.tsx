@@ -220,7 +220,7 @@ export function SponsorForm({ orgSlug, initiativeId, offer, initial, startAction
 
       {offer.matchingAvailable ? (
         <label className="flex min-h-11 cursor-pointer items-start gap-2 rounded-xl border border-patio-rule-strong bg-white p-3 text-sm">
-          <input type="checkbox" checked={draft.matchingPool} onChange={(event) => update({ matchingPool: event.target.checked })} className="mt-0.5 size-5 shrink-0 accent-emerald-700" />
+          <input type="checkbox" checked={draft.matchingPool} onChange={(event) => update({ matchingPool: event.target.checked })} className="korum-check korum-check-start text-emerald-700" />
           <span>
             <span className="block font-bold text-ink">
               <span aria-hidden="true">{'✨ '}</span>
@@ -254,7 +254,7 @@ export function SponsorForm({ orgSlug, initiativeId, offer, initial, startAction
       </fieldset>
 
       <label className="flex min-h-11 cursor-pointer items-start gap-2 rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-950">
-        <input type="checkbox" checked={draft.autoRenew} onChange={(event) => update({ autoRenew: event.target.checked })} className="mt-0.5 size-5 shrink-0 accent-emerald-700" />
+        <input type="checkbox" checked={draft.autoRenew} onChange={(event) => update({ autoRenew: event.target.checked })} className="korum-check korum-check-start text-emerald-700" />
         <span>
           <span aria-hidden="true">{'🔄 '}</span>
           {t('sponsor.renewal')}

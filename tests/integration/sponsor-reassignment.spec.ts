@@ -211,6 +211,26 @@ describe('Reasignación según la regla de la entidad', () => {
     expect((await getTrialBalance(db)).balanced).toBe(true);
   });
 
+  it('Sprint 5.9 · una asignación cerrada con la campaña aún sin liquidar sale de su hucha y no vuelve a contar cuando la campaña se liquida después', async () => {
+    const { organization, origin, directorActor } = await team('SOONEST');
+    const soon = await campaign(organization.id, 'Biblioteca de aula', 20);
+    const { sponsorId, contribution } = await paidSponsor(organization.slug, origin.id, directorActor);
+    await fail(origin.id);
+    expect(await sweepSponsorMoney(db, new Date(), 50)).toMatchObject({ placed: 1, errors: 0 });
+    expect(await dossierTable(directorActor, organization.id, soon.id)).toEqual({ raised: 25_000, lines: 25_000, pool: 0, placed: 25_000, ledgerMatches: true });
+
+    // El contracargo llega con la campaña sin liquidar: el dinero sale de su hucha (el asiento toca la hucha de esta campaña) y la asignación se cierra.
+    expect(await deliver('CHARGEBACK', contribution.paycometOrder!, contribution.totalChargedCents)).toMatchObject({ status: 200 });
+    expect(await db.sponsorAllocation.count({ where: { sponsorId, withdrawnAt: null } })).toBe(0);
+    expect(await escrowOf(soon.id)).toBe(0);
+    expect(await dossierTable(directorActor, organization.id, soon.id)).toEqual({ raised: 0, lines: 0, pool: 0, placed: 0, ledgerMatches: true });
+
+    // Se liquida después (basta una liquidación aprobada): la asignación cerrada no es de las que «se quedaron» tras liquidar, porque su dinero sí salió de la hucha.
+    await db.escrowPayout.create({ data: { organizationId: organization.id, initiativeId: soon.id, destinationType: 'ORGANIZATION', beneficiaryName: 'AMPA', netPaidCents: 100, korumFeeSettledCents: 0, status: 'APPROVED' } });
+    expect(await dossierTable(directorActor, organization.id, soon.id)).toEqual({ raised: 0, lines: 0, pool: 0, placed: 0, ledgerMatches: true });
+    expect((await getTrialBalance(db)).balanced).toBe(true);
+  });
+
   it('PROPORTIONAL: reparte por lo que le falta a cada campaña, al céntimo; un contracargo sale de cada una de ellas, no de la original', async () => {
     const { organization, origin, directorActor } = await team('PROPORTIONAL');
     const big = await campaign(organization.id, 'Pizarras digitales', 20, 30_000);

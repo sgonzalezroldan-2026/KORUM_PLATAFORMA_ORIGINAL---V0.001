@@ -30,7 +30,11 @@ Ningún sprint se entrega ni se marca `[x]` sin superar al **100 % (`0` fallos)*
 - **Puerta 2 · Tests unitarios, de integración, concurrencia y fuzzing:** `npm run test:unit` y `npm run test:integration` (PostgreSQL real: en local, `npm run db:dev`; en CI, el servicio `postgres`) al `100 %`.
 - **Puerta 3 · War Room:** dictamen `APROBADO` de los auditores indicados en la ficha.
 - **Puerta 4 · Navegador real** (todo sprint con interfaz): `qa-e2e-verifier` ejecuta `npm run test:e2e` (Playwright, `1440×900` y `430×932`, incluida la comprobación de accesibilidad con axe) y además navega la app como una persona usuaria real con el **servidor MCP de Playwright**, revisando clics, formularios, capturas y `0` errores de consola.
-- **Puerta 5 · Bucle de corrección y no regresión:** si cualquier puerta falla, se corrige la causa raíz y se **vuelven a ejecutar todas las puertas desde la 1**, también la prueba en navegador, hasta `0` errores con el `100 %` de las suites (nuevas y anteriores) en verde.
+- **Puerta 5 · Bucle de corrección y no regresión (decisión del promotor, 2026-11-17: repetición por niveles + una pasada final completa):** si cualquier puerta falla, se corrige la causa raíz y se repite así:
+  1. **Siempre completas, tras cada corrección** (son baratas): Puerta 1 (invariantes, `typecheck`, `lint`) y `npm run test:unit`.
+  2. **Solo el área afectada y sus vecinas** (archivos cambiados y lo que depende de ellos): la integración, los E2E, el recorrido manual con MCP y el auditor que falló. El asistente anota en la bitácora qué repitió y por qué.
+  3. **Pasada final completa, una sola vez**, cuando ya no quedan correcciones pendientes: **todas las puertas desde la 1** (integración completa, E2E completo en escritorio y móvil, recorrido manual y todos los auditores de la ficha). Si esa pasada final encuentra algo, se corrige, se repiten los niveles 1 y 2 y se hace **otra pasada final completa**.
+  - El sprint se cierra solo con `0` errores y el `100 %` de las suites (nuevas y anteriores) en verde **en la pasada final completa**. Una corrección que toque dinero, seguridad o un componente compartido por muchas pantallas amplía el nivel 2 a lo que dependa de ella.
 
 ## 5. Al cerrar un sprint (obligatorio)
 

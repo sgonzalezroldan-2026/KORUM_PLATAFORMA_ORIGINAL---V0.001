@@ -12,6 +12,7 @@ import { Block, FIELD, PRIMARY } from './entity-action';
 import { NUMERIC_FIELDS, fieldDef, parseState, stateOf, type NumericKey, type RulesFormState } from './global-rules-model';
 import { PricingHealthPanel, type PricingAlertItem } from './pricing-health-panel';
 import { RulesOutcome, useRulesAction } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 type Group = 'gateway' | 'brackets' | 'guarantee' | 'maintenance' | 'duration';
 
@@ -47,6 +48,7 @@ export interface GlobalRulesFormProps {
  * perder dinero; lo imposible (decimales, negativos, vacíos, fuera de rango) se marca en el campo y el servidor lo rechaza igualmente.
  */
 export function GlobalRulesForm({ rules, version, margins, acknowledgements }: GlobalRulesFormProps) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.rules');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -74,7 +76,7 @@ export function GlobalRulesForm({ rules, version, margins, acknowledgements }: G
   useEffect(() => {
     const first = serverFields[0];
     // Solo cuando la acción ha terminado: mientras tanto los campos están deshabilitados y un campo deshabilitado no recibe el foco (sin límite de tiempo, a diferencia de un reintento).
-    if (first && !action.pending) requestAnimationFrame(() => document.getElementById(`rule-${first}`)?.focus());
+    if (first && !action.pending) focusPainted(() => document.getElementById(`rule-${first}`));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action.outcome, action.pending]);
 
@@ -89,7 +91,7 @@ export function GlobalRulesForm({ rules, version, margins, acknowledgements }: G
     if (!parsed.rules) {
       setShowInvalid(true);
       const first = parsed.invalid[0];
-      if (first) requestAnimationFrame(() => document.getElementById(`rule-${first}`)?.focus());
+      if (first) focusPainted(() => document.getElementById(`rule-${first}`));
       return;
     }
     setShowInvalid(false);
@@ -228,7 +230,7 @@ export function GlobalRulesForm({ rules, version, margins, acknowledgements }: G
 
       <Block id="mantenimiento" title={t('maintenance.title')} hint={t('maintenance.hint')}>
         <label className="flex min-h-11 items-center gap-2 font-bold text-varsity-navy">
-          <input id="rule-maintActive" type="checkbox" checked={state.maintActive} disabled={action.pending} onChange={(event) => setState((previous) => ({ ...previous, maintActive: event.target.checked }))} className="size-5" />
+          <input id="rule-maintActive" type="checkbox" checked={state.maintActive} disabled={action.pending} onChange={(event) => setState((previous) => ({ ...previous, maintActive: event.target.checked }))} className="korum-check" />
           <span>{t('maintenance.active')}</span>
         </label>
         <div className="grid gap-3 md:grid-cols-2">

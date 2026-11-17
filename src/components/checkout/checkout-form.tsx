@@ -128,7 +128,7 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
   function formMessage(): string | null {
     if (error === null) return null;
     if (error.kind === 'email' || error.kind === 'amount' || error.kind === 'fiscal' || error.kind === 'form') return t('errors.form');
-    if (error.kind === 'soldOut') return t('ticket.soldOut', { count: error.available });
+    if (error.kind === 'soldOut') return t('ticket.soldOut', { kind: offer.ticket?.subtype ?? 'EVENT', count: error.available });
     if (error.kind === 'quantity') return t('errors.quantity', { max: maxTickets });
     return t(`errors.${error.kind}`);
   }
@@ -165,7 +165,7 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
         />
       )}
 
-      <p className="text-center text-sm italic text-ink-soft">{ticketing ? t('refundNoteTickets') : t('refundNote')}</p>
+      <p className="text-center text-sm italic text-ink-soft">{ticketing ? t('refundNoteTickets', { kind: offer.ticket?.subtype ?? 'EVENT' }) : t('refundNote')}</p>
 
       {/* Barra fija al pie del diálogo: el total y los botones de pago siempre a la vista, también en el móvil (pago en 10 segundos). */}
       <div className="sticky bottom-0 z-10 -mx-5 -mb-5 space-y-2 border-t border-patio-rule bg-white px-5 pb-4 pt-3 shadow-[0_-10px_16px_-14px_rgb(16_31_56/0.45)] sm:-mx-6 sm:-mb-6 sm:px-6">
@@ -191,7 +191,7 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
           <p>{message}</p>
           {error?.kind === 'soldOut' && error.available > 0 ? (
             <button type="button" onClick={() => update({ quantity: clampQuantity(error.available, error.available) })} className="min-h-11 rounded-lg bg-white px-3 font-extrabold text-varsity-navy underline">
-              {t('ticket.useAvailable', { count: error.available })}
+              {t('ticket.useAvailable', { kind: offer.ticket?.subtype ?? 'EVENT', count: error.available })}
             </button>
           ) : null}
         </div>

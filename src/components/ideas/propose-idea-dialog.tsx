@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { proposeIdeaAction } from '@/app/[locale]/(public)/[orgSlug]/ideas/actions';
+import { useCategoryLabel } from '@/components/portal/use-category-label';
 import { Link } from '@/i18n/navigation';
 import { IDEA_DESCRIPTION_MAX, IDEA_DESCRIPTION_MIN, IDEA_TITLE_MAX, IDEA_TITLE_MIN } from '@/core/ideas/idea-rules';
 
@@ -27,6 +28,7 @@ const fieldClass = (invalid: boolean) => clsx('min-h-11 w-full rounded-xl border
  */
 export function ProposeIdeaDialog({ open, onClose, onProposed, orgSlug, locale, categories }: ProposeIdeaDialogProps) {
   const t = useTranslations('portal.ideas.dialog');
+  const categoryLabel = useCategoryLabel();
   const dialog = useRef<HTMLDialogElement>(null);
   const headingId = useId();
   const ids = { title: useId(), category: useId(), description: useId(), privacy: useId(), error: useId() };
@@ -187,7 +189,7 @@ export function ProposeIdeaDialog({ open, onClose, onProposed, orgSlug, locale, 
                   </option>
                   {categories.map((category) => (
                     <option key={category.name} value={category.name}>
-                      {`${category.icon} ${category.name}`}
+                      {`${category.icon} ${categoryLabel(category.name).text}`}
                     </option>
                   ))}
                 </select>

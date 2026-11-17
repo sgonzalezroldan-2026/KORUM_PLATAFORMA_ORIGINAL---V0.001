@@ -11,6 +11,7 @@ import type { Locale } from '@/i18n/routing';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import { FIELD, OUTLINE, PRIMARY } from './entity-action';
 import { focusLater } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * «✉️ Enviar email directo al centro» (prototipo; aplazado del 5.2): un texto libre de KORUM a quienes firman por la entidad. El texto sale tal como se escribe (solo el botón y el
@@ -18,6 +19,7 @@ import { focusLater } from './rules-action';
  * entidad. Lleva un tope de envíos por entidad y por persona y día; queda en la auditoría con la longitud del texto y a cuántas personas salió, nunca con el contenido.
  */
 export function OrgDirectEmail({ organizationId, organizationName, disabled }: { organizationId: string; organizationName: string; disabled: boolean }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.org360.directEmail');
   const locale = useLocale() as Locale;
   const { toast } = useToast();
@@ -61,7 +63,7 @@ export function OrgDirectEmail({ organizationId, organizationName, disabled }: {
       onSubmit={(event) => {
         event.preventDefault();
         setConfirming(true);
-        requestAnimationFrame(() => confirmTitle.current?.focus());
+        focusPainted(() => confirmTitle.current);
       }}
       className="flex flex-col gap-3"
       data-testid="direct-email"

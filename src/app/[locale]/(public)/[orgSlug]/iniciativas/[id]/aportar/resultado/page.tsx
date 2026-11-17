@@ -162,7 +162,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
         <p className="font-corp text-sm font-bold tabular-nums text-ink-soft">{t('confirmed.pct', { pct: toPct })}</p>
         <p role="status" className="font-joy text-lg font-bold text-emerald-900">
           <span aria-hidden="true">{reached ? '🎉 ' : '💛 '}</span>
-          {reached ? (ticketing ? t('confirmed.soldOut') : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
+          {reached ? (ticketing ? t('confirmed.soldOut', { kind: subtype }) : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
         </p>
       </div>
       {course ? (

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { discardStudioAction, publishStudioAction, saveStudioAction } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/(gestion)/estudio/actions';
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
 import { formatCents } from '@/core/finance/money';
-import { resizedBudgetBoard } from '@/core/studio/resized-board';
+import { tryResizedBudgetBoard } from '@/core/studio/resized-board';
 import { computeStudioBoard, computeTicketingBoard, publishBlockers, saveProblems, storedBudgetBoard, type PublishBlocker, type StudioContext } from '@/core/studio/studio-board';
 import type { RewardPreset, StudioDraft } from '@/core/studio/studio-draft';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -13,6 +13,7 @@ import { isLocale } from '@/i18n/routing';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { StudioBoardView } from './studio-board-view';
 import { StudioFields, type StudioFieldErrors, type StudioLock } from './studio-fields';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Estudio de edición (`sch-sub-studio`, `loadInitiativeIntoStudio`, `recalcStudioTCO`, `saveInitiativeFromStudio`): el formulario a la izquierda y la
@@ -85,6 +86,7 @@ const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STA
 let carriedSavedNotice: { initiativeId: number; message: Exclude<Message, null> } | null = null;
 
 export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, rewardPresets, nowIso, today, maxCloseOn, justPublished, shareText, resized = null }: StudioWorkbenchProps) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('panel.studio');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -122,10 +124,13 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
     if (editable || !stored) return computeStudioBoard(context, draft);
     return draft.format === 'TICKETING' ? computeTicketingBoard(context, draft, stored.maintFeeCents) : storedBudgetBoard({ ...stored, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps });
   }, [context, draft, editable, stored]);
-  const resizedBoard = useMemo(
-    () => (resized && stored && draft.format === 'BUDGET' ? resizedBudgetBoard({ ...stored, originalGoalCents: resized.originalGoalCents, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps }) : null),
+  const resizedResult = useMemo(
+    () => (resized && stored && draft.format === 'BUDGET' ? tryResizedBudgetBoard({ ...stored, originalGoalCents: resized.originalGoalCents, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps }) : null),
     [resized, stored, draft.format, draft.costMatCents, draft.costInstCents, draft.contingencyBps]
   );
+  const resizedBoard = resizedResult?.kind === 'OK' ? resizedResult.board : null;
+  // Lo guardado no cuadra con la meta: se avisa y no se enseña ninguna pizarra (una pizarra de dinero nunca se enseña descuadrada).
+  const resizedMismatch = resizedResult?.kind === 'MISMATCH';
   const blockers = useMemo(() => (editable ? publishBlockers(context, draft, board, now) : []), [context, draft, board, now, editable]);
   // En vivo solo la fecha (su error se arregla al momento); lo demás, tras el primer intento de guardar o publicar: no se grita a quien aún está escribiendo.
   const live = useMemo(() => saveProblems(context, draft, now).filter((problem) => problem.startsWith('CLOSING')), [context, draft, now]);
@@ -227,7 +232,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
   function cancelConfirmation() {
     const target = confirming === 'discard' ? discardButton : publishButton;
     setConfirming(null);
-    requestAnimationFrame(() => target.current?.focus());
+    focusPainted(() => target.current);
   }
 
   function onConfirmKey(event: KeyboardEvent<HTMLDivElement>) {
@@ -389,7 +394,11 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
         </div>
       ) : null}
       {lock === 'SOFT' ? <FormAlert tone="info">{t('lock.soft')}</FormAlert> : null}
-      {resizedBoard ? (
+      {resizedMismatch ? (
+        <FormAlert tone="error">
+          <span data-testid="studio-resized-mismatch">{t('resized.mismatch')}</span>
+        </FormAlert>
+      ) : resizedBoard ? (
         <div className="rounded-xl border-2 border-varsity-navy bg-varsity-ivory p-3 text-sm text-varsity-navy" data-testid="studio-resized-notice">
           <p className="font-extrabold">
             <span aria-hidden="true">{'🗳️ '}</span>
@@ -430,7 +439,9 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
           <StudioFields draft={draft} context={context} lock={lock} rewardPresets={rewardPresets} ticketFeeUnitCents={ticketFeeUnitCents} today={today} maxCloseOn={maxCloseOn} onChange={change} errors={errors} />
         </section>
         <div className="lg:col-span-5">
-          <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} ticketSubtype={draft.ticketSubtype} footer={footer} resized={resizedBoard} resizedSettles={stored?.status === 'GOAL_REACHED' || stored?.status === 'CLOSED'} />
+          {resizedMismatch ? null : (
+            <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} ticketSubtype={draft.ticketSubtype} footer={footer} resized={resizedBoard} resizedSettles={stored?.status === 'GOAL_REACHED' || stored?.status === 'CLOSED'} gatewayCovered={stored?.absorbsGatewayCostByKorum === true} />
+          )}
         </div>
       </div>
     </div>

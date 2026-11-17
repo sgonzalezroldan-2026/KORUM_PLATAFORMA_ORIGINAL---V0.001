@@ -12,6 +12,7 @@ import type { ModerationSponsorView } from '@/services/panel/sponsor-moderation-
 import { useApprovalsNotice } from './approvals-notice';
 import { SponsorLogoForm } from './sponsor-logo-form';
 import { SponsorMoneyDetail } from './sponsor-money-detail';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Un comercio amigo en la bandeja de aprobaciones (`id="sch-sponsors-moderation-list"`, `function moderateSponsor` del prototipo). Enseña lo que la
@@ -22,6 +23,7 @@ import { SponsorMoneyDetail } from './sponsor-money-detail';
 const BADGE: Record<string, string> = { ORO: '🥇', PLATA: '🥈', BRONCE: '🥉' };
 
 export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBytes }: { orgSlug: string; sponsor: ModerationSponsorView; canModerate: boolean; maxLogoBytes: number }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('panel.sponsors');
   const tErrors = useTranslations('panel.approvals.errors');
   const format = useFormatter();
@@ -93,7 +95,7 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
     setRejecting(false);
     setReasonError(null);
     setError(null);
-    requestAnimationFrame(() => openRejectButton.current?.focus());
+    focusPainted(() => openRejectButton.current);
   };
 
   return (
@@ -207,7 +209,7 @@ export function SponsorModerationCard({ orgSlug, sponsor, canModerate, maxLogoBy
             onClick={() => {
               setError(null);
               setRejecting(true);
-              requestAnimationFrame(() => reasonField.current?.focus());
+              focusPainted(() => reasonField.current);
             }}
             disabled={pending}
             className="inline-flex min-h-11 items-center rounded-xl border-2 border-red-700 px-4 font-bold text-red-800 disabled:opacity-60"

@@ -3154,6 +3154,7 @@
         "line3Exempt": "3. Platform commission (0% category)",
         "line4": "4. Platform maintenance charge",
         "line5": "5. Payment gateway cost (Paycomet)",
+        "gatewayCoveredNote": "The payment gateway cost is covered: it is not deducted from what the organisation receives.",
         "gatewayFormula": "How it is calculated: {pct} variable on {subtotal} ({variable}) + {count, plural, one {# estimated contribution} other {# estimated contributions}} (based on the suggested contribution of {ticket}) × {fixed} ({fixedTotal}) + {rounding} rounding up to the euro. Balanced total: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Gross takings at full capacity (capacity × price)",
         "ticketGrossRaffle": "Gross takings from the tickets (tickets × price)",
@@ -3326,6 +3327,7 @@
       },
       "resized": {
         "notice": "This campaign was resized by a vote, so its goal is fixed.",
+        "mismatch": "We can’t show the board for this redone campaign: the saved figures don’t add up to its goal. Nothing has been changed and no money has moved. Write to KORUM support with the campaign number and we will review it.",
         "detail": "The people who contributed chose to go ahead with what had been raised: the goal went from {original} to {goal} and the fees went down in the same proportion. The figures are shown and cannot be changed.",
         "originalGoal": "Goal it was published with",
         "provider": "Supplier and equipment budget (adjusted to the new goal)",
@@ -3339,7 +3341,7 @@
         "rounding": "Reserve rounding (it also reaches the organisation)",
         "sum": "Balanced total: {parts} = {goal}.",
         "entity": "For the project at payout (goal minus fees)",
-        "gatewayAbsorbed": "Payment gateway cost (KORUM covers it: it does not come out of the goal)",
+        "gatewayAbsorbed": "Payment gateway cost (covered: not deducted from the goal)",
         "detailAfterLoss": "The people who contributed chose to go ahead with what had been raised: the goal went from {original} to {voted} and the fees went down in the same proportion. Later, a chargeback (a payment that was returned to its holder) left it at {goal}, with the fees again in proportion. The figures are shown and cannot be changed.",
         "entitySame": "For the project at payout: the goal minus fees (the same amount as the project cost)"
       }
@@ -5700,25 +5702,33 @@
       "open": "Open the page for {title}",
       "share": "Share {title}",
       "stage": "Stage: {stage}",
-      "price": "Ticket {price}",
+      "price": "{kind, select, RAFFLE {Raffle ticket {price}} other {Ticket {price}}}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x is on: your contribution is doubled while the pool lasts.",
       "zeroCommission": "0% platform commission",
       "raisedOf": "{raised} of {goal}",
       "percent": "{pct}%",
       "progress": "Progress of {title}",
-      "ticketsSold": "{sold} sold · capacity {max}",
+      "ticketsSold": "{kind, select, RAFFLE {{sold} sold of {max}} other {{sold} sold · capacity {max}}}",
       "ticketsLeft": "{count, plural, =0 {Sold out} one {# left} other {# left}}",
       "contributions": "{count, plural, one {# contribution} other {# contributions}}",
       "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
       "completed": "Complete!",
       "refund": "100% refunded if the goal is missed",
-      "soldOut": "Full house · tickets sold out",
+      "soldOut": "{kind, select, RAFFLE {Raffle tickets sold out} other {Full house · tickets sold out}}",
       "goalReached": "100% reached! Closed",
       "contribute": "Contribute now",
       "buyTickets": "Buy tickets",
       "buyRaffle": "Buy raffle tickets",
       "closed": "Closed"
+    },
+    "categories": {
+      "comfort": "Infrastructure and comfort",
+      "courts": "Playgrounds and sport",
+      "tech": "Technology and resources",
+      "community": "Community and trips",
+      "solidarity": "Solidarity and scholarships",
+      "ticketing": "Box office and raffles"
     },
     "detail": {
       "back": "Back to the initiatives",
@@ -5738,15 +5748,15 @@
       "contributionsDone": "{count, plural, one {# contribution made} other {# contributions made}}",
       "completedFull": "100% complete",
       "closed": "100% reached! Contributions are closed",
-      "ticketsSoldOut": "Full house! Tickets sold out",
-      "ticketsHeading": "Digital ticketing details",
+      "ticketsSoldOut": "{kind, select, RAFFLE {Raffle tickets sold out!} other {Full house! Tickets sold out}}",
+      "ticketsHeading": "{kind, select, RAFFLE {Raffle ticket details} other {Digital ticketing details}}",
       "ticketLines": {
-        "price": "Full amount per ticket for the organisation",
+        "price": "{kind, select, RAFFLE {Full amount per raffle ticket for the organisation} other {Full amount per ticket for the organisation}}",
         "fee": "Digital handling fee",
-        "total": "Total per ticket",
-        "priceInc": "Ticket price",
+        "total": "{kind, select, RAFFLE {Total per raffle ticket} other {Total per ticket}}",
+        "priceInc": "{kind, select, RAFFLE {Raffle ticket price} other {Ticket price}}",
         "feeInc": "Includes the digital handling fee",
-        "center": "The organisation receives per ticket",
+        "center": "{kind, select, RAFFLE {The organisation receives per raffle ticket} other {The organisation receives per ticket}}",
         "venue": "Venue: {venue}"
       },
       "breakdown": {
@@ -5826,7 +5836,7 @@
     },
     "og": {
       "progress": "{pct}% reached",
-      "tickets": "{sold} of {max} tickets sold",
+      "tickets": "{kind, select, RAFFLE {{sold} of {max} raffle tickets sold} other {{sold} of {max} tickets sold}}",
       "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
       "goalReached": "Goal reached!",
       "challengeMissing": "{missing, plural, one {Just # family to go} other {Just # families to go}} for {group} to unlock {reward}!",
@@ -5856,6 +5866,10 @@
         "title": "This ticket is no longer valid",
         "description": "It has been refunded or cancelled, so it will not open the door. If you think this is a mistake, write to the organisation."
       },
+      "revokedRaffle": {
+        "title": "These raffle tickets are no longer valid",
+        "description": "They have been refunded or cancelled, so they no longer count for the draw. If you think this is a mistake, write to the organisation."
+      },
       "invalid": {
         "title": "We can’t open this ticket",
         "description": "Check that you opened the full link from the email, or ask for it to be sent again."
@@ -5869,10 +5883,18 @@
       "quantityRaffle": "{count, plural, one {# raffle ticket} other {# raffle tickets}}",
       "qrAltRaffle": "QR code for your raffle tickets",
       "showRaffle": "{count, plural, one {Keep it: if your number comes up, show it on your phone or printed to claim your prize. The organisation will tell you how to collect it.} other {Keep them: if one of your numbers comes up, show them on your phone or printed to claim your prize. The organisation will tell you how to collect it.}}",
+      "showRaffleWon": "{count, plural, one {Show this page, on your phone or printed, to claim your prize. The organisation will tell you how to collect it.} other {Show this page, on your phone or printed, to claim your prizes. The organisation will tell you how to collect them.}}",
       "shareWarningRaffle": "Anyone with this link can show these raffle tickets as their own: only send it to someone you trust.",
       "shareMessageRaffle": "Your raffle tickets for “{title}”: {url}",
       "actionsRaffle": "Raffle ticket actions",
-      "drawOn": "Draw: {date}"
+      "drawOn": "Draw: {date}",
+      "outcome": {
+        "notDrawn": "The draw hasn’t taken place yet: once it does, you’ll see here whether any of your numbers came up.",
+        "inProgress": "The draw has started and there are still prizes to draw. Open this page again to see if you’ve won.",
+        "won": "{count, plural, one {Your number {numbers} won a prize!} other {Your numbers {numbers} won prizes!}}",
+        "replaced": "{count, plural, one {Your number {numbers} came up in the draw, but the organisation has drawn that prize again. If you think this is a mistake, write to the organisation.} other {Your numbers {numbers} came up in the draw, but the organisation has drawn those prizes again. If you think this is a mistake, write to the organisation.}}",
+        "notWon": "The draw has taken place and none of your numbers came up this time. Thanks for taking part!"
+      }
     },
     "error": {
       "title": "We couldn’t load the community",
@@ -5907,8 +5929,8 @@
         "unitAdd": "Price: {price} + {fee} digital handling fee",
         "unitInc": "Price: {price} (digital handling fee included)",
         "limit": "You can choose up to {max} in this purchase.",
-        "soldOut": "{count, plural, =0 {There are no places left. Thanks for trying!} one {Only # place left.} other {Only # places left.}}",
-        "useAvailable": "{count, plural, one {Choose # place} other {Choose # places}}"
+        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {There are no raffle tickets left. Thanks for trying!} one {Only # raffle ticket left.} other {Only # raffle tickets left.}}} other {{count, plural, =0 {There are no places left. Thanks for trying!} one {Only # place left.} other {Only # places left.}}}}",
+        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Choose # raffle ticket} other {Choose # raffle tickets}}} other {{count, plural, one {Choose # place} other {Choose # places}}}}"
       },
       "group": {
         "label": {
@@ -5961,7 +5983,7 @@
         "secure": "You pay on Paycomet’s secure page. KORUM never sees your card details."
       },
       "refundNote": "If the goal is not reached in time, we refund 100% of what you paid to the same payment method.",
-      "refundNoteTickets": "If the event is cancelled, we refund 100% of what you paid to the same payment method.",
+      "refundNoteTickets": "{kind, select, RAFFLE {If the raffle is cancelled, we refund 100% of what you paid to the same payment method.} other {If the event is cancelled, we refund 100% of what you paid to the same payment method.}}",
       "errors": {
         "form": "Please check the highlighted details and try again.",
         "quantity": "Choose between 1 and {max}.",
@@ -5973,7 +5995,7 @@
       "closed": {
         "title": "Contributions are closed",
         "achieved": "Goal reached! This initiative does not need any more contributions.",
-        "soldOut": "Sold out! There are no places left.",
+        "soldOut": "{kind, select, RAFFLE {Raffle tickets sold out! There are none left.} other {Sold out! There are no places left.}}",
         "ended": "This initiative has passed its deadline and no longer accepts contributions."
       },
       "custodyTickets": "Secure payment with Paycomet",
@@ -6064,7 +6086,7 @@
         },
         "paid": "You paid {total}",
         "goalReached": "Your contribution has taken it to 100%!",
-        "soldOut": "Your purchase has sold out the event!",
+        "soldOut": "{kind, select, RAFFLE {Your purchase has sold out the raffle tickets!} other {Your purchase has sold out the event!}}",
         "count": "{count, plural, one {# contribution so far} other {# contributions so far}}",
         "progressLabel": "Progress of “{title}”",
         "group": "{group} already has {count, plural, one {# family} other {# families}} · challenge: {target}",
@@ -7171,7 +7193,7 @@
       "api": {
         "panel_cover_denied": "Campaign cover upload denied",
         "panel_entity_image_denied": "Organisation image upload denied",
-        "panel_fund_receipt_denied": "Denied: download of the activity fund receipt",
+        "panel_fund_receipt_denied": "Fund receipt download denied",
         "panel_kyb_open_denied": "Opening of a holder document denied",
         "panel_kyb_upload_denied": "Holder document upload denied",
         "panel_logros_denied": "Achievement photo upload denied",
@@ -7180,7 +7202,7 @@
         "panel_payout_invoice_denied": "Payout invoice upload denied",
         "panel_payout_invoice_open_denied": "Opening of a payout invoice denied",
         "panel_sponsor_logo_denied": "Business logo upload denied",
-        "panel_dossier_denied": "Denied: download of a case file as PDF"
+        "panel_dossier_denied": "Case file PDF download denied"
       },
       "double_check": {
         "denied": "Signature denied",
@@ -7197,8 +7219,8 @@
         "payout_approved": "Fund payout approved",
         "payout_cancelled": "Fund payout withdrawn",
         "receipt_downloaded": "Activity fund: receipt downloaded",
-        "signatures_rejected": "Activity fund: a payout’s signatures stopped being valid",
-        "split_resolved": "Activity fund: a money transfer was checked and resolved by hand"
+        "signatures_rejected": "Fund payout signatures no longer valid",
+        "split_resolved": "Fund transfer resolved by hand after checking"
       },
       "expired": {
         "rate_limited": "Expired campaigns: too many attempts in a row to decide"
@@ -7412,7 +7434,7 @@
         "failed": "Scheduled task failed"
       },
       "quota": {
-        "period_assigned": "Commission-free quota: its school year was set",
+        "period_assigned": "School year set for commission-free quota",
         "renewed": "Commission-free quota renewed for the new school year"
       },
       "dossier": {

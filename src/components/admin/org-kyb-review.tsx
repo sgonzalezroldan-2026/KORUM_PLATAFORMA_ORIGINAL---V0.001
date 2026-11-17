@@ -100,7 +100,7 @@ export function OrgKybReview({ organization, documents }: { organization: Org360
             <>
               {organization.ley49 ? (
                 <label className="flex min-h-11 items-center gap-2">
-                  <input type="checkbox" checked={ley49Accredited} onChange={(event) => setLey49Accredited(event.target.checked)} className="size-5" />
+                  <input type="checkbox" checked={ley49Accredited} onChange={(event) => setLey49Accredited(event.target.checked)} className="korum-check" />
                   <span>{t('ley49Accredited')}</span>
                 </label>
               ) : null}
@@ -133,7 +133,7 @@ export function OrgKybReview({ organization, documents }: { organization: Org360
                 </span>
               </label>
               <label className="flex min-h-11 items-center gap-2">
-                <input type="checkbox" checked={releaseCif} onChange={(event) => setReleaseCif(event.target.checked)} className="size-5" disabled={organization.cif === null} />
+                <input type="checkbox" checked={releaseCif} onChange={(event) => setReleaseCif(event.target.checked)} className="korum-check" disabled={organization.cif === null} />
                 <span>{t('releaseCifWithReject')}</span>
               </label>
             </>

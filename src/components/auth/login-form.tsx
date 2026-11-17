@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useHydrated } from '@/components/ui/use-hydrated';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
-import { CodeField, Field, focusFirstInvalid, FormAlert, linkButton, secondaryButton, SubmitButton } from './auth-ui';
+import { CodeField, Field, useFocusFirstInvalid, FormAlert, linkButton, secondaryButton, SubmitButton } from './auth-ui';
 import { SecondFactorForm } from './second-factor-form';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Acceso por rol (ARQUITECTURA_LANDING §2). Familias y comercios: enlace mágico o código por email, sin contraseña. Firmantes y Super-Admin:
@@ -38,6 +39,8 @@ const EMAIL_FIELD_ERRORS = new Set(['INVALID_EMAIL', 'KORUM_INVALID_EMAIL', 'KOR
 const CODE_FIELD_ERRORS = new Set(['INVALID_OTP', 'OTP_EXPIRED']);
 
 export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl: string; loginUrl: string; initialError: string | null }) {
+  const focusFirstInvalid = useFocusFirstInvalid();
+  const focusPainted = useFocusPainted();
   const t = useTranslations('auth.login');
   const te = useTranslations('auth.errors');
   const locale = useLocale();
@@ -56,14 +59,14 @@ export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl
   // Un error de campo devuelve el foco a ese campo (el botón que lo provocó estaba deshabilitado mientras se enviaba).
   useEffect(() => {
     if (error !== null && (EMAIL_FIELD_ERRORS.has(error) || CODE_FIELD_ERRORS.has(error))) focusFirstInvalid(rootRef.current);
-  }, [error]);
+  }, [error, focusFirstInvalid]);
   const passkeysSupported = hydrated && 'PublicKeyCredential' in window;
 
   const message = (key: string | null) => (key ? te(KNOWN_ERRORS.has(key) || key === 'LINK_INVALID' ? key : 'UNKNOWN') : null);
   const go = (next: Step, options: { focusHeading?: boolean } = {}) => {
     setStep(next);
     setCode('');
-    if (options.focusHeading !== false) requestAnimationFrame(() => headingRef.current?.focus());
+    if (options.focusHeading !== false) focusPainted(() => headingRef.current);
   };
   const finish = () => router.push(continueUrl);
 

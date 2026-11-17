@@ -18,6 +18,7 @@ import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { ConsoleTicket } from '@/services/admin/console-support.service';
 import { FIELD, OUTLINE, PRIMARY } from './entity-action';
 import { focusLater } from './rules-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 const STATUS_STYLE = { OPEN: 'bg-amber-100 text-amber-950', IN_PROGRESS: 'bg-sky-100 text-sky-950', RESOLVED: 'bg-emerald-100 text-emerald-950' } as const;
 
@@ -28,6 +29,7 @@ const STATUS_STYLE = { OPEN: 'bg-amber-100 text-amber-950', IN_PROGRESS: 'bg-sky
  * el nombre de la cuenta desde aquí y cerrar la solicitud una vez hecho el cambio.
  */
 export function SupportTicketCard({ ticket }: { ticket: ConsoleTicket }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.support');
   const format = useFormatter();
   const router = useRouter();
@@ -78,7 +80,7 @@ export function SupportTicketCard({ ticket }: { ticket: ConsoleTicket }) {
     // Cerrar la consulta es definitivo: ya no se puede contestar. Se confirma, diciendo si va con respuesta o sin ella.
     if (status === 'RESOLVED') {
       setConfirming(true);
-      requestAnimationFrame(() => confirmTitle.current?.focus());
+      focusPainted(() => confirmTitle.current);
       return;
     }
     send();
@@ -241,6 +243,7 @@ export function SupportTicketCard({ ticket }: { ticket: ConsoleTicket }) {
  * comprobando la identidad. El cambio de email no se ofrece (hay que comprobar que la persona controla el nuevo): se hace por el canal de privacidad.
  */
 function RectificationBlock({ ticket }: { ticket: ConsoleTicket }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.support.rectification');
   const format = useFormatter();
   const locale = useLocale() as Locale;
@@ -335,7 +338,7 @@ function RectificationBlock({ ticket }: { ticket: ConsoleTicket }) {
               className={OUTLINE}
               onClick={() => {
                 setRejecting(true);
-                requestAnimationFrame(() => rejectTitle.current?.focus());
+                focusPainted(() => rejectTitle.current);
               }}
               data-testid="rectification-reject"
             >

@@ -9,6 +9,7 @@ import type { InitiativeCardData } from '@/core/public/view-model';
 import { Link } from '@/i18n/navigation';
 import { ideasPath } from '@/lib/seo/portal-routes';
 import { InitiativeCard } from './initiative-card';
+import { useCategoryLabel } from './use-category-label';
 import { ShareModal, type ShareGroup, type ShareTarget } from './share-modal';
 
 export interface InitiativeCatalogProps {
@@ -40,6 +41,8 @@ export function InitiativeCatalog({ orgSlug, entityName, cards, urls, groups, co
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null);
 
+  const categoryLabel = useCategoryLabel(contentLang);
+  // El valor de cada opción sigue siendo el nombre guardado (con él se filtra); solo la etiqueta se traduce, y se ordena por ella.
   const categories = useMemo(() => distinctOptions(cards.map((card) => card.category), locale), [cards, locale]);
   const stages = useMemo(() => distinctOptions(cards.map((card) => card.stage), locale), [cards, locale]);
   const visible = useMemo(() => cards.filter((card) => matchesFilters(card, filters)), [cards, filters]);
@@ -96,11 +99,14 @@ export function InitiativeCatalog({ orgSlug, entityName, cards, urls, groups, co
             </label>
             <select id={categoryId} className={selectClass} value={filters.category} onChange={(event) => setFilters({ ...filters, category: event.target.value })}>
               <option value="">{t('filter.allCategories')}</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+              {categories
+                .map((category) => ({ value: category, ...categoryLabel(category) }))
+                .sort((first, second) => first.text.localeCompare(second.text, locale))
+                .map((category) => (
+                  <option key={category.value} value={category.value} lang={category.lang}>
+                    {category.text}
+                  </option>
+                ))}
             </select>
           </div>
           <div>

@@ -59,7 +59,7 @@ function CrawlerGroup({ group, rules, onChange, others }: { group: Group; rules:
               <label className="relative inline-flex min-h-11 items-center gap-2 font-semibold">
                 <input
                   type="checkbox"
-                  className="size-5"
+                  className="korum-check"
                   checked={rule.allow}
                   onChange={(event) => onChange(rules.map((item, position) => (position === index ? { ...item, allow: event.target.checked } : item)))}
                 />

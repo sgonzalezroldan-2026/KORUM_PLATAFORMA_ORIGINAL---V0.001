@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { createContext, useContext, useEffect, useId, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Piezas comunes de los formularios de acceso y alta: campo con etiqueta, ayuda y error asociados (`aria-describedby`, `aria-invalid`), y
@@ -97,9 +98,10 @@ export function FormAlert({ tone = 'error', focusOnShow = true, children }: { to
   );
 }
 
-/** Lleva el foco al primer campo marcado como erróneo dentro de `container` (tras pintar los errores). */
-export function focusFirstInvalid(container: HTMLElement | null): void {
-  requestAnimationFrame(() => container?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+/** Lleva el foco al primer campo marcado como erróneo dentro de `container`, cuando React ya ha pintado los errores (`useFocusPainted`). */
+export function useFocusFirstInvalid(): (container: HTMLElement | null) => void {
+  const focusPainted = useFocusPainted();
+  return useCallback((container) => focusPainted(() => container?.querySelector<HTMLElement>('[aria-invalid="true"]')), [focusPainted]);
 }
 
 interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'id'> {
@@ -144,7 +146,7 @@ export function CheckboxField({ label, hint, error, ...input }: Omit<FieldProps,
   return (
     <div className="flex flex-col gap-1">
       <div className="flex min-h-11 items-start gap-3">
-        <input id={id} type="checkbox" className="mt-1 size-5 shrink-0 accent-varsity-emerald" aria-invalid={error ? true : undefined} aria-describedby={describedBy} {...input} />
+        <input id={id} type="checkbox" className="korum-check korum-check-start text-varsity-emerald" aria-invalid={error ? true : undefined} aria-describedby={describedBy} {...input} />
         <label htmlFor={id} className="font-semibold text-varsity-navy">
           {label}
         </label>

@@ -7,6 +7,7 @@ import { TARIFF_LIMITS, type TariffValues } from '@/core/admin/org-360-rules';
 import { MoneyParseError, parseEurosToCents } from '@/core/finance/money';
 import { isLocale } from '@/i18n/routing';
 import { ActionOutcome, FIELD, PRIMARY, useEntityAction } from './entity-action';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 type NumericField = Exclude<keyof TariffValues, 'maintActive'>;
 const FIELDS: ReadonlyArray<{ key: NumericField; kind: 'eur' | 'pct'; max: number }> = [
@@ -49,6 +50,7 @@ export function parseTariffText(text: string, locale: 'es' | 'ca' | 'en', max: n
  * bloquea por «perder dinero» (lo avisa la salud de precios), pero lo imposible se rechaza aquí y en el servidor.
  */
 export function OrgTariffsForm({ organizationId, customRules, tariffs, globalTariffs }: { organizationId: string; customRules: boolean; tariffs: TariffValues; globalTariffs: TariffValues }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('admin.org360.tariffs');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -89,7 +91,7 @@ export function OrgTariffsForm({ organizationId, customRules, tariffs, globalTar
     if (wrong.length > 0) {
       // El error se anuncia junto al campo y el foco va al primero que está mal.
       const first = wrong[0];
-      requestAnimationFrame(() => document.getElementById(`${groupId}-${first}`)?.focus());
+      focusPainted(() => document.getElementById(`${groupId}-${first}`));
       return;
     }
     action.run(() => saveTariffsAction({ organizationId, tariffs: { customRules: true, maintActive, ...parsed } }), t('doneCustom'));
@@ -98,7 +100,7 @@ export function OrgTariffsForm({ organizationId, customRules, tariffs, globalTar
   return (
     <div className="flex flex-col gap-4" data-testid="tariffs-form">
       <label className="flex min-h-11 items-center gap-2 font-bold text-varsity-navy">
-        <input type="checkbox" checked={custom} onChange={(event) => toggleCustom(event.target.checked)} className="size-5" data-testid="tariffs-custom" />
+        <input type="checkbox" checked={custom} onChange={(event) => toggleCustom(event.target.checked)} className="korum-check" data-testid="tariffs-custom" />
         <span>{t('custom')}</span>
       </label>
       <p className="text-sm font-semibold" data-testid="tariffs-mode">
@@ -135,7 +137,7 @@ export function OrgTariffsForm({ organizationId, customRules, tariffs, globalTar
         })}
       </div>
       <label className="flex min-h-11 items-center gap-2">
-        <input type="checkbox" checked={shownMaint} disabled={!custom || action.pending} onChange={(event) => setMaintActive(event.target.checked)} className="size-5" />
+        <input type="checkbox" checked={shownMaint} disabled={!custom || action.pending} onChange={(event) => setMaintActive(event.target.checked)} className="korum-check" />
         <span>{t('maintActive')}</span>
       </label>
       <p className="text-sm text-ink-soft">{t('futureOnly')}</p>

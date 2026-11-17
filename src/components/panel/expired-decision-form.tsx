@@ -8,6 +8,7 @@ import { FormAlert } from '@/components/auth/auth-ui';
 import { RESIZE_OPTION_MAX_LENGTH, RESIZE_OPTION_MIN_LENGTH, RESIZE_OPTIONS_MAX, RESIZE_OPTIONS_MIN, RESIZE_POLL_DAYS, hasDuplicateOptions } from '@/core/resize/resize-limits';
 import type { VoteBlocker } from '@/repositories/expired-campaigns.repository';
 import { useApprovalsNotice } from './approvals-notice';
+import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
  * Qué hacer con una campaña vencida (Sprint 4.4b, prototipo `sendResizePollToDonors` y `executeAutomaticRefundAndSponsorReassign`): preguntar a quienes
@@ -18,6 +19,7 @@ import { useApprovalsNotice } from './approvals-notice';
 type Step = 'idle' | 'confirmVote' | 'confirmRefund';
 
 export function ExpiredDecisionForm({ orgSlug, initiativeId, title, donors, voteBlockers }: { orgSlug: string; initiativeId: number; title: string; donors: number; voteBlockers: VoteBlocker[] }) {
+  const focusPainted = useFocusPainted();
   const t = useTranslations('panel.expired.decide');
   const tErrors = useTranslations('panel.expired.errors');
   const announce = useApprovalsNotice();
@@ -41,7 +43,7 @@ export function ExpiredDecisionForm({ orgSlug, initiativeId, title, donors, vote
   const cancel = () => {
     const back = step === 'confirmVote' ? voteButton : refundButton;
     setStep('idle');
-    requestAnimationFrame(() => back.current?.focus());
+    focusPainted(() => back.current);
   };
 
   const send = (action: () => Promise<ExpiredActionResult>) => {
