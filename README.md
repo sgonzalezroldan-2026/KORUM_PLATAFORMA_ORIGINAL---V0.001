@@ -18,6 +18,8 @@ La base de datos local (PostgreSQL) se arranca con `npm run db:dev` (sin Docker:
 
 Para ver la aplicación con datos: `npm run db:dev`, apunta `DATABASE_URL` y `DIRECT_URL` de `.env.local` a `postgres://postgres:postgres@localhost:51214/template1?sslmode=disable`, y ejecuta `npm run db:migrate` y `npm run db:seed`. Los datos de demostración son **4 entidades** (CEIP Cervantes, Colegio San José, Club Basket Vallès e IES Mediterráneo, cada una con su titular legal y sus 2 firmantes), **8 iniciativas** con 1.505 cobros, 5 comercios amigos, una taquilla con 112 compras y pases QR firmados, 3 ideas y 2 facturas. Todo es ficticio y el libro mayor cuadra al céntimo.
 
+**Entrar a las pantallas de la entidad y de la consola en local:** la semilla crea las cuentas sin contraseña. Con la base local lista, ejecuta `npm run demo:access`: da a todas las cuentas de demostración la contraseña `Korum-Demo-2026!` y un segundo factor conocido, y escribe en pantalla el código de 6 dígitos de ese momento (caduca a los 30 s; vuelve a ejecutarlo para ver otro). Entra en `/login` con `superadmin@korum.example` (consola `/admin`) o con un firmante, p. ej. `director@cervantes.example` (panel `/panel/cervantes`). Solo funciona en bases locales o de demostración (misma guardia que la semilla). La consola lanza muchas consultas a la vez: con Prisma Postgres local (`db:dev`) puede dar error 500; con un PostgreSQL 16 real (p. ej. `postgres://postgres@localhost:5440/korum`) va bien y la semilla tarda segundos.
+
 La galería de componentes está en <http://localhost:3000/dev/ui> (solo en desarrollo y en el entorno de demostración).
 
 ## Comandos

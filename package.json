@@ -26,6 +26,7 @@
     "db:migrate": "node --env-file-if-exists=.env.local node_modules/prisma/build/index.js migrate deploy",
     "db:seed": "tsx --env-file-if-exists=.env.local prisma/seed.ts",
     "db:reset": "tsx --env-file-if-exists=.env.local prisma/reset.ts",
+    "demo:access": "tsx --env-file-if-exists=.env.local prisma/demo-access.ts",
     "superadmin:bootstrap": "tsx --env-file-if-exists=.env.local prisma/bootstrap-superadmin.ts",
     "postinstall": "prisma generate"
   },
