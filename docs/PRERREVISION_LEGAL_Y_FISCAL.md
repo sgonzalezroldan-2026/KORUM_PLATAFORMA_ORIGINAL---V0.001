@@ -260,7 +260,14 @@ Varias propuestas **cambian decisiones ya tomadas** (CUMPLIMIENTO §8). Ninguna 
 - **Veri\*factu (L-026):** se decide en su sprint, con las dos vías sobre la mesa: un proveedor (con coste por factura) o el envío directo a la Agencia Tributaria con el certificado digital de KORUM. Se piden ya los precios a los proveedores y el asistente estudia la vía directa al empezar el sprint.
 - **Brevo (L-061), resuelto sin consulta:** su documentación describe `GET /v3/account` como una lectura de los datos de la cuenta, sin coste.
 
-**Balance de la revisión por rondas (2026-11-17 y 2026-11-18).** De las 71 preguntas del borrador inicial: las del abogado (19) y las de la asesoría (21) quedan todas cerradas por el promotor; de Paycomet quedan 21 (12 bloquean los primeros cobros reales y 9 no) y de los proveedores de Veri\*factu quedan 8, que no bloquean hasta su sprint. El borrador final, ya renumerado, está en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). **Nada de esto está trasladado todavía** a CUMPLIMIENTO, a las Reglas 02 y 03, a AGENTS.md, al plan ni al registro de deuda: ese traslado necesita la aprobación del promotor.
+**Balance de la revisión por rondas (2026-11-17 y 2026-11-18).** De las 71 preguntas del borrador inicial: las del abogado (19) y las de la asesoría (21) quedan todas decididas por el promotor, que guarda 1 del abogado y 3 de la asesoría para consultarlas más adelante sin que bloqueen nada; de Paycomet quedan 21 (12 bloquean los primeros cobros reales y 9 no) y de los proveedores de Veri\*factu quedan 8, que no bloquean hasta su sprint. El borrador final, ya renumerado, está en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). **Nada de esto está trasladado todavía** a CUMPLIMIENTO, a las Reglas 02 y 03, a AGENTS.md, al plan ni al registro de deuda: ese traslado necesita la aprobación del promotor.
+
+**Cierre de la revisión (2026-11-18): cuatro preguntas para consultar más adelante.** El promotor aplica la excepción de su regla y decide a quién preguntar. No bloquean nada: se construye con lo decidido.
+
+- **Al abogado (1):** el riesgo que le queda a KORUM con la firma única elegida por la entidad (L-046).
+- **A la asesoría fiscal (3):** la aportación voluntaria a KORUM sin IVA; el año en que cuenta el donativo de una familia a una campaña «todo o nada» (L-031); y si el Auto-Impulso es un gasto deducible en el Impuesto sobre Sociedades (L-070).
+- **Confirmados y cerrados, sin consulta:** KORUM no devuelve nada cuando una entidad retira el anuncio de un comercio (L-091); y la factura de un comercio con contracargo solo se anula si el banco indica fraude (L-140).
+- El borrador de consulta recoge las cuatro preguntas en sus partes 1 y 2, redactadas para enviarse.
 
 **Importes de comercios:** se quedan como hoy, ajustables por cada entidad en su panel dentro de los límites de la plataforma.
 

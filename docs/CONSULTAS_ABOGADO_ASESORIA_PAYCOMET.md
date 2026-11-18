@@ -1,4 +1,4 @@
-# Consultas a Paycomet y a los proveedores de Veri\*factu · borrador final
+# Consultas a Paycomet, a los proveedores de Veri\*factu y cuatro preguntas para más adelante · borrador final
 
 > **Estado:** borrador del 2026-11-18, revisado pregunta a pregunta con el promotor (11 rondas) y **con su visto bueno**. Por decisión suya, se exporta y se envía cuando terminen los sprints pendientes, justo antes de empezar el Sprint 6.1.
 > **De dónde sale:** del dictamen de [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) y de las decisiones del promotor de su §3.1. No sustituye a [CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), que sigue mandando.
@@ -8,13 +8,13 @@
 
 | Parte | A quién | Cuándo | Qué desbloquea |
 | :--- | :--- | :--- | :--- |
-| 1 | Abogado | No se envía | Nada: el promotor ha cerrado todos sus puntos |
-| 2 | Asesoría fiscal | No se envía | Nada: el promotor ha cerrado todos sus puntos |
+| 1 | Abogado | Más adelante, cuando el promotor lo decida | Nada: es una segunda opinión sobre 1 punto ya decidido |
+| 2 | Asesoría fiscal | Más adelante, cuando el promotor lo decida | Nada: es una segunda opinión sobre 3 puntos ya decididos |
 | 3 | Paycomet | Antes de los primeros cobros reales (Sprint 6.1) | Cobros, devoluciones y repartos; después, Mi Hucha |
 | 4 | Candidatos a proveedor de Veri\*factu | Ya, para tener precios al empezar el sprint de Veri\*factu | Elegir entre un proveedor y el envío directo a la Agencia Tributaria |
 
 - **Las referencias entre corchetes** (`[L-046]`) son nuestras: sirven para llevar cada respuesta a su punto de CUMPLIMIENTO §9. Se pueden quitar antes de enviar.
-- **Regla del promotor:** lo que él decide lo valida él mismo, no el abogado ni la asesoría, salvo que diga a quién.
+- **Regla del promotor:** lo que él decide lo valida él mismo, no el abogado ni la asesoría, salvo que diga a quién. Lo ha dicho para cuatro puntos, que se consultarán más adelante y **no bloquean nada**: se construye con lo decidido.
 - **Adjuntos:** ninguno.
 - **Lo que ya no se pregunta** (todo en PRERREVISION §3.1): los 42 puntos aprobados en bloque; las 11 decisiones; los seis paquetes del abogado y los cuatro bloques de la asesoría, cerrados en la revisión; las rifas, que se retiran de la plataforma; el dinero propio de KORUM en el Auto-Impulso, que se compensa en el reparto; los monederos con saldo; y el uso del nombre de PAYCOMET, que se mencionará sin logotipo.
 
@@ -22,16 +22,39 @@
 
 ## 1. Para el abogado
 
-**Sin preguntas.** El promotor cerró todos los puntos de esta parte: los decide y los valida él mismo. Las rifas, que eran el paquete de más riesgo, se retiran de la plataforma. Si más adelante quiere una segunda opinión, el punto donde el asistente ve más riesgo es la firma única elegida por la entidad `[L-046]`, ya acotado porque el dinero solo se reparte a la cuenta verificada de la propia entidad.
+Una sola pregunta, para consultar más adelante. No bloquea nada.
+
+### Quiénes somos
+
+KORUM es una plataforma web para que colegios (a través de su AMPA/AFA o de su titular), clubes deportivos de base y entidades culturales recauden dinero para proyectos concretos. KORUM no cobra ni guarda dinero: los cobros, las retenciones, los repartos y las devoluciones los ejecuta PAYCOMET, entidad de pago autorizada por el Banco de España.
+
+### Pregunta
+
+1. **Firma única elegida por la entidad** `[L-046]`. Cada entidad elige si para aprobar y liberar fondos exige dos firmas (por defecto) o una sola. Cambia a sus firmantes ella misma, al instante y sin intervención de KORUM.
+   - **Lo que hemos decidido:** al activar la firma única, la entidad confirma que «asume la responsabilidad de que una sola persona apruebe y libere dinero» y que «este modo es conforme con los estatutos de la entidad y con lo que haya acordado su órgano de gobierno». Las condiciones dicen que KORUM ejecuta lo que firman las personas que la entidad designa, no verifica su poder de representación y no responde de una liberación firmada por ellas.
+   - **Salvaguardas:** el dinero solo se reparte a la cuenta verificada a nombre de la propia entidad, nunca a un tercero. Cada liberación se avisa al email general de la entidad. Queda un registro que la entidad no puede borrar.
+   - **Pregunta:** si una sola persona libera fondos en contra de los estatutos, ¿qué riesgo le queda a KORUM frente a la entidad y frente a las familias, y qué más recomienda?
 
 ---
 
 ## 2. Para la asesoría fiscal
 
-**Sin preguntas.** El promotor cerró todos los puntos de esta parte. Dos cosas quedan como trabajo propio y no como consulta:
+Tres preguntas, para consultar más adelante. No bloquean nada.
 
-- **Modelo 182** `[L-027]`: el asistente comprueba el fichero campo a campo contra el diseño oficial vigente, y la prueba final es que el entorno de pruebas de la Agencia Tributaria acepte un fichero con un caso de cada tipo. Hace falta una persona con certificado digital para subirlo.
-- **Si más adelante quiere una confirmación de una línea**, los dos puntos que más pesan son: la aportación voluntaria a KORUM tratada como no sujeta a IVA (criterio de la DGT, consulta V1808-22) y el año en que cuenta el donativo de una familia a una campaña «todo o nada» (el año en que la campaña se consigue) `[L-031]`.
+### Quiénes somos
+
+KORUM es una plataforma tecnológica, explotada por una sociedad limitada española, para que AMPA/AFA, clubes deportivos de base, fundaciones y entidades culturales recauden dinero para proyectos concretos. Los cobros, los repartos y las devoluciones los ejecuta PAYCOMET, entidad de pago; KORUM no custodia fondos. Las campañas son «todo o nada»: si no se llega a la meta, se devuelve el 100 %. KORUM cobra a la entidad una comisión sobre lo recaudado, con el IVA incluido.
+
+### Preguntas
+
+1. **Aportación voluntaria a KORUM.** Al donar a una campaña, la familia puede añadir una aportación voluntaria para KORUM. La casilla aparece desmarcada, el importe se elige desde 0 € y no cambia nada de su donación ni del servicio que recibe.
+   - **Lo que hemos decidido:** no está sujeta a IVA y no lleva factura, por el criterio de la Dirección General de Tributos sobre aportaciones voluntarias y unilaterales (consultas 2174-03, V2604-10 y V1808-22). Es un ingreso en el Impuesto sobre Sociedades.
+   - **Pregunta:** ¿lo confirman?
+2. **Año en que cuenta el donativo de una familia** `[L-031]`. Un donativo a una campaña «todo o nada» de una entidad acogida a la Ley 49/2002 puede devolverse hasta que se alcanza la meta.
+   - **Lo que hemos decidido:** el certificado se emite solo cuando la campaña se consigue, y el donativo cuenta en ese año. Ejemplo: se paga en diciembre y la campaña se consigue en enero; se certifica y se declara en el Modelo 182 del año de enero.
+   - **Pregunta:** ¿es correcto el ejercicio en que deduce la familia y en que se declara?
+3. **Aportación de KORUM a una campaña** `[L-070]`. Cuando a una campaña le falta poco para su meta y la comisión que KORUM cobrará supera lo que falta, KORUM completa la meta. No mueve dinero propio: cobra esa cantidad de menos al repartir. Factura la comisión entera y registra lo aportado como gasto promocional.
+   - **Pregunta:** ¿es ese gasto deducible en el Impuesto sobre Sociedades, o puede considerarse una liberalidad? ¿Convendría documentarlo de otra forma?
 
 ---
 
