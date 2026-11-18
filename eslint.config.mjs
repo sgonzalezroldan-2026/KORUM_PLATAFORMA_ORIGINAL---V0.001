@@ -57,7 +57,7 @@ export default defineConfig([
     }
   },
   {
-    files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.mjs', 'prisma/**/*.ts'],
+    files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.{mjs,ts}', 'prisma/**/*.ts'],
     rules: {
       'no-console': 'off',
       'react/jsx-no-literals': 'off'

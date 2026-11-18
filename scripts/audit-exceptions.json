@@ -1,0 +1,8 @@
+[
+  {
+    "id": "GHSA-fc5q-39xc-vjpf",
+    "package": "picomatch",
+    "reason": "Bloqueo por patrones de búsqueda de ficheros (ReDoS) en picomatch <= 4.0.7. El 2026-11-18 no hay versión corregida. Llega por next-intl (vigilancia de ficheros al compilar) y por vitest (pruebas): la aplicación no lo usa al atender peticiones y nadie de fuera puede darle un patrón. Se retira en cuanto haya versión corregida.",
+    "reviewBy": "2026-12-18"
+  }
+]

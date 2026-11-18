@@ -808,7 +808,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.11a — Endurecimiento: secretos, cola de emails y trazabilidad (P18):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** `env.ts` rechaza los secretos de ejemplo publicados antes de cualquier despliegue; el `token` y el `otp` de la cola de emails se guardan cifrados; identificador por petición que enlaza la auditoría, Sentry y los registros del servidor; cadena de huellas de la auditoría comprobada en la conciliación diaria.
+  - **Alcance:** `env.ts` rechaza los secretos de ejemplo publicados antes de cualquier despliegue; el `token` y el `otp` de la cola de emails se guardan cifrados; identificador por petición que enlaza la auditoría, Sentry y los registros del servidor; cadena de huellas de la auditoría comprobada en la conciliación diaria; se revisan las excepciones de `scripts/audit-exceptions.json` (hoy, `picomatch`) y se retiran las que ya tengan versión corregida.
   - **Skills:** `korum-quorum-antifraud`, `korum-escrow-payments`.
   - **Gate QA:** `QA-SEC15`, `QA-SEC16`.
 

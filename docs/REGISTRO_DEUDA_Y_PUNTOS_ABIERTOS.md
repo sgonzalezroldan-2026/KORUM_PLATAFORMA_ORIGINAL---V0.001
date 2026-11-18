@@ -186,6 +186,7 @@ Lo técnico que es mejor tener hecho antes de tocar infraestructura real.
 8. **Modelo 182 con campañas sin resolver:** resuelto por la decisión 28 (solo entran las campañas conseguidas). *Sprint 5.22.*
 9. **`pg@9`:** pasar la integración con `pg@9` y usar `relationLoadStrategy: 'join'` en lecturas dentro de transacciones. *5.11b.*
 10. **Validar con PostgreSQL real** la concurrencia de las funciones que solo se han revisado leyendo código (`reserveTickets`, `checkInPass`, `openGateSession`, `issueInvoice`, `signIdea`, `requestSignature`, `completeSignature` y el canje de vales; ya sin el sorteo). *5.11b.*
+11. **Excepción de `npm audit` para `picomatch`** (`GHSA-fc5q-39xc-vjpf`, sin versión corregida el 2026-11-18): está en `scripts/audit-exceptions.json` y caduca el 2026-12-18. Quien abra un sprint después de esa fecha comprueba si ya hay versión corregida: si la hay, sube la dependencia y borra la excepción; si no, la renueva un mes con su motivo. *Se cierra, como muy tarde, en el 5.11a.*
 
 ### P22 · Higiene de claves · 🟠 · S · Promotor *(tema nuevo, hacer hoy)*
 La bitácora del Sprint 3.9 recoge que la línea de comandos de un proceso `mcp-remote` de **Stitch** muestra una **clave de API en claro**: conviene rotarla. No consta que se hiciera. Si ya no usas Stitch, retirarlo. Revisar de paso qué otras claves se han escrito en conversaciones (la bitácora cita una clave de la base local «dada en la sesión»: es de una base local, pero conviene cambiarla si el equipo sale de casa).

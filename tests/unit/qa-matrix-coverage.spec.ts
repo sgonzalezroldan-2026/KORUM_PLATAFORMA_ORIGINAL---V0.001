@@ -43,15 +43,54 @@ for (const file of testFiles(path.join(ROOT, 'tests'))) {
   for (const id of new Set(readFileSync(file, 'utf8').match(ID) ?? [])) citedBy.set(id, [...(citedBy.get(id) ?? []), path.relative(ROOT, file)]);
 }
 
+/**
+ * Criterios de un sprint que todavía no se ha construido. La matriz los define por adelantado (su fila acaba con el sprint entre paréntesis: «(5.13)») y
+ * su prueba llega con ese sprint. Mientras la ficha siga abierta en el plan (`- [ ]`) no se le exige prueba; **al marcarla `[x]`, la exigencia vuelve
+ * sola** y un criterio sin prueba hace fallar la Puerta 2. Un sprint partido en entregas («5.12» con fichas 5.12a y 5.12b) cuenta como abierto mientras
+ * quede alguna entrega abierta.
+ */
+const planText = readFileSync(path.join(ROOT, 'docs', 'PLAN_IMPLEMENTACION_ATOMICO.md'), 'utf8');
+const sprintCards = [...planText.matchAll(/^- \[( |x)\] \*\*SPRINT (\d+\.\d+[a-z]?) —/gm)].map((match) => ({ id: match[2]!, open: match[1] === ' ' }));
+
+function sprintIsOpen(sprint: string): boolean {
+  const exact = sprintCards.filter((card) => card.id === sprint);
+  if (exact.length > 0) return exact.some((card) => card.open);
+  return sprintCards.some((card) => card.open && new RegExp(`^${sprint.replace('.', '\\.')}[a-z]$`).test(card.id));
+}
+
+const sprintOf = new Map<string, string[]>();
+for (const row of matrix.matchAll(/^\| \*\*(QA-[A-Z]+\d+)\*\* \| ([^|]*)\|/gm)) {
+  const closing = row[2]!.match(/\(([^()]*)\)\s*$/);
+  const sprints = closing ? (closing[1]!.match(/\d+\.\d+[a-z]?/g) ?? []) : [];
+  if (sprints.length > 0) sprintOf.set(row[1]!, sprints);
+}
+/** Pendiente de su sprint: todos los sprints que cita su fila siguen abiertos en el plan. */
+const awaitsItsSprint = (id: string) => (sprintOf.get(id) ?? []).length > 0 && sprintOf.get(id)!.every(sprintIsOpen);
+
 describe('matriz QA · cada criterio tiene su prueba', () => {
   it('la matriz define sus criterios una sola vez', () => {
     expect(defined.length).toBeGreaterThanOrEqual(60);
     expect(defined.filter((id, index) => defined.indexOf(id) !== index)).toEqual([]);
   });
 
-  it('cada criterio lo nombra al menos una prueba del repositorio', () => {
-    const orphans = defined.filter((id) => !citedBy.has(id) && !(id in NOT_AUTOMATED));
+  it('cada criterio lo nombra al menos una prueba del repositorio, salvo los de un sprint que aún no se ha construido', () => {
+    const orphans = defined.filter((id) => !citedBy.has(id) && !(id in NOT_AUTOMATED) && !awaitsItsSprint(id));
     expect(orphans, 'criterios de la matriz sin ninguna prueba').toEqual([]);
+  });
+
+  it('un criterio solo espera a su sprint mientras la ficha de ese sprint sigue abierta en el plan', () => {
+    const waiting = defined.filter((id) => !citedBy.has(id) && awaitsItsSprint(id));
+    for (const id of waiting) {
+      for (const sprint of sprintOf.get(id)!) {
+        const known = sprintCards.some((card) => card.id === sprint || card.id.startsWith(sprint));
+        expect(known, `${id} cita el sprint ${sprint}, que no tiene ficha en el plan`).toBe(true);
+      }
+    }
+    // La regla no tapa nada de lo ya construido: un sprint cerrado no está «abierto» y uno partido lo está mientras quede una entrega.
+    const closed = sprintCards.find((card) => !card.open);
+    expect(closed).toBeDefined();
+    expect(sprintIsOpen(closed!.id)).toBe(sprintCards.some((card) => card.id === closed!.id && card.open));
+    expect(sprintIsOpen('0.0')).toBe(false);
   });
 
   it('las excepciones son solo las declaradas y siguen existiendo en la matriz', () => {

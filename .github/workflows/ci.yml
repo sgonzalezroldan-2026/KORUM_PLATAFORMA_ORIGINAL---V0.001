@@ -66,7 +66,8 @@ jobs:
         run: npm run lint
 
       - name: Dependencias de producción sin vulnerabilidades altas
-        run: npm audit --omit=dev --audit-level=high
+        # Como `npm audit --omit=dev --audit-level=high`, con las excepciones escritas y con fecha de scripts/audit-exceptions.json.
+        run: npm run audit:prod
 
       - name: Puerta 2 · tests unitarios
         run: npm run test:unit

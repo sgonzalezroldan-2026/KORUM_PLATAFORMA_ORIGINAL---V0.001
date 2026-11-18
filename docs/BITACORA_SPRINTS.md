@@ -20,6 +20,20 @@
 
 ## Entradas
 
+### Mantenimiento — CI de GitHub en rojo desde el 2026-11-17 (aviso de `picomatch` y matriz QA) · 2026-11-18 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Fable 5.2 · esfuerzo alto, en la misma sesión que la SESIÓN T1 (lo pidió el promotor al recibir los correos de GitHub).
+- **Duración:** unos 30 minutos.
+- **Qué pasaba:** los cuatro últimos commits (solo de documentos) salían en rojo en el CI. No era por su contenido. **Primera causa:** el paso «Dependencias de producción sin vulnerabilidades altas» (`npm audit --omit=dev --audit-level=high`) falla desde que el 2026-11-17 se actualizó el aviso `GHSA-fc5q-39xc-vjpf` (`picomatch` ≤ 4.0.7, bloqueo por patrones de búsqueda): **no hay versión corregida** (la última es la 4.0.7) y `npm audit fix --force` solo propone bajar `vite` y `vitest` a versiones antiguas, sin arreglarlo. Llega por `next-intl` (`@parcel/watcher`, que solo usa su plugin al compilar) y por `vitest` (dependencia opcional de `better-auth`); `src/` no lo usa y nadie de fuera puede darle un patrón. **Segunda causa, tapada por la primera** (el CI se paraba antes): `tests/unit/qa-matrix-coverage.spec.ts` fallaba desde el commit del plan (11a95e2), porque la matriz QA define ya los 40 criterios de los sprints 5.10 a 5.26 y esa prueba exige que cada criterio tenga su prueba.
+- **Qué se ha hecho:**
+  - `scripts/audit-production-core.ts` y `scripts/audit-production.ts` (`npm run audit:prod`), con `scripts/audit-exceptions.json`: el paso del CI sigue fallando con cualquier aviso alto o crítico, salvo los de una lista escrita, cada uno con su motivo y su **fecha de revisión**; pasada la fecha, la excepción deja de valer. Una sola excepción: `picomatch`, hasta el 2026-12-18. Si `npm audit` no devuelve un informe válido, el paso falla. Prueba: `tests/unit/audit-production.spec.ts` (9 casos). `ci.yml`, `package.json` y `eslint.config.mjs` (los scripts en TypeScript pueden escribir en la consola, como los `.mjs`).
+  - `qa-matrix-coverage.spec.ts`: un criterio cuya fila cita un sprint que **sigue abierto en el plan** no necesita prueba todavía; al marcar la ficha `[x]`, la exigencia vuelve sola. Los 40 criterios pendientes corresponden, uno a uno, a fichas abiertas (comprobado).
+  - [DECISIONES_TECNICAS §5](DECISIONES_TECNICAS.md) (cómo funciona la excepción), registro (P18, punto 11) y ficha del 5.11a.
+- **Decisiones tomadas:** no se baja el nivel del paso ni se quita; la excepción es de un solo aviso y caduca. No se usa `npm audit fix --force`.
+- **Pendiente / deuda:** revisar la excepción al caducar (2026-12-18) o en cuanto haya versión corregida; destino, como muy tarde, el Sprint 5.11a. **El promotor volverá a recibir un correo del CI si el 2026-12-18 sigue sin versión corregida y nadie la ha renovado: es intencionado.**
+- **Puertas:** P1 ✅ (invariantes, `typecheck`, `lint`) · P2 ✅ unitarias completas; la integración y los E2E no se tocan y los ejecuta el propio CI · P3 no aplica (sin dinero, datos ni pantallas) · P4 no aplica · P5 ✅ (resultado del CI comprobado tras subir el commit).
+- **Siguiente:** sin cambios: SESIÓN T1 · segunda entrega.
+
 ### SESIÓN T1 — Textos legales · primera entrega (lo que lee el público) · 2026-11-18 · en curso (primera entrega validada por el promotor; falta la segunda)
 
 - **Modelo y esfuerzo usados:** Claude Fable 5.2 · esfuerzo alto, como recomienda la ficha. Revisión: `korum-legal-fiscal-prereviewer` y `korum-community-target-psychologist`, cada uno en su contexto. Sesión solo de documentos: no se ha tocado código, esquema, semilla, catálogos ni pruebas.
