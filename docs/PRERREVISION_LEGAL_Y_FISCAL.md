@@ -44,10 +44,238 @@ Varias propuestas **cambian decisiones ya tomadas** (CUMPLIMIENTO §8). Ninguna 
 | 10 | **Cambios globales de tarifas** que empeoren condiciones: preaviso de 30 días y sin efecto en campañas ya recaudando | L-056 | Motor de reglas |
 | 11 | **Rastros de seguridad** desvinculados de la cuenta a los 12 meses (no 6 años) | L-064 | Plazos §6 |
 
+### 3.1 Decisiones tomadas por el promotor (sesión del 2026-11-17)
+
+> Se anotan aquí según se toman. Se trasladan a CUMPLIMIENTO §8, a la Regla 02 y al plan cuando el promotor apruebe el conjunto. Lo fiscal se construye con estas suposiciones y **bloquea los cobros reales hasta que la asesoría lo confirme**.
+
+**Decisión 1 · IVA en los ingresos de KORUM (L-025, L-029): aprobada, a un sprint propio.**
+
+- Comisión por tramos, mantenimiento, aportación voluntaria, Gastos de gestión digital y gestión de Mi Hucha llevan el IVA del 21 % **dentro** del importe mostrado (cuota = 21/121). Nadie paga más; metas, pizarra y textos oficiales no cambian.
+- La factura a la entidad (tramos y mantenimiento) separa base, IVA y total. A familias y compradores, factura simplificada con «IVA incluido».
+- La aportación voluntaria se trata como sujeta, por prudencia; se pregunta a la asesoría si puede ser una liberalidad.
+- El BI, las alertas de Auto-Impulso rentable y de retorno negativo y el plan de negocio pasan a contar el ingreso sin IVA.
+
+**Decisión 2 · Comercios: dos modos por entidad (L-137, L-138, L-144): aprobada, a un sprint propio.**
+
+| | Solo donación (por defecto) | Patrocinio con publicidad |
+| :--- | :--- | :--- |
+| Quién | Cualquier entidad | Solo la que declara en su panel que está dada de alta para facturar con IVA, bajo su responsabilidad, con aviso a la otra persona firmante y auditoría; sin el Super-Admin |
+| Qué recibe el comercio | Un agradecimiento con su logotipo y nada más (sin categoría, ventaja, enlace ni cartel) | Distintivo, categoría en Comercios amigos, ventaja para las familias y cartel |
+| Qué paga | Nivel + gestión de KORUM + IVA de la gestión | Nivel + IVA de la entidad sobre el nivel + gestión de KORUM + IVA de la gestión |
+| Documentos | Certificado fiscal (entidad con Ley 49/2002 verificada, y entra en el Modelo 182) o justificante nominativo; factura de KORUM | Factura de la entidad al comercio, que emite la entidad con su programa y sube a la plataforma; factura de KORUM |
+| Matching 2x | Anónimo («Un comercio del barrio duplica tu aportación») | Con el nombre del comercio |
+| Renovación anual | No hay: aportación única, sin recordatorios | Como hoy |
+
+- **El proyecto ve siempre el nivel íntegro**; comisiones e IVA van encima y los paga el comercio.
+- La comisión de KORUM se llama «gestión» (ya no «gestión publicitaria»), con dos porcentajes separados en la consola (donación y publicidad), los dos al 15 % de partida.
+- Un cambio de modo afecta solo a los pagos nuevos.
+- El promotor conoce el riesgo comercial del modo donación sin Ley 49/2002 (ni publicidad ni desgravación) y lo acepta: el comercio gana visibilidad ante la entidad.
+- **Agradecimiento en modo donación:** con logotipo, durante 12 meses desde la donación, en orden alfabético y sin avisos al terminar. Un interruptor en la consola permite dejarlo en solo el nombre si la asesoría desaconseja el logotipo.
+- En modo donación se mantienen los tres importes como opciones, sin mostrar en público los nombres Oro, Plata y Bronce.
+- Los textos para el comercio no prometen que la gestión de KORUM desgrava hasta que la asesoría lo confirme.
+- **A consultar con la asesoría:** si el agradecimiento con logotipo mantiene la donación como tal (y, con Ley 49/2002, si es donativo del art. 17 o convenio del art. 25); si el comercio puede deducir la gestión de KORUM y su IVA en modo donación.
+
+**Decisión 3 · Certificado fiscal y Modelo 182 (L-031, L-032): opción A, aprobada.**
+
+- El certificado fiscal solo está disponible cuando la campaña se consigue (meta alcanzada o redimensionamiento cerrado). Mientras tanto, *Mi cuenta* dice que estará disponible entonces. El justificante nominativo no cambia.
+- **Criterio del promotor para el ejercicio:** el donativo cuenta en el año en que la campaña se consolida, no en el del pago (quien paga en diciembre una campaña que se consigue en enero, deduce en el año de enero). Se construye así y **se envía a la asesoría como propuesta para que la confirme**.
+- Con ese criterio, el Modelo 182 de cada ejercicio recoge las campañas consolidadas en él y la declaración complementaria deja de hacer falta por este motivo (L-032 queda como mejora para correcciones).
+- Caso a cerrar en el sprint: una campaña conseguida que un contracargo reabre; propuesta, dejar sus certificados en suspenso hasta que vuelva a consolidarse.
+
+**Decisión 4 · Campaña vencida sin decisión de la entidad (L-113): opción A, aprobada.**
+
+- La entidad sigue decidiendo (devolver o votar un proyecto más pequeño) durante **14 días** desde el vencimiento. Si no decide, la plataforma devuelve el 100 % sola y avisa a quienes firman y a quienes aportaron; queda en la auditoría.
+- Si antes de los 14 días ya no da tiempo a votar (ventana de 90 días), la devolución automática se adelanta a ese momento.
+- Avisos a quienes firman 7, 3 y 1 días antes de la devolución automática.
+- Sustituye a «decide la entidad, no el cron» solo cuando la entidad calla. El plazo puede acortarse según lo que Paycomet responda sobre hasta cuándo se puede devolver un cobro.
+
+**Decisión 5 · Evento o rifa sin agotar el aforo (L-130): opción A, aprobada.**
+
+- **Taquilla:** un evento con entradas vendidas que llega a su fecha pasa a liquidable por lo vendido. Solo se devuelve el 100 % si la entidad lo cancela.
+- **Rifas:** se sortea en su fecha entre las papeletas vendidas, aunque no se agoten, y se liquida tras el sorteo. Si la entidad no sortea en los 14 días siguientes a esa fecha, se devuelve todo de forma automática (mismo criterio que la decisión 4).
+- Sin ninguna venta, la campaña se cierra sin dinero que mover.
+- A cerrar en el sprint: la pizarra de taquilla debe aclarar que el «neto garantizado para la entidad» es el neto si se vende todo el aforo.
+
+**Decisión 6 · Comercio cobrado que la entidad no modera (L-090): opción A, aprobada, ajustada a los dos modos.**
+
+- **Criterio del promotor:** el dinero de los comercios es una fuente importante para las entidades y para KORUM; su recorrido debe tener la menor fricción posible.
+- **Modo donación:** se acepta directamente, sin moderación; el dinero suma al proyecto al momento (y un cobro tardío se coloca con la regla de la entidad sin esperar). No hay dinero pendiente ni plazo que vigilar.
+- **Modo publicidad:** la entidad modera, porque responde de la publicidad que muestra. Si no decide en **14 días** desde el cobro, se trata como no admitido: se devuelve el 100 % de forma automática, con su rectificativa, y se avisa al comercio y a la entidad. Avisos a quienes firman 7, 3 y 1 días antes. Vale para cualquier comercio cobrado que espera moderación, no solo el que paga tarde.
+- En modo publicidad la entidad sube su factura **después** de admitir al comercio, para no tener que rectificarla si no lo admite.
+- A consultar con la asesoría: la donación de un comercio nunca se devuelve, así que sería firme desde el pago (a diferencia de la de una familia, que lo es al conseguirse la campaña).
+- **El dinero y el agradecimiento van separados (modo donación), aprobado:** el dinero entra directo. La entidad recibe siempre el aviso de qué comercio ha donado y cuánto. El agradecimiento público (nombre y logotipo) **solo aparece si la entidad lo activa** con un clic; si no lo activa, el comercio no aparece en ningún sitio público y el dinero no cambia. El texto del pago dice que la entidad «podrá agradecer públicamente» la aportación, sin prometerlo: es un gesto voluntario de la entidad, no algo que el comercio compra.
+
+**Decisión 7 · Renovación pagada dos veces y ampliaciones (L-089): opción A, aprobada, solo para el enlace del email de renovación.**
+
+- Solo existe en modo publicidad (en modo donación no hay renovación anual).
+- **Pago repetido desde el email de renovación:** el enlace deja de admitir pagos en cuanto la renovación está pagada y muestra hasta cuándo está renovado. Si aun así entra un segundo pago (dos personas a la vez), el email ofrece la devolución con un botón durante **14 días**; sale sola, con su rectificativa y sin el Super-Admin. Si el comercio no la pide, vale como renovación del año siguiente. El plazo depende de la respuesta de Paycomet.
+- **Ampliación (criterio del promotor):** un comercio que ya es comercio amigo y aporta de nuevo por su cuenta, fuera del email de renovación, no es un pago repetido: es una **ampliación**. Antes de pagar se le dice que ya es comercio amigo hasta su fecha, que esto es una ampliación y que su fecha de renovación no cambia. Como cualquier dinero de un comercio admitido, no se devuelve.
+- **Categoría:** las aportaciones se suman dentro del año del distintivo (Plata de 250 € que amplía con 250 € pasa a Oro de 500 € hasta su fecha de renovación).
+- **Sin nueva moderación:** el comercio ya fue admitido y su anuncio no cambia; el dinero entra directo, la entidad recibe el aviso y sube su factura por la ampliación.
+- **Renovación siguiente:** el email propone la categoría que el comercio tiene en ese momento y le deja elegir otra.
+- En modo donación no hay ampliación: una segunda donación es otra donación y entra directa.
+- A cerrar en el sprint: reconocer al mismo comercio dentro de la entidad (por NIF y email) y mostrarlo una sola vez en «Comercios amigos».
+
+**Decisión 8 · Auto-Impulso (L-022, L-023, L-070): opción A en los tres puntos, aprobada.**
+
+- **Siempre visible, sin importe (8a):** se quita la opción de ocultarlo (el ajuste `autoBoost.publicDisclosureDefault` y la elección en cada ejecución desaparecen). La ficha dice siempre «La plataforma KORUM también aportó y ayudó a conseguir el reto». El email a quienes donaron añade la frase cuando haya Auto-Impulso y pasa a decir «gracias a ti y a toda la comunidad». Cambia la decisión 8 de CUMPLIMIENTO §8 y la Regla 02 §7.
+- **Solo en campañas de presupuesto (8b):** se rechaza en taquilla y rifas y se oculta el 💎 en esas filas, hasta que el abogado lo valide.
+- **La entidad lo ve en privado (8c):** el justificante de liquidación y el expediente llevan la línea «Aportación de la plataforma KORUM» con su importe. En público sigue sin importe.
+- **Criterio a confirmar con la asesoría:** el Auto-Impulso es un **gasto comercial de KORUM, no una donación** (KORUM lo aporta solo cuando gana con ello y lo recupera si la campaña se reabre y vence, así que no es puro ni irrevocable). Sin certificado ni Modelo 182, que es lo que ya hace el código. Pregunta abierta: si es un gasto aparte o un descuento sobre la comisión de KORUM (cambia el IVA de la factura a la entidad).
+- **Decisión del promotor: se trata como gasto promocional**, y el aviso 💎 debe calcularse así para que la información sirva para decidir: el retorno es lo que KORUM ingresa de la campaña **sin IVA** (el IVA incluido de la decisión 1 se ingresa en Hacienda, no es de KORUM) menos la aportación entera (es un gasto sin IVA que recuperar) y menos el Auto-Impulso anterior recuperable. Ejemplo: comisión de 350,00 € con IVA incluido = 289,26 € de base; si faltan 300,00 €, el retorno es −10,74 € y el aviso **no** debe salir.
+- Sigue pendiente de Paycomet cómo se financia el reparto desde dinero propio de KORUM (bloquea los cobros reales).
+
+**Decisión 9 · Rifas: nombre del sorteo y números de reserva (L-095, L-128, L-131): opción A en los dos puntos, aprobada.**
+
+- **Nombre (9a):** «sorteo certificado» pasa a **«sorteo con acta verificable»** en castellano, catalán e inglés (FAQ, Estudio, panel, pase, cartel y documentación).
+- **Números de reserva (9b):** en el mismo sorteo salen los ganadores y, en orden, los números de reserva (3 por defecto; la entidad elige cuántos en el Estudio). Constan en el acta desde el primer momento. La ronda extra queda solo como último recurso si se agotan los reservas.
+- **Solo se sortean las papeletas vendidas y válidas, ni más ni menos** (criterio del promotor; el sorteo ya lo hace así): una rifa que no vende todos sus números se sortea entre los vendidos (decisión 5), y no puede haber más ganadores y reservas que papeletas vendidas.
+- **Plazo para reclamar el premio: 48 horas**, igual para todas las rifas. Si no se reclama, o la papeleta ganadora fue devuelta, el premio pasa al siguiente de la lista, que tiene sus propias 48 horas. El plazo debe verse claro y a tiempo: en la ficha, el cartel y las bases antes de comprar, y con día y hora exactos en el aviso a quien gana y en su pase.
+- **Cómo se reclama:** quien gana pulsa «Reclamar mi premio» desde el email o desde su pase; la entidad también puede marcarlo como reclamado si la persona se presenta en mano. Si en 48 horas no ocurre ninguna de las dos cosas, el premio pasa solo al siguiente reserva y se avisa a todos.
+- A consultar con el abogado: el plazo mínimo de reclamación y el encaje con la norma de rifas de cada comunidad autónoma (las rifas con dinero real dependen de esa respuesta).
+
+**Decisión 10 · Cambios globales de tarifas (L-056): opción A con los matices del promotor, aprobada.**
+
+- **Todo cambio de tarifas, mejore o empeore, entra en vigor a los 30 días** de guardarse. Nada se aplica al momento.
+- Solo vale para las campañas **publicadas después** de esa fecha; las que ya recaudan conservan sus condiciones.
+- La entidad ve las tarifas vigentes al montar una iniciativa nueva: la pizarra se calcula sola con ellas.
+- **Aviso a las entidades:** al guardar el cambio, el sistema envía solo un email a quienes firman por cada entidad y muestra un aviso en el Estudio durante los 30 días («A partir del [fecha] cambian las tarifas»). Nadie tiene que hacer nada a mano. La cláusula de modificación va en las condiciones de la entidad (L-001).
+- **Tarifas propias de una entidad:** si mejoran, valen al momento (se le conceden a ella); si empeoran (botón «Corregir tarifas en 1 clic»), entran en vigor a los 30 días y con aviso a esa entidad.
+- A cerrar en el sprint (hallazgo en el código): la compra de entradas lee hoy la tarifa **actual** de los «Gastos de gestión digital», no la de la publicación; para que una taquilla o rifa a la venta conserve sus condiciones hay que guardar su tarifa al publicarse.
+
+**Decisión 11 · Rastros de seguridad (L-064): opción A, aprobada.**
+
+- A los 12 meses, las filas de seguridad (intentos fallidos de entrar y accesos denegados) se desvinculan de la cuenta, con el mismo mecanismo que ya anonimiza la IP; la fila sigue para estadística.
+- Lo que mueve dinero o lleva firma se conserva 6 años, como hoy.
+
+**Puntos `R`: los 42, aprobados en bloque por el promotor (2026-11-17).**
+
+- Son L-006, L-009, L-013, L-014, L-017, L-033, L-034, L-043, L-047, L-051, L-052, L-055, L-062, L-063, L-065, L-066, L-068, L-069, L-074, L-075, L-077, L-085, L-086, L-094, L-099, L-101, L-105, L-106, L-109, L-110, L-117, L-118, L-120, L-122, L-125, L-126, L-127, L-133, L-135, L-136, L-139 y L-143.
+- Se dan por resueltos con el criterio del dictamen y salen de los paquetes del abogado y de la asesoría. La política de privacidad y las condiciones, donde muchos se reflejan, las revisa igualmente el abogado (L-001 y L-002).
+- Los cuatro de facturas (L-135, L-136, L-139 y L-143) se piden confirmar a la asesoría en una línea, ya que se le consulta de todos modos.
+- En L-062 y L-068 no se cambia nada: la entidad sigue viendo quién firmó por ella, y el aviso tras varios fallos de contraseña queda como mejora opcional.
+- **Borrador final de consulta** (abogado, asesoría fiscal, Paycomet y proveedor de Veri\*factu), con estas decisiones ya incorporadas: [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). Sustituye a los borradores por bloques del §5 de este documento.
+- Retoques pequeños que salen de estos puntos, para el Sprint 5.10: recordatorio en la consola de que el email directo no es para publicidad (L-051), «sin datos de personas» en la nota de precios (L-055) y el IBAN completo solo en la pantalla de firma (L-105). Frases para la política de privacidad (L-006, L-063, L-074, L-127) y cláusulas para las condiciones y el contrato de encargo (L-065, L-086, L-126): van en el paquete del abogado.
+
+**Revisión del borrador de consulta, por rondas (2026-11-17).** El promotor repasa cada pregunta del borrador para cerrar las que pueda decidir él.
+
+- **Regla del promotor para toda la revisión:** lo que él responde y necesita validación **lo valida él mismo cuando esté hecho**, no el abogado ni la asesoría, salvo que indique lo contrario y diga a quién. Si con su respuesta la pregunta se puede cerrar, se cierra y sale del borrador. Solo siguen fuera los datos que únicamente tiene un tercero (Paycomet o el proveedor de Veri\*factu).
+
+*Ronda 1 · abogado, paquete 1 (textos, contrato y datos personales). Las cinco preguntas quedan cerradas:*
+
+- **Textos legales (L-001):** los escribe el asistente a partir de lo que la aplicación hace de verdad (aviso legal, condiciones de uso, política de privacidad, política de cookies, primera capa de cada formulario y contrato de encargo), en una sesión propia, y **los valida el promotor con el asistente**. Salen del paquete del abogado. Se validan en castellano; el catalán y el inglés se traducen después.
+- **Desistimiento en Mi Hucha (L-016):** la familia tiene **derecho de desistimiento de 14 días** desde que activa la aportación mensual. Principio del promotor: **se devuelve la gestión cobrada a KORUM (0,25 €), nunca la donación**, que no es una compra y sigue la regla de la campaña (se devuelve si la campaña no se consigue). La devolución es automática al cancelar dentro del plazo, sin el Super-Admin. Tiene que quedar claro en las condiciones de uso (condiciones de la aportación mensual, cambio C-12), en el formulario y en el email de bienvenida. Para el sprint: contra-asiento del ingreso de la gestión y rectificativa de su factura simplificada.
+- **El mismo principio en la aportación voluntaria a KORUM del checkout:** durante 14 días desde el pago, la persona puede recuperarla con un enlace en su recibo, de forma automática y sin el Super-Admin; la donación no se toca. Se dice en las condiciones de uso. No alcanza a las entradas de un evento con fecha (excluidas del desistimiento, TRLGDCU art. 103.l; se avisa antes de pagar, cambio C-14) ni a las papeletas de rifa (juego de azar).
+- **Reparto de papeles (L-002, L-103, L-115):** el propuesto. KORUM es responsable de cuentas, pagos, antifraude y seguridad; la entidad es responsable de los datos de su comunidad y KORUM es su encargado, con un contrato que se acepta en el alta.
+- **Evaluación de impacto y plazos (L-019):** la escribe el asistente con el modelo de la AEPD, junto con la tabla única de plazos, y **la valida el promotor**. Sale del paquete del abogado.
+- **Copia de «mis datos» (L-067):** se da todo lo propio: los intentos fallidos de entrar en la cuenta (fecha y método) y los accesos denegados de la persona (fecha y tipo de acción), de los últimos 12 meses y sin identificadores internos de otras entidades. Queda **resuelto** y sale del borrador. Retoque para el Sprint 5.10 (hoy la descarga no incluye ningún rastro de seguridad).
+
+*Ronda 2 · abogado, paquete 2 (responsabilidad de KORUM frente a las entidades). Las tres preguntas quedan cerradas:*
+
+- **Firma única (L-046):** tres piezas. (1) La confirmación al activar añade «…y que este modo es conforme con los estatutos de la entidad y con lo que haya acordado su órgano de gobierno». (2) Cláusula en las condiciones de la entidad: KORUM ejecuta lo que firman las personas que la entidad designa, no verifica su poder de representación y no responde de una liberación firmada por ellas. (3) **Nuevo:** con firma única, cada liberación de dinero se avisa de forma automática al email general de la entidad, para que alguien más la vea. No se pide el acta del órgano de gobierno. Por la regla del promotor, sale del paquete del abogado; es el punto donde el asistente ve más riesgo residual (ninguna cláusula exime del todo frente a las familias).
+- **Cambios de tarifas (L-056):** las condiciones dirán que la entidad puede dejar la plataforma cuando quiera y sin coste, y que sus campañas en marcha terminan con las condiciones que tenían. Con eso, la pregunta sobre el derecho a darse de baja durante los 30 días desaparece. **Mensaje de valor que pide el promotor** (para la portada, la página de precios y las preguntas frecuentes, en el sprint de textos): se entra gratis y sin barreras, se sale cuando se quiere, y solo se paga cuando se usa la plataforma y se obtienen resultados.
+- **Accesibilidad (L-073):** KORUM es microempresa de servicios y está exenta (Directiva (UE) 2019/882, art. 4.5). Se mantiene la declaración voluntaria, con respuesta en 20 días hábiles y remisión genérica a las autoridades de consumo. Se revisa si KORUM llega a 10 personas empleadas o a 2 millones de euros al año.
+
+*Ronda 3 · abogado, paquete 3 (campañas vencidas, devoluciones y entradas). Las tres preguntas quedan cerradas:*
+
+- **Principio del promotor sobre dónde van las condiciones:** viven en los **términos y condiciones**, no en la zona de pago, para no emborronarla. En la zona de pago queda **una sola línea** junto al botón («Al pagar aceptas las condiciones», con enlace), que es lo mínimo para que las condiciones valgan (Ley 7/1998, arts. 5 y 7; TRLGDCU art. 97); con el pago se guarda la versión aceptada y el resumen de lo que aplica llega en el email del recibo (soporte duradero, TRLGDCU art. 98.7). Este principio sustituye a los textos largos antes del botón que proponían los cambios C-12 y C-14 y vale también para el desistimiento de Mi Hucha y de la aportación voluntaria (ronda 1).
+- **Campaña vencida y «devolución automática» (L-113):** el texto oficial del pago no cambia. El calendario (14 días para que la entidad decida y, si hay votación, 7 días para votar) se explica en las condiciones y en las preguntas frecuentes. **Nuevo:** el día del vencimiento se envía un email a cada persona que donó con la fecha exacta en que, como muy tarde, recupera su dinero (hoy ese día solo se avisa a quienes firman). El plazo puede acortarse con la respuesta de Paycomet sobre hasta cuándo se puede devolver un cobro.
+- **Entradas y rifas sin agotar el aforo (L-130):** las condiciones dirán que la entrada vale aunque no se llene el aforo, que las entradas de un evento con fecha no admiten desistimiento y que se devuelve el 100 % si el evento se cancela; y que la rifa se sortea entre las papeletas vendidas y se devuelve el 100 % si no se celebra en los 14 días siguientes a su fecha. La garantía de «si no se alcanza la meta» no aparece en entradas ni en rifas.
+- **Evento que cambia de fecha (nuevo):** quien no pueda ir recupera el 100 % con un enlace en el aviso del cambio, durante 14 días y de forma automática, sin el Super-Admin. Si no lo pide, su entrada vale para la nueva fecha. Va en las condiciones.
+
+*Ronda 4 · abogado, paquete 4 (comercios). Las cinco preguntas quedan cerradas:*
+
+- **Aceptación del comercio (L-076, L-088):** casilla obligatoria, solo en el pago de comercios, «He leído y acepto las condiciones para comercios», con enlace al texto versionado. Se guardan la versión y la fecha en la aportación y en cada renovación. Las condiciones siguen en su página, no en la zona de pago. Es la prueba de que el comercio aceptó que su dinero no se devuelve.
+- **Comercio admitido en modo publicidad (L-076) y renovación doble o ampliación (L-089):** ya decididos (decisiones 6 y 7); se cierran sin consulta.
+- **La entidad retira el anuncio antes de que acabe el año (L-091), criterio del promotor:** es un asunto entre la entidad y el comercio. KORUM ya ha hecho su trabajo de gestión y **no devuelve nada en ningún caso**, ni lo aportado ni su gestión, ni media entre ellos: si procede una devolución, la resuelven fuera de la plataforma. Motivo: la entidad puede haber dado publicidad fuera de la plataforma (eventos, cartelería) o haber llegado a otros acuerdos con el comercio que KORUM no conoce ni controla, y no asume esas responsabilidades. Se escribe así en las condiciones para comercios y en las condiciones para entidades.
+- **Declaración de la entidad para el modo publicidad:** basta la declaración de que puede facturar con IVA, registrada y con aviso a la otra persona firmante, sin certificado. Recordatorios automáticos a la entidad hasta que suba su factura al comercio.
+
+*Ronda 5 · abogado, paquete 5 (rifas). **Las rifas se retiran de la plataforma** (decisión del promotor del 2026-11-18, tras hablar con su abogado):*
+
+- **Motivo:** es una actividad muy regulada y perseguida, exige autorizaciones, daría problemas con la pasarela de pagos y, por transparencia y responsabilidad social, no encaja vender rifas, sorteos o loterías en un entorno escolar.
+- **Qué se hace:** se elimina todo rastro de las rifas y de sus funciones (papeletas numeradas, sorteo, acta, números de reserva, ronda extra, aviso normativo, textos, semilla, pruebas y documentación). La retirada de una función del prototipo queda aprobada de forma expresa por el promotor (Regla 01 §6).
+- **Qué deja sin efecto:** la decisión 9 entera (nombre del sorteo, números de reserva y 48 horas), la parte de rifas de la decisión 5 y de la ronda 3, y los puntos L-072, L-092, L-095, L-128 y L-131, además de la parte de rifas de L-020. Salen del borrador el paquete 5 del abogado y la pregunta de la asesoría sobre premios de más de 300 €.
+- **Qué las sustituye: «Vales y cupones»**, en un sprint propio. Vales de pago anticipado por productos de la entidad (tienda de comercio justo o de artículos del centro), sin numerar, con existencias limitadas o no a elección de la entidad, que se canjean con un lector móvil como las entradas. Sus gastos de gestión se configuran desde la consola del Super-Admin y su operativa es similar a la de las entradas. El detalle se decide con el promotor antes de escribir la ficha del sprint.
+- Se añade a la consulta de Paycomet una pregunta sobre la venta de vales.
+
+*Vales: definición acordada con el promotor (2026-11-18), para la ficha de su sprint:*
+
+- **Qué es un vale:** una unidad de canje, como la ficha de una feria. La entidad fija su precio; la persona compra los que quiera; en el puesto se cambian por lo que la entidad indique («pulsera = 1 vale, camiseta = 3 vales»). No van numerados. Sirve para una tienda de comercio justo, el acto de una ONG, la tienda de artículos del centro o el viaje de fin de curso.
+- **Quién vende y dónde se canjea:** vende siempre la entidad y el dinero solo le llega a ella. Se canjea en su puesto con el lector móvil y un PIN, como en la portería de las entradas. Si el puesto lo lleva una ONG o una tienda de comercio justo, la entidad le pasa el PIN y arregla cuentas con ella fuera de la plataforma.
+- **Existencias:** la entidad elige un tope de vales o ninguno. Puede activar que, al agotarse, se siga aportando «sin producto», con un aviso claro y sin vale ni QR.
+- **Fiscalidad:** con producto o sin él, se trata como una entrada: sin certificado y fuera del Modelo 182.
+- **Sin lista de artículos (criterio del promotor):** la entidad solo escribe un texto descriptivo de la venta (por ejemplo, «Paradita de bisutería africana para participar en la construcción de un pozo de agua, a través de la ONG»). No hay lista de canje ni antes de comprar, ni después, ni en el lector: lo que hay en el puesto se ve allí. Inventariar artículos sería mucho trabajo y fricción para la entidad.
+- **Lectura ágil:** un solo QR por compra, con su saldo de vales. Quien atiende lo lee una vez, ve cuántos vales quedan y teclea cuántos se gastan; se descuentan y el resto sigue en el mismo QR. Un vale no se puede gastar dos veces.
+- **Otros detalles:** precio único por vale en cada venta, sin lotes con descuento. El QR es al portador: lo gasta quien lo enseña. Si la entidad cancela, se devuelve el 100 % de los vales sin gastar; si cambia la fecha, vale la regla de las entradas (devolución a quien la pida en 14 días). KORUM no lleva existencias de artículos, solo el tope de vales si la entidad lo pone.
+- **Devolución:** durante 14 días, si no se ha gastado ningún vale de esa compra, se devuelve el 100 % con un clic y de forma automática. Pasado ese plazo, los vales son a fondo perdido: lo que no se gaste se queda en la entidad para su causa. La persona acepta las condiciones, que están en su página.
+- **Caducidad:** el vale es válido hasta la fecha que indique la entidad, sin máximo impuesto por la plataforma. La fecha se ve antes de comprar, y una semana antes se envía un recordatorio automático a quien aún tiene vales.
+- **Gastos de gestión digital:** mismo nombre que en las entradas y tarifa propia para vales en la consola del Super-Admin (fijo más porcentaje). La entidad elige si se suman al precio o van incluidos. Se aplican igual con producto o «sin producto».
+- **Liquidación:** al cerrar la venta, por lo vendido, pasados los 14 días de devolución. La venta dura como máximo 60 días.
+- **Nombre y orden:** «Vales». Dos sprints seguidos antes de los cobros reales: primero la retirada de las rifas y después los vales, en exclusiva.
+
+*Ronda 6 · abogado, paquete 6 (Auto-Impulso). Las dos preguntas quedan cerradas y **la parte del abogado se queda sin preguntas**:*
+
+- **Transparencia (L-022, L-070):** ya decidida (decisión 8a y 8c); se cierra sin consulta.
+- **Alcance (L-023):** el Auto-Impulso queda limitado **de forma definitiva** a las campañas con presupuesto. Ni entradas ni vales: desde que un evento se celebra con lo vendido (decisión 5), no tienen una meta que completar. La alerta 💎 no aparece en ellas.
+
+*Ronda 7 · asesoría fiscal, bloque A (ingresos de KORUM e IVA):*
+
+- **Se cierran sin consulta:** el IVA de los ingresos de KORUM (21 %, incluido en el precio; decisión 1); que no hay forma de aliviar el IVA a las entidades que no lo deducen (el precio ya lo lleva dentro y quien ingresa menos es KORUM); y la fecha de Veri*factu (BOE: antes del 1 de enero de 2027 para sociedades; se vuelve a comprobar al empezar su sprint).
+- **Factura a las familias (L-025):** un solo email. El recibo lleva los datos de la factura simplificada y un enlace para descargarla en PDF, sin adjuntos. El formato final se cierra en el sprint de Veri*factu.
+- **Auto-Impulso (L-070):** gasto promocional de KORUM, cerrado. No se plantea tratarlo como descuento en la comisión.
+- **Aportación voluntaria a KORUM: no sujeta a IVA, sin factura (opción B, aprobada tras la comprobación).** Cambia en este punto la decisión 1, que la incluía entre los ingresos con IVA. Condiciones que deben mantenerse: voluntaria, casilla desmarcada, importe libre desde 0 € y ninguna ventaja para quien la da. La devolución en 14 días se mantiene como gesto de KORUM cuando la persona la pide con el enlace de su recibo, no como derecho de desistimiento. En el Impuesto sobre Sociedades es un ingreso más. El promotor pidió comprobar cómo se trata la propina de una aplicación en marcha (Glovo). Resultado de la comprobación (2026-11-18, por resúmenes de bases de datos fiscales; no se pudo leer el texto original de las consultas): la DGT mantiene que las aportaciones **voluntarias y unilaterales, de importe libre y sin contrapartida pactada, no están sujetas a IVA** (consultas 2174-03, V2604-10 y V1808-22; sentencia Tolsma del TJUE, C-16/93). La V1808-22 es el caso más parecido: una web gratuita que recibe para sí misma donaciones voluntarias de apoyo. Aplicado a KORUM, la aportación voluntaria (casilla desmarcada, desde 0 €, «no cambia nada de tu donación») no llevaría IVA ni factura. El asistente rectifica su recomendación anterior («con IVA incluido») y recomienda no sujeta, manteniendo esas condiciones.
+
+*Ronda 8 · asesoría fiscal, bloque B (comercios). Las ocho preguntas quedan cerradas:*
+
+- **Agradecimiento en modo donación (L-137):** **solo el nombre** del comercio («Gracias a Ferretería Sol»), sin logotipo, y solo si la entidad lo activa. Cambia en esto la decisión 6, que admitía nombre y logotipo. Frontera entre modos: donación es nombre; publicidad es logotipo, categoría y anuncio.
+- **Donación de un comercio a una entidad con la Ley 49/2002 acreditada:** donativo (art. 17) con certificado y dentro del Modelo 182.
+- **Donación a una entidad sin esa ley:** aportación sin efectos fiscales, con justificante y no sujeta a IVA.
+- **Momento:** la donación de un comercio es firme desde el pago y cuenta en el año del pago, porque nunca se devuelve.
+- **Gestión de KORUM en modo donación:** ningún texto promete que sea deducible; el comercio recibe su factura completa y decide con su asesor.
+- **Modo publicidad:** patrocinio publicitario sujeto al 21 %, con el IVA de la entidad encima del importe elegido, factura de la entidad al comercio y devengo en el cobro. No habrá un tercer modo de «convenio de colaboración».
+- **Fondo de actividades (L-138, L-144):** el destino no cambia el tratamiento fiscal; el justificante de KORUM no es un documento fiscal.
+- **Obligaciones fiscales de la entidad** (Modelo 347, Impuesto sobre Sociedades): son suyas. Las condiciones lo dicen en una línea y KORUM no asesora.
+- **Contracargo de un comercio ya facturado (L-140):** si el banco indica fraude (el titular no autorizó el pago), la factura se anula de forma automática con una rectificativa; en cualquier otro caso se mantiene.
+
+*Ronda 9 · asesoría fiscal, bloques C y D (donativos de las familias y otros). Las siete preguntas quedan cerradas y **la parte de la asesoría se queda sin preguntas**:*
+
+- **Cuándo cuenta el donativo de una familia (L-031):** como en la decisión 3: el certificado se emite cuando la campaña se consigue y el donativo cuenta en ese año.
+- **Proyecto reducido por votación (L-114):** se mantiene la deducción; el certificado indica el proyecto final.
+- **Dinero que no llega a la entidad (L-050):** por un contracargo, ya lo resuelve la Regla 02 §7 (si la campaña ya se liquidó lo asume KORUM; si no, se descuenta de la hucha). Por pasar el plazo de reparto, depende de la respuesta de Paycomet, que ya está en su lista.
+- **Cuatro detalles de facturas de comercios (L-135, L-136, L-139, L-143):** aprobados en el bloque de los 42; ya no se piden confirmar.
+- **Colegios privados con ánimo de lucro (L-024):** se les admite **solo para entradas y vales**, que son ventas, y no para campañas de donación. Los colegios de fundaciones, congregaciones o cooperativas sin ánimo de lucro no se ven afectados.
+- **Modelo 182 (L-027):** lo comprueba el asistente campo a campo contra el diseño oficial vigente, en un sprint anterior a la primera campaña real con certificados. La prueba final es objetiva: que el entorno de pruebas de la Agencia Tributaria acepte un fichero con un caso de cada tipo; para subirlo hace falta una persona con certificado digital.
+
+*Ronda 10 · Paycomet y el dinero. Tres cambios de diseño para no depender de su respuesta; el resto son datos que solo tiene Paycomet y siguen en su lista:*
+
+- **Auto-Impulso sin mover dinero de KORUM (L-023):** KORUM no aporta dinero propio a la hucha: **cobra esa cantidad de menos al repartir** (compensación en el reparto). Ejemplo: comisión de 350 € y Auto-Impulso de 300 €; KORUM cobra 50 € y la entidad recibe exactamente lo mismo. Funciona siempre porque el Auto-Impulso solo se permite cuando es menor que lo que KORUM va a cobrar en esa campaña (`NOT_PROFITABLE`). En pantalla sigue contando como una aportación (Regla 02 §7), se sigue asentando como gasto promocional y la factura sigue siendo por la comisión entera. Desaparece la pregunta a Paycomet y deja de bloquear los cobros reales.
+- **Campaña conseguida que nadie liquida a tiempo (L-050):** cinco días antes de que venza la ventana de 90 días de un cobro, el sistema **entrega ese dinero de forma automática a la cuenta verificada de la propia entidad**, con aviso a quienes firman y registro de auditoría. Nunca a un proveedor. Vale también para el Fondo de actividades. La pregunta a Paycomet queda como red de seguridad.
+- **Pago directo al proveedor (L-104): se aplaza, con aprobación expresa del promotor** (Regla 01 §6). La plataforma sale repartiendo solo a la cuenta de la entidad (`PayoutDestination.ORGANIZATION`); la entidad paga a su proveedor con su propia transferencia y sigue adjuntando la factura. Cierra el mayor riesgo de la firma única (L-046): el dinero solo puede ir a una cuenta verificada a nombre de la entidad. El destino `PROVIDER` queda como mejora posterior si Paycomet lo ofrece con verificación del titular.
+- **Siguen en la lista de Paycomet**, con lo que se supone mientras tanto: retención hasta 90 días y reparto solo si se llega a la meta; un reparto por cobro; reparto desde otra campaña de la misma entidad; coste y plazo máximo de las devoluciones (se supone hasta 81 días tras el cobro; de aquí dependen los 14 días de espera); devoluciones parciales; alta y verificación de las entidades; contracargos y sus pruebas; y la venta de vales.
+
+*Ronda 11 · Paycomet técnico y proveedores de Veri\*factu (última):*
+
+- **Mi Hucha, apagada en el lanzamiento:** la plataforma sale con `hucha.mode = DISABLED` y el promotor la enciende desde su consola cuando Paycomet confirme los cobros mensuales. Sus siete preguntas siguen en la lista de Paycomet, pero **ya no bloquean los primeros cobros reales**. La pregunta sobre monederos con saldo se retira: KORUM no va a guardar saldo.
+- **Nombre de PAYCOMET (L-093), resuelto sin consulta:** se le menciona solo por su nombre en texto, nunca con su logotipo, y no se le pide autorización de redacción. Cambia en esto la Regla 03 §4, que pedía usar la redacción que Paycomet aprobase en el contrato.
+- **Veri\*factu (L-026):** se decide en su sprint, con las dos vías sobre la mesa: un proveedor (con coste por factura) o el envío directo a la Agencia Tributaria con el certificado digital de KORUM. Se piden ya los precios a los proveedores y el asistente estudia la vía directa al empezar el sprint.
+- **Brevo (L-061), resuelto sin consulta:** su documentación describe `GET /v3/account` como una lectura de los datos de la cuenta, sin coste.
+
+**Balance de la revisión por rondas (2026-11-17 y 2026-11-18).** De las 71 preguntas del borrador inicial: las del abogado (19) y las de la asesoría (21) quedan todas cerradas por el promotor; de Paycomet quedan 21 (12 bloquean los primeros cobros reales y 9 no) y de los proveedores de Veri\*factu quedan 8, que no bloquean hasta su sprint. El borrador final, ya renumerado, está en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). **Nada de esto está trasladado todavía** a CUMPLIMIENTO, a las Reglas 02 y 03, a AGENTS.md, al plan ni al registro de deuda: ese traslado necesita la aprobación del promotor.
+
+**Importes de comercios:** se quedan como hoy, ajustables por cada entidad en su panel dentro de los límites de la plataforma.
+
+**Veri\*factu: sprint propio, minucioso.**
+
+- Se cuenta con la obligación desde la primera factura real (1-1-2027), sin esperar al aplazamiento anunciado.
+- El proveedor se elige al empezar ese sprint, con una comparativa; por ahora, el sistema de facturación ante Hacienda será el del proveedor.
+- En la plataforma el emisor es siempre KORUM.
+- Hay que emitir todas las facturas que procedan y cuadrarlas al céntimo con el libro mayor; la rectificativa debe identificar la factura que corrige; la leyenda de la factura se ajusta a la frase que exige la norma.
+- **Domicilio fiscal del comercio:** se pide en el alta del comercio; va al siguiente sprint de correcciones (5.10).
+
 ## 4. Avisos de prudencia del propio dictamen
 
-- **Fecha de obligatoriedad de Veri\*factu:** el revisor fiscal cree que se aplazó al 1-1-2028 para sociedades, con confianza media. **Comprobar en el BOE.**
-- **«Orden HAC/1430/2025»**, citada en el código del Modelo 182 y en CUMPLIMIENTO: el revisor no puede confirmar que exista. **Comprobar** antes de enviarlo a la asesoría.
+- **Fecha de obligatoriedad de Veri\*factu (comprobada en el BOE el 2026-11-17):** el revisor fiscal creía que se había aplazado al 1-1-2028 para sociedades; **no es así**. La fecha vigente es **antes del 1 de enero de 2027** para los contribuyentes del Impuesto sobre Sociedades y antes del 1 de julio de 2027 para el resto (disposición final cuarta del RD 1007/2023, redactada por la disposición final primera del Real Decreto-ley 15/2025, de 2 de diciembre, BOE-A-2025-24446; el texto consolidado no tiene cambios posteriores). El aplazamiento a 2028 que Hacienda anunció en octubre de 2026 no está publicado. Donde el dictamen del §5 dice «1-1-2028» o atribuye el 1-1-2027 al RD 254/2025, vale esta nota.
+- **«Orden HAC/1430/2025» (comprobada en el BOE el 2026-11-17):** existe. Orden HAC/1430/2025, de 3 de diciembre (BOE núm. 298, de 12 de diciembre de 2025, BOE-A-2025-25389): modifica, entre otras, la Orden EHA/3021/2007 del Modelo 182 y redacta de nuevo el campo «Recurrencia donativos» (posición 132 del registro de tipo 2); se aplica desde las declaraciones del ejercicio 2025. La cita del código y de CUMPLIMIENTO es correcta y la regla programada (`isRecurrentDonor`) coincide con esa redacción: el cambio 9 de la lista fiscal queda sin objeto.
 - Los duplicados circulares sobre imágenes con menores (L-008, L-044, L-119) se resuelven dejando **L-008** como punto principal.
 - Fuera de lo legal: al desactivar `publicIndexing` no se avisa a IndexNow (anotado en el registro de deuda).
 
