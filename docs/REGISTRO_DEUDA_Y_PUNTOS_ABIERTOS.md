@@ -24,10 +24,10 @@
 
 ## 2. Resumen en cifras (2026-11-18)
 
-- **48 puntos:** P1–P26 (P10 está hecho y P16 no se usó: 24 vivos, con P2 partido en cuatro) y **N1–N22**, más los sprints 6.1 y 6.2.
+- **48 puntos:** P1–P26 (P10 está hecho, P25 decidido en la SESIÓN D1 y P16 no se usó: 23 vivos, con P2 partido en cuatro) y **N1–N22**, más los sprints 6.1 y 6.2.
 - **144 puntos legales y fiscales** (`L-001`–`L-144`, [Anexo A](#anexo-a--los-144-puntos-legales-y-fiscales-uno-a-uno)): **92 resueltos o decididos** por el promotor y **52 abiertos**. De los abiertos, **48 son cambios pequeños en la aplicación**, cada uno con su sprint; **3 dependen de Paycomet** (`L-041`, `L-061`, `L-071`) y **1 de Veri\*factu** (`L-026`).
 - **Consultas a terceros:** a Paycomet, **21 preguntas** (12 bloquean los primeros cobros reales); a los proveedores de Veri\*factu, **8** (no bloquean hasta su sprint); al abogado, **1**, y a la asesoría, **3**, que no bloquean nada (N20). Están redactadas en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md).
-- **Trabajo de código hasta la preproducción:** 30 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 160 y 202 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
+- **Trabajo de código hasta la preproducción:** 30 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 162 y 204 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
 - **Lo que el código todavía no aplica** (decidido, pendiente de construir): la retirada de las rifas (5.12), los vales (5.14), los comercios en dos modos (5.16), el IVA incluido (5.20), el Auto-Impulso siempre visible y compensado en el reparto (5.21), la liquidación solo a la entidad (5.19) y Mi Hucha apagada (5.15).
 - **Verificado en el código el 2026-11-17 y aún sin hacer:** no hay trámite para cambiar el email ni autoría de las consultas; no existen las páginas públicas de los textos legales; no se registra la aceptación del contrato de encargo en el alta; **no hay baja de la entidad** (verificado el 2026-11-18: nada escribe `Organization.archivedAt`; N22); la analítica no está conectada; no hay protección contra la indexación de la preproducción; `docs/MANUAL_OPERACION.md` no existe.
 
@@ -65,7 +65,7 @@
 | **P22** | Higiene de claves: rotar la clave de Stitch | 🟠 | Promotor | Gestión del promotor, **hoy** |
 | **P23** | Verificación de la deuda heredada | 🟡 | Claude | Sprint 5.10c |
 | **P24** | Monedero con saldo de Mi Hucha | — | — | **Descartado** (2026-11-18): KORUM no guardará saldo. El modo se retira del código en el Sprint 5.24b |
-| **P25** | Decisiones pequeñas que quedan (5) | 🟠 | Promotor | SESIÓN D1 |
+| **P25** | Decisiones pequeñas que quedan (5) | — | Promotor | **Decidido** en la SESIÓN D1 (2026-11-18): lo que trae de código va al 5.24a (soporte) y al 5.24b (guía sin Gemini); casilla de Mi Hucha en el 6.1b |
 | **P26** | Deuda menor y cosmética | 🟢 | Claude | Sprint 5.24b (la tarifa guardada de la taquilla, en el 5.18) |
 | **6.1** | Preproducción, con las 11 casillas de DECISIONES §8 | 🔴 | Claude + Promotor | Sprints 6.1a, 6.1b y 6.1c |
 | **6.2** | Piloto con 3 entidades | — | Mixto | Sprint 6.2 |
@@ -135,7 +135,7 @@
 | Entorno de pruebas de Paycomet, página de pago, Bizum, `AuthCode`, borrado de tarjetas, email real, SPF, DKIM y DMARC | Sprint 6.1b |
 | Search Console, Bing, IndexNow, tarjetas, cámara y audio en móviles reales, manual de operación y simulacro | Sprint 6.1c |
 
-**Mejoras posteriores, fuera del alcance hasta el piloto** (no son deuda: no se construyen salvo decisión expresa): el pago directo al proveedor (`PROVIDER`, con `L-100`, `L-104` y `L-105`), si Paycomet lo ofrece con verificación del titular; un adaptador SMTP además de Brevo; fotografías reales de ambiente, si se decide en la SESIÓN D1.
+**Mejoras posteriores, fuera del alcance hasta el piloto** (no son deuda: no se construyen salvo decisión expresa): el pago directo al proveedor (`PROVIDER`, con `L-100`, `L-104` y `L-105`), si Paycomet lo ofrece con verificación del titular; un adaptador SMTP además de Brevo; fotografías reales de ambiente (la SESIÓN D1 decidió que bastan las ilustraciones; se vuelve a mirar al cerrar el piloto).
 
 ---
 
@@ -196,18 +196,18 @@ Lo técnico que es mejor tener hecho antes de tocar infraestructura real.
 La bitácora del Sprint 3.9 recoge que la línea de comandos de un proceso `mcp-remote` de **Stitch** muestra una **clave de API en claro**: conviene rotarla. No consta que se hiciera. Si ya no usas Stitch, retirarlo. Revisar de paso qué otras claves se han escrito en conversaciones (la bitácora cita una clave de la base local «dada en la sesión»: es de una base local, pero conviene cambiarla si el equipo sale de casa).
 - **Destino:** gestión del promotor, hoy.
 
-### P25 · SESIÓN D1 · Decisiones pequeñas que quedan · 🟠 · S · Promotor
-Una sesión corta, con el formato «qué pasa hoy, ejemplo, opciones, recomendación»:
-1. **Gestión de Mi Hucha frente al coste de la pasarela:** con los valores por defecto (0,25 € de gestión; pasarela 1 % + 0,09 €) el aviso ya es crítico desde unos 16–25 € al mes. Como Mi Hucha sale apagada, puede dejarse para cuando se encienda, con los precios reales de P1.
-2. **¿Puede el Super-Admin intervenir en la portería?** Hoy no entra ni crea PIN. *Destino: Sprint 5.13.*
-3. **Chat de soporte del centro:** hoy no puede contestar dos veces ni reabrir una consulta resuelta. *Destino: Sprint 5.24a.*
-4. **Fotografías de ambiente:** se sustituyeron por ilustraciones vectoriales. Decidir si bastan o si se usarán fotos reales de las entidades piloto (con permisos y sin menores identificables).
-5. **Revisión cruzada con otro modelo:** si se quiere, y en qué sprints.
+### P25 · SESIÓN D1 · Decisiones pequeñas que quedan · decidido (2026-11-18) · Promotor
+Una sesión corta, con el formato «qué pasa hoy, ejemplo, opciones, recomendación». **Decididas las cinco el 2026-11-18** (lo decidido va al final de cada punto):
+1. **Gestión de Mi Hucha frente al coste de la pasarela:** con los valores por defecto (0,25 € de gestión; pasarela 1 % + 0,09 €) el aviso ya es crítico desde unos 16–25 € al mes. Como Mi Hucha sale apagada, puede dejarse para cuando se encienda, con los precios reales de P1. **Decidido:** se deja para cuando se encienda (casilla en el 6.1b). Principio del promotor: **toda comisión de la plataforma se ajusta desde la consola del Super-Admin**; la gestión de Mi Hucha ya lo hace (fijo + %, «Motor de reglas globales»), igual que tramos, mantenimiento, gastos de gestión digital, gestión de comercios y pasarela; la tarifa de los vales se añade en el 5.14a.
+2. **¿Puede el Super-Admin intervenir en la portería?** Hoy no entra ni crea PIN. **Decidido:** se queda así (ya aprobado en `L-125`), también en el puesto de canje de vales (5.14c). Nada que construir.
+3. **Chat de soporte del centro:** hoy no puede contestar dos veces ni reabrir una consulta resuelta. **Decidido:** conversación corta mientras la consulta está abierta (unos 5 mensajes por lado) y reabrir durante 14 días, en la bandeja del centro y en la de KORUM. *Destino: Sprint 5.24a* (pasa de 4–6 h a 6–8 h).
+4. **Fotografías de ambiente:** se sustituyeron por ilustraciones vectoriales. Decidir si bastan o si se usarán fotos reales de las entidades piloto (con permisos y sin menores identificables). **Decidido:** bastan las ilustraciones; se vuelve a mirar al cerrar el piloto (6.2).
+5. **Revisión cruzada con otro modelo:** si se quiere, y en qué sprints. **Decidido:** solo Claude, con un auditor de otro modelo de Claude, más las revisiones externas (P6 y P7). La guía de IA deja de proponer Gemini como revisión cruzada (Sprint 5.24b, con P8).
 
 **Ya decididas y fuera de esta lista:** el evento de taquilla que llega a su fecha sin agotar el aforo (decisión 30), el aviso por email al cambiar una tarifa global (decisión 34) y el Auto-Impulso en taquilla (decisión 33).
 
 ### P15 · Entidades piloto y su acuerdo · 🟠 · M · Promotor
-El 6.2 necesita **3 entidades reales con KYB real**. Incluye: elegir cuáles (un colegio, un club y una entidad cultural si se quiere probar las tres verticales), acuerdo de piloto (qué se promete, qué no, duración, soporte), contrato de encargo aceptado (sale de la SESIÓN T1), alta acompañada, **primera campaña de presupuesto y primera taquilla o venta de vales** (ya sin rifa), y qué se mide (depende del Sprint 5.26). También fotos reales si se decide así en la SESIÓN D1.
+El 6.2 necesita **3 entidades reales con KYB real**. Incluye: elegir cuáles (un colegio, un club y una entidad cultural si se quiere probar las tres verticales), acuerdo de piloto (qué se promete, qué no, duración, soporte), contrato de encargo aceptado (sale de la SESIÓN T1), alta acompañada, **primera campaña de presupuesto y primera taquilla o venta de vales** (ya sin rifa), y qué se mide (depende del Sprint 5.26). Al cerrarlo se vuelve a mirar si se usan fotos reales de ambiente (SESIÓN D1: de momento bastan las ilustraciones).
 
 ### P12 · Revisión crítica de producto · 🟡 · M · Claude *(punto pedido por el promotor)*
 Un repaso crítico de toda la aplicación **poniéndolo todo en cuestión** para proponer mejoras de negocio, control, automatismos, simplificación de UX, textos y diseño. Entrega: informe con una tabla común (pantalla o flujo, problema o idea, impacto en negocio, esfuerzo, riesgo, recomendación) y una propuesta de qué entra y en qué sprint. **Va antes de P13, P5 y P11** porque sus conclusiones los alimentan. Lo ejecutan, con contexto separado, `ux-school-director-reviewer` y `korum-community-target-psychologist`, y lo sintetizo yo; después tú decides qué entra.
@@ -255,7 +255,7 @@ Algunas deudas de sprints antiguos se movieron de ficha en ficha y no sé si sig
 - **Destino:** Sprint 5.10c.
 
 ### P8 · Imágenes y animaciones las hace Claude · 🟢 · S · Claude
-Decidido el 2026-11-16. Falta ejecutar: actualizar la guía de IA §5, la Regla 04 §3.4, `CLAUDE.md`, la skill de marca y las fichas del plan que citan Gemini («Gemini Argon» para revisión de nativo y 6.1, «Gemini Flash» como alternativa de modelo; hay 53 menciones repartidas en `AGENTS.md`, la Regla 04, el plan y la guía), y ejecutar `node scripts/sync-ai-context.mjs`. Límite honesto: Claude no genera fotografías ni ilustraciones en mapa de bits (ver P25.5).
+Decidido el 2026-11-16. Falta ejecutar: actualizar la guía de IA §5, la Regla 04 §3.4, `CLAUDE.md`, la skill de marca y las fichas del plan que citan Gemini («Gemini Argon» para revisión de nativo, revisión cruzada y 6.1, «Gemini Flash» como alternativa de modelo; la revisión cruzada con Gemini la descartó el promotor en la SESIÓN D1; hay 53 menciones repartidas en `AGENTS.md`, la Regla 04, el plan y la guía), y ejecutar `node scripts/sync-ai-context.mjs`. Límite honesto: Claude no genera fotografías ni ilustraciones en mapa de bits (ver P25.5).
 - **Destino:** Sprint 5.24b.
 
 ### 6.1 · Preproducción · 🔴 · L · Claude + Promotor · Sprints 6.1a, 6.1b y 6.1c

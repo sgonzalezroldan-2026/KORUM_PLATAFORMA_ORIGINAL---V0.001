@@ -20,6 +20,22 @@
 
 ## Entradas
 
+### SESIÓN D1 — Decisiones pequeñas que quedan (P25) · 2026-11-18 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (la ficha recomienda Sonnet 5.5 · medio; el promotor abrió la sesión con Opus y, como no se escribe código, se siguió con él). Sin auditores: la ficha no los pide.
+- **Duración:** estimada, 1 h con el promotor; real, menos de una hora.
+- **Qué se ha hecho:** antes de preguntar, se comprobó en el código cómo funciona hoy cada punto: gestión de Mi Hucha (`GlobalConfig.topupFeeCents` = 25, `topupFeeBps` = 0; pasarela 1 % + 0,09 €; aviso `HUCHA_FEE_BELOW_GATEWAY_COST` en `src/core/finance/pricing-health.ts`), acceso a la portería (`enterGateAction`, solo con el enlace y el PIN; `L-125` ya resuelto el 2026-11-17), bandeja de soporte (`planTicketAnswer`: una respuesta y un estado que solo avanza), ilustraciones de `src/components/marketing/illustrations.tsx` y los modelos de los agentes (`.agents/agents/*.md`). Después se plantearon las cinco al promotor con el formato «qué pasa hoy, ejemplo, opciones, recomendación».
+- **Decisiones del promotor:**
+  1. **Mi Hucha frente a la pasarela:** se deja para cuando se encienda Mi Hucha, con los precios reales de la pasarela. **Principio del promotor:** toda comisión de la plataforma se ajusta desde la consola del Super-Admin. Comprobado: la gestión de Mi Hucha ya se ajusta en «Motor de reglas globales» (fijo + %), igual que tramos, mantenimiento, gastos de gestión digital, gestión de comercios y pasarela; la tarifa de los vales se añade en el 5.14a. Casilla nueva en la ficha del 6.1b: fijar la gestión y resolver el aviso crítico antes de encenderla (con los valores por defecto, KORUM pierde desde unos 16 € al mes, y desde unos 12 € con el IVA dentro).
+  2. **Super-Admin en la portería:** se queda como está (no entra ni crea PIN), también en el puesto de canje de vales. Anotado en las fichas del 5.13 y del 5.14c; nada que construir.
+  3. **Chat de soporte:** conversación corta (unos 5 mensajes por lado, con aviso por email en cada respuesta) y reabrir durante 14 días, en la bandeja del centro y en la de KORUM. Va al Sprint 5.24a, que pasa de 4–6 h a 6–8 h, con `QA-LEG07` ampliado; el plazo de conservación de 2 años corre desde la última vez que se resuelve (la tabla de plazos §3.5 se ajusta en ese sprint).
+  4. **Fotografías de ambiente:** bastan las ilustraciones; se vuelve a mirar al cerrar el piloto (6.2).
+  5. **Revisión cruzada con otro modelo:** solo Claude, con un auditor de otro modelo de Claude, más las revisiones externas (P6 y P7). La guía de IA deja de proponer Gemini como revisión cruzada en el 5.24b, junto con P8.
+- **Documentos al día:** [plan](PLAN_IMPLEMENTACION_ATOMICO.md) (D1 marcada; fichas 5.13, 5.14c, 5.24a, 5.24b y 6.1; orden de trabajo y total: 162–204 h), [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md) (P25 decidido, P8, P15 y mejoras posteriores) y [criterios de aceptación](QA_ACCEPTANCE_CRITERIA.md) (`QA-LEG07`).
+- **Pendiente / deuda:** ninguna nueva. Todo lo que trae de código tiene sprint (5.24a, 5.24b y la casilla del 6.1b).
+- **Puertas:** sesión sin código. P1 (invariantes y coherencia documental) ✅; P2–P5 no aplican.
+- **Siguiente sprint:** 5.12a · Retirada de las rifas: motor, datos y pruebas · Claude Opus 5.5 · esfuerzo alto · 5–7 h.
+
 ### SESIÓN T1 — Textos legales · segunda entrega (contrato de encargo, evaluación de impacto, plazos y registro de actividades) · 2026-11-18 · terminado (validada por el promotor el mismo día)
 
 - **Modelo y esfuerzo usados:** Claude Fable 5.2 · esfuerzo alto, como recomienda la ficha. Revisión: `korum-legal-fiscal-prereviewer` y `korum-community-target-psychologist`, cada uno en su contexto. Sesión solo de documentos: no se ha tocado código, esquema, semilla, catálogos ni pruebas.
