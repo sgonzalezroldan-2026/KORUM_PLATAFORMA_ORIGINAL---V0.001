@@ -1,6 +1,6 @@
 # Aviso legal
 
-> **Documento:** `aviso-legal` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `aviso-legal` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **Se publica en:** `/aviso-legal` (Sprint 5.10a). Los datos entre dobles corchetes los rellena el promotor (P14) y salen del ajuste `platform.company` de la consola. Las notas de este recuadro no forman parte del texto publicado.
 
 ---
@@ -51,7 +51,7 @@ Si ves en la plataforma un contenido que crees ilícito (por ejemplo, una imagen
 
 Te confirmaremos que lo hemos recibido, lo revisará una persona y te diremos qué hemos decidido. **Si una imagen muestra a un menor reconocible y su familia pide retirarla, se retira en un máximo de 72 horas desde el aviso.**
 
-### 4.2 Si retiramos un contenido
+### 4.2 Si retiramos un contenido o suspendemos una cuenta
 
 Cuando retiramos un contenido o suspendemos una cuenta, se lo comunicamos a quien lo publicó, con el motivo y con las vías para impugnar la decisión (pedirnos que la revise una persona, acudir a un servicio de resolución de conflictos fuera de los tribunales o acudir a los tribunales), salvo que la ley no lo permita.
 

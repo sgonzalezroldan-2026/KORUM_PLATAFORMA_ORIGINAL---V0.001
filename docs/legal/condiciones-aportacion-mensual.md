@@ -1,6 +1,6 @@
 # Condiciones de la aportación mensual (Mi Hucha)
 
-> **Documento:** `condiciones-aportacion-mensual` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-aportacion-mensual` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que activan una aportación mensual a una entidad.
 > **Cuándo se publica:** Mi Hucha sale apagada en el lanzamiento. Este texto se publica cuando el promotor la encienda (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 

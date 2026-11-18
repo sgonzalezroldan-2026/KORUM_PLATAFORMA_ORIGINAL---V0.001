@@ -1,6 +1,6 @@
 # Condiciones de uso de KORUM
 
-> **Documento:** `condiciones-generales` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-generales` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** familias, socios, vecinos y cualquier persona que aporta, compra, firma una idea o escribe a soporte.
 > **Se publica en:** `/condiciones` (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 

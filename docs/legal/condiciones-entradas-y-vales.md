@@ -1,6 +1,6 @@
 # Condiciones de entradas y vales
 
-> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que compran entradas para un evento o vales de una entidad.
 > **Se acepta en:** el pago, con la casilla obligatoria «He leído y acepto las condiciones de entradas y vales» y su ventana de resumen (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 

@@ -1,8 +1,8 @@
 # Política de privacidad
 
-> **Documento:** `privacidad` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `privacidad` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** todas las personas que usan KORUM: familias, socios, comercios, firmantes de entidades y voluntarios.
-> **Se publica en:** `/privacidad` (Sprint 5.10a). Los plazos de conservación se resumen aquí; la tabla completa se cierra en la segunda entrega de la SESIÓN T1. Las notas de este recuadro no forman parte del texto publicado.
+> **Se publica en:** `/privacidad` (Sprint 5.10a). Los plazos de conservación se resumen aquí; la tabla completa, que manda, es [tabla-de-plazos.md](tabla-de-plazos.md) (documento interno). Las notas de este recuadro no forman parte del texto publicado.
 
 ---
 
@@ -19,7 +19,7 @@
 
 ### 2.1 KORUM
 
-**[[RAZÓN SOCIAL]]**, con NIF [[NIF]] y domicilio en [[DOMICILIO SOCIAL]] («KORUM»), es **responsable** del tratamiento de los datos de las cuentas de usuario, los pagos, la prevención del fraude y la seguridad de la plataforma.
+**[[RAZÓN SOCIAL]]**, con NIF [[NIF]] y domicilio en [[DOMICILIO SOCIAL]] («KORUM»), es **responsable** del tratamiento de los datos de las cuentas de usuario, los pagos, la prevención del fraude y la seguridad de la plataforma, y de los datos de contacto de las personas que firman por cada entidad, en lo que necesita para su relación con ella.
 
 Para cualquier asunto de privacidad: **[[EMAIL DE PRIVACIDAD]]**.
 
@@ -27,7 +27,7 @@ Para cualquier asunto de privacidad: **[[EMAIL DE PRIVACIDAD]]**.
 
 Dicho en sencillo: **KORUM se ocupa de tu cuenta, de tus pagos y de la seguridad; la entidad se ocupa de su comunidad**, y KORUM le presta la tecnología.
 
-En términos legales, cada entidad (el AMPA o AFA, el colegio, el club o la entidad cultural) es **responsable** de la gestión de su propia comunidad dentro de la plataforma: la moderación de las ideas, sus mensajes con las familias, los datos de las personas que firman por ella y de sus voluntarios, las imágenes que publica y los certificados fiscales que emite. En esos tratamientos KORUM actúa como **encargado**: trata los datos por cuenta de la entidad y siguiendo sus instrucciones, con un contrato que la entidad acepta al darse de alta.
+En términos legales, cada entidad (el AMPA o AFA, el colegio, el club o la entidad cultural) es **responsable** de la gestión de su propia comunidad dentro de la plataforma: la moderación de las ideas, sus mensajes con las familias, quién firma por ella y los datos de sus voluntarios, las imágenes que publica y los certificados fiscales que emite. En esos tratamientos KORUM actúa como **encargado**: trata los datos por cuenta de la entidad y siguiendo sus instrucciones, con un contrato que la entidad acepta al darse de alta.
 
 En la práctica no tienes que distinguir a quién dirigirte: puedes ejercer tus derechos ante KORUM y, si la petición corresponde a la entidad, se la trasladamos.
 
@@ -107,8 +107,8 @@ Los datos del comercio (nombre comercial, razón social, NIF, domicilio fiscal) 
 
 ### 3.9 Si firmas por una entidad
 
-- Tu nombre, email, teléfono y cargo, para gestionar la entidad y avisarte de lo que requiere tu firma. Base legal: el contrato con la entidad (art. 6.1.b).
-- El documento de identidad de quien representa a la entidad, junto con el resto de la documentación del titular, para comprobar que la entidad existe y puede recibir pagos. **Solo lo ven quien lo sube y el equipo de KORUM**, y cada vez que se abre queda registrado. Si lo sube otra persona, te avisamos por email de que lo ha hecho y de dónde está esta política. Base legal: ejecución del contrato con la entidad y obligaciones legales ligadas a los pagos.
+- Tu nombre, email, teléfono y cargo, para gestionar la entidad y avisarte de lo que requiere tu firma, de los cambios del servicio y de las facturas. Base legal: el interés legítimo de KORUM y de la entidad en mantener su relación a través de las personas que la representan (art. 6.1.f del RGPD y art. 19 de la LOPDGDD).
+- El documento de identidad de quien representa a la entidad, junto con el resto de la documentación del titular, para comprobar que la entidad existe y puede recibir pagos. **Solo lo ven quien lo sube y el equipo de KORUM**, y cada vez que se abre queda registrado. Si lo sube otra persona, te avisamos por email de que lo ha hecho y de dónde está esta política. Base legal: el interés legítimo en entregar el dinero solo a quien corresponde, en evitar el fraude y en cumplir lo que pide PAYCOMET para dar de alta a la entidad (art. 6.1.f).
 - Cada firma y cada decisión queda en el registro de actividad de la entidad.
 
 **Si te han invitado a firmar,** tu nombre y tu email nos los ha dado la persona de la entidad que te invita, para que puedas ocupar ese cargo. Si no aceptas la invitación, se borran a los 30 días.
@@ -178,12 +178,14 @@ Tus datos se alojan en la Unión Europea. Algunos de los proveedores anteriores 
 | Firmas de ideas y mensajes sobre una idea | Mientras dure la idea y 1 año más |
 | Consultas de soporte | 2 años desde que se resuelven |
 | Cookie de dispositivo del buzón de ideas | 13 meses |
-| Códigos creados a partir de la conexión y del navegador | 12 meses |
+| Códigos creados a partir de la conexión | 12 meses |
+| Código que identifica tu navegador, si lo aceptaste | Hasta 12 meses después de la última vez que usas ese dispositivo en el buzón de ideas, o hasta que retires tu permiso |
 | Rastros de seguridad (intentos fallidos y accesos denegados) | A los 12 meses dejamos de poder relacionarlos con tu cuenta |
 | Registro de auditoría de lo que mueve dinero o lleva firma | 6 años |
+| Tus firmas por una entidad y tu aportación mensual | Siguen unidas a tu cuenta mientras exista: las firmas no se pueden cambiar y la aportación mensual es tu historial. Al suprimir la cuenta quedan sin nada que te identifique |
 | Contenido de los emails que te enviamos | 12 meses |
 | Consentimientos | Mientras estén vigentes y 3 años más |
-| Voto en una votación de proyecto | Al año de cerrarse la votación borramos el email unido al voto |
+| Voto en una votación de proyecto | Al año de cerrarse la votación borramos el email copiado en el voto. El voto sigue unido a tu aportación mientras esta se conserve, solo para poder demostrar qué elegiste si reclamas tu dinero |
 | Registro de accesos de una entrada o de canjes de un vale | 1 año desde que se liquida el evento o la venta |
 | Nombre que un voluntario da a su móvil | 90 días desde que caduca su sesión |
 | Datos de un comercio que empezó un pago y no lo completó | 30 días |

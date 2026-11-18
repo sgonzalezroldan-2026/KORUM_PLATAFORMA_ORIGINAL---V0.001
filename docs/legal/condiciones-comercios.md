@@ -1,6 +1,6 @@
 # Condiciones para comercios
 
-> **Documento:** `condiciones-comercios` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-comercios` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** comercios, empresas y profesionales que apoyan a una entidad.
 > **Se acepta en:** el pago del comercio, con la casilla obligatoria «He leído y acepto las condiciones para comercios» y su ventana de resumen (Sprint 5.16b), y en cada renovación. Las notas de este recuadro no forman parte del texto publicado.
 
@@ -71,7 +71,7 @@ La publicidad te la presta la entidad. Por eso es ella quien te emite la factura
 
 - **Tu patrocinio no se devuelve**, ocurra lo que ocurra con la campaña que elegiste (punto 7).
 - **El cartel.** Puedes exhibirlo mientras tu distintivo esté vigente; la fecha va impresa en él. **Retíralo cuando caduque** o si dejas de ser comercio amigo: a partir de ese momento ya no puedes usar el nombre de la entidad.
-- **Si la entidad retira tu anuncio antes de que acabe el año**, KORUM no devuelve nada, ni tu aportación ni su gestión, y no media entre vosotros. KORUM no conoce ni controla lo que la entidad y tú hayáis acordado, ni la publicidad que te haya dado fuera de la plataforma. Lo que proceda lo resolvéis directamente con la entidad.
+- **Si la entidad retira tu anuncio antes de que acabe el año**, KORUM no devuelve nada, ni tu aportación ni su gestión, y no media entre vosotros. KORUM no conoce ni controla lo que la entidad y tú hayáis acordado, ni la publicidad que te haya dado fuera de la plataforma. Lo que proceda lo resolvéis directamente con la entidad. Lo mismo vale si la entidad se da de baja en KORUM o si KORUM la suspende o la cierra: tu anuncio puede dejar de verse, y KORUM no devuelve nada ni media.
 
 ### 5.4 Ampliar tu apoyo
 

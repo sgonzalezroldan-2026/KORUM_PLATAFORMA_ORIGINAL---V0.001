@@ -1,6 +1,6 @@
 # Aceptación de las condiciones y primera capa de privacidad de cada formulario
 
-> **Documento:** `primeras-capas` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `primeras-capas` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **Qué es:** los textos cortos que acompañan a cada formulario. No son páginas: van a los catálogos `messages/{es,ca,en}.json` en los sprints que se indican (5.10a, 5.15, 5.16b, 5.10c y 5.24a).
 > **Criterio (decisión 48 del promotor, 2026-11-18, que cambia la 39):** en todo pago hay una **casilla obligatoria**, desmarcada, con la que la persona acepta las condiciones de forma expresa. Al pulsar sobre «las condiciones» se abre una **ventana con el resumen** de lo que acepta y de lo que se hace con sus datos, con el enlace al texto completo. Junto al botón no hay avisos legales largos. Los formularios que no son un pago llevan una línea y un desplegable.
 

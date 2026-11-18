@@ -1,6 +1,6 @@
 # Política de cookies
 
-> **Documento:** `cookies` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `cookies` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **Se publica en:** `/cookies` (Sprint 5.10a). Comprobada contra el código el 2026-11-18 (`auth-config.ts`, `device-signals.ts`, `gate-cookie.ts`, `cookies.ts`, `routing.ts` y el almacenamiento del navegador). Si se añade una cookie, este texto se actualiza en el mismo sprint. Las notas de este recuadro no forman parte del texto publicado.
 
 ---
@@ -42,7 +42,7 @@ No son cookies y no salen de tu dispositivo, salvo cuando tú envías el formula
 
 - **Estadísticas sin cookies.** Contamos las visitas con una herramienta que no guarda nada en tu navegador y no identifica a nadie.
 - **Sin cookie de idioma.** El idioma lo marca la dirección de la página (`/`, `/ca` o `/en`).
-- **Sin huella del navegador por defecto.** En el buzón de ideas puedes aceptar, si quieres, una protección extra que calcula un código con datos técnicos de tu navegador. Es opcional, empieza desmarcada, se conserva 12 meses y la retiras con un clic. Está explicada en la [política de privacidad](politica-de-privacidad.md).
+- **Sin huella del navegador por defecto.** En el buzón de ideas puedes aceptar, si quieres, una protección extra que calcula un código con datos técnicos de tu navegador. Es opcional, empieza desmarcada, se conserva hasta 12 meses después de la última vez que usas ese dispositivo en el buzón y la retiras con un clic. Está explicada en la [política de privacidad](politica-de-privacidad.md).
 
 ## 6. La página de pago
 

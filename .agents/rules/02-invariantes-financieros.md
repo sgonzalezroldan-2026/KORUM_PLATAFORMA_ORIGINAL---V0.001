@@ -2,7 +2,7 @@
 
 > Fórmulas exactas: [korum-tco-calculator](../skills/korum-tco-calculator/SKILL.md). Flujos de cobro, asientos tipo y Paycomet: [korum-escrow-payments](../skills/korum-escrow-payments/SKILL.md). Marco legal y decisiones del negocio: [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md).
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 54). Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 62). Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
 
 ## 1. Céntimos enteros y cuadre exacto de la meta (4 líneas públicas = meta)
 

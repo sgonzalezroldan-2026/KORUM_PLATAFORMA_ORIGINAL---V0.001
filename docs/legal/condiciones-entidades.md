@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-18 · **Estado:** BORRADOR, pendiente de la validación del promotor · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -230,9 +230,9 @@ En el patrocinio con publicidad, el comercio puede renovar cada año. Aunque no 
 
 ## 13. Datos personales
 
-- **KORUM es responsable** del tratamiento de las cuentas de usuario, los pagos, la prevención del fraude y la seguridad de la plataforma.
-- **La entidad es responsable** de los datos de su comunidad que gestiona en la plataforma (la moderación de las ideas, los mensajes con las familias, los datos de sus firmantes y de sus voluntarios, sus imágenes), y **KORUM es su encargado del tratamiento**. Las reglas están en el [contrato de encargo](contrato-de-encargo.md), que se acepta en el alta.
-- Las consultas que el equipo de KORUM hace a los datos de vuestra entidad quedan registradas y podéis pedirlas, como explica ese contrato.
+- **KORUM es responsable** del tratamiento de las cuentas de usuario, los pagos, la prevención del fraude y la seguridad de la plataforma, y de los datos de contacto de las personas que firman por cada entidad, en lo que necesita para su relación con ella.
+- **La entidad es responsable** de los datos de su comunidad que gestiona en la plataforma (la moderación de las ideas, las consultas y los mensajes con las familias, los datos fiscales de quien le pide certificado, quién firma por ella y sus voluntarios, sus imágenes y los datos de sus comercios desde que los recibe), y **KORUM es su encargado del tratamiento**. Las reglas están en el [contrato de encargo](contrato-de-encargo.md), que se acepta en el alta.
+- Cada acceso del equipo de KORUM a los datos de vuestra entidad queda registrado, y podéis pedir la lista: os la entregamos en 30 días, como explica ese contrato.
 - La entidad no debe sacar de la plataforma datos de las familias para usos distintos de los de sus campañas.
 
 ## 14. Visibilidad
@@ -243,9 +243,39 @@ En el patrocinio con publicidad, el comercio puede renovar cada año. Aunque no 
 
 ## 15. Baja, suspensión y cierre
 
-- **Baja voluntaria:** cuando queráis y sin coste. Las campañas, eventos y ventas en marcha terminan con sus condiciones: se liquidan si se consiguen y se devuelven si no. No se pueden publicar otras nuevas.
-- **Suspensión:** KORUM puede suspender una entidad, o una de sus campañas, si hay indicios de fraude, si los documentos del titular no son correctos, si incumple estas condiciones de forma grave o si lo exige PAYCOMET o una autoridad. Os diremos el motivo, salvo que la ley no lo permita. El dinero que esté retenido se devuelve a quienes lo aportaron o se entrega a la entidad, según corresponda a cada campaña.
-- Tras la baja, KORUM conserva lo que la ley obliga a conservar (los movimientos de dinero, las facturas y el registro de actividad) durante los plazos de la política de privacidad y del contrato de encargo.
+### 15.1 Baja voluntaria
+
+Podéis dejar KORUM cuando queráis y sin coste.
+
+- La pide desde el panel cualquiera de las personas firmantes: **basta una firma**. Se avisa por email a la otra persona firmante, si la hay, y al email general de la entidad, y queda en el registro de actividad.
+- Las campañas, eventos y ventas en marcha terminan con sus condiciones: se liquidan si se consiguen y se devuelven si no. No se pueden publicar otras nuevas.
+
+### 15.2 Suspensión
+
+KORUM puede suspender la actividad de una entidad, o solo una de sus campañas, en estos casos:
+
+- si hay indicios de uso fraudulento de la plataforma;
+- si la entidad la usa para algo contrario a la ley o a las normas que le son aplicables;
+- si la usa para algo contrario a la ética de la plataforma, es decir: para publicar contenidos ofensivos, discriminatorios, violentos o que inciten al odio, para fines ajenos a los de la entidad o para engañar a las familias sobre el destino del dinero;
+- si los documentos del titular (punto 3.1) no son correctos;
+- si incumple estas condiciones de forma grave;
+- si lo exige PAYCOMET o una autoridad.
+
+Qué pasa entonces:
+
+- **Os lo decimos.** Os lo comunicamos por email en el momento de suspender, con el motivo, los hechos en que se basa y la forma de pedir que lo revisemos o de reclamar ([aviso legal](aviso-legal.md), punto 4.2), salvo que la ley no lo permita.
+- **Lo que no podéis hacer.** Mientras dura la suspensión podéis entrar en el panel y consultar toda vuestra actividad, pero **no publicar, cambiar, firmar ni mover dinero**.
+- **Lo que sí podéis hacer, siempre:** descargar vuestros datos y ficheros (entre ellos el del Modelo 182), retirar imágenes y textos, atender las peticiones de las personas sobre sus datos, subir los documentos que os pidamos, relevar a quien firma y pedir la baja. Pedir la baja no levanta la suspensión: lo que esté en marcha sigue parado hasta que se aclare.
+- **Si suspendemos solo una campaña**, todo lo anterior vale solo para esa campaña.
+- **El dinero retenido** sigue en PAYCOMET mientras se aclara la situación, como mucho hasta que venza su plazo de 90 días (punto 7.2). Antes de que venza, se devuelve a quienes lo aportaron o se entrega a la entidad, según corresponda a cada campaña.
+- **Cómo termina.** KORUM levanta la suspensión en cuanto la causa se corrige o se aclara, y puede levantarla en cualquier momento: el panel vuelve entonces a funcionar como antes.
+- **Cierre.** Si la causa no se corrige en el plazo que os indiquemos, KORUM puede cerrar la entidad. Os avisa por email 30 días antes, con el motivo. El aviso puede ser más corto si lo exige una ley o una autoridad, o si hay fraude o incumplimientos graves repetidos. A un cierre se le aplica lo mismo que a una baja.
+
+### 15.3 Vuestros datos al iros
+
+Cuando termina lo último que teníais en marcha, tenéis **30 días** para descargar vuestros datos; hasta entonces el panel sigue abierto para lo que esté en marcha. Después se cierra el acceso al panel y vuestra página deja de ser pública.
+
+KORUM borra lo que guardaba por vuestra cuenta. Conserva lo que la ley le obliga a conservar a ella (los movimientos de dinero, las firmas y las facturas). Y guarda una copia bloqueada de lo que la ley os obliga a conservar a vosotros (los datos fiscales de vuestros donantes y vuestro registro de actividad): es una copia guardada sin uso, solo para una reclamación o una autoridad. Todo ello, durante los plazos que fija la ley. Lo detalla el [contrato de encargo](contrato-de-encargo.md), cláusula 14.
 
 ## 16. De qué responde cada parte
 
