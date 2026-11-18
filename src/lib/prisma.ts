@@ -78,8 +78,7 @@ export function createPrismaClient({ connectionString, schema, maxConnections, t
     query: {
       ledgerJournal: { $allOperations: journalGuard },
       escrowLedgerEntry: { $allOperations: entryGuard },
-      auditLog: { $allOperations: auditGuard },
-      raffleDraw: { $allOperations: appendOnly }
+      auditLog: { $allOperations: auditGuard }
     }
   });
 }

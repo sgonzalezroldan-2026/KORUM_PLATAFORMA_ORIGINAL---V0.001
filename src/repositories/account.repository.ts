@@ -75,9 +75,7 @@ export async function loadAccountOverview(db: Db, userId: string) {
       select: {
         uuid: true,
         serialCode: true,
-        subtype: true,
         quantity: true,
-        raffleNumbers: true,
         revokedAt: true,
         initiative: { select: { title: true, closesAt: true, ticketVenue: true, organization: { select: { slug: true, name: true } } } }
       }

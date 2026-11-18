@@ -6,7 +6,7 @@ import type { SecretKey } from '@/services/settings/setting-definitions';
  * rechaza), así que lo que el navegador envía nunca decide qué ajuste se toca.
  */
 
-export const SETTINGS_SECTIONS = ['pagos', 'email', 'facturacion', 'hucha', 'autoimpulso', 'seo', 'empresa', 'limites'] as const;
+export const SETTINGS_SECTIONS = ['pagos', 'email', 'facturacion', 'hucha', 'autoimpulso', 'seo', 'empresa'] as const;
 export type SectionId = (typeof SETTINGS_SECTIONS)[number];
 export const isSectionId = (value: unknown): value is SectionId => typeof value === 'string' && (SETTINGS_SECTIONS as readonly string[]).includes(value);
 
@@ -57,8 +57,7 @@ export const SECTION_FIELDS: Record<SectionId, readonly FieldSpec[]> = {
     { key: 'seo.verification.google', kind: 'text', maxLength: 200 },
     { key: 'seo.verification.bing', kind: 'text', maxLength: 200 }
   ],
-  empresa: [{ key: 'platform.company', kind: 'json' }],
-  limites: [{ key: 'raffle.extraRoundMinHours', kind: 'number', inputMode: 'numeric' }]
+  empresa: [{ key: 'platform.company', kind: 'json' }]
 };
 
 /** Secretos de cada bloque, para dibujar sus campos de «clave» (siempre de solo escritura). */

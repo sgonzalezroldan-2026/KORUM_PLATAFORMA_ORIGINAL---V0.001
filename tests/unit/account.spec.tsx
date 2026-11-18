@@ -87,7 +87,7 @@ describe('Mi cuenta · historial', () => {
   });
 
   it('una entrada válida enlaza con la firma de vista; una anulada lo dice y no enlaza', () => {
-    const base = { serialCode: 'TKT-1', quantity: 2, raffleNumbers: [], subtype: 'EVENT' as const, initiative: { title: 'Festival de primavera', closesAt: new Date('2026-12-01T18:00:00Z'), ticketVenue: 'Patio', organization: { slug: 'cervantes', name: 'CEIP Cervantes' } } };
+    const base = { serialCode: 'TKT-1', quantity: 2, initiative: { title: 'Festival de primavera', closesAt: new Date('2026-12-01T18:00:00Z'), ticketVenue: 'Patio', organization: { slug: 'cervantes', name: 'CEIP Cervantes' } } };
     renderWithIntl(
       <AccountPasses
         passes={[

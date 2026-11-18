@@ -53,9 +53,7 @@ function draftFromStored(initiative: StudioInitiative, firstReward: string, late
     ticketPriceCents: ticketing ? (initiative.ticketPriceCents ?? 0) : 500,
     ticketMax: ticketing ? (initiative.ticketMax ?? 0) : 200,
     ticketFeeMode: initiative.ticketFeeMode ?? 'ADD',
-    ticketVenue: initiative.ticketVenue,
-    rafflePrizeCount: initiative.rafflePrizeCount,
-    raffleNoticeConfirmed: false
+    ticketVenue: initiative.ticketVenue
   };
 }
 

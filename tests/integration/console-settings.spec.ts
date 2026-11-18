@@ -23,7 +23,7 @@ import { createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TES
  * «Probar conexión» no llama a nadie con cobros simulados y no filtra la respuesta del proveedor; y todo exige el Super-Admin verificado.
  */
 
-const TOUCHED = ['paycomet.merchantCode', 'paycomet.terminalId', 'paycomet.jetId', 'paycomet.serverIp', 'email.provider', 'email.fromAddress', 'email.fromName', 'email.replyTo', 'invoicing.provider', 'invoicing.issuerNif', 'invoicing.issuerName', 'invoicing.series', 'hucha.mode', 'hucha.walletProvider', 'autoBoost.publicDisclosureDefault', 'seo.aiCrawlers', 'seo.verification.google', 'seo.verification.bing', 'platform.company', 'raffle.extraRoundMinHours', 'privacy.policyVersion'];
+const TOUCHED = ['paycomet.merchantCode', 'paycomet.terminalId', 'paycomet.jetId', 'paycomet.serverIp', 'email.provider', 'email.fromAddress', 'email.fromName', 'email.replyTo', 'invoicing.provider', 'invoicing.issuerNif', 'invoicing.issuerName', 'invoicing.series', 'hucha.mode', 'hucha.walletProvider', 'autoBoost.publicDisclosureDefault', 'seo.aiCrawlers', 'seo.verification.google', 'seo.verification.bing', 'platform.company', 'privacy.policyVersion'];
 const TOUCHED_SECRETS = ['paycomet.apiKey', 'paycomet.webhookSecret', 'email.apiKey', 'hucha.walletApiKey', 'invoicing.apiKey', 'seo.indexNowKey'];
 const MOCK: SettingsRuntime = { paycometMode: 'mock', keyring: TEST_KEYRING, encryptionKeyVersion: 1, previousKeyCount: 0 };
 const REAL: SettingsRuntime = { ...MOCK, paycometMode: 'sandbox' };
@@ -133,17 +133,12 @@ describe('QA-A05 · guardar un bloque de ajustes', () => {
     expect((await rejection(save('pagos', { 'paycomet.terminalId': 'abc', 'paycomet.serverIp': 'no-es-una-ip' }))).fields.sort()).toEqual(['paycomet.serverIp', 'paycomet.terminalId']);
     expect((await rejection(save('email', { 'email.provider': 'smtp' }))).fields).toEqual(['email.provider']);
     expect((await rejection(save('email', { 'email.fromAddress': 'esto no es un email' }))).fields).toEqual(['email.fromAddress']);
-    expect((await rejection(save('limites', { 'raffle.extraRoundMinHours': '721' }))).fields).toEqual(['raffle.extraRoundMinHours']);
-    expect((await rejection(save('limites', { 'raffle.extraRoundMinHours': '1.5' }))).fields).toEqual(['raffle.extraRoundMinHours']);
-    expect((await rejection(save('limites', { 'raffle.extraRoundMinHours': '-3' }))).fields).toEqual(['raffle.extraRoundMinHours']);
+    // «Límites» ya no tiene nada que guardar (Sprint 5.12a): sus topes son fijos y solo se leen.
+    expect((await rejection(save('limites', {}))).reason).toBe('INVALID');
     expect((await rejection(saveSettingsSection(db, await verified(), { section: 'inexistente', values: {}, versions: {} }, MOCK))).reason).toBe('INVALID');
     expect((await rejection(saveSettingsSection(db, await verified(), { section: 'pagos', values: { 'paycomet.jetId': 'x' }, versions: {} }, MOCK))).fields).toEqual(['paycomet.jetId']);
   });
 
-  it('las horas de la ronda extra del sorteo se guardan como número y las lee el motor del sorteo', async () => {
-    await save('limites', { 'raffle.extraRoundMinHours': '24' });
-    expect(await getSetting(db, 'raffle.extraRoundMinHours')).toBe(24);
-  });
 });
 
 describe('QA-SEC07 · reglas entre ajustes', () => {
@@ -804,14 +799,14 @@ describe('QA-A05 · vista, claves de cifrado e historial', () => {
 
   it('el historial lista los cambios de más recientes a más antiguos con quién y cuándo, la versión, el valor solo si es corto y no personal, y sin ningún secreto', async () => {
     const actor = await verified();
-    await save('limites', { 'raffle.extraRoundMinHours': '48' });
+    await save('email', { 'email.fromName': 'Remitente del historial' });
     await saveSecretValue(db, actor, { key: 'seo.indexNowKey', value: 'clave-indexnow-12345' }, MOCK);
     const view = await loadSettingsView(db, MOCK, { actorUserId: actor.userId, historyLimit: 25 });
     expect(view.history.rows.length).toBeGreaterThan(5);
     const times = view.history.rows.map((row) => row.occurredAt.getTime());
     expect([...times].sort((a, b) => b - a)).toEqual(times);
-    const change = view.history.rows.find((row) => row.target === 'raffle.extraRoundMinHours' && row.action === 'settings.setting.updated');
-    expect(change).toMatchObject({ value: '48', version: expect.any(Number) });
+    const change = view.history.rows.find((row) => row.target === 'email.fromName' && row.action === 'settings.setting.updated');
+    expect(change).toMatchObject({ value: 'Remitente del historial', version: expect.any(Number) });
     expect(change?.actorEmail).toBeTruthy();
     expect(JSON.stringify(view.history)).not.toContain('clave-indexnow-12345');
     expect(view.history.rows.find((row) => row.action === 'settings.secret.updated')?.value).toBeNull();

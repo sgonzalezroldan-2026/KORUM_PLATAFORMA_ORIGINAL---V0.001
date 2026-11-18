@@ -21,7 +21,7 @@ export async function expectNoHorizontalOverflow(page: Page) {
 }
 
 /**
- * Espera a que acaben las animaciones finitas de la página (como la aparición de los números del sorteo, 700 ms). axe mide el contraste con la opacidad que tiene el
+ * Espera a que acaben las animaciones finitas de la página (como la aparición de un sello o una celebración). axe mide el contraste con la opacidad que tiene el
  * elemento en ese instante: en un servidor lento (el CI de GitHub) la medición caía a mitad de la animación y daba un falso «color-contrast». Las infinitas
  * (confeti, esqueletos) se dejan: esperarlas no terminaría nunca.
  */

@@ -25,7 +25,7 @@ export interface InitiativeRow {
   showPublicBreakdown: boolean;
   matchingPoolRemainingCents: number;
   matchingSponsorName: string | null;
-  ticketSubtype: 'EVENT' | 'RAFFLE' | null;
+  ticketSubtype: 'EVENT' | null;
   ticketPriceCents: number | null;
   ticketMax: number | null;
   ticketsSold: number;
@@ -53,7 +53,7 @@ export interface InitiativeRow {
 export interface InitiativeCardData {
   id: number;
   format: PublicFormat;
-  subtype: 'EVENT' | 'RAFFLE' | null;
+  subtype: 'EVENT' | null;
   title: string;
   category: string;
   stage: string;

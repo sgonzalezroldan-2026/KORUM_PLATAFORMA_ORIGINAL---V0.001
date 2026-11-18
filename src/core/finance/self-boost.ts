@@ -57,7 +57,7 @@ export interface OrganizationRuleFacts {
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
   /**
-   * La entidad tiene una taquilla o rifa a la venta. La compra de entradas lee la tarifa **actual** de la entidad (no guarda la de la publicación), así
+   * La entidad tiene una taquilla a la venta. La compra de entradas lee la tarifa **actual** de la entidad (no guarda la de la publicación), así
    * que cambiar sus gastos de gestión cambiaría lo que paga quien compra o lo que recibe la entidad en una campaña ya prometida (auditoría financiera, B1).
    */
   hasPublishedTicketing: boolean;

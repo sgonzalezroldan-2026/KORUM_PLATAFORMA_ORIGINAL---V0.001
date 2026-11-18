@@ -1,13 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { publishInitiative } from '@/core/finance/campaign-window';
 import { getRaisedFromLedger } from '@/core/finance/ledger.service';
 import { computeSignatureHash, payoutDigestFor } from '@/core/security/signature-hash';
 import { checkInPass, getGateSummary } from '@/core/ticketing/check-in.service';
 import { MAX_FAILURES_PER_EVENT, openGateSession, resolveGateSession, revokeGateSession, setGatePin } from '@/core/ticketing/gate-session.service';
 import { buildPassQrPayload } from '@/core/ticketing/qr-signature';
-import { verifyDrawAct, type RaffleEntry } from '@/core/ticketing/raffle-draw';
-import { drawRaffle, RaffleDrawNotAllowedError } from '@/core/ticketing/raffle-draw.service';
-import { loadRaffleAdminView } from '@/core/ticketing/raffle-extra';
 import { releaseExpiredTicketHolds, reserveTickets, TICKET_HOLD_MS, TicketReservationError } from '@/core/ticketing/ticket-reservation.service';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
@@ -15,7 +11,7 @@ import { MockPaycometProvider } from '@/services/payments/mock-paycomet';
 import { handlePaymentWebhook } from '@/services/payments/paycomet-webhook.service';
 import { refundContribution } from '@/services/payments/payment-reversals';
 import { approvePayout } from '@/services/payments/split-transfer.service';
-import { createInitiative, createOrganization, createTestClient, createUser, signerOf, table, uniqueId } from './test-database';
+import { createInitiative, createOrganization, createTestClient, createUser, signerOf, uniqueId } from './test-database';
 
 const QR_SECRET = 'secreto-de-integracion-de-los-pases-qr-0123456789';
 const PIN_SECRET = 'secreto-de-integracion-de-la-porteria-0123456789';
@@ -51,20 +47,6 @@ async function buy(initiativeId: number, quantity: number) {
   expect(await deliver('PAYMENT', reservation.paycometOrder, reservation.totalChargedCents)).toEqual({ status: 200, outcome: 'PROCESSED' });
   const pass = await db.ticketPass.findUniqueOrThrow({ where: { contributionId: reservation.contributionId } });
   return { reservation, pass };
-}
-
-/** El sorteo se abre el día del evento (`closesAt`): las rifas de estas pruebas se venden con la fecha lejana y se sortean «hoy» (QA-SEC09). */
-const setEventToday = (initiativeId: number) => db.initiative.update({ where: { id: initiativeId }, data: { closesAt: new Date() } });
-async function drawToday(actor: SessionActor, event: { organizationId: string; initiativeId: number }, request: Parameters<typeof drawRaffle>[3]) {
-  await setEventToday(event.initiativeId);
-  return drawRaffle(db, actor, event, request);
-}
-
-/** Los números ganadores que una ronda extra puede sustituir ahora (Sprint 4.7: la ronda debe decir cuáles sustituye). */
-async function replaceableNumbers(initiativeId: number, reason?: 'PRIZE_UNCLAIMED' | 'WINNER_REFUNDED'): Promise<number[]> {
-  const initiative = await db.initiative.findUniqueOrThrow({ where: { id: initiativeId }, select: { rafflePrizeCount: true } });
-  const view = await loadRaffleAdminView(db, initiativeId, initiative.rafflePrizeCount);
-  return (view?.replaceable ?? []).filter((winner) => reason !== 'WINNER_REFUNDED' || winner.refunded).map((winner) => winner.number);
 }
 
 const counters = (id: number) => db.initiative.findUniqueOrThrow({ where: { id }, select: { ticketsSold: true, ticketsHeld: true, status: true, raisedCents: true } });
@@ -526,165 +508,6 @@ describe('QA-SEC06 · PIN de portería contra fuerza bruta', () => {
   }, 30_000);
 });
 
-describe('QA-REG01 · rifas y sorteo certificado', () => {
-  const raffle = (overrides: Parameters<typeof createInitiative>[2] = {}) => eventSetup({ ticketSubtype: 'RAFFLE', ticketMax: 10, goalCents: 5_000, rafflePrizeCount: 1, ...overrides });
-  const draw = async (actor: SessionActor, event: { organizationId: string; initiativeId: number }, winnersCount: number, extra: Partial<Parameters<typeof drawRaffle>[3]> = {}) => {
-    const request = { winnersCount, idempotencyKey: uniqueId('sorteo'), ...extra };
-    if (request.extraRoundReason && !request.replacesNumbers) request.replacesNumbers = (await replaceableNumbers(event.initiativeId, request.extraRoundReason)).slice(0, winnersCount);
-    return drawToday(actor, event, request);
-  };
-
-  it('números correlativos, sin repetirse, y el número de un pase anulado se reutiliza', async () => {
-    const { initiative } = await raffle();
-    const first = await buy(initiative.id, 3);
-    const second = await buy(initiative.id, 2);
-    expect(first.pass.serialCode).toMatch(/^RIFA-/);
-    expect((await db.ticketPass.findUniqueOrThrow({ where: { id: first.pass.id } })).raffleNumbers).toEqual([1, 2, 3]);
-    expect((await db.ticketPass.findUniqueOrThrow({ where: { id: second.pass.id } })).raffleNumbers).toEqual([4, 5]);
-
-    await deliver('CHARGEBACK', first.reservation.paycometOrder, first.reservation.totalChargedCents);
-    const third = await buy(initiative.id, 4);
-    expect((await db.ticketPass.findUniqueOrThrow({ where: { id: third.pass.id } })).raffleNumbers).toEqual([1, 2, 3, 6]);
-    await expect(db.raffleNumber.create({ data: { initiativeId: initiative.id, number: 1, ticketPassId: second.pass.id } })).rejects.toThrow();
-  });
-
-  it('una papeleta no se usa en la puerta', async () => {
-    const { organization, initiative } = await raffle();
-    const session = await gateActorWithSession(organization.id, initiative.id);
-    const { pass } = await buy(initiative.id, 1);
-    expect(await checkInPass(db, QR_SECRET, session, { organizationId: organization.id, initiativeId: initiative.id }, buildPassQrPayload(QR_SECRET, pass.uuid), 1)).toEqual({ status: 'NOT_APPLICABLE' });
-  });
-
-  it('solo con la venta cerrada, y solo en una rifa', async () => {
-    const open = await raffle();
-    await buy(open.initiative.id, 1);
-    const actor = member(open.organization.id);
-    await expect(draw(actor, { organizationId: open.organization.id, initiativeId: open.initiative.id }, 1)).rejects.toMatchObject({ reason: 'SALES_OPEN' });
-    const event = await eventSetup({ status: 'GOAL_REACHED' });
-    await expect(draw(member(event.organization.id), { organizationId: event.organization.id, initiativeId: event.initiative.id }, 1)).rejects.toBeInstanceOf(RaffleDrawNotAllowedError);
-    const unset = await raffle({ status: 'GOAL_REACHED', rafflePrizeCount: null });
-    await expect(draw(member(unset.organization.id), { organizationId: unset.organization.id, initiativeId: unset.initiative.id }, 1)).rejects.toMatchObject({ reason: 'PRIZES_NOT_SET' });
-    const other = await raffle();
-    await expect(draw(member(open.organization.id), { organizationId: open.organization.id, initiativeId: other.initiative.id }, 1)).rejects.toThrow('no encontrado');
-    expect(await db.auditLog.count({ where: { action: 'tenant.resource_outside_tenant', targetId: String(other.initiative.id) } })).toBe(1);
-    await expect(draw(member(other.organization.id, 'GATEKEEPER'), { organizationId: open.organization.id, initiativeId: open.initiative.id }, 1)).rejects.toBeInstanceOf(TenantAccessError);
-  });
-
-  it('sortea solo entre lo pagado y no anulado, deja un acta verificable e inmutable, y cada ronda excluye a los ya premiados', async () => {
-    const { organization, initiative } = await raffle({ ticketMax: 6, goalCents: 3_000, rafflePrizeCount: 4 });
-    const anulada = await buy(initiative.id, 2);
-    await deliver('CHARGEBACK', anulada.reservation.paycometOrder, anulada.reservation.totalChargedCents);
-    await buy(initiative.id, 2);
-    await reserve(initiative.id, 1); // Reservada, sin pagar: no participa.
-    await buy(initiative.id, 2);
-    await db.initiative.update({ where: { id: initiative.id }, data: { status: 'GOAL_REACHED' } });
-    const event = { organizationId: organization.id, initiativeId: initiative.id };
-    const actor = member(organization.id);
-
-    const first = await draw(actor, event, 2);
-    expect(first.participants.map((entry) => entry.number)).toEqual([1, 2, 3, 4]);
-    expect(first.act).toMatchObject({ round: 1, participantCount: 4 });
-    expect(verifyDrawAct(first.act, first.participants, first.actSha256)).toBe(true);
-
-    const stored = await db.raffleDraw.findUniqueOrThrow({ where: { initiativeId_round: { initiativeId: initiative.id, round: 1 } } });
-    expect(stored.winningNumbers).toEqual(first.act.winningNumbers);
-    expect(verifyDrawAct(first.act, stored.participantsJson as unknown as RaffleEntry[], stored.actSha256)).toBe(true);
-    expect(JSON.stringify(stored.participantsJson)).not.toContain('@');
-
-    const second = await draw(actor, event, 2);
-    expect(second.act.round).toBe(2);
-    expect(second.participants.map((entry) => entry.number).some((number) => first.act.winningNumbers.includes(number))).toBe(false);
-    await expect(draw(actor, event, 1)).rejects.toMatchObject({ reason: 'PRIZES_EXHAUSTED' });
-
-    await expect(db.raffleDraw.update({ where: { id: stored.id }, data: { actSha256: 'x' } })).rejects.toThrow('KORUM_IMMUTABLE');
-    await expect(db.$executeRawUnsafe(`UPDATE ${table('RaffleDraw')} SET "actSha256" = 'x' WHERE "id" = ${stored.id}`)).rejects.toThrow();
-    await expect(db.$executeRawUnsafe(`DELETE FROM ${table('RaffleDraw')} WHERE "id" = ${stored.id}`)).rejects.toThrow();
-    expect(await db.auditLog.count({ where: { action: 'raffle.drawn', targetId: String(initiative.id) } })).toBe(2);
-  });
-
-  it('no se puede repetir hasta que salga quien se quiere, ni un doble toque saca otro ganador', async () => {
-    const { organization, initiative } = await raffle({ ticketMax: 4, goalCents: 2_000 });
-    await buy(initiative.id, 4);
-    const event = { organizationId: organization.id, initiativeId: initiative.id };
-    const session = await gateActorWithSession(organization.id, initiative.id);
-    await expect(draw(session, event, 2)).rejects.toMatchObject({ reason: 'PRIZES_EXHAUSTED' });
-
-    const first = await draw(session, event, 1, { idempotencyKey: 'toque' });
-    const repeated = await draw(session, event, 1, { idempotencyKey: 'toque' });
-    expect(repeated.actSha256).toBe(first.actSha256);
-    expect(verifyDrawAct(repeated.act, repeated.participants, repeated.actSha256)).toBe(true);
-    expect(await db.raffleDraw.count({ where: { initiativeId: initiative.id } })).toBe(1);
-    await expect(draw(session, event, 1)).rejects.toMatchObject({ reason: 'PRIZES_EXHAUSTED' });
-
-    // Un premio sin reclamar: solo los firmantes, con motivo, y como mucho uno por premio.
-    await expect(draw(session, event, 1, { extraRoundReason: 'PRIZE_UNCLAIMED' })).rejects.toBeInstanceOf(TenantAccessError);
-    const director = member(organization.id);
-    await expect(draw(director, event, 1, { extraRoundReason: 'WINNER_REFUNDED' })).rejects.toMatchObject({ reason: 'EXTRA_NOT_JUSTIFIED' });
-    await expect(draw(director, event, 1, { extraRoundReason: 'OTRO' as 'PRIZE_UNCLAIMED' })).rejects.toBeInstanceOf(RangeError);
-    await expect(draw(director, event, 1, { idempotencyKey: 'clave con espacios' })).rejects.toBeInstanceOf(RangeError);
-    await expect(draw(director, event, 1, { extraRoundReason: null as unknown as undefined })).rejects.toMatchObject({ reason: 'PRIZES_EXHAUSTED' });
-    await expect(draw(director, event, 1, { idempotencyKey: 'toque', extraRoundReason: 'PRIZE_UNCLAIMED' })).rejects.toMatchObject({ reason: 'KEY_REUSED' });
-    const extra = await draw(director, event, 1, { extraRoundReason: 'PRIZE_UNCLAIMED' });
-    expect(extra.act.round).toBe(2);
-    expect(extra.participants.map((entry) => entry.number)).not.toContain(first.act.winningNumbers[0]);
-    await expect(draw(director, event, 1, { extraRoundReason: 'PRIZE_UNCLAIMED' })).rejects.toMatchObject({ reason: 'PRIZES_EXHAUSTED' });
-  });
-
-  it('una ronda extra no puede ser la primera', async () => {
-    const { organization, initiative } = await raffle({ status: 'GOAL_REACHED' });
-    await expect(draw(member(organization.id), { organizationId: organization.id, initiativeId: initiative.id }, 1, { extraRoundReason: 'PRIZE_UNCLAIMED' })).rejects.toMatchObject({ reason: 'EXTRA_NOT_JUSTIFIED' });
-  });
-
-  it('un ganador reembolsado justifica una ronda extra, y solo una', async () => {
-    const { organization, initiative } = await raffle({ ticketMax: 3, goalCents: 1_500, rafflePrizeCount: 2 });
-    const buyers = [await buy(initiative.id, 1), await buy(initiative.id, 1), await buy(initiative.id, 1)];
-    const event = { organizationId: organization.id, initiativeId: initiative.id };
-    const director = member(organization.id);
-    const first = await draw(director, event, 1);
-    const winnerPass = await db.raffleNumber.findUniqueOrThrow({ where: { initiativeId_number: { initiativeId: initiative.id, number: first.act.winningNumbers[0]! } } });
-    const winner = buyers.find((buyer) => buyer.pass.id === winnerPass.ticketPassId)!;
-    await deliver('CHARGEBACK', winner.reservation.paycometOrder, winner.reservation.totalChargedCents);
-    const extra = await draw(director, event, 1, { extraRoundReason: 'WINNER_REFUNDED' });
-    expect(extra.act.participantCount).toBe(2);
-    await expect(draw(director, event, 1, { extraRoundReason: 'WINNER_REFUNDED' })).rejects.toMatchObject({ reason: 'EXTRA_NOT_JUSTIFIED' });
-    expect(await db.auditLog.count({ where: { action: 'raffle.drawn', targetId: String(initiative.id) } })).toBe(2);
-  });
-
-  it('una rifa sin premios no se publica ni se vende', async () => {
-    const unset = await raffle({ status: 'BUDGETING', rafflePrizeCount: null });
-    await expect(publishInitiative(db, unset.initiative.id)).rejects.toThrow('número de premios');
-    const excess = await raffle({ status: 'BUDGETING', rafflePrizeCount: 11 });
-    await expect(publishInitiative(db, excess.initiative.id)).rejects.toThrow('número de premios');
-    const onSale = await raffle({ rafflePrizeCount: null });
-    await expect(reserve(onSale.initiative.id, 1)).rejects.toMatchObject({ reason: 'NOT_ON_SALE' });
-  });
-
-  it('los premios no cambian una vez a la venta', async () => {
-    const { initiative } = await raffle();
-    await expect(db.initiative.update({ where: { id: initiative.id }, data: { rafflePrizeCount: 5 } })).rejects.toThrow();
-    const draft = await raffle({ status: 'BUDGETING' });
-    await db.initiative.update({ where: { id: draft.initiative.id }, data: { rafflePrizeCount: 5 } });
-  });
-
-  it('tras el sorteo no se vende ni se confirma ninguna papeleta, y un contracargo no deja la rifa sin salida', async () => {
-    const { organization, initiative } = await raffle({ ticketMax: 4, goalCents: 2_000 });
-    const pending = await reserve(initiative.id, 1);
-    const paid = await buy(initiative.id, 2);
-    await db.initiative.update({ where: { id: initiative.id }, data: { status: 'GOAL_REACHED' } });
-    await draw(member(organization.id), { organizationId: organization.id, initiativeId: initiative.id }, 1);
-
-    // Un contracargo la baja de la meta: sigue cerrada, porque una rifa sorteada no puede volver a vender y debe poder liquidarse.
-    await deliver('CHARGEBACK', paid.reservation.paycometOrder, paid.reservation.totalChargedCents);
-    expect((await counters(initiative.id)).status).toBe('GOAL_REACHED');
-    await expect(reserve(initiative.id, 1)).rejects.toMatchObject({ reason: 'NOT_ON_SALE' });
-
-    await deliver('PAYMENT', pending.paycometOrder, pending.totalChargedCents);
-    expect(await db.contribution.findUniqueOrThrow({ where: { id: pending.contributionId } })).toMatchObject({ status: 'REFUND_PENDING', ticketHoldUntil: null });
-    expect(await db.ticketPass.count({ where: { contributionId: pending.contributionId } })).toBe(0);
-    expect((await counters(initiative.id)).ticketsHeld).toBe(0);
-  });
-});
-
 describe('Liquidar lo vendido', () => {
   const SIGNATURE_SECRET = 'secreto-de-integracion-de-las-firmas-0123456789';
 
@@ -712,35 +535,4 @@ describe('Liquidar lo vendido', () => {
     expect(await approvePayout(db, payout.id, SIGNATURE_SECRET)).toMatchObject({ approved: true });
   });
 
-  it('una rifa sin sortear no se liquida; sorteada, sí, también tras un contracargo que la baje de la meta', async () => {
-    const { organization, initiative } = await eventSetup({ ticketSubtype: 'RAFFLE', ticketMax: 3, goalCents: 1_500, rafflePrizeCount: 2 });
-    const kept = await buy(initiative.id, 2);
-    const lost = await buy(initiative.id, 1);
-    expect(kept.pass.subtype).toBe('RAFFLE');
-    const unsigned = await signedPayout(organization.id, initiative.id);
-    await expect(approvePayout(db, unsigned.id, SIGNATURE_SECRET)).rejects.toThrow('sorteado');
-
-    const event = { organizationId: organization.id, initiativeId: initiative.id };
-    await drawToday(member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
-    await expect(approvePayout(db, unsigned.id, SIGNATURE_SECRET)).rejects.toThrow('por completo');
-    await drawToday(member(organization.id), event, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
-    await deliver('CHARGEBACK', lost.reservation.paycometOrder, lost.reservation.totalChargedCents);
-    const { raisedCents, status } = await counters(initiative.id);
-    expect(status).toBe('GOAL_REACHED');
-    expect(raisedCents).toBe(1_000);
-    // La liquidación firmada ya no cuadra: hay que recalcularla y volver a firmarla.
-    await expect(approvePayout(db, unsigned.id, SIGNATURE_SECRET)).rejects.toThrow();
-  });
-
-  it('una rifa sorteada con un contracargo se liquida por lo que queda, si se firma de nuevo sobre esa cifra', async () => {
-    const { organization, initiative } = await eventSetup({ ticketSubtype: 'RAFFLE', ticketMax: 3, goalCents: 1_500, rafflePrizeCount: 1 });
-    await buy(initiative.id, 2);
-    const lost = await buy(initiative.id, 1);
-    await drawToday(member(organization.id), { organizationId: organization.id, initiativeId: initiative.id }, { winnersCount: 1, idempotencyKey: uniqueId('sorteo') });
-    await deliver('CHARGEBACK', lost.reservation.paycometOrder, lost.reservation.totalChargedCents);
-    expect((await counters(initiative.id)).status).toBe('GOAL_REACHED');
-    const payout = await signedPayout(organization.id, initiative.id);
-    expect(payout.netPaidCents).toBe((await counters(initiative.id)).raisedCents);
-    expect(await approvePayout(db, payout.id, SIGNATURE_SECRET)).toMatchObject({ approved: true });
-  });
 });

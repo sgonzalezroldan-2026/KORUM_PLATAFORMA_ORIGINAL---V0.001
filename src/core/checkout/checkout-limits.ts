@@ -9,7 +9,7 @@ export const DONATION_MIN_CENTS = 100;
 export const DONATION_MAX_CENTS = 500_000;
 /** Tope de la aportación voluntaria a KORUM: evita que un cero de más se cobre sin querer. */
 export const GUARANTEE_MAX_CENTS = 5_000;
-/** Entradas o papeletas por compra (también lo comprueba `reserveTickets`). */
+/** Entradas por compra (también lo comprueba `reserveTickets`). */
 export const MAX_TICKETS_PER_ORDER = 20;
 
 /**

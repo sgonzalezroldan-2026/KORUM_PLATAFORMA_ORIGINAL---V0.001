@@ -13,8 +13,7 @@ import { renderWithIntl } from '../utils/render-with-intl';
 
 /**
  * Sprint 5.6 · Repaso del Estudio: la pizarra de una campaña rehecha por votación (Sprint 4.4b) se enseña en solo lectura, con sus cifras guardadas y
- * cuadradas al céntimo, y con su aviso. Lo que dice que recibe el proyecto es, al céntimo, lo que paga la liquidación. Y el pase de una rifa habla de
- * papeletas, no de entradas.
+ * cuadradas al céntimo, y con su aviso. Lo que dice que recibe el proyecto es, al céntimo, lo que paga la liquidación.
  */
 
 vi.mock('@/i18n/navigation', () => ({
@@ -246,15 +245,7 @@ describe('Estudio · campaña rehecha por votación (solo lectura)', () => {
   });
 });
 
-describe('Pase de una rifa · habla de papeletas', () => {
-  it('el aviso y el mensaje de WhatsApp de una rifa no hablan de entradas ni de ir a un acto', () => {
-    renderWithIntl(<PassActions raffle title="Rifa solidaria" url="https://korum.es/cervantes/entrada/abc?sig=x" />);
-    expect(screen.getByRole('group', { name: 'Acciones de las papeletas' })).toBeInTheDocument();
-    expect(screen.getByText(/puede enseñar estas papeletas como suyas/)).toBeInTheDocument();
-    expect(decodeURIComponent(screen.getByRole('link', { name: /Enviar por WhatsApp/ }).getAttribute('href') ?? '')).toContain('Tus papeletas de «Rifa solidaria»');
-    expect(document.body.textContent).not.toMatch(/entrada:/);
-  });
-
+describe('Pase de una entrada', () => {
   it('el pase de un evento conserva sus textos', () => {
     renderWithIntl(<PassActions title="Fiesta" url="https://korum.es/cervantes/entrada/abc?sig=x" />);
     expect(screen.getByRole('group', { name: 'Acciones de la entrada' })).toBeInTheDocument();

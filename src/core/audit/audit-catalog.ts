@@ -122,7 +122,6 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'studio.initiative_published',
     'studio.draft_discarded',
     'studio.exempt_category_saved',
-    'studio.raffle_notice_confirmed',
     'studio.semantic_lock_triggered',
     'studio.semantic_lock_after_publish',
     'resize.link_resent',
@@ -134,7 +133,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'achievement.thanks_saved'
   ],
   ideas: ['idea.approved', 'idea.converted', 'idea.rejected', 'idea.replied', 'idea.signature_revalidated'],
-  gate: ['gate.check_in', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync', 'raffle.drawn'],
+  gate: ['gate.check_in', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync'],
   sponsors: [
     'sponsor.approved',
     'sponsor.rejected',

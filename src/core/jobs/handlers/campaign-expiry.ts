@@ -31,7 +31,7 @@ export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, de
   const polls = await closeDueResizePolls(db, now, batchSize, deadline);
   const pollDetail = { pollsClosed: polls.closed, resized: polls.resized, pollsRefunding: polls.refunding, pollsFailed: polls.failed };
   // Una votación que no terminó sus devoluciones (o más votaciones de las que caben) no retrasa el vencimiento de las campañas del día (reauditoría, L2).
-  // Recorre las candidatas por identificador: las que no pueden caducar (p. ej. una rifa ya sorteada) no se quedan al principio de la cola y no dejan sin atender a las demás.
+  // Recorre las candidatas por identificador: las que no pueden caducar (p. ej. una que ya cumplió la meta) no se quedan al principio de la cola y no dejan sin atender a las demás.
   for (;;) {
     const page = await db.initiative.findMany({ where: { status: 'FUNDRAISING', closesAt: { lte: now }, id: { gt: cursor } }, orderBy: { id: 'asc' }, take: batchSize, select: { id: true } });
     for (const { id } of page) {
@@ -65,9 +65,9 @@ async function expireIfDue(db: Db, id: number, now: Date): Promise<boolean> {
     await tx.initiative.updateMany({ where: { id }, data: { ticketsHeld: { increment: 0 } } });
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id },
-      select: { organizationId: true, format: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true, _count: { select: { raffleDraws: true } } }
+      select: { organizationId: true, format: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true }
     });
-    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative) || initiative._count.raffleDraws > 0) return false;
+    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative)) return false;
     const { count } = await tx.initiative.updateMany({ where: { id, status: 'FUNDRAISING' }, data: { status: 'EXPIRED' } });
     if (count !== 1) return false;
     await recordStatusChange(tx, { initiativeId: id, organizationId: initiative.organizationId, from: 'FUNDRAISING', to: 'EXPIRED', reason: 'DEADLINE_PASSED' });

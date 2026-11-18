@@ -12,7 +12,7 @@ import type { ScanOutcome } from '@/core/ticketing/gate-offline';
  * aparecer, para que un lector de pantalla lo lea y el teclado no se pierda; al cerrarlo, el lector devuelve el foco al campo del código.
  */
 
-const RED: ReadonlySet<ScanOutcome['status']> = new Set(['EXHAUSTED', 'INSUFFICIENT', 'INVALID_SIGNATURE', 'OTHER_EVENT', 'REVOKED', 'NOT_PAID', 'NOT_APPLICABLE', 'EVENT_CLOSED', 'INVALID_FORMAT']);
+const RED: ReadonlySet<ScanOutcome['status']> = new Set(['EXHAUSTED', 'INSUFFICIENT', 'INVALID_SIGNATURE', 'OTHER_EVENT', 'REVOKED', 'NOT_PAID', 'EVENT_CLOSED', 'INVALID_FORMAT']);
 
 export const isRedOutcome = (outcome: ScanOutcome): boolean => RED.has(outcome.status);
 
@@ -28,7 +28,6 @@ const KEY: Record<ScanOutcome['status'], string> = {
   OTHER_EVENT: 'otherEvent',
   REVOKED: 'revoked',
   NOT_PAID: 'notPaid',
-  NOT_APPLICABLE: 'notApplicable',
   EVENT_CLOSED: 'eventClosed',
   DUPLICATE_SCAN: 'duplicate'
 };

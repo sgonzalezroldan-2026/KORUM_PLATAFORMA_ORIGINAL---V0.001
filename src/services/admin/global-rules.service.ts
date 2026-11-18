@@ -111,7 +111,7 @@ function tariffCopyOf(rules: GlobalRulesInput) {
 
 /**
  * Guarda las reglas globales y las propaga a las entidades sin tarifa propia. El límite exento mueve el cupo restante lo mismo (lo ya gastado no cambia; si el
- * límite nuevo no cubre lo gastado, la entidad conserva un límite igual a lo gastado y el cupo restante queda a 0). Con una taquilla o rifa a la venta en una de esas
+ * límite nuevo no cubre lo gastado, la entidad conserva un límite igual a lo gastado y el cupo restante queda a 0). Con una taquilla a la venta en una de esas
  * entidades **no se pueden cambiar los gastos de gestión digital** (la compra de entradas lee la tarifa actual y cambiaría lo prometido y la meta), y con un comercio en la
  * bolsa **no se puede cambiar la duración de las bolsas** (cambiaría la fecha que ya se le comunicó). Cualquiera de los dos rechaza el guardado entero.
  */

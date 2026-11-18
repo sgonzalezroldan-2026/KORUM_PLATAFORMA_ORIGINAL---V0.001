@@ -43,7 +43,7 @@ export interface TemplateContext {
     goalCents: number;
     raisedCents: number;
     totalContributions: number;
-    ticketSubtype: 'EVENT' | 'RAFFLE' | null;
+    ticketSubtype: 'EVENT' | null;
     ticketVenue: string | null;
     /** Estado al enviar el mensaje (no al escribirlo): un aviso que sale tarde dice lo que ya es verdad (Sprint 5.5b). */
     status?: string;

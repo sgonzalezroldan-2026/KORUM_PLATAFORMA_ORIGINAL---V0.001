@@ -15,7 +15,7 @@ import { useApprovalsNotice } from './approvals-notice';
  */
 
 /** Motivos que cambian lo que se ve (la tarjeta cambia al recargar): se dicen en el aviso de la página, que sobrevive al refresco. */
-const PAGE_LEVEL = new Set(['LINK_NOT_SENT', 'WRONG_STATUS', 'NOT_READY', 'RAFFLE_NOT_DRAWN', 'SPONSORS_PENDING', 'WINDOW_EXPIRED', 'NOTHING_TO_PAY']);
+const PAGE_LEVEL = new Set(['LINK_NOT_SENT', 'WRONG_STATUS', 'NOT_READY', 'SPONSORS_PENDING', 'WINDOW_EXPIRED', 'NOTHING_TO_PAY']);
 
 export function usePayoutAction() {
   const tErrors = useTranslations('panel.payouts.errors');

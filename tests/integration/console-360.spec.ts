@@ -450,7 +450,7 @@ describe('QA-A03 · tarifas y categorías de una entidad', () => {
 
   const OWN_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
 
-  it('con una taquilla o rifa a la venta no se cambian los gastos de gestión de las entradas, ni a mano ni volviendo a los valores globales; el resto sí (auditoría financiera, B1)', async () => {
+  it('con una taquilla a la venta no se cambian los gastos de gestión de las entradas, ni a mano ni volviendo a los valores globales; el resto sí (auditoría financiera, B1)', async () => {
     const { organization } = await organizationWithSigners({ customRules: true, ticketFeeFixedCents: 0, ticketFeeBps: 0 });
     await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', ticketPriceCents: 1_000, ticketMax: 50 });
     await expect(saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, ticketFeeFixedCents: 65 })).rejects.toMatchObject({ reason: 'PUBLISHED_TICKETING' });

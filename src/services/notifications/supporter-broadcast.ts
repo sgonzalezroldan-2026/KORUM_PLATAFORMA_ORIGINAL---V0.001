@@ -9,7 +9,7 @@ import { DONOR_RECIPIENT_SELECT, donorRecipient } from './donor-recipient';
  * las fotos Antes / Después. Un reparto a miles de familias no cabe en la transacción de un cobro: quien provoca el aviso solo deja una fila
  * (`SupporterBroadcast`, una por iniciativa y plantilla) y la tarea `SUPPORTER_BROADCAST` la reparte por lotes, siguiendo desde la última aportación tratada.
  *
- * - Solo a quien **donó**: donaciones `COMPLETED` (no devueltas ni contracargadas). Ni entradas ni papeletas, ni comercios, ni el Auto-Impulso.
+ * - Solo a quien **donó**: donaciones `COMPLETED` (no devueltas ni contracargadas). Ni entradas, ni comercios, ni el Auto-Impulso.
  * - Una vez por persona e iniciativa aunque aportara varias veces: la clave de la bandeja lleva el HMAC de su email canónico, no el email.
  * - Al email de su cuenta (si no está anonimizada) o al de invitado, en el idioma con el que aportó.
  * - Son avisos sobre el destino de su propia donación (la garantía «todo o nada»), no publicidad: no piden `MARKETING_EMAILS` (punto para el abogado,

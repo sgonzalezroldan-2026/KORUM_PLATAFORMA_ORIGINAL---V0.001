@@ -94,7 +94,7 @@ export function TicketQuantityField({ offer, draft, update, error }: { offer: Ch
       <div className="space-y-1 rounded-2xl border border-sky-300 bg-sky-50 p-3.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded-full bg-sky-800 px-2.5 py-0.5 text-sm font-extrabold text-white">
-            <span aria-hidden="true">{ticket.subtype === 'RAFFLE' ? '🍀 ' : '🎭 '}</span>
+            <span aria-hidden="true">{'🎭 '}</span>
             {t(`badge.${ticket.subtype}`)}
           </span>
           <span className="font-corp font-extrabold tabular-nums text-sky-950">{t('available', { available: ticket.available, max: ticket.max })}</span>

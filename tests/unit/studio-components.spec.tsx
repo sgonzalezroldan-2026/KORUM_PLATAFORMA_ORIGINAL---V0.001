@@ -60,7 +60,6 @@ function props(draft: StudioDraft, overrides: Partial<StudioWorkbenchProps> = {}
 }
 
 const budget = (overrides: Partial<StudioDraft> = {}): StudioDraft => ({ ...blankStudioDraft('BUDGET', 'SCHOOL', '2026-12-10'), initiativeId: 7, title: 'Aulas frescas', description: 'Ventilación', category: 'Infraestructura y Confort', costMatCents: 380_000, costInstCents: 130_000, rewardText: REWARDS.cinema, ...overrides });
-const raffle = (overrides: Partial<StudioDraft> = {}): StudioDraft => ({ ...blankStudioDraft('TICKETING', 'SCHOOL', '2026-12-10'), initiativeId: 8, title: 'Rifa', description: 'Papeletas', ticketSubtype: 'RAFFLE', ticketPriceCents: 200, ticketMax: 500, rewardText: REWARDS.cinema, ...overrides });
 
 describe('QA-S01 · Estudio de edición', () => {
   it('la pizarra enseña la meta cuadrada y el mantenimiento a 0 solo como «0,00 €», sin «desactivado»', () => {
@@ -108,22 +107,6 @@ describe('QA-S01 · Estudio de edición', () => {
     const alert = await screen.findByTestId('studio-lock-alert');
     expect(alert).toHaveTextContent('ventiladores');
     expect(screen.getByTestId('studio-badge')).not.toHaveTextContent('0 %');
-  });
-
-  it('una rifa muestra el aviso normativo y no se puede publicar sin premios ni confirmación', async () => {
-    const user = userEvent.setup();
-    renderWithIntl(<StudioWorkbench {...props(raffle())} />);
-    expect(screen.getByTestId('raffle-notice')).toHaveTextContent('competencia de cada comunidad autónoma');
-    const publish = screen.getByTestId('studio-publish');
-    expect(publish).toBeDisabled();
-    expect(screen.getByTestId('studio-blockers')).toHaveTextContent('Indicad cuántos premios se sortean');
-    expect(screen.getByTestId('studio-blockers')).toHaveTextContent('Confirmad que la rifa cumple la normativa');
-
-    await user.type(screen.getByLabelText('Premios que se sortean'), '3');
-    expect(publish).toBeDisabled();
-    await user.click(screen.getByLabelText('Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma'));
-    expect(publish).toBeEnabled();
-    expect(screen.queryByTestId('studio-blockers')).not.toBeInTheDocument();
   });
 
   it('publicar pide confirmación y manda al servidor la meta que se aceptó, no una cifra calculada por el navegador', async () => {

@@ -2,10 +2,6 @@
 
 import { getEnv } from '@/config/env';
 import { GatePinNotAllowedError, GatePinRateLimitedError, revokeGateSession, rotateGateCode, setGatePin } from '@/core/ticketing/gate-session.service';
-import { drawRaffle, RaffleDrawNotAllowedError, type RaffleDrawBlock } from '@/core/ticketing/raffle-draw.service';
-import { loadRaffleActFile, type RaffleActFile } from '@/core/ticketing/raffle-state.service';
-import { dispatchOutboxSoon } from '@/lib/panel/outbox-soon';
-import { z } from 'zod';
 import { getSessionActor } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { findOrganizationIdBySlug } from '@/repositories/organization.repository';
@@ -69,47 +65,5 @@ export async function revokeGateSessionAction(orgSlug: string, gateSessionId: st
     return { status: 'OK' };
   } catch (error) {
     return failure(error);
-  }
-}
-
-const extraInput = z.object({ reason: z.enum(['PRIZE_UNCLAIMED', 'WINNER_REFUNDED']), replacesNumbers: z.array(z.number().int().positive()).min(1).max(100), idempotencyKey: z.string().regex(/^[\w-]{8,128}$/) });
-
-export type ExtraRoundResult = { status: 'OK'; round: number; numbers: number[]; notified: number } | { status: 'BLOCKED'; reason: RaffleDrawBlock } | { status: 'ERROR'; reason: 'FORBIDDEN' | 'NOT_FOUND' | 'INVALID_INPUT' };
-
-/**
- * Ronda extra de una rifa (Sprint 4.6): sustituye un premio sin reclamar o el de un ganador reembolsado. La hace **una sola** persona firmante con segundo factor
- * (decisión del promotor, 2026-11-11: sin doble firma); el motor comprueba cargo, entidad, motivo y límites, y la otra persona firmante recibe un aviso. La clave de
- * idempotencia la genera la pantalla al preparar la ronda: un doble toque devuelve la misma acta.
- */
-export async function drawExtraRoundAction(orgSlug: string, initiativeId: number, input: unknown): Promise<ExtraRoundResult> {
-  const ctx = await context(orgSlug);
-  const parsed = extraInput.safeParse(input);
-  if (!ctx || !Number.isSafeInteger(initiativeId) || initiativeId <= 0) return { status: 'ERROR', reason: 'FORBIDDEN' };
-  if (!parsed.success) return { status: 'ERROR', reason: 'INVALID_INPUT' };
-  try {
-    const result = await drawRaffle(ctx.db, ctx.actor, { organizationId: ctx.organizationId, initiativeId }, { winnersCount: parsed.data.replacesNumbers.length, replacesNumbers: parsed.data.replacesNumbers, idempotencyKey: parsed.data.idempotencyKey, extraRoundReason: parsed.data.reason });
-    dispatchOutboxSoon(ctx.db, result.outboxIds, 'outbox-after-raffle-extra-round');
-    return { status: 'OK', round: result.act.round, numbers: result.act.winningNumbers, notified: result.notified };
-  } catch (error) {
-    if (error instanceof RaffleDrawNotAllowedError) return { status: 'BLOCKED', reason: error.reason };
-    if (error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'NOT_FOUND' };
-    if (error instanceof TenantAccessError) return { status: 'ERROR', reason: 'FORBIDDEN' };
-    throw error;
-  }
-}
-
-export type RaffleActFileResult = { status: 'OK'; act: RaffleActFile } | { status: 'ERROR'; reason: 'FORBIDDEN' | 'NOT_FOUND' };
-
-/** El acta de una ronda (normal o extra) para descargarla desde el panel: solo números y series, sin datos de nadie. */
-export async function downloadRaffleActAction(orgSlug: string, initiativeId: number, round: number): Promise<RaffleActFileResult> {
-  const ctx = await context(orgSlug);
-  if (!ctx || !Number.isSafeInteger(initiativeId) || initiativeId <= 0 || !Number.isSafeInteger(round) || round < 1) return { status: 'ERROR', reason: 'FORBIDDEN' };
-  try {
-    const act = await loadRaffleActFile(ctx.db, ctx.actor, { organizationId: ctx.organizationId, initiativeId }, round);
-    return act ? { status: 'OK', act } : { status: 'ERROR', reason: 'NOT_FOUND' };
-  } catch (error) {
-    if (error instanceof ResourceNotFoundError) return { status: 'ERROR', reason: 'NOT_FOUND' };
-    if (error instanceof TenantAccessError) return { status: 'ERROR', reason: 'FORBIDDEN' };
-    throw error;
   }
 }

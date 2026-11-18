@@ -7,7 +7,7 @@ import { useHydrated } from '@/components/ui/use-hydrated';
 import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
- * Papeleta de la votación de redimensionamiento (Sprint 4.4b): las opciones de proyecto y, siempre, «Prefiero que me devolváis mi aportación». Un voto por
+ * Formulario de voto de la votación de redimensionamiento (Sprint 4.4b): las opciones de proyecto y, siempre, «Prefiero que me devolváis mi aportación». Un voto por
  * persona que no se cambia, así que antes de enviarlo se confirma (y la devolución dice cuánto se devuelve y adónde). Los errores se anuncian y reciben el
  * foco. Registrado el voto, lo dice aquí mismo (sin recargar la página) y el foco va al aviso.
  */

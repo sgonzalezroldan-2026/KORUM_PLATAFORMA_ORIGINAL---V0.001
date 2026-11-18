@@ -43,7 +43,7 @@ export type ScanOutcome =
   /** Sin red: no está en la lista (o su firma no coincide). Puede ser una compra posterior a la descarga o un pase falso; sin red no se puede saber. */
   | { status: 'UNKNOWN' }
   | { status: 'INVALID_FORMAT' }
-  | { status: 'INVALID_SIGNATURE' | 'OTHER_EVENT' | 'REVOKED' | 'NOT_PAID' | 'NOT_APPLICABLE' | 'EVENT_CLOSED' }
+  | { status: 'INVALID_SIGNATURE' | 'OTHER_EVENT' | 'REVOKED' | 'NOT_PAID' | 'EVENT_CLOSED' }
   /** Solo al sincronizar: esa lectura ya había llegado. */
   | { status: 'DUPLICATE_SCAN'; accepted: boolean };
 

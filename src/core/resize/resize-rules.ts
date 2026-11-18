@@ -11,7 +11,7 @@ import { RESIZE_MIN_WINDOW_DAYS, RESIZE_OPTION_MAX_LENGTH, RESIZE_OPTION_MIN_LEN
  *   está además «Prefiero que me devolváis mi aportación»: a quien la elige se le devuelve el 100 % sí o sí (en el acto).
  * - **Resultado:** gana la opción de proyecto más votada. **Sin votos de proyecto o con empate, reembolso a todos.** La meta nueva es lo que queda tras
  *   devolver a quien lo pidió.
- * - Solo campañas de **presupuesto**: un evento o una rifa no tienen versión más pequeña (se reembolsan).
+ * - Solo campañas de **presupuesto**: un evento con entradas no tiene versión más pequeña (se reembolsan).
  */
 
 export { hasDuplicateOptions, RESIZE_MIN_WINDOW_DAYS, RESIZE_OPTION_MAX_LENGTH, RESIZE_OPTION_MIN_LENGTH, RESIZE_OPTIONS_MAX, RESIZE_OPTIONS_MIN, RESIZE_POLL_DAYS } from './resize-limits';
@@ -116,7 +116,7 @@ export function tallyResizeVotes(votes: ReadonlyArray<{ optionIndex: number | nu
 
 /**
  * Enlace personal de voto (`?v=`): la votación y la donación desde la que se vota, firmados con `DATA_HMAC_SECRET` y dominio propio. No abre nada más que
- * la papeleta de esa persona; vale mientras la votación esté abierta. Va en el email (campo secreto, se borra de la bandeja al enviarlo), nunca en claro
+ * el voto de esa persona; vale mientras la votación esté abierta. Va en el email (campo secreto, se borra de la bandeja al enviarlo), nunca en claro
  * en la base de datos.
  */
 const TOKEN_PATTERN = /^([1-9]\d{0,9})\.([1-9]\d{0,9})\.([0-9a-f]{64})$/;

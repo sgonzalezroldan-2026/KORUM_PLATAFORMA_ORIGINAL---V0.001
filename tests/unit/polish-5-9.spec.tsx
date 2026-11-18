@@ -6,11 +6,9 @@ import { useState, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { StudioBoardView } from '@/components/panel/studio-board-view';
 import { InitiativeCard } from '@/components/portal/initiative-card';
-import { TicketDetails } from '@/components/portal/detail-sections';
 import { useCategoryLabel } from '@/components/portal/use-category-label';
 import { standardCategoryKey } from '@/core/public/category-label';
 import type { InitiativeCardData } from '@/core/public/view-model';
-import { raffleOutcomeForPass, type RaffleDrawFact } from '@/core/ticketing/raffle-pass-outcome';
 import { consoleActor, wasKorum, type KorumPeriods } from '@/services/audit/audit-people';
 import { tryResizedBudgetBoard, resizedBudgetBoard } from '@/core/studio/resized-board';
 import { storedBudgetBoard, type StudioContext } from '@/core/studio/studio-board';
@@ -18,7 +16,7 @@ import { useFocusPainted } from '@/lib/use-focus-painted';
 import { renderWithIntl } from '../utils/render-with-intl';
 
 /**
- * Sprint 5.9 · Tanda de pulido previa al piloto: vocabulario de rifa de punta a punta, pase de rifa con el resultado del sorteo, categorías traducidas,
+ * Sprint 5.9 · Tanda de pulido previa al piloto: vocabulario de la taquilla, categorías traducidas,
  * casillas de 44 px, pizarra que avisa en vez de caerse, foco al pintarse y la etiqueta «KORUM» de la auditoría juzgada por fecha.
  */
 
@@ -33,9 +31,9 @@ vi.mock('@/i18n/navigation', () => ({
 const baseCard = (overrides: Partial<InitiativeCardData> = {}): InitiativeCardData => ({
   id: 1,
   format: 'TICKETING',
-  subtype: 'RAFFLE',
-  title: 'Gran rifa de Navidad',
-  category: 'Taquilla y Rifas',
+  subtype: 'EVENT',
+  title: 'Fiesta de Navidad',
+  category: 'Taquilla',
   stage: 'Todo el centro',
   pct: 100,
   daysLeft: 4,
@@ -55,78 +53,14 @@ const baseCard = (overrides: Partial<InitiativeCardData> = {}): InitiativeCardDa
   ...overrides
 });
 
-describe('Vocabulario de rifa de punta a punta', () => {
-  it('la tarjeta de una rifa dice «papeleta», no «entrada» ni «aforo», en los tres idiomas', () => {
+describe('Vocabulario de la taquilla', () => {
+  it('la tarjeta de un evento dice «entrada» y «aforo»', () => {
     renderWithIntl(<InitiativeCard orgSlug="cervantes" card={baseCard()} />, 'es');
-    expect(document.body.textContent).toContain('Papeleta 2,49');
-    expect(document.body.textContent).toContain('500 vendidas de 500');
-    expect(document.body.textContent).toContain('Papeletas agotadas');
-    expect(document.body.textContent).not.toMatch(/aforo|entrada/i);
-  });
-
-  it('la de un evento sigue diciendo «entrada» y «aforo»', () => {
-    renderWithIntl(<InitiativeCard orgSlug="cervantes" card={baseCard({ subtype: 'EVENT', title: 'Fiesta' })} />, 'es');
     expect(document.body.textContent).toContain('Entrada 2,49');
     expect(document.body.textContent).toContain('aforo 500');
     expect(document.body.textContent).toContain('entradas agotadas');
   });
 
-  it('en catalán e inglés, la rifa habla de butlletes y de raffle tickets', () => {
-    const ca = renderWithIntl(<InitiativeCard orgSlug="cervantes" card={baseCard()} />, 'ca');
-    expect(document.body.textContent).toContain('Butlleta');
-    expect(document.body.textContent).toContain('Butlletes exhaurides');
-    expect(document.body.textContent).not.toMatch(/aforament|entrad/i);
-    ca.unmount();
-    renderWithIntl(<InitiativeCard orgSlug="cervantes" card={baseCard()} />, 'en');
-    expect(document.body.textContent).toContain('Raffle ticket');
-    expect(document.body.textContent).toContain('Raffle tickets sold out');
-    expect(document.body.textContent).not.toMatch(/capacity|full house/i);
-  });
-
-  it('el bloque de información de una rifa habla de papeletas', () => {
-    const ticket = { mode: 'ADD' as const, priceCents: 200, feeUnitCents: 49, buyerUnitCents: 249, centerUnitCents: 200, venue: null };
-    renderWithIntl(<TicketDetails ticket={ticket} kind="RAFFLE" />, 'es');
-    expect(document.body.textContent).toContain('Información de las papeletas');
-    expect(document.body.textContent).toContain('Importe íntegro por papeleta para la entidad');
-    expect(document.body.textContent).toContain('Total por papeleta');
-    expect(document.body.textContent).not.toMatch(/entrada/i);
-  });
-});
-
-describe('Pase de rifa · resultado del sorteo', () => {
-  const draw = (winningNumbers: number[], replacedNumbers: number[] = [], extra = false): RaffleDrawFact => ({ winningNumbers, replacedNumbers, extra });
-
-  it('antes del sorteo: aún no hay sorteo', () => {
-    expect(raffleOutcomeForPass({ numbers: [12, 13], prizeCount: 3, draws: [] })).toEqual({ state: 'NOT_DRAWN' });
-  });
-
-  it('si alguno de sus números ha salido, lo dice y lista solo los suyos, en orden', () => {
-    expect(raffleOutcomeForPass({ numbers: [40, 7, 12], prizeCount: 2, draws: [draw([12, 99]), draw([7], [], false)] })).toEqual({ state: 'WON', numbers: [7, 12] });
-  });
-
-  it('con el sorteo completo y ninguno suyo, dice que esta vez no ha salido', () => {
-    expect(raffleOutcomeForPass({ numbers: [1, 2], prizeCount: 2, draws: [draw([5, 6])] })).toEqual({ state: 'NOT_WON' });
-  });
-
-  it('si aún quedan premios por sortear y ninguno suyo ha salido, el sorteo está en marcha', () => {
-    expect(raffleOutcomeForPass({ numbers: [1, 2], prizeCount: 3, draws: [draw([5])] })).toEqual({ state: 'IN_PROGRESS' });
-  });
-
-  it('un premio sustituido por una ronda extra deja de ser suyo, pero se le dice que salió y se volvió a sortear', () => {
-    const draws = [draw([5, 6]), draw([8], [5], true)];
-    expect(raffleOutcomeForPass({ numbers: [5], prizeCount: 2, draws })).toEqual({ state: 'REPLACED', numbers: [5] });
-    // El número nuevo sí gana, y el sustituido ya no.
-    expect(raffleOutcomeForPass({ numbers: [8], prizeCount: 2, draws })).toEqual({ state: 'WON', numbers: [8] });
-    expect(raffleOutcomeForPass({ numbers: [6], prizeCount: 2, draws })).toEqual({ state: 'WON', numbers: [6] });
-  });
-
-  it('una ronda extra no cuenta como premio sorteado para decidir si el sorteo está completo', () => {
-    expect(raffleOutcomeForPass({ numbers: [1], prizeCount: 2, draws: [draw([5, 6]), draw([8], [5], true)] })).toEqual({ state: 'NOT_WON' });
-  });
-
-  it('sin número de premios guardado (dato antiguo) no inventa un sorteo a medias', () => {
-    expect(raffleOutcomeForPass({ numbers: [1], prizeCount: null, draws: [draw([5])] })).toEqual({ state: 'NOT_WON' });
-  });
 });
 
 describe('Categorías: las estándar se enseñan traducidas; las de la entidad, tal como las escribió', () => {
@@ -140,7 +74,7 @@ describe('Categorías: las estándar se enseñan traducidas; las de la entidad, 
   }
 
   it('reconoce las seis categorías estándar y nada más', () => {
-    for (const name of ['Infraestructura y Confort', 'Patios y Deporte', 'Tecnología y Recursos', 'Comunidad y Viajes', 'Solidaridad y Becas', 'Taquilla y Rifas']) expect(standardCategoryKey(name)).not.toBeNull();
+    for (const name of ['Infraestructura y Confort', 'Patios y Deporte', 'Tecnología y Recursos', 'Comunidad y Viajes', 'Solidaridad y Becas', 'Taquilla']) expect(standardCategoryKey(name)).not.toBeNull();
     expect(standardCategoryKey('Huerto escolar')).toBeNull();
     expect(standardCategoryKey('')).toBeNull();
   });
@@ -243,14 +177,14 @@ describe('Pizarra del Estudio: pasarela cubierta', () => {
   const board = storedBudgetBoard({ costMatCents: 100_000, costInstCents: 0, contingencyBps: 1_000, goalCents: 112_000, defaultExemptAppliedCents: 100_000, medalExemptAppliedCents: 0, bracketRateAppliedBps: 500, bracketFeeCents: 500, maintFeeCents: 0, gatewayFeeCents: 1_700 });
 
   it('si la pasarela está cubierta lo dice sin decir que KORUM la asume', () => {
-    renderWithIntl(<StudioBoardView board={board} context={CONTEXT} contingencyBps={1_000} ticketFeeMode="ADD" ticketSubtype="EVENT" gatewayCovered />, 'es');
+    renderWithIntl(<StudioBoardView board={board} context={CONTEXT} contingencyBps={1_000} ticketFeeMode="ADD" gatewayCovered />, 'es');
     const note = screen.getByTestId('studio-gateway-covered');
     expect(note).toHaveTextContent('El coste de la pasarela de pago está cubierto: no se resta de lo que recibe la entidad.');
     expect(note.textContent).not.toMatch(/KORUM/);
   });
 
   it('en una campaña normal no sale ese aviso', () => {
-    renderWithIntl(<StudioBoardView board={board} context={CONTEXT} contingencyBps={1_000} ticketFeeMode="ADD" ticketSubtype="EVENT" />, 'es');
+    renderWithIntl(<StudioBoardView board={board} context={CONTEXT} contingencyBps={1_000} ticketFeeMode="ADD" />, 'es');
     expect(screen.queryByTestId('studio-gateway-covered')).not.toBeInTheDocument();
     expect(within(screen.getByTestId('studio-tco-lines')).getByText('5. Coste de la pasarela de pago (Paycomet)')).toBeInTheDocument();
   });
@@ -346,36 +280,19 @@ describe('Auditoría de la consola: «KORUM» se juzga por la fecha de cada fila
   });
 });
 
-describe('Tarjeta social y pase anulado: la rifa también habla de papeletas (revisión de experiencia del 5.9)', () => {
+describe('Tarjeta social y pase anulado de una entrada (revisión de experiencia del 5.9)', () => {
   const translator = (locale: 'es' | 'ca' | 'en', namespace: string) => {
     const messages = JSON.parse(readFileSync(join(process.cwd(), `messages/${locale}.json`), 'utf8'));
     return createTranslator({ locale, messages, namespace: namespace as never }) as unknown as (key: string, values?: Record<string, unknown>) => string;
   };
 
-  it('la tarjeta para WhatsApp de una rifa dice «papeletas vendidas» y la de un evento, «entradas vendidas», en los tres idiomas', () => {
-    expect(translator('es', 'portal.og')('tickets', { kind: 'RAFFLE', sold: 3, max: 60 })).toBe('3 de 60 papeletas vendidas');
+  it('la tarjeta para WhatsApp de un evento dice «entradas vendidas»', () => {
     expect(translator('es', 'portal.og')('tickets', { kind: 'EVENT', sold: 3, max: 60 })).toBe('3 de 60 entradas vendidas');
-    expect(translator('ca', 'portal.og')('tickets', { kind: 'RAFFLE', sold: 3, max: 60 })).toBe('3 de 60 butlletes venudes');
-    expect(translator('en', 'portal.og')('tickets', { kind: 'RAFFLE', sold: 3, max: 60 })).toBe('3 of 60 raffle tickets sold');
     expect(translator('en', 'portal.og')('tickets', { kind: 'EVENT', sold: 3, max: 60 })).toBe('3 of 60 tickets sold');
   });
 
-  it('una papeleta anulada no habla de puerta ni de entrada; la entrada anulada sí', () => {
-    for (const locale of ['es', 'ca', 'en'] as const) {
-      const t = translator(locale, 'portal.pass');
-      expect(`${t('revokedRaffle.title')} ${t('revokedRaffle.description')}`).not.toMatch(/puerta|porta|door|entrada|entrad|\bticket\b(?! )/i);
-      expect(t('revoked.description')).toMatch(/puerta|porta|door/i);
-    }
+  it('la entrada anulada dice que ya no vale en la puerta, en los tres idiomas', () => {
+    for (const locale of ['es', 'ca', 'en'] as const) expect(translator(locale, 'portal.pass')('revoked.description')).toMatch(/puerta|porta|door/i);
   });
 
-  it('el resultado del sorteo no repite lo que dice el pie del pase', () => {
-    for (const locale of ['es', 'ca', 'en'] as const) {
-      const t = translator(locale, 'portal.pass');
-      // «La entidad te dirá cómo recogerlo» vive solo en el pie de un pase ganador, no también en el resultado.
-      expect(t('outcome.won', { count: 1, numbers: '5' })).not.toMatch(/entidad|entitat|organisation/i);
-      expect(t('showRaffleWon', { count: 1 })).toMatch(/entidad|entitat|organisation/i);
-      // Antes del sorteo el resultado no vuelve a decir «guárdalas»: eso lo dice el pie.
-      expect(t('outcome.notDrawn')).not.toMatch(/guard|keep/i);
-    }
-  });
 });

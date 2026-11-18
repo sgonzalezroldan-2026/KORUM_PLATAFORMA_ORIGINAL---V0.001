@@ -9,7 +9,7 @@ export const STANDARD_CATEGORY_KEYS = {
   'Tecnología y Recursos': 'tech',
   'Comunidad y Viajes': 'community',
   'Solidaridad y Becas': 'solidarity',
-  'Taquilla y Rifas': 'ticketing'
+  Taquilla: 'ticketing'
 } as const;
 
 export type StandardCategoryKey = (typeof STANDARD_CATEGORY_KEYS)[keyof typeof STANDARD_CATEGORY_KEYS];

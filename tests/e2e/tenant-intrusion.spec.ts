@@ -15,7 +15,7 @@ import { registerEntityAndEnterPanel, type RegisteredEntity } from './panel-supp
  *     en la prueba, y sin argumentos preparados la prueba falla) cambiando su propia entidad por la de B. Cada una responde `FORBIDDEN` y deja su fila
  *     `tenant.access_denied` con la entidad de B.
  *  2. **Identificadores ajenos:** con su propia entidad en la dirección, llama a todas las acciones que reciben un identificador con los de B (campañas,
- *     ideas, firmas, comercios, liquidaciones, relevos, sesiones de portería, sorteos, consultas). La respuesta es exactamente la misma que para un
+ *     ideas, firmas, comercios, liquidaciones, relevos, sesiones de portería, consultas). La respuesta es exactamente la misma que para un
  *     identificador que no existe, y el intento queda registrado.
  *  3. **Páginas y ficheros:** abre las páginas del panel de B, sus documentos, sus facturas, su Modelo 182 y sus subidas, con la entidad de B y con la
  *     propia. Todo responde 403 o 404, igual que para algo que no existe.
@@ -67,7 +67,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       await test.step('censo de acciones del panel con la entidad de otra persona', async () => {
         // Cada acción del manifiesto tiene sus argumentos preparados, y no sobra ninguno: una acción nueva (o una que desaparece) obliga a revisar la prueba.
         expect(panelActions.map((action) => action.name).sort()).toEqual(Object.keys(forVictim).sort());
-        expect(panelActions.length).toBeGreaterThanOrEqual(45);
+        expect(panelActions.length).toBeGreaterThanOrEqual(43); // 45 hasta el 5.12a, que retiró dos acciones de la taquilla.
         // Control: la misma llamada con la entidad propia sí llega a la acción y funciona. Lo que sigue se niega por la entidad, no por cómo se llama.
         const own = await invoke(page, urlOf('resendInvitationAction'), byName.get('resendInvitationAction')!.id, [attacker.slug]);
         expect(['SENT', 'NOT_NEEDED']).toContain(statusOf(own.result));
@@ -116,16 +116,14 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
         }
       });
 
-      // La portería no se abre con una cuenta de firmante: solo con el PIN de ese evento. Las acciones del lector y del sorteo, con el evento de B.
+      // La portería no se abre con una cuenta de firmante: solo con el PIN de ese evento. Las acciones del lector, con el evento de B.
       await test.step('portería de un evento de otra entidad sin su PIN', async () => {
         // Todas las acciones de la portería que reciben el evento (las que la compilación expone: las que usa alguna pantalla); entrar y salir van aparte, con el PIN.
         const gate = loadActions().filter((action) => action.file.includes('/panel/[orgSlug]/porteria/') && !/^(enterGate|leaveGate)Action$/.test(action.name));
-        expect(gate.map((action) => action.name).sort()).toEqual(['drawRaffleAction', 'gateSummaryAction', 'loadGateListAction', 'loadRaffleActAction', 'scanPassAction', 'syncScansAction']);
+        expect(gate.map((action) => action.name).sort()).toEqual(['gateSummaryAction', 'loadGateListAction', 'scanPassAction', 'syncScansAction']);
         const inputs: Record<string, unknown[]> = {
           scanPassAction: [victim.eventId, { payload: 'KORUM1.00000000-0000-4000-8000-000000000000.AAAA', people: 1 }],
-          syncScansAction: [victim.eventId, { scans: [] }],
-          drawRaffleAction: [victim.raffleId, { winnersCount: 1, idempotencyKey: randomUUID() }],
-          loadRaffleActAction: [victim.raffleId, 1]
+          syncScansAction: [victim.eventId, { scans: [] }]
         };
         for (const action of gate) {
           const outcome = await invoke(page, pageUrl(action.pages[0]!, params), action.id, inputs[action.name] ?? [victim.eventId]);
@@ -326,7 +324,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
             .filter((action) => action.file.includes('/(superadmin)/admin/'))
             .map((action) => ({ action, args: [consolePayload(action.name, victim)] }))
         ];
-        expect(targets.length).toBeGreaterThanOrEqual(75);
+        expect(targets.length).toBeGreaterThanOrEqual(74); // 76 hasta el 5.12a, que retiró dos acciones de la taquilla.
         for (const { action, args } of targets) {
           const outcome = await invokeAnonymous(anonymous.request, origin, pageUrl(action.pages[0]!, { ...params, orgSlug: victimEntity.slug, id: victim.organizationId }), action.id, args);
           clean(outcome.body, action.name);

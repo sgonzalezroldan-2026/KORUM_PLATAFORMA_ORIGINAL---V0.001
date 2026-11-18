@@ -1,9 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
 import { formatCents } from '@/core/finance/money';
-import { madridIsoDate } from '@/core/studio/studio-draft';
 import { validateTaxId } from '@/core/tax/tax-id';
-import { verifyDrawAct } from '@/core/ticketing/raffle-draw';
 import { emailTo, uniqueEmail, withE2eDb } from './auth-support';
 import { trackConsoleErrors } from './helpers';
 import { buyTickets, createGatePin, donate, enterGate, expectNoMoneyNorPersonalData, ledgerOf, moneyIn, parseMoney, scanPass, sponsor } from './journey-stages';
@@ -14,7 +12,7 @@ import { activateCosigner, checkPage, createKorumReviewer, localized, NAVIGATION
  * y en dos idiomas (castellano y catalán), con cobros simulados:
  *
  *   alta de la entidad ➔ documentos del titular y su verificación ➔ idea de una familia ➔ quórum ➔ doble firma ➔ Estudio ➔ donación + comercio + taquilla ➔
- *   portería + sorteo ➔ Auto-Impulso ➔ liquidación con factura y fotos Antes/Después ➔ Modelo 182
+ *   portería ➔ Auto-Impulso ➔ liquidación con factura y fotos Antes/Después ➔ Modelo 182
  *
  * Nada se prepara por detrás: cada dato nace de una pantalla. La única excepción es el permiso de Super-Admin de la persona de KORUM (una cuenta sin ningún
  * cargo en una entidad), que en producción dan `superadmin:bootstrap` o la invitación desde la consola. Los textos salen del catálogo de cada idioma
@@ -66,8 +64,8 @@ async function submitHolderDocuments(page: Page, t: T, locale: Lang, entity: Jou
   return cif;
 }
 
-/** Publica una taquilla o una rifa desde su plantilla del Estudio y devuelve su identificador. */
-async function publishTicketing(page: Page, t: T, locale: Lang, slug: string, template: 'festival' | 'raffle', title: string, fill: () => Promise<void>): Promise<number> {
+/** Publica una taquilla desde su plantilla del Estudio y devuelve su identificador. */
+async function publishTicketing(page: Page, t: T, locale: Lang, slug: string, template: 'festival', title: string, fill: () => Promise<void>): Promise<number> {
   await page.goto(localized(locale, `/panel/${slug}/estudio?nueva=taquilla&plantilla=${template}`));
   await page.getByLabel(t('panel.studio.fields.title')).fill(title);
   await fill();
@@ -289,20 +287,15 @@ for (const locale of ['es', 'ca'] as const) {
     });
     expect(funding.raisedCents).toBeLessThan(board.goalCents);
 
-    // ───────────── 7. Taquilla: un evento con entradas y una rifa, publicados desde el Estudio y comprados por familias ─────────────
+    // ───────────── 7. Taquilla: dos eventos con entradas, publicados desde el Estudio y comprados por familias; el segundo se agota ─────────────
     const eventTitle = `${locale === 'es' ? 'Fiesta de fin de curso' : 'Festa de final de curs'} ${tag}${Date.now().toString(36)}`;
-    const raffleTitle = `${locale === 'es' ? 'Rifa solidaria' : 'Rifa solidària'} ${tag}${Date.now().toString(36)}`;
-    const gate = await test.step('taquilla: entradas con QR y rifa con todas las papeletas vendidas', async () => {
+    const soldOutTitle = `${locale === 'es' ? 'Concierto solidario' : 'Concert solidari'} ${tag}${Date.now().toString(36)}`;
+    const gate = await test.step('taquilla: entradas con QR y un evento con todas las entradas vendidas', async () => {
       const eventId = await publishTicketing(page, t, locale, entity.slug, 'festival', eventTitle, async () => {
         await page.getByLabel(t('panel.studio.fields.ticketMax')).fill('10');
       });
-      const raffleId = await publishTicketing(page, t, locale, entity.slug, 'raffle', raffleTitle, async () => {
+      const soldOutId = await publishTicketing(page, t, locale, entity.slug, 'festival', soldOutTitle, async () => {
         await page.getByLabel(t('panel.studio.fields.ticketMax')).fill('4');
-        await page.getByLabel(t('panel.studio.fields.rafflePrizes')).fill('2');
-        // El sorteo se abre el día del acto: hoy.
-        await page.getByLabel(t('panel.studio.fields.closesOn')).fill(madridIsoDate(new Date()));
-        await expect(page.getByTestId('raffle-notice')).toBeVisible();
-        await page.getByLabel(t('panel.studio.fields.raffleConfirm')).check();
       });
       await checkPage(page, isMobile);
 
@@ -314,40 +307,34 @@ for (const locale of ['es', 'ca'] as const) {
       // El pase que ve la familia lleva un QR de verdad: se lee como lo leería la cámara de la puerta.
       const qrPayload = await readQrCode(buyer.page.getByRole('img', { name: t('portal.pass.qrAlt') }));
       await expect(buyer.page.getByText(t('portal.pass.quantity', { count: 3 }))).toBeVisible();
-      const drawLabel = t('portal.pass.drawOn', { date: '' }).trim();
-      await expect(buyer.page.locator('section[aria-labelledby="pass-title"]')).not.toContainText(drawLabel);
       await checkPage(buyer.page, isMobile);
       expect(await emailTo(buyerEmail, since, (text) => text.includes('/entrada/'))).toContain(entries.passPath.split('?')[0]!);
 
-      // El pase de una rifa habla de papeletas y de reclamar el premio, no de entradas ni de la puerta.
-      const papers = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: raffleId, email: buyerEmail, quantity: 3, subtype: 'RAFFLE' });
-      await expect(buyer.page).toHaveTitle(new RegExp(`^${t('portal.pass.titleRaffle')}`));
-      await expect(buyer.page.getByRole('img', { name: t('portal.pass.qrAltRaffle') })).toBeVisible();
-      await expect(buyer.page.getByText(t('portal.pass.quantityRaffle', { count: 3 }))).toBeVisible();
-      await expect(buyer.page.getByText(t('portal.pass.showRaffle', { count: 3 }))).toBeVisible();
-      await expect(buyer.page.getByText(t('portal.pass.show'))).toHaveCount(0);
-      // La fecha del pase de una rifa dice de qué es: el día del sorteo.
-      await expect(buyer.page.locator('section[aria-labelledby="pass-title"]')).toContainText(drawLabel);
+      // El segundo evento: tres entradas para la misma familia y la última para una vecina, que agota el aforo.
+      const seats = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: buyerEmail, quantity: 3, subtype: 'EVENT' });
+      await expect(buyer.page).toHaveTitle(new RegExp(`^${t('portal.pass.title')}`));
+      await expect(buyer.page.getByRole('img', { name: t('portal.pass.qrAlt') })).toBeVisible();
+      await expect(buyer.page.getByText(t('portal.pass.quantity', { count: 3 }))).toBeVisible();
+      await expect(buyer.page.getByText(t('portal.pass.show'))).toBeVisible();
       await checkPage(buyer.page, isMobile);
       const neighbour = await newPerson(browser, page);
-      const lastPaper = await buyTickets(neighbour.page, t, locale, { slug: entity.slug, initiativeId: raffleId, email: uniqueEmail('papeleta'), quantity: 1, subtype: 'RAFFLE' });
-      await expect(neighbour.page.getByText(t('portal.pass.showRaffle', { count: 1 }))).toBeVisible();
-      charges.push(entries.chargedCents, papers.chargedCents, lastPaper.chargedCents);
-      // Con la última papeleta la rifa completa su aforo y deja de venderse.
-      await expect.poll(() => statusOf(raffleId), { timeout: 30_000 }).toBe('GOAL_REACHED');
+      const lastSeat = await buyTickets(neighbour.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: uniqueEmail('ultima-entrada'), quantity: 1, subtype: 'EVENT' });
+      await expect(neighbour.page.getByText(t('portal.pass.show'))).toBeVisible();
+      charges.push(entries.chargedCents, seats.chargedCents, lastSeat.chargedCents);
+      // Con la última entrada el evento completa su aforo y deja de venderse.
+      await expect.poll(() => statusOf(soldOutId), { timeout: 30_000 }).toBe('GOAL_REACHED');
       expect(buyerErrors).toEqual([]);
       await buyer.context.close();
       await neighbour.context.close();
-      return { eventId, raffleId, qrPayload, entries, raffleUnitFeeCents: papers.unitFeeCents, raffleUnitPriceCents: papers.unitPriceCents };
+      return { eventId, soldOutId, qrPayload, entries, soldOutUnitFeeCents: seats.unitFeeCents, soldOutUnitPriceCents: seats.unitPriceCents };
     });
 
-    // ───────────── 8. Portería: PIN del evento, lectura del pase y sorteo certificado (QA-SEC05: sin dinero ni datos de nadie) ─────────────
-    await test.step('portería con PIN: entrada parcial, alerta roja y sorteo con acta comprobable', async () => {
+    // ───────────── 8. Portería: PIN del evento y lectura del pase (QA-SEC05: sin dinero ni datos de nadie) ─────────────
+    await test.step('portería con PIN: entrada parcial y alerta roja', async () => {
       const eventGate = await createGatePin(page, t, locale, entity.slug, eventTitle);
-      const raffleGate = await createGatePin(page, t, locale, entity.slug, raffleTitle);
       await checkPage(page, isMobile);
 
-      const volunteer = await newPerson(browser, page, { acceptDownloads: true });
+      const volunteer = await newPerson(browser, page);
       const volunteerErrors = trackConsoleErrors(volunteer.page);
       await enterGate(volunteer.page, t, eventGate.gatePath, eventGate.pin);
       await server(volunteer.page.getByRole('heading', { name: t('gate.scanner.capacityTitle') })).toBeVisible();
@@ -374,27 +361,6 @@ for (const locale of ['es', 'ca'] as const) {
       await expect(volunteer.page.getByRole('heading', { name: t('gate.scanner.result.exhausted') })).toBeVisible();
       await expectNoMoneyNorPersonalData(volunteer.page);
       await checkPage(volunteer.page, isMobile);
-
-      // El sorteo de la rifa, el día del acto: 2 premios entre las 4 papeletas pagadas.
-      await enterGate(volunteer.page, t, raffleGate.gatePath, raffleGate.pin);
-      await server(volunteer.page.getByTestId('gate-raffle-link')).toBeVisible();
-      await volunteer.page.getByTestId('gate-raffle-link').click();
-      await server(volunteer.page.getByTestId('raffle-stage')).toBeVisible();
-      await expect(volunteer.page.getByTestId('raffle-entries')).toHaveText('4');
-      await volunteer.page.getByLabel(t('gate.raffle.winnersLabel', { left: 2 })).fill('2');
-      await volunteer.page.getByTestId('raffle-draw').click();
-      await server(volunteer.page.getByTestId('raffle-result')).toBeVisible();
-      const winners = (await volunteer.page.getByTestId('raffle-number').allInnerTexts()).map((text) => Number(text.replace('#', '')));
-      expect(new Set(winners).size).toBe(2);
-      expect(winners.every((number) => number >= 1 && number <= 4)).toBe(true);
-      await expect(volunteer.page.getByText(t('gate.raffle.blocked.done'))).toBeVisible();
-      await expectNoMoneyNorPersonalData(volunteer.page);
-      await checkPage(volunteer.page, isMobile);
-      const [download] = await Promise.all([volunteer.page.waitForEvent('download', { timeout: 30_000 }), volunteer.page.getByTestId('raffle-download').click()]);
-      const act = JSON.parse(await readFile(await download.path(), 'utf8')) as { initiativeId: number; round: number; drawnAt: string; winningNumbers: number[]; participantCount: number; participantsSha256: string; actSha256: string; participants: { number: number; serialCode: string }[] };
-      expect(act).toMatchObject({ initiativeId: gate.raffleId, round: 1, participantCount: 4, winningNumbers: winners });
-      expect(JSON.stringify(act)).not.toContain('@');
-      expect(verifyDrawAct({ initiativeId: act.initiativeId, round: act.round, drawnAt: act.drawnAt, participantsSha256: act.participantsSha256, participantCount: act.participantCount, winningNumbers: act.winningNumbers }, act.participants, act.actSha256)).toBe(true);
       expect(volunteerErrors).toEqual([]);
       await volunteer.context.close();
     });
@@ -508,10 +474,10 @@ for (const locale of ['es', 'ca'] as const) {
       const achievement = visitor.page.getByTestId('achievement-card').filter({ hasText: ideaTitle });
       await server(achievement.getByTestId('achievement-comparer')).toBeVisible();
       await expect(achievement).toContainText(thanks);
-      // Una rifa conseguida también es un logro, pero no promete fotos del antes y el después: su tarjeta no lleva ese hueco.
-      const raffleCard = visitor.page.getByTestId('achievement-card').filter({ hasText: raffleTitle });
-      await expect(raffleCard).toBeVisible();
-      await expect(raffleCard.getByTestId('achievement-no-photos')).toHaveCount(0);
+      // Un evento agotado también es un logro, pero no promete fotos del antes y el después: su tarjeta no lleva ese hueco.
+      const soldOutCard = visitor.page.getByTestId('achievement-card').filter({ hasText: soldOutTitle });
+      await expect(soldOutCard).toBeVisible();
+      await expect(soldOutCard.getByTestId('achievement-no-photos')).toHaveCount(0);
       // Las dos fotos han cargado de verdad (una imagen rota también es «visible» por su texto alternativo).
       for (const alt of [t('portal.achievements.beforeAlt', { title: ideaTitle }), t('portal.achievements.afterAlt', { title: ideaTitle })]) {
         await expect.poll(() => achievement.getByRole('img', { name: alt }).evaluate((image) => (image as HTMLImageElement).naturalWidth), { timeout: 30_000 }).toBeGreaterThan(0);
@@ -567,8 +533,8 @@ for (const locale of ['es', 'ca'] as const) {
 
     // ───────────── Cierre: el libro mayor cuenta la misma historia que las pantallas ─────────────
     await test.step('libro mayor: cada asiento cuadra, lo cobrado es lo que se vio y cada comisión está en su cuenta', async () => {
-      const ledger = await ledgerOf(entity.slug, [initiativeId, gate.eventId, gate.raffleId]);
-      const campaigns = await withE2eDb((db) => db.query(`SELECT id, "raisedCents", "goalCents", "totalContributions", "ticketsSold", "ticketPriceCents" FROM "Initiative" WHERE id = ANY($1::int[]) ORDER BY id`, [[initiativeId, gate.eventId, gate.raffleId]]));
+      const ledger = await ledgerOf(entity.slug, [initiativeId, gate.eventId, gate.soldOutId]);
+      const campaigns = await withE2eDb((db) => db.query(`SELECT id, "raisedCents", "goalCents", "totalContributions", "ticketsSold", "ticketPriceCents" FROM "Initiative" WHERE id = ANY($1::int[]) ORDER BY id`, [[initiativeId, gate.eventId, gate.soldOutId]]));
       const byId = new Map(campaigns.rows.map((row) => [Number(row.id), row]));
       const boost = await withE2eDb((db) => db.query(`SELECT "amountCents", "publiclyDisclosed" FROM "Contribution" WHERE "initiativeId" = $1 AND type = 'SELF_BOOST'`, [initiativeId]));
 
@@ -595,13 +561,13 @@ for (const locale of ['es', 'ca'] as const) {
       expect(ledger.sum(initiativeId, 'ORG_PAYABLE', 'CREDIT')).toBe(board.goalCents - board.feesCents);
       expect(ledger.sum(initiativeId, 'ORG_PAYABLE', 'DEBIT')).toBe(board.goalCents - board.feesCents);
 
-      // Taquilla (gastos sumados al comprador): a la hucha del evento y de la rifa entra el precio; los Gastos de gestión digital son de KORUM.
+      // Taquilla (gastos sumados al comprador): a la hucha de cada evento entra el precio; los Gastos de gestión digital son de KORUM.
       expect(byId.get(gate.eventId)).toMatchObject({ ticketsSold: 3, raisedCents: 3 * gate.entries.unitPriceCents });
-      expect(byId.get(gate.raffleId)).toMatchObject({ ticketsSold: 4, raisedCents: 4 * gate.raffleUnitPriceCents });
+      expect(byId.get(gate.soldOutId)).toMatchObject({ ticketsSold: 4, raisedCents: 4 * gate.soldOutUnitPriceCents });
       expect(ledger.sum(gate.eventId, 'INITIATIVE_ESCROW', 'CREDIT') - ledger.sum(gate.eventId, 'INITIATIVE_ESCROW', 'DEBIT')).toBe(3 * gate.entries.unitPriceCents);
-      expect(ledger.sum(gate.raffleId, 'INITIATIVE_ESCROW', 'CREDIT') - ledger.sum(gate.raffleId, 'INITIATIVE_ESCROW', 'DEBIT')).toBe(4 * gate.raffleUnitPriceCents);
+      expect(ledger.sum(gate.soldOutId, 'INITIATIVE_ESCROW', 'CREDIT') - ledger.sum(gate.soldOutId, 'INITIATIVE_ESCROW', 'DEBIT')).toBe(4 * gate.soldOutUnitPriceCents);
       expect(ledger.sum(gate.eventId, 'KORUM_REVENUE_TICKET_FEE', 'CREDIT')).toBe(3 * gate.entries.unitFeeCents);
-      expect(ledger.sum(gate.raffleId, 'KORUM_REVENUE_TICKET_FEE', 'CREDIT')).toBe(4 * gate.raffleUnitFeeCents);
+      expect(ledger.sum(gate.soldOutId, 'KORUM_REVENUE_TICKET_FEE', 'CREDIT')).toBe(4 * gate.soldOutUnitFeeCents);
     });
 
     expect(errors).toEqual([]);

@@ -9,19 +9,18 @@ import { RATE_LIMIT_PURGE_RULES } from '@/core/jobs/handlers/housekeeping';
 import { decideOffline, digestSignature, type GateList, type ScanOutcome } from '@/core/ticketing/gate-offline';
 import { gateNetwork } from '@/core/ticketing/gate-limits';
 import { GATE_CODE_PATTERN, generateGateCode } from '@/core/ticketing/gate-code';
-import { extraRoundLimits } from '@/core/ticketing/raffle-extra';
 import { signatureDigest } from '@/core/ticketing/gate-list.service';
-import { clampScanTime, gatePinExpiry, GATE_PIN_GRACE_MS, MAX_SCAN_AGE_MS, raffleOpensAt, scanInputSchema, syncBatchSchema } from '@/core/ticketing/gate-rules';
+import { clampScanTime, gatePinExpiry, GATE_PIN_GRACE_MS, MAX_SCAN_AGE_MS, scanInputSchema, syncBatchSchema } from '@/core/ticketing/gate-rules';
 import { toScanOutcome } from '@/core/ticketing/gate-sync.service';
 import { buildPassQrPayload, parsePassQrPayload, signPass } from '@/core/ticketing/qr-signature';
-import { startOfDayInMadrid, madridIsoDate } from '@/core/studio/studio-draft';
+import { startOfDayInMadrid } from '@/core/studio/studio-draft';
 import { GATE_BLOCK_NOTICE_RULE, GATE_ENTRY_RULE, GATE_REJECTED_NOTICE_RULE, GATE_REQUEST_RULE } from '@/lib/rate-limit-rules';
 import { renderWithIntl } from '../utils/render-with-intl';
 
 const SECRET = 'secreto-de-pruebas-de-la-porteria-0123456789';
 const UUID = '0d3c6b0e-5b4a-4a52-9d5e-6c6b8b1f2a11';
 
-describe('Fecha del evento: PIN y sorteo (QA-SEC09)', () => {
+describe('Fecha del evento y caducidad del PIN (QA-SEC09)', () => {
   it('el PIN caduca 6 horas después de la fecha del evento', () => {
     const end = new Date('2026-12-05T22:59:00Z');
     expect(gatePinExpiry(end).getTime() - end.getTime()).toBe(GATE_PIN_GRACE_MS);
@@ -39,13 +38,6 @@ describe('Fecha del evento: PIN y sorteo (QA-SEC09)', () => {
     expect(startOfDayInMadrid('no es una fecha')).toBeNull();
   });
 
-  it('el sorteo se abre el día del evento, aunque la fecha límite sea el final de ese día', () => {
-    const endOfDay = new Date('2026-12-05T22:59:00Z');
-    expect(madridIsoDate(endOfDay)).toBe('2026-12-05');
-    expect(raffleOpensAt(endOfDay).toISOString()).toBe('2026-12-04T23:00:00.000Z');
-    // Una fecha límite a medianoche UTC también cae en el mismo día de España.
-    expect(raffleOpensAt(new Date('2026-12-05T10:00:00Z')).toISOString()).toBe('2026-12-04T23:00:00.000Z');
-  });
 });
 
 describe('Lecturas sin red: validación y hora', () => {
@@ -192,20 +184,7 @@ describe('Red de una petición (QA-SEC09)', () => {
   });
 });
 
-describe('Ronda extra: límites', () => {
-  const base = { prizeCount: 3, ordinaryDrawn: 3, extraDrawn: 0, replaceable: 3, replaceableRefunded: 0, entriesLeft: 10 };
-
-  it('nunca más extras que premios, que premios normales sorteados, que números sin sustituir ni que papeletas libres; el reembolso exige un ganador reembolsado sin sustituir', () => {
-    expect(extraRoundLimits(base)).toEqual({ PRIZE_UNCLAIMED: 3, WINNER_REFUNDED: 0 });
-    expect(extraRoundLimits({ ...base, ordinaryDrawn: 2, replaceable: 2 })).toEqual({ PRIZE_UNCLAIMED: 2, WINNER_REFUNDED: 0 });
-    expect(extraRoundLimits({ ...base, extraDrawn: 1, replaceable: 2 })).toEqual({ PRIZE_UNCLAIMED: 2, WINNER_REFUNDED: 0 });
-    expect(extraRoundLimits({ ...base, entriesLeft: 1 })).toEqual({ PRIZE_UNCLAIMED: 1, WINNER_REFUNDED: 0 });
-    expect(extraRoundLimits({ ...base, replaceableRefunded: 2 })).toEqual({ PRIZE_UNCLAIMED: 3, WINNER_REFUNDED: 2 });
-    expect(extraRoundLimits({ ...base, replaceableRefunded: 3, extraDrawn: 2, replaceable: 1 })).toEqual({ PRIZE_UNCLAIMED: 1, WINNER_REFUNDED: 1 });
-    expect(extraRoundLimits({ ...base, extraDrawn: 3, replaceable: 0 })).toEqual({ PRIZE_UNCLAIMED: 0, WINNER_REFUNDED: 0 });
-    expect(extraRoundLimits({ ...base, entriesLeft: 0 })).toEqual({ PRIZE_UNCLAIMED: 0, WINNER_REFUNDED: 0 });
-  });
-
+describe('Código de la puerta', () => {
   it('el código de la puerta tiene 10 caracteres en base 32, no se repite y es el único formato aceptado', () => {
     const codes = new Set(Array.from({ length: 500 }, () => generateGateCode()));
     expect(codes.size).toBe(500);
@@ -265,7 +244,7 @@ describe('Resultado de una lectura en pantalla', () => {
   });
 
   it('solo es roja la que no deja entrar: lo que pide decidir o comprobar no lo es', () => {
-    const red: ScanOutcome['status'][] = ['EXHAUSTED', 'INSUFFICIENT', 'INVALID_SIGNATURE', 'OTHER_EVENT', 'REVOKED', 'NOT_PAID', 'NOT_APPLICABLE', 'EVENT_CLOSED', 'INVALID_FORMAT'];
+    const red: ScanOutcome['status'][] = ['EXHAUSTED', 'INSUFFICIENT', 'INVALID_SIGNATURE', 'OTHER_EVENT', 'REVOKED', 'NOT_PAID', 'EVENT_CLOSED', 'INVALID_FORMAT'];
     for (const status of red) expect(isRedOutcome({ status } as ScanOutcome), status).toBe(true);
     expect(isRedOutcome({ status: 'UNKNOWN' })).toBe(false);
     expect(isRedOutcome({ status: 'CHOOSE', remaining: 2, quantity: 2, serial: 'x' })).toBe(false);

@@ -126,7 +126,7 @@ describe('QA-F01 · filtros ocultos del listado', () => {
     expect(matchesFilters(card({ pct: ALMOST_THERE_PERCENT - 1 }), { ...NO_FILTERS, urgency: 'ALMOST' })).toBe(false);
   });
 
-  it('solo taquilla y rifas deja fuera las campañas', () => {
+  it('solo taquilla deja fuera las campañas', () => {
     expect(matchesFilters(card({ format: 'TICKETING' }), { ...NO_FILTERS, urgency: 'TICKETING' })).toBe(true);
     expect(matchesFilters(card({ format: 'BUDGET' }), { ...NO_FILTERS, urgency: 'TICKETING' })).toBe(false);
   });

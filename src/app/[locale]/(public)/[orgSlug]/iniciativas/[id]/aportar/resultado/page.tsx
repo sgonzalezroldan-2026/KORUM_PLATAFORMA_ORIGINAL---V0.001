@@ -137,7 +137,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
   }
 
   const ticketing = row.type === 'TICKET';
-  const subtype = row.ticketPass?.subtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT';
+  const subtype = 'EVENT';
   const toPct = ticketing ? percentOf(initiative.ticketsSold, initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents, initiative.goalCents);
   const fromPct = ticketing ? percentOf(initiative.ticketsSold - (row.ticketQuantity ?? 0), initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents - row.amountCents, initiative.goalCents);
   const course = row.groupName && initiative.rewardEnabled ? initiative.courses.find((entry) => entry.groupName === row.groupName) : undefined;

@@ -51,12 +51,11 @@ describe('recordAudit y los errores de base de datos', () => {
 });
 
 describe('payoutBlockers: «ventana vencida» solo cuando de verdad vence', () => {
-  const initiative = { id: 7, status: 'GOAL_REACHED', ticketSubtype: null, rafflePrizeCount: null, raisedCents: 100_000, bracketFeeCents: 1_000, maintFeeCents: 0, gatewayFeeCents: 0, absorbsGatewayCostByKorum: true };
+  const initiative = { id: 7, status: 'GOAL_REACHED', raisedCents: 100_000, bracketFeeCents: 1_000, maintFeeCents: 0, gatewayFeeCents: 0, absorbsGatewayCostByKorum: true };
   const organization = { kybStatus: 'VERIFIED', archivedAt: null, paycometSplitId: 'split-1' };
   const options = { destination: 'ORGANIZATION' as const, payoutId: null, now: new Date('2026-11-13T10:00:00Z') };
   const fakeTx = (findMany: () => Promise<unknown[]>) =>
     ({
-      raffleDraw: { count: async () => 0 },
       sponsor: { count: async () => 0 },
       contribution: { findMany },
       sponsorAllocation: { findMany: async () => [] },

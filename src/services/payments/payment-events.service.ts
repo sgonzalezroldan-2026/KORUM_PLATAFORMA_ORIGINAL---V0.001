@@ -171,7 +171,7 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     if (!options.qrSecret) throw new PaymentReconciliationError(`Cobro ${order}: falta el secreto del QR para emitir el pase.`);
     const seat = await settleTicketSeatInTx(tx, contribution, options.qrSecret, occurredAt);
     if (!seat.issued) {
-      // Pago tardío sin plaza, o rifa ya sorteada: el dinero entró, así que se devuelve entero. No llegó a contar en el aforo.
+      // Pago tardío sin plaza: el dinero entró, así que se devuelve entero. No llegó a contar en el aforo.
       await approveRefundInTx(tx, contribution.id, { lateCharge: true });
       return;
     }

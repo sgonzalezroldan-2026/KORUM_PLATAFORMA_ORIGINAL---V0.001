@@ -29,7 +29,7 @@ export interface CheckoutModalProps {
   /** Lo elegido según la aportación rechazada (por si `sessionStorage` está vacío en esta pestaña). */
   retryHint: RetryHint | null;
   startAction: (payload: unknown) => Promise<CheckoutStart>;
-  /** Condiciones del patrocinio de esta iniciativa, o `null` si no admite comercios (taquilla, rifa o campaña cerrada). */
+  /** Condiciones del patrocinio de esta iniciativa, o `null` si no admite comercios (taquilla o campaña cerrada). */
   sponsor: SponsorOffer | null;
   /** Pestaña con la que se abre el diálogo (`?modo=comercio`). */
   initialTab: 'family' | 'sponsor';

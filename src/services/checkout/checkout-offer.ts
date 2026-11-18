@@ -43,7 +43,7 @@ export function buildCheckoutOffer(input: {
     ticket:
       ticketing && detail.ticket
         ? {
-            subtype: context.ticketSubtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT',
+            subtype: 'EVENT',
             available: card.ticketsAvailable,
             max: card.ticketMax,
             venue: detail.ticket.venue,

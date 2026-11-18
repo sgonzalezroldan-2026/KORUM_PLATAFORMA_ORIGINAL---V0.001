@@ -173,7 +173,7 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     expect(poll).toMatchObject({ status: 'OPEN', originalGoalCents: 20_000, raisedAtLaunchCents: 10_500, createdById: director.userId });
     await expect(launchResizeVote(db, cosigner, organization.id, { initiativeId: initiative.id, options: OPTIONS })).rejects.toMatchObject({ reason: 'WRONG_STATUS' });
 
-    // Una papeleta por persona, aunque donara dos veces.
+    // Un voto por persona, aunque donara dos veces.
     const links = await voteLinks(initiative.id, organization.id);
     expect([...links.keys()].sort()).toEqual([asksBack, repeat, silent, third].sort());
     const ballot = await loadResizeBallot(db, SECRET, organization.slug, links.get(asksBack)!);
@@ -286,7 +286,7 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     expect(await db.contribution.count({ where: { initiativeId: tied.initiative.id, status: 'REFUNDED' } })).toBe(2);
   });
 
-  it('el enlace de la papeleta vale hasta el cierre en la bandeja (no una hora), y un voto contracargado deja de contar en el recuento', async () => {
+  it('el enlace para votar vale hasta el cierre en la bandeja (no una hora), y un voto contracargado deja de contar en el recuento', async () => {
     const { organization, director } = await team();
     const loud = `${uniqueId('contracargo')}@pruebas.example`;
     const silent = `${uniqueId('calla')}@pruebas.example`;

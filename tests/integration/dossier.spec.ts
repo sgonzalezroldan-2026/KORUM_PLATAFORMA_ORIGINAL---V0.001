@@ -656,7 +656,7 @@ describe('QA-SEC13 · expediente desde el panel: solo lo de la entidad', () => {
     expect(rejections.every((row) => row.targetType === 'Organization' && row.targetId === organizationId)).toBe(true);
   });
 
-  it('en una taquilla o rifa el Auto-Impulso cuenta como una entrada más: allí no hay donaciones y «una donación» solo podría ser de KORUM', async () => {
+  it('en una taquilla el Auto-Impulso cuenta como una entrada más: allí no hay donaciones y «una donación» solo podría ser de KORUM', async () => {
     const context = await team('Club Expediente Taquilla');
     const organizationId = context.organization.id;
     const event = await createInitiative(db, organizationId, { status: 'FUNDRAISING', format: 'TICKETING', goalCents: 2_000, raisedCents: 1_000, totalContributions: 1, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 4, ticketFeeMode: 'ADD', title: 'Fiesta de fin de curso' });

@@ -3,9 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useState, type FormEvent } from 'react';
-import { enterGateAction, leaveGateAction } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/porteria/actions';
-import { CodeField, Field, FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
-import { clearGateState } from '@/components/gate/gate-offline-store';
+import { enterGateAction } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/porteria/actions';
+import { CodeField, Field, FormAlert, primaryButton } from '@/components/auth/auth-ui';
 
 /** PIN de 6 dígitos del evento. Tras 5 fallos desde la misma red se bloquea un rato (QA-SEC06). El nombre del móvil es opcional: así la entidad sabe qué puerta es cada sesión. */
 export function GatePinForm({ gateCode }: { gateCode: string }) {
@@ -42,19 +41,3 @@ export function GatePinForm({ gateCode }: { gateCode: string }) {
   );
 }
 
-export function LeaveGateButton({ eventId }: { eventId: number }) {
-  const t = useTranslations('gate');
-  const router = useRouter();
-  return (
-    <button
-      type="button"
-      className={secondaryButton}
-      onClick={() => {
-        clearGateState(eventId);
-        void leaveGateAction().then(() => router.refresh());
-      }}
-    >
-      {t('leave')}
-    </button>
-  );
-}

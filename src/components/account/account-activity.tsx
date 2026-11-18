@@ -6,7 +6,7 @@ import { initiativePath } from '@/lib/seo/portal-routes';
 import type { AccountOverview } from '@/repositories/account.repository';
 
 /**
- * Historial de *Mi cuenta*: aportaciones y compras, y entradas o papeletas (Sprint 3.7). Cada fila dice en texto su estado (nunca solo con color).
+ * Historial de *Mi cuenta*: aportaciones y compras, y entradas (Sprint 3.7). Cada fila dice en texto su estado (nunca solo con color).
  * El enlace de cada pase lleva la firma **de vista** (`signPassView`), la misma que el email y la pantalla del pago: nunca la del QR de la puerta.
  */
 
@@ -73,7 +73,7 @@ export function AccountPasses({ passes }: { passes: PassRow[] }) {
               <p className="text-sm text-ink-soft">{t('where', { organization: pass.initiative.organization.name, date: format.dateTime(pass.initiative.closesAt, DATE) })}</p>
               {pass.initiative.ticketVenue ? <p className="text-sm text-ink-soft">{pass.initiative.ticketVenue}</p> : null}
               <p className="text-sm font-semibold text-varsity-navy">
-                {pass.subtype === 'RAFFLE' ? t('numbers', { numbers: pass.raffleNumbers.join(', ') }) : t('quantity', { count: pass.quantity })}
+                {t('quantity', { count: pass.quantity })}
               </p>
               <p className="font-mono text-sm text-ink-soft">{t('serial', { serial: pass.serialCode })}</p>
               {pass.revokedAt ? (
@@ -81,7 +81,7 @@ export function AccountPasses({ passes }: { passes: PassRow[] }) {
               ) : (
                 <Link href={pass.href} className="tactile-btn justify-center">
                   <span aria-hidden="true">{'🎟️ '}</span>
-                  {t(pass.subtype === 'RAFFLE' ? 'viewRaffle' : 'viewEvent')}
+                  {t('viewEvent')}
                   {/* El nombre accesible empieza por el texto visible (WCAG 2.5.3) y añade de qué evento es: hay un botón igual por entrada. */}
                   {' '}
                   <span className="sr-only">{`· ${pass.initiative.title}`}</span>

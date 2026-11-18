@@ -11,8 +11,8 @@ import { createInitiative, createOrganization, createTestClient, createUser } fr
 
 /**
  * Sprint 4.3 · Estudio de edición contra PostgreSQL real (QA-S01): guardar y publicar recalcula la pizarra en el servidor con las reglas y los cupos de
- * la base de datos, publicar reserva los cupos, una campaña recaudando solo admite cambios que no mueven dinero, una rifa exige premios y la confirmación
- * de normativa (que queda en la auditoría), y nada se hace desde otra entidad, sin segundo factor ni como Super-Admin.
+ * la base de datos, publicar reserva los cupos, una campaña recaudando solo admite cambios que no mueven dinero, una taquilla fija su aforo y su precio al
+ * publicarse, y nada se hace desde otra entidad, sin segundo factor ni como Super-Admin.
  */
 
 let db: KorumPrismaClient;
@@ -51,15 +51,13 @@ const budget = (overrides: Partial<StudioDraft> = {}): StudioDraft => ({
   ...overrides
 });
 
-const raffle = (overrides: Partial<StudioDraft> = {}): StudioDraft => ({
+const ticketing = (overrides: Partial<StudioDraft> = {}): StudioDraft => ({
   ...blankStudioDraft('TICKETING', 'SCHOOL', closesOn()),
-  title: 'Rifa solidaria',
-  description: 'Papeletas numeradas',
-  ticketSubtype: 'RAFFLE',
+  title: 'Festival solidario',
+  description: 'Entradas para el festival de fin de curso',
+  ticketSubtype: 'EVENT',
   ticketPriceCents: 200,
   ticketMax: 500,
-  rafflePrizeCount: 3,
-  raffleNoticeConfirmed: true,
   ...overrides
 });
 
@@ -116,9 +114,9 @@ describe('guardar el borrador', () => {
   it('cambiar de formato en un borrador deja la campaña coherente con el nuevo', async () => {
     const { organization, director } = await entity();
     const first = await saveStudioDraft(db, director, organization.id, budget());
-    await saveStudioDraft(db, director, organization.id, { ...raffle(), initiativeId: first.initiativeId });
+    await saveStudioDraft(db, director, organization.id, { ...ticketing(), initiativeId: first.initiativeId });
     const row = await db.initiative.findUniqueOrThrow({ where: { id: first.initiativeId } });
-    expect(row).toMatchObject({ format: 'TICKETING', category: TICKETING_CATEGORY, costMatCents: 0, bracketFeeCents: 0, ticketSubtype: 'RAFFLE', ticketMax: 500, rafflePrizeCount: 3, goalCents: 100_000 });
+    expect(row).toMatchObject({ format: 'TICKETING', category: TICKETING_CATEGORY, costMatCents: 0, bracketFeeCents: 0, ticketSubtype: 'EVENT', ticketMax: 500, goalCents: 100_000 });
   });
 
   it('el candado semántico deja rastro para la revisión del Super-Admin: una categoría al 0 % y un texto bloqueado', async () => {
@@ -185,7 +183,7 @@ describe('aislamiento y permisos', () => {
 
   it('la lectura del Estudio no trae el PIN de portería ni datos de las personas', async () => {
     const { organization, director } = await entity();
-    const saved = await saveStudioDraft(db, director, organization.id, raffle({ raffleNoticeConfirmed: false }));
+    const saved = await saveStudioDraft(db, director, organization.id, ticketing());
     await db.initiative.update({ where: { id: saved.initiativeId }, data: { gatePinHash: 'secreto-no-mostrar' } });
     const initiative = await getStudioInitiative(db, director, organization.id, saved.initiativeId);
     expect(JSON.stringify(initiative)).not.toContain('secreto-no-mostrar');
@@ -255,7 +253,7 @@ describe('publicar', () => {
     const soft = await saveStudioDraft(db, director, organization.id, budget({ initiativeId: first.initiativeId, description: 'Una más' }));
     expect(soft.status).toBe('FUNDRAISING');
     // Pasar una campaña recaudando a otro formato no se admite.
-    expect((await reason(saveStudioDraft(db, director, organization.id, { ...raffle(), initiativeId: first.initiativeId }))).reason).toBe('NOT_EDITABLE');
+    expect((await reason(saveStudioDraft(db, director, organization.id, { ...ticketing(), initiativeId: first.initiativeId }))).reason).toBe('NOT_EDITABLE');
   });
 
   it('una campaña cerrada no admite ningún cambio', async () => {
@@ -282,46 +280,28 @@ describe('publicar', () => {
   });
 });
 
-describe('rifas y taquilla', () => {
-  it('una rifa no se publica sin premios ni sin la confirmación de normativa', async () => {
+describe('taquilla', () => {
+  it('una taquilla se publica con la meta de la recaudación del aforo, en su categoría; publicada, el aforo y el precio ya no cambian', async () => {
     const { organization, director } = await entity();
-    const error = await reason(publishStudioInitiative(db, director, organization.id, { draft: raffle({ rafflePrizeCount: null, raffleNoticeConfirmed: false }), expectedGoalCents: 100_000 }));
-    expect(error.reason).toBe('BLOCKED');
-    expect(error.detail).toEqual(expect.arrayContaining(['RAFFLE_PRIZES', 'RAFFLE_NOTICE']));
-    expect(await db.auditLog.count({ where: { organizationId: organization.id, action: 'studio.raffle_notice_confirmed' } })).toBe(0);
-    expect((await db.initiative.findUniqueOrThrow({ where: { id: error.initiativeId! } })).status).toBe('BUDGETING');
-  });
-
-  it('con los premios y la confirmación se publica: los premios quedan fijados, la meta es la recaudación del aforo y la confirmación está en la auditoría', async () => {
-    const { organization, director } = await entity();
-    const result = await publishStudioInitiative(db, director, organization.id, { draft: raffle(), expectedGoalCents: 100_000 });
+    const result = await publishStudioInitiative(db, director, organization.id, { draft: ticketing(), expectedGoalCents: 100_000 });
     expect(result.published).toBe(true);
     const row = await db.initiative.findUniqueOrThrow({ where: { id: result.initiativeId } });
-    expect(row).toMatchObject({ status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'RAFFLE', rafflePrizeCount: 3, ticketMax: 500, ticketPriceCents: 200, goalCents: 100_000, category: TICKETING_CATEGORY, defaultExemptAppliedCents: 0 });
-    const audit = await db.auditLog.findFirstOrThrow({ where: { organizationId: organization.id, action: 'studio.raffle_notice_confirmed' } });
-    expect(audit.metadataJson).toMatchObject({ initiativeId: result.initiativeId, prizes: 3 });
-    // Publicada, los premios ya no se cambian: el trigger de la base de datos lo impide y el Estudio ni lo intenta.
-    await saveStudioDraft(db, director, organization.id, raffle({ initiativeId: result.initiativeId, rafflePrizeCount: 9 }));
-    expect((await db.initiative.findUniqueOrThrow({ where: { id: result.initiativeId } })).rafflePrizeCount).toBe(3);
+    expect(row).toMatchObject({ status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'EVENT', ticketMax: 500, ticketPriceCents: 200, goalCents: 100_000, category: TICKETING_CATEGORY, defaultExemptAppliedCents: 0 });
+    // Recaudando, solo se guarda lo que no mueve dinero: el aforo y el precio siguen siendo los publicados.
+    await saveStudioDraft(db, director, organization.id, ticketing({ initiativeId: result.initiativeId, ticketMax: 900, ticketPriceCents: 300, description: 'Descripción nueva' }));
+    expect(await db.initiative.findUniqueOrThrow({ where: { id: result.initiativeId } })).toMatchObject({ ticketMax: 500, ticketPriceCents: 200, goalCents: 100_000, description: 'Descripción nueva' });
   });
 
   it('en `INC` la meta es lo que entra de verdad en la hucha; sin importe para la hucha no se publica', async () => {
     const { organization, director } = await entity();
-    const inc = await saveStudioDraft(db, director, organization.id, raffle({ ticketFeeMode: 'INC', ticketPriceCents: 500, ticketMax: 200 }));
+    const inc = await saveStudioDraft(db, director, organization.id, ticketing({ ticketFeeMode: 'INC', ticketPriceCents: 500, ticketMax: 200 }));
     expect(inc.goalCents).toBe(200 * (500 - 55));
-    const free = await reason(publishStudioInitiative(db, director, organization.id, { draft: raffle({ ticketPriceCents: 0 }), expectedGoalCents: 0 }));
+    const free = await reason(publishStudioInitiative(db, director, organization.id, { draft: ticketing({ ticketPriceCents: 0 }), expectedGoalCents: 0 }));
     expect(free.detail).toContain('TICKET_PRICE_ZERO');
-    const tooCheap = await reason(publishStudioInitiative(db, director, organization.id, { draft: raffle({ ticketFeeMode: 'INC', ticketPriceCents: 46 }), expectedGoalCents: 0 }));
+    const tooCheap = await reason(publishStudioInitiative(db, director, organization.id, { draft: ticketing({ ticketFeeMode: 'INC', ticketPriceCents: 46 }), expectedGoalCents: 0 }));
     expect(tooCheap.detail).toContain('TICKET_FEE_EXCEEDS_PRICE');
   });
 
-  it('un evento con entradas no pide premios ni confirmación', async () => {
-    const { organization, director } = await entity();
-    const result = await publishStudioInitiative(db, director, organization.id, { draft: raffle({ ticketSubtype: 'EVENT', rafflePrizeCount: null, raffleNoticeConfirmed: false, ticketMax: 100, ticketPriceCents: 500 }), expectedGoalCents: 50_000 });
-    expect(result.published).toBe(true);
-    const row = await db.initiative.findUniqueOrThrow({ where: { id: result.initiativeId } });
-    expect(row).toMatchObject({ ticketSubtype: 'EVENT', rafflePrizeCount: null });
-  });
 });
 
 describe('`publishInitiative` protege el cobro aunque el Estudio no se use', () => {
@@ -359,21 +339,20 @@ describe('contexto del Estudio', () => {
 });
 
 describe('correcciones de la auditoría del 4.3', () => {
-  it('guardar y publicar a la vez no publica algo distinto de lo aceptado: un evento nunca sale como rifa sin la confirmación de normativa', async () => {
+  it('guardar y publicar a la vez no publica algo distinto de lo aceptado: una taquilla sale con el aforo y el precio que vio quien publicó', async () => {
     for (let round = 0; round < 4; round += 1) {
       const { organization, director, cosigner } = await entity();
-      const event = raffle({ ticketSubtype: 'EVENT', rafflePrizeCount: null, raffleNoticeConfirmed: false, ticketMax: 200, ticketPriceCents: 500 });
+      const event = ticketing({ ticketMax: 200, ticketPriceCents: 500 });
       const saved = await saveStudioDraft(db, director, organization.id, event);
       const results = await Promise.allSettled([
         publishStudioInitiative(db, director, organization.id, { draft: { ...event, initiativeId: saved.initiativeId }, expectedGoalCents: saved.goalCents }),
-        saveStudioDraft(db, cosigner, organization.id, raffle({ initiativeId: saved.initiativeId, ticketMax: 200, ticketPriceCents: 500, rafflePrizeCount: 2, raffleNoticeConfirmed: false }))
+        saveStudioDraft(db, cosigner, organization.id, ticketing({ initiativeId: saved.initiativeId, ticketMax: 300, ticketPriceCents: 400 }))
       ]);
       for (const result of results) if (result.status === 'rejected') expect(result.reason).toBeInstanceOf(StudioError);
       const row = await db.initiative.findUniqueOrThrow({ where: { id: saved.initiativeId } });
       if (row.status === 'FUNDRAISING') {
-        // Se publicó lo que aceptó quien publicó (un evento); una rifa publicada sin su confirmación sería el fallo.
-        expect(row.ticketSubtype).toBe('EVENT');
-        expect(row.rafflePrizeCount).toBeNull();
+        // Se publicó lo que aceptó quien publicó; publicar el aforo o el precio de la otra persona con la meta aceptada sería el fallo.
+        expect(row).toMatchObject({ ticketSubtype: 'EVENT', ticketMax: 200, ticketPriceCents: 500, goalCents: saved.goalCents });
       }
     }
   });
@@ -392,7 +371,7 @@ describe('correcciones de la auditoría del 4.3', () => {
 
   it('en taquilla no se guarda pasarela en la meta (ya la pagan los gastos de gestión): la liquidación no la restaría otra vez', async () => {
     const { organization, director } = await entity();
-    const saved = await saveStudioDraft(db, director, organization.id, raffle());
+    const saved = await saveStudioDraft(db, director, organization.id, ticketing());
     expect((await db.initiative.findUniqueOrThrow({ where: { id: saved.initiativeId } })).gatewayFeeCents).toBe(0);
   });
 
@@ -434,7 +413,7 @@ describe('correcciones de la auditoría del 4.3', () => {
 
   it('un evento cuyo mantenimiento no cubre lo recaudable no se publica', async () => {
     const { organization, director } = await entity({ maintActive: true });
-    const error = await reason(publishStudioInitiative(db, director, organization.id, { draft: raffle({ ticketSubtype: 'EVENT', rafflePrizeCount: null, raffleNoticeConfirmed: false, ticketPriceCents: 100, ticketMax: 10 }), expectedGoalCents: 1000 }));
+    const error = await reason(publishStudioInitiative(db, director, organization.id, { draft: ticketing({ ticketPriceCents: 100, ticketMax: 10 }), expectedGoalCents: 1000 }));
     expect(error.detail).toContain('MAINT_EXCEEDS_TAKINGS');
   });
 

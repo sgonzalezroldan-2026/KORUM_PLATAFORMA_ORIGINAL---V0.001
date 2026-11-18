@@ -23,7 +23,7 @@ export type CheckInResult =
   | { status: 'DUPLICATE_SCAN'; accepted: boolean }
   | { status: 'INSUFFICIENT'; remaining: number; quantity: number; firstAccessAt: Date | null }
   | { status: 'EXHAUSTED'; quantity: number; firstAccessAt: Date | null }
-  | { status: 'INVALID_SIGNATURE' | 'OTHER_EVENT' | 'REVOKED' | 'NOT_PAID' | 'NOT_APPLICABLE' | 'EVENT_CLOSED' };
+  | { status: 'INVALID_SIGNATURE' | 'OTHER_EVENT' | 'REVOKED' | 'NOT_PAID' | 'EVENT_CLOSED' };
 
 export interface CheckInOptions {
   /** Lo genera el móvil por lectura; con él, repetir la petición es inofensivo. */
@@ -96,7 +96,6 @@ export async function checkInPass(db: KorumPrismaClient, secret: string, actor: 
     const reject = async (reason: string) => tx.ticketCheckIn.create({ data: { ...record, quantity: people, accepted: false, reason } });
     const firstAccess = async () => (await tx.ticketCheckIn.findFirst({ where: { ticketPassId: pass.id, accepted: true }, orderBy: { createdAt: 'asc' }, select: { createdAt: true } }))?.createdAt ?? null;
 
-    if (pass.subtype === 'RAFFLE') return (await reject('NOT_APPLICABLE'), { status: 'NOT_APPLICABLE' });
     if (pass.revokedAt) return (await reject('REVOKED'), { status: 'REVOKED' });
     if (CLOSED_EVENT_STATUSES.has(pass.initiative.status)) return (await reject('EVENT_CLOSED'), { status: 'EVENT_CLOSED' });
     if (pass.contribution.status !== 'COMPLETED') return (await reject('NOT_PAID'), { status: 'NOT_PAID' });

@@ -70,7 +70,7 @@ export const CHECKOUT_RULE: RateLimitRule & PurgeRule = { prefix: 'checkout:ip:'
  * Plazas de taquilla retenidas por red **y por evento** (auditoría del Sprint 3.4): el límite de pagos solo cuenta pedidos (entonces 30, hoy 600), y
  * 30 pedidos de 20 entradas ya dejaban agotado cualquier evento de colegio sin pagar nada. Cada compra consume tantas unidades como plazas retiene. El tope real es
  * `seatHoldLimit(ticketMax)`: un cuarto del aforo, nunca menos que una compra máxima (20, para que una red compartida como el wifi del colegio
- * pueda comprar) y nunca más que el propio aforo: en una rifa de 40 papeletas, una sola red no puede retenerlas todas.
+ * pueda comprar) y nunca más que el propio aforo: en un evento de 40 entradas, una sola red no puede retenerlas todas.
  */
 export const CHECKOUT_SEATS_RULE: RateLimitRule & PurgeRule = { prefix: 'checkout:seats:', limit: MAX_TICKETS_PER_ORDER, windowMs: 15 * 60_000 };
 export function seatHoldLimit(ticketMax: number): number {
@@ -129,7 +129,7 @@ export const ENTITY_IMAGE_UPLOAD_RULE: RateLimitRule & PurgeRule = { prefix: 'br
  */
 /** Intentos de entrar con un PIN, contando **todos** los eventos: recorrer identificadores de evento desde una red no puede llenar la auditoría. */
 export const GATE_ENTRY_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:entry:ip:', limit: 60, windowMs: 15 * 60_000 };
-/** Peticiones de portería con sesión (lector, aforo, lista, sorteo, pantallas), también las de un token ya revocado que insiste. */
+/** Peticiones de portería con sesión (lector, aforo, lista, pantallas), también las de un token ya revocado que insiste. */
 export const GATE_REQUEST_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:req:ip:', limit: 1_200, windowMs: 60_000 };
 /** Marca de «ya anotado en la auditoría» de un bloqueo: solo el primero de cada ventana deja fila (`AuditLog` no se puede purgar). */
 export const GATE_BLOCK_NOTICE_RULE: RateLimitRule & PurgeRule = { prefix: 'gate:notice:', limit: 1, windowMs: 15 * 60_000 };

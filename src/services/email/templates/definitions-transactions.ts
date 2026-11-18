@@ -4,7 +4,7 @@ import type { EmailContent, TemplateContext, TemplateDefinition } from './email-
 import { buildCalendarAttachment, buildQrAttachment } from './ticket-assets';
 
 /**
- * Emails de dinero y de entradas: recibo, entrada o papeleta, reembolso y firma pendiente. Los textos están en `messages/*.json`
+ * Emails de dinero y de entradas: recibo, entrada, reembolso y firma pendiente. Los textos están en `messages/*.json`
  * (espacio `email`); aquí solo se decide qué datos van en cada uno.
  */
 
@@ -59,8 +59,7 @@ const ticketPayload = z.object({
   passUuid: z.uuid(),
   serialCode: z.string().min(1).max(40),
   initiativeId: z.number().int().positive(),
-  quantity: z.number().int().positive(),
-  raffleNumbers: z.array(z.number().int().positive()).default([])
+  quantity: z.number().int().positive()
 });
 
 export const ticketPass: TemplateDefinition<z.infer<typeof ticketPayload>> = {
@@ -71,27 +70,25 @@ export const ticketPass: TemplateDefinition<z.infer<typeof ticketPayload>> = {
     const initiative = requireInitiative(context, 'ticket.pass');
     const organization = requireOrganization(context, 'ticket.pass');
     if (!context.qrSecret) throw new Error('La entrada necesita QR_HMAC_SECRET para componer su código QR.');
-    const raffle = initiative.ticketSubtype === 'RAFFLE';
+    const facts = [
+      { label: t('ticket.serial'), value: payload.serialCode },
+      { label: t('ticket.quantity'), value: t('common.quantity', { count: payload.quantity }) },
+      { label: t('ticket.date'), value: context.formatDate(initiative.closesAt) }
+    ];
+    if (initiative.ticketVenue) facts.push({ label: t('ticket.venue'), value: initiative.ticketVenue });
 
-    const facts = [{ label: t('ticket.serial'), value: payload.serialCode }, { label: t('ticket.quantity'), value: t('common.quantity', { count: payload.quantity }) }];
-    if (raffle && payload.raffleNumbers.length > 0) facts.push({ label: t('ticket.numbers'), value: payload.raffleNumbers.join(', ') });
-    if (!raffle) {
-      facts.push({ label: t('ticket.date'), value: context.formatDate(initiative.closesAt) });
-      if (initiative.ticketVenue) facts.push({ label: t('ticket.venue'), value: initiative.ticketVenue });
-    }
-
-    const attachments = [await buildQrAttachment(buildPassQrPayload(context.qrSecret, payload.passUuid), `${payload.serialCode}.png`)];
-    if (!raffle) {
-      attachments.push(buildCalendarAttachment({ uid: payload.passUuid, summary: initiative.title, location: initiative.ticketVenue, date: initiative.closesAt, stamp: context.createdAt, filename: `${payload.serialCode}.ics` }));
-    }
+    const attachments = [
+      await buildQrAttachment(buildPassQrPayload(context.qrSecret, payload.passUuid), `${payload.serialCode}.png`),
+      buildCalendarAttachment({ uid: payload.passUuid, summary: initiative.title, location: initiative.ticketVenue, date: initiative.closesAt, stamp: context.createdAt, filename: `${payload.serialCode}.ics` })
+    ];
 
     // Enlace de acceso directo al pase para quien compró como invitado: el identificador y una firma propia de «ver», distinta de la del QR.
     const accessUrl = context.url(`/${organization.slug}/entrada/${payload.passUuid}?sig=${signPassView(context.qrSecret, payload.passUuid)}`);
     return {
-      subject: t(raffle ? 'ticket.subjectRaffle' : 'ticket.subjectEvent', { initiative: initiative.title }),
+      subject: t('ticket.subjectEvent', { initiative: initiative.title }),
       preheader: t('ticket.preheader'),
-      title: t(raffle ? 'ticket.titleRaffle' : 'ticket.titleEvent'),
-      paragraphs: [t(raffle ? 'ticket.bodyRaffle' : 'ticket.bodyEvent')],
+      title: t('ticket.titleEvent'),
+      paragraphs: [t('ticket.bodyEvent')],
       facts,
       button: { label: t('ticket.cta'), url: accessUrl },
       footnote: t('ticket.footnote'),

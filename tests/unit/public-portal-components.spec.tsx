@@ -139,16 +139,13 @@ describe('QA-F02 · tarjeta de iniciativa', () => {
     expect(screen.getByRole('link', { name: /Aportar ahora/ })).toHaveAttribute('href', '/cervantes/iniciativas/1/aportar');
   });
 
-  it('taquilla: precio, vendidas y disponibles; rifa: papeletas', () => {
-    const { unmount } = renderWithIntl(<InitiativeCard orgSlug="cervantes" card={TICKETS} />);
+  it('taquilla: precio, vendidas y disponibles', () => {
+    renderWithIntl(<InitiativeCard orgSlug="cervantes" card={TICKETS} />);
     // Lo que paga quien compra (precio + gastos de gestión digital), no solo el precio base.
     expect(screen.getByText(/Entrada 5,55 €/)).toBeInTheDocument();
     expect(screen.getByText('50 vendidas · aforo 200')).toBeInTheDocument();
     expect(screen.getByText('150 disponibles')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Comprar entradas/ })).toBeInTheDocument();
-    unmount();
-    renderWithIntl(<InitiativeCard orgSlug="cervantes" card={{ ...TICKETS, subtype: 'RAFFLE' }} />);
-    expect(screen.getByRole('link', { name: /Comprar papeletas/ })).toBeInTheDocument();
   });
 
   it('una iniciativa completa o cerrada no ofrece aportar', () => {

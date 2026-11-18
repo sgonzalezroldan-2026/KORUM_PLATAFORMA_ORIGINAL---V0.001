@@ -9,8 +9,8 @@ import { z } from 'zod';
 export const STUDIO_FORMATS = ['BUDGET', 'TICKETING'] as const;
 export type StudioFormat = (typeof STUDIO_FORMATS)[number];
 
-/** Categoría fija de las campañas de taquilla y rifas (no es una mejora: el buzón de ideas la excluye). Siempre al 0 %, sin tramos. */
-export const TICKETING_CATEGORY = 'Taquilla y Rifas';
+/** Categoría fija de las campañas de taquilla (no es una mejora: el buzón de ideas la excluye). Siempre al 0 %, sin tramos. */
+export const TICKETING_CATEGORY = 'Taquilla';
 
 export type StudioVertical = 'SCHOOL' | 'SPORTS_CLUB' | 'CULTURAL';
 
@@ -52,7 +52,6 @@ export const STUDIO_LIMITS = {
   defaultContingencyBps: 1000,
   maxTicketPriceCents: 100_000,
   maxTicketMax: 20_000,
-  maxRafflePrizes: 100,
   minFamiliesPerCourse: 5,
   maxFamiliesPerCourse: 150,
   defaultFamiliesPerCourse: 35
@@ -89,14 +88,11 @@ export const studioDraftSchema = z
     costMatCents: cents(STUDIO_LIMITS.maxBudgetCents),
     costInstCents: cents(STUDIO_LIMITS.maxBudgetCents),
     contingencyBps: cents(STUDIO_LIMITS.maxContingencyBps),
-    ticketSubtype: z.enum(['EVENT', 'RAFFLE']),
+    ticketSubtype: z.enum(['EVENT']),
     ticketPriceCents: cents(STUDIO_LIMITS.maxTicketPriceCents),
     ticketMax: z.number().int().min(0).max(STUDIO_LIMITS.maxTicketMax),
     ticketFeeMode: z.enum(['ADD', 'INC']),
-    ticketVenue: plainText(STUDIO_LIMITS.venueMax).nullable(),
-    rafflePrizeCount: z.number().int().min(1).max(STUDIO_LIMITS.maxRafflePrizes).nullable(),
-    /** La entidad confirma que la rifa cumple la normativa de su comunidad autónoma (CUMPLIMIENTO §8). Queda en `AuditLog`. */
-    raffleNoticeConfirmed: z.boolean()
+    ticketVenue: plainText(STUDIO_LIMITS.venueMax).nullable()
   })
   .strict();
 
@@ -125,9 +121,7 @@ export function blankStudioDraft(format: StudioFormat, vertical: StudioVertical,
     ticketPriceCents: 500,
     ticketMax: 200,
     ticketFeeMode: 'ADD',
-    ticketVenue: null,
-    rafflePrizeCount: null,
-    raffleNoticeConfirmed: false
+    ticketVenue: null
   };
 }
 

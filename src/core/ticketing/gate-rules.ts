@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { madridIsoDate, startOfDayInMadrid } from '@/core/studio/studio-draft';
 
 /**
  * Reglas puras de la portería (Sprint 4.5). La **fecha del evento** es la fecha límite de la iniciativa (`closesAt`, la misma que ya enseñan el email
- * del pase y el calendario): de ella salen cuándo caduca el PIN y desde cuándo se puede sortear. Ninguna de las dos la decide quien llama
- * (`QA-SEC09`): antes se pasaba el fin del evento a `setGatePin` y la rifa se podía sortear en cuanto cerraba la venta.
+ * del pase y el calendario): de ella sale cuándo caduca el PIN, y no la decide quien llama
+ * (`QA-SEC09`): antes se pasaba el fin del evento a `setGatePin`.
  */
 
 /** El PIN y las sesiones valen hasta 6 horas después de acabar el día del evento (la fecha límite es el final de ese día). */
@@ -12,13 +11,6 @@ export const GATE_PIN_GRACE_MS = 6 * 3_600_000;
 
 export function gatePinExpiry(eventDate: Date): Date {
   return new Date(eventDate.getTime() + GATE_PIN_GRACE_MS);
-}
-
-/** El sorteo se abre a las 00:00 (hora de España) del día del evento: nunca antes del acto, y sí durante la fiesta. */
-export function raffleOpensAt(eventDate: Date): Date {
-  const start = startOfDayInMadrid(madridIsoDate(eventDate));
-  if (!start) throw new RangeError('La fecha del evento no es válida.');
-  return start;
 }
 
 /** Lecturas que un móvil puede enviar de una vez al recuperar la red, y tamaño de la cola que se acepta guardar sin cobertura. */

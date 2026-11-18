@@ -64,7 +64,7 @@ describe('QA-A02 · «Corregir tarifas en 1 clic»: solo lo que no se ha prometi
     expect(fixHasEffect(plan)).toBe(true);
   });
 
-  it('con una taquilla o rifa a la venta no se tocan los gastos de gestión de las entradas (la compra lee la tarifa actual): cambiarían lo prometido', () => {
+  it('con una taquilla a la venta no se tocan los gastos de gestión de las entradas (la compra lee la tarifa actual): cambiarían lo prometido', () => {
     const plan = planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false }, { ...own, hasPublishedTicketing: true }, global);
     // La garantía sugerida sí sube; los gastos de gestión fijos y variables se quedan como están y la pantalla lo explica.
     expect(plan.organization).toEqual({ fullIntegrityCheckCents: 180 });

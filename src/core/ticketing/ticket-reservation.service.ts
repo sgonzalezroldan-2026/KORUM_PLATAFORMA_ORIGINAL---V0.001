@@ -91,15 +91,13 @@ export async function reserveTickets(db: Db, input: TicketReservationInput, now:
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id: input.initiativeId },
       select: {
-        organizationId: true, format: true, status: true, closesAt: true, ticketMax: true, ticketsSold: true, ticketsHeld: true, ticketPriceCents: true, ticketFeeMode: true, ticketSubtype: true, rafflePrizeCount: true,
-        organization: { select: { ticketFeeFixedCents: true, ticketFeeBps: true, contentLocale: true } },
-        _count: { select: { raffleDraws: true } }
+        organizationId: true, format: true, status: true, closesAt: true, ticketMax: true, ticketsSold: true, ticketsHeld: true, ticketPriceCents: true, ticketFeeMode: true,
+        organization: { select: { ticketFeeFixedCents: true, ticketFeeBps: true, contentLocale: true } }
       }
     });
     const { ticketMax, ticketPriceCents, ticketFeeMode } = initiative;
-    if (initiative.format !== 'TICKETING' || initiative.status !== 'FUNDRAISING' || initiative.closesAt <= now || initiative._count.raffleDraws > 0) throw new TicketReservationError('NOT_ON_SALE');
+    if (initiative.format !== 'TICKETING' || initiative.status !== 'FUNDRAISING' || initiative.closesAt <= now) throw new TicketReservationError('NOT_ON_SALE');
     if (ticketMax === null || ticketPriceCents === null || ticketFeeMode === null) throw new TicketReservationError('NOT_ON_SALE');
-    if (initiative.ticketSubtype === 'RAFFLE' && initiative.rafflePrizeCount === null) throw new TicketReservationError('NOT_ON_SALE');
     const available = Math.max(0, ticketMax - initiative.ticketsSold - initiative.ticketsHeld);
     if (input.quantity > available) throw new TicketReservationError('SOLD_OUT', available);
 

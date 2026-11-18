@@ -12,7 +12,7 @@ export { compactIban, PROVIDER_NAME_MAX, PROVIDER_NAME_MIN, validateIban } from 
  * - **Cifras:** a la entidad (o a su proveedor) va lo recaudado menos la comisión de KORUM (tramo + mantenimiento) y la pasarela incluida en la meta. Es la
  *   misma cuenta que comprueba `approvePayout` en la transacción que mueve el dinero.
  * - **Factura:** una campaña de presupuesto adjunta siempre la factura (o proforma) de su proveedor, también si el dinero va a la entidad (QA-S03); un
- *   evento o una rifa no tienen proveedor y no la necesitan.
+ *   evento con entradas no tiene proveedor y no la necesita.
  * - **Proveedor:** el IBAN se valida (módulo 97) y el CIF/NIF con su dígito de control; nunca se guardan en claro (CUMPLIMIENTO §5.2).
  */
 
@@ -24,7 +24,6 @@ export type CampaignPayoutRejection =
   | 'INVALID_TAX_ID'
   | 'NOT_FOUND'
   | 'NOT_READY'
-  | 'RAFFLE_NOT_DRAWN'
   | 'SPONSORS_PENDING'
   | 'KYB_NOT_VERIFIED'
   | 'DESTINATION_ACCOUNT_MISSING'

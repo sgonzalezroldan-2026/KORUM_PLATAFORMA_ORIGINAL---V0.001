@@ -1,5 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { z } from 'zod';
+import { TICKETING_CATEGORY } from '@/core/studio/studio-draft';
 
 /**
  * Reglas puras del buzón de ideas (Sprint 3.6, QA-F09). El alias de una idea es siempre `#FAM-NNNN`, generado aquí: nunca texto libre de la
@@ -82,7 +83,7 @@ export function ideaAction(phase: string, signed: boolean, expiresAt: Date, now:
   return signed ? 'SIGNED' : 'SIGN';
 }
 
-/** Categorías que admite una idea: las de la entidad menos la de taquilla y rifas (que no es una mejora). */
+/** Categorías que admite una idea: las de la entidad menos la de taquilla (que no es una mejora). */
 export function ideaCategories(categories: readonly { name: string; icon: string }[]): { name: string; icon: string }[] {
-  return categories.filter((category) => category.name !== 'Taquilla y Rifas');
+  return categories.filter((category) => category.name !== TICKETING_CATEGORY);
 }

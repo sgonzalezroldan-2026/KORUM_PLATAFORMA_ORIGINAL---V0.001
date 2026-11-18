@@ -32,7 +32,7 @@
     { "name": "Tecnología y Recursos", "rule": "BRACKETS", "icon": "💻", "sortOrder": 3 },
     { "name": "Comunidad y Viajes", "rule": "EXEMPT", "icon": "🎒", "sortOrder": 4 },
     { "name": "Solidaridad y Becas", "rule": "EXEMPT", "icon": "💚", "sortOrder": 5 },
-    { "name": "Taquilla y Rifas", "rule": "EXEMPT", "icon": "🎟️", "sortOrder": 6 }
+    { "name": "Taquilla", "rule": "EXEMPT", "icon": "🎟️", "sortOrder": 6 }
   ],
   "schools": [
     {
@@ -310,8 +310,8 @@
       "schoolName": "CEIP Cervantes",
       "province": "Barcelona",
       "academicYear": "2026-2027",
-      "title": "Gran Fiesta de Primavera y Rifa Solidaria Pro-Viaje 6º",
-      "category": "Taquilla y Rifas",
+      "title": "Gran Fiesta de Primavera Pro-Viaje 6º",
+      "category": "Taquilla",
       "stage": "Todo el centro",
       "status": "FUNDRAISING",
       "stepIndex": 4,

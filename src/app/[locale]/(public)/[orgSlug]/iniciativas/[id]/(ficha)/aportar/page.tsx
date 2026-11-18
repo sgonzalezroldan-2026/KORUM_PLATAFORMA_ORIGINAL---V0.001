@@ -62,7 +62,7 @@ export default async function CheckoutPage({ params, searchParams }: PageProps) 
   }
   const [organization, page, context, session] = loaded;
   const method = first(query.metodo);
-  // Un comercio puede patrocinar mientras la campaña recauda un presupuesto (no una taquilla o rifa): entonces la pestaña «Soy comercio local» existe.
+  // Un comercio puede patrocinar mientras la campaña recauda un presupuesto (no una taquilla): entonces la pestaña «Soy comercio local» existe.
   const sponsorship = await getSponsorshipContext(getPrisma(), orgSlug, initiativeId).catch((error: unknown) => {
     if (error instanceof ResourceNotFoundError) return null;
     throw error;

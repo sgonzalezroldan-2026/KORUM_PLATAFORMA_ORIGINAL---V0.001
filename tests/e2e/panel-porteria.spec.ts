@@ -1,23 +1,20 @@
-import { createHash, randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { expect, test, type Browser, type BrowserContext, type Page } from '@playwright/test';
 import { academicYearFor } from '@/core/finance/academic-year';
 import { quarterOf } from '@/core/ideas/idea-conversion';
 import { buildPassQrPayload, signPass } from '@/core/ticketing/qr-signature';
-import { verifyDrawAct } from '@/core/ticketing/raffle-draw';
 import { withE2eDb } from './auth-support';
 import { E2E_SERVER_ENV } from './e2e-env';
 import { expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
-import { activateCosigner, registerEntityAndEnterPanel } from './panel-support';
+import { registerEntityAndEnterPanel } from './panel-support';
 
 /**
- * Sprint 4.5 · Portería móvil y sorteo certificado (QA-S04, QA-F06, QA-SEC05, QA-SEC09), como personas reales con la compilación de producción:
+ * Sprint 4.5 · Portería móvil (QA-S04, QA-F06, QA-SEC05, QA-SEC09), como personas reales con la compilación de producción:
  *  - quien dirige crea el PIN de la puerta en «Taquilla y portería»; un voluntario sin cuenta entra con él desde otro navegador, lee pases (por código
  *    escrito, como haría un lector con teclado), elige cuántas personas entran, ve la alerta roja de un pase usado, una firma falsa y el aforo en directo;
  *  - sin cobertura valida con la lista descargada, guarda las lecturas y las envía al volver la red, y un conflicto (otro móvil ya había dejado entrar el pase)
  *    queda a la vista; quien dirige cierra la sesión y el móvil lo sabe;
- *  - el sorteo de una rifa se proyecta, saca los premios entre las papeletas pagadas y deja un acta que se puede descargar y comprobar; antes del día del evento
- *    no se abre; la cámara solo se concede a la portería.
+ *  - la cámara solo se concede a la portería.
  * Catalán, axe, 430 px y sin errores de consola.
  */
 
@@ -32,28 +29,25 @@ interface SeedPass {
   uuid: string;
   payload: string;
   quantity: number;
-  numbers: number[];
 }
 
 const octet = () => 1 + Math.floor(Math.random() * 250);
 
-/** Un evento o una rifa con venta de entradas en la entidad de la prueba, con sus pases ya pagados. */
-async function createTicketEvent(slug: string, options: { title: string; subtype: 'EVENT' | 'RAFFLE'; quantities: number[]; closes: 'today' | 'future'; prizes?: number }): Promise<{ id: number; passes: SeedPass[] }> {
+/** Un evento con venta de entradas en la entidad de la prueba, con sus pases ya pagados. */
+async function createTicketEvent(slug: string, options: { title: string; quantities: number[]; closes: 'today' | 'future' }): Promise<{ id: number; passes: SeedPass[] }> {
   const total = options.quantities.reduce((sum, quantity) => sum + quantity, 0);
-  const raffle = options.subtype === 'RAFFLE';
   return withE2eDb(async (db) => {
     const walletId = `WLT-ESC-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     const { rows } = await db.query(
       `INSERT INTO "Initiative" ("walletEscrowId", "format", "organizationId", "academicYear", "title", "category", "stage", "status", "stepIndex", "closesAt", "quarter", "goalCents", "description",
-         "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketsSold", "ticketFeeMode", "rafflePrizeCount", "ticketVenue", "raisedCents", "updatedAt")
-       VALUES ($1, 'TICKETING'::"InitiativeFormat", (SELECT id FROM "Organization" WHERE slug = $2), $12, $3, 'Fiesta', 'Infantil', $4::"InitiativeStatus", $5,
-         ${options.closes === 'today' ? 'now()' : "now() + interval '3 days'"}, $13, $6, 'Prueba E2E de portería', $7::"TicketSubtype", 500, $8, $9, 'ADD'::"TicketFeeMode", $10, 'Patio central', $11, now())
+         "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketsSold", "ticketFeeMode", "ticketVenue", "raisedCents", "updatedAt")
+       VALUES ($1, 'TICKETING'::"InitiativeFormat", (SELECT id FROM "Organization" WHERE slug = $2), $10, $3, 'Fiesta', 'Infantil', $4::"InitiativeStatus", $5,
+         ${options.closes === 'today' ? 'now()' : "now() + interval '3 days'"}, $11, $6, 'Prueba E2E de portería', 'EVENT'::"TicketSubtype", 500, $7, $8, 'ADD'::"TicketFeeMode", 'Patio central', $9, now())
        RETURNING id`,
-      [walletId, slug, options.title, raffle ? 'GOAL_REACHED' : 'FUNDRAISING', raffle ? 5 : 4, total * 500, options.subtype, raffle ? total : total + 50, total, raffle ? (options.prizes ?? 1) : null, raffle ? total * 500 : 0, academicYearFor(new Date()), quarterOf(new Date(Date.now() + (options.closes === 'today' ? 0 : 3 * 86_400_000)))]
+      [walletId, slug, options.title, 'FUNDRAISING', 4, total * 500, total + 50, total, 0, academicYearFor(new Date()), quarterOf(new Date(Date.now() + (options.closes === 'today' ? 0 : 3 * 86_400_000)))]
     );
     const initiativeId = Number(rows[0].id);
     const passes: SeedPass[] = [];
-    let nextNumber = 1;
     for (const quantity of options.quantities) {
       const uuid = randomUUID();
       const email = `familia-${uuid.slice(0, 8)}@pruebas.example`;
@@ -62,14 +56,12 @@ async function createTicketEvent(slug: string, options: { title: string; subtype
          VALUES ((SELECT id FROM "Organization" WHERE slug = $1), $2, $3, $3, 2026, 'TICKET'::"ContributionType", $4, $5, $5, 'BIZUM'::"PaymentMethod", 'COMPLETED'::"ContributionStatus", $6) RETURNING id`,
         [slug, initiativeId, email, quantity, quantity * 500, `KT${randomUUID().replace(/-/g, '').slice(0, 14).toUpperCase()}`]
       );
-      const numbers = raffle ? Array.from({ length: quantity }, () => nextNumber++) : [];
-      const pass = await db.query(
-        `INSERT INTO "TicketPass" ("uuid", "contributionId", "initiativeId", "serialCode", "subtype", "holderEmail", "quantity", "raffleNumbers", "qrHmacSignature")
-         VALUES ($1, $2, $3, $4, $5::"TicketSubtype", $6, $7, $8, $9) RETURNING id`,
-        [uuid, contribution.rows[0].id, initiativeId, `${raffle ? 'RIFA' : 'PASE'}-2026-${uuid.slice(0, 6).toUpperCase()}`, options.subtype, email, quantity, numbers, signPass(QR_SECRET, uuid)]
+      await db.query(
+        `INSERT INTO "TicketPass" ("uuid", "contributionId", "initiativeId", "serialCode", "subtype", "holderEmail", "quantity", "qrHmacSignature")
+         VALUES ($1, $2, $3, $4, 'EVENT'::"TicketSubtype", $5, $6, $7)`,
+        [uuid, contribution.rows[0].id, initiativeId, `PASE-2026-${uuid.slice(0, 6).toUpperCase()}`, email, quantity, signPass(QR_SECRET, uuid)]
       );
-      for (const number of numbers) await db.query(`INSERT INTO "RaffleNumber" ("initiativeId", "number", "ticketPassId") VALUES ($1, $2, $3)`, [initiativeId, number, pass.rows[0].id]);
-      passes.push({ uuid, payload: buildPassQrPayload(QR_SECRET, uuid), quantity, numbers });
+      passes.push({ uuid, payload: buildPassQrPayload(QR_SECRET, uuid), quantity });
     }
     return { id: initiativeId, passes };
   });
@@ -109,13 +101,6 @@ async function createPin(page: Page, slug: string, title: string): Promise<strin
 /** El código no adivinable de la puerta de un evento (se genera al crear su primer PIN): es lo que lleva el enlace de la portería. */
 const gateCodeOf = async (initiativeId: number): Promise<string> => (await withE2eDb((db) => db.query(`SELECT "gateCode" FROM "Initiative" WHERE id = $1`, [initiativeId]))).rows[0].gateCode as string;
 
-async function enterGate(page: Page, slug: string, gateCode: string, pin: string, device?: string) {
-  await page.goto(`/panel/${slug}/porteria/${gateCode}`);
-  await page.getByLabel('PIN del evento').fill(pin);
-  if (device) await page.getByLabel('Nombre de este móvil (opcional)').fill(device);
-  await page.getByRole('button', { name: 'Entrar en la portería' }).click();
-}
-
 const result = (page: Page) => page.getByTestId('gate-result');
 
 async function scan(page: Page, payload: string) {
@@ -136,7 +121,7 @@ test.describe('Sprint 4.5 · portería móvil', () => {
     const errors = trackConsoleErrors(page);
     const entity = await registerEntityAndEnterPanel(page, isMobile);
     // 1 y 2 plazas sueltas (sin red), un grupo de 4 (parcial), un pase para el conflicto y uno que se usa entero: 1 + 4 + 1 + 2 + 1 = 9.
-    const event = await createTicketEvent(entity.slug, { title: 'Fiesta de fin de curso', subtype: 'EVENT', quantities: [1, 4, 1, 2, 1], closes: 'future' });
+    const event = await createTicketEvent(entity.slug, { title: 'Fiesta de fin de curso', quantities: [1, 4, 1, 2, 1], closes: 'future' });
     const [single, group, offlineOne, conflict, spare] = event.passes as [SeedPass, SeedPass, SeedPass, SeedPass, SeedPass];
 
     // --- Quien dirige: «Taquilla y portería» ---
@@ -335,152 +320,4 @@ test.describe('Sprint 4.5 · portería móvil', () => {
     await phone.context.close();
   });
 
-  test('sorteo certificado: no se abre antes del día del evento, se proyecta, saca los premios y deja un acta que se puede descargar y comprobar', async ({ page, browser, isMobile }) => {
-    const errors = trackConsoleErrors(page);
-    const entity = await registerEntityAndEnterPanel(page, isMobile);
-    // La segunda persona firmante acepta su invitación: solo a quien ya firma se le avisa de una ronda extra.
-    const cosigner = await activateCosigner(browser, entity, isMobile ? { width: 430, height: 932 } : null);
-    const today = await createTicketEvent(entity.slug, { title: 'Rifa de hoy', subtype: 'RAFFLE', quantities: [1, 1, 1, 1, 1, 1], closes: 'today', prizes: 2 });
-    const later = await createTicketEvent(entity.slug, { title: 'Rifa de la semana que viene', subtype: 'RAFFLE', quantities: [2, 2], closes: 'future', prizes: 1 });
-    const pinToday = await createPin(page, entity.slug, 'Rifa de hoy');
-    const pinLater = await createPin(page, entity.slug, 'Rifa de la semana que viene');
-    await expect(page.getByText(/Rifa · /).first()).toBeVisible();
-
-    const phone = await volunteerPhone(browser, isMobile);
-    const volunteer = phone.page;
-    const volunteerErrors = trackConsoleErrors(volunteer);
-
-    // --- Antes del día del evento, con la venta cerrada, el sorteo no se abre ---
-    const laterCode = await gateCodeOf(later.id);
-    const todayCode = await gateCodeOf(today.id);
-    await enterGate(volunteer, entity.slug, laterCode, pinLater);
-    await server(volunteer.getByRole('heading', { name: 'Sorteo de la rifa' })).toBeVisible();
-    await volunteer.getByTestId('gate-raffle-link').click();
-    await server(volunteer.getByTestId('raffle-stage')).toBeVisible();
-    await expect(volunteer.getByText(/El sorteo se abre el .+, el día del evento\./)).toBeVisible();
-    await expect(volunteer.getByTestId('raffle-draw')).toHaveCount(0);
-    await checkPage(volunteer, isMobile);
-
-    // --- La sesión de un evento no vale para otro ---
-    await volunteer.goto(`/panel/${entity.slug}/porteria/${todayCode}`);
-    await expect(volunteer.getByLabel('PIN del evento')).toBeVisible();
-
-    // --- El día del evento: se proyecta y se sortean los 2 premios entre las 6 papeletas ---
-    await enterGate(volunteer, entity.slug, todayCode, pinToday);
-    await server(volunteer.getByTestId('gate-raffle-link')).toBeVisible();
-    await volunteer.getByTestId('gate-raffle-link').click();
-    await server(volunteer.getByTestId('raffle-stage')).toBeVisible();
-    await expect(volunteer.getByTestId('raffle-entries')).toHaveText('6');
-    await expect(volunteer.getByTestId('raffle-left')).toHaveText('2');
-    await expect(volunteer.getByTestId('raffle-fullscreen')).toBeVisible();
-    await checkPage(volunteer, isMobile);
-    await volunteer.getByLabel('¿Cuántos premios sorteas ahora? (quedan 2)').fill('2');
-    await volunteer.getByTestId('raffle-draw').click();
-    await server(volunteer.getByTestId('raffle-result')).toBeVisible();
-    const shown = (await volunteer.getByTestId('raffle-number').allInnerTexts()).map((text) => Number(text.replace('#', '')));
-    expect(shown).toHaveLength(2);
-    expect(new Set(shown).size).toBe(2);
-    for (const number of shown) expect(number).toBeGreaterThanOrEqual(1);
-    for (const number of shown) expect(number).toBeLessThanOrEqual(6);
-    await expect(volunteer.getByTestId('raffle-participants')).toHaveText('6');
-    await expect(volunteer.getByTestId('raffle-list-hash')).toHaveText(/^[0-9a-f]{64}$/);
-    await expect(volunteer.getByTestId('raffle-act-hash')).toHaveText(/^[0-9a-f]{64}$/);
-    await expect(volunteer.getByText('Ya se han sorteado todos los premios.')).toBeVisible();
-    await expect(volunteer.getByTestId('raffle-draw')).toHaveCount(0);
-    await expect(volunteer.getByTestId('raffle-left')).toHaveText('0');
-    await checkPage(volunteer, isMobile);
-
-    // --- El acta se descarga y cualquiera puede comprobarla ---
-    const [download] = await Promise.all([volunteer.waitForEvent('download'), volunteer.getByTestId('raffle-download').click()]);
-    const file = JSON.parse(await readFile(await download.path(), 'utf8')) as { kind: string; initiativeId: number; round: number; drawnAt: string; winningNumbers: number[]; participantCount: number; participantsSha256: string; actSha256: string; participants: { number: number; serialCode: string }[] };
-    expect(file).toMatchObject({ kind: 'korum-raffle-act', initiativeId: today.id, round: 1, participantCount: 6 });
-    expect(file.winningNumbers).toEqual(shown);
-    expect(JSON.stringify(file)).not.toContain('@');
-    expect(verifyDrawAct({ initiativeId: file.initiativeId, round: file.round, drawnAt: file.drawnAt, participantsSha256: file.participantsSha256, participantCount: file.participantCount, winningNumbers: file.winningNumbers }, file.participants, file.actSha256)).toBe(true);
-    expect(createHash('sha256').update(JSON.stringify(file.participants), 'utf8').digest('hex')).toBe(file.participantsSha256);
-    const draws = await withE2eDb((db) => db.query(`SELECT "winningNumbers", "actSha256" FROM "RaffleDraw" WHERE "initiativeId" = $1`, [today.id]));
-    expect(draws.rows).toHaveLength(1);
-    expect(draws.rows[0].winningNumbers).toEqual(shown);
-
-    // --- Al recargar, el resultado sigue ahí y en catalán se lee igual ---
-    await volunteer.reload();
-    await server(volunteer.getByTestId('raffle-result')).toBeVisible();
-    await volunteer.goto(`/ca/panel/${entity.slug}/porteria/${todayCode}/sorteo`);
-    await server(volunteer.getByRole('heading', { level: 1, name: 'Sorteig certificat' })).toBeVisible();
-    await expect(volunteer.getByText('Ja s’han sortejat tots els premis.')).toBeVisible();
-    await expectNoMissingTranslations(volunteer);
-
-    // --- Quien dirige: ronda extra por un premio que nadie reclama (una sola persona firmante, sin doble firma) ---
-    await page.goto(`/panel/${entity.slug}/taquilla`);
-    const raffleCard = page.getByTestId('gate-admin-event').filter({ has: page.getByRole('heading', { name: 'Rifa de hoy' }) });
-    const admin = raffleCard.getByTestId('gate-raffle-admin');
-    await server(admin).toBeVisible();
-    await expect(admin.getByTestId('gate-raffle-summary')).toHaveText('Premios sorteados: 2 de 2. Sustituidos con rondas extra: 0.');
-    await expect(admin.getByTestId('gate-raffle-rounds').getByRole('listitem')).toHaveCount(1);
-    // Sin ganador reembolsado, ese motivo no se ofrece: solo el premio sin reclamar.
-    await expect(admin.getByLabel('Motivo').locator('option')).toHaveText(['Premio sin reclamar (hasta 2 premios)']);
-    await checkPage(page, isMobile);
-    const tag = (number: number) => `#${String(number).padStart(4, '0')}`;
-    // Sin elegir ninguna papeleta ganadora no se prepara la ronda.
-    await admin.getByTestId('gate-raffle-prepare').click();
-    await expect(admin.getByText('Marca al menos una papeleta ganadora para sustituirla.')).toBeVisible();
-    // El premio sin reclamar es el de la segunda papeleta ganadora: consta qué número se sustituye.
-    // Se elige una sola papeleta ganadora: elegir otra cambia la elección (no queda una casilla muerta).
-    await expect(admin.getByTestId('gate-raffle-replace').getByRole('radio')).toHaveCount(2);
-    await admin.getByRole('radio', { name: tag(shown[0]!) }).check();
-    await admin.getByRole('radio', { name: tag(shown[1]!) }).check();
-    await expect(admin.getByRole('radio', { name: tag(shown[0]!) })).not.toBeChecked();
-    await admin.getByTestId('gate-raffle-prepare').click();
-    await expect(admin.getByTestId('gate-raffle-confirm')).toContainText(`¿Sortear 1 papeleta para sustituir la ${tag(shown[1]!)}?`);
-    await expect(admin.getByTestId('gate-raffle-confirm')).toContainText('Quedará en el acta y en el historial de la entidad, y avisaremos a la otra persona firmante si la hay.');
-    await admin.getByTestId('gate-raffle-confirm-yes').click();
-    await server(admin.getByTestId('gate-raffle-done')).toContainText('Ronda 2 hecha');
-    await expect(admin.getByTestId('gate-raffle-done')).toContainText(`sustituye a ${tag(shown[1]!)}. Anota qué premio era. La otra persona firmante recibirá un aviso.`);
-    await expect(admin.getByTestId('gate-raffle-summary')).toHaveText('Premios sorteados: 2 de 2. Sustituidos con rondas extra: 1.');
-    await expect(admin.getByTestId('gate-raffle-rounds').getByRole('listitem')).toHaveCount(2);
-    await expect(admin.getByTestId('gate-raffle-rounds')).toContainText('Ronda 2 (extra: premio sin reclamar)');
-    await expect(admin.getByTestId('gate-raffle-rounds')).toContainText(`sustituye a ${tag(shown[1]!)}`);
-    const extraRound = await withE2eDb((db) => db.query(`SELECT "winningNumbers", "replacedNumbers", "extraRoundReason" FROM "RaffleDraw" WHERE "initiativeId" = $1 AND round = 2`, [today.id]));
-    expect(extraRound.rows[0].extraRoundReason).toBe('PRIZE_UNCLAIMED');
-    expect(extraRound.rows[0].winningNumbers).toHaveLength(1);
-    expect(extraRound.rows[0].replacedNumbers).toEqual([shown[1]]);
-    expect(shown).not.toContain(extraRound.rows[0].winningNumbers[0]);
-    // La otra persona firmante recibe el aviso; quien la hizo, no.
-    const notices = await withE2eDb((db) => db.query(`SELECT "toAddress" FROM "OutboxMessage" WHERE "templateKey" = 'raffle.extraRound' AND "organizationId" = (SELECT id FROM "Organization" WHERE slug = $1)`, [entity.slug]));
-    expect(notices.rows.map((row) => row.toAddress)).toEqual([entity.cosigner]);
-    const payload = await withE2eDb((db) => db.query(`SELECT "payloadJson" FROM "OutboxMessage" WHERE "templateKey" = 'raffle.extraRound' AND "toAddress" = $1`, [entity.cosigner]));
-    expect(payload.rows[0].payloadJson).toMatchObject({ round: 2, numbers: extraRound.rows[0].winningNumbers, replaced: [shown[1]], by: 'Carla Puig' });
-
-    // --- El acta de la ronda extra se descarga desde el panel ---
-    const [panelDownload] = await Promise.all([page.waitForEvent('download'), admin.getByRole('button', { name: 'Descargar acta de la ronda 2' }).click()]);
-    const extraAct = JSON.parse(await readFile(await panelDownload.path(), 'utf8')) as { round: number; winningNumbers: number[]; participantCount: number; extraRoundReason: string | null; drawnBy: string; replacedNumbers: number[] };
-    expect(extraAct).toMatchObject({ round: 2, winningNumbers: extraRound.rows[0].winningNumbers, participantCount: 4, extraRoundReason: 'PRIZE_UNCLAIMED', drawnBy: 'USER', replacedNumbers: [shown[1]] });
-
-    // --- Un ganador reembolsado habilita su motivo ---
-    await withE2eDb(async (db) => {
-      const { rows } = await db.query(`SELECT "ticketPassId" FROM "RaffleNumber" WHERE "initiativeId" = $1 AND number = $2`, [today.id, shown[0]]);
-      await db.query(`UPDATE "TicketPass" SET "revokedAt" = now() WHERE id = $1`, [rows[0].ticketPassId]);
-      await db.query(`DELETE FROM "RaffleNumber" WHERE "ticketPassId" = $1`, [rows[0].ticketPassId]);
-    });
-    await page.reload();
-    await expect(admin.getByLabel('Motivo').locator('option')).toHaveText(['Premio sin reclamar (hasta 1 premio)', 'Papeleta ganadora reembolsada (hasta 1 premio)'], { timeout: 30_000 });
-    await admin.getByLabel('Motivo').selectOption('WINNER_REFUNDED');
-    // Con el reembolso solo aparece la papeleta ganadora reembolsada.
-    await expect(admin.getByTestId('gate-raffle-replace').getByRole('radio')).toHaveCount(1);
-    await admin.getByRole('radio', { name: `${tag(shown[0]!)} (reembolsada)` }).check();
-    await admin.getByTestId('gate-raffle-prepare').click();
-    await admin.getByTestId('gate-raffle-confirm-yes').click();
-    await server(admin.getByTestId('gate-raffle-done')).toContainText('Ronda 3 hecha');
-    await expect(admin.getByTestId('gate-raffle-rounds')).toContainText('Ronda 3 (extra: papeleta ganadora reembolsada)');
-    await expect(admin.getByTestId('gate-raffle-rounds')).toContainText(`sustituye a ${tag(shown[0]!)}`);
-    await checkPage(page, isMobile);
-    await page.goto(`/ca/panel/${entity.slug}/taquilla`);
-    await server(page.getByRole('heading', { name: 'Sorteig i rondes extra' }).first()).toBeVisible();
-    await expectNoMissingTranslations(page);
-
-    expect(errors).toEqual([]);
-    expect(volunteerErrors).toEqual([]);
-    await phone.context.close();
-    await cosigner.context.close();
-  });
 });

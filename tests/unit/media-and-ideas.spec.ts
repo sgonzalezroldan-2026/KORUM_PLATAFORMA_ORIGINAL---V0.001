@@ -220,8 +220,8 @@ describe('reglas del buzón de ideas (QA-F09)', () => {
     expect(ideaAction('DOUBLE_CHECK', true, future, now)).toBe('SIGNED');
   });
 
-  it('las categorías de una idea excluyen la de taquilla y rifas', () => {
-    expect(ideaCategories([{ name: 'Patios y Deporte', icon: '⚽' }, { name: 'Taquilla y Rifas', icon: '🎟️' }]).map((category) => category.name)).toEqual(['Patios y Deporte']);
+  it('las categorías de una idea excluyen la de taquilla', () => {
+    expect(ideaCategories([{ name: 'Patios y Deporte', icon: '⚽' }, { name: 'Taquilla', icon: '🎟️' }]).map((category) => category.name)).toEqual(['Patios y Deporte']);
   });
 });
 

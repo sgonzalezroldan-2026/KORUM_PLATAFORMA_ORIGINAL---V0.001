@@ -140,14 +140,14 @@ function ResizedRows({ board, contingencyBps, settles }: { board: ResizedBoard; 
   );
 }
 
-function TicketingRows({ board, mode, subtype }: { board: TicketingBoard; mode: 'ADD' | 'INC'; subtype: 'EVENT' | 'RAFFLE' }) {
+function TicketingRows({ board, mode }: { board: TicketingBoard; mode: 'ADD' | 'INC' }) {
   const t = useTranslations('panel.studio.board');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
   const money = (cents: number) => formatCents(cents, locale);
   return (
     <div className="flex flex-col gap-2.5">
-      <Row label={t(subtype === 'RAFFLE' ? 'ticketGrossRaffle' : 'ticketGross')} value={money(board.grossCents)} />
+      <Row label={t('ticketGross')} value={money(board.grossCents)} />
       <div className="flex flex-col gap-2 rounded-2xl border border-slate-600 bg-slate-900/60 p-3.5" data-testid="studio-tco-lines">
         <p className="text-xs font-extrabold uppercase text-sky-300">{t('ticketModelTitle')}</p>
         <Row label={t('ticketDigitalFee')} value={t(mode === 'ADD' ? 'perUnitAdd' : 'perUnitInc', { amount: money(board.digitalFeeUnitCents) })} tone="emerald" phrase />
@@ -176,7 +176,6 @@ export interface StudioBoardViewProps {
   context: StudioContext;
   contingencyBps: number;
   ticketFeeMode: 'ADD' | 'INC';
-  ticketSubtype: 'EVENT' | 'RAFFLE';
   /** Pie con el botón de guardar y publicar. */
   footer?: ReactNode;
   /** Campaña rehecha por votación: sus cifras guardadas sustituyen a la pizarra calculada. */
@@ -187,7 +186,7 @@ export interface StudioBoardViewProps {
   gatewayCovered?: boolean;
 }
 
-export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode, ticketSubtype, footer, resized = null, resizedSettles = false, gatewayCovered = false }: StudioBoardViewProps) {
+export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode, footer, resized = null, resizedSettles = false, gatewayCovered = false }: StudioBoardViewProps) {
   const t = useTranslations('panel.studio.board');
   const current = useLocale();
   const locale = isLocale(current) ? current : 'es';
@@ -209,7 +208,7 @@ export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode,
         ) : board.kind === 'BUDGET' ? (
           <BudgetRows board={board} context={context} contingencyBps={contingencyBps} gatewayCovered={gatewayCovered} />
         ) : (
-          <TicketingRows board={board} mode={ticketFeeMode} subtype={ticketSubtype} />
+          <TicketingRows board={board} mode={ticketFeeMode} />
         )}
       </div>
       <div className="flex flex-col gap-3 border-t border-slate-600 pt-4">

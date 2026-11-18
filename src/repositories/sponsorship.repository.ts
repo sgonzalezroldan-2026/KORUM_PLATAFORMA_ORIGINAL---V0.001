@@ -21,7 +21,7 @@ export async function listFriendlySponsors(db: KorumPrismaClient, slug: string, 
   });
 }
 
-/** Iniciativa a la que se puede patrocinar ahora: la que antes cierra, entre las que recaudan un presupuesto (no taquilla ni rifa). */
+/** Iniciativa a la que se puede patrocinar ahora: la que antes cierra, entre las que recaudan un presupuesto (no una taquilla). */
 export async function findSponsorableInitiative(db: KorumPrismaClient, slug: string, now: Date) {
   return db.initiative.findFirst({
     where: { status: 'FUNDRAISING', format: 'BUDGET', closesAt: { gt: now }, organization: { slug, archivedAt: null } },

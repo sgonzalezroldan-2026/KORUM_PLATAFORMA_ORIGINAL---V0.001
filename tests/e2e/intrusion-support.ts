@@ -106,7 +106,6 @@ export interface Targets {
   campaignId: number;
   draftId: number;
   eventId: number;
-  raffleId: number;
   /** Campaña conseguida, con su liquidación pedida. */
   payoutCampaignId: number;
   ideaId: number;
@@ -131,15 +130,15 @@ export interface Victim extends Targets {
 /** Identificadores bien formados que no existen: la respuesta a algo de otra entidad debe ser la misma que a esto. */
 export function missingTargets(): Targets {
   const none = 2_147_483_000;
-  return { campaignId: none, draftId: none, eventId: none, raffleId: none, payoutCampaignId: none, ideaId: none, signatureId: none, sponsorId: none, fundPayoutId: none, handoverId: 'z'.repeat(24), gateSessionId: randomUUID(), ticketCode: generateTicketCode() };
+  return { campaignId: none, draftId: none, eventId: none, payoutCampaignId: none, ideaId: none, signatureId: none, sponsorId: none, fundPayoutId: none, handoverId: 'z'.repeat(24), gateSessionId: randomUUID(), ticketCode: generateTicketCode() };
 }
 
 const fileId = () => randomUUID().replace(/-/g, '').slice(0, 24);
 const order = (prefix: string) => `${prefix}${randomUUID().replace(/-/g, '').slice(0, 14).toUpperCase()}`;
 
 /**
- * Datos de la entidad B, de todo lo que una acción del panel puede tocar: campañas en cada estado, un evento con entradas y su sesión de portería, una rifa
- * con su acta, una idea con una firma, un comercio con su cobro y su dinero en el Fondo, una liquidación con factura, otra del Fondo, un relevo de firmante,
+ * Datos de la entidad B, de todo lo que una acción del panel puede tocar: campañas en cada estado, un evento con entradas y su sesión de portería,
+ * una idea con una firma, un comercio con su cobro y su dinero en el Fondo, una liquidación con factura, otra del Fondo, un relevo de firmante,
  * un documento del titular y una consulta de una familia.
  */
 export async function prepareVictim(entity: RegisteredEntity): Promise<Victim> {
@@ -148,23 +147,22 @@ export async function prepareVictim(entity: RegisteredEntity): Promise<Victim> {
     const organizationId = organization.id;
     const director = (await db.query(`SELECT m.id AS "memberId", m."userId" FROM "OrganizationMember" m WHERE m."organizationId" = $1 AND m.role = 'DIRECTOR'`, [organizationId])).rows[0] as { memberId: number; userId: string };
     const wallets: string[] = [organization.walletId];
-    const initiative = async (title: string, status: string, ticket: { subtype: 'EVENT' | 'RAFFLE'; prizes: number | null } | null = null) => {
+    const initiative = async (title: string, status: string, ticketing = false) => {
       const wallet = `WLT-ESC-${randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase()}`;
       wallets.push(wallet);
       const { rows } = await db.query(
         `INSERT INTO "Initiative" ("walletEscrowId", "format", "organizationId", "academicYear", "title", "category", "stage", "status", "stepIndex", "closesAt", "quarter", "goalCents", "description",
-           "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketFeeMode", "rafflePrizeCount", "updatedAt")
-         VALUES ($1, $2::"InitiativeFormat", $3, $11, $4, 'Fiesta', 'Infantil', $5::"InitiativeStatus", 4, now() + interval '30 days', $12, 50000, 'Datos de la entidad B',
-           $6::"TicketSubtype", $7, $8, $9::"TicketFeeMode", $10, now()) RETURNING id`,
-        [wallet, ticket ? 'TICKETING' : 'BUDGET', organizationId, title, status, ticket?.subtype ?? null, ticket ? 500 : null, ticket ? 100 : null, ticket ? 'ADD' : null, ticket?.prizes ?? null, academicYearFor(new Date()), quarterOf(new Date(Date.now() + 30 * 86_400_000))]
+           "ticketSubtype", "ticketPriceCents", "ticketMax", "ticketFeeMode", "updatedAt")
+         VALUES ($1, $2::"InitiativeFormat", $3, $10, $4, 'Fiesta', 'Infantil', $5::"InitiativeStatus", 4, now() + interval '30 days', $11, 50000, 'Datos de la entidad B',
+           $6::"TicketSubtype", $7, $8, $9::"TicketFeeMode", now()) RETURNING id`,
+        [wallet, ticketing ? 'TICKETING' : 'BUDGET', organizationId, title, status, ticketing ? 'EVENT' : null, ticketing ? 500 : null, ticketing ? 100 : null, ticketing ? 'ADD' : null, academicYearFor(new Date()), quarterOf(new Date(Date.now() + 30 * 86_400_000))]
       );
       return Number(rows[0].id);
     };
     const campaignId = await initiative('Campaña de la entidad B', 'FUNDRAISING');
     const draftId = await initiative('Borrador de la entidad B', 'BUDGETING');
     const payoutCampaignId = await initiative('Campaña conseguida de la entidad B', 'GOAL_REACHED');
-    const eventId = await initiative('Fiesta de la entidad B', 'FUNDRAISING', { subtype: 'EVENT', prizes: null });
-    const raffleId = await initiative('Rifa de la entidad B', 'FUNDRAISING', { subtype: 'RAFFLE', prizes: 1 });
+    const eventId = await initiative('Fiesta de la entidad B', 'FUNDRAISING', true);
 
     // Buzón de ideas: una idea por moderar con una firma en revisión.
     const authorEmail = `autora-${randomUUID().slice(0, 8)}@familias.example`;
@@ -227,28 +225,16 @@ export async function prepareVictim(entity: RegisteredEntity): Promise<Victim> {
       [handoverId, organizationId, director.memberId, director.userId, `entrante-${randomUUID().slice(0, 12)}`]
     );
 
-    // Taquilla: una entrada vendida, una sesión de portería abierta y una rifa sorteada.
-    const pass = async (initiativeId: number, subtype: 'EVENT' | 'RAFFLE', numbers: number[]) => {
-      const uuid = randomUUID();
-      const email = `entrada-b-${uuid.slice(0, 8)}@familias.example`;
-      const contributionId = await charge(initiativeId, 'TICKET', email, 1_000, { quantity: 2 });
-      const serial = `${subtype === 'RAFFLE' ? 'RIFA' : 'PASE'}-2026-${uuid.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
-      const inserted = await db.query(
-        `INSERT INTO "TicketPass" ("uuid", "contributionId", "initiativeId", "serialCode", "subtype", "holderEmail", "quantity", "raffleNumbers", "qrHmacSignature") VALUES ($1, $2, $3, $4, $5::"TicketSubtype", $6, 2, $7, $8) RETURNING id`,
-        [uuid, contributionId, initiativeId, serial, subtype, email, numbers, 'firma-de-prueba']
-      );
-      for (const number of numbers) await db.query(`INSERT INTO "RaffleNumber" ("initiativeId", "number", "ticketPassId") VALUES ($1, $2, $3)`, [initiativeId, number, inserted.rows[0].id]);
-      return { email, serial };
-    };
-    const entry = await pass(eventId, 'EVENT', []);
-    const paper = await pass(raffleId, 'RAFFLE', [1, 2]);
+    // Taquilla: una entrada vendida y una sesión de portería abierta.
+    const uuid = randomUUID();
+    const entry = { email: `entrada-b-${uuid.slice(0, 8)}@familias.example`, serial: `PASE-2026-${uuid.replace(/-/g, '').slice(0, 8).toUpperCase()}` };
+    const entryContributionId = await charge(eventId, 'TICKET', entry.email, 1_000, { quantity: 2 });
+    await db.query(
+      `INSERT INTO "TicketPass" ("uuid", "contributionId", "initiativeId", "serialCode", "subtype", "holderEmail", "quantity", "qrHmacSignature") VALUES ($1, $2, $3, $4, 'EVENT'::"TicketSubtype", $5, 2, $6)`,
+      [uuid, entryContributionId, eventId, entry.serial, entry.email, 'firma-de-prueba']
+    );
     const gateSessionId = fileId();
     await db.query(`INSERT INTO "GateSession" ("id", "initiativeId", "tokenHash", "deviceLabel", "expiresAt") VALUES ($1, $2, $3, 'Móvil de la entidad B', now() + interval '8 hours')`, [gateSessionId, eventId, randomUUID().replace(/-/g, '').repeat(2)]);
-    await db.query(
-      `INSERT INTO "RaffleDraw" ("initiativeId", "round", "idempotencyKey", "participantsJson", "participantsSha256", "winningNumbers", "actSha256", "drawnByType", "drawnById", "drawnAt")
-       VALUES ($1, 1, $2, $3::jsonb, $4, '{1}', $5, 'USER', $6, now())`,
-      [raffleId, randomUUID(), JSON.stringify([1, 2].map((number) => ({ number, serialCode: paper.serial }))), 'c'.repeat(64), 'd'.repeat(64), director.userId]
-    );
 
     // Una consulta de una familia a la entidad B.
     const ticketCode = generateTicketCode();
@@ -257,8 +243,8 @@ export async function prepareVictim(entity: RegisteredEntity): Promise<Victim> {
       [ticketCode, organizationId]
     );
 
-    const needles = [entity.name, entity.director, entity.cosigner, 'de la entidad B', 'Persona Relevo B', 'comercio-b@comercios.example', 'familia-b@familias.example', authorEmail, signerEmail, entry.email, paper.email, entry.serial, paper.serial, ticketCode, ...wallets];
-    return { organizationId, campaignId, draftId, eventId, raffleId, payoutCampaignId, ideaId, signatureId: Number(signature.rows[0].id), sponsorId, fundPayoutId, handoverId, gateSessionId, ticketCode, documentId: Number(document.rows[0].id), kybFileId, invoiceFileId, needles };
+    const needles = [entity.name, entity.director, entity.cosigner, 'de la entidad B', 'Persona Relevo B', 'comercio-b@comercios.example', 'familia-b@familias.example', authorEmail, signerEmail, entry.email, entry.serial, ticketCode, ...wallets];
+    return { organizationId, campaignId, draftId, eventId, payoutCampaignId, ideaId, signatureId: Number(signature.rows[0].id), sponsorId, fundPayoutId, handoverId, gateSessionId, ticketCode, documentId: Number(document.rows[0].id), kybFileId, invoiceFileId, needles };
   });
 }
 
@@ -347,7 +333,7 @@ export async function outboxOf(organizationId: string, addresses: string[]): Pro
 const TEXT = 'Texto escrito por la entidad A que no es suyo decidir.';
 /** Cierre válido de un borrador del Estudio: 30 días después de hoy (Sprint 5.7: una fecha fija dejaría de ser un borrador bien formado al pasar). */
 const closesOnInAMonth = () => new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
-const studioDraft = (initiativeId: number) => ({ initiativeId, format: 'BUDGET', title: 'Título cambiado por la entidad A', category: 'Patios y Deporte', stage: 'Infantil', closesOn: closesOnInAMonth(), description: 'Descripción cambiada por la entidad A', showPublicBreakdown: true, plaqueEnabled: false, rewardEnabled: false, rewardText: null, targetFamiliesPerCourse: 20, costMatCents: 100, costInstCents: 0, contingencyBps: 1000, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 200, ticketFeeMode: 'ADD', ticketVenue: null, rafflePrizeCount: null, raffleNoticeConfirmed: false });
+const studioDraft = (initiativeId: number) => ({ initiativeId, format: 'BUDGET', title: 'Título cambiado por la entidad A', category: 'Patios y Deporte', stage: 'Infantil', closesOn: closesOnInAMonth(), description: 'Descripción cambiada por la entidad A', showPublicBreakdown: true, plaqueEnabled: false, rewardEnabled: false, rewardText: null, targetFamiliesPerCourse: 20, costMatCents: 100, costInstCents: 0, contingencyBps: 1000, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 200, ticketFeeMode: 'ADD', ticketVenue: null });
 
 /** Acciones del panel que reciben el identificador de un recurso (además de la entidad): sus argumentos bien formados para una entidad y unos recursos dados. */
 export function resourceArguments(slug: string, target: Targets): Record<string, unknown[]> {
@@ -377,8 +363,6 @@ export function resourceArguments(slug: string, target: Targets): Record<string,
     setGatePinAction: [slug, target.eventId],
     rotateGateCodeAction: [slug, target.eventId],
     revokeGateSessionAction: [slug, target.gateSessionId],
-    drawExtraRoundAction: [slug, target.raffleId, { reason: 'PRIZE_UNCLAIMED', replacesNumbers: [1], idempotencyKey: randomUUID() }],
-    downloadRaffleActAction: [slug, target.raffleId, 1],
     decideRefundAction: [slug, { initiativeId: target.campaignId }],
     launchResizeVoteAction: [slug, { initiativeId: target.campaignId, options: ['Hacer la mitad', 'Hacer un tercio'] }]
   };

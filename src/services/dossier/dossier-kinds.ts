@@ -6,7 +6,7 @@ import type { DossierMovement } from '@/core/dossier/dossier-model';
 
 /**
  * Cómo se llama un asiento en el expediente de la entidad. El Auto-Impulso es una aportación más de las que admite la campaña (Regla 02 §7): una donación
- * en una de presupuesto y una entrada en una taquilla o rifa, donde no hay donaciones y «una donación» solo podría ser de KORUM. Y cuando KORUM lo recupera
+ * en una de presupuesto y una entrada en una taquilla, donde no hay donaciones y «una donación» solo podría ser de KORUM. Y cuando KORUM lo recupera
  * (el contra-asiento de una campaña que venció tras un contracargo), una devolución más: si saliera como «corrección de un cobro», delataría qué cobro fue
  * de KORUM, porque a una familia nunca se le devuelve así.
  */

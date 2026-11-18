@@ -130,7 +130,7 @@ test.describe('QA-F09 · firmar y proponer (con sesión)', () => {
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('option', { name: /Infraestructura y Confort/ })).toHaveCount(1);
     await expect(dialog.getByRole('option', { name: /Patios y Deporte/ })).toHaveCount(1);
-    await expect(dialog.getByRole('option', { name: /Taquilla y Rifas/ })).toHaveCount(0);
+    await expect(dialog.getByRole('option', { name: /Taquilla/ })).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Enviar propuesta al centro' }).click();
     await expect(dialog.getByRole('alert')).toContainText('Revisa los campos marcados');
     await expect(dialog.getByLabel('Título de la idea')).toBeFocused();

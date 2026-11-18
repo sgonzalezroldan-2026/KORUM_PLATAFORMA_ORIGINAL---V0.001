@@ -408,7 +408,7 @@ describe('QA-SEC13 · el Auto-Impulso no se distingue en el expediente de la ent
     expect(entityKindOf('REVERSAL', 'MATCHING_RELEASE', 'BUDGET')).toBe('MATCHING_UNDONE');
     expect(entityKindOf('REVERSAL', 'PAYOUT_APPROVAL', 'BUDGET')).toBe('REVERSAL');
     expect(entityKindOf('PAYIN_DONATION', null, 'BUDGET')).toBe('PAYIN_DONATION');
-    // En una taquilla o rifa no hay donaciones: «una donación» solo podría ser de KORUM. Cuenta como una entrada más.
+    // En una taquilla no hay donaciones: «una donación» solo podría ser de KORUM. Cuenta como una entrada más.
     expect(entityKindOf('SELF_BOOST_INJECTION', null, 'TICKETING')).toBe('PAYIN_TICKET');
     expect(entityKindOf('REVERSAL', 'SELF_BOOST_INJECTION', 'TICKETING')).toBe('ESCROW_REFUND_DONOR');
     expect([entityContributionTypeOf('SELF_BOOST', 'BUDGET'), entityContributionTypeOf('SELF_BOOST', 'TICKETING'), entityContributionTypeOf('TICKET', 'TICKETING')]).toEqual(['DONATION', 'TICKET', 'TICKET']);
@@ -550,7 +550,7 @@ describe('QA-SEC13 · el Auto-Impulso no se distingue en el expediente de la ent
     expect(shortTitle('New books from our families and friends', 17)).toBe('New books…');
     // Tampoco una raya, una barra, un «&» o un «+» sueltos.
     expect(shortTitle('Material escolar – ayudas para familias – curso nuevo', 43)).toBe('Material escolar – ayudas para familias…');
-    expect(shortTitle('Gran Fiesta de Primavera / Rifa Solidaria del centro', 28)).toBe('Gran Fiesta de Primavera…');
+    expect(shortTitle('Gran Fiesta de Primavera / Mercadillo solidario del centro', 28)).toBe('Gran Fiesta de Primavera…');
     expect(shortTitle('Pizarras digitales + proyectores para todas las aulas', 22)).toBe('Pizarras digitales…');
     expect(shortTitle('Bibliotecas, juegos & más cosas para el patio', 23)).toBe('Bibliotecas, juegos…');
   });

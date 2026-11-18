@@ -168,16 +168,12 @@ function windowText(t: ReturnType<typeof useTranslations>, windowMs: number): st
   return windowMs >= 3_600_000 ? t('limits.hours', { count: Math.round(windowMs / 3_600_000) }) : t('limits.minutes', { count: Math.round(windowMs / 60_000) });
 }
 
-export function LimitsSettings({ fields, fixedLimits }: { fields: Fields; fixedLimits: FixedLimit[] }) {
+/** Límites fijos de la plataforma (Sprint 5.4): se leen del código y no se editan. El único que se podía ajustar se retiró en el Sprint 5.12a. */
+export function LimitsSettings({ fixedLimits }: { fixedLimits: FixedLimit[] }) {
   const t = useTranslations('admin.settings');
-  const form = useSectionForm('limites', fields);
   const caption = useId();
   return (
     <div className="flex flex-col gap-4">
-      <SectionForm onSubmit={() => form.submit()}>
-        <FieldGrid form={form} fields={fields} />
-        <SaveBar pending={form.pending} outcome={form.outcome} failed={form.failed} testId="save-limites" />
-      </SectionForm>
       <h3 className="font-corp text-lg font-extrabold text-varsity-navy">{t('limits.fixedTitle')}</h3>
       <p id={caption} className="text-sm text-ink-soft">
         {t('limits.fixedHint')}

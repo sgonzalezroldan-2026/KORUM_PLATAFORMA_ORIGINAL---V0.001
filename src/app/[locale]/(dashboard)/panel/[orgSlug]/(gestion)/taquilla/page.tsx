@@ -9,7 +9,7 @@ import { getPrisma } from '@/lib/prisma';
 import { loadGateAdmin } from '@/repositories/gate-admin.repository';
 
 /**
- * Taquilla y portería (Sprint 4.5; el prototipo no tiene pantalla de portería ni de sorteo, la paridad se mide contra la ficha): los eventos y rifas con venta de entradas, el PIN de la puerta de cada uno y los móviles de
+ * Taquilla y portería (Sprint 4.5; el prototipo no tiene pantalla de portería, la paridad se mide contra la ficha): los eventos con venta de entradas, el PIN de la puerta de cada uno y los móviles de
  * voluntarios que están dentro. Dinámica: depende de la sesión. El Super-Admin la ve sin poder crear PIN ni cerrar sesiones.
  */
 export const dynamic = 'force-dynamic';

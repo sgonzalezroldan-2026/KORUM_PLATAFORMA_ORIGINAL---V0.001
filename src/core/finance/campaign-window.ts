@@ -115,7 +115,7 @@ export async function publishInitiative(db: Db, initiativeId: number, now: Date 
     }
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id: initiativeId },
-      select: { organizationId: true, status: true, closesAt: true, goalCents: true, stage: true, ticketSubtype: true, rafflePrizeCount: true, ticketMax: true, organization: { select: { kybStatus: true } } }
+      select: { organizationId: true, status: true, closesAt: true, goalCents: true, stage: true, organization: { select: { kybStatus: true } } }
     });
     if (initiative.status === 'FUNDRAISING') return { published: false };
     if (initiative.status !== 'BUDGETING') throw new InitiativeNotPublishableError(initiativeId, `está en estado ${initiative.status}`);
@@ -125,10 +125,6 @@ export async function publishInitiative(db: Db, initiativeId: number, now: Date 
     if (initiative.stage.trim() === '') throw new InitiativeNotPublishableError(initiativeId, 'falta indicar a quién beneficia');
     if (initiative.organization.kybStatus !== 'VERIFIED') throw new InitiativeNotPublishableError(initiativeId, 'los documentos del titular aún no están verificados');
     if (initiative.closesAt.getTime() <= now.getTime()) throw new InitiativeNotPublishableError(initiativeId, 'su fecha de cierre ya ha pasado');
-    // Publicada, los premios ya no se pueden cambiar: sin ellos la rifa vendería y luego no podría sortearse ni liquidarse.
-    if (initiative.ticketSubtype === 'RAFFLE' && (initiative.rafflePrizeCount === null || initiative.ticketMax === null || initiative.rafflePrizeCount > initiative.ticketMax)) {
-      throw new InitiativeNotPublishableError(initiativeId, 'una rifa necesita un número de premios, y no más que papeletas');
-    }
     const config = await tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { maxCampaignDays: true } });
     assertCampaignDuration(now, initiative.closesAt, config.maxCampaignDays);
 

@@ -137,7 +137,7 @@ export function computeBudgetBoard(context: StudioContext, draft: StudioDraft): 
 }
 
 /**
- * Taquilla o rifa. La meta es lo que entra en la hucha con el aforo completo: en `ADD` los gastos de gestión digital se cobran aparte y entra el
+ * Taquilla. La meta es lo que entra en la hucha con el aforo completo: en `ADD` los gastos de gestión digital se cobran aparte y entra el
  * precio entero; en `INC` van dentro del precio y entra el precio menos esos gastos. (Con el precio entero como meta, una campaña `INC` vendida
  * por completo nunca llegaría al 100 %.) `maintFeeCents` fija el mantenimiento de una campaña ya publicada, que no se recalcula.
  */
@@ -243,7 +243,7 @@ export function latestCloseOn(now: Date, maxDays: number): string {
 /** Lo que cabe en `Initiative.goalCents` (un entero de 32 bits de PostgreSQL): con reglas extremas la meta calculada podría pasarlo y guardar fallaría con un error de la base de datos. */
 export const MAX_GOAL_CENTS = 2_147_483_647;
 
-export type SaveProblem = 'GOAL_TOO_HIGH' | 'TITLE_MISSING' | 'INVALID_CATEGORY' | 'CLOSING_INVALID' | 'CLOSING_PAST' | 'CLOSING_TOO_LATE' | 'RAFFLE_PRIZES_EXCEED';
+export type SaveProblem = 'GOAL_TOO_HIGH' | 'TITLE_MISSING' | 'INVALID_CATEGORY' | 'CLOSING_INVALID' | 'CLOSING_PAST' | 'CLOSING_TOO_LATE';
 
 /** Lo que impide guardar el borrador. Es poco: un borrador a medias se puede guardar; lo que falta para publicar lo dice `publishBlockers`. */
 export function saveProblems(context: StudioContext, draft: StudioDraft, now: Date): SaveProblem[] {
@@ -257,7 +257,6 @@ export function saveProblems(context: StudioContext, draft: StudioDraft, now: Da
   if (!closesAt) problems.push('CLOSING_INVALID');
   else if (closesAt.getTime() <= now.getTime()) problems.push('CLOSING_PAST');
   else if (campaignDaysFrom(now, closesAt) > effectiveMaxCampaignDays(context.maxCampaignDays)) problems.push('CLOSING_TOO_LATE');
-  if (draft.format === 'TICKETING' && draft.rafflePrizeCount !== null && draft.rafflePrizeCount > draft.ticketMax) problems.push('RAFFLE_PRIZES_EXCEED');
   return problems;
 }
 
@@ -270,8 +269,6 @@ export type PublishBlocker =
   | 'TICKET_PRICE_ZERO'
   | 'TICKET_FEE_EXCEEDS_PRICE'
   | 'MAINT_EXCEEDS_TAKINGS'
-  | 'RAFFLE_PRIZES'
-  | 'RAFFLE_NOTICE'
   | SaveProblem;
 
 /**
@@ -292,10 +289,6 @@ export function publishBlockers(context: StudioContext, draft: StudioDraft, boar
     else if (draft.ticketFeeMode === 'INC' && draft.ticketPriceCents <= board.digitalFeeUnitCents) blockers.push('TICKET_FEE_EXCEEDS_PRICE');
     // El mantenimiento se reserva contra el tope anual al publicar: si lo recaudable no lo cubre, la liquidación saldría en negativo.
     if (board.maintShortfallCents > 0) blockers.push('MAINT_EXCEEDS_TAKINGS');
-    if (draft.ticketSubtype === 'RAFFLE') {
-      if (draft.rafflePrizeCount === null || draft.rafflePrizeCount < 1 || draft.rafflePrizeCount > draft.ticketMax) blockers.push('RAFFLE_PRIZES');
-      if (!draft.raffleNoticeConfirmed) blockers.push('RAFFLE_NOTICE');
-    }
   }
   return [...new Set(blockers)];
 }

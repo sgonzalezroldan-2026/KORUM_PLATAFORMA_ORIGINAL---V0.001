@@ -141,8 +141,8 @@ export interface TicketPurchase {
   chargedCents: number;
 }
 
-/** Compra entradas o papeletas y abre el pase con su QR. Lo cobrado es `cantidad × (precio + Gastos de gestión digital)`, con ese nombre exacto (Regla 02 §6). */
-export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug: string; initiativeId: number; email: string; quantity: number; subtype: 'EVENT' | 'RAFFLE' }): Promise<TicketPurchase> {
+/** Compra entradas y abre el pase con su QR. Lo cobrado es `cantidad × (precio + Gastos de gestión digital)`, con ese nombre exacto (Regla 02 §6). */
+export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug: string; initiativeId: number; email: string; quantity: number; subtype: 'EVENT' }): Promise<TicketPurchase> {
   const modal = await openCheckout(page, locale, options.slug, options.initiativeId);
   for (let added = 1; added < options.quantity; added += 1) await modal.getByRole('button', { name: t('portal.checkout.ticket.more') }).click();
   await expect(modal.getByTestId('ticket-quantity')).toHaveText(String(options.quantity));
@@ -151,7 +151,7 @@ export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug
   const [unitPriceCents, feesCents, chargedCents] = moneyIn(await summary.innerText()) as [number, number, number];
   await expect(summary).toContainText(t('portal.checkout.summary.ticketsAdd', { count: options.quantity, price: formatCents(unitPriceCents, locale), fee: formatCents(feesCents, locale) }));
   expect(feesCents).toBeGreaterThan(0);
-  // Los gastos son los mismos por cada entrada o papeleta: se reparten sin resto.
+  // Los gastos son los mismos por cada entrada: se reparten sin resto.
   expect(feesCents % options.quantity).toBe(0);
   const unitFeeCents = feesCents / options.quantity;
   expect(chargedCents).toBe(options.quantity * (unitPriceCents + unitFeeCents));

@@ -15,7 +15,7 @@ export interface AchievementCardData {
   raised: string;
   beforeSrc: string | null;
   afterSrc: string | null;
-  /** Una mejora (campaña de presupuesto) tiene un antes y un después; un evento o una rifa, no: sin fotos, su tarjeta no las promete. */
+  /** Una mejora (campaña de presupuesto) tiene un antes y un después; un evento, no: sin fotos, su tarjeta no las promete. */
   photosExpected: boolean;
   /** Ruta de la ficha de la iniciativa, sin idioma. */
   href: string;
@@ -35,7 +35,7 @@ export function AchievementGrid({ items, entityName }: { items: AchievementCardD
 
   return (
     <>
-      {/* Cada tarjeta con su altura: una rifa sin fotos junto a una mejora con su comparador no se estira dejando un hueco vacío (repaso del Sprint 5.6). */}
+      {/* Cada tarjeta con su altura: un evento sin fotos junto a una mejora con su comparador no se estira dejando un hueco vacío (repaso del Sprint 5.6). */}
       <ul className="mobile-stack grid items-start gap-6 md:grid-cols-2" aria-label={t('listLabel')}>
         {items.map((item) => (
           <li key={item.id} className="flex">

@@ -208,11 +208,8 @@ if (fs.existsSync(migrationsDir)) {
     'EscrowLedgerEntry_amountCents_positive',
     'LedgerJournal_stamp_tx',
     'EscrowLedgerEntry_same_transaction',
-    // El acta de un sorteo no se puede repetir ni retocar, y el aforo no se puede superar (Sprint 2.3).
-    'RaffleDraw_immutable',
-    'RaffleDraw_no_truncate',
+    // El aforo no se puede superar (Sprint 2.3).
     'Initiative_tickets_within_capacity',
-    'Initiative_prize_count_locked',
     // La votación de redimensionamiento decide sobre el dinero de quienes donaron: ni ella ni sus votos se retocan ni se borran (Sprint 4.4b).
     'ResizePoll_keep_history',
     'ResizeVote_keep_history'
@@ -235,7 +232,40 @@ if (fs.existsSync(migrationsDir)) {
     if (!events.some((event) => event.kind === 'create')) errors.push(`[LEDGER-GUARD-MISSING] no migration creates "${guard}"`);
     else if (events[events.length - 1].kind === 'drop') errors.push(`[LEDGER-GUARD-DROPPED] the last migration touching "${guard}" drops it (the ledger must stay append-only and balanced)`);
   }
+  // Guardas de una función retirada (las rifas, Sprint 5.12a): la migración de retirada las elimina junto con lo que protegían y ninguna posterior las recupera.
+  const retiredGuards = ['RaffleDraw_immutable', 'RaffleDraw_no_truncate', 'Initiative_prize_count_locked'];
+  for (const guard of retiredGuards) {
+    const events = guardEvents(guard);
+    if (events.length > 0 && events[events.length - 1].kind !== 'drop') errors.push(`[RETIRED-GUARD-BACK] "${guard}" belongs to a retired feature (raffles) and the last migration touching it recreates it`);
+  }
   if (/DISABLE\s+TRIGGER/i.test(allSql)) errors.push('[LEDGER-GUARD-DISABLED] a migration disables triggers');
+  // Borrar la tabla, la función o la columna que protegen las guardas también las quita, sin nombrarlas (auditoría financiera del 5.12a): se vigila igual.
+  // `CASCADE` arrastra objetos que no se ven en la migración; solo se admite para lo retirado con su función (las rifas, Sprint 5.12a).
+  const PROTECTED_TABLES = ['LedgerJournal', 'EscrowLedgerEntry', 'AuditLog', 'ResizePoll', 'ResizeVote', 'Initiative'];
+  const CASCADE_ALLOWED = ['RaffleDraw', 'RaffleNumber'];
+  migrationFiles.forEach((file) => {
+    const rel = path.relative(ROOT, file);
+    const sql = fs.readFileSync(file, 'utf8').replace(/--[^\n]*/g, '');
+    for (const match of sql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?([^;]+);/gi)) {
+      const names = [...match[1].matchAll(/"?(\w+)"?\s*(?:,|CASCADE|RESTRICT|$)/gi)].map((name) => name[1]);
+      for (const name of names) if (PROTECTED_TABLES.includes(name)) errors.push(`[LEDGER-GUARD-DROPPED] ${rel} drops table "${name}", which carries ledger or audit guards`);
+    }
+    for (const match of sql.matchAll(/DROP\s+FUNCTION\s+(?:IF\s+EXISTS\s+)?(?:\w+\.)?"?(\w+)"?/gi)) {
+      if (/^korum_/.test(match[1]) || /_keep_history$/.test(match[1])) errors.push(`[LEDGER-GUARD-DROPPED] ${rel} drops function ${match[1]}(), used by the ledger or audit guards`);
+    }
+    for (const match of sql.matchAll(/DROP\s+(?:TABLE|FUNCTION|TYPE|TRIGGER|VIEW|SCHEMA|INDEX|CONSTRAINT|COLUMN)\b([^;]*?)\bCASCADE\b/gi)) {
+      const targets = [...match[1].matchAll(/"(\w+)"/g)].map((name) => name[1]);
+      if (targets.length === 0 || targets.some((name) => !CASCADE_ALLOWED.includes(name))) errors.push(`[LEDGER-GUARD-CASCADE] ${rel} uses DROP … CASCADE on ${targets.join(', ') || 'an unnamed object'}: drop each dependent object explicitly`);
+    }
+    // PostgreSQL quita en silencio, sin CASCADE, los CHECK de la tabla que usan una columna borrada: las columnas de las guardas tampoco se borran.
+    const PROTECTED_COLUMNS = { EscrowLedgerEntry: ['amountCents'], Initiative: ['ticketsSold', 'ticketsHeld', 'ticketMax'] };
+    for (const statement of sql.matchAll(/ALTER\s+TABLE\s+(?:ONLY\s+)?(?:IF\s+EXISTS\s+)?(?:"?\w+"?\.)?"?(\w+)"?([^;]*);/gi)) {
+      const columns = PROTECTED_COLUMNS[statement[1]] ?? [];
+      for (const dropped of statement[2].matchAll(/DROP\s+(?:COLUMN\s+)?(?:IF\s+EXISTS\s+)?"?(\w+)"?/gi)) {
+        if (columns.includes(dropped[1])) errors.push(`[LEDGER-GUARD-DROPPED] ${rel} drops ${statement[1]}.${dropped[1]}, which a ledger or capacity guard checks`);
+      }
+    }
+  });
   // Las funciones `korum_*` de los triggers deben terminar con su search_path fijado y pg_temp al final (si no, una tabla temporal
   // las engaña). Igual que con las guardas, cuenta el ESTADO FINAL: un `CREATE OR REPLACE FUNCTION` posterior sin `SET search_path`
   // borra el endurecimiento anterior, así que tras la última definición de cada función debe haber otro endurecimiento.

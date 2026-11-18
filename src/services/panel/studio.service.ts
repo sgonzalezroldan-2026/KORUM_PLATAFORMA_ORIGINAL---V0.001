@@ -22,8 +22,8 @@ import { recordStatusChange } from '@/services/audit/status-change-audit';
  * - **Qué se puede editar:** en `BUDGETING`, todo. En `FUNDRAISING` solo lo que no mueve dinero (descripción, reto, placa, desglose público): el presupuesto,
  *   el precio, el aforo y la fecha ya los usan las aportaciones y la reserva de cupos. En cualquier otro estado, nada.
  * - **Rastro:** cada guardado deja `studio.initiative_saved`; una categoría al 0 % deja `studio.exempt_category_saved` (el candado semántico es un filtro
- *   de buena fe y el Super-Admin las revisa) y, si el texto lo ha activado, `studio.semantic_lock_triggered`. La confirmación de normativa de una rifa
- *   se escribe en la misma transacción que el guardado y es obligatoria.
+ *   de buena fe y el Super-Admin las revisa) y, si el texto lo ha activado, `studio.semantic_lock_triggered`. Todo se escribe en la
+ *   misma transacción que el guardado y es obligatorio.
  */
 
 export type StudioErrorReason = 'INVALID_INPUT' | 'PROBLEMS' | 'BLOCKED' | 'NOT_EDITABLE' | 'STALE_BOARD' | 'QUOTA' | 'NOT_PUBLISHABLE' | 'TOO_MANY_DRAFTS' | 'SEMANTIC_LOCK';
@@ -75,8 +75,7 @@ function pricingColumns(draft: StudioDraft, board: StudioBoard, context: StudioC
       ticketPriceCents: null,
       ticketMax: null,
       ticketFeeMode: null,
-      ticketVenue: null,
-      rafflePrizeCount: null
+      ticketVenue: null
     };
   }
   return {
@@ -97,8 +96,7 @@ function pricingColumns(draft: StudioDraft, board: StudioBoard, context: StudioC
     ticketPriceCents: draft.ticketPriceCents,
     ticketMax: draft.ticketMax,
     ticketFeeMode: draft.ticketFeeMode,
-    ticketVenue: draft.ticketVenue,
-    rafflePrizeCount: draft.ticketSubtype === 'RAFFLE' ? draft.rafflePrizeCount : null
+    ticketVenue: draft.ticketVenue
   };
 }
 
@@ -196,9 +194,6 @@ async function persistDraft(
     if (!audit) return { initiativeId, status, goalCents, created };
     const metadata = { initiativeId, format: draft.format, created, goalCents, ...(status === 'BUDGETING' ? {} : { softOnly: true }) };
     await recordAudit(tx, signer, { action: 'studio.initiative_saved', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata }, { required: true });
-    if (status === 'BUDGETING' && draft.format === 'TICKETING' && draft.ticketSubtype === 'RAFFLE' && draft.raffleNoticeConfirmed) {
-      await recordAudit(tx, signer, { action: 'studio.raffle_notice_confirmed', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { initiativeId, prizes: draft.rafflePrizeCount } }, { required: true });
-    }
     if (status === 'BUDGETING' && board.kind === 'BUDGET' && board.categoryExempt) {
       await recordAudit(tx, signer, { action: 'studio.exempt_category_saved', organizationId, targetType: 'Initiative', targetId: String(initiativeId), metadata: { initiativeId, category } }, { required: true });
     }
@@ -256,7 +251,7 @@ export async function publishStudioInitiative(db: KorumPrismaClient, actor: Sess
 
   try {
     // Lo aceptado se vuelve a escribir y se publica en una sola transacción: la fila queda bloqueada desde el primer momento, así que un guardado de la otra
-    // persona firmante no puede cambiar el formato, la rifa o el texto entre la comprobación y la publicación. Si algo falla, el borrador de arriba sigue guardado.
+    // persona firmante no puede cambiar el formato, la taquilla o el texto entre la comprobación y la publicación. Si algo falla, el borrador de arriba sigue guardado.
     const accepted: StudioDraft = { ...draft, initiativeId: saved.initiativeId };
     const result = await inTransaction(db, async (tx) => {
       await persistDraft(tx, signer, organizationId, accepted, context, board, now, { audit: false });

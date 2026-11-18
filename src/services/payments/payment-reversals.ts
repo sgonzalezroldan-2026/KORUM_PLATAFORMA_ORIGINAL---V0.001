@@ -118,8 +118,7 @@ async function undoMatchingBonus(tx: Db, contribution: ContributionRow): Promise
 
 /**
  * Quita el cobro de los contadores de la iniciativa, en la misma transacción que su asiento. Si baja de la meta antes de liquidar,
- * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. Una rifa ya sorteada no se reabre: no puede volver a vender
- * y se quedaría sin salida; se liquida lo que queda. Tampoco se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
+ * vuelve a recaudar: la liquidación pendiente no se aprobará porque ya no cuadra. No se reabre un evento de taquilla cuya fecha ya pasó (`at` es el momento del
  * cobro deshecho): ya no puede revender, y `CAMPAIGN_EXPIRY` acabaría devolviendo el dinero a quienes asistieron (decisión del 01-11-2026). Ni una campaña
  * redimensionada por votación (Sprint 4.4b): su fecha ya pasó y la votación ya decidió; se liquida lo que queda.
  */
@@ -146,14 +145,14 @@ export async function removeFromInitiative(tx: Db, contribution: ContributionRow
   const initiative = await tx.initiative.update({
     where: { id: contribution.initiativeId },
     data: { raisedCents: { decrement: leavesRaised }, totalContributions: { decrement: leavesCount }, ticketsSold: { decrement: releasedTickets } },
-    select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, _count: { select: { raffleDraws: true } }, resizePoll: { select: { status: true } } }
+    select: { raisedCents: true, goalCents: true, status: true, format: true, closesAt: true, ticketsSold: true, ticketMax: true, resizePoll: { select: { status: true } } }
   });
   if (contribution.groupName) {
     await tx.initiativeCourseProgress.updateMany({ where: { initiativeId: contribution.initiativeId, groupName: contribution.groupName, familiesCount: { gt: 0 } }, data: { familiesCount: { decrement: 1 } } });
   }
   const eventAlreadyHeld = initiative.format === 'TICKETING' && initiative.closesAt <= at;
   const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
-  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && initiative._count.raffleDraws === 0 && !eventAlreadyHeld && !resized) {
+  if (initiative.status === 'GOAL_REACHED' && !isGoalMet(initiative) && !eventAlreadyHeld && !resized) {
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
     await recordStatusChange(tx, { initiativeId: contribution.initiativeId, organizationId: contribution.organizationId, from: 'GOAL_REACHED', to: 'FUNDRAISING', reason: 'REOPENED_BY_REVERSAL' });
   }

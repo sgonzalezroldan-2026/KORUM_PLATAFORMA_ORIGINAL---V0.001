@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 /**
  * Votación de redimensionamiento de una campaña que no llegó a su meta (Sprint 4.4b, prototipo `sendResizePollToDonors`): con `?v=` (el enlace del email)
- * enseña la papeleta, el voto ya emitido o el resultado. Una persona, un voto; «Prefiero que me devolváis mi aportación» siempre está y se cumple sí o sí.
+ * enseña las opciones para votar, el voto ya emitido o el resultado. Una persona, un voto; «Prefiero que me devolváis mi aportación» siempre está y se cumple sí o sí.
  */
 export default async function ResizeVotePage({ params, searchParams }: PageProps) {
   const { locale, orgSlug } = await params;

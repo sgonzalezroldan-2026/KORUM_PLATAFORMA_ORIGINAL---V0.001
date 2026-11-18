@@ -3,8 +3,6 @@ import { buildDonationDocument, donationDocumentKind } from '@/core/tax/donation
 import { buildModel182File, deductionPercent, declaredNature, isRecurrentDonor, Model182FormatError, normalizeText, RECORD_LENGTH, type Model182Declarant } from '@/core/tax/model182-format';
 import { validateTaxId } from '@/core/tax/tax-id';
 import { generateGatePin, hashGatePin, verifyGatePin } from '@/core/ticketing/gate-pin';
-import { canonicalEntries, hashAct, hashEntries, pickWinners, verifyDrawAct, type DrawAct } from '@/core/ticketing/raffle-draw';
-import { lowestFreeNumbers } from '@/core/ticketing/ticket-issuance';
 import { computeVerifactuHash, formatCents, generatedAtOf, hashInput, issueDateOf, verifactuQrUrl } from '@/services/invoicing/verifactu-record';
 
 const SECRET = 'secreto-de-pruebas-del-pin-de-porteria-0123456789';
@@ -184,53 +182,3 @@ describe('PIN de portería', () => {
   });
 });
 
-describe('Sorteo certificado', () => {
-  const entries = [3, 1, 2, 5, 4].map((number) => ({ number, serialCode: `RIFA-2026-00000${number}` }));
-
-  it('ganadores distintos, siempre de la lista', () => {
-    for (let run = 0; run < 200; run += 1) {
-      const winners = pickWinners([1, 2, 3, 4, 5], 3);
-      expect(new Set(winners).size).toBe(3);
-      for (const winner of winners) expect([1, 2, 3, 4, 5]).toContain(winner);
-    }
-  });
-
-  it('todas las papeletas pueden ganar, con la misma probabilidad', () => {
-    const counts = new Map<number, number>();
-    for (let run = 0; run < 6_000; run += 1) {
-      const [winner] = pickWinners([1, 2, 3], 1);
-      counts.set(winner!, (counts.get(winner!) ?? 0) + 1);
-    }
-    for (const number of [1, 2, 3]) {
-      expect(counts.get(number)).toBeGreaterThan(1_700);
-      expect(counts.get(number)).toBeLessThan(2_300);
-    }
-  });
-
-  it('rechaza más premios que papeletas', () => {
-    expect(() => pickWinners([1], 2)).toThrow(RangeError);
-    expect(() => pickWinners([1], 0)).toThrow(RangeError);
-  });
-
-  it('la huella no depende del orden de lectura', () => {
-    expect(hashEntries(entries)).toBe(hashEntries([...entries].reverse()));
-    expect(canonicalEntries(entries).map((entry) => entry.number)).toEqual([1, 2, 3, 4, 5]);
-  });
-
-  it('un acta retocada no pasa la comprobación', () => {
-    const act: DrawAct = { initiativeId: 1, round: 1, drawnAt: '2026-05-01T10:00:00.000Z', participantsSha256: hashEntries(entries), participantCount: 5, winningNumbers: [3] };
-    const sha = hashAct(act);
-    expect(verifyDrawAct(act, entries, sha)).toBe(true);
-    expect(verifyDrawAct({ ...act, winningNumbers: [4] }, entries, sha)).toBe(false);
-    expect(verifyDrawAct(act, entries.slice(1), sha)).toBe(false);
-    expect(verifyDrawAct({ ...act, winningNumbers: [99] }, entries, hashAct({ ...act, winningNumbers: [99] }))).toBe(false);
-  });
-});
-
-describe('Numeración de rifas', () => {
-  it('usa los números libres más bajos y no pasa del máximo', () => {
-    expect(lowestFreeNumbers([], 2, 10)).toEqual([1, 2]);
-    expect(lowestFreeNumbers([1, 3], 2, 10)).toEqual([2, 4]);
-    expect(lowestFreeNumbers([1, 2], 2, 3)).toEqual([3]);
-  });
-});

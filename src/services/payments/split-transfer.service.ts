@@ -2,7 +2,6 @@ import { planPayoutSplits, SPLIT_WINDOW_DAYS } from '@/core/finance/campaign-win
 import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
 import { payoutFigures } from '@/core/payouts/campaign-payout-rules';
-import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
@@ -25,7 +24,6 @@ import { PaymentProviderError, type PaymentProvider } from './payment-provider';
 /** Por qué no se aprueba o no se envía: lo traduce la pantalla de quien firma (Sprint 4.4a). */
 export type PayoutBlockCode =
   | 'NOT_GOAL'
-  | 'RAFFLE_NOT_DRAWN'
   | 'SPONSORS_PENDING'
   | 'FIGURES_CHANGED'
   | 'ESCROW_MISMATCH'
@@ -92,7 +90,7 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
   return inTransaction(db, async (tx) => {
     const { initiativeId } = await tx.escrowPayout.findUniqueOrThrow({ where: { id: payoutId }, select: { initiativeId: true } });
     // Se bloquea la iniciativa antes de leer nada: un contracargo simultáneo espera, y después ya la verá liquidada.
-    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now }, include: { _count: { select: { raffleDraws: true } }, resizePoll: { select: { status: true } } } });
+    const initiative = await tx.initiative.update({ where: { id: initiativeId }, data: { updatedAt: now }, include: { resizePoll: { select: { status: true } } } });
     const payout = await tx.escrowPayout.findUniqueOrThrow({
       where: { id: payoutId },
       include: {
@@ -119,16 +117,11 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     }
     if (!account) throw new PayoutNotAllowedError(payoutId, 'no hay cuenta destino en Paycomet', 'DESTINATION_ACCOUNT_MISSING');
 
-    const drawn = initiative._count.raffleDraws > 0;
-    // Una rifa sorteada y un evento cuya fecha ya pasó se liquidan aunque un contracargo los baje de la meta: ya no pueden vender más.
-    // Y una rifa sin sorteo completo no se liquida (comprobación siguiente).
+    // Un evento cuya fecha ya pasó se liquida aunque un contracargo lo baje de la meta: ya no puede vender más.
     const eventHeld = initiative.format === 'TICKETING' && initiative.closesAt <= now;
     // Una campaña redimensionada por votación (Sprint 4.4b) tampoco vuelve a recaudar: un contracargo posterior solo baja lo que se liquida.
     const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
-    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || drawn || eventHeld || resized)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta', 'NOT_GOAL');
-    if (initiative.ticketSubtype === 'RAFFLE' && (!drawn || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiativeId, initiative.rafflePrizeCount)))) {
-      throw new PayoutNotAllowedError(payoutId, 'la rifa aún no se ha sorteado por completo', 'RAFFLE_NOT_DRAWN');
-    }
+    if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || eventHeld || resized)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta', 'NOT_GOAL');
     // El dinero de un comercio cobrado y sin revisar ya cuenta para la meta, pero el centro aún puede rechazarlo y devolvérselo: liquidar antes lo
     // haría imposible (heredado del Sprint 3.5, punto 9). La iniciativa está bloqueada: nadie aprueba ni rechaza a un comercio mientras tanto.
     const unreviewed = await tx.sponsor.count({ where: { initiativeId, status: 'PENDING', paidAt: { not: null }, contribution: { status: 'COMPLETED' } } });

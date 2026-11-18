@@ -71,10 +71,7 @@ const FIELD_FOR: Partial<Record<PublishBlocker, keyof StudioFieldErrors>> = {
   CLOSING_TOO_LATE: 'closesOn',
   TICKET_MAX_ZERO: 'ticketMax',
   TICKET_PRICE_ZERO: 'ticketPrice',
-  TICKET_FEE_EXCEEDS_PRICE: 'ticketPrice',
-  RAFFLE_PRIZES_EXCEED: 'rafflePrizeCount',
-  RAFFLE_PRIZES: 'rafflePrizeCount',
-  RAFFLE_NOTICE: 'raffleNotice'
+  TICKET_FEE_EXCEEDS_PRICE: 'ticketPrice'
 };
 
 const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STALE_BOARD', 'QUOTA', 'NOT_PUBLISHABLE', 'TOO_MANY_DRAFTS', 'SEMANTIC_LOCK', 'FORBIDDEN'];
@@ -155,7 +152,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
   function rememberInitiative(initiativeId: number) {
     if (draft.initiativeId === null) {
       setDraft((previous) => ({ ...previous, initiativeId }));
-      // La campaña ya existe: la dirección apunta a ella sin volver a cargar la página (se perdería lo que aún no se guarda, como la confirmación de la rifa).
+      // La campaña ya existe: la dirección apunta a ella sin volver a cargar la página (se perdería lo que aún no se guarda).
       window.history.replaceState(null, '', `${window.location.pathname}?${new URLSearchParams({ iniciativa: String(initiativeId) }).toString()}`);
     }
   }
@@ -440,7 +437,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
         </section>
         <div className="lg:col-span-5">
           {resizedMismatch ? null : (
-            <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} ticketSubtype={draft.ticketSubtype} footer={footer} resized={resizedBoard} resizedSettles={stored?.status === 'GOAL_REACHED' || stored?.status === 'CLOSED'} gatewayCovered={stored?.absorbsGatewayCostByKorum === true} />
+            <StudioBoardView board={board} context={context} contingencyBps={draft.contingencyBps} ticketFeeMode={draft.ticketFeeMode} footer={footer} resized={resizedBoard} resizedSettles={stored?.status === 'GOAL_REACHED' || stored?.status === 'CLOSED'} gatewayCovered={stored?.absorbsGatewayCostByKorum === true} />
           )}
         </div>
       </div>

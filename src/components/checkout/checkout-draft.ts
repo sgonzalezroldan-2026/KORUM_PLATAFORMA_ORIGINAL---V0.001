@@ -20,7 +20,7 @@ export interface CheckoutOffer {
   /** Por qué ya no se puede pagar, o `null` si se puede. */
   closedReason: 'achieved' | 'soldOut' | 'ended' | null;
   donation: { presetsCents: number[]; defaultIdx: number } | null;
-  ticket: { subtype: 'EVENT' | 'RAFFLE'; available: number; max: number; venue: string | null; pricing: TicketPricing } | null;
+  ticket: { subtype: 'EVENT'; available: number; max: number; venue: string | null; pricing: TicketPricing } | null;
   /** Grupos del reto en el orden de la entidad; vacío si el reto está desactivado. */
   groups: Array<{ group: string; items: string[] }>;
   initialGroup: string | null;

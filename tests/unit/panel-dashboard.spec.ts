@@ -46,7 +46,7 @@ describe('filtros del cuadro de mandos', () => {
   const items = [
     initiative({ id: 1 }),
     initiative({ id: 2, academicYear: '2025-2026', category: 'Patios y Deporte', status: 'CLOSED', stepIndex: 5 }),
-    initiative({ id: 3, status: 'GOAL_REACHED', stepIndex: 5, category: 'Taquilla y rifas', format: 'TICKETING' })
+    initiative({ id: 3, status: 'GOAL_REACHED', stepIndex: 5, category: 'Taquilla', format: 'TICKETING' })
   ];
 
   it('sin filtros entra todo; cada filtro acota y se combinan', () => {
@@ -64,7 +64,7 @@ describe('filtros del cuadro de mandos', () => {
   });
 
   it('las opciones salen de los datos: cursos del más reciente al más antiguo y categorías ordenadas', () => {
-    expect(filterOptions(items)).toEqual({ years: ['2026-2027', '2025-2026'], categories: ['Infraestructura', 'Patios y Deporte', 'Taquilla y rifas'] });
+    expect(filterOptions(items)).toEqual({ years: ['2026-2027', '2025-2026'], categories: ['Infraestructura', 'Patios y Deporte', 'Taquilla'] });
   });
 });
 

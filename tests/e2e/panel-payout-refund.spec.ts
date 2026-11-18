@@ -303,7 +303,7 @@ test.describe('Sprint 4.4b · campañas vencidas sin llegar a la meta', () => {
     await server(notice).toContainText('Devolución en marcha');
     await server(page.getByTestId(`expired-refund-${refundId}`)).toContainText('Devueltas 0 de 1 aportaciones');
 
-    // --- Cada familia recibe su papeleta (una por persona) y vota desde su enlace ---
+    // --- Cada familia recibe su enlace para votar (uno por persona) y vota desde él ---
     await cronUntil(request, BROADCAST, async () => (await sentTo('initiative.resizePoll', asksBack)) && (await sentTo('initiative.resizePoll', keeps)));
     await family.goto(await voteLink(asksBack, familySince, voteTitle));
     await server(family.getByRole('heading', { level: 1, name: `¿Qué hacemos con «${voteTitle}»?` })).toBeVisible();

@@ -137,7 +137,7 @@ describe('QA-S01 · candado semántico en vivo', () => {
   });
 });
 
-describe('QA-S01 · taquilla y rifa', () => {
+describe('QA-S01 · taquilla', () => {
   it('QA-FIN03: entrada de 5,00 € con gestión de 0,55 € sumada al comprador deja un margen de +0,40 €', () => {
     const board = computeTicketingBoard(context(), ticketing());
     expect(board.digitalFeeUnitCents).toBe(55);
@@ -232,14 +232,9 @@ describe('QA-S01 · qué falta para publicar', () => {
     expect(blockers({ ...budget(), description: '   ' })).toContain('DESCRIPTION_MISSING');
   });
 
-  it('una rifa necesita premios (no más que papeletas) y la confirmación de normativa', () => {
-    const raffle = ticketing({ ticketSubtype: 'RAFFLE', ticketPriceCents: 200, ticketMax: 500, rafflePrizeCount: null, raffleNoticeConfirmed: false });
-    expect(blockers(raffle)).toEqual(expect.arrayContaining(['RAFFLE_PRIZES', 'RAFFLE_NOTICE']));
-    expect(blockers({ ...raffle, rafflePrizeCount: 3 })).toEqual(['RAFFLE_NOTICE']);
-    expect(blockers({ ...raffle, rafflePrizeCount: 3, raffleNoticeConfirmed: true })).toEqual([]);
-    expect(blockers({ ...raffle, rafflePrizeCount: 600, raffleNoticeConfirmed: true })).toContain('RAFFLE_PRIZES_EXCEED');
-    // Un evento con entradas no lleva aviso de rifa.
+  it('un evento con entradas bien rellenado se puede publicar, y el borrador solo admite el subtipo de evento', () => {
     expect(blockers(ticketing())).toEqual([]);
+    expect(studioDraftSchema.safeParse({ ...ticketing(), ticketSubtype: 'OTRO' }).success).toBe(false);
   });
 
   it('no admite entradas sin importe para la hucha: precio 0, o `INC` con un precio que no supera los gastos', () => {
@@ -279,7 +274,6 @@ describe('QA-S01 · borrador y esquema', () => {
     expect(studioDraftSchema.safeParse({ ...valid, goalCents: 1 }).success).toBe(false);
     expect(studioDraftSchema.safeParse({ ...valid, costMatCents: 10.5 }).success).toBe(false);
     expect(studioDraftSchema.safeParse({ ...valid, costMatCents: -1 }).success).toBe(false);
-    expect(studioDraftSchema.safeParse({ ...valid, rafflePrizeCount: 0 }).success).toBe(false);
     expect(studioDraftSchema.safeParse({ ...valid, contingencyBps: 3001 }).success).toBe(false);
     expect(studioDraftSchema.safeParse({ ...valid, initiativeId: 3_000_000_000 }).success).toBe(false);
   });
@@ -302,7 +296,6 @@ describe('QA-S01 · plantillas de campaña', () => {
     for (const vertical of ['SCHOOL', 'SPORTS_CLUB', 'CULTURAL'] as const) {
       const templates = templatesFor(vertical);
       expect(templates.some((template) => template.format === 'BUDGET'), vertical).toBe(true);
-      expect(templates.some((template) => template.ticket?.subtype === 'RAFFLE'), vertical).toBe(true);
       expect(templates.some((template) => template.ticket?.subtype === 'EVENT'), vertical).toBe(true);
     }
     const draft = draftFromTemplate(CAMPAIGN_TEMPLATES[0]!, { title: 'T', description: 'D', rewardText: null }, { vertical: 'SCHOOL', defaultCloseOn: '2026-12-10', availableCategories: CATEGORIES.map((category) => category.name) });
@@ -331,9 +324,11 @@ describe('QA-S01 · plantillas de campaña', () => {
   });
 
   it('si la entidad no tiene la categoría de la plantilla, queda por elegir; la taquilla usa la suya y sus valores de partida', () => {
-    const raffle = CAMPAIGN_TEMPLATES.find((template) => template.key === 'raffle')!;
-    const draft = draftFromTemplate(raffle, { title: 'R', description: 'D', rewardText: 'P' }, { vertical: 'SCHOOL', defaultCloseOn: '2026-12-10', availableCategories: [] });
-    expect(draft).toMatchObject({ format: 'TICKETING', category: TICKETING_CATEGORY, ticketSubtype: 'RAFFLE', ticketPriceCents: 200, ticketMax: 500, rafflePrizeCount: 3 });
+    const festival = CAMPAIGN_TEMPLATES.find((template) => template.key === 'festival')!;
+    const draft = draftFromTemplate(festival, { title: 'F', description: 'D', rewardText: 'P' }, { vertical: 'SCHOOL', defaultCloseOn: '2026-12-10', availableCategories: [] });
+    expect(draft).toMatchObject({ format: 'TICKETING', category: TICKETING_CATEGORY, ticketSubtype: 'EVENT', ticketPriceCents: 500, ticketMax: 200 });
+    // Sprint 5.12a: toda plantilla de taquilla es de un evento con entradas.
+    expect(CAMPAIGN_TEMPLATES.every((template) => template.ticket === undefined || template.ticket.subtype === 'EVENT')).toBe(true);
     const climate = CAMPAIGN_TEMPLATES.find((template) => template.key === 'climate')!;
     expect(draftFromTemplate(climate, { title: 'C', description: 'D', rewardText: null }, { vertical: 'SCHOOL', defaultCloseOn: '2026-12-10', availableCategories: [] }).category).toBe('');
   });

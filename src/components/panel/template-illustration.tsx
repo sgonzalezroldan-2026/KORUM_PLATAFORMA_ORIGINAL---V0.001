@@ -77,16 +77,6 @@ function Motif({ kind }: { kind: TemplateIllustration }) {
           <circle cx="60" cy="44" r="6" fill={GOLD} />
         </g>
       );
-    case 'raffle':
-      return (
-        <g>
-          <path d="M24 26 H96 V36 a6 6 0 0 0 0 12 V58 H24 V48 a6 6 0 0 0 0 -12 Z" fill={GOLD} stroke={NAVY} strokeWidth="3" strokeLinejoin="round" />
-          <line x1="76" y1="28" x2="76" y2="56" stroke={NAVY} strokeWidth="2.5" strokeDasharray="4 3" />
-          <text x="46" y="48" textAnchor="middle" fontFamily="Plus Jakarta Sans, sans-serif" fontSize="18" fontWeight="800" fill={NAVY}>
-            {'#7'}
-          </text>
-        </g>
-      );
     case 'instrument':
       // Tambor con sus baquetas y dos notas (Sprint 5.5b: plantilla «Instrumentos» de las entidades culturales).
       return (

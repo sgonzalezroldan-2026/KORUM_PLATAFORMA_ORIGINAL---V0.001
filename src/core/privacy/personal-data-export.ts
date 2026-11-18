@@ -39,7 +39,7 @@ export interface PersonalDataExport {
     donorProvinceCode: string | null;
     asGuest: boolean;
   }>;
-  tickets: Array<{ serialCode: string; initiative: string; quantity: number; checkedInCount: number; raffleNumbers: number[]; revokedAt: string | null; createdAt: string }>;
+  tickets: Array<{ serialCode: string; initiative: string; quantity: number; checkedInCount: number; revokedAt: string | null; createdAt: string }>;
   consents: Array<{ purpose: string; granted: boolean; policyVersion: string; source: string; createdAt: string }>;
   privacyRequests: Array<{ type: string; status: string; createdAt: string; dueAt: string; completedAt: string | null }>;
   memberships: Array<{ organization: string; role: string; roleLabel: string | null; since: string }>;
@@ -146,7 +146,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
       donorProvinceCode: row.donorProvinceCode,
       asGuest: row.userId === null
     })),
-    tickets: tickets.map((pass) => ({ serialCode: pass.serialCode, initiative: pass.initiative.title, quantity: pass.quantity, checkedInCount: pass.checkedInCount, raffleNumbers: pass.raffleNumbers, revokedAt: iso(pass.revokedAt), createdAt: pass.createdAt.toISOString() })),
+    tickets: tickets.map((pass) => ({ serialCode: pass.serialCode, initiative: pass.initiative.title, quantity: pass.quantity, checkedInCount: pass.checkedInCount, revokedAt: iso(pass.revokedAt), createdAt: pass.createdAt.toISOString() })),
     consents: consents.map((row) => ({ purpose: row.purpose, granted: row.granted, policyVersion: row.policyVersion, source: row.source, createdAt: row.createdAt.toISOString() })),
     privacyRequests: requests.map((row) => ({ type: row.type, status: row.status, createdAt: row.createdAt.toISOString(), dueAt: row.dueAt.toISOString(), completedAt: iso(row.completedAt) })),
     memberships: memberships.map((row) => ({ organization: row.organization.name, role: row.role, roleLabel: row.roleLabel, since: row.createdAt.toISOString() })),

@@ -54,7 +54,7 @@ export class GatePinNotAllowedError extends Error {
  * cambiarlo es la forma de echar a alguien que no debería estar dentro.
  */
 export async function setGatePin(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, initiativeId: number, now: Date = new Date()): Promise<{ pin: string; expiresAt: Date }> {
-  // Solo quien firma: el Super-Admin ve la pantalla pero no crea PIN (con él podría entrar en la puerta y sortear una rifa).
+  // Solo quien firma: el Super-Admin ve la pantalla pero no crea PIN (con él podría entrar en la puerta: decisión L-125, SESIÓN D1).
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'gate.pin_set', targetType: 'Initiative', targetId: initiativeId, allowSuperadmin: false });
   const initiative = await db.initiative.findUnique({ where: { id: initiativeId }, select: { format: true, status: true, organizationId: true, closesAt: true, gateCode: true } });
   await requireOwnedResource(db, actor, { organizationId, resourceType: 'Initiative', resourceId: initiativeId, resourceLabel: 'Initiative', ownerOrganizationId: initiative?.organizationId ?? null });

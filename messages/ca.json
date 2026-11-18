@@ -7294,8 +7294,7 @@
         "initiative_saved": "Campanya desada a l’Estudi",
         "initiative_published": "Campanya publicada",
         "draft_discarded": "Esborrany descartat",
-        "exempt_category_saved": "Categoria al 0 %: campanya desada amb ella",
-        "raffle_notice_confirmed": "Avís normatiu de rifes confirmat"
+        "exempt_category_saved": "Categoria al 0 %: campanya desada amb ella"
       },
       "superadmin": {
         "access": "Consulta de KORUM des de la seva consola",
@@ -7370,9 +7369,6 @@
       "achievement": {
         "photo_published": "Foto d’èxits publicada",
         "thanks_saved": "Missatge d’agraïment desat"
-      },
-      "raffle": {
-        "drawn": "Sorteig fet"
       },
       "sponsor": {
         "approved": "Comerç admès",
@@ -7762,9 +7758,6 @@
         },
         "gate": {
           "pinRevoked": "Avís de PIN de porteria anul·lat"
-        },
-        "raffle": {
-          "extraRound": "Avís de ronda extra d’un sorteig"
         },
         "initiative": {
           "goalReached": "Avís de meta aconseguida",

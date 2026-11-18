@@ -6,7 +6,6 @@ import { revokeGateSessionAction, rotateGateCodeAction, setGatePinAction, type G
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
 import { getPathname, useRouter } from '@/i18n/navigation';
 import type { GateEventView } from '@/repositories/gate-admin.repository';
-import { GateRaffleAdmin } from './gate-raffle-admin';
 
 /**
  * Un evento de taquilla en «Taquilla y portería»: PIN de la puerta (se enseña una vez; cambiarlo cierra las sesiones abiertas), enlace de la portería y los
@@ -90,7 +89,7 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
           {event.title}
         </h2>
         <p className="text-sm text-ink-soft">
-          {[t(event.subtype === 'RAFFLE' ? 'kind.raffle' : 'kind.event'), date, event.venue].filter(Boolean).join(' · ')}
+          {[t('kind.event'), date, event.venue].filter(Boolean).join(' · ')}
         </p>
         <p className="text-sm font-semibold tabular-nums">{event.ticketMax === null ? t('sold', { sold: event.ticketsSold }) : t('soldOf', { sold: event.ticketsSold, max: event.ticketMax })}</p>
       </div>
@@ -201,7 +200,6 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
         )}
       </div>
 
-      {event.subtype === 'RAFFLE' ? <GateRaffleAdmin orgSlug={orgSlug} event={event} canAct={canAct} /> : null}
     </li>
   );
 }

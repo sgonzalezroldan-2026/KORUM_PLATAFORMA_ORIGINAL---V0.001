@@ -7294,8 +7294,7 @@
         "initiative_saved": "Campaña guardada en el Estudio",
         "initiative_published": "Campaña publicada",
         "draft_discarded": "Borrador descartado",
-        "exempt_category_saved": "Categoría al 0 %: campaña guardada con ella",
-        "raffle_notice_confirmed": "Aviso normativo de rifas confirmado"
+        "exempt_category_saved": "Categoría al 0 %: campaña guardada con ella"
       },
       "superadmin": {
         "access": "Consulta de KORUM desde su consola",
@@ -7370,9 +7369,6 @@
       "achievement": {
         "photo_published": "Foto de logros publicada",
         "thanks_saved": "Mensaje de agradecimiento guardado"
-      },
-      "raffle": {
-        "drawn": "Sorteo realizado"
       },
       "sponsor": {
         "approved": "Comercio admitido",
@@ -7762,9 +7758,6 @@
         },
         "gate": {
           "pinRevoked": "Aviso de PIN de portería anulado"
-        },
-        "raffle": {
-          "extraRound": "Aviso de ronda extra de un sorteo"
         },
         "initiative": {
           "goalReached": "Aviso de meta conseguida",

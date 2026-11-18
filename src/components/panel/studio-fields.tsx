@@ -17,7 +17,7 @@ import { IntField, MoneyField } from './studio-money-field';
 export type StudioLock = 'NONE' | 'SOFT' | 'ALL';
 
 /** Avisos junto a cada campo: lo que falta para guardar o publicar se dice donde se arregla, no solo en la lista del panel. */
-export type StudioFieldErrors = Partial<Record<'title' | 'category' | 'stage' | 'closesOn' | 'description' | 'costMat' | 'ticketMax' | 'ticketPrice' | 'rafflePrizeCount' | 'raffleNotice', string>>;
+export type StudioFieldErrors = Partial<Record<'title' | 'category' | 'stage' | 'closesOn' | 'description' | 'costMat' | 'ticketMax' | 'ticketPrice', string>>;
 
 export interface StudioFieldsProps {
   draft: StudioDraft;
@@ -121,15 +121,6 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
       {ticketing ? (
         <fieldset disabled={moneyLocked} className="flex flex-col gap-4 rounded-2xl border-2 border-sky-300 bg-sky-50 p-4">
           <legend className="px-2 font-corp font-extrabold text-sky-950">{t('ticketingTitle')}</legend>
-          <SelectField
-            label={t('ticketSubtype')}
-            value={draft.ticketSubtype}
-            onChange={(event) => onChange({ ticketSubtype: event.target.value === 'RAFFLE' ? 'RAFFLE' : 'EVENT', raffleNoticeConfirmed: false })}
-            options={[
-              { value: 'EVENT', label: t('subtypeEvent') },
-              { value: 'RAFFLE', label: t('subtypeRaffle') }
-            ]}
-          />
           <div className="mobile-stack grid gap-4 sm:grid-cols-3">
             <MoneyField label={t('ticketPrice')} valueCents={draft.ticketPriceCents} maxCents={STUDIO_LIMITS.maxTicketPriceCents} onChange={(cents) => onChange({ ticketPriceCents: cents })} disabled={moneyLocked} error={errors.ticketPrice} />
             <Field
@@ -162,23 +153,6 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
               ]}
             />
           </div>
-          {draft.ticketSubtype === 'RAFFLE' ? (
-            <div className="flex flex-col gap-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-3" data-testid="raffle-notice">
-              <p className="text-sm font-semibold text-amber-950">{t('raffleNotice')}</p>
-              <Field
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={STUDIO_LIMITS.maxRafflePrizes}
-                label={t('rafflePrizes')}
-                hint={t('rafflePrizesHint')}
-                error={errors.rafflePrizeCount}
-                value={draft.rafflePrizeCount ?? ''}
-                onChange={(event) => onChange({ rafflePrizeCount: event.target.value === '' ? null : Math.min(STUDIO_LIMITS.maxRafflePrizes, Math.max(1, Math.trunc(Number(event.target.value)) || 1)) })}
-              />
-              <CheckboxField label={t('raffleConfirm')} checked={draft.raffleNoticeConfirmed} error={errors.raffleNotice} onChange={(event) => onChange({ raffleNoticeConfirmed: event.target.checked })} />
-            </div>
-          ) : null}
         </fieldset>
       ) : (
         <fieldset disabled={moneyLocked} className="flex flex-col gap-4 rounded-2xl border-2 border-varsity-navy/30 bg-patio-cream p-4">

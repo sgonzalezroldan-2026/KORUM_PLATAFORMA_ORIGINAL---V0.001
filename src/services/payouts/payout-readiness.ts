@@ -1,6 +1,5 @@
 import { planPayoutSplits } from '@/core/finance/campaign-window';
 import { payoutFigures, type CampaignPayoutRejection } from '@/core/payouts/campaign-payout-rules';
-import { hasPendingPrizes } from '@/core/ticketing/raffle-draw.service';
 import type { Db } from '@/lib/db';
 import { payoutCandidates } from '@/services/payments/payout-candidates';
 
@@ -10,13 +9,11 @@ import { payoutCandidates } from '@/services/payments/payout-candidates';
  * balde.
  */
 
-export type PayoutBlocker = Extract<CampaignPayoutRejection, 'NOT_READY' | 'RAFFLE_NOT_DRAWN' | 'SPONSORS_PENDING' | 'KYB_NOT_VERIFIED' | 'DESTINATION_ACCOUNT_MISSING' | 'NOTHING_TO_PAY' | 'WINDOW_EXPIRED'>;
+export type PayoutBlocker = Extract<CampaignPayoutRejection, 'NOT_READY' | 'SPONSORS_PENDING' | 'KYB_NOT_VERIFIED' | 'DESTINATION_ACCOUNT_MISSING' | 'NOTHING_TO_PAY' | 'WINDOW_EXPIRED'>;
 
 export interface ReadinessInitiative {
   id: number;
   status: string;
-  ticketSubtype: 'EVENT' | 'RAFFLE' | null;
-  rafflePrizeCount: number | null;
   raisedCents: number;
   bracketFeeCents: number;
   maintFeeCents: number;
@@ -37,10 +34,6 @@ export interface ReadinessOrganization {
 export async function payoutBlockers(tx: Db, initiative: ReadinessInitiative, organization: ReadinessOrganization, options: { destination: 'ORGANIZATION' | 'PROVIDER'; payoutId: number | null; now: Date }): Promise<PayoutBlocker[]> {
   const blockers: PayoutBlocker[] = [];
   if (initiative.status !== 'GOAL_REACHED') return ['NOT_READY'];
-  if (initiative.ticketSubtype === 'RAFFLE') {
-    const draws = await tx.raffleDraw.count({ where: { initiativeId: initiative.id } });
-    if (draws === 0 || initiative.rafflePrizeCount === null || (await hasPendingPrizes(tx, initiative.id, initiative.rafflePrizeCount))) blockers.push('RAFFLE_NOT_DRAWN');
-  }
   // Un comercio cobrado sin revisar aún se puede rechazar y devolver: liquidar antes lo impediría (heredado del 3.5).
   const unreviewed = await tx.sponsor.count({ where: { initiativeId: initiative.id, status: 'PENDING', paidAt: { not: null }, contribution: { status: 'COMPLETED' } } });
   if (unreviewed > 0) blockers.push('SPONSORS_PENDING');
@@ -68,8 +61,6 @@ export const READINESS_INITIATIVE_SELECT = {
   format: true,
   title: true,
   walletEscrowId: true,
-  ticketSubtype: true,
-  rafflePrizeCount: true,
   raisedCents: true,
   goalCents: true,
   bracketFeeCents: true,

@@ -34,7 +34,7 @@ async function prepareIdeas(slug: string, suffix: string): Promise<PreparedIdeas
   await withE2eDb(async (db) => {
     const { rows } = await db.query(`SELECT id FROM "Organization" WHERE slug = $1`, [slug]);
     const organizationId = rows[0].id as string;
-    const { rows: categories } = await db.query(`SELECT name FROM "GlobalCategory" WHERE name <> 'Taquilla y Rifas' ORDER BY "sortOrder", id LIMIT 1`);
+    const { rows: categories } = await db.query(`SELECT name FROM "GlobalCategory" WHERE name <> 'Taquilla' ORDER BY "sortOrder", id LIMIT 1`);
     const category = categories[0].name as string;
     const insert = async (title: string, phase: string, alias: string, verifiedVotes: number, suspiciousVotes: number) => {
       const { rows: created } = await db.query(

@@ -7,7 +7,7 @@ import { blankStudioDraft, TICKETING_CATEGORY, type StudioDraft, type StudioForm
  * las categorías globales de la plataforma, así que si la entidad no la tiene, la plantilla deja la categoría por elegir.
  */
 
-export type TemplateIllustration = 'fan' | 'court' | 'kit' | 'laptop' | 'bus' | 'heart' | 'stage' | 'raffle' | 'instrument' | 'scoreboard';
+export type TemplateIllustration = 'fan' | 'court' | 'kit' | 'laptop' | 'bus' | 'heart' | 'stage' | 'instrument' | 'scoreboard';
 
 export interface CampaignTemplate {
   key: string;
@@ -16,7 +16,7 @@ export interface CampaignTemplate {
   /** Categoría de mejora (nombre global); `null` en taquilla, que usa la suya. */
   category: string | null;
   illustration: TemplateIllustration;
-  ticket?: { subtype: 'EVENT' | 'RAFFLE'; priceCents: number; max: number; prizes: number | null };
+  ticket?: { subtype: 'EVENT'; priceCents: number; max: number };
   /**
    * Textos propios de una vertical (Sprint 5.5b, heredado del 4.3): un club no hace «excursión de fin de curso» sino un desplazamiento a un torneo, y una
    * entidad cultural no hace «festival de fin de curso» sino un concierto. La clave apunta a `panel.studio.templates.<clave>`.
@@ -35,8 +35,7 @@ export const CAMPAIGN_TEMPLATES: readonly CampaignTemplate[] = [
   { key: 'instruments', verticals: ['CULTURAL'], format: 'BUDGET', category: 'Tecnología y Recursos', illustration: 'instrument' },
   { key: 'trip', verticals: ALL, format: 'BUDGET', category: 'Comunidad y Viajes', illustration: 'bus', textVariants: { SPORTS_CLUB: 'tripClub', CULTURAL: 'tripCultural' } },
   { key: 'solidarity', verticals: ALL, format: 'BUDGET', category: 'Solidaridad y Becas', illustration: 'heart', textVariants: { SPORTS_CLUB: 'solidarityClub' } },
-  { key: 'festival', verticals: ALL, format: 'TICKETING', category: null, illustration: 'stage', ticket: { subtype: 'EVENT', priceCents: 500, max: 200, prizes: null }, textVariants: { SPORTS_CLUB: 'festivalClub', CULTURAL: 'festivalCultural' } },
-  { key: 'raffle', verticals: ALL, format: 'TICKETING', category: null, illustration: 'raffle', ticket: { subtype: 'RAFFLE', priceCents: 200, max: 500, prizes: 3 } }
+  { key: 'festival', verticals: ALL, format: 'TICKETING', category: null, illustration: 'stage', ticket: { subtype: 'EVENT', priceCents: 500, max: 200 }, textVariants: { SPORTS_CLUB: 'festivalClub', CULTURAL: 'festivalCultural' } }
 ];
 
 /** Clave de los textos de una plantilla en una vertical (`panel.studio.templates.<clave>`): la propia de la vertical si la tiene. */
@@ -77,7 +76,7 @@ export function draftFromTemplate(
     category,
     rewardText: texts.rewardText,
     ...(template.ticket
-      ? { ticketSubtype: template.ticket.subtype, ticketPriceCents: template.ticket.priceCents, ticketMax: template.ticket.max, rafflePrizeCount: template.ticket.prizes }
+      ? { ticketSubtype: template.ticket.subtype, ticketPriceCents: template.ticket.priceCents, ticketMax: template.ticket.max }
       : {})
   };
 }

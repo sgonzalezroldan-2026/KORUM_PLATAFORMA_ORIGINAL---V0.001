@@ -13,7 +13,7 @@ export interface PublicPricing {
   sponsorFeeBps: number;
   gatewayPctBps: number;
   gatewayFixedCents: number;
-  /** «Gastos de gestión digital» de entradas y papeletas: fijo + porcentaje sobre el precio. */
+  /** «Gastos de gestión digital» de las entradas: fijo + porcentaje sobre el precio. */
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
   maintActive: boolean;

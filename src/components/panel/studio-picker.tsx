@@ -7,7 +7,7 @@ import type { Locale } from '@/i18n/routing';
 import { TemplateArt } from './template-illustration';
 
 /**
- * Punto de entrada del Estudio (`studio-select-initiative` del prototipo, «+ Nueva iniciativa» y «+ Nueva taquilla / rifa»): las campañas que ya tiene la
+ * Punto de entrada del Estudio (`studio-select-initiative` del prototipo, «+ Nueva iniciativa» y «+ Nueva taquilla»): las campañas que ya tiene la
  * entidad, dos botones para empezar en blanco y las plantillas listas para usar. Una plantilla solo rellena textos y, en taquilla, un precio y un aforo de
  * partida: el presupuesto de un proveedor lo escribe siempre la entidad.
  */

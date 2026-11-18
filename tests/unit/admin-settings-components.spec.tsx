@@ -85,8 +85,7 @@ const FIELDS: Record<string, SettingFieldView> = {
   'seo.aiCrawlers': field(null, 0, 'none'),
   'seo.verification.google': field(null, 0, 'none'),
   'seo.verification.bing': field(null, 0, 'none'),
-  'platform.company': field(null, 0, 'none'),
-  'raffle.extraRoundMinHours': field(0, 0, 'default')
+  'platform.company': field(null, 0, 'none')
 };
 const secret = (key: string, over: Partial<SecretSummary> = {}): SecretSummary => ({ key: key as SecretSummary['key'], configured: false, hint: null, usesEnvFallback: false, updatedAt: null, ...over });
 const SECRETS: Record<string, SecretSummary> = {
@@ -238,23 +237,21 @@ describe('QA-A05 · cobros, email, facturación y Mi Hucha', () => {
     expect(actions.saveSectionAction.mock.calls[1]![0]).toMatchObject({ section: 'hucha', values: { 'hucha.mode': 'REGULATED_WALLET', 'hucha.walletProvider': 'Mangopay' }, confirmations: ['walletLegal'] });
   });
 
-  it('Auto-Impulso y límites: el límite editable se guarda como texto y los fijos se listan solo de lectura con su ventana', async () => {
+  it('Auto-Impulso y límites: el aviso se guarda con su bloque y los límites fijos se listan solo de lectura con su ventana, sin nada que editar', async () => {
     const user = userEvent.setup();
     const { unmount } = renderAll(<AutoBoostSettings fields={FIELDS} />);
     await user.selectOptions(screen.getByLabelText('Aviso público por defecto'), 'HIDE');
     await user.click(screen.getByTestId('save-autoimpulso'));
     await waitFor(() => expect(actions.saveSectionAction).toHaveBeenCalledWith(expect.objectContaining({ section: 'autoimpulso', values: { 'autoBoost.publicDisclosureDefault': 'HIDE' } })));
     unmount();
-    renderAll(<LimitsSettings fields={FIELDS} fixedLimits={[{ id: 'authEmail', limit: 5, windowMs: 900_000 }, { id: 'registration', limit: 5, windowMs: 3_600_000 }, { id: 'webhookInvalid', limit: 60, windowMs: 60_000 }]} />);
+    renderAll(<LimitsSettings fixedLimits={[{ id: 'authEmail', limit: 5, windowMs: 900_000 }, { id: 'registration', limit: 5, windowMs: 3_600_000 }, { id: 'webhookInvalid', limit: 60, windowMs: 60_000 }]} />);
     const table = screen.getByTestId('fixed-limits');
     expect(within(table).getByText('15 minutos')).toBeTruthy();
     expect(within(table).getByText('1 hora')).toBeTruthy();
     expect(within(table).getByText('1 minuto')).toBeTruthy();
     expect(within(table).queryAllByRole('textbox')).toHaveLength(0);
-    await user.clear(screen.getByLabelText('Horas de espera antes de una ronda extra del sorteo'));
-    await user.type(screen.getByLabelText('Horas de espera antes de una ronda extra del sorteo'), '24');
-    await user.click(screen.getByTestId('save-limites'));
-    await waitFor(() => expect(actions.saveSectionAction).toHaveBeenLastCalledWith(expect.objectContaining({ section: 'limites', values: { 'raffle.extraRoundMinHours': '24' } })));
+    expect(screen.queryAllByRole('textbox')).toHaveLength(0);
+    expect(screen.queryByTestId('save-limites')).toBeNull();
   });
 });
 
@@ -495,7 +492,7 @@ describe('QA-A05 · claves de cifrado e historial', () => {
 
   it('el historial muestra quién, cuándo, qué y el detalle (versión, valor corto, texto legal, conexión, sesiones); sin nada, lo dice', () => {
     const rows: HistoryRow[] = [
-      { id: 5, occurredAt: NOW, action: 'settings.setting.updated', target: 'raffle.extraRoundMinHours', actorEmail: 'yo@korum.test', version: 3, value: '48', legal: null, status: null, sessionsClosed: null, walletConfirmed: false },
+      { id: 5, occurredAt: NOW, action: 'settings.setting.updated', target: 'autoBoost.publicDisclosureDefault', actorEmail: 'yo@korum.test', version: 3, value: 'HIDE', legal: null, status: null, sessionsClosed: null, walletConfirmed: false },
       { id: 4, occurredAt: NOW, action: 'settings.setting.updated', target: 'legal.terminos.es', actorEmail: 'yo@korum.test', version: 2, value: null, legal: { version: '2026-11-13', status: 'PUBLICADO' }, status: null, sessionsClosed: null, walletConfirmed: false },
       { id: 3, occurredAt: NOW, action: 'settings.connection_tested', target: 'paycomet', actorEmail: 'yo@korum.test', version: null, value: null, legal: null, status: 'FAILED', sessionsClosed: null, walletConfirmed: false },
       { id: 2, occurredAt: NOW, action: 'superadmin.revoked', target: 'abc123', actorEmail: null, version: null, value: null, legal: null, status: null, sessionsClosed: 2, walletConfirmed: false },
@@ -504,7 +501,7 @@ describe('QA-A05 · claves de cifrado e historial', () => {
     const { unmount } = renderAll(<HistoryTable history={{ rows, hasMore: true, limit: 25 }} />);
     const table = within(screen.getByTestId('history-table'));
     expect(table.getAllByRole('row')).toHaveLength(6);
-    expect(table.getByText('valor: 48 · cambio nº 3')).toBeTruthy();
+    expect(table.getByText('valor: HIDE · cambio nº 3')).toBeTruthy();
     expect(table.getByText('versión 2026-11-13 (publicado)')).toBeTruthy();
     expect(table.getByText('rechazada')).toBeTruthy();
     expect(table.getByText('2 sesiones cerradas')).toBeTruthy();
@@ -531,7 +528,7 @@ describe('Los tres idiomas', () => {
         <SeoSettings fields={FIELDS} secrets={SECRETS} defaultPolicy={crawlers} />
         <CompanySettings field={undefined} />
         <LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />
-        <LimitsSettings fields={FIELDS} fixedLimits={[{ id: 'authEmail', limit: 5, windowMs: 900_000 }]} />
+        <LimitsSettings fixedLimits={[{ id: 'authEmail', limit: 5, windowMs: 900_000 }]} />
         <TeamSettings members={MEMBERS} invitations={INVITATIONS} />
         <SecurityPanel security={SECURITY} />
         <HistoryTable history={{ rows: [{ id: 1, occurredAt: NOW, action: 'settings.setting.updated', target: 'hucha.mode', actorEmail: 'yo@korum.test', version: 1, value: 'PLEDGE', legal: null, status: null, sessionsClosed: null, walletConfirmed: false }], hasMore: false, limit: 25 }} />

@@ -19,9 +19,8 @@ export interface InitiativeCardProps {
 }
 
 /** Texto del botón principal según el tipo de campaña. */
-export function ctaKey(card: Pick<InitiativeCardData, 'format' | 'subtype'>): 'contribute' | 'buyTickets' | 'buyRaffle' {
-  if (card.format !== 'TICKETING') return 'contribute';
-  return card.subtype === 'RAFFLE' ? 'buyRaffle' : 'buyTickets';
+export function ctaKey(card: Pick<InitiativeCardData, 'format'>): 'contribute' | 'buyTickets' {
+  return card.format === 'TICKETING' ? 'buyTickets' : 'contribute';
 }
 
 /**
@@ -32,7 +31,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
   const t = useTranslations('portal.card');
   const money = useMoney();
   const ticketing = card.format === 'TICKETING';
-  const kind = card.subtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT';
+  const kind = 'EVENT';
   const category = useCategoryLabel(contentLang)(card.category);
   const href = initiativePath(orgSlug, card.id);
 

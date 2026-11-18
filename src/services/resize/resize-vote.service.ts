@@ -8,7 +8,7 @@ import { DONOR_RECIPIENT_SELECT, donorCandidatesWhere, donorRecipient } from '@/
 import { approveRefundInTx } from '@/services/payments/payment-reversals';
 
 /**
- * La papeleta de quien donó a una campaña vencida (Sprint 4.4b, decisión del promotor del 2026-11-11). Se llega desde el enlace personal del email
+ * El voto de quien donó a una campaña vencida (Sprint 4.4b, decisión del promotor del 2026-11-11). Se llega desde el enlace personal del email
  * (`/{entidad}/votacion?v=`), sin cuenta: el enlace firma la votación y una donación, y de la donación sale la persona (su email canónico).
  *
  * - **Una persona, un voto**, aunque donara varias veces o tenga varios enlaces: el voto es por email canónico y no cambia.

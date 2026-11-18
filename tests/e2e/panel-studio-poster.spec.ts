@@ -8,7 +8,7 @@ import { registerEntityAndEnterPanel } from './panel-support';
  * Sprint 4.3 · Estudio dual, pizarra TCO y cartel A4 con QR (QA-S01), como una persona real: desde el estado vacío del cuadro de mandos abre el Estudio, empieza
  * con una plantilla, ve la pizarra cuadrada al céntimo (mantenimiento a «0,00 €»), recibe el aviso del candado semántico al escribir «ventiladores» en una
  * categoría al 0 %, guarda el borrador, ve que no puede publicar sin los documentos del titular y, verificados, publica con confirmación; la campaña recaudando
- * solo admite cambiar lo que no mueve dinero; el cartel A4 lleva un QR real a la ficha pública. Una rifa exige premios y la confirmación de normativa. Catalán,
+ * solo admite cambiar lo que no mueve dinero; el cartel A4 lleva un QR real a la ficha pública. Una taquilla se publica desde su plantilla con la meta del aforo completo. Catalán,
  * axe, 430 px y sin errores de consola.
  */
 
@@ -27,7 +27,7 @@ async function checkPage(page: Page, isMobile: boolean) {
 }
 
 test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
-  test('plantilla → pizarra cuadrada → candado → borrador → publicar con confirmación → cartel con QR real; rifa con aviso de normativa', async ({ page, isMobile }) => {
+  test('plantilla → pizarra cuadrada → candado → borrador → publicar con confirmación → cartel con QR real; taquilla desde su plantilla', async ({ page, isMobile }) => {
     const errors = trackConsoleErrors(page);
     const entity = await registerEntityAndEnterPanel(page, isMobile);
     const studio = `/panel/${entity.slug}/estudio`;
@@ -38,7 +38,7 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await expect(page).toHaveURL(new RegExp(`${studio}$`), NAVIGATION);
     await server(page.getByRole('heading', { level: 1, name: 'Estudio de edición' })).toBeVisible();
     await expect(page.getByTestId('studio-template-climate')).toBeVisible();
-    await expect(page.getByTestId('studio-template-raffle')).toBeVisible();
+    await expect(page.getByTestId('studio-template-festival')).toBeVisible();
     await expect(page.getByTestId('studio-existing')).toHaveCount(0);
     await checkPage(page, isMobile);
 
@@ -172,31 +172,23 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await page.goto(publicPath);
     await server(page.getByRole('heading', { level: 1, name: 'Aulas más frescas y confortables' })).toBeVisible(NAVIGATION);
 
-    // --- Rifa: aviso de normativa, premios y confirmación antes de publicar ---
-    await page.goto(`${studio}?nueva=taquilla&plantilla=raffle`);
-    await server(page.getByRole('heading', { level: 1, name: 'Rifa solidaria' })).toBeVisible();
-    await expect(page.getByTestId('raffle-notice')).toContainText('competencia de cada comunidad autónoma');
+    // --- Taquilla: el festival se publica desde su plantilla, con la meta del aforo completo y sin pasos de más ---
+    await page.goto(`${studio}?nueva=taquilla&plantilla=festival`);
+    await server(page.getByRole('heading', { level: 1, name: 'Festival con entradas' })).toBeVisible();
     // La fila de los «Gastos de gestión digital» lleva una frase por valor: baja de línea entera y su rótulo no se queda sin sitio.
     await expect(page.locator('[data-board-row="phrase"]')).toHaveCount(1);
     await expectBoardRowsReadable(page);
-    await expect(page.getByLabel('Premios que se sortean')).toHaveValue('3');
     await expect(page.getByTestId('studio-goal')).toHaveText(/^1\.000,00\s€$/);
-    await expect(page.getByTestId('studio-publish')).toBeDisabled();
-    await expect(page.getByTestId('studio-blockers')).toContainText('Confirmad que la rifa cumple la normativa');
-    await page.getByLabel('Premios que se sortean').fill('');
-    await expect(page.getByTestId('studio-blockers')).toContainText('Indicad cuántos premios se sortean');
-    await page.getByLabel('Premios que se sortean').fill('3');
-    await page.getByLabel('Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma').check();
+    await expect(page.getByTestId('studio-blockers')).toHaveCount(0);
     await expect(page.getByTestId('studio-publish')).toBeEnabled();
     await checkPage(page, isMobile);
     await page.getByTestId('studio-publish').click();
     await page.getByTestId('studio-confirm-publish').click();
     await server(page.getByTestId('studio-published')).toBeVisible(NAVIGATION);
     const { rows } = await withE2eDb((db) =>
-      db.query(`SELECT i."rafflePrizeCount", i."status", i."goalCents", (SELECT count(*) FROM "AuditLog" a WHERE a.action = 'studio.raffle_notice_confirmed' AND a."organizationId" = o.id) AS ack FROM "Initiative" i JOIN "Organization" o ON o.id = i."organizationId" WHERE o.slug = $1 AND i.format = 'TICKETING'`, [entity.slug])
+      db.query(`SELECT i."ticketSubtype", i."status", i."goalCents", i."ticketMax", i."ticketPriceCents" FROM "Initiative" i JOIN "Organization" o ON o.id = i."organizationId" WHERE o.slug = $1 AND i.format = 'TICKETING'`, [entity.slug])
     );
-    expect(rows[0]).toMatchObject({ rafflePrizeCount: 3, status: 'FUNDRAISING', goalCents: 100_000 });
-    expect(Number(rows[0].ack)).toBe(1);
+    expect(rows[0]).toMatchObject({ ticketSubtype: 'EVENT', status: 'FUNDRAISING', goalCents: 100_000, ticketMax: 200, ticketPriceCents: 500 });
 
     // --- El selector del Estudio lista las dos campañas ---
     await page.goto(studio);

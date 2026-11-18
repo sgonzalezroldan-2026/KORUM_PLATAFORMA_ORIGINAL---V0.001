@@ -114,7 +114,7 @@ export default async function AdminSettingsPage({ params, searchParams }: { para
         </Block>
         <BackToIndex label={t('backToIndex')} />
         <Block id="limites" title={t('sections.limites.title')} hint={t('sections.limites.hint')}>
-          <LimitsSettings fields={view.fields} fixedLimits={view.fixedLimits} />
+          <LimitsSettings fixedLimits={view.fixedLimits} />
         </Block>
         <BackToIndex label={t('backToIndex')} />
         <Block id="equipo" title={t('sections.equipo.title')} hint={t('sections.equipo.hint')}>

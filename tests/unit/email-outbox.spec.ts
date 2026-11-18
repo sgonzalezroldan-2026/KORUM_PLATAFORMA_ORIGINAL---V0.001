@@ -27,7 +27,7 @@ const IN_3_DAYS = new Date(NOW.getTime() + 3 * 86_400_000).toISOString();
 const PASS_UUID = randomUUID();
 
 const ORGANIZATION = { name: 'AMPA Colegio Sol', legalName: 'AMPA del Colegio Sol', slug: 'colegio-sol' };
-const initiative = (ticketSubtype: 'EVENT' | 'RAFFLE' | null = null) => ({
+const initiative = (ticketSubtype: 'EVENT' | null = null) => ({
   id: 7,
   title: 'Techar el patio',
   closesAt: new Date('2026-12-19T00:00:00.000Z'),
@@ -44,9 +44,8 @@ const SAMPLES: Record<string, unknown> = {
   'auth.invitation': { url: 'https://korum.test/invitacion#t=abc.def', hours: 72, organizationName: 'CEIP Cervantes', roleLabel: 'Presidencia del AFA' },
   'auth.otp': { code: '123456', minutes: 10 },
   'contribution.receipt': { initiativeId: 7, amountCents: 2_500, guaranteeCents: 150, totalCents: 2_650, reference: 'KOR-2026-0001', groupName: '3º de Primaria', fiscalCertificate: true },
-  'ticket.pass': { passUuid: PASS_UUID, serialCode: 'PASE-2026-000012', initiativeId: 7, quantity: 2, raffleNumbers: [] },
+  'ticket.pass': { passUuid: PASS_UUID, serialCode: 'PASE-2026-000012', initiativeId: 7, quantity: 2 },
   'gate.pinRevoked': { initiativeId: 7 },
-  'raffle.extraRound': { initiativeId: 7, round: 2, prizes: 1, reason: 'PRIZE_UNCLAIMED' },
   'initiative.goalReached': { initiativeId: 7 },
   'initiative.expired': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', raisedCents: 90_000, goalCents: 120_000 },
   'refund.issued': { initiativeId: 7, amountCents: 2_650 },
@@ -305,7 +304,7 @@ describe('QA-NOT01 · catálogo de plantillas en es / ca / en', () => {
   });
 });
 
-describe('QA-NOT01 · entradas y papeletas', () => {
+describe('QA-NOT01 · entradas', () => {
   it('la entrada adjunta el QR firmado como PNG y un .ics de día completo; el QR firmado no va en el HTML', async () => {
     const email = await render('ticket.pass', 'es', { initiative: initiative('EVENT') });
     const [qr, calendar] = email.attachments;
@@ -329,13 +328,6 @@ describe('QA-NOT01 · entradas y papeletas', () => {
     expect(verifyPassViewSignature(QR_SECRET, randomUUID(), signature)).toBe(false);
     // El enlace queda en registros y en el Referer: su firma no sirve para rehacer el QR que abre la puerta.
     expect(verifyPassSignature(QR_SECRET, PASS_UUID, signature)).toBe(false);
-  });
-
-  it('una rifa lleva sus números y no adjunta calendario', async () => {
-    const email = await render('ticket.pass', 'ca', { initiative: initiative('RAFFLE'), payload: { ...(SAMPLES['ticket.pass'] as object), raffleNumbers: [12, 13] } });
-    expect(email.text).toContain('12, 13');
-    expect(email.attachments.map((file) => file.filename)).toEqual(['PASE-2026-000012.png']);
-    expect(email.subject).toContain('butlletes');
   });
 
   it('sin QR_HMAC_SECRET no se puede componer la entrada: falla en lugar de enviar un email sin QR', async () => {
@@ -362,25 +354,12 @@ describe('QA-NOT01 · firma pendiente y datos de un solo uso', () => {
 
   it('el pie dice la verdad de cada destinatario: operación propia, gestión de la entidad o acción sobre la cuenta', async () => {
     expect((await render('contribution.receipt', 'es')).text).toContain('has hecho una operación en AMPA Colegio Sol');
-    for (const templateKey of ['gate.pinRevoked', 'raffle.extraRound', 'initiative.goalReached', 'initiative.expired', 'split.windowExpiring', 'split.windowExpired', 'model182.reminder', 'doubleCheck.pending']) {
+    for (const templateKey of ['gate.pinRevoked', 'initiative.goalReached', 'initiative.expired', 'split.windowExpiring', 'split.windowExpired', 'model182.reminder', 'doubleCheck.pending']) {
       const text = (await render(templateKey, 'es')).text;
       expect(text, templateKey).toContain('gestionas AMPA Colegio Sol en KORUM');
       expect(text, templateKey).not.toContain('has hecho una operación');
     }
     expect((await render('auth.otp', 'ca')).text).toContain('T’escrivim');
-  });
-
-  it('el aviso de una ronda extra dice quién la hizo, qué papeletas son las nuevas y cuáles sustituyen, en los tres idiomas', async () => {
-    const payload = { initiativeId: 7, round: 2, prizes: 2, reason: 'PRIZE_UNCLAIMED', numbers: [3, 12], replaced: [1, 4], by: 'Carla Puig' };
-    const es = (await render('raffle.extraRound', 'es', { payload })).text;
-    expect(es).toContain('Carla Puig ha hecho la ronda 2');
-    expect(es).toContain('#0003, #0012');
-    expect(es).toContain('#0001, #0004');
-    expect(es).toContain('premio sin reclamar');
-    const sinNombre = (await render('raffle.extraRound', 'es', { payload: { ...payload, by: undefined } })).text;
-    expect(sinNombre).toContain('Una de las personas firmantes ha hecho la ronda 2');
-    expect((await render('raffle.extraRound', 'ca', { payload })).text).toContain('Carla Puig ha fet la ronda 2');
-    expect((await render('raffle.extraRound', 'en', { payload })).text).toContain('Carla Puig made round 2');
   });
 
   it('el plazo de la firma lleva fecha y hora de Madrid, y el inglés usa fechas británicas', async () => {

@@ -42,7 +42,6 @@ function payoutOutcome(done: Done): string | null {
     case 'DESTINATION_ACCOUNT_MISSING':
       return 'blocked';
     case 'NOT_GOAL':
-    case 'RAFFLE_NOT_DRAWN':
     case 'SPONSORS_PENDING':
       return 'notReady';
     case 'INVOICE_INVALID':

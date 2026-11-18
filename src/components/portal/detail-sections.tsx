@@ -60,7 +60,7 @@ export function HiddenBreakdownNotice({ goalCents }: { goalCents: number }) {
 }
 
 /** Taquilla: lo que paga quien compra y lo que recibe la entidad, con la misma fórmula que el Estudio. */
-export function TicketDetails({ ticket, kind }: { ticket: TicketInfoData; kind: 'EVENT' | 'RAFFLE' }) {
+export function TicketDetails({ ticket, kind }: { ticket: TicketInfoData; kind: 'EVENT' }) {
   const t = useTranslations('portal.detail');
 
   return (

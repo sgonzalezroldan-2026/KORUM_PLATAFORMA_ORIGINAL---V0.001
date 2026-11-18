@@ -46,7 +46,7 @@ async function newOrganization(overrides: Parameters<typeof createOrganization>[
     data: [
       { organizationId: organization.id, name: 'Patios y Deporte', icon: '⚽' },
       { organizationId: organization.id, name: 'Cultura', icon: '🎭' },
-      { organizationId: organization.id, name: 'Taquilla y Rifas', icon: '🎟️', rule: 'EXEMPT' }
+      { organizationId: organization.id, name: 'Taquilla', icon: '🎟️', rule: 'EXEMPT' }
     ]
   });
   return organization;
@@ -82,7 +82,7 @@ describe('proponer una idea', () => {
     expect(await reject((await createUser(db, { emailVerified: false })).id, proposal(organization.slug))).toBe('ACCOUNT_NOT_ALLOWED');
     expect(await reject((await createUser(db, { gdprAnonymizedAt: new Date() })).id, proposal(organization.slug))).toBe('ACCOUNT_NOT_ALLOWED');
     const person = await createUser(db);
-    expect(await reject(person.id, proposal(organization.slug, { category: 'Taquilla y Rifas' }))).toBe('INVALID_CATEGORY');
+    expect(await reject(person.id, proposal(organization.slug, { category: 'Taquilla' }))).toBe('INVALID_CATEGORY');
     expect(await reject(person.id, proposal(organization.slug, { category: 'Inventada' }))).toBe('INVALID_CATEGORY');
     expect(await reject(person.id, proposal('no-existe'))).toBe('ORGANIZATION_NOT_FOUND');
     expect(await reject(person.id, proposal(archived.slug))).toBe('ORGANIZATION_NOT_FOUND');
@@ -171,10 +171,10 @@ describe('límite de propuestas por red (auditoría del 3.6)', () => {
 });
 
 describe('tipos de mejora del buzón', () => {
-  it('son las categorías globales más las propias de la entidad, sin repetir nombres y sin taquilla y rifas; una idea puede usar cualquiera de las dos', async () => {
+  it('son las categorías globales más las propias de la entidad, sin repetir nombres y sin taquilla; una idea puede usar cualquiera de las dos', async () => {
     const globalName = uniqueId('Global');
     await db.globalCategory.create({ data: { name: globalName, icon: '🌍', sortOrder: 99 } });
-    await db.globalCategory.upsert({ where: { name: 'Taquilla y Rifas' }, create: { name: 'Taquilla y Rifas', icon: '🎟️', rule: 'EXEMPT', sortOrder: 6 }, update: {} });
+    await db.globalCategory.upsert({ where: { name: 'Taquilla' }, create: { name: 'Taquilla', icon: '🎟️', rule: 'EXEMPT', sortOrder: 6 }, update: {} });
     const organization = await newOrganization();
     await db.organizationCategory.create({ data: { organizationId: organization.id, name: globalName, icon: '🏠' } });
     const { listIdeaCategoryOptions } = await import('@/repositories/ideas-public.repository');
@@ -183,7 +183,7 @@ describe('tipos de mejora del buzón', () => {
     expect(names).toContain(globalName);
     expect(names.filter((name: string) => name === globalName)).toHaveLength(1);
     expect(names).toEqual(expect.arrayContaining(['Patios y Deporte', 'Cultura']));
-    expect(names).not.toContain('Taquilla y Rifas');
+    expect(names).not.toContain('Taquilla');
     const author = await createUser(db);
     const proposed = await proposeIdea(db, { userId: author.id, payload: proposal(organization.slug, { category: globalName }), systemMessage: SYSTEM_MESSAGE }, NOW);
     expect(proposed.alias).toMatch(/^#FAM-/);

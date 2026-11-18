@@ -21,7 +21,7 @@ export class OrgAdminRejectedError extends Error {
 }
 
 /**
- * ¿Tiene la entidad una taquilla o rifa a la venta? Cuenta las que recaudan y también las que ya cumplieron la meta pero aún no han cerrado (un contracargo las
+ * ¿Tiene la entidad una taquilla a la venta? Cuenta las que recaudan y también las que ya cumplieron la meta pero aún no han cerrado (un contracargo las
  * reabre y volverían a vender con la tarifa nueva): la compra de entradas lee la tarifa actual de la entidad, no la de la publicación (auditoría financiera, M2).
  */
 export async function hasTicketingOnSale(db: Db, organizationId: string, now: Date): Promise<boolean> {
@@ -57,7 +57,7 @@ export async function saveOrganizationTariffs(db: Db, actor: VerifiedSuperadminA
       tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' } })
     ]);
     const values = pickTariffValues(input.customRules ? input : global);
-    // La compra de entradas lee la tarifa actual de la entidad: con una taquilla o rifa a la venta no se cambian sus gastos de gestión (cambiaría lo prometido).
+    // La compra de entradas lee la tarifa actual de la entidad: con una taquilla a la venta no se cambian sus gastos de gestión (cambiaría lo prometido).
     if ((values.ticketFeeFixedCents !== before.ticketFeeFixedCents || values.ticketFeeBps !== before.ticketFeeBps) && (await hasTicketingOnSale(tx, organizationId, now))) {
       throw new OrgAdminRejectedError('PUBLISHED_TICKETING', ['ticketFeeFixedCents', 'ticketFeeBps']);
     }

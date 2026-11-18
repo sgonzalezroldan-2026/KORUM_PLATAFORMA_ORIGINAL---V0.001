@@ -253,7 +253,7 @@ export interface KorumInitiative {
   matchingPoolTotalCents?: number;
   matchingPoolRemainingCents?: number;
   matchingSponsorName?: string | null;
-  ticketSubtype?: 'EVENT' | 'RAFFLE';
+  ticketSubtype?: 'EVENT';
   ticketPriceCents?: number;
   ticketMax?: number;
   ticketsSold?: number;

@@ -34,7 +34,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
   const money = useMoney();
   const { card } = detail;
   const ticketing = card.format === 'TICKETING';
-  const kind = card.subtype === 'RAFFLE' ? 'RAFFLE' : 'EVENT';
+  const kind = 'EVENT';
   const category = useCategoryLabel(contentLang)(card.category);
   const deadline = format.dateTime(new Date(detail.closesAtIso), { dateStyle: 'long', timeZone: 'Europe/Madrid' });
 

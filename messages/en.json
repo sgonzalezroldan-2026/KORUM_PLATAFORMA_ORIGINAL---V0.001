@@ -7294,8 +7294,7 @@
         "initiative_saved": "Campaign saved in the Studio",
         "initiative_published": "Campaign published",
         "draft_discarded": "Draft discarded",
-        "exempt_category_saved": "0% category: campaign saved with it",
-        "raffle_notice_confirmed": "Raffle regulatory notice confirmed"
+        "exempt_category_saved": "0% category: campaign saved with it"
       },
       "superadmin": {
         "access": "KORUM lookup from its console",
@@ -7370,9 +7369,6 @@
       "achievement": {
         "photo_published": "Achievement photo published",
         "thanks_saved": "Thank-you message saved"
-      },
-      "raffle": {
-        "drawn": "Raffle drawn"
       },
       "sponsor": {
         "approved": "Business accepted",
@@ -7762,9 +7758,6 @@
         },
         "gate": {
           "pinRevoked": "Door PIN cancelled notice"
-        },
-        "raffle": {
-          "extraRound": "Extra raffle round notice"
         },
         "initiative": {
           "goalReached": "Goal reached notice",

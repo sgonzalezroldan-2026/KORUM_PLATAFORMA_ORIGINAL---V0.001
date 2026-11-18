@@ -27,7 +27,7 @@ export const PUBLIC_IDEAS_LIMIT = 60;
 
 /**
  * Tipos de mejora en los que puede clasificarse una idea: las categorías globales de la plataforma más las propias de la entidad (como el
- * prototipo, `getEffectiveCategoriesForSchool`), sin repetir nombres y sin la de taquilla y rifas, que no es una mejora.
+ * prototipo, `getEffectiveCategoriesForSchool`), sin repetir nombres y sin la de taquilla, que no es una mejora.
  */
 export async function listIdeaCategoryOptions(db: Db, organizationId: string): Promise<{ name: string; icon: string }[]> {
   const [global, custom] = await Promise.all([

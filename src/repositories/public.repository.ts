@@ -237,9 +237,7 @@ export async function getPassForView(db: KorumPrismaClient, slug: string, passUu
     select: {
       uuid: true,
       serialCode: true,
-      subtype: true,
       quantity: true,
-      raffleNumbers: true,
       revokedAt: true,
       initiative: {
         select: {
@@ -247,9 +245,6 @@ export async function getPassForView(db: KorumPrismaClient, slug: string, passUu
           title: true,
           ticketVenue: true,
           closesAt: true,
-          rafflePrizeCount: true,
-          // Solo los números de las actas (lo que se proyecta en la fiesta): para decirle a quien abre su papeleta si ya hubo sorteo y si salió.
-          raffleDraws: { select: { winningNumbers: true, replacedNumbers: true, extraRoundReason: true }, orderBy: { round: 'asc' } },
           organization: { select: { name: true } }
         }
       }
