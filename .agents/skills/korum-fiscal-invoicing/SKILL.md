@@ -13,7 +13,7 @@ description: Fiscalidad y facturación de KORUM. IVA del 21 % incluido en los in
 
 | Ingreso de KORUM | IVA | Quién recibe la factura |
 | :--- | :--- | :--- |
-| Comisión por tramos y mantenimiento | 21 % **dentro** del importe | La entidad: factura completa por liquidación |
+| Comisión por tramos, mantenimiento y coste de la pasarela (decisión 50; el IVA de la pasarela se cuadra con el promotor al abrir el Sprint 5.20a) | 21 % **dentro** del importe | La entidad: una sola factura completa por liquidación, por todo lo retenido |
 | «Gastos de gestión digital» (entradas y vales) | 21 % **dentro** del importe | Quien compra: factura simplificada en su recibo |
 | Gestión de Mi Hucha | 21 % **dentro** del importe | La familia: factura simplificada en su recibo |
 | Gestión de comercios (los dos modos) | 21 % **encima**, como hoy | El comercio: factura completa |
@@ -54,7 +54,7 @@ description: Fiscalidad y facturación de KORUM. IVA del 21 % incluido en los in
 - **Texto del certificado** (art. 24 de la Ley 49/2002): identificación de donante y entidad, mención de que la entidad está entre las del art. 16, fecha e importe, **destino** (el proyecto final, también tras un redimensionamiento) y carácter irrevocable.
 - **Donación de un comercio** (modo donación) a una entidad con la Ley 49/2002 acreditada: donativo con certificado y dentro del Modelo 182; es firme desde el pago y cuenta en el año del pago.
 - **Nunca cuentan:** entradas, vales, recargas, gestión, aportación voluntaria, Auto-Impulso ni el dinero de un comercio en modo publicidad.
-- **Colegios privados con ánimo de lucro:** solo entradas y vales; no publican campañas de donación.
+- **Colegios privados con ánimo de lucro:** entradas, vales y patrocinio con publicidad de comercios, que entra directo en su Fondo de actividades (decisión 51); no publican campañas de donación.
 - **Modelo 182:** se comprueba campo a campo contra el diseño oficial vigente (la Orden HAC/1430/2025 redactó de nuevo la recurrencia, posición 132) y se valida subiendo un fichero con un caso de cada tipo al entorno de pruebas de la Agencia Tributaria, con el certificado digital del promotor. Admite declaración complementaria y sustitutiva. El NIF se guarda cifrado y se busca por HMAC; el Super-Admin no descarga el fichero de ninguna entidad.
 - **Hoy:** el certificado está disponible desde el pago y el fichero incluye, señaladas, las donaciones de campañas sin resolver.
 

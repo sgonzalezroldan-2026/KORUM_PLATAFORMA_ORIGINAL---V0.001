@@ -1,6 +1,6 @@
 # Especificación Técnica de Tokens Visuales y Geometría SVG · KORUM Brand System v8.5
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los activos de rifa se retiran entonces y no se crean otros nuevos; el pase de vales se especifica en el Sprint 5.14b. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](../../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los activos de rifa se retiran entonces y no se crean otros nuevos; el pase de vales se especifica en el Sprint 5.14b. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 54); orden y fichas en el [plan](../../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 ## Arquitectura Híbrida Oficial: "Varsity Heritage Colegial + Cuaderno Vivo de Patio"
 
 ---

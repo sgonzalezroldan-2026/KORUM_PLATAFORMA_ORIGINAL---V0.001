@@ -1,6 +1,6 @@
 # Registro maestro de deuda y puntos abiertos
 
-> **Qué es:** la lista única, completa y ordenada de todo lo que queda por hacer, decidir o gestionar hasta cerrar el piloto. Reúne los puntos P1–P26 (barrido del 2026-11-17), los puntos N1–N20 que salieron de la revisión legal y fiscal del promotor (2026-11-17 y 2026-11-18), la lista legal de [CUMPLIMIENTO §9](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) y la lista de preproducción de [DECISIONES_TECNICAS §8](DECISIONES_TECNICAS.md).
+> **Qué es:** la lista única, completa y ordenada de todo lo que queda por hacer, decidir o gestionar hasta cerrar el piloto. Reúne los puntos P1–P26 (barrido del 2026-11-17), los puntos N1–N21 que salieron de la revisión legal y fiscal del promotor (2026-11-17 y 2026-11-18), la lista legal de [CUMPLIMIENTO §9](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) y la lista de preproducción de [DECISIONES_TECNICAS §8](DECISIONES_TECNICAS.md).
 > **Rehecho el 2026-11-18**, tras el traslado de las decisiones del promotor a los documentos que mandan. **Quién lo mantiene:** el asistente, al cerrar cada sprint; el promotor marca lo que decide o gestiona.
 > **Fuente única:** el detalle técnico y legal de cada punto sigue en su documento de origen (se enlaza). Aquí está el **qué, quién, cuándo y dónde se resuelve**. El orden de ejecución y las fichas están en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md) («Orden de trabajo vigente»).
 > **Regla de este registro (Regla 04 §5):** ningún punto queda sin destino. Cada uno tiene un sprint, una sesión, un dueño fuera del código (el promotor o un tercero) o está cerrado. Un sprint no deja «heredados» sin sprint de destino.
@@ -24,10 +24,10 @@
 
 ## 2. Resumen en cifras (2026-11-18)
 
-- **46 puntos:** P1–P26 (P10 está hecho y P16 no se usó: 24 vivos, con P2 partido en cuatro) y **N1–N20**, más los sprints 6.1 y 6.2.
+- **47 puntos:** P1–P26 (P10 está hecho y P16 no se usó: 24 vivos, con P2 partido en cuatro) y **N1–N21**, más los sprints 6.1 y 6.2.
 - **144 puntos legales y fiscales** (`L-001`–`L-144`, [Anexo A](#anexo-a--los-144-puntos-legales-y-fiscales-uno-a-uno)): **92 resueltos o decididos** por el promotor y **52 abiertos**. De los abiertos, **48 son cambios pequeños en la aplicación**, cada uno con su sprint; **3 dependen de Paycomet** (`L-041`, `L-061`, `L-071`) y **1 de Veri\*factu** (`L-026`).
 - **Consultas a terceros:** a Paycomet, **21 preguntas** (12 bloquean los primeros cobros reales); a los proveedores de Veri\*factu, **8** (no bloquean hasta su sprint); al abogado, **1**, y a la asesoría, **3**, que no bloquean nada (N20). Están redactadas en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md).
-- **Trabajo de código hasta la preproducción:** 28 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 150 y 190 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
+- **Trabajo de código hasta la preproducción:** 29 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 155 y 195 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
 - **Lo que el código todavía no aplica** (decidido, pendiente de construir): la retirada de las rifas (5.12), los vales (5.14), los comercios en dos modos (5.16), el IVA incluido (5.20), el Auto-Impulso siempre visible y compensado en el reparto (5.21), la liquidación solo a la entidad (5.19) y Mi Hucha apagada (5.15).
 - **Verificado en el código el 2026-11-17 y aún sin hacer:** no hay trámite para cambiar el email ni autoría de las consultas; no existen las páginas públicas de los textos legales; no se registra la aceptación del contrato de encargo en el alta; la analítica no está conectada; no hay protección contra la indexación de la preproducción; `docs/MANUAL_OPERACION.md` no existe.
 
@@ -74,7 +74,7 @@
 
 | Punto | Qué es | Crit. | Dueño | Dónde se resuelve |
 | :--- | :--- | :-: | :--- | :--- |
-| **N1** | Textos legales, contrato de encargo, evaluación de impacto y tabla de plazos; los valida el promotor | 🔴 | Claude + Promotor | SESIÓN T1; se publican en el 5.10a |
+| **N1** | Textos legales, contrato de encargo, evaluación de impacto y tabla de plazos; los valida el promotor | 🔴 | Claude + Promotor | SESIÓN T1; se publican en el 5.10a. **Primera entrega hecha (2026-11-18):** los nueve textos públicos, en [docs/legal/](legal/README.md), validados por el promotor el mismo día (doce decisiones contestadas, README §6). Falta la segunda entrega |
 | **N2** | Retirada de las rifas | 🔴 | Claude | Sprints 5.12a y 5.12b |
 | **N3** | Vales | 🟠 | Claude | Sprints 5.14a, 5.14b y 5.14c |
 | **N4** | Comercios en dos modos | 🔴 | Claude | Sprints 5.16a, 5.16b y 5.16c |
@@ -88,12 +88,13 @@
 | **N12** | Firma única: frase, cláusula y aviso de cada liberación | 🟠 | Claude | Sprint 5.19 (la cláusula, en la SESIÓN T1) |
 | **N13** | Mi Hucha apagada al lanzar, condiciones propias y devolución de la gestión | 🟠 | Claude | Sprint 5.15 |
 | **N14** | Aportación voluntaria sin IVA ni factura y enlace de devolución de 14 días | 🟠 | Claude | Sprint 5.15 (el IVA, en el 5.20a) |
-| **N15** | Aceptación: una línea junto al botón, versión guardada y resumen en el recibo | 🔴 | Claude | Sprint 5.15 (la casilla de comercios, en el 5.16b) |
+| **N15** | Aceptación: casilla obligatoria y ventana de resumen en cada pago, versión guardada y resumen en el recibo | 🔴 | Claude | Sprint 5.15 (la casilla de comercios, en el 5.16b) |
 | **N16** | Privacidad: copia de «mis datos» con rastros y desvinculación a los 12 meses | 🟠 | Claude | Sprint 5.10b |
-| **N17** | Colegios con ánimo de lucro: solo entradas y vales | 🟠 | Claude | Sprint 5.22 |
+| **N17** | Colegios con ánimo de lucro: entradas, vales y patrocinio con publicidad | 🟠 | Claude | Sprint 5.22 |
 | **N18** | Modelo 182 contra el diseño oficial y en el entorno de pruebas de la Agencia Tributaria | 🔴 | Claude + Promotor | Sprint 5.22 (hace falta el certificado digital del promotor) |
 | **N19** | Los 53 cambios pequeños y los retoques de los puntos R | 🟠 | Claude | 48 repartidos por sprint (ver §3.3) y 5 sin objeto |
 | **N20** | Cuatro consultas para más adelante, sin bloquear nada | 🟢 | Promotor | Cuando el promotor quiera; redactadas en las partes 1 y 2 de CONSULTAS |
+| **N21** | Contracargo de una campaña ya liquidada: revisión y decisión del Super-Admin, sin asumirlo de forma automática | 🟠 | Claude | Sprint 5.19b |
 
 ### 3.3 Los 52 puntos legales abiertos, por destino
 
@@ -103,7 +104,7 @@
 | Sprint 5.10b | `L-010`, `L-011`, `L-015`, `L-053`, `L-064` |
 | Sprint 5.10c | `L-004`, `L-005`, `L-007`, `L-018`, `L-042`, `L-045`, `L-049`, `L-054`, `L-059` |
 | Sprint 5.13 | `L-123`, `L-124`, `L-130`, `L-134` |
-| Sprint 5.15 | `L-016`, `L-020` (línea de aceptación) |
+| Sprint 5.15 | `L-016`, `L-020` (aceptación en el pago) |
 | Sprint 5.16b | `L-040`, `L-081`, `L-082`, `L-088` |
 | Sprint 5.16c | `L-037`, `L-038`, `L-039`, `L-078`, `L-079`, `L-087`, `L-089`, `L-090` |
 | Sprint 5.17 | `L-112`, `L-113` |
@@ -296,15 +297,15 @@ Se barre en una sola entrega. Ya no incluye los puntos de rifas, que desaparecen
 `npm run demo:access` (solo bases locales). Queda revisar con calma la experiencia de acceso y anotar en el README el bloqueo de `npm run db:dev` por un fichero antiguo en `AppData\Local\prisma-dev-nodejs\Data\durable-streams\korum\`.
 - **Destino:** Sprint 5.24b.
 
-### N1–N20 · Puntos nuevos de la revisión legal y fiscal del promotor
+### N1–N21 · Puntos nuevos de la revisión legal y fiscal del promotor
 
-El detalle de cada decisión está en [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1 y su resumen en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47). Las fichas, en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+El detalle de cada decisión está en [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1 y su resumen en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 54). Las fichas, en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
-- **N1 · Sesión de escritura (SESIÓN T1).** Aviso legal; condiciones (familias, entidades, comercios, aportación mensual, entradas y vales); privacidad; cookies; primera capa de cada formulario; contrato de encargo; evaluación de impacto y tabla de plazos. Los valida el promotor.
+- **N1 · Sesión de escritura (SESIÓN T1).** Aviso legal; condiciones (familias, entidades, comercios, aportación mensual, entradas y vales); privacidad; cookies; primera capa de cada formulario; contrato de encargo; evaluación de impacto y tabla de plazos. Los valida el promotor. **Primera entrega (2026-11-18):** escritos y revisados los nueve textos públicos ([docs/legal/](legal/README.md)). **Segunda entrega:** contrato de encargo, evaluación de impacto, tabla única de plazos y los cambios que pida el promotor. El promotor contestó el mismo día las doce decisiones de la primera (README §6; decisiones 48 a 54 de CUMPLIMIENTO §8) y todo lo que traen de código tiene sprint: la casilla y la ventana de resumen de cada pago, con el aviso de quién vende (5.15 y 5.16b); los vales cancelados tras liquidar (5.14c); el contacto del comercio que dona y su plazo de 5 años (5.16b y 5.16c); la factura única con la pasarela (5.20); los patrocinios de los colegios con ánimo de lucro (5.22), y el contracargo de una campaña ya liquidada (N21, 5.19b). También asignados: la línea y la primera capa de la pantalla de acceso (5.10a) y el aviso por email a la persona representante cuando otra sube su documento de identidad (5.10c, con `L-042`).
 - **N2 · Retirada de las rifas (5.12a y 5.12b).** 231 archivos las mencionan. Papeletas numeradas, sorteo, acta, números de reserva, ronda extra, aviso normativo, textos, semilla, pruebas y documentación.
-- **N3 · Vales (5.14a, 5.14b y 5.14c), en exclusiva.** Unidades de canje en un QR con saldo; puesto con lector y PIN; devolución de 14 días; caducidad; tarifa propia; liquidación por lo vendido.
+- **N3 · Vales (5.14a, 5.14b y 5.14c), en exclusiva.** Pregunta para el promotor al abrir el 5.14a (sale de la revisión legal del 2026-11-18): el pago «sin producto» ¿es una compra o una donación?, y ¿se ofrece a los colegios con ánimo de lucro? Unidades de canje en un QR con saldo; puesto con lector y PIN; devolución de 14 días; caducidad; tarifa propia; liquidación por lo vendido.
 - **N4 · Comercios en dos modos (5.16a, 5.16b y 5.16c).** Donación con solo el nombre; publicidad con IVA de la entidad; casilla de aceptación; moderación a 14 días; ampliaciones; renovación; factura de la entidad con recordatorios; mismo comercio reconocido por NIF y email; domicilio fiscal. KORUM no devuelve nada si la entidad retira el anuncio: lo resuelven fuera de la plataforma.
-- **N5 · IVA incluido y facturas (5.20a y 5.20b).** Completa a entidades y comercios; simplificada en el recibo de las familias. La factura de un comercio con contracargo solo se anula si el banco indica fraude.
+- **N5 · IVA incluido y facturas (5.20a y 5.20b).** Completa a entidades y comercios; simplificada en el recibo de las familias. Una sola factura a la entidad por todo lo retenido, pasarela incluida (decisión 50); el IVA de esa línea se cuadra con el promotor al abrir el 5.20a. La factura de un comercio con contracargo solo se anula si el banco indica fraude.
 - **N6 · Veri\*factu (5.23), sprint propio.**
 - **N7 · Campañas (5.17).** Devolución automática a los 14 días con avisos a 7, 3 y 1; email a quien donó el día del vencimiento con la fecha exacta.
 - **N8 · Entradas (5.13).** El evento se liquida por lo vendido; la cancelación devuelve el 100 %; el cambio de fecha devuelve a quien lo pida en 14 días.
@@ -314,12 +315,13 @@ El detalle de cada decisión está en [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVIS
 - **N12 · Firma única (5.19).** Frase añadida a la confirmación, cláusula en las condiciones y aviso de cada liberación al email general de la entidad.
 - **N13 · Mi Hucha (5.15).** Apagada al lanzar; condiciones propias con versión; devolución automática de la gestión en 14 días.
 - **N14 · Aportación voluntaria (5.15 y 5.20a).** Sin IVA ni factura; enlace de devolución de 14 días en el recibo.
-- **N15 · Aceptación (5.15).** Una línea junto al botón de pago, versión guardada y resumen en el recibo.
+- **N15 · Aceptación (5.15).** Casilla obligatoria y ventana de resumen en cada pago (decisión 48), versión guardada y resumen en el recibo.
 - **N16 · Privacidad (5.10b).** Copia de «mis datos» con los rastros de seguridad; desvincularlos de la cuenta a los 12 meses.
-- **N17 · Colegios con ánimo de lucro (5.22).** Solo entradas y vales.
+- **N17 · Colegios con ánimo de lucro (5.22).** Entradas, vales y patrocinio con publicidad de comercios, que entra directo en su Fondo de actividades (decisiones 42 y 51).
 - **N18 · Modelo 182 (5.22).** Comprobarlo contra el diseño oficial y validarlo en el entorno de pruebas de la Agencia Tributaria (hace falta el certificado digital del promotor).
 - **N19 · Los 53 cambios pequeños y los retoques de los puntos R.** Repartidos por sprint en el §3.3 y, uno a uno, en el Anexo A.
 - **N20 · Cuatro consultas para más adelante, sin bloquear nada.** Al abogado, el riesgo de la firma única; a la asesoría, la aportación voluntaria sin IVA, el año del donativo «todo o nada» y si el Auto-Impulso es gasto deducible. Redactadas en las partes 1 y 2 de [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). Se construye con lo decidido.
+- **N21 · Contracargo de una campaña ya liquidada (5.19b).** Decisión 53 del promotor (2026-11-18): no se asume de forma automática. Abre una revisión con el banco, a través de Paycomet, y con la entidad; al terminar, el Super-Admin decide y aprueba si lo asume KORUM o se reclama a la entidad. Hoy el código lo asume al momento.
 
 ---
 

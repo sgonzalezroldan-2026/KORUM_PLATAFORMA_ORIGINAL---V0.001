@@ -25,11 +25,11 @@ Sustituye a cualquier orden anterior. Las fichas están en «FASE 5 (continuaci�
 | 5 | 5.14 · Vales | N3 | 3 | 6–8 h |
 | 6 | SESIÓN R1 · Revisión crítica de producto | P12 | 1 | 3–4 h |
 | 7 | 5.10 · Cumplimiento en el código | P17, N16, P23 | 3 | 6–8 h |
-| 8 | 5.15 · Aceptación en el pago y devoluciones de 14 días | N13, N14, N15 | 1 | 5–7 h |
+| 8 | 5.15 · Aceptación en el pago y devoluciones de 14 días | N13, N14, N15 | 1 | 6–8 h |
 | 9 | 5.16 · Comercios en dos modos | N4 | 3 | 6–8 h |
 | 10 | 5.17 · Campañas vencidas | N7 | 1 | 4–6 h |
 | 11 | 5.18 · Tarifas a 30 días | N9 | 1 | 4–6 h |
-| 12 | 5.19 · Liquidación y firma única | N11, N12 | 1 | 6–8 h |
+| 12 | 5.19 · Liquidación, firma única y contracargos tras liquidar | N11, N12, N21 | 2 | 6–8 h y 4–6 h |
 | 13 | 5.20 · IVA incluido y facturas | N5 | 2 | 6–8 h |
 | 14 | 5.21 · Auto-Impulso | N10 | 1 | 5–7 h |
 | 15 | 5.22 · Donativos y Modelo 182 | N17, N18 | 1 | 5–7 h |
@@ -47,7 +47,7 @@ Sustituye a cualquier orden anterior. Las fichas están en «FASE 5 (continuaci�
 | 27 | 6.1e · Correcciones de las revisiones externas | P21, P6, P7 | 1–3 | 5–7 h |
 | 28 | 6.2 · Piloto con 3 entidades | 6.2, P15 | semanas | sesiones de 1–3 h |
 
-**Hasta dejar el código listo para la preproducción (puntos 1 a 18): unas 28 sesiones y entre 150 y 190 horas de trabajo del asistente.** Son estimaciones: la bitácora no guardaba duraciones hasta ahora.
+**Hasta dejar el código listo para la preproducción (puntos 1 a 18): unas 29 sesiones y entre 155 y 195 horas de trabajo del asistente.** Son estimaciones: la bitácora no guardaba duraciones hasta ahora.
 
 **En paralelo, sin código y a cargo del promotor:** P22 (rotar la clave de Stitch, hoy), P14 (dominio, datos de la empresa, cuentas y correo), P1 (proveedor de pagos definitivo), P3 (presupuesto, con seguros), P15 (entidades piloto), P2b (pedir ya los precios de Veri\*factu), el certificado digital para el Sprint 5.22, P2a (las 21 preguntas a Paycomet, justo antes del 6.1) y, cuando quiera, las cuatro consultas de N20.
 
@@ -605,7 +605,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 
 ## FASE 5 (continuación) · Ajuste legal y fiscal, cierre técnico y producto
 
-> **Origen:** las decisiones del promotor del 2026-11-17 y del 2026-11-18 ([PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1, resumidas en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 47) y el [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md). **Los sprints se ejecutan en el orden en que aparecen aquí**, no por su número: 5.10 y 5.11 conservan el suyo porque otros documentos ya los citan.
+> **Origen:** las decisiones del promotor del 2026-11-17 y del 2026-11-18 ([PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1, resumidas en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 54) y el [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md). **Los sprints se ejecutan en el orden en que aparecen aquí**, no por su número: 5.10 y 5.11 conservan el suyo porque otros documentos ya los citan.
 > **Cómo leer cada ficha:** `⏱️` es la duración estimada de la sesión del asistente, con las 5 puertas incluidas; se afina con la duración real que cada cierre anota en la bitácora. «Entregas» son sesiones separadas (a, b, c). Las sesiones que no escriben código de la aplicación se llaman `SESIÓN`.
 > **Sin deuda nueva (Regla 04 §5):** lo que aparezca en un sprint se corrige dentro de él; si de verdad no cabe, se anota en el registro con un sprint de destino.
 > **Preguntas a terceros (Regla 04 §2):** cualquier duda legal, fiscal, de Paycomet o de Veri\*factu se le plantea primero al promotor.
@@ -618,6 +618,8 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - **Alcance:** en castellano y a partir de lo que la aplicación hace de verdad: aviso legal; condiciones de uso (familias; entidades; comercios; aportación mensual; entradas y vales); política de privacidad; política de cookies; primera capa de cada formulario (pago de familias y de comercios, alta de entidad, buzón de ideas, soporte, Mi Hucha); contrato de encargo del tratamiento; evaluación de impacto con el modelo de la AEPD; y la tabla única de plazos de [CUMPLIMIENTO §6](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md). Se guardan en `docs/legal/` con versión y fecha.
   - **Cláusulas y frases que deben estar** (salen de los puntos cerrados): firma única (`L-046`); cambios de tarifas a 30 días y baja libre y sin coste (`L-056`); el dinero de un comercio admitido no se devuelve y KORUM no media si la entidad retira el anuncio (`L-076`, `L-091`); textos que escribe la entidad (`L-037`); cartel del escaparate (`L-038`); registro de accesos de KORUM como encargado (`L-065`); destino del Fondo sin datos personales (`L-086`); móviles personales en la portería (`L-126`); rastros de seguridad, reenvío del enlace de voto, IndexNow y cámara (`L-006`, `L-063`, `L-074`, `L-075`, `L-127`); obligaciones fiscales de la entidad; mayoría de edad; regla de los 14 días (aportación voluntaria, gestión de Mi Hucha, vales, cambio de fecha); entradas sin desistimiento; reparto de papeles del §5.1.
   - **Lo valida el promotor** (decisión 41). El catalán y el inglés se traducen en la SESIÓN I1.
+  - **Reparto en dos entregas:** *primera*, lo que lee el público: aviso legal, las cinco condiciones (de uso; entradas y vales; aportación mensual; entidades; comercios), política de privacidad, política de cookies y primera capa de cada formulario. *Segunda*, lo interno y contractual: contrato de encargo del tratamiento, evaluación de impacto, tabla única de plazos (con CUMPLIMIENTO §6 al día) y los cambios que el promotor pida al validar la primera. Índice y trazabilidad en [docs/legal/README.md](legal/README.md).
+  - **Hecho (2026-11-18), primera entrega:** los nueve textos públicos están en [docs/legal/](legal/README.md), revisados por los dos agentes de la ficha (APROBADO). **Validados por el promotor el mismo día:** contestó las doce decisiones ([README §6](legal/README.md); decisiones 48 a 54 de CUMPLIMIENTO §8) y sus respuestas están ya en los textos, en las reglas y en las fichas de los sprints que las construyen. **Falta la segunda entrega**; la casilla se marca al cerrarla.
   - ⛓️ **Va antes de:** el Sprint 5.10a, que publica estos textos.
 
 - [ ] **SESIÓN D1 — Decisiones pequeñas que quedan (P25):**
@@ -654,7 +656,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.14a — Vales: motor (N3):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance (decisión 32):** modelo de datos de una venta de vales (precio único, tope o sin tope, fecha de validez, «seguir aportando sin producto» al agotarse); compra con asiento en el libro mayor; **un solo QR firmado por compra, con su saldo**; canje parcial atómico (un vale no se gasta dos veces, probado con concurrencia en PostgreSQL real); «Gastos de gestión digital» con tarifa propia para vales en la consola (sumados o incluidos, a elección de la entidad); sin certificado y fuera del Modelo 182.
+  - **Alcance (decisión 32):** modelo de datos de una venta de vales (precio único, tope o sin tope, fecha de validez que fija la entidad, sin mínimo (decisión 49), «seguir aportando sin producto» al agotarse; **al abrir el sprint se le plantea al promotor** si ese pago se trata como compra o como donación y si se ofrece a los colegios con ánimo de lucro, que no pueden recibir donaciones); compra con asiento en el libro mayor; **un solo QR firmado por compra, con su saldo**; canje parcial atómico (un vale no se gasta dos veces, probado con concurrencia en PostgreSQL real); «Gastos de gestión digital» con tarifa propia para vales en la consola (sumados o incluidos, a elección de la entidad); sin certificado y fuera del Modelo 182.
   - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-tco-calculator`.
   - **Gate QA:** `QA-VAL01`, `QA-VAL02`.
 
@@ -668,7 +670,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.14c — Vales: puesto con lector, devolución, caducidad y liquidación (N3):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** puesto de canje con lector móvil y PIN (se lee el QR, se ve el saldo y se teclea cuántos vales se gastan); devolución del 100 % con un clic durante 14 días si no se ha gastado ningún vale de esa compra; después, a fondo perdido; recordatorio automático una semana antes de caducar; cancelación (se devuelve el 100 % de lo no gastado) y cambio de fecha (regla del 5.13); liquidación por lo vendido al cerrar la venta, pasados los 14 días; venta de 60 días como máximo.
+  - **Alcance:** puesto de canje con lector móvil y PIN (se lee el QR, se ve el saldo y se teclea cuántos vales se gastan); devolución del 100 % con un clic durante 14 días si no se ha gastado ningún vale de esa compra; después, a fondo perdido; recordatorio automático una semana antes de caducar; cancelación antes de liquidar (se devuelve el 100 % de lo no gastado) y, después de liquidar, aviso a quienes compraron de que responde la entidad (decisión 49); cambio de fecha (regla del 5.13); liquidación por lo vendido al cerrar la venta, pasados los 14 días; venta de 60 días como máximo.
   - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
   - **Gate QA:** `QA-VAL04`, `QA-VAL05`.
   - ⛓️ **Depende de:** la respuesta de Paycomet sobre la venta de vales solo para cobros reales; se construye contra el simulador.
@@ -686,6 +688,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - **Alcance:** páginas públicas de aviso legal, condiciones, privacidad y cookies en los tres idiomas, enlazadas en el pie, con **archivo inmutable de cada versión** (contenido, huella y fecha) e idioma y versión guardados en cada aceptación (`L-057`); primera capa de privacidad en cada formulario (`L-020`); aceptación registrada del contrato de encargo y de las condiciones en el alta de la entidad; ningún consentimiento se registra con una versión que no esté publicada; **antiindexación de todo lo que no sea producción** (`noindex` y `robots.txt`, con prueba).
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-seo-discoverability`.
   - **Gate QA:** `QA-LEG01`, `QA-LEG02`, `QA-SEO04`.
+  - **De la SESIÓN T1** ([docs/legal/README.md](legal/README.md) §2 y §3): la consola pasa de cuatro tipos de documento a nueve, cada uno con su versión (condiciones de uso, de entradas y vales, de la aportación mensual, para entidades y para comercios; privacidad; cookies; aviso legal; contrato de encargo); un campo nuevo en `platform.company` (datos registrales); línea de aceptación y primera capa en la pantalla de acceso (`/login`), que hoy no tiene ninguna; sustitución de las marcas `[[…]]` y de los enlaces entre documentos al pintar cada página; `privacy.policyVersion` apunta a la versión publicada.
   - ⛓️ **Depende de:** la SESIÓN T1 (textos validados por el promotor).
 
 - [ ] **SPRINT 5.10b — Cumplimiento: la cuenta y los derechos de la persona (P17, N16):**
@@ -698,14 +701,14 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.10c — Cumplimiento: la entidad, el buzón de ideas y la consola (P17, P23):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** firma única también en el alta; KYB exigido al publicar; documento de identidad de quien representa visible solo para quien lo subió y el Super-Admin (`L-042`); párrafo informativo en la invitación a firmar (`L-045`); fecha, hora y código en el aviso de relevo (`L-049`); email directo de KORUM conservado 12 meses, con recordatorio de que no es para publicidad (`L-054`, `L-051`); compromiso de confidencialidad y revisión semestral de accesos a la consola (`L-059`); «sin datos de personas» en la nota de precios (`L-055`); en el buzón: duración de la cookie (`L-004`), plazo de la huella (`L-005`), motivo al dar por buena una firma (`L-007`) y cruce por huella solo entre cuentas con consentimiento (`L-018`). **Verificación de la deuda heredada (P23):** se comprueba en el código cada punto de su lista y se corrige aquí o se le da sprint.
+  - **Alcance:** firma única también en el alta; KYB exigido al publicar; documento de identidad de quien representa visible solo para quien lo subió y el Super-Admin, con aviso por email a esa persona cuando lo sube otra (`L-042`; lo promete la política de privacidad §3.9); párrafo informativo en la invitación a firmar (`L-045`); fecha, hora y código en el aviso de relevo (`L-049`); email directo de KORUM conservado 12 meses, con recordatorio de que no es para publicidad (`L-054`, `L-051`); compromiso de confidencialidad y revisión semestral de accesos a la consola (`L-059`); «sin datos de personas» en la nota de precios (`L-055`); en el buzón: duración de la cookie (`L-004`), plazo de la huella (`L-005`), motivo al dar por buena una firma (`L-007`) y cruce por huella solo entre cuentas con consentimiento (`L-018`). **Verificación de la deuda heredada (P23):** se comprueba en el código cada punto de su lista y se corrige aquí o se le da sprint.
   - **Skills:** `korum-quorum-antifraud`, `korum-nextjs-multitenant-ui`.
   - **Gate QA:** `QA-LEG05`.
 
 - [ ] **SPRINT 5.15 — Aceptación en el pago y devoluciones de 14 días (N13, N14, N15):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
-  - ⏱️ **Duración estimada:** 5–7 h.
-  - **Alcance:** una sola línea junto al botón de pago («Al pagar aceptas las condiciones», con enlace), versión aceptada guardada en cada pago y resumen de lo que aplica en el email del recibo (decisión 39); enlace en el recibo para recuperar la **aportación voluntaria** durante 14 días, automático y con su contra-asiento (decisión 22); **Mi Hucha apagada por defecto** (`hucha.mode = DISABLED`), condiciones propias con versión y devolución automática de la gestión si se cancela en 14 días, nunca de la donación (decisión 38, `L-016`). Los textos oficiales de la Regla 03 §3 no cambian.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** **casilla obligatoria** de aceptación junto al botón de pago de donaciones, entradas, vales y aportación mensual, y **ventana accesible «Las condiciones, en resumen»** que se abre desde ella (lo que se acepta, qué se hace con los datos y el enlace al texto completo; en entradas y vales, si quien vende es una empresa o una entidad sin ánimo de lucro, según su `legalForm`, comprobando a qué grupo va cada forma jurídica: un club que sea sociedad anónima deportiva vende como empresa), con el enlace «Cómo usamos tus datos» junto a la casilla, que abre la ventana por el bloque de los datos; versión aceptada guardada en cada pago y resumen de lo que aplica en el email del recibo (decisiones 39 y 48; textos en [docs/legal/primeras-capas.md](legal/primeras-capas.md)); enlace en el recibo para recuperar la **aportación voluntaria** durante 14 días, automático y con su contra-asiento (decisión 22); **Mi Hucha apagada por defecto** (`hucha.mode = DISABLED`), condiciones propias con versión y devolución automática de la gestión si se cancela en 14 días, nunca de la donación (decisión 38, `L-016`). Los textos oficiales de la Regla 03 §3 no cambian.
   - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`, `korum-fiscal-invoicing`.
   - **Gate QA:** `QA-LEG06`, `QA-PAY12`.
   - ⛓️ **Depende de:** el Sprint 5.10a (versiones publicadas).
@@ -722,14 +725,14 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.16b — Comercios en dos modos: pantallas y pago (N4):**
   - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Claude Opus 5.5 · alto) · auditoría `ux-school-director-reviewer` + `fintech-escrow-auditor` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** pago del comercio en cada modo, con la **casilla obligatoria** de aceptación y su versión (`L-088`), qué datos verá la entidad (`L-040`), el plazo de 70 días hasta el Fondo y qué pasa si el pago llega con la campaña cerrada (`L-081`, `L-082`), y su domicilio fiscal; en donación, agradecimiento **solo con el nombre** y solo si la entidad lo activa, sin categorías Oro, Plata y Bronce en público, y Matching 2x anónimo; en publicidad, lo de hoy; panel de la entidad: activar el modo, activar el agradecimiento, avisos de cada donación.
+  - **Alcance:** pago del comercio en cada modo, con la **casilla obligatoria** de aceptación, su ventana de resumen y su versión (`L-088`, decisión 48), qué datos verá la entidad (`L-040`; desde la decisión 52, el contacto del comercio también en donación, con su dirección y su página web), el plazo de 70 días hasta el Fondo y qué pasa si el pago llega con la campaña cerrada (`L-081`, `L-082`), y su domicilio fiscal; en donación, agradecimiento **solo con el nombre** y solo si la entidad lo activa, sin categorías Oro, Plata y Bronce en público, y Matching 2x anónimo; en publicidad, lo de hoy; panel de la entidad: activar el modo, activar el agradecimiento, avisos de cada donación.
   - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-brand-design-system`.
   - **Gate QA:** `QA-COM12`, `QA-X02`, `QA-X03`.
 
 - [ ] **SPRINT 5.16c — Comercios en dos modos: plazos, renovación y avisos (N4):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** moderación en modo publicidad con devolución automática a los 14 días y avisos a 7, 3 y 1 (decisión 24, `L-090`); factura de la entidad subida tras admitir, con recordatorios; enlace de renovación que se cierra al pagarse, segundo pago devuelto con un botón durante 14 días (`L-089`); la renovación propone la categoría actual; página de renovación que enseña y deja corregir los datos de facturación (`L-079`); enlace de baja en cada email de renovación y baja de la invitación (`L-078`, `L-087`); texto del email de no admisión (`L-037`), retirada del cartel (`L-038`) y purga del contacto de un comercio cobrado (`L-039`).
+  - **Alcance:** moderación en modo publicidad con devolución automática a los 14 días y avisos a 7, 3 y 1 (decisión 24, `L-090`); factura de la entidad subida tras admitir, con recordatorios; enlace de renovación que se cierra al pagarse, segundo pago devuelto con un botón durante 14 días (`L-089`); la renovación propone la categoría actual; página de renovación que enseña y deja corregir los datos de facturación (`L-079`); enlace de baja en cada email de renovación y baja de la invitación (`L-078`, `L-087`); texto del email de no admisión (`L-037`), retirada del cartel (`L-038`) y purga del contacto de un comercio cobrado (`L-039`; el de un comercio que dona, a los 5 años de su última donación, decisión 52).
   - **Skills:** `korum-escrow-payments`, `korum-fiscal-invoicing`, `korum-nextjs-multitenant-ui`.
   - **Gate QA:** `QA-COM13`, `QA-COM14`.
 
@@ -754,17 +757,25 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - **Skills:** `korum-escrow-payments`, `korum-quorum-antifraud`.
   - **Gate QA:** `QA-PAY14`, `QA-SEC14`.
 
+- [ ] **SPRINT 5.19b — Contracargo de una campaña ya liquidada: revisión y decisión (N21):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance (decisión 53):** un contracargo que llega con la campaña, el evento, la venta de vales o el Fondo ya liquidados deja de asumirse de forma automática: se asienta en una cuenta de contracargos en revisión y abre un caso en la consola, con el expediente del cobro para discutirlo con el banco a través de Paycomet y una petición de información a la entidad; a la entidad no se le descuenta nada mientras tanto. Al cerrar el caso, el Super-Admin decide y aprueba, con reautenticación y auditoría, si lo asume KORUM (`CHARGEBACK_LOSSES`) o se reclama a la entidad por engaño o incumplimiento, y la entidad recibe el resultado con su motivo. El contracargo de una campaña sin liquidar sigue como hoy. Al abrir el sprint se le plantea al promotor cómo se cobra esa reclamación.
+  - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-PAY17`.
+  - ⛓️ **Depende de:** lo que Paycomet responda sobre los plazos y la documentación de una disputa, solo para cobros reales; se construye contra el simulador.
+
 - [ ] **SPRINT 5.20a — IVA incluido: libro mayor, BI y alertas (N5):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance (decisión 21):** la cuota de IVA (21/121 del importe mostrado) se separa en los asientos de la comisión por tramos, el mantenimiento, los Gastos de gestión digital (entradas y vales) y la gestión de Mi Hucha; nadie paga más y metas, pizarra y textos oficiales no cambian; el BI, las seis fuentes, la proyección y las alertas 🚨 y 💎 cuentan el ingreso **sin IVA**; la aportación voluntaria, sin IVA. Se actualiza el plan de negocio.
+  - **Alcance (decisión 21):** la cuota de IVA (21/121 del importe mostrado) se separa en los asientos de la comisión por tramos, el mantenimiento, los Gastos de gestión digital (entradas y vales) y la gestión de Mi Hucha; nadie paga más y metas, pizarra y textos oficiales no cambian; el BI, las seis fuentes, la proyección y las alertas 🚨 y 💎 cuentan el ingreso **sin IVA**; la aportación voluntaria, sin IVA. **Coste de la pasarela (decisión 50):** entra en la factura a la entidad con su base y su IVA; al abrir el sprint se cuadra con el promotor cómo se separa ese IVA sin que nadie pague más, y el libro mayor distingue lo que es para Paycomet, lo que es IVA y lo que es ingreso de KORUM. Se actualiza el plan de negocio.
   - **Skills:** `korum-fiscal-invoicing`, `korum-tco-calculator`, `korum-escrow-payments`.
   - **Gate QA:** `QA-FIS10`, `QA-FIN08`.
 
 - [ ] **SPRINT 5.20b — Facturas: completa a entidades y comercios, simplificada en el recibo (N5):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** factura completa a la entidad por la comisión y el mantenimiento de cada liquidación, con base, IVA y total; factura simplificada a familias y compradores dentro del email del recibo, con enlace al PDF y sin adjuntos; ninguna factura por la aportación voluntaria; rectificativa que identifica la factura que corrige; contracargo de un comercio facturado: se anula solo si el banco indica fraude (decisión 27); cada factura cuadra al céntimo con su asiento.
+  - **Alcance:** una sola factura completa a la entidad por todo lo retenido en cada liquidación (comisión, mantenimiento y coste de la pasarela, decisión 50), con base, IVA y total; factura simplificada a familias y compradores dentro del email del recibo, con enlace al PDF y sin adjuntos; ninguna factura por la aportación voluntaria; rectificativa que identifica la factura que corrige; contracargo de un comercio facturado: se anula solo si el banco indica fraude (decisión 27); cada factura cuadra al céntimo con su asiento.
   - **Skills:** `korum-fiscal-invoicing`, `korum-escrow-payments`.
   - **Gate QA:** `QA-FIS11`, `QA-FIS12`.
 
@@ -779,7 +790,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.22 — Donativos y Modelo 182 (N17, N18):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `korum-legal-fiscal-prereviewer` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 5–7 h.
-  - **Alcance (decisiones 28, 42 y 46):** el certificado fiscal solo está disponible cuando la campaña se consigue y cuenta en ese año; el Modelo 182 de cada ejercicio recoge las campañas consolidadas en él; una campaña que un contracargo reabre deja sus certificados en suspenso; texto del certificado con las menciones del art. 24 de la Ley 49/2002 y el proyecto final tras un redimensionamiento (`L-028`, `L-114`); persona de contacto editable (`L-030`); declaración complementaria y sustitutiva (`L-032`); colegios con ánimo de lucro: solo entradas y vales; **comprobación del Modelo 182 campo a campo** contra el diseño oficial vigente y fichero de prueba con un caso de cada tipo.
+  - **Alcance (decisiones 28, 42, 46 y 51):** el certificado fiscal solo está disponible cuando la campaña se consigue y cuenta en ese año; el Modelo 182 de cada ejercicio recoge las campañas consolidadas en él; una campaña que un contracargo reabre deja sus certificados en suspenso; texto del certificado con las menciones del art. 24 de la Ley 49/2002 y el proyecto final tras un redimensionamiento (`L-028`, `L-114`); persona de contacto editable (`L-030`); declaración complementaria y sustitutiva (`L-032`); colegios con ánimo de lucro: entradas, vales y patrocinio con publicidad de comercios, que al admitirse entra directo en su Fondo de actividades; **comprobación del Modelo 182 campo a campo** contra el diseño oficial vigente y fichero de prueba con un caso de cada tipo.
   - **Skills:** `korum-fiscal-invoicing`, `korum-quorum-antifraud`.
   - **Gate QA:** `QA-FIS13`, `QA-FIS14`.
   - ⛓️ **Depende de:** el certificado digital del promotor para subir el fichero al entorno de pruebas de la Agencia Tributaria.
