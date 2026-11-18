@@ -260,7 +260,7 @@ Varias propuestas **cambian decisiones ya tomadas** (CUMPLIMIENTO §8). Ninguna 
 - **Veri\*factu (L-026):** se decide en su sprint, con las dos vías sobre la mesa: un proveedor (con coste por factura) o el envío directo a la Agencia Tributaria con el certificado digital de KORUM. Se piden ya los precios a los proveedores y el asistente estudia la vía directa al empezar el sprint.
 - **Brevo (L-061), resuelto sin consulta:** su documentación describe `GET /v3/account` como una lectura de los datos de la cuenta, sin coste.
 
-**Balance de la revisión por rondas (2026-11-17 y 2026-11-18).** De las 71 preguntas del borrador inicial: las del abogado (19) y las de la asesoría (21) quedan todas decididas por el promotor, que guarda 1 del abogado y 3 de la asesoría para consultarlas más adelante sin que bloqueen nada; de Paycomet quedan 21 (12 bloquean los primeros cobros reales y 9 no) y de los proveedores de Veri\*factu quedan 8, que no bloquean hasta su sprint. El borrador final, ya renumerado, está en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). **Nada de esto está trasladado todavía** a CUMPLIMIENTO, a las Reglas 02 y 03, a AGENTS.md, al plan ni al registro de deuda: ese traslado necesita la aprobación del promotor.
+**Balance de la revisión por rondas (2026-11-17 y 2026-11-18).** De las 71 preguntas del borrador inicial: las del abogado (19) y las de la asesoría (21) quedan todas decididas por el promotor, que guarda 1 del abogado y 3 de la asesoría para consultarlas más adelante sin que bloqueen nada; de Paycomet quedan 21 (12 bloquean los primeros cobros reales y 9 no) y de los proveedores de Veri\*factu quedan 8, que no bloquean hasta su sprint. El borrador final, ya renumerado, está en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md). **Trasladado el 2026-11-18**, con la aprobación del promotor, a CUMPLIMIENTO (§8, decisiones 21 a 47, y §9, punto por punto), a las Reglas 01 a 04, a AGENTS.md, al plan (fichas 5.10 a 5.29 y fase 6) y al registro de deuda.
 
 **Cierre de la revisión (2026-11-18): cuatro preguntas para consultar más adelante.** El promotor aplica la excepción de su regla y decide a quién preguntar. No bloquean nada: se construye con lo decidido.
 
@@ -278,6 +278,13 @@ Varias propuestas **cambian decisiones ya tomadas** (CUMPLIMIENTO §8). Ninguna 
 - En la plataforma el emisor es siempre KORUM.
 - Hay que emitir todas las facturas que procedan y cuadrarlas al céntimo con el libro mayor; la rectificativa debe identificar la factura que corrige; la leyenda de la factura se ajusta a la frase que exige la norma.
 - **Domicilio fiscal del comercio:** se pide en el alta del comercio; va al siguiente sprint de correcciones (5.10).
+
+**Decisiones del 2026-11-18 al planificar los sprints.**
+
+- **Orden:** retirada de las rifas, después las reglas de las entradas y después los vales (los vales heredan esas reglas ya probadas).
+- **Monedero con saldo de Mi Hucha (`REGULATED_WALLET`): descartado.** KORUM no guardará saldo; el modo se retira del código en el Sprint 5.24b.
+- **Preguntas a terceros:** toda pregunta nueva para el abogado, la asesoría, Paycomet o un proveedor de Veri\*factu se le plantea primero al promotor; si no puede resolverla, se anota.
+- **Sin deuda nueva:** lo que aparezca en un sprint se corrige dentro de él o se anota en el registro con su sprint; cada sprint dice su duración estimada y anota la real.
 
 ## 4. Avisos de prudencia del propio dictamen
 

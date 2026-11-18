@@ -16,11 +16,12 @@
 ## 2. Listados, fichas públicas y viralidad
 
 - **Filtros ocultos por defecto** en el portal de familias y en el cuadro de mandos de la entidad; se despliegan con `🔍 Filtrar` y muestran un contador si hay filtros activos.
+- **Rifas retiradas** (decisión del promotor, 2026-11-18): ningún texto nuevo habla de rifas, papeletas o sorteos. Lo que queda en la aplicación se retira en el Sprint 5.12; los **vales** llegan en el 5.14.
 - **En la pestaña pública "Iniciativas y taquilla" solo aparecen iniciativas `FUNDRAISING`** (etiqueta visible «Recaudando»), destacando las que tienen *Matching 2x* activo.
 - **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio y por el Auto-Impulso de KORUM (que no suma a ningún curso).
 - **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**.
 - **Tarjetas para WhatsApp y redes (`next/og`):** todo enlace de iniciativa o curso genera su imagen en servidor (logo del centro, `%` de avance, días restantes y reto del curso o equipo). Detalle en [korum-seo-discoverability](../skills/korum-seo-discoverability/SKILL.md).
-- **Comercios amigos por categoría, sin importes en público:** `🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`, siempre en ese orden.
+- **Comercios amigos por categoría, sin importes en público:** `🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`, siempre en ese orden. Las categorías son del **modo publicidad**. En el **modo donación** (por defecto desde el Sprint 5.16) el comercio no tiene categoría, ventaja ni cartel: la entidad puede agradecerlo **solo con su nombre** («Gracias a Ferretería Sol»), si lo activa, en orden alfabético y durante 12 meses; el Matching 2x es anónimo («Un comercio del barrio duplica tu aportación»).
 
 ## 3. Textos oficiales (no se cambian sin aprobación del usuario)
 
@@ -30,12 +31,16 @@
   - **Descripción si `organization.ley49 === true` y está verificada:** `Es opcional y no cambia nada de tu donación. Con ella sostienes el servicio que garantiza a todas las familias: (1) que el 100% de tu donación llega al centro sin descuentos bancarios, (2) la devolución automática si no se alcanza la meta y (3) la emisión automática de tu Certificado Fiscal de donación (Ley 49/2002).`
   - **Descripción en el resto de casos:** igual, terminando en `(3) la emisión automática de tu Justificante Nominativo de Aportación.`
 - **Pie del desglose público:** `💡 Transparencia total: el importe total ya incluye el coste de la pasarela de pago, el servicio de la plataforma, la gestión y la devolución del 100% si la iniciativa no se consigue, para que al centro le quede exactamente lo necesario para pagar los costes reales.`
-- **Aviso al retirar el saldo de Mi Hucha** (solo en modo `REGULATED_WALLET`): `⚠️ ¿Seguro que quieres retirar el saldo de tu Hucha? Te devolveremos el 100% directamente a tu medio de pago original (tarjeta o Bizum). Tu saldo quedará a 0,00 € y no podrás pagar con la Hucha hasta recargarla, pero podrás seguir participando con Bizum o tarjeta.`
+- **Dónde van las condiciones (principio del promotor, 2026-11-17; se construye en los Sprints 5.15 y 5.16b):** las condiciones viven en su página de términos y condiciones, **no en la zona de pago**. Junto al botón de pago hay **una sola línea**, «Al pagar aceptas las condiciones», con enlace; no se añaden avisos legales largos antes del botón. Con el pago se guarda la versión aceptada y el resumen de lo que aplica llega en el email del recibo. Única excepción: el pago de comercios lleva la casilla obligatoria «He leído y acepto las condiciones para comercios».
+- **Auto-Impulso en la ficha (siempre, sin importe; Sprint 5.21):** `La plataforma KORUM también aportó y ayudó a conseguir el reto`.
+- **Aviso al retirar el saldo de Mi Hucha** (solo en modo `REGULATED_WALLET`, **descartado el 2026-11-18**: este texto se retira con el modo en el Sprint 5.24b y no se usa en nada nuevo): `⚠️ ¿Seguro que quieres retirar el saldo de tu Hucha? Te devolveremos el 100% directamente a tu medio de pago original (tarjeta o Bizum). Tu saldo quedará a 0,00 € y no podrás pagar con la Hucha hasta recargarla, pero podrás seguir participando con Bizum o tarjeta.`
 - Las versiones en catalán e inglés de estos textos se revisan por una persona nativa antes de publicarse y se guardan en los catálogos de traducción como textos legales versionados.
 
 ## 4. Cómo se habla de KORUM y del dinero (precisión legal)
 
-- KORUM es una **plataforma tecnológica**: no es un banco, no está regulada como entidad financiera y **no custodia fondos**. Los cobros, retenciones y devoluciones los ejecuta **PAYCOMET**, entidad de pago autorizada por el Banco de España (usar exactamente la redacción que Paycomet apruebe en el contrato).
+- KORUM es una **plataforma tecnológica**: no es un banco, no está regulada como entidad financiera y **no custodia fondos**. Los cobros, retenciones y devoluciones los ejecuta **PAYCOMET**, entidad de pago autorizada por el Banco de España. A PAYCOMET se le menciona **solo por su nombre, en texto: nunca con su logotipo** ni con una redacción pendiente de su aprobación (decisión del promotor, 2026-11-18).
+- **Mi Hucha** sale apagada en el lanzamiento y, cuando se encienda, es solo una aportación mensual programada: KORUM no guarda saldo y ningún texto habla de «saldo», «monedero» o «recargar».
+- **Vales:** se dice «vales», nunca «cupones regalo», «tarjeta regalo» ni «saldo»; un vale se canjea en el puesto de la entidad y no es dinero.
 - **Prohibido** en textos públicos: "cuenta bancaria" referido a KORUM o a las huchas, "banco", "regulado por el Banco de España" referido a KORUM, "exención CNMV", "garantizado por ley", sellos o logotipos de organismos públicos.
 - En público, "Escrow" se dice **"hucha de la iniciativa"** o **"el dinero queda retenido en Paycomet hasta lograr la meta"**. "Escrow" se mantiene solo como término interno en código y documentación técnica.
 

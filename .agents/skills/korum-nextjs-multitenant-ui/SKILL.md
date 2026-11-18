@@ -10,6 +10,8 @@ description: >-
 
 # Skill · Arquitectura Next.js multi-entidad, sistema visual y paridad con `Korum_v8.html`
 
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Rutas nuevas previstas: páginas públicas de los textos legales con archivo de versiones (5.10a), venta de vales en el portal y puesto de canje en el panel (5.14). **Zona de pago:** una sola línea de aceptación junto al botón, sin avisos legales largos (5.15; Regla 03 §3). Funciones del prototipo retiradas o aplazadas con aprobación expresa: rifas, pago directo al proveedor y monedero con saldo (Regla 01 §6). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+
 ## 1. Cómo usar el prototipo (`prototype/Korum_v8.html`)
 
 - Es la **referencia funcional**: define qué acciones, datos, filtros, columnas y alertas existen. **No es la referencia visual** (su paleta y su logotipo son de una fase descartada; manda [korum-brand-design-system](../korum-brand-design-system/SKILL.md)).

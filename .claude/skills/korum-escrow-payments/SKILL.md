@@ -8,6 +8,8 @@ description: Integración con Paycomet REST API (cobros Bizum/tarjeta, split tra
 # Skill · Pagos con Paycomet, libro mayor y Mi Hucha
 
 > Antes de implementar cualquier endpoint, compruébalo en la documentación oficial (`docs.paycomet.com`) y en el contrato firmado. Lo que aquí figura como **"a confirmar"** no se da por hecho en código: va detrás de un ajuste de la consola o falla de forma explícita.
+>
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. **Liquidación (5.19):** solo a la cuenta verificada de la entidad (`PROVIDER` queda aplazado) y entrega automática 5 días antes de que venza la ventana de un cobro, también en el Fondo de actividades. **Auto-Impulso (5.21):** KORUM no aporta dinero propio; se compensa cobrando de menos en el reparto, solo en campañas con presupuesto. **Regla de los 14 días** (Regla 02 §12): campañas vencidas (5.17), comercios sin moderar y renovación doble (5.16c), aportación voluntaria y gestión de Mi Hucha (5.15), vales (5.14c) y cambio de fecha (5.13). **Comercios en dos modos** (5.16; Regla 02 §5). **Mi Hucha** sale apagada y `REGULATED_WALLET` se descarta (5.15 y 5.24b). **IVA, facturas y Veri\*factu** pasan a la skill [korum-fiscal-invoicing](../korum-fiscal-invoicing/SKILL.md) (5.20 y 5.23). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## 1. Adaptador y principios
 

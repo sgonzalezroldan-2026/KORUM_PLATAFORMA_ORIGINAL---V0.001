@@ -5,6 +5,8 @@ description: Quórum del buzón de ideas, antifraude en servidor (email canónic
 
 # Skill · Quórum, antifraude, doble firma y marco fiscal y de privacidad
 
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. **Fiscalidad:** el certificado solo existe cuando la campaña se consigue y el Modelo 182 recoge las campañas consolidadas en el ejercicio (5.22); lo fiscal pasa a la skill [korum-fiscal-invoicing](../korum-fiscal-invoicing/SKILL.md). **Firma única (5.19):** frase añadida a la confirmación y aviso de cada liberación al email general de la entidad; se podrá elegir en el alta (5.10c). **Privacidad (5.10):** rastros de seguridad desvinculados de la cuenta a los 12 meses, copia de «mis datos» con esos rastros, cambio de email verificado y cruce por huella solo entre cuentas con consentimiento. **Quién valida:** el promotor (Regla 04 §2). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+
 ## 1. Dos formas de participar
 
 1. **Aportar dinero (`💛 Aportar ahora`):** sin registro; en modo invitado solo se pide el email.

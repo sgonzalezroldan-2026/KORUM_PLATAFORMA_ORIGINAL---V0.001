@@ -12,7 +12,52 @@
 
 ---
 
+## Orden de trabajo vigente (2026-11-18)
+
+Sustituye a cualquier orden anterior. Las fichas están en «FASE 5 (continuación)» y en la FASE 6; el porqué de cada punto, en el [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md). Al abrir cada sprint el asistente dice **modelo, esfuerzo y duración estimada**.
+
+| # | Sesión o sprint | Qué resuelve | Entregas | Duración por entrega |
+| :-: | :--- | :--- | :-: | :-: |
+| 1 | SESIÓN T1 · Textos legales | N1 | 2 | 3–4 h + validación del promotor |
+| 2 | SESIÓN D1 · Decisiones pequeñas | P25 | 1 | 1 h |
+| 3 | 5.12 · Retirada de las rifas | N2 | 2 | 5–7 h |
+| 4 | 5.13 · Reglas de las entradas | N8 | 1 | 4–6 h |
+| 5 | 5.14 · Vales | N3 | 3 | 6–8 h |
+| 6 | SESIÓN R1 · Revisión crítica de producto | P12 | 1 | 3–4 h |
+| 7 | 5.10 · Cumplimiento en el código | P17, N16, P23 | 3 | 6–8 h |
+| 8 | 5.15 · Aceptación en el pago y devoluciones de 14 días | N13, N14, N15 | 1 | 5–7 h |
+| 9 | 5.16 · Comercios en dos modos | N4 | 3 | 6–8 h |
+| 10 | 5.17 · Campañas vencidas | N7 | 1 | 4–6 h |
+| 11 | 5.18 · Tarifas a 30 días | N9 | 1 | 4–6 h |
+| 12 | 5.19 · Liquidación y firma única | N11, N12 | 1 | 6–8 h |
+| 13 | 5.20 · IVA incluido y facturas | N5 | 2 | 6–8 h |
+| 14 | 5.21 · Auto-Impulso | N10 | 1 | 5–7 h |
+| 15 | 5.22 · Donativos y Modelo 182 | N17, N18 | 1 | 5–7 h |
+| 16 | 5.23 · Veri\*factu | N6, P2b | 1–2 | 6–8 h |
+| 17 | 5.11 · Endurecimiento | P18 | 2 | 6–8 h |
+| 18 | 5.24 · Cambios pequeños y deuda menor | N19, P26, P24, P8, P9 | 2 | 4–7 h |
+| 19 | 5.25 · Mejoras de la revisión crítica | P12 | 1–3 | 5–7 h |
+| 20 | 5.26 · Medición del negocio | P19 | 1 | 6–8 h |
+| 21 | 5.27 · Gamificación | P13 | 2–3 | 3–8 h |
+| 22 | SESIÓN V1 y, solo si se decide que sí, 5.28 · Rediseño visual | P5 | 1 (+4–6) | 4–8 h |
+| 23 | 5.29 · Landing y mensaje de valor | P11 | por lotes | 4–6 h |
+| 24 | SESIÓN I1 · Revisión de nativo de catalán e inglés | P20 | 1 | 2 h + 4–6 h |
+| 25 | 6.1a, 6.1b y 6.1c · Preproducción | 6.1, P14, P2a | 3 | 6–8 h + gestiones del promotor |
+| 26 | 6.1d · Rendimiento medido | P4 | 1 | 5–7 h |
+| 27 | 6.1e · Correcciones de las revisiones externas | P21, P6, P7 | 1–3 | 5–7 h |
+| 28 | 6.2 · Piloto con 3 entidades | 6.2, P15 | semanas | sesiones de 1–3 h |
+
+**Hasta dejar el código listo para la preproducción (puntos 1 a 18): unas 28 sesiones y entre 150 y 190 horas de trabajo del asistente.** Son estimaciones: la bitácora no guardaba duraciones hasta ahora.
+
+**En paralelo, sin código y a cargo del promotor:** P22 (rotar la clave de Stitch, hoy), P14 (dominio, datos de la empresa, cuentas y correo), P1 (proveedor de pagos definitivo), P3 (presupuesto, con seguros), P15 (entidades piloto), P2b (pedir ya los precios de Veri\*factu), el certificado digital para el Sprint 5.22, P2a (las 21 preguntas a Paycomet, justo antes del 6.1) y, cuando quiera, las cuatro consultas de N20.
+
+**El proyecto se da por terminado** cuando el piloto (6.2) cierra con la conciliación diaria sin diferencias. Tres cosas pueden añadir sprints y hoy no se pueden medir: lo que salga de la revisión crítica (5.25), las respuestas de Paycomet (12 preguntas bloquean los cobros reales; cambiar de proveedor sería un sprint entero) y lo que encuentren las revisiones externas y el piloto (6.1e).
+
+---
+
 ## Tareas externas aplazadas (decisión del promotor, 29-10-2026)
+
+> **Actualización (2026-11-18):** las filas «Revisión del abogado» y «Revisión de la asesoría fiscal» de esta tabla **quedan cerradas como tareas externas**: el promotor ha decidido los 144 puntos de [CUMPLIMIENTO §9](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) y valida él lo que decide (decisión 45 del §8); quedan cuatro consultas que no bloquean nada (N20). La fila «Activar `REGULATED_WALLET`» se descarta (decisión 38). Siguen vigentes las respuestas de Paycomet (21 preguntas; 12 bloquean los primeros cobros reales), el proveedor de Veri\*factu (Sprint 5.23) y la prueba con lector de pantalla (antes del 6.2).
 
 El promotor ha decidido **dejar para más adelante, hasta ver el resultado del proyecto**, las gestiones que dependen de terceros. No bloquean la construcción: todo se desarrolla contra el simulador y con textos marcados como borrador. **Sí bloquean el cobro de dinero real**: ninguna de estas tareas está hecha cuando termine el Sprint 5.6, y el Sprint 6.1 no puede empezar sin ellas.
 
@@ -47,6 +92,8 @@ Peticiones del promotor que aún no tienen sprint. El asistente las revisa al ab
   - **Dónde encaja:** los puntos 1, 4 y 5, junto a la bandeja de soporte (Sprint 5.3) o en un sprint propio antes del 5.6; los puntos 2 y 3, en el Sprint 6.1 (infraestructura).
 
 ## Puntos abiertos para tratar antes del Sprint 6.1 (anotados el 2026-11-16)
+
+> **Actualización (2026-11-18):** esta lista se conserva como historia. **Manda el [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md)**, que la recoge entera (P1–P26 y N1–N20), y el «Orden de trabajo vigente» de arriba.
 
 Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido: el asistente los retoma al cerrar el 5.9 y antes de abrir el 6.1.
 
@@ -556,10 +603,278 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 
 ---
 
+## FASE 5 (continuación) · Ajuste legal y fiscal, cierre técnico y producto
+
+> **Origen:** las decisiones del promotor del 2026-11-17 y del 2026-11-18 ([PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1, resumidas en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 47) y el [registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md). **Los sprints se ejecutan en el orden en que aparecen aquí**, no por su número: 5.10 y 5.11 conservan el suyo porque otros documentos ya los citan.
+> **Cómo leer cada ficha:** `⏱️` es la duración estimada de la sesión del asistente, con las 5 puertas incluidas; se afina con la duración real que cada cierre anota en la bitácora. «Entregas» son sesiones separadas (a, b, c). Las sesiones que no escriben código de la aplicación se llaman `SESIÓN`.
+> **Sin deuda nueva (Regla 04 §5):** lo que aparezca en un sprint se corrige dentro de él; si de verdad no cabe, se anota en el registro con un sprint de destino.
+> **Preguntas a terceros (Regla 04 §2):** cualquier duda legal, fiscal, de Paycomet o de Veri\*factu se le plantea primero al promotor.
+
+### Bloque A · Documentos y decisiones (sin código)
+
+- [ ] **SESIÓN T1 — Textos legales, contrato de encargo, evaluación de impacto y plazos (N1):**
+  - 🤖 **IA recomendada:** **Claude Fable 5.2 · esfuerzo alto** (alternativa: Claude Opus 5.5 · extra alto) · revisión `korum-legal-fiscal-prereviewer` + `korum-community-target-psychologist` (que se entiendan).
+  - ⏱️ **Duración estimada:** 2 entregas de 3–4 h, más la lectura y validación del promotor.
+  - **Alcance:** en castellano y a partir de lo que la aplicación hace de verdad: aviso legal; condiciones de uso (familias; entidades; comercios; aportación mensual; entradas y vales); política de privacidad; política de cookies; primera capa de cada formulario (pago de familias y de comercios, alta de entidad, buzón de ideas, soporte, Mi Hucha); contrato de encargo del tratamiento; evaluación de impacto con el modelo de la AEPD; y la tabla única de plazos de [CUMPLIMIENTO §6](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md). Se guardan en `docs/legal/` con versión y fecha.
+  - **Cláusulas y frases que deben estar** (salen de los puntos cerrados): firma única (`L-046`); cambios de tarifas a 30 días y baja libre y sin coste (`L-056`); el dinero de un comercio admitido no se devuelve y KORUM no media si la entidad retira el anuncio (`L-076`, `L-091`); textos que escribe la entidad (`L-037`); cartel del escaparate (`L-038`); registro de accesos de KORUM como encargado (`L-065`); destino del Fondo sin datos personales (`L-086`); móviles personales en la portería (`L-126`); rastros de seguridad, reenvío del enlace de voto, IndexNow y cámara (`L-006`, `L-063`, `L-074`, `L-075`, `L-127`); obligaciones fiscales de la entidad; mayoría de edad; regla de los 14 días (aportación voluntaria, gestión de Mi Hucha, vales, cambio de fecha); entradas sin desistimiento; reparto de papeles del §5.1.
+  - **Lo valida el promotor** (decisión 41). El catalán y el inglés se traducen en la SESIÓN I1.
+  - ⛓️ **Va antes de:** el Sprint 5.10a, que publica estos textos.
+
+- [ ] **SESIÓN D1 — Decisiones pequeñas que quedan (P25):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo medio**.
+  - ⏱️ **Duración estimada:** 1 h, con el promotor.
+  - **Alcance:** con el formato «qué pasa hoy, ejemplo, opciones, recomendación»: (1) gestión de Mi Hucha frente al coste de la pasarela (se puede dejar para cuando se encienda Mi Hucha); (2) si el Super-Admin puede intervenir en la portería; (3) chat de soporte del centro: contestar dos veces y reabrir; (4) fotografías de ambiente; (5) revisión cruzada con otro modelo. Cada decisión se anota con su sprint de destino (la 2 en el 5.13; la 3 en el 5.24a).
+  - ⛓️ **Va antes de:** el Sprint 5.13.
+
+### Bloque B · Quitar y sustituir
+
+- [ ] **SPRINT 5.12a — Retirada de las rifas: motor, datos y pruebas (N2):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Claude Fable 5.2 · medio) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Decisión del promotor (2026-11-18):** las rifas se retiran de la plataforma; la retirada de una función del prototipo queda aprobada de forma expresa (Regla 01 §6).
+  - **Alcance:** esquema y migración escrita a mano (subtipo de rifa, premios, acta del sorteo y sus rondas, plazo de reclamación); servicios y tareas (sorteo, ronda extra, avisos a ganadores), emails, semilla y pruebas unitarias y de integración. El escáner `verify-invariants.mjs` deja de exigir las guardas `RaffleDraw_*` e `Initiative_prize_count_locked` en la misma entrega en que la migración las elimina, y conserva todas las del libro mayor. Los datos de demostración de rifas se retiran; no hay datos reales que migrar.
+  - **Excepción de tamaño:** una retirada toca muchos archivos con pocos cambios en cada uno; no se aplica el tope de 4–8 archivos, sí el de una sola responsabilidad por entrega.
+  - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-qa-harness-gatekeeper`.
+  - **Gate QA:** `QA-RET01`.
+
+- [ ] **SPRINT 5.12b — Retirada de las rifas: pantallas, textos, pruebas de navegador y documentación (N2):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Claude Sonnet 5.5 · alto) · auditoría `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance:** Estudio (formato, plantilla y aviso normativo), ficha pública, pago, pase, portería (pantalla del sorteo), panel, preguntas frecuentes, landing y páginas pilar, tarjetas sociales, catálogos `messages/{es,ca,en}.json`, pruebas E2E y **toda la documentación** que hoy describe las rifas (PRD, EXPERIENCIA, GLOSARIO, QA, DECISIONES, skills y agentes de `.agents/`, README; en el índice del prototipo, nota de «función retirada»). Al cerrar no queda ninguna mención a rifas, papeletas o sorteos fuera de la bitácora y de los documentos históricos de la prerrevisión.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-ticketing-qr`, `korum-seo-discoverability`, `korum-qa-harness-gatekeeper`.
+  - **Gate QA:** `QA-RET01`, `QA-X02`, `QA-X03`.
+
+- [ ] **SPRINT 5.13 — Reglas de las entradas: liquidar por lo vendido, cancelación y cambio de fecha (N8):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance (decisión 30):** un evento con entradas vendidas que llega a su fecha pasa a liquidable por lo vendido (hoy pasa a «vencido»); sin ventas, se cierra sin dinero que mover; cancelar devuelve el 100 %; cambiar la fecha avisa a cada comprador con un enlace para recuperar el 100 % durante 14 días, de forma automática y sin el Super-Admin; la pizarra aclara que el «neto garantizado» es el neto si se vende todo el aforo. Además: aviso al voluntario sobre lo que guarda su móvil (`L-123`), plazo propio de las lecturas de portería (`L-124`), texto para no reenviar el enlace de la portería (`L-134`) y lo que se decida en la SESIÓN D1 sobre el Super-Admin en la portería.
+  - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-TKT10`.
+
+- [ ] **SPRINT 5.14a — Vales: motor (N3):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance (decisión 32):** modelo de datos de una venta de vales (precio único, tope o sin tope, fecha de validez, «seguir aportando sin producto» al agotarse); compra con asiento en el libro mayor; **un solo QR firmado por compra, con su saldo**; canje parcial atómico (un vale no se gasta dos veces, probado con concurrencia en PostgreSQL real); «Gastos de gestión digital» con tarifa propia para vales en la consola (sumados o incluidos, a elección de la entidad); sin certificado y fuera del Modelo 182.
+  - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-tco-calculator`.
+  - **Gate QA:** `QA-VAL01`, `QA-VAL02`.
+
+- [ ] **SPRINT 5.14b — Vales: Estudio, ficha pública, compra y pase (N3):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Claude Opus 5.5 · alto) · auditoría `ux-school-director-reviewer` + `fintech-escrow-auditor` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** en el Estudio, la venta de vales con un texto descriptivo libre (sin lista de artículos) y su pizarra; ficha pública con precio, validez y existencias; compra en 10 segundos; pase con el QR y el saldo; emails de compra; tarjeta social; los tres idiomas. El aviso «sin producto» es claro antes de pagar.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-ticketing-qr`, `korum-brand-design-system`, `korum-seo-discoverability`.
+  - **Gate QA:** `QA-VAL03`, `QA-X02`, `QA-X03`.
+
+- [ ] **SPRINT 5.14c — Vales: puesto con lector, devolución, caducidad y liquidación (N3):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** puesto de canje con lector móvil y PIN (se lee el QR, se ve el saldo y se teclea cuántos vales se gastan); devolución del 100 % con un clic durante 14 días si no se ha gastado ningún vale de esa compra; después, a fondo perdido; recordatorio automático una semana antes de caducar; cancelación (se devuelve el 100 % de lo no gastado) y cambio de fecha (regla del 5.13); liquidación por lo vendido al cerrar la venta, pasados los 14 días; venta de 60 días como máximo.
+  - **Skills:** `korum-ticketing-qr`, `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-VAL04`, `QA-VAL05`.
+  - ⛓️ **Depende de:** la respuesta de Paycomet sobre la venta de vales solo para cobros reales; se construye contra el simulador.
+
+- [ ] **SESIÓN R1 — Revisión crítica de producto (P12):**
+  - 🤖 **IA recomendada:** **Claude Fable 5.2 · esfuerzo alto** · con `ux-school-director-reviewer` y `korum-community-target-psychologist` en contextos separados.
+  - ⏱️ **Duración estimada:** 3–4 h; solo informe.
+  - **Alcance:** repaso crítico de toda la aplicación, ya sin rifas y con vales: negocio, control, automatismos, simplificación, textos y diseño. Entrega una tabla (pantalla o flujo, problema o idea, impacto, esfuerzo, riesgo, recomendación) y una propuesta de qué entra en el Sprint 5.25. Parte de las nueve hipótesis del registro (P12). El promotor decide qué entra.
+
+### Bloque C · Base legal en el código
+
+- [ ] **SPRINT 5.10a — Cumplimiento: textos legales publicados, versiones y aceptación (P17):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `korum-legal-fiscal-prereviewer` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** páginas públicas de aviso legal, condiciones, privacidad y cookies en los tres idiomas, enlazadas en el pie, con **archivo inmutable de cada versión** (contenido, huella y fecha) e idioma y versión guardados en cada aceptación (`L-057`); primera capa de privacidad en cada formulario (`L-020`); aceptación registrada del contrato de encargo y de las condiciones en el alta de la entidad; ningún consentimiento se registra con una versión que no esté publicada; **antiindexación de todo lo que no sea producción** (`noindex` y `robots.txt`, con prueba).
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`, `korum-seo-discoverability`.
+  - **Gate QA:** `QA-LEG01`, `QA-LEG02`, `QA-SEO04`.
+  - ⛓️ **Depende de:** la SESIÓN T1 (textos validados por el promotor).
+
+- [ ] **SPRINT 5.10b — Cumplimiento: la cuenta y los derechos de la persona (P17, N16):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** trámite verificado para cambiar el email de una cuenta y autoría de cada consulta (`L-053`); copia de «mis datos» con los rastros de seguridad propios de los últimos 12 meses (`L-067`) y con la sección «Información sobre el tratamiento» (`L-011`); rastros de seguridad desvinculados de la cuenta a los 12 meses (`L-064`); textos de la supresión (`L-010`); plazos que faltan (`L-015`); **purgas pendientes** (altas sin verificar en 7 días, auditoría, ficheros públicos retirados).
+  - **Skills:** `korum-quorum-antifraud`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-LEG03`, `QA-LEG04`.
+
+- [ ] **SPRINT 5.10c — Cumplimiento: la entidad, el buzón de ideas y la consola (P17, P23):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** firma única también en el alta; KYB exigido al publicar; documento de identidad de quien representa visible solo para quien lo subió y el Super-Admin (`L-042`); párrafo informativo en la invitación a firmar (`L-045`); fecha, hora y código en el aviso de relevo (`L-049`); email directo de KORUM conservado 12 meses, con recordatorio de que no es para publicidad (`L-054`, `L-051`); compromiso de confidencialidad y revisión semestral de accesos a la consola (`L-059`); «sin datos de personas» en la nota de precios (`L-055`); en el buzón: duración de la cookie (`L-004`), plazo de la huella (`L-005`), motivo al dar por buena una firma (`L-007`) y cruce por huella solo entre cuentas con consentimiento (`L-018`). **Verificación de la deuda heredada (P23):** se comprueba en el código cada punto de su lista y se corrige aquí o se le da sprint.
+  - **Skills:** `korum-quorum-antifraud`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-LEG05`.
+
+- [ ] **SPRINT 5.15 — Aceptación en el pago y devoluciones de 14 días (N13, N14, N15):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance:** una sola línea junto al botón de pago («Al pagar aceptas las condiciones», con enlace), versión aceptada guardada en cada pago y resumen de lo que aplica en el email del recibo (decisión 39); enlace en el recibo para recuperar la **aportación voluntaria** durante 14 días, automático y con su contra-asiento (decisión 22); **Mi Hucha apagada por defecto** (`hucha.mode = DISABLED`), condiciones propias con versión y devolución automática de la gestión si se cancela en 14 días, nunca de la donación (decisión 38, `L-016`). Los textos oficiales de la Regla 03 §3 no cambian.
+  - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`, `korum-fiscal-invoicing`.
+  - **Gate QA:** `QA-LEG06`, `QA-PAY12`.
+  - ⛓️ **Depende de:** el Sprint 5.10a (versiones publicadas).
+
+### Bloque D · Reglas de dinero
+
+- [ ] **SPRINT 5.16a — Comercios en dos modos: motor (N4):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance (decisión 23):** modo de la entidad (donación por defecto; publicidad con la declaración de que puede facturar con IVA, registrada, con aviso a la otra persona firmante y sin el Super-Admin); un cambio de modo solo afecta a los pagos nuevos; en donación, el dinero entra directo y suma al momento; en publicidad, el IVA de la entidad va encima del nivel; gestión de KORUM con dos porcentajes en la consola; el proyecto ve siempre el nivel íntegro; el mismo comercio reconocido por NIF y email; ampliaciones que suman a la categoría dentro del año; donación de comercio a entidad con la Ley 49/2002 acreditada dentro del Modelo 182.
+  - **Skills:** `korum-escrow-payments`, `korum-tco-calculator`, `korum-fiscal-invoicing`.
+  - **Gate QA:** `QA-COM10`, `QA-COM11`.
+
+- [ ] **SPRINT 5.16b — Comercios en dos modos: pantallas y pago (N4):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** (alternativa: Claude Opus 5.5 · alto) · auditoría `ux-school-director-reviewer` + `fintech-escrow-auditor` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** pago del comercio en cada modo, con la **casilla obligatoria** de aceptación y su versión (`L-088`), qué datos verá la entidad (`L-040`), el plazo de 70 días hasta el Fondo y qué pasa si el pago llega con la campaña cerrada (`L-081`, `L-082`), y su domicilio fiscal; en donación, agradecimiento **solo con el nombre** y solo si la entidad lo activa, sin categorías Oro, Plata y Bronce en público, y Matching 2x anónimo; en publicidad, lo de hoy; panel de la entidad: activar el modo, activar el agradecimiento, avisos de cada donación.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-brand-design-system`.
+  - **Gate QA:** `QA-COM12`, `QA-X02`, `QA-X03`.
+
+- [ ] **SPRINT 5.16c — Comercios en dos modos: plazos, renovación y avisos (N4):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** moderación en modo publicidad con devolución automática a los 14 días y avisos a 7, 3 y 1 (decisión 24, `L-090`); factura de la entidad subida tras admitir, con recordatorios; enlace de renovación que se cierra al pagarse, segundo pago devuelto con un botón durante 14 días (`L-089`); la renovación propone la categoría actual; página de renovación que enseña y deja corregir los datos de facturación (`L-079`); enlace de baja en cada email de renovación y baja de la invitación (`L-078`, `L-087`); texto del email de no admisión (`L-037`), retirada del cartel (`L-038`) y purga del contacto de un comercio cobrado (`L-039`).
+  - **Skills:** `korum-escrow-payments`, `korum-fiscal-invoicing`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-COM13`, `QA-COM14`.
+
+- [ ] **SPRINT 5.17 — Campañas vencidas: devolución automática a los 14 días (N7):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance (decisión 29, `L-113`):** si la entidad no decide en 14 días desde el vencimiento (o antes, cuando ya no da tiempo a votar dentro de la ventana de 90 días), la plataforma devuelve el 100 % sola y avisa; avisos a quienes firman 7, 3 y 1 días antes; el día del vencimiento, email a cada persona que donó con la fecha exacta en que, como muy tarde, recupera su dinero; preguntas frecuentes con el calendario y la votación; se conserva el vínculo entre voto y donación (`L-112`). El plazo es un valor único que puede acortarse según responda Paycomet.
+  - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-PAY13`.
+
+- [ ] **SPRINT 5.18 — Tarifas: todo cambio a 30 días y condiciones guardadas al publicar (N9):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance (decisión 34, `L-056`):** todo cambio global de tarifas entra en vigor a los 30 días y solo vale para lo publicado después; email automático a quienes firman y aviso en el Estudio durante esos 30 días; cada campaña, taquilla y venta de vales **guarda la tarifa con la que se publicó** (hoy la compra de entradas lee la tarifa actual); tarifas propias de una entidad: al momento si mejoran, a 30 días y con aviso si empeoran; texto anterior guardado en cada cambio con la campaña recaudando (`L-096`).
+  - **Skills:** `korum-tco-calculator`, `korum-ticketing-qr`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-FIN07`.
+
+- [ ] **SPRINT 5.19 — Liquidación: solo a la cuenta de la entidad, entrega automática y firma única (N11, N12):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance (decisiones 36 y 37):** el destino `PROVIDER` deja de ofrecerse y se reparte solo a la cuenta verificada de la entidad, que sigue adjuntando la factura de su proveedor; cinco días antes de que venza la ventana de 90 días de un cobro, **entrega automática** a esa cuenta, con aviso a quienes firman y auditoría, también en el Fondo de actividades; firma única: frase añadida a la confirmación y aviso de cada liberación de dinero al email general de la entidad.
+  - **Skills:** `korum-escrow-payments`, `korum-quorum-antifraud`.
+  - **Gate QA:** `QA-PAY14`, `QA-SEC14`.
+
+- [ ] **SPRINT 5.20a — IVA incluido: libro mayor, BI y alertas (N5):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance (decisión 21):** la cuota de IVA (21/121 del importe mostrado) se separa en los asientos de la comisión por tramos, el mantenimiento, los Gastos de gestión digital (entradas y vales) y la gestión de Mi Hucha; nadie paga más y metas, pizarra y textos oficiales no cambian; el BI, las seis fuentes, la proyección y las alertas 🚨 y 💎 cuentan el ingreso **sin IVA**; la aportación voluntaria, sin IVA. Se actualiza el plan de negocio.
+  - **Skills:** `korum-fiscal-invoicing`, `korum-tco-calculator`, `korum-escrow-payments`.
+  - **Gate QA:** `QA-FIS10`, `QA-FIN08`.
+
+- [ ] **SPRINT 5.20b — Facturas: completa a entidades y comercios, simplificada en el recibo (N5):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** factura completa a la entidad por la comisión y el mantenimiento de cada liquidación, con base, IVA y total; factura simplificada a familias y compradores dentro del email del recibo, con enlace al PDF y sin adjuntos; ninguna factura por la aportación voluntaria; rectificativa que identifica la factura que corrige; contracargo de un comercio facturado: se anula solo si el banco indica fraude (decisión 27); cada factura cuadra al céntimo con su asiento.
+  - **Skills:** `korum-fiscal-invoicing`, `korum-escrow-payments`.
+  - **Gate QA:** `QA-FIS11`, `QA-FIS12`.
+
+- [ ] **SPRINT 5.21 — Auto-Impulso: siempre visible, compensado en el reparto y 💎 sin IVA (N10):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance (decisión 33):** desaparecen el ajuste `autoBoost.publicDisclosureDefault` y la elección en cada ejecución; la ficha lo dice siempre, sin importe; frase en el email a quienes donaron («gracias a ti y a toda la comunidad»); línea «Aportación de la plataforma KORUM» con su importe en el justificante de liquidación y en el expediente; solo en campañas con presupuesto (se rechaza y se oculta el 💎 en entradas y vales); **compensación en el reparto** (KORUM cobra esa cantidad de menos; la factura sigue siendo por la comisión entera); 💎 calculado sobre la comisión sin IVA.
+  - **Skills:** `korum-tco-calculator`, `korum-escrow-payments`, `korum-fiscal-invoicing`.
+  - **Gate QA:** `QA-FIN09`, `QA-PAY15`.
+  - ⛓️ **Depende de:** el Sprint 5.20a.
+
+- [ ] **SPRINT 5.22 — Donativos y Modelo 182 (N17, N18):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `korum-legal-fiscal-prereviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance (decisiones 28, 42 y 46):** el certificado fiscal solo está disponible cuando la campaña se consigue y cuenta en ese año; el Modelo 182 de cada ejercicio recoge las campañas consolidadas en él; una campaña que un contracargo reabre deja sus certificados en suspenso; texto del certificado con las menciones del art. 24 de la Ley 49/2002 y el proyecto final tras un redimensionamiento (`L-028`, `L-114`); persona de contacto editable (`L-030`); declaración complementaria y sustitutiva (`L-032`); colegios con ánimo de lucro: solo entradas y vales; **comprobación del Modelo 182 campo a campo** contra el diseño oficial vigente y fichero de prueba con un caso de cada tipo.
+  - **Skills:** `korum-fiscal-invoicing`, `korum-quorum-antifraud`.
+  - **Gate QA:** `QA-FIS13`, `QA-FIS14`.
+  - ⛓️ **Depende de:** el certificado digital del promotor para subir el fichero al entorno de pruebas de la Agencia Tributaria.
+
+- [ ] **SPRINT 5.23 — Veri\*factu (N6):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 1–2 entregas de 6–8 h.
+  - **Alcance (decisión 44):** al empezar, se vuelve a comprobar la fecha de obligación en el BOE y se comparan las dos vías con precios reales: un proveedor o el envío directo a la Agencia Tributaria con el certificado de KORUM; el promotor elige. Después: adaptador real de `InvoicingProvider`, registro de la rectificativa con sus campos (`L-141`), NIF del destinatario cuando proceda, leyenda de la factura, QR y su entorno de pruebas, envío en el propio flujo de emisión y cuadre al céntimo de todas las facturas con el libro mayor.
+  - **Skills:** `korum-fiscal-invoicing`, `korum-escrow-payments`.
+  - **Gate QA:** `QA-FIS15`.
+  - ⛓️ **Depende de:** los precios de los proveedores (P2b) y el certificado digital de KORUM.
+
+### Bloque E · Cierre técnico
+
+- [ ] **SPRINT 5.11a — Endurecimiento: secretos, cola de emails y trazabilidad (P18):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** `env.ts` rechaza los secretos de ejemplo publicados antes de cualquier despliegue; el `token` y el `otp` de la cola de emails se guardan cifrados; identificador por petición que enlaza la auditoría, Sentry y los registros del servidor; cadena de huellas de la auditoría comprobada en la conciliación diaria.
+  - **Skills:** `korum-quorum-antifraud`, `korum-escrow-payments`.
+  - **Gate QA:** `QA-SEC15`, `QA-SEC16`.
+
+- [ ] **SPRINT 5.11b — Endurecimiento: subidas, límites, conciliación y concurrencia (P18):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** subida directa al almacén con URL firmada; IP de confianza y topes de peticiones preparados para la plataforma elegida (su comprobación con infraestructura real es del 6.1a); riesgo de doble reembolso revisado y conciliación ampliada a devoluciones y repartos; integración con `pg@9`; concurrencia validada con PostgreSQL real en las funciones que solo se habían revisado leyendo el código (ya sin el sorteo, e incluido el canje de vales).
+  - **Skills:** `korum-escrow-payments`, `korum-quorum-antifraud`, `korum-qa-harness-gatekeeper`.
+  - **Gate QA:** `QA-SEC17`, `QA-PAY16`.
+
+- [ ] **SPRINT 5.24a — Cambios pequeños: imágenes, soporte y textos (N19):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance:** retirada de una imagen a petición de una familia, con plazo de 72 horas (`L-008`); caché de las imágenes públicas de una hora y limpieza de objetos retirados (`L-102`); aviso en el formulario de soporte (`L-115`); denunciar y ocultar una respuesta del centro (`L-121`); frase del 100 % en el informe del kit de medallas (`L-035`); aviso de que las plantillas son orientativas (`L-097`); lo decidido en la SESIÓN D1 sobre el chat de soporte del centro.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-quorum-antifraud`.
+  - **Gate QA:** `QA-LEG07`.
+
+- [ ] **SPRINT 5.24b — Deuda menor, retirada del monedero con saldo y documentación (P26, P24, P8, P9):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** · auditoría `ux-school-director-reviewer` + `fintech-escrow-auditor` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance:** la lista de deuda menor y cosmética del registro (P26), ya sin los puntos de rifas; **retirada del modo `REGULATED_WALLET`** del código, de los textos y del aviso oficial de retirada de saldo de la Regla 03 §3 (decisión 38); documentación sin Gemini (P8); experiencia del acceso a la demo y nota del README (P9). Al cerrar, el registro no tiene ningún punto de código sin sprint.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-escrow-payments`, `korum-qa-harness-gatekeeper`.
+  - **Gate QA:** `QA-X02`, `QA-X03`.
+
+### Bloque F · Producto
+
+- [ ] **SPRINT 5.25 — Mejoras elegidas de la revisión crítica (P12):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto**; **Claude Opus 5.5 · alto** si una mejora toca dinero o seguridad · auditoría según lo que se toque.
+  - ⏱️ **Duración estimada:** 1–3 entregas de 5–7 h (se concreta tras la SESIÓN R1).
+  - **Alcance:** lo que el promotor elija del informe de la SESIÓN R1. Cada mejora elegida se escribe aquí con su alcance antes de empezar; lo que no se elija se descarta de forma expresa, no se deja como deuda.
+
+- [ ] **SPRINT 5.26 — Medición del negocio (P19):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** · auditoría `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 6–8 h.
+  - **Alcance:** analítica sin cookies conectada, sin datos personales; eventos del embudo de aportación (`checkout_open`, `payment_success`, `share_click` y los demás de EXPERIENCIA §9); métricas de negocio leídas de la base de datos; pantalla en la consola con el embudo de entidades y las métricas del piloto.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-seo-discoverability`.
+  - **Gate QA:** `QA-MET01`.
+  - ⛓️ **Depende de:** el dominio definitivo (P14) para dejarla configurada del todo.
+
+- [ ] **SPRINT 5.27 — Gamificación (P13):**
+  - 🤖 **IA recomendada:** propuesta con **Claude Fable 5.2 · esfuerzo alto** y `korum-community-target-psychologist`; construcción con **Claude Sonnet 5.5 · esfuerzo alto** · auditoría `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** propuesta de 3–4 h y 1–2 entregas de 6–8 h.
+  - **Alcance:** propuesta de 2–3 mecánicas con maqueta y métricas de éxito, dentro de las reglas de la casa (sin presión social, sin ranking de personas, sin importes por curso, nada que parezca un sorteo o un incentivo económico); el promotor elige y se construye. Parte de lo que ya existe: medallas, retos por curso, sellos, celebraciones y galería Antes/Después.
+  - **Skills:** `korum-brand-design-system`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-X02`, `QA-X03`.
+
+- [ ] **SESIÓN V1 — Rediseño visual: decidir sí o no (P5):**
+  - 🤖 **IA recomendada:** **Claude Fable 5.2 · esfuerzo alto** con `korum-brand-visual-director`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance:** tres propuestas en maqueta de tres pantallas (portada de entidad, ficha con pago y panel de la entidad); el promotor decide **sí o no**. Si es no, P5 se cierra.
+
+- [ ] **SPRINT 5.28 — Rediseño visual (solo si la SESIÓN V1 dice que sí) (P5):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** con `korum-brand-visual-director` · auditoría `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 entregas de 6–8 h.
+  - **Alcance:** primero por tokens (`globals.css`), después pantalla a pantalla; se actualizan la skill de marca y la Regla 03 y se rehacen los E2E que dependan de la estructura.
+
+- [ ] **SPRINT 5.29 — Landing y mensaje de valor (P11):**
+  - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo alto** con `korum-community-target-psychologist` y `korum-seo-discoverability-specialist` · auditoría `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h por lote de cambios del promotor.
+  - **Alcance:** la revisión del promotor de textos y microcorrecciones de la landing, por lotes («dónde → qué»), con el mensaje de valor en la portada, la página de precios y las preguntas frecuentes: **«entras gratis, te vas cuando quieres y solo pagas cuando obtienes resultados»**. Los textos oficiales de la Regla 03 §3 no se tocan sin aprobación expresa.
+  - **Skills:** `korum-nextjs-multitenant-ui`, `korum-seo-discoverability`, `korum-brand-design-system`.
+  - **Gate QA:** `QA-X02`, `QA-X03`.
+
+- [ ] **SESIÓN I1 — Revisión de nativo de catalán e inglés (P20):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** para preparar el material y aplicar las correcciones.
+  - ⏱️ **Duración estimada:** 2 h de preparación, la revisión de la persona nativa y 4–6 h para aplicarla.
+  - **Alcance:** se hace una sola vez, con todos los textos congelados: catálogos completos, textos legales de la SESIÓN T1 traducidos, nombres de curso de la plantilla y los textos oficiales de la Regla 03 §3, que se guardan como textos legales versionados.
+
+---
+
 ## FASE 6 · Preproducción y piloto
 
 - [ ] **SPRINT 6.1 — Preproducción: infraestructura en la UE, dominios, copias de seguridad y manual de operación:**
-  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Gemini Argon · medio).
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** (alternativa: Claude Fable 5.2 · medio) · auditoría `antifraud-legal-guardian` + `fintech-escrow-auditor` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 3 entregas de 6–8 h, más las gestiones del promotor (cuentas, dominio, contrato y credenciales de Paycomet).
+  - **Reparto en entregas (2026-11-18):** **6.1a · Infraestructura y datos** (entornos separados, base en la UE, copias y restauración real, rol `korum_app`, cron, cubos de ficheros, Sentry, IP de confianza y topes en el borde, cookie por HTTPS y ensayo de rotación de la clave de cifrado) · **6.1b · Pagos y correo reales** (pago, reparto, reembolso y contracargo en el entorno de pruebas de Paycomet, página de pago, conciliación, venta de vales, cuenta real de email con SPF, DKIM y DMARC, y entorno de pruebas de Veri\*factu) · **6.1c · Descubribilidad, dispositivos y operación** (Search Console, Bing, IndexNow y tarjetas con el dominio definitivo; cámara y audio de la portería y del puesto de vales en iPhone y Android; `docs/MANUAL_OPERACION.md`; simulacro de restauración; `QA-OPS03`).
+  - **Actualización (2026-11-18):** de los «heredados» de abajo, los Sprints 5.10 y 5.11 absorben lo que se puede hacer sin infraestructura real (identificador por petición, cadena de huellas, cifrado de la cola de emails, secretos de ejemplo, subida directa, conciliación de devoluciones y repartos, concurrencia con PostgreSQL real) y el 5.22 y el 5.23, lo fiscal (Modelo 182 y Veri\*factu). **Aquí queda lo que solo se puede comprobar con infraestructura real.** Donde dice «que el abogado valide» o «la asesoría debe revisar», vale la decisión 45 de [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md): lo valida el promotor. Las menciones a rifas y a `drawRaffle` quedan sin objeto tras el Sprint 5.12. Antes de abrirlo, el promotor envía las 21 preguntas a Paycomet (P2a).
   - **Heredado de la trazabilidad (decisión del promotor, 2026-11-15):** un **identificador por petición** que enlace la auditoría, los errores de Sentry y los registros del servidor de una misma operación, y la **prueba de que la auditoría no se ha manipulado** (cada registro con la huella del anterior, comprobada en la conciliación diaria). El visor y el expediente son del Sprint 5.8.
   - **Heredado del Sprint 5.5b:** la declaración de accesibilidad (`/accesibilidad`) toma su canal de `platform.company.supportEmail` (o `privacyEmail`): **configurar los datos de la empresa en `/admin/ajustes` antes de abrir al público**, o la página dirá que el buzón se publicará pronto. Configurar también `seo.indexNowKey` con el dominio definitivo y comprobar que `/indexnow-key.txt` la sirve.
   - **Heredado del Sprint 3.6:** (1) **IP de las familias:** `trustedClientIp` (`src/lib/trusted-ip.ts`) prefiere `x-vercel-forwarded-for`, luego `x-real-ip` y por último el primer valor de `x-forwarded-for`. Confirmar en la preproducción cuál entrega la plataforma elegida y, si es otra, ajustar el orden: con una cabecera que el cliente pueda falsear, la regla padre/madre y la ráfaga se pueden esquivar. La alerta `TRUSTED_IP_MISSING` avisa en la consola si no llega ninguna. (2) **Imágenes públicas:** el HTML apunta a `/api/files/public/{id}`, que redirige (302, caché de un año) al cubo público de Supabase; con almacén real se puede servir directamente desde un dominio propio o CDN. (3) La cookie `korum_device` es `Secure`: en preproducción debe servirse por HTTPS. (4) Tope de subida de fotos: 4 MB por el límite de cuerpo de Vercel; para más, URL firmada de subida directa.
@@ -578,8 +893,21 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - **Heredado del Sprint 2.2:** validar con PostgreSQL real (CI o `TEST_DATABASE_URL`) la concurrencia de `signIdea`, `requestSignature` y `completeSignature`. En local la base tiene una sola conexión: los bloqueos solo se han revisado leyendo el código.
   - **Heredado del Sprint 2.1:** antes de cualquier despliegue fuera de local, también una demo, `env.ts` debe rechazar los secretos publicados en `ci.yml` y `playwright.config.ts`. Antes de cobrar dinero real: confirmar el `AuthCode` de cada cobro contra la API, validar los formatos de las notificaciones con el sandbox y ver la CI con PostgreSQL real, porque los bloqueos entre transacciones solo se han revisado leyendo el código.
 
+- [ ] **SPRINT 6.1d — Rendimiento medido en la preproducción (P4):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 5–7 h.
+  - **Alcance:** medir en la preproducción (LCP, INP, JavaScript inicial y consultas lentas) y optimizar solo lo que salga mal, incluida la deuda de volumen anotada: `loadLedgerPerInitiative` con `GROUP BY`, `loadBiSnapshot` por una sola fila, propagación de ajustes por lotes, cursor en el cierre de donaciones y la pulsación de «Filtrar».
+  - **Gate QA:** `QA-X03` y los presupuestos de rendimiento de EXPERIENCIA §7.
+
+- [ ] **SPRINT 6.1e — Correcciones tras la accesibilidad real, la revisión externa y la prueba de intrusión y de carga (P21, P6, P7):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** para seguridad y dinero; **Claude Sonnet 5.5 · alto** para experiencia · auditoría según lo que se toque.
+  - ⏱️ **Duración estimada:** 1–3 entregas de 5–7 h (se concreta con los informes).
+  - **Alcance:** lo que encuentren la prueba del promotor con VoiceOver, TalkBack y teclado en el pago, la portería y el puesto de vales (P21; al terminar se actualiza `/accesibilidad`), la revisión crítica externa (P6: el asistente prepara el dossier y prioriza; el promotor elige qué entra) y la prueba de intrusión y de carga de una empresa independiente (P7: todo hallazgo de seguridad se corrige). Lo que no se elija se descarta de forma expresa.
+  - ⛓️ **Depende de:** P21 (promotor), P6 y P7 (externos, con presupuesto en P3).
+
 - [ ] **SPRINT 6.2 — Piloto con las primeras 3 entidades:**
   - 🤖 **IA recomendada:** **Claude Sonnet 5.5 · esfuerzo medio** para ajustes y soporte; **Claude Opus 5.5 · alto** si aparece un problema de dinero o seguridad.
-  - ⛓️ **Depende de:** contrato de Paycomet en producción, KYB real de las 3 entidades y textos legales publicados.
-  - **Alcance:** alta acompañada de las 3 entidades, primera campaña de presupuesto y primera taquilla o rifa, seguimiento diario de las métricas de [EXPERIENCIA_DE_PRODUCTO.md](EXPERIENCIA_DE_PRODUCTO.md) §9, registro de incidencias en la bitácora y lista priorizada de mejoras.
+  - ⏱️ **Duración estimada:** varias semanas de piloto, con sesiones de 1–3 h para ajustes y soporte.
+  - ⛓️ **Depende de:** contrato de Paycomet en producción, KYB real de las 3 entidades (P15), textos legales publicados, Veri\*factu en marcha (5.23), P21 hecha y los Sprints 6.1d y 6.1e cerrados.
+  - **Alcance:** alta acompañada de las 3 entidades, primera campaña de presupuesto y primera taquilla o venta de vales, seguimiento diario de las métricas de [EXPERIENCIA_DE_PRODUCTO.md](EXPERIENCIA_DE_PRODUCTO.md) §9, registro de incidencias en la bitácora y lista priorizada de mejoras. **Con su cierre el proyecto se da por terminado**; lo que quede en esa lista es evolución del producto.
   - **Gate QA:** conciliación diaria sin diferencias durante todo el piloto.

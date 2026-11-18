@@ -1,6 +1,8 @@
 # Glosario · KORUM
 
 > Significado único de cada término. Si un documento usa un término de otra forma, manda este glosario. Los **códigos internos** (en `monoespacio`) no se traducen; las **etiquetas visibles** viven en `messages/{es,ca,en}.json`.
+>
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) dejan de usarse entonces; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## Entidades y personas
 
@@ -13,14 +15,14 @@
 | **`DIRECTOR`** | Rol de gestión principal y 1ª firma de la entidad (Dirección del centro, Presidencia del club…). |
 | **`COSIGNER`** | Rol de 2ª firma mancomunada (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato, Titularidad del colegio…). Su cargo visible es `roleLabel`. |
 | **Doble firma (*2-Man Rule*)** | Aprobación que exige dos firmas de dos personas distintas (`DIRECTOR` + `COSIGNER`) para aprobar ideas y liberar fondos. |
-| **Portería** | Vista móvil para validar entradas y hacer sorteos (`/panel/[orgSlug]/porteria`), con PIN por evento y `GateSession`. |
+| **Portería** | Vista móvil para validar entradas (hasta el Sprint 5.12, también hacer sorteos; desde el 5.14c, canjear vales en el puesto) (`/panel/[orgSlug]/porteria`), con PIN por evento y `GateSession`. |
 | **Super-Admin** | Persona que opera la plataforma KORUM (`User.isSuperadmin`). |
 
 ## Campañas y estados
 
 | Término | Significado |
 | :--- | :--- |
-| **Iniciativa / campaña** | Objetivo de recaudación de una entidad. Formato `BUDGET` (presupuesto de una mejora) o `TICKETING` (entradas o rifa). |
+| **Iniciativa / campaña** | Objetivo de recaudación de una entidad. Formato `BUDGET` (presupuesto de una mejora) o `TICKETING` (entradas; la rifa se retira en el Sprint 5.12 y la venta de vales llega en el 5.14). |
 | **Estados** | `BUDGETING` (Presupuestación) · `FUNDRAISING` (Recaudando) · `GOAL_REACHED` (¡Conseguido!) · `CLOSED` (Cerrada) · `EXPIRED` (Vencida) · `RESIZE_VOTING` (Votación de redimensionamiento) · `REFUNDING` (Devolviendo) · `REFUNDED` (Reembolsada) · `CANCELLED` (Cancelada). Transiciones en el PRD §4. |
 | **Hucha de la iniciativa (`WLT-ESC-XXX`)** | Referencia del dinero retenido de una iniciativa en Paycomet. En público se llama así; "Escrow" es solo el término interno. |
 | **Todo o nada** | Si no se alcanza la meta, se devuelve el 100 % de lo cobrado (o se vota redimensionar). |
@@ -40,8 +42,8 @@
 | **Paycomet** | Entidad de pago que cobra, retiene, reparte y devuelve el dinero. KORUM no custodia fondos. |
 | ***Split transfer*** | Reparto de Paycomet desde el saldo cobrado a la cuenta destino de una entidad. Solo dentro de los **90 días** siguientes al cobro. |
 | **KYB** | Verificación de la entidad titular antes de cobrar: CIF, estatutos o escrituras, DNI de quien la representa y certificado de titularidad de su cuenta (más la acreditación de la Ley 49/2002 si la declara). Se suben en *Ajustes* del panel y se envían a revisión. |
-| **Estudio de edición** | Pantalla de la entidad (`/panel/{slug}/estudio`) donde diseña una campaña de presupuesto o de taquilla/rifa, ve la pizarra TCO en vivo y la publica con confirmación. |
-| **Plantilla de campaña** | Punto de partida del Estudio (confort, patio, excursión, becas, festival, rifa…): rellena título, descripción y categoría, nunca el presupuesto de un proveedor. |
+| **Estudio de edición** | Pantalla de la entidad (`/panel/{slug}/estudio`) donde diseña una campaña de presupuesto o de taquilla (la rifa se retira en el Sprint 5.12; la venta de vales llega en el 5.14), ve la pizarra TCO en vivo y la publica con confirmación. |
+| **Plantilla de campaña** | Punto de partida del Estudio (confort, patio, excursión, becas, festival…; la de rifa se retira en el Sprint 5.12): rellena título, descripción y categoría, nunca el presupuesto de un proveedor. |
 | **Cartel A4 con QR** | Hoja imprimible de una campaña que está recaudando, con QR real hacia su ficha pública, título y mensaje de la entidad y la dirección escrita. |
 | **TCO / pizarra TCO** | Desglose interno del coste total de una campaña en el Estudio (5 líneas en `BUDGET`). |
 | **Desglose de 4 líneas** | Versión pública del presupuesto, que suma exactamente la meta. |
@@ -50,19 +52,25 @@
 | **Comisión por tramos** | Porcentaje de KORUM sobre el resto sujeto (`t1`/`t2`/`t3`). |
 | **Mantenimiento ("La Baza")** | Cuota opcional por campaña con tope anual que se desactiva sola al alcanzarse. |
 | **Aportación voluntaria a KORUM** | Importe opcional que la familia puede añadir para sostener la plataforma (`guaranteeContributionCents`; sugerido por `fullIntegrityCheckCents`). Check **desmarcado** por defecto. Nunca "propina". |
-| **Gastos de gestión digital** | Importe por entrada o papeleta que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
+| **Gastos de gestión digital** | Importe por entrada o por vale (hasta el Sprint 5.12, también por papeleta) que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
 | **Matching 2x** | Bolsa de un comercio que duplica las donaciones de las familias hasta agotarse. |
 | **Comercios amigos** | Patrocinadores locales por categoría ORO, PLATA o BRONCE. El 100 % va a la iniciativa; el fee se cobra encima. |
 | **`CREDIT_POOL`** | Bolsa donde espera (retenido en Paycomet) un patrocinio cuya campaña falló o una renovación, mientras no hay campaña a la que llevarlo; plazo limitado por la ventana de 90 días. Al vencer (día 70 desde el cobro como mucho) no se devuelve al comercio: pasa al Fondo de actividades de la entidad. |
 | **Fondo de actividades** | Dinero de comercios admitidos que no se pudo llevar a ninguna campaña antes de que venciera su bolsa (Sprint 4.2f). Es de la entidad para sus actividades; lo liquida a su cuenta con un destino escrito, doble firma y justificante en PDF, antes de los 90 días de Paycomet. |
-| **Auto-Impulso** | Aportación de KORUM para completar una campaña cuando es rentable hacerlo. Siempre asentada; su visibilidad pública la decide el Super-Admin. |
+| **Auto-Impulso** | Aportación de KORUM para completar una campaña cuando es rentable hacerlo. Siempre asentada. **Decidido (Sprint 5.21):** siempre visible y sin importe, solo en campañas con presupuesto; es un gasto promocional de KORUM que se compensa cobrando de menos en el reparto. Hasta entonces, su visibilidad pública la decide el Super-Admin. |
 | **Retorno negativo** | Campaña en la que KORUM pierde dinero (`netRevenueCents < 0`). |
 | **Salud de precios** | Comprobación (`evaluatePricingHealth`) que avisa al Super-Admin con `❗` / `⚠️` cuando una regla de precio pierde dinero o es incoherente. Nunca bloquea: el Super-Admin ajusta o acepta y registra. |
 | **Modo de tramos (`FLAT` / `MARGINAL`)** | `FLAT`: el tramo se elige por el importe total y se aplica a todo lo sujeto (con efecto escalón). `MARGINAL`: cada tramo grava solo su porción. |
 | **Tareas externas aplazadas** | Gestiones con terceros (Paycomet, abogado, asesoría fiscal, proveedor Veri\*factu) que el promotor ha dejado para más adelante; bloquean el cobro de dinero real, no la construcción. |
 | **6 fuentes de ingresos** | Aportación voluntaria, comisión por tramos, fee de comercios, gastos de gestión digital, mantenimiento y gestión de recargas de la Hucha. |
 | **Real frente a proyectado** | Ingresos ya asentados en el libro mayor frente a los previstos si las campañas llegan al 100 %. |
-| **Mi Hucha** | Área de la familia para aportar de forma recurrente. Modos: `PLEDGE` (aportación mensual programada, sin saldo), `REGULATED_WALLET` (saldo custodiado por una entidad autorizada), `DISABLED`. |
+| **Mi Hucha** | Área de la familia para aportar de forma recurrente. Modos: `DISABLED` (así sale en el lanzamiento, Sprint 5.15) y `PLEDGE` (aportación mensual programada, sin saldo). `REGULATED_WALLET` (monedero con saldo) queda **descartado** y se retira del código en el Sprint 5.24b. |
+| **Vale** | Unidad de canje de pago anticipado que vende una entidad, como la ficha de una feria: precio único, sin numerar, en un solo QR con saldo que se gasta en su puesto. No es dinero ni una donación: sin certificado y fuera del Modelo 182. Sprint 5.14. |
+| **Modo donación / modo publicidad** | Los dos modos en que una entidad recibe dinero de comercios. *Donación* (por defecto): entra directo, sin moderación, y la entidad puede agradecerlo solo con el nombre. *Publicidad*: la entidad factura con IVA y el comercio recibe distintivo, categoría, ventaja y cartel. Sprint 5.16. |
+| **Gestión (de comercios)** | Comisión de KORUM sobre la aportación de un comercio, con un porcentaje para cada modo. Sustituye a «gestión publicitaria» en el Sprint 5.16. |
+| **Regla de los 14 días** | Plazo único de las devoluciones automáticas cuando quien debe decidir calla o cuando una persona se arrepiente de un pago que no es una donación (Regla 02 §12). |
+| **Entrega automática** | Reparto que la plataforma hace sola a la cuenta verificada de la entidad cinco días antes de que venza la ventana de 90 días de un cobro. Sprint 5.19. |
+| **Sesión** | Trabajo del plan que no escribe código de la aplicación (textos legales, decisiones, revisión crítica, maquetas, revisión de nativo). |
 | **`JET-ID`** | Tokenización de tarjetas de Paycomet para cobros recurrentes sin guardar el número de tarjeta. |
 
 ## Seguridad, fiscalidad y privacidad

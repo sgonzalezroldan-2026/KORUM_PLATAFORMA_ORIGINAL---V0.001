@@ -8,6 +8,7 @@
 ### Sprint X.Y — Título · AAAA-MM-DD · ESTADO (terminado / en curso / bloqueado)
 
 - **Modelo y esfuerzo usados:** (p. ej. Claude Sonnet 5.5 · alto; auditoría Claude Opus 5.5 · alto)
+- **Duración:** la estimada en la ficha (`⏱️`) y la real de la sesión.
 - **Qué se ha hecho:** archivos creados o modificados y funcionalidad entregada.
 - **Decisiones tomadas:** y por qué (si cambian un documento que manda, enlazarlo).
 - **Pendiente / deuda:** lo que queda y en qué sprint se resuelve.
@@ -18,6 +19,30 @@
 ---
 
 ## Entradas
+
+### Mantenimiento — Traslado documental de las decisiones legales y fiscales y plan de los sprints 5.10 a 5.29 · 2026-11-18 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Fable 5.2. Sesión solo de documentos: no se ha tocado código, esquema, semilla, catálogos ni pruebas.
+- **Duración:** no se midió (es la primera entrada con este campo; desde el siguiente sprint se anota la real junto a la estimada).
+- **Qué se ha hecho:**
+  - **[CUMPLIMIENTO](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md):** §8 con las decisiones 21 a 47 del promotor (2026-11-17 y 2026-11-18) y las anteriores que sustituyen (3, 8, 11, 14, 17 y 19); §9 marcado punto por punto: de los 144 puntos `L-nnn`, **92 resueltos o decididos y 52 abiertos**, cada casilla con su nota `➔ L-nnn` (motivo o sprint de destino); §1 a §7 al día (rifas retiradas, vales, PAYCOMET solo por su nombre, Mi Hucha apagada, colegios con ánimo de lucro, plazos y regla de los 14 días).
+  - **[Plan](PLAN_IMPLEMENTACION_ATOMICO.md):** «Orden de trabajo vigente» con 28 pasos y su duración; fichas nuevas de los sprints 5.10a–c, 5.11a–b, 5.12a–b, 5.13, 5.14a–c, 5.15, 5.16a–c, 5.17 a 5.23, 5.24a–b y 5.25 a 5.29, y de las sesiones T1, D1, R1, V1 e I1; la fase 6 repartida en 6.1a, 6.1b y 6.1c, con los sprints nuevos 6.1d y 6.1e antes del piloto. Cada ficha lleva modelo (`🤖`) y duración (`⏱️`); las fichas nuevas ya no citan Gemini.
+  - **[Registro de deuda](REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md):** rehecho. Tabla de trazabilidad de los puntos P1–P26 y N1–N20, de los 52 puntos legales abiertos por sprint y de lo que antes estaba «heredado» en la ficha del 6.1; Anexo A con el estado y el destino de los 144 puntos.
+  - **Reglas (`.agents/rules/`):** 02 (comercios en dos modos, Auto-Impulso, entrega automática, IVA incluido en el §11 y regla de los 14 días en el §12, Mi Hucha, certificado al conseguirse la campaña), 03 (PAYCOMET solo por su nombre, una sola línea junto al botón de pago, modo donación, sin rifas), 04 (duración por sprint, preguntas a terceros primero al promotor, sin deuda nueva) y 01 (funciones del prototipo retiradas o aplazadas). **AGENTS.md** al día, con el agente `korum-legal-fiscal-prereviewer`, que no figuraba.
+  - **Skill nueva:** [korum-fiscal-invoicing](../.agents/skills/korum-fiscal-invoicing/SKILL.md) (IVA incluido, facturas, Veri\*factu, certificados y Modelo 182). Aviso de «decidido, pendiente de construir» en las otras 7 skills afectadas, en 2 de sus referencias y en 9 agentes; `.claude/` regenerado.
+  - **Resto de documentos:** aviso con los cambios y su sprint en PRD, EXPERIENCIA, GLOSARIO (con los términos nuevos: vale, modo donación y modo publicidad, gestión, regla de los 14 días, entrega automática), DECISIONES (y dos casillas de su §8), 00_IDEA, BUSINESS_CASE, ARQUITECTURA y README; [QA](QA_ACCEPTANCE_CRITERIA.md) con el §6 y 39 criterios nuevos para los sprints 5.10 a 5.26; [PRERREVISION](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1 con las decisiones del día.
+- **Decisiones tomadas (promotor, 2026-11-18):**
+  - **Orden:** retirada de las rifas, después las reglas de las entradas y después los vales.
+  - **El monedero con saldo de Mi Hucha (`REGULATED_WALLET`) se descarta** (P24): KORUM no guardará saldo; el modo se retira del código en el 5.24b.
+  - **Toda pregunta nueva para el abogado, la asesoría, Paycomet o Veri\*factu se le plantea primero a él**; si no puede resolverla, se anota.
+  - **Sin deuda nueva** y **duración estimada en cada sprint** (Regla 04 §2 y §5).
+  - Se conservan los números 5.10 y 5.11 (otros documentos ya los citan) y los sprints nuevos van del 5.12 al 5.29; **manda el orden del plan, no el número**.
+- **Criterio seguido en los documentos que describen el código:** las rifas, el pago al proveedor y Mi Hucha encendida **siguen en la aplicación**, así que el PRD, EXPERIENCIA, QA, DECISIONES, las skills y los agentes conservan su descripción actual con un aviso arriba que dice qué cambia y en qué sprint. La descripción se retira cuando se retira el código (5.12b para las rifas), para que documento y código no se contradigan en ningún momento.
+- **Hueco encontrado en la lista del promotor:** su decisión 3 (certificado fiscal solo cuando la campaña se consigue) no estaba entre los puntos N; va en el Sprint 5.22 y es la decisión 28 de CUMPLIMIENTO §8.
+- **Pendiente / deuda:** ninguna nueva. Todo lo abierto tiene destino en el registro (§3). Lo que hoy no se puede medir y puede añadir sprints: lo que salga de la revisión crítica (5.25), las respuestas de Paycomet (12 preguntas bloquean los cobros reales) y lo que encuentren las revisiones externas y el piloto (6.1e).
+- **Gestiones del promotor, en paralelo:** P22 (rotar la clave de Stitch, hoy), P14, P1, P3, P15, pedir los precios de Veri\*factu (P2b), el certificado digital para el Sprint 5.22 y, justo antes del 6.1, las 21 preguntas a Paycomet.
+- **Puertas:** P1 ✅ (`verify-invariants`: 0 violaciones, 34 sprints abiertos con modelo, `.claude/` sincronizado) · P2 a P4 no aplican (no hay código) · P5 ✅ (finales de línea LF comprobados).
+- **Siguiente:** SESIÓN T1 · Textos legales (**Claude Fable 5.2 · esfuerzo alto**, 2 entregas de 3–4 h más la validación del promotor) y SESIÓN D1 · Decisiones pequeñas (**Claude Sonnet 5.5 · medio**, 1 h). El primer sprint de código es el **5.12a · Retirada de las rifas: motor, datos y pruebas** (**Claude Opus 5.5 · esfuerzo alto**, 5–7 h).
 
 ### Mantenimiento — Next.js 16.4.3 → 16.4.6 (aviso de seguridad GHSA-mfr8-8qww-v76h) · 2026-11-17 · terminado
 

@@ -3,6 +3,8 @@
 > **Nombre de la Marca:** **KORUM** (Fusión de **Quórum** —las firmas necesarias para impulsar una iniciativa en comunidad— y **Corazón** —el compromiso emocional con el lugar donde crecen los hijos o se comparte una pasión—).
 > **Claim Oficial:** *"Donde las buenas ideas suman y se logran."*
 > **Principio Innegociable de Confianza:** **100% Independencia de Proveedores y Automatización Pura** (El centro elige siempre libremente a sus instaladores o comercios locales; KORUM jamás actúa como intermediario de obras ni cobra comisiones ocultas a proveedores).
+>
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. El modelo de ingresos se ajusta: **IVA del 21 % incluido** en los ingresos de KORUM, salvo la aportación voluntaria, que no lleva IVA (5.20); **comercios en dos modos**, con la «gestión» de KORUM al 15 % en los dos (5.16); **Mi Hucha** sale apagada y sin monedero con saldo (5.15); **Auto-Impulso** como gasto promocional, solo en campañas con presupuesto (5.21). Mensaje de valor para entidades: «entras gratis, te vas cuando quieres y solo pagas cuando obtienes resultados». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ---
 

@@ -2,6 +2,8 @@
 
 > Fórmulas exactas: [korum-tco-calculator](../skills/korum-tco-calculator/SKILL.md). Flujos de cobro, asientos tipo y Paycomet: [korum-escrow-payments](../skills/korum-escrow-payments/SKILL.md). Marco legal y decisiones del negocio: [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md).
 
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 47). Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
+
 ## 1. Céntimos enteros y cuadre exacto de la meta (4 líneas públicas = meta)
 
 Todo cálculo se hace en **céntimos enteros**. La meta pública se redondea al euro superior (`Math.ceil` a múltiplo de `100`) y los `0–99` céntimos de redondeo (`roundingBufferCents`) se suman a `gatewayFeeCents`, de modo que **nunca hay descuadre** ni en la pizarra interna ni en la ficha pública. **Excepción (Sprint 4.4b):** la meta de una campaña redimensionada por votación es lo recaudado que queda (decisión del promotor del 2026-11-11), sin redondear al euro; sus 4 líneas siguen sumándola al céntimo y sus comisiones bajan en proporción, hacia abajo ([DECISIONES_TECNICAS.md](../../docs/DECISIONES_TECNICAS.md) §2.17).
@@ -26,7 +28,9 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
   3. `Resto sujeto a tramo`.
   4. `Cargo de mantenimiento de la plataforma`: si es `0`, mostrar **solo `0,00 €`** (prohibido "(Desactivado)"). Si está activo, se aplica hasta el **tope anual**, y a partir de ahí `0,00 €` el resto del curso.
   5. `Coste de la pasarela de pago (Paycomet)`: importe exacto (incluido el redondeo al euro) con su explicación (`% variable sobre el subtotal + fijo por el nº estimado de aportaciones, calculado con el importe de aportación sugerido por defecto de la entidad`).
-- **Modo `TICKETING`:** `Recaudación bruta del aforo`, `Gastos de gestión digital por entrada`, `Coste de pasarela cubierto por la gestión`, `Mantenimiento` y `Neto garantizado para la entidad`, más el aviso normativo de rifas cuando `ticketSubtype === 'RAFFLE'`.
+- **Modo `TICKETING`:** `Recaudación bruta del aforo`, `Gastos de gestión digital por entrada`, `Coste de pasarela cubierto por la gestión`, `Mantenimiento` y `Neto garantizado para la entidad` (es el neto **si se vende todo el aforo**; la pizarra lo aclarará en el Sprint 5.13). **Las rifas se retiran** (decisión 31): el subtipo `RAFFLE` y su aviso normativo siguen en el código hasta el Sprint 5.12 y no se amplían.
+- **Vales** (decisión 32, pendiente de construir en el Sprint 5.14): venta de unidades de canje con precio único; su pizarra sigue el modo `TICKETING` sin aforo obligatorio (tope opcional) y con tarifa propia de «Gastos de gestión digital».
+- **Tarifas (decisión 34, pendiente de construir en el Sprint 5.18):** todo cambio global de tarifas entra en vigor a los 30 días y solo vale para lo publicado después; cada campaña, taquilla o venta de vales guarda la tarifa con la que se publicó. Hasta entonces, un cambio se aplica al momento y la compra de entradas lee la tarifa actual.
 
 ## 3. Libro mayor de doble partida (`LedgerJournal` + `EscrowLedgerEntry`)
 
@@ -35,34 +39,65 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
 - Todo saldo que se muestra (recaudado de una iniciativa, bolsa `CREDIT_POOL`, Mi Hucha, ingresos de KORUM) se puede reconstruir sumando apuntes. Los contadores en otras tablas (`raisedCents`, `walletBalanceCents`) son cachés que se actualizan en la misma transacción que el asiento y se verifican en la conciliación diaria.
 - **Conciliación diaria** (`PSP_RECONCILIATION`): el saldo de `PSP_CLEARING` debe coincidir con lo que reporta Paycomet. Cualquier diferencia genera una alerta en la consola del Super-Admin.
 
-## 4. Ventana de 90 días de Paycomet y duración de las campañas
+## 4. Ventana de 90 días de Paycomet, duración de las campañas y entrega automática
 
 - Paycomet solo permite repartir fondos (*split transfer*) durante **90 días desde cada cobro**. Por eso:
   - Duración máxima de una campaña: `maxCampaignDays` (por defecto **60 días**, nunca más de 75), contados desde la publicación.
   - La tarea `SPLIT_WINDOW_GUARD` avisa a la entidad y al Super-Admin cuando queden **15 días** para que venza la ventana del primer cobro de una iniciativa sin liquidar.
+  - **Entrega automática (decisión 36, pendiente de construir en el Sprint 5.19):** cinco días antes de que venza la ventana de un cobro de una campaña conseguida que nadie ha liquidado, ese dinero se entrega de forma automática a la **cuenta verificada de la propia entidad**, con aviso a quienes firman y auditoría. Nunca a un proveedor. Vale también para el Fondo de actividades. Hasta entonces solo se avisa.
+  - **Liquidación solo a la entidad (decisión 36, Sprint 5.19):** se reparte únicamente a la cuenta verificada de la entidad (`PayoutDestination.ORGANIZATION`); el pago directo al proveedor (`PROVIDER`) queda aplazado y hoy sigue en el código, apagado fuera del simulador. La entidad sigue adjuntando la factura de su proveedor.
+  - **Campaña vencida sin decisión (decisión 29, pendiente de construir en el Sprint 5.17):** la entidad decide (devolver o votar un proyecto más pequeño) durante **14 días**; si calla, la plataforma devuelve el 100 % sola, antes si ya no da tiempo a votar, con avisos a quienes firman 7, 3 y 1 días antes. Hasta entonces el dinero espera la decisión de la entidad sin plazo.
+  - **Evento con entradas (decisión 30, pendiente de construir en el Sprint 5.13):** al llegar su fecha se liquida por lo vendido; solo se devuelve el 100 % si la entidad lo cancela, y a quien lo pida en 14 días si cambia de fecha. Hasta entonces un evento sin el aforo completo pasa a «vencido».
   - La bolsa `CREDIT_POOL` dura `min(creditPoolMaxDays, 70 − días transcurridos desde el cobro del patrocinio)` (`creditPoolMaxDays` nunca pasa de 70). Al vencer **no se reembolsa al comercio** (decisión del promotor, 2026-11-10): pasa al **Fondo de actividades** de la entidad (`ORG_ACTIVITY_FUND`, Sprint 4.2f), que la liquida a su cuenta con doble firma desde el cobro original de cada comercio. Los 20 días hasta el 90 son para firmar; a 10 días del final se recuerda a quienes firman, y el dinero que pasa del día 90 sin liquidar abre la alerta crítica `ACTIVITY_FUND_WINDOW`.
 
-## 5. Patrocinio de comercios: 100 % íntegro + fee encima + Veri\*factu
+## 5. Comercios: nivel íntegro + gestión encima, en dos modos
+
+> **Decidido (decisiones 23 a 27), pendiente de construir en el Sprint 5.16.** Hoy el código tiene un solo modo: el que se describe más abajo como «comportamiento actual», con moderación siempre y fee de «gestión publicitaria».
+
+Cada entidad elige su modo; un cambio de modo afecta solo a los pagos nuevos. **El proyecto ve siempre el nivel íntegro**: comisiones e IVA van encima y los paga el comercio. La comisión de KORUM se llama **«gestión»**, con dos porcentajes en la consola (donación y publicidad, 15 % de partida), y lleva IVA y factura de KORUM en los dos modos.
+
+| | Solo donación (por defecto) | Patrocinio con publicidad |
+| :--- | :--- | :--- |
+| Quién | Cualquier entidad | Solo la que declara en su panel que puede facturar con IVA (bajo su responsabilidad, con aviso a la otra persona firmante y auditoría; sin el Super-Admin) |
+| Qué paga el comercio | Nivel + gestión de KORUM + IVA de la gestión | Nivel + **IVA de la entidad sobre el nivel** + gestión de KORUM + IVA de la gestión |
+| Moderación | Ninguna: el dinero entra directo y suma al momento | La entidad modera; **sin decisión en 14 días** se devuelve el 100 % de forma automática, con rectificativa y avisos a 7, 3 y 1 |
+| Qué recibe el comercio | Agradecimiento **solo con su nombre**, y solo si la entidad lo activa; sin categoría, ventaja, enlace ni cartel | Distintivo, categoría, ventaja para las familias y cartel |
+| Documentos | Certificado fiscal (entidad con la Ley 49/2002 acreditada; entra en el Modelo 182) o justificante; factura de KORUM | Factura de la entidad al comercio, que la entidad emite y sube tras admitirlo; factura de KORUM |
+| Matching 2x | Anónimo | Con el nombre del comercio |
+| Renovación anual | No hay | Sí; una aportación nueva de un comercio ya admitido es una **ampliación**: no se modera, no se devuelve y suma a su categoría dentro del año |
+
+- **Nunca se devuelve** el dinero de un comercio admitido (ni el de una donación, firme desde el pago). Excepciones cerradas: el comercio en modo publicidad que la entidad no admite o no modera en 14 días (100 %, con rectificativa) y la renovación pagada dos veces desde el email, que se puede devolver con un botón durante 14 días.
+- Si la entidad retira el anuncio de un comercio, KORUM **no devuelve nada ni media**: lo resuelven fuera de la plataforma.
+- La factura de un comercio con contracargo solo se anula si el banco indica fraude (Sprint 5.20b).
+- El mismo comercio se reconoce por NIF y email dentro de la entidad y se muestra una sola vez.
+
+**Comportamiento actual del código (hasta el Sprint 5.16), que también fija lo que no cambia** (reasignación, bolsa y Fondo de actividades):
+
 
 - El **100 % del nivel elegido** (`100 €`, `250 €` o `500 €`) se suma íntegro a la iniciativa.
-- El fee de gestión publicitaria (`15 %` por defecto + IVA) se **suma encima** (`250,00 € íntegros + 37,50 € de fee`). Se emite un justificante del patrocinio y una **factura de KORUM registrada en Veri\*factu** por el fee.
+- El fee de gestión (hoy «gestión publicitaria», `15 %` por defecto + IVA) se **suma encima** (`250,00 € íntegros + 37,50 € de fee`). Se emite un justificante del patrocinio y una **factura de KORUM registrada en Veri\*factu** por el fee.
 - **El dinero de un comercio admitido no se le devuelve nunca** (decisión del promotor, 2026-11-10: es una aportación a fondo perdido y el comercio ya disfruta de su publicidad). Solo se devuelve el 100 % (nivel + fee + IVA, con rectificativa) si la entidad **no lo admite** en la moderación. Un contracargo sigue su camino propio (§7). Un cobro que llega con la campaña ya cerrada **tampoco se devuelve** (decisión del promotor, 2026-11-10): entra en la bolsa del comercio, se factura su fee y espera la moderación (admitido → se coloca con la regla; no admitido → 100 % con rectificativa).
 - Si la campaña vence sin éxito, o al dejar de recaudar le sobra parte de una bolsa *Matching 2x*, el patrocinio se reasigna según la regla de la entidad (`SOONEST`, `PROPORTIONAL`, `MANUAL`) a campañas activas que cierren antes del día 85 desde su cobro; si no hay ninguna, pasa a `CREDIT_POOL` con aviso al comercio (ver §4). La liquidación de la campaña que lo recibe reparte desde el cobro original del comercio (`SponsorAllocation`) y un cobro nunca se reparte por encima de lo cobrado.
 - La renovación anual es un cobro nuevo (pedido `KR`, enlace de pago por email, sin tarjeta guardada) que entra en la bolsa del comercio y se coloca con la misma regla. Una renovación pagada dos veces **no se devuelve**: el segundo pago renueva el año siguiente. A quien no marcó «renovar cada año», la entidad puede enviarle **una** invitación a renovar por año.
 - **Fondo de actividades** (Sprint 4.2f): la liquidación la pide una persona firmante con el **destino** del dinero (lo firman las dos y sale en el justificante en PDF); se aprueba con la doble firma (`ACTIVITY_FUND_PAYOUT_APPROVAL`: `ORG_ACTIVITY_FUND` → `ORG_PAYABLE`) y se reparte cobro a cobro como una liquidación de campaña. Un cobro nunca se reparte por encima de lo cobrado entre las liquidaciones de campaña y las del Fondo.
 
-## 6. "Gastos de gestión digital" en entradas y papeletas
+## 6. "Gastos de gestión digital" en entradas y vales
 
 - Se llaman única y exactamente **"Gastos de gestión digital"** y solo se configuran desde la consola del Super-Admin (`fijo + % sobre el precio`).
 - En modo `ADD`, el coste de Paycomet se calcula sobre el **total cobrado al comprador** (`precio + gastos de gestión digital`) más el fijo por transacción. El validador garantiza margen neto positivo.
+- Los vales tendrán su propia tarifa (Sprint 5.14). Las papeletas de rifa desaparecen con el Sprint 5.12.
+- **Llevan el IVA dentro** (decisión 21, §11).
 
 ## 7. Reembolsos, contracargos y Auto-Impulso
 
 - **Campaña fallida:** se devuelve el **100 % de lo cobrado** a cada persona (donación + aportación voluntaria a KORUM), siempre al medio de pago original, mediante la tarea `MASS_REFUND` (por lotes, idempotente y reintentable). Decisión por defecto revisable en [CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) §8.
 - **Contracargo:** se registra con un asiento `CHARGEBACK`. Si la iniciativa no se ha liquidado, se descuenta de su hucha y se recalcula el progreso; si ya se liquidó, lo asume KORUM (`CHARGEBACK_LOSSES`) y se avisa al Super-Admin.
-- **Auto-Impulso:** siempre se asienta (`SELF_BOOST` + `AUTO_BOOST_EXPENSE`). **Suma como cualquier aportación** (decisión del promotor, 2026-11-12): su importe cuenta en la barra de avance, en la barra de impacto de la portada, en las fichas, en el panel y en la consola con **el mismo total en todas partes**, y suma `+1` al contador `💛 X aportaciones`. **No suma a los retos por curso**: KORUM no pertenece a ningún curso. Lo único que decide el Super-Admin en cada ejecución (por defecto, el valor del ajuste `autoBoost.publicDisclosureDefault`) es si la ficha **dice que la plataforma KORUM ayudó a conseguir el reto**, sin importe y de forma sutil («La plataforma KORUM también aportó y ayudó a conseguir el reto»); como las aportaciones de las familias, el importe es anónimo.
+- **Auto-Impulso (decisión 33, pendiente de construir en el Sprint 5.21):** es un **gasto promocional de KORUM**. Se permite **solo en campañas con presupuesto** (nunca en entradas ni vales, que no tienen una meta que completar). KORUM **no aporta dinero propio a la hucha: cobra esa cantidad de menos al repartir** (compensación en el reparto; ejemplo: comisión de 350 € y Auto-Impulso de 300 €, KORUM cobra 50 € y la entidad recibe lo mismo); la factura a la entidad sigue siendo por la comisión entera. La ficha dice **siempre**, sin importe, «La plataforma KORUM también aportó y ayudó a conseguir el reto»: desaparecen el ajuste `autoBoost.publicDisclosureDefault` y la elección en cada ejecución. El email a quienes donaron añade la frase, y el justificante de liquidación y el expediente llevan la línea «Aportación de la plataforma KORUM» con su importe. *Hasta el Sprint 5.21 el código hace lo que sigue, con la visibilidad a elección del Super-Admin.*
+- **Auto-Impulso (lo que no cambia):** siempre se asienta (`SELF_BOOST` + `AUTO_BOOST_EXPENSE`). **Suma como cualquier aportación** (decisión del promotor, 2026-11-12): su importe cuenta en la barra de avance, en la barra de impacto de la portada, en las fichas, en el panel y en la consola con **el mismo total en todas partes**, y suma `+1` al contador `💛 X aportaciones`. **No suma a los retos por curso**: KORUM no pertenece a ningún curso. Hoy, y hasta el Sprint 5.21, lo único que decide el Super-Admin en cada ejecución (por defecto, el valor del ajuste `autoBoost.publicDisclosureDefault`) es si la ficha **dice que la plataforma KORUM ayudó a conseguir el reto**, sin importe y de forma sutil («La plataforma KORUM también aportó y ayudó a conseguir el reto»); como las aportaciones de las familias, el importe es anónimo.
 
 ## 8. Mi Hucha: KORUM nunca custodia saldo
+
+**Decisión 38:** Mi Hucha **sale apagada** (`DISABLED`) y el promotor la enciende en modo `PLEDGE` cuando Paycomet confirme los cobros mensuales; el monedero con saldo (`REGULATED_WALLET`) **queda descartado**. Al encenderla tendrá condiciones propias con versión, y la gestión cobrada a KORUM se devuelve de forma automática si la familia cancela en los 14 días siguientes al alta (con su contra-asiento; nunca la donación). *Pendiente de construir: el valor por defecto y las condiciones, en el Sprint 5.15; la retirada del modo `REGULATED_WALLET` del código, en el 5.24b. Hasta entonces el código conserva la tabla siguiente y arranca en `PLEDGE`.*
 
 El funcionamiento depende del ajuste `hucha.mode` de la consola del Super-Admin:
 
@@ -78,11 +113,37 @@ El funcionamiento depende del ajuste `hucha.mode` de la consola del Super-Admin:
 ## 9. Fiscalidad
 
 - El certificado fiscal de donación y el Modelo 182 solo se emiten si `organization.ley49 === true` **y** `ley49VerifiedAt` no es nulo (el régimen se acredita en el KYB). En caso contrario se emite un **justificante nominativo de aportación**.
+- **Cuándo existe el certificado (decisión 28, pendiente de construir en el Sprint 5.22):** solo cuando la campaña se consigue (meta alcanzada o redimensionamiento cerrado); el donativo de una familia cuenta en el año en que la campaña se consolida y el Modelo 182 de cada ejercicio recoge las campañas consolidadas en él. La donación de un comercio es firme desde el pago y cuenta en el año del pago. Hasta entonces el certificado está disponible desde el pago y el fichero señala las campañas sin resolver.
+- **Colegios privados con ánimo de lucro (decisión 42, Sprint 5.22):** solo entradas y vales; no publican campañas de donación.
 - Para el Modelo 182 se necesitan el NIF, el nombre y el código de provincia del donante. El checkout pide el NIF como **opcional** ("Quiero mi certificado fiscal"), también a invitados. El NIF se guarda cifrado y se busca por HMAC.
 
 ## 10. Analítica: real frente a proyectada, sin cifras inventadas
 
+- **Sin IVA (decisión 21, pendiente de construir en el Sprint 5.20a):** el BI, las seis fuentes, la proyección y las dos alertas cuentan el ingreso de KORUM **sin IVA** (§11). El 💎 se calcula sobre la comisión sin IVA menos la aportación entera: con una comisión de 350,00 € (289,26 € de base) y 300,00 € por completar, el retorno es −10,74 € y el aviso **no** sale. El 💎 solo aparece en campañas con presupuesto (Sprint 5.21).
 - Prohibido inyectar ingresos ficticios. El panel separa **ingresos reales** (leídos del libro mayor) de la **proyección al 100 %**, y las **6 fuentes de ingresos**, menos los costes que asume KORUM (pasarela absorbida o margen de taquilla negativo; en lo real, también Auto-Impulso y contracargos), coinciden al céntimo con el ingreso neto.
 - Alertas en cada tabla de iniciativas:
   1. **🚨 Retorno negativo** (`netRevenueCents < 0`): `🚨 ¡Peligro Retorno Negativo! (-X,XX €) · Ajustar precios`, con corrección en 1 clic.
   2. **💎 Auto-Impulso rentable** (`status === 'FUNDRAISING' && missingTo100Cents > 0 && collectedNetRevenueCents − missingTo100Cents − recoverableSelfBoostCents > 0`, donde `collectedNetRevenueCents` cuenta lo ya cobrado más la comisión de tramos y el mantenimiento, que se liquidan al completar la meta: nunca aportaciones proyectadas ni entradas sin vender, que ya no llegarían si KORUM completa la meta, y **nunca el fee de patrocinio ya cobrado**, que KORUM conserva aporte o no, decisión del promotor del 2026-11-11, y `recoverableSelfBoostCents` es el Auto-Impulso anterior que sigue puesto en una campaña que un contracargo reabrió: si la campaña vence sin meta vuelve a KORUM con un contra-asiento y si KORUM la completa ya no vuelve, así que aportar de nuevo lo pierde y se resta del retorno, decisión del promotor del 2026-11-12): `💎 ¡Auto-Impulso Rentable! Aportar X € ➔ Retorno +Y €`, con ejecución auditada en 1 clic.
+
+## 11. IVA de los ingresos de KORUM (decisión 21, pendiente de construir en el Sprint 5.20)
+
+- La comisión por tramos, el mantenimiento, los «Gastos de gestión digital» y la gestión de Mi Hucha **llevan el IVA del 21 % dentro del importe mostrado**: cuota = `Math.round(importe × 21 / 121)`, en céntimos. **Nadie paga más**: metas, pizarra y textos oficiales no cambian. La gestión de comercios lleva su IVA encima, como hoy.
+- **La aportación voluntaria a KORUM no lleva IVA ni factura** (decisión 22). Condiciones que deben mantenerse: voluntaria, casilla desmarcada, importe libre desde 0 € y ninguna ventaja para quien la da.
+- Cada cuota de IVA va a su cuenta del libro mayor, en el mismo asiento que el ingreso. Facturas: completa a entidades y comercios; simplificada a familias y compradores, dentro del email del recibo y con enlace al PDF. Todas cuadran al céntimo con su asiento y se registran en Veri\*factu (Sprint 5.23). Detalle en [korum-fiscal-invoicing](../skills/korum-fiscal-invoicing/SKILL.md).
+- Hasta el Sprint 5.20 solo la gestión de comercios calcula IVA y factura.
+
+## 12. La regla de los 14 días
+
+Cuando alguien que debe decidir calla, o cuando una persona se arrepiente de un pago que no es una donación, el plazo es siempre **14 días** y la devolución es **automática, sin el Super-Admin**:
+
+| Caso | Qué pasa a los 14 días o dentro de ellos | Sprint |
+| :--- | :--- | :-: |
+| Campaña vencida sin decisión de la entidad | Se devuelve el 100 % a quienes aportaron (antes, si ya no da tiempo a votar) | 5.17 |
+| Comercio en modo publicidad sin moderar | Se devuelve el 100 % al comercio, con rectificativa | 5.16c |
+| Renovación de un comercio pagada dos veces | El comercio puede pedir la devolución con un botón; si no, renueva el año siguiente | 5.16c |
+| Aportación voluntaria a KORUM | La persona puede recuperarla con el enlace de su recibo | 5.15 |
+| Gestión de Mi Hucha | Se devuelve si la familia cancela en los 14 días siguientes al alta | 5.15 |
+| Vales sin gastar | Se devuelve el 100 % de la compra con un clic; después son a fondo perdido | 5.14c |
+| Evento que cambia de fecha | Se devuelve el 100 % a quien lo pida con el enlace del aviso | 5.13 |
+
+**Nunca se devuelve por esta regla una donación**, que sigue la suerte de su campaña (§7). El plazo es un valor único de configuración y puede acortarse según lo que Paycomet responda sobre hasta cuándo se puede devolver un cobro (se supone 81 días).

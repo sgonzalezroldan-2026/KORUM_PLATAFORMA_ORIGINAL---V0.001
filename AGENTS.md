@@ -1,7 +1,8 @@
 # KORUM · Contexto maestro para asistentes de IA
 
 > **Eslogan:** *"Donde las buenas ideas suman y se logran."*
-> **Qué es:** plataforma SaaS multi-entidad para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales. Une un buzón de ideas con quórum, campañas de mecenazgo "todo o nada", taquilla y rifas con QR, comercios amigos y Mi Hucha.
+> **Qué es:** plataforma SaaS multi-entidad para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales. Une un buzón de ideas con quórum, campañas de mecenazgo "todo o nada", taquilla y vales con QR, comercios amigos y Mi Hucha.
+> **Decidido y pendiente de construir (2026-11-18):** las rifas se retiran (Sprint 5.12) y llegan los vales (5.14); comercios en dos modos (5.16); IVA incluido y facturas (5.20); liquidación solo a la cuenta de la entidad (5.19); Auto-Impulso siempre visible y compensado en el reparto (5.21); Mi Hucha apagada al lanzar y sin monedero con saldo (5.15). Hasta su sprint, **el código hace lo anterior y no se adelanta la regla nueva**. Lista completa: [CUMPLIMIENTO §8](docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 47; orden y fichas: [plan](docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 > **Principio de independencia:** KORUM nunca intermedia ni cobra comisiones a proveedores de obras o equipamiento; la entidad elige libremente.
 > **Pagos:** los cobros, retenciones, repartos y devoluciones los ejecuta **PAYCOMET** (entidad de pago autorizada por el Banco de España). **KORUM es una plataforma tecnológica: no es un banco ni custodia fondos.**
 > **Marca:** *Escudo Varsity Heritage* (azul marino `#101F38`, oro deportivo `#F59E0B`, esmeralda `#047857`) + experiencia *Cuaderno Vivo de Patio*. Sin frialdad bancaria. Detalle en [korum-brand-design-system](.agents/skills/korum-brand-design-system/SKILL.md).
@@ -20,12 +21,12 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 | Funcionalidad por entorno y máquinas de estado | [docs/PRD_3_ENTORNOS_KORUM.md](docs/PRD_3_ENTORNOS_KORUM.md) |
 | Landing, acceso por rol y alta de entidades | [docs/ARQUITECTURA_LANDING_Y_AUTH_MULTIRROL.md](docs/ARQUITECTURA_LANDING_Y_AUTH_MULTIRROL.md) |
 | Stack, proveedores, infraestructura y ajustes de la consola | [docs/DECISIONES_TECNICAS.md](docs/DECISIONES_TECNICAS.md) |
-| Legal, privacidad y decisiones de negocio con impacto legal | [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) |
+| Legal, privacidad y decisiones de negocio con impacto legal (las valida el promotor) | [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) |
 | Experiencia: recorridos, emails, estados, animaciones, accesibilidad, idiomas, métricas | [docs/EXPERIENCIA_DE_PRODUCTO.md](docs/EXPERIENCIA_DE_PRODUCTO.md) |
-| Sprints, alcance y modelo de IA recomendado por sprint | [docs/PLAN_IMPLEMENTACION_ATOMICO.md](docs/PLAN_IMPLEMENTACION_ATOMICO.md) |
+| Sprints, orden de ejecución, alcance, modelo de IA y duración estimada por sprint | [docs/PLAN_IMPLEMENTACION_ATOMICO.md](docs/PLAN_IMPLEMENTACION_ATOMICO.md) |
 | Criterios de aceptación | [docs/QA_ACCEPTANCE_CRITERIA.md](docs/QA_ACCEPTANCE_CRITERIA.md) |
 | Estado del proyecto y traspaso entre sesiones o modelos | [docs/BITACORA_SPRINTS.md](docs/BITACORA_SPRINTS.md) |
-| Deuda, puntos abiertos y su prioridad (qué queda, quién lo hace y en qué orden) | [docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md](docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md) |
+| Deuda y puntos abiertos (qué queda, quién lo hace y en qué sprint se resuelve; el orden de ejecución está en el plan) | [docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md](docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md) |
 | Significado de cada término | [docs/GLOSARIO.md](docs/GLOSARIO.md) |
 | Cómo trabajar con Claude Code o con Gemini, imágenes incluidas | [docs/GUIA_IA_CLAUDE_Y_GEMINI.md](docs/GUIA_IA_CLAUDE_Y_GEMINI.md) |
 | Modelo de datos | [schema/schema.prisma](schema/schema.prisma) |
@@ -36,22 +37,22 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 
 1. **Entorno 0 · Marketing y acceso** (`/`, `/registro-comunidad`, `/login`): landing con buscador y calculadora, alta autónoma de entidades en 3 pasos y acceso por rol. Optimizado para buscadores, asistentes de IA y redes sociales.
 2. **Entorno 1 · Portal público de familias, socios y comercios** (`/[orgSlug]`):
-   - Iniciativas en `FUNDRAISING` (con *Matching 2x* opcional) y taquilla o rifas con QR, con tarjetas para WhatsApp (`next/og`).
+   - Iniciativas en `FUNDRAISING` (con *Matching 2x* opcional) y taquilla con QR (las rifas se retiran en el Sprint 5.12 y los vales llegan en el 5.14), con tarjetas para WhatsApp (`next/og`).
    - Checkout en 10 segundos sin registro (solo email en modo invitado), grupos por vertical (13 cursos escolares, categorías deportivas o grupos culturales), aportación voluntaria a KORUM **desmarcada por defecto** y texto fiscal según `organization.ley49`.
    - Buzón de ideas con quórum y control antifraude en servidor (máximo 2 cuentas familiares por dispositivo).
    - Logros conseguidos (Antes / Después), comercios amigos por categoría (sin importes), FAQ y soporte.
-   - **Mi Hucha**, según el modo configurado por el Super-Admin: aportación mensual programada (`PLEDGE`) o monedero custodiado por una entidad autorizada (`REGULATED_WALLET`). KORUM nunca guarda saldo propio.
+   - **Mi Hucha**: aportación mensual programada (`PLEDGE`). **Sale apagada en el lanzamiento** y la enciende el Super-Admin; el monedero con saldo (`REGULATED_WALLET`) queda descartado y se retira del código en el Sprint 5.24b. KORUM nunca guarda saldo.
 3. **Entorno 2 · Panel de la entidad** (`/panel/[orgSlug]`):
    - Cuadro de mandos con línea de 6 estados, kit de medallas e ID de hucha `WLT-ESC-XXX`.
    - **Doble firma mancomunada real** entre dos personas distintas: `DIRECTOR` (gestión principal) y `COSIGNER` (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato…), para aprobar ideas y para liberar fondos. **La entidad elige** si exige las dos firmas (por defecto) o una sola, la de `DIRECTOR`, bajo su responsabilidad (`Organization.signatureMode`); cambia a sus firmantes y su modo de firma **ella misma, al instante y sin el Super-Admin**, con aviso por email y registro de auditoría que no puede borrar.
-   - Estudio de edición con pizarra TCO cuadrada al céntimo (presupuesto con proveedor libre, o taquilla/rifa con aviso normativo).
-   - Liquidaciones con factura del proveedor, fotos Antes/Después, redimensionamiento o reembolso del 100 %.
-   - **Modo portería** (`/panel/[orgSlug]/porteria`) con PIN por evento, escáner QR y sorteo certificado; exportación del Modelo 182 y cartel A4 con QR.
+   - Estudio de edición con pizarra TCO cuadrada al céntimo (presupuesto con proveedor libre, taquilla o, desde el Sprint 5.14, venta de vales).
+   - Liquidaciones a la cuenta verificada de la entidad, con la factura de su proveedor adjunta, fotos Antes/Después, redimensionamiento o reembolso del 100 %.
+   - **Modo portería** (`/panel/[orgSlug]/porteria`) con PIN por evento y escáner QR (el sorteo se retira con las rifas en el Sprint 5.12; el puesto de canje de vales llega en el 5.14c); exportación del Modelo 182 y cartel A4 con QR.
    - **Registro de actividad** (`/panel/[orgSlug]/auditoria`): lo ocurrido en la entidad, solo lo suyo y sin nombres ajenos, y el expediente en PDF de sus campañas y liquidaciones.
 4. **Entorno 3 · Consola del Super-Admin** (`/admin`):
    - Cuadro de mandos con ingresos reales (libro mayor) frente a proyectados, 6 fuentes de ingresos, tablas ordenables y alertas 💎 Auto-Impulso / 🚨 Retorno negativo.
    - Ficha 360º de cada entidad, facturas Veri\*factu, motor de reglas globales, medallas y bandeja de soporte.
-   - **Ajustes de la plataforma** (`/admin/ajustes`): credenciales de Paycomet, email, Veri\*factu, modo de Mi Hucha, divulgación del Auto-Impulso, textos legales y límites.
+   - **Ajustes de la plataforma** (`/admin/ajustes`): credenciales de Paycomet, email, Veri\*factu, modo de Mi Hucha, textos legales y límites (el ajuste de divulgación del Auto-Impulso desaparece en el Sprint 5.21).
    - **Auditoría** (`/admin/auditoria`): quién hizo qué, cuándo y desde dónde, con búsqueda por persona, entidad, campaña, acción y fechas, y el expediente exportable en PDF de una aportación, una campaña o una liquidación (cuadrado con el libro mayor y sin datos personales de más).
 
 ---
@@ -72,7 +73,8 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 | [korum-tco-calculator](.agents/skills/korum-tco-calculator/SKILL.md) | Presupuestos, exenciones, medallas, BI y alertas |
 | [korum-escrow-payments](.agents/skills/korum-escrow-payments/SKILL.md) | Paycomet, libro mayor, Mi Hucha, reembolsos, liquidaciones, Veri\*factu |
 | [korum-quorum-antifraud](.agents/skills/korum-quorum-antifraud/SKILL.md) | Buzón de ideas, doble firma, candado semántico, fiscalidad y RGPD |
-| [korum-ticketing-qr](.agents/skills/korum-ticketing-qr/SKILL.md) | Entradas, rifas, QR firmados, portería y sorteo |
+| [korum-ticketing-qr](.agents/skills/korum-ticketing-qr/SKILL.md) | Entradas, vales, QR firmados y portería |
+| [korum-fiscal-invoicing](.agents/skills/korum-fiscal-invoicing/SKILL.md) | IVA incluido, facturas, Veri\*factu, certificados y Modelo 182 |
 | [korum-nextjs-multitenant-ui](.agents/skills/korum-nextjs-multitenant-ui/SKILL.md) | Cualquier vista, layout o Server Action |
 | [korum-qa-harness-gatekeeper](.agents/skills/korum-qa-harness-gatekeeper/SKILL.md) | Cierre de cada sprint (5 puertas) |
 | [korum-brand-design-system](.agents/skills/korum-brand-design-system/SKILL.md) | Marca, tokens, activos visuales e imágenes |
@@ -90,6 +92,7 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 
 ### 2.4 Subagentes auditores del *War Room* (solo lectura + tests)
 
+- `korum-legal-fiscal-prereviewer`: prerrevisión legal y fiscal de textos, puntos abiertos y cambios con impacto legal o fiscal; propone, y **decide y valida el promotor**.
 - `fintech-escrow-auditor`: matemática al céntimo, libro mayor, Paycomet y Veri\*factu.
 - `antifraud-legal-guardian`: seguridad, aislamiento entre entidades, doble firma, QR, fiscalidad y RGPD.
 - `ux-school-director-reviewer`: experiencia móvil, accesibilidad, idiomas, textos y paridad funcional con el prototipo.
@@ -100,9 +103,9 @@ Cada tema tiene **un documento que manda**. Los demás remiten a él en lugar de
 ## 3. Protocolo de cada sprint (resumen de la Regla 04)
 
 1. Leer [docs/BITACORA_SPRINTS.md](docs/BITACORA_SPRINTS.md) y la ficha del sprint.
-2. **Decir al usuario qué modelo de IA y qué nivel de esfuerzo recomienda la ficha** y, si no coinciden con la sesión actual, preguntar antes de seguir.
+2. **Decir al usuario qué modelo de IA, qué nivel de esfuerzo y qué duración estimada indica la ficha** y, si el modelo no coincide con la sesión actual, preguntar antes de seguir. Las dudas para terceros (abogado, asesoría, Paycomet, Veri\*factu) se plantean primero al promotor.
 3. Cargar las skills de la ficha, construir, pasar las 5 puertas y actualizar la bitácora.
-4. Terminar indicando el siguiente sprint y su modelo recomendado.
+4. Terminar sin deuda nueva (lo que no quepa, al registro con su sprint) e indicando el siguiente sprint, su modelo y su duración.
 
 ---
 

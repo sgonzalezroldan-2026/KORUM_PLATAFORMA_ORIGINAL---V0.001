@@ -1,6 +1,8 @@
 # Decisiones técnicas · KORUM v8.5
 
 > Documento que manda en stack, proveedores, infraestructura y ajustes de la consola. Decisiones tomadas en octubre de 2026 con estos criterios: **datos en la Unión Europea**, **el menor número de proveedores posible**, **todo proveedor detrás de un adaptador** (para poder cambiarlo sin reescribir la app) y **toda configuración operativa editable desde la consola del Super-Admin**.
+>
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los apartados del §2 sobre el sorteo, el acta y la ronda extra quedan como historia y se retiran en el 5.12b. Cambian además: el destino `PROVIDER` de las liquidaciones (aplazado; solo cuenta de la entidad y entrega automática, 5.19), la financiación del Auto-Impulso (§2.23: pasa a compensarse en el reparto, 5.21), el ajuste `autoBoost.publicDisclosureDefault` (desaparece, 5.21), `hucha.mode` (por defecto `DISABLED`, 5.15; `REGULATED_WALLET` se retira, 5.24b), el IVA de los ingresos de KORUM (5.20) y el adaptador de Veri\*factu (§4: proveedor o envío directo, 5.23). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 47); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ---
 
@@ -651,6 +653,6 @@ Los avisos se calculan al cargar la consola y en vivo mientras se edita un campo
 - [ ] Alertas de Sentry y del fallo de conciliación activas.
 - [ ] Pago, reparto, reembolso y contracargo probados en el sandbox real de Paycomet.
 - [ ] Search Console y Bing Webmaster Tools verificados; sitemap enviado.
-- [ ] Textos legales publicados en los 3 idiomas y visto bueno del abogado.
-- [ ] `invoicing.issuerNif` **e** `invoicing.issuerName` configurados en `/admin/ajustes` (el NIF emisor es imprescindible: sin él, un patrocinio con fee no se asienta; la razón social sale en la factura) y el IVA del fee confirmado por la asesoría fiscal (hoy 21 %, `SPONSOR_FEE_VAT_BPS`).
+- [ ] Textos legales publicados en los 3 idiomas y **validados por el promotor** (decisión 41 de CUMPLIMIENTO §8; SESIÓN T1, Sprint 5.10a y SESIÓN I1).
+- [ ] `invoicing.issuerNif` **e** `invoicing.issuerName` configurados en `/admin/ajustes` (el NIF emisor es imprescindible: sin él, un patrocinio con fee no se asienta; la razón social sale en la factura) y el IVA de los ingresos de KORUM construido (decisión 21 de CUMPLIMIENTO §8, Sprint 5.20; hoy solo el fee de comercios, 21 %, `SPONSOR_FEE_VAT_BPS`) con Veri\*factu en marcha (Sprint 5.23).
 - [ ] `docs/MANUAL_OPERACION.md` escrito.

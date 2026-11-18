@@ -11,9 +11,10 @@
 ## 2. Antes de empezar un sprint (obligatorio, en este orden)
 
 1. **Leer el estado:** [docs/BITACORA_SPRINTS.md](../../docs/BITACORA_SPRINTS.md) (qué se hizo, qué quedó pendiente, decisiones tomadas) y la ficha del sprint en [docs/PLAN_IMPLEMENTACION_ATOMICO.md](../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
-2. **Avisar al usuario del modelo recomendado.** Indica el modelo de IA y el nivel de esfuerzo que la ficha del sprint recomienda (línea `🤖`) y, si el modelo de la sesión actual no coincide, dilo y pregunta si continuar o cambiar antes de escribir código. No adivines el modelo de la sesión: si no lo sabes, pregúntalo.
+2. **Avisar al usuario del modelo recomendado y de la duración.** Indica el modelo de IA y el nivel de esfuerzo que la ficha del sprint recomienda (línea `🤖`), **la duración estimada de la sesión (línea `⏱️`) y cuánto tiempo del promotor hará falta** y, si el modelo de la sesión actual no coincide, dilo y pregunta si continuar o cambiar antes de escribir código. No adivines el modelo de la sesión: si no lo sabes, pregúntalo.
 3. **Cargar las skills** que indica la ficha del sprint (y la anatomía del prototipo si el sprint toca interfaz).
-4. **Comprobar las dependencias externas** que indique la ficha (credenciales, decisiones legales pendientes). Si falta algo bloqueante, se para y se avisa; no se simula en silencio. Excepción: lo que figura en «Tareas externas aplazadas» del plan (respuestas de Paycomet, abogado, asesoría fiscal, proveedor Veri\*factu) **se construye contra el simulador por decisión del promotor**; en ese caso se anota en la bitácora la suposición usada y se recuerda que bloquea el paso a cobros reales.
+4. **Preguntas a terceros, primero al promotor (decisión del 2026-11-18).** Toda duda que parezca para el abogado, la asesoría fiscal, Paycomet o un proveedor de Veri\*factu **se le plantea primero al promotor**, con el formato «qué pasa hoy, ejemplo, opciones, recomendación». Lo que él decide lo valida él. Solo si no puede resolverla se anota en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](../../docs/CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md), con lo que se supone mientras tanto. Ningún documento vuelve a decir «pendiente del abogado» o «de la asesoría» sin esa conversación.
+5. **Comprobar las dependencias externas** que indique la ficha (credenciales, decisiones legales pendientes). Si falta algo bloqueante, se para y se avisa; no se simula en silencio. Excepción: lo que figura en «Tareas externas aplazadas» del plan (respuestas de Paycomet, abogado, asesoría fiscal, proveedor Veri\*factu) **se construye contra el simulador por decisión del promotor**; en ese caso se anota en la bitácora la suposición usada y se recuerda que bloquea el paso a cobros reales.
 
 ## 3. Tamaño de cada entrega y reparto de trabajo
 
@@ -38,7 +39,8 @@ Ningún sprint se entrega ni se marca `[x]` sin superar al **100 % (`0` fallos)*
 
 ## 5. Al cerrar un sprint (obligatorio)
 
-1. Marca `[x]` en el plan y añade una entrada en [docs/BITACORA_SPRINTS.md](../../docs/BITACORA_SPRINTS.md): modelo y esfuerzo usados, archivos creados, decisiones, pendientes y resultado de las 5 puertas.
-2. Si has cambiado algo en `.agents/` (reglas, skills o agentes), ejecuta `node scripts/sync-ai-context.mjs` para regenerar `.claude/`.
-3. Propón un commit con un mensaje claro. Commitea solo si el usuario lo aprueba.
-4. Termina indicando **el siguiente sprint y su modelo y esfuerzo recomendados**.
+1. Marca `[x]` en el plan y añade una entrada en [docs/BITACORA_SPRINTS.md](../../docs/BITACORA_SPRINTS.md): modelo y esfuerzo usados, **duración real de la sesión**, archivos creados, decisiones, pendientes y resultado de las 5 puertas.
+2. **Sin deuda nueva (decisión del promotor, 2026-11-18).** Lo que aparezca durante el sprint se corrige dentro de él. Si de verdad no cabe, se añade a [docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md](../../docs/REGISTRO_DEUDA_Y_PUNTOS_ABIERTOS.md) **con un sprint de destino concreto** y se le dice al promotor al cerrar: prohibido dejar «heredados» sin sprint. Los puntos que el sprint resuelve se marcan en el registro y en su documento de origen (CUMPLIMIENTO §9, DECISIONES §8).
+3. Si has cambiado algo en `.agents/` (reglas, skills o agentes), ejecuta `node scripts/sync-ai-context.mjs` para regenerar `.claude/`.
+4. Propón un commit con un mensaje claro. Commitea solo si el usuario lo aprueba.
+5. Termina indicando **el siguiente sprint y su modelo, esfuerzo y duración recomendados**.
