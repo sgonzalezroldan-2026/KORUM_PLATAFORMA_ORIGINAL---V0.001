@@ -2,7 +2,7 @@
 
 > **Regla de oro:** ningún sprint se marca `[x]` en [PLAN_IMPLEMENTACION_ATOMICO.md](PLAN_IMPLEMENTACION_ATOMICO.md) sin superar al **100 %** las **5 puertas** y cada código `QA-*` asignado en su ficha. Cada criterio se traduce en al menos un test automatizado que queda en el repositorio.
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los criterios y las partes de criterios que hablaban de rifas, papeletas, sorteo o ronda extra se retiraron de esta matriz en el Sprint 5.12b. Los criterios de los sprints 5.10 a 5.26 están en el §6. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los criterios y las partes de criterios que hablaban de rifas, papeletas, sorteo o ronda extra se retiraron de esta matriz en el Sprint 5.12b. Los criterios de los sprints 5.10 a 5.26 están en el §6. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 63); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ---
 
@@ -120,7 +120,7 @@
 
 ## 6. Fase 5 (continuación) · Ajuste legal y fiscal, cierre técnico y medición (`QA-RET`, `QA-TKT`, `QA-VAL`, `QA-LEG`, `QA-PAY`, `QA-COM`, `QA-FIN`, `QA-FIS`, `QA-SEC`, `QA-SEO`, `QA-MET`)
 
-> Criterios de los sprints 5.10 a 5.26 del [plan](PLAN_IMPLEMENTACION_ATOMICO.md), añadidos el 2026-11-18 con las decisiones del promotor ([CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 62). El sprint de cada uno va entre paréntesis. Cada sprint puede afinar el suyo al abrirse, nunca rebajarlo.
+> Criterios de los sprints 5.10 a 5.26 del [plan](PLAN_IMPLEMENTACION_ATOMICO.md), añadidos el 2026-11-18 con las decisiones del promotor ([CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 63). El sprint de cada uno va entre paréntesis. Cada sprint puede afinar el suyo al abrirse, nunca rebajarlo.
 
 | ID | Escenario | Dado / cuando | Entonces |
 | :--- | :--- | :--- | :--- |

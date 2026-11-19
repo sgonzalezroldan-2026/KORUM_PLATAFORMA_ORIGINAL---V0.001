@@ -4,7 +4,7 @@
 > **Qué es:** el análisis de qué puede salir mal con los datos personales en KORUM, qué se hace para evitarlo y qué riesgo queda. La exige el artículo 35 del Reglamento General de Protección de Datos (RGPD) cuando un tratamiento puede suponer un riesgo alto.
 > **Modelo seguido:** el *Modelo de informe de evaluación de impacto para el sector privado* de la Agencia Española de Protección de Datos (AEPD), con sus diez apartados, y la matriz de riesgo de su *Guía de gestión del riesgo y evaluación de impacto en tratamientos de datos personales* (2021).
 > **Quién la valida:** el promotor (decisión 41). No se publica. Se entrega a la AEPD si la pide, y a una entidad la información que necesite de ella según su [contrato de encargo](contrato-de-encargo.md).
-> **Qué evalúa:** la plataforma tal como saldrá a cobrar dinero real, con las decisiones 21 a 62 de [CUMPLIMIENTO §8](../CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) aplicadas. Lo que todavía no está construido figura en el plan de acción (apartado 9) con su sprint.
+> **Qué evalúa:** la plataforma tal como saldrá a cobrar dinero real, con las decisiones 21 a 63 de [CUMPLIMIENTO §8](../CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) aplicadas. Lo que todavía no está construido figura en el plan de acción (apartado 9) con su sprint.
 
 ---
 

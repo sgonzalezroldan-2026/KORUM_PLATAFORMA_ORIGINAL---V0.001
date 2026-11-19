@@ -87,6 +87,7 @@
     - E2E completa en modo CI sobre la compilación de producción: 547 en verde, 0 fallos, 33 omitidas (las deliberadas de siempre), 0 intermitencias. La primera pasada final dio 2 fallos, la intrusión ya corregida.
     - Recorrido real con el MCP de Playwright a 1440 y 430 px en es, ca y en, a cargo del verificador y del auditor de experiencia: 0 errores de consola, sin desbordes y sin claves sin traducir.
   - P5 ✅: tras cada corrección, P1 y unitarias completas y lo afectado (integración del área, E2E del área, también dos veces sin reintentos). Después, dos pasadas finales completas desde la 1; la segunda, en verde.
+- **Decisión posterior al cierre (decisión 63, 2026-11-19):** cargo por cancelación, opción C y sin excepciones. Si la entidad cancela un evento o una venta de vales, las familias siguen recuperando el 100 % por la plataforma y la entidad paga a KORUM la gestión devuelta y el coste de la pasarela y de las devoluciones. Va al Sprint 5.20b (N23); al abrirlo, el asistente propone al promotor cómo se cobra. Ya está en las condiciones para entidades §8 y §9 (versión 2026-11-19), la regla 02, la skill de taquilla, CUMPLIMIENTO §8, el registro y el plan. Hoy lo asume KORUM.
 - **Siguiente sprint:** 5.14a · Vales: motor · Claude Opus 5.5 · esfuerzo alto · 6–8 h. Al abrirlo, se le plantea al promotor si el pago «sin producto» es compra o donación y si se ofrece a los colegios con ánimo de lucro.
 
 ### Sprint 5.12b — Retirada de las rifas: pantallas, textos, pruebas de navegador y documentación (N2) · 2026-11-19 · terminado

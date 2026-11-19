@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -155,7 +155,7 @@ La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campa�
 
 - **Vendéis vosotros.** La entidad es la organizadora del evento y responde de que se celebre, del aforo, de la seguridad y de sus permisos.
 - **Un evento que llega a su fecha se liquida por lo vendido**, aunque no se haya llenado el aforo. Si no se vendió nada, se cierra sin dinero que mover.
-- **Si canceláis el evento**, se devuelve el 100 % a todas las personas.
+- **Si canceláis el evento**, se devuelve el 100 % a todas las personas y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo de la cancelación. Cambiar la fecha no tiene coste.
 - **Si cambiáis la fecha**, cada persona recibe un aviso con un enlace para recuperar el 100 % durante 14 días. Quien no lo pide conserva su entrada para la nueva fecha.
 - **La portería** se abre con un PIN por evento. Los voluntarios que la atienden actúan por cuenta de la entidad, que les da el enlace y el PIN y responde de a quién se los da. El enlace no debe publicarse; si se filtra, se cambia desde el panel.
 - **El móvil del voluntario** guarda la lista de entradas del evento y lo que lea sin cobertura hasta que se cierra la portería (como mucho, 3 días).
@@ -168,7 +168,7 @@ La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campa�
 - El puesto funciona con un lector móvil y un PIN, como la portería. Si lo atiende otra organización (por ejemplo, una ONG), la entidad le pasa el PIN bajo su responsabilidad y arregla cuentas con ella fuera de la plataforma: el dinero de la venta llega solo a la entidad.
 - Quien compra puede recuperar el 100 % durante 14 días si no ha gastado ningún vale de esa compra. Después, los vales sin gastar se quedan en la entidad para su causa.
 - **La fecha hasta la que valen los vales la fijáis vosotros** y respondéis de ella: KORUM no impone un plazo mínimo. Dad un plazo razonable para gastarlos.
-- Si canceláis la venta antes de la liquidación, la plataforma devuelve el 100 % de los vales sin gastar. Si la canceláis después, cuando el dinero ya está en vuestra cuenta, la plataforma ya no puede devolverlo: avisa de la cancelación a quienes compraron, con el modo de pediros la devolución que nos indiquéis, y devolverles lo no gastado es responsabilidad de la entidad, que responde ante ellos. Si cambiáis la fecha, se aplica la misma regla que a las entradas.
+- Si canceláis la venta antes de la liquidación, la plataforma devuelve el 100 % de los vales sin gastar, y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo. Si la canceláis después, cuando el dinero ya está en vuestra cuenta, la plataforma ya no puede devolverlo: avisa de la cancelación a quienes compraron, con el modo de pediros la devolución que nos indiquéis, y devolverles lo no gastado es responsabilidad de la entidad, que responde ante ellos. Si cambiáis la fecha, se aplica la misma regla que a las entradas.
 - La venta dura 60 días como máximo y se liquida por lo vendido al cerrarse, pasados los 14 días de devolución.
 
 ## 10. Comercios

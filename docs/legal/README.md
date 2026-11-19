@@ -13,7 +13,7 @@
 | Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-18 | Validado por el promotor | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
 | Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-19 | Validado por el promotor (el añadido del 3.6, el 2026-11-19) | Quien compra, con casilla al pagar |
 | Condiciones de la aportación mensual | [condiciones-aportacion-mensual.md](condiciones-aportacion-mensual.md) | 2026-11-18 | Validado por el promotor | Quien activa Mi Hucha, con casilla (apagada en el lanzamiento) |
-| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-18 | Validado por el promotor | La entidad, en el alta |
+| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-19 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19) | La entidad, en el alta |
 | Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-18 | Validado por el promotor | El comercio, con casilla, en cada pago y en cada renovación |
 | Política de privacidad | [politica-de-privacidad.md](politica-de-privacidad.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
 | Política de cookies | [politica-de-cookies.md](politica-de-cookies.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
@@ -54,7 +54,7 @@ Aparecen entre dobles corchetes y salen del ajuste `platform.company` de la cons
 
 ## 4. Lo que estos textos describen y el código todavía no hace
 
-Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 62 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
+Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 63 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
 
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |

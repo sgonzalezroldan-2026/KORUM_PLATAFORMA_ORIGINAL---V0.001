@@ -2,7 +2,7 @@
 
 > Significado único de cada término. Si un documento usa un término de otra forma, manda este glosario. Los **códigos internos** (en `monoespacio`) no se traducen; las **etiquetas visibles** viven en `messages/{es,ca,en}.json`.
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) se retiraron con ellas; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) se retiraron con ellas; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 63); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## Entidades y personas
 
