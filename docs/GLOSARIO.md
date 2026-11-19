@@ -2,7 +2,7 @@
 
 > Significado único de cada término. Si un documento usa un término de otra forma, manda este glosario. Los **códigos internos** (en `monoespacio`) no se traducen; las **etiquetas visibles** viven en `messages/{es,ca,en}.json`.
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) dejan de usarse entonces; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) se retiraron con ellas; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## Entidades y personas
 
@@ -15,14 +15,14 @@
 | **`DIRECTOR`** | Rol de gestión principal y 1ª firma de la entidad (Dirección del centro, Presidencia del club…). |
 | **`COSIGNER`** | Rol de 2ª firma mancomunada (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato, Titularidad del colegio…). Su cargo visible es `roleLabel`. |
 | **Doble firma (*2-Man Rule*)** | Aprobación que exige dos firmas de dos personas distintas (`DIRECTOR` + `COSIGNER`) para aprobar ideas y liberar fondos. |
-| **Portería** | Vista móvil para validar entradas (hasta el Sprint 5.12, también hacer sorteos; desde el 5.14c, canjear vales en el puesto) (`/panel/[orgSlug]/porteria`), con PIN por evento y `GateSession`. |
+| **Portería** | Vista móvil para validar entradas (el sorteo se retiró en el Sprint 5.12a; desde el 5.14c, también canjear vales en el puesto) (`/panel/[orgSlug]/porteria`), con PIN por evento y `GateSession`. |
 | **Super-Admin** | Persona que opera la plataforma KORUM (`User.isSuperadmin`). |
 
 ## Campañas y estados
 
 | Término | Significado |
 | :--- | :--- |
-| **Iniciativa / campaña** | Objetivo de recaudación de una entidad. Formato `BUDGET` (presupuesto de una mejora) o `TICKETING` (entradas; la rifa se retira en el Sprint 5.12 y la venta de vales llega en el 5.14). |
+| **Iniciativa / campaña** | Objetivo de recaudación de una entidad. Formato `BUDGET` (presupuesto de una mejora) o `TICKETING` (entradas; la rifa se retiró en el Sprint 5.12a y la venta de vales llega en el 5.14). |
 | **Estados** | `BUDGETING` (Presupuestación) · `FUNDRAISING` (Recaudando) · `GOAL_REACHED` (¡Conseguido!) · `CLOSED` (Cerrada) · `EXPIRED` (Vencida) · `RESIZE_VOTING` (Votación de redimensionamiento) · `REFUNDING` (Devolviendo) · `REFUNDED` (Reembolsada) · `CANCELLED` (Cancelada). Transiciones en el PRD §4. |
 | **Hucha de la iniciativa (`WLT-ESC-XXX`)** | Referencia del dinero retenido de una iniciativa en Paycomet. En público se llama así; "Escrow" es solo el término interno. |
 | **Todo o nada** | Si no se alcanza la meta, se devuelve el 100 % de lo cobrado (o se vota redimensionar). |
@@ -42,8 +42,8 @@
 | **Paycomet** | Entidad de pago que cobra, retiene, reparte y devuelve el dinero. KORUM no custodia fondos. |
 | ***Split transfer*** | Reparto de Paycomet desde el saldo cobrado a la cuenta destino de una entidad. Solo dentro de los **90 días** siguientes al cobro. |
 | **KYB** | Verificación de la entidad titular antes de cobrar: CIF, estatutos o escrituras, DNI de quien la representa y certificado de titularidad de su cuenta (más la acreditación de la Ley 49/2002 si la declara). Se suben en *Ajustes* del panel y se envían a revisión. |
-| **Estudio de edición** | Pantalla de la entidad (`/panel/{slug}/estudio`) donde diseña una campaña de presupuesto o de taquilla (la rifa se retira en el Sprint 5.12; la venta de vales llega en el 5.14), ve la pizarra TCO en vivo y la publica con confirmación. |
-| **Plantilla de campaña** | Punto de partida del Estudio (confort, patio, excursión, becas, festival…; la de rifa se retira en el Sprint 5.12): rellena título, descripción y categoría, nunca el presupuesto de un proveedor. |
+| **Estudio de edición** | Pantalla de la entidad (`/panel/{slug}/estudio`) donde diseña una campaña de presupuesto o de taquilla (la rifa se retiró en el Sprint 5.12a; la venta de vales llega en el 5.14), ve la pizarra TCO en vivo y la publica con confirmación. |
+| **Plantilla de campaña** | Punto de partida del Estudio (confort, patio, excursión, becas, festival…; la de rifa se retiró en el Sprint 5.12a): rellena título, descripción y categoría, nunca el presupuesto de un proveedor. |
 | **Cartel A4 con QR** | Hoja imprimible de una campaña que está recaudando, con QR real hacia su ficha pública, título y mensaje de la entidad y la dirección escrita. |
 | **TCO / pizarra TCO** | Desglose interno del coste total de una campaña en el Estudio (5 líneas en `BUDGET`). |
 | **Desglose de 4 líneas** | Versión pública del presupuesto, que suma exactamente la meta. |
@@ -52,7 +52,7 @@
 | **Comisión por tramos** | Porcentaje de KORUM sobre el resto sujeto (`t1`/`t2`/`t3`). |
 | **Mantenimiento ("La Baza")** | Cuota opcional por campaña con tope anual que se desactiva sola al alcanzarse. |
 | **Aportación voluntaria a KORUM** | Importe opcional que la familia puede añadir para sostener la plataforma (`guaranteeContributionCents`; sugerido por `fullIntegrityCheckCents`). Check **desmarcado** por defecto. Nunca "propina". |
-| **Gastos de gestión digital** | Importe por entrada o por vale (hasta el Sprint 5.12, también por papeleta) que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
+| **Gastos de gestión digital** | Importe por entrada o por vale (la papeleta de rifa se retiró en el Sprint 5.12a) que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
 | **Matching 2x** | Bolsa de un comercio que duplica las donaciones de las familias hasta agotarse. |
 | **Comercios amigos** | Patrocinadores locales por categoría ORO, PLATA o BRONCE. El 100 % va a la iniciativa; el fee se cobra encima. |
 | **`CREDIT_POOL`** | Bolsa donde espera (retenido en Paycomet) un patrocinio cuya campaña falló o una renovación, mientras no hay campaña a la que llevarlo; plazo limitado por la ventana de 90 días. Al vencer (día 70 desde el cobro como mucho) no se devuelve al comercio: pasa al Fondo de actividades de la entidad. |

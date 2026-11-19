@@ -1,6 +1,6 @@
 # Business Case, Unit Economics (Paycomet) y Hoja de Ruta Lean · KORUM
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. **Las cifras de este documento cuentan todavía el ingreso con IVA:** desde el Sprint 5.20a el ingreso de KORUM se mide **sin IVA** (el 21 % va dentro de la comisión por tramos, el mantenimiento, los Gastos de gestión digital y la gestión de Mi Hucha; la aportación voluntaria no lleva IVA) y este documento se recalcula en ese sprint. Además: los ingresos por rifas desaparecen y entran los de vales (5.14); los de Mi Hucha no existen en el lanzamiento (sale apagada, 5.15); los comercios pasan a dos modos con «gestión» al 15 % (5.16); el Auto-Impulso es un gasto promocional (5.21); y hay que sumar el coste de Veri\*factu por factura si se elige un proveedor (5.23). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. **Las cifras de este documento cuentan todavía el ingreso con IVA:** desde el Sprint 5.20a el ingreso de KORUM se mide **sin IVA** (el 21 % va dentro de la comisión por tramos, el mantenimiento, los Gastos de gestión digital y la gestión de Mi Hucha; la aportación voluntaria no lleva IVA) y este documento se recalcula en ese sprint. Además: los ingresos por rifas desaparecieron con su retirada (5.12) y entran los de vales (5.14); los de Mi Hucha no existen en el lanzamiento (sale apagada, 5.15); los comercios pasan a dos modos con «gestión» al 15 % (5.16); el Auto-Impulso es un gasto promocional (5.21); y hay que sumar el coste de Veri\*factu por factura si se elige un proveedor (5.23). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## 1. Filosofía Financiera: Automatización 100% Autónoma, Coste Mínimo e Independencia Total
 
@@ -10,14 +10,14 @@ KORUM está concebido como una **plataforma SaaS/Fintech pura de alta eficiencia
   - **Tarifa Media Negociada Paycomet (Entidad de Pago Banco de España):** `1,00%` variable (`100 bps`) + `0,09 €` fijo (`9 cts`) por transacción.
   - **Cobertura Matemática Exacta:**
     1. **En Iniciativas de Presupuesto (`BUDGET`):** La calculadora TCO incorpora el coste de pasarela en la Línea 5 (incluyendo los céntimos de redondeo al euro superior) dentro de la meta pública.
-    2. **En Taquilla y Rifas QR (`TICKETING`):** Los **"Gastos de gestión digital"** (`0,45 € fijo + 2,0%` por defecto = `0,55 €` en una entrada de `5,00 €`) cubren el coste real de Paycomet sobre el cobro bruto (`5,55 € × 1% + 0,09 € = 0,15 €`) y dejan **`+0,40 €` de margen neto limpio por cada entrada vendida**.
+    2. **En Taquilla QR (`TICKETING`):** Los **"Gastos de gestión digital"** (`0,45 € fijo + 2,0%` por defecto = `0,55 €` en una entrada de `5,00 €`) cubren el coste real de Paycomet sobre el cobro bruto (`5,55 € × 1% + 0,09 € = 0,15 €`) y dejan **`+0,40 €` de margen neto limpio por cada entrada vendida**.
     3. **En cargos de Mi Hucha:** el fee por defecto de `0,25 €` solo cubre el coste de Paycomet en cargos de **menos de 16 €** (`0,25 > 1 % × importe + 0,09`). En un cargo de 50 € se pierden 0,34 €. El fee (fijo + porcentaje) es configurable por el Super-Admin y la consola avisa cuando pierde dinero. Ver §5.
 
 ---
 
 ## 2. Unit Economics por Centro Activo (Colegio de 2 Líneas o Club Deportivo)
 
-Para un centro o club tipo de **450 familias** que ejecuta de forma autónoma **2 campañas de mejora** (`12.000 €` recaudados) + **1 evento de taquilla/rifa QR** (`300 entradas a 5 € = 1.500 €`) + **3 comercios patrocinadores** (`1 Oro de 500 €` + `2 Plata de 250 € = 1.000 €`):
+Para un centro o club tipo de **450 familias** que ejecuta de forma autónoma **2 campañas de mejora** (`12.000 €` recaudados) + **1 evento de taquilla QR** (`300 entradas a 5 € = 1.500 €`) + **3 comercios patrocinadores** (`1 Oro de 500 €` + `2 Plata de 250 € = 1.000 €`):
 
 | Fuente de Ingreso KORUM (6 Vías Transparentes) | Cálculo Anual por Centro | Ingreso Neto KORUM / Centro |
 | :--- | :--- | :---: |

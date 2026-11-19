@@ -159,7 +159,7 @@
       "sections": {
         "account": "Your account",
         "contributions": "Contributions and purchases",
-        "tickets": "Tickets and raffle entries",
+        "tickets": "Tickets",
         "consents": "Consents",
         "privacyRequests": "Privacy requests",
         "memberships": "Roles in organisations",
@@ -196,7 +196,6 @@
         "serial": "Code",
         "quantity": "Quantity",
         "checkedIn": "Check-ins",
-        "raffleNumbers": "Numbers",
         "revoked": "Cancelled",
         "purpose": "Purpose",
         "granted": "Accepted",
@@ -229,7 +228,7 @@
       },
       "types": {
         "DONATION": "Donation",
-        "TICKET": "Ticket or raffle entry",
+        "TICKET": "Ticket",
         "SPONSORSHIP": "Sponsorship",
         "SELF_BOOST": "Auto-Boost",
         "MATCHING_FUND": "Matching fund"
@@ -339,15 +338,11 @@
     },
     "ticket": {
       "subjectEvent": "Your ticket for “{initiative}”",
-      "subjectRaffle": "Your raffle tickets for “{initiative}”",
       "preheader": "Your QR code is inside.",
       "titleEvent": "Your ticket is ready",
-      "titleRaffle": "Your raffle tickets are ready",
       "bodyEvent": "Show the QR code at the door. It is attached to this email as an image, and you can also open it with the button.",
-      "bodyRaffle": "Your numbers are in the draw. Keep this email: the attached QR code identifies you if you win.",
       "serial": "Ticket number",
       "quantity": "Quantity",
-      "numbers": "Your numbers",
       "venue": "Venue",
       "date": "Date",
       "cta": "See my ticket",
@@ -825,22 +820,6 @@
         "cta": "See other initiatives"
       }
     },
-    "raffle": {
-      "extraRound": {
-        "subject": "An extra round was drawn for “{initiative}”",
-        "preheader": "If this does not ring a bell, review the record and talk to the other signatory.",
-        "title": "Extra raffle round",
-        "body": "{by} made round {round} of the draw for “{initiative}”: {prizes, plural, one {it replaces # prize} other {it replaces # prizes}} ({reason}). To keep things simple, a single person makes the extra round; that is why we let you know. It is in the draw record, which you can review and download in “Box office and door”.",
-        "cta": "See the draw",
-        "reason": {
-          "PRIZE_UNCLAIMED": "unclaimed prize",
-          "WINNER_REFUNDED": "refunded winning ticket"
-        },
-        "someone": "One of the signatories",
-        "factNew": "New tickets",
-        "factReplaced": "Replacing"
-      }
-    },
     "org": {
       "kybStatus": {
         "verified": {
@@ -997,14 +976,14 @@
       "howItWorks": "See how it works"
     },
     "llms": {
-      "summary": "KORUM is a technology platform for schools (through their parents’ association or owner), grassroots sports clubs and cultural organisations. It combines an ideas box with a quorum, all-or-nothing crowdfunding campaigns, QR ticketing and raffles, friendly local businesses and Mi Hucha.",
+      "summary": "KORUM is a technology platform for schools (through their parents’ association or owner), grassroots sports clubs and cultural organisations. It combines an ideas box with a quorum, all-or-nothing crowdfunding campaigns, QR ticketing, friendly local businesses and Mi Hucha.",
       "money": "Payments, the holding of funds and refunds are executed by PAYCOMET, a payment institution authorised by the Bank of Spain. KORUM is not a financial institution and does not hold funds. If an initiative does not reach its goal, 100% is refunded to each person, to the original payment method. KORUM never intermediates or charges commissions to suppliers of works or equipment: the organisation chooses freely.",
       "figuresTitle": "Current rates",
       "figures": [
         "Registering an organisation: free.",
         "The first {exempt} of each school year pays no commission; after that, {t1Rate}, {t2Rate} or {t3Rate} depending on the size of the initiative (bands up to {t1Max} and {t2Max}).",
         "Payment gateway: {gatewayRate} plus {gatewayFixed} per contribution, included in the goal families see.",
-        "Tickets and raffle tickets: “digital management fees” of {ticketFixed} plus {ticketRate} of the price.",
+        "Tickets: “digital management fees” of {ticketFixed} plus {ticketRate} of the price.",
         "Business sponsorship: 100% of the chosen level reaches the initiative; the advertising management fee ({sponsorFee} plus VAT) is added on top.",
         "Maximum campaign length: {maxDays} days."
       ],
@@ -1030,7 +1009,7 @@
       "maintOn": "{maintFee} per campaign, up to a yearly cap of {maintCap}",
       "gatewayLabel": "Payment gateway (Paycomet)",
       "gatewayValue": "{gatewayRate} plus {gatewayFixed} per contribution, included in the goal families see",
-      "ticketsLabel": "Tickets and raffle tickets",
+      "ticketsLabel": "Tickets",
       "ticketsValue": "“Digital management fees”: {ticketFixed} plus {ticketRate} of the price, always itemised before paying",
       "sponsorsLabel": "Business sponsorship",
       "sponsorsValue": "100% of the chosen level reaches the initiative. The advertising management fee ({sponsorFee} plus VAT) is added on top and paid by the business",
@@ -1054,7 +1033,7 @@
             "bullets": [
               "Open an ideas box with a quorum so families can propose and back improvements.",
               "Launch all-or-nothing campaigns for climate control, playground shade, digital whiteboards or the end-of-year trip.",
-              "Sell tickets and raffle tickets with QR codes at festivals and parties, with capacity control.",
+              "Sell tickets with QR codes at festivals and parties, with capacity control.",
               "Set class challenges (from the first year of nursery to the last year of compulsory secondary school) and celebrate what is achieved.",
               "Export Model 182 in one click if the organisation falls under Law 49/2002."
             ]
@@ -1090,9 +1069,9 @@
       },
       "clubes": {
         "title": "Fundraising for sports clubs",
-        "description": "Fund kit, travel or facilities with all-or-nothing campaigns, QR tickets and raffles, and a 100% refund if the goal is not reached.",
+        "description": "Fund kit, travel or facilities with all-or-nothing campaigns, QR tickets, and a 100% refund if the goal is not reached.",
         "h1": "How to raise funds for a grassroots sports club",
-        "answer": "KORUM gives a grassroots sports club an orderly way to raise money: all-or-nothing campaigns for kit, travel or facilities, QR tickets and raffles for its events, and positive team challenges. If a campaign does not reach its goal, 100% is refunded. The first {exempt} of each season pays no commission.",
+        "answer": "KORUM gives a grassroots sports club an orderly way to raise money: all-or-nothing campaigns for kit, travel or facilities, QR tickets for its events, and positive team challenges. If a campaign does not reach its goal, 100% is refunded. The first {exempt} of each season pays no commission.",
         "sections": [
           {
             "title": "Built for how a club works",
@@ -1104,10 +1083,10 @@
             ]
           },
           {
-            "title": "Tickets, raffles and the door",
+            "title": "Tickets and the door",
             "paragraphs": [
-              "Sell tickets with controlled capacity and numbered raffle tickets. Volunteers check people in at the door with their phone camera, using an event PIN and installing nothing. The raffle draw is held on screen and leaves a record.",
-              "Raffles and lotteries are regulated by each autonomous community and may require prior notification or authorisation: the organisation confirms it complies with its own rules before publishing."
+              "Sell tickets with controlled capacity. Volunteers check people in at the door with their phone camera, using an event PIN and installing nothing.",
+              "Every ticket carries a signed QR code: if someone tries to get in twice with the same one, the phone at the door warns and shows the time of the first entry. And if the signal drops, the door check keeps working."
             ]
           },
           {
@@ -1125,7 +1104,7 @@
           {
             "title": "What it costs",
             "paragraphs": [
-              "Registration is free and the first {exempt} of each season pays no commission. Tickets and raffle tickets carry “digital management fees” of {ticketFixed} plus {ticketRate} of the price, always itemised before paying."
+              "Registration is free and the first {exempt} of each season pays no commission. Tickets carry “digital management fees” of {ticketFixed} plus {ticketRate} of the price, always itemised before paying."
             ]
           }
         ],
@@ -1294,7 +1273,7 @@
               "The organisation pays nothing to register.",
               "Families contribute to the goal and, if they wish, a voluntary contribution to KORUM that arrives unticked.",
               "Businesses pay the sponsorship level, which arrives in full, plus the advertising management fee.",
-              "Whoever buys a ticket or a raffle ticket pays the “digital management fees”, always in plain sight."
+              "Whoever buys a ticket pays the “digital management fees”, always in plain sight."
             ]
           },
           {
@@ -1348,7 +1327,7 @@
       },
       "faq": {
         "title": "Frequently asked questions",
-        "description": "Clear answers on money, refunds, the organisation’s signatures, commissions, raffles, tax certificates and personal data on KORUM.",
+        "description": "Clear answers on money, refunds, the organisation’s signatures, commissions, tickets, tax certificates and personal data on KORUM.",
         "h1": "Frequently asked questions about KORUM",
         "answer": "Here we answer, in plain language, what organisations, families and businesses ask us most.",
         "sections": [
@@ -1393,8 +1372,8 @@
                 "a": "By default, two different people: the main manager (head teacher, club chair…) and a co-signer (chair of the parents’ association, club treasurer…). Both are needed to approve an idea and to release funds. The organisation can decide, at its own responsibility, that only the main manager signs."
               },
               {
-                "q": "Can we hold raffles?",
-                "a": "Yes, with numbered tickets and a certified on-screen draw. Raffles are regulated by each autonomous community and may require prior notification or authorisation: the organisation confirms it complies with its own rules before publishing."
+                "q": "Can we sell tickets for a party or a tournament?",
+                "a": "Yes. You publish the event from the Studio with its price and capacity; families buy in a few seconds and get their QR ticket by email. At the door, volunteers check it with their phone camera and an event PIN, installing nothing."
               }
             ]
           },
@@ -1918,7 +1897,7 @@
       },
       "card": {
         "formatBudget": "Budget",
-        "formatTicketing": "Tickets or raffle",
+        "formatTicketing": "Ticket sales",
         "hucha": "Piggy bank {id}",
         "raised": "{raised} of {goal}",
         "progress": "Progress of “{title}”: {percent}%",
@@ -1985,7 +1964,7 @@
         }
       },
       "newInitiative": "+ New initiative",
-      "newTicketing": "+ New ticketing / raffle",
+      "newTicketing": "+ New ticket sale",
       "metaTitle": "Dashboard"
     },
     "medals": {
@@ -2051,7 +2030,7 @@
     },
     "model182": {
       "title": "Form 182 (donations)",
-      "intro": "File to submit to the Tax Agency with the year’s completed, non-refunded donations. Tickets, raffles and top-ups never count.",
+      "intro": "File to submit to the Tax Agency with the year’s completed, non-refunded donations. Tickets and top-ups never count.",
       "year": "Tax year",
       "phone": "Contact phone",
       "phoneHint": "Nine digits: it will appear as the contact in the file. The contact name is the one on your account.",
@@ -2235,7 +2214,7 @@
           "blockedTitle": "Signed, but it can’t be sent yet",
           "blocked": "The required signatures are recorded, but the account holder’s documents are not verified or the PAYCOMET account is missing. It will be sent as soon as they are ready.",
           "notReadyTitle": "Signed, but the campaign can’t be paid out yet",
-          "notReady": "The required signatures are recorded, but something is missing before the payout (the raffle draw or a decision on a local business). You’ll see it in Payouts.",
+          "notReady": "The required signatures are recorded, but something is missing before the payout (for example, a decision on a local business). You’ll see it in Payouts.",
           "invoiceTitle": "A valid invoice is missing",
           "invoice": "The attached invoice is no longer valid. Upload another one in Payouts and request the payout again.",
           "providerTitle": "Paying the supplier is not available yet",
@@ -2954,7 +2933,7 @@
       "picker": {
         "newTitle": "Start a campaign",
         "newBudget": "+ New initiative",
-        "newTicketing": "+ New ticketing / raffle",
+        "newTicketing": "+ New ticket sale",
         "tooManyDrafts": "You already have {max} open drafts. Publish or finish one before creating another.",
         "templatesTitle": "Ready-to-use templates",
         "templatesHint": "They fill in the title and description. You enter the budget from your supplier’s quote: KORUM does not suggest prices.",
@@ -2966,7 +2945,7 @@
       },
       "format": {
         "BUDGET": "Budget / works",
-        "TICKETING": "Ticketing or raffle"
+        "TICKETING": "Ticket sales"
       },
       "templates": {
         "climate": {
@@ -3010,12 +2989,6 @@
           "summary": "Tickets with controlled capacity and a QR code.",
           "title": "End-of-year festival",
           "description": "Ticket sales with controlled capacity and a QR code for our festival. What we raise goes to the community’s activities."
-        },
-        "raffle": {
-          "name": "Charity raffle",
-          "summary": "Numbered tickets with a certified draw.",
-          "title": "Community charity raffle",
-          "description": "Numbered tickets with an on-screen draw and a record. What we raise goes to the community’s activities."
         },
         "playgroundClub": {
           "name": "Club facilities",
@@ -3088,33 +3061,28 @@
         "families": "Families and members"
       },
       "fields": {
-        "title": "Title of the initiative, event or raffle",
+        "title": "Title of the initiative or event",
         "category": "Category",
         "categoryChoose": "Choose a category",
-        "ticketingCategory": "Ticketing and raffles",
+        "ticketingCategory": "Ticket sales",
         "stage": "Who it benefits",
         "stageChoose": "Choose who it benefits",
         "closesOn": "Deadline",
         "closesOnHint": "At most {days} days from today.",
         "description": "Description",
-        "ticketingTitle": "Ticketing or raffle with a QR code",
+        "ticketingTitle": "Ticket sales with a QR code",
         "ticketSubtype": "Type",
         "subtypeEvent": "Ticket with capacity control",
-        "subtypeRaffle": "Numbered raffle ticket",
         "ticketPrice": "Ticket price (€)",
-        "ticketMax": "Maximum capacity or number of tickets",
+        "ticketMax": "Maximum capacity",
         "digitalFee": "Digital handling fees (amount)",
         "digitalFeeHint": "Set by KORUM; shown here for the calculation.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} each)",
-        "venue": "Place or date of the event or draw",
+        "venue": "Place or date of the event",
         "venueHint": "Optional. Shown on the public page.",
         "feeMode": "Who pays the digital handling fees",
         "feeModeAdd": "Add them to the buyer’s total",
         "feeModeInc": "Absorb them within the ticket price",
-        "raffleNotice": "Raffles and lotteries are regulated by each region and may need prior notification or authorisation depending on their value. Prizes in kind cannot be exchanged for cash.",
-        "rafflePrizes": "Prizes to draw",
-        "rafflePrizesHint": "Set before publishing and cannot be changed afterwards: without it the draw could not be held.",
-        "raffleConfirm": "We confirm that the raffle complies with the rules of our region",
         "budgetTitle": "Budget",
         "costMat": "Supplier quote (€)",
         "costMatHint": "Your own supplier’s quote, with no KORUM commission.",
@@ -3157,8 +3125,7 @@
         "gatewayCoveredNote": "The payment gateway cost is covered: it is not deducted from what the organisation receives.",
         "gatewayFormula": "How it is calculated: {pct} variable on {subtotal} ({variable}) + {count, plural, one {# estimated contribution} other {# estimated contributions}} (based on the suggested contribution of {ticket}) × {fixed} ({fixedTotal}) + {rounding} rounding up to the euro. Balanced total: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Gross takings at full capacity (capacity × price)",
-        "ticketGrossRaffle": "Gross takings from the tickets (tickets × price)",
-        "ticketModelTitle": "Digital handling fees (QR ticketing)",
+        "ticketModelTitle": "Digital handling fees (QR ticket sales)",
         "ticketDigitalFee": "Digital handling fee per ticket",
         "perUnitAdd": "{amount} each (added to the buyer’s total)",
         "perUnitInc": "{amount} each (included in the price)",
@@ -3167,7 +3134,7 @@
         "ticketNet": "Net guaranteed for the organisation",
         "maintShortfall": "The takings do not cover the maintenance charge: {amount} would be missing.",
         "gatewayNotCovered": "At these prices the handling fees do not cover the payment gateway ({amount} per ticket). KORUM reviews it; it does not change what the organisation receives.",
-        "badgeTicketing": "Ticketing or raffle with QR",
+        "badgeTicketing": "Ticket sales with QR",
         "badgeExempt": "0% commission category",
         "badgeBracket": "Bracket {rate}",
         "badgeExact": "Exact breakdown",
@@ -3183,16 +3150,13 @@
         "GOAL_ZERO": "The budget is missing: the goal cannot be €0.00.",
         "STAGE_MISSING": "Say who the campaign benefits.",
         "DESCRIPTION_MISSING": "The description is missing.",
-        "TICKET_MAX_ZERO": "Enter the capacity or the number of tickets.",
+        "TICKET_MAX_ZERO": "Enter the capacity.",
         "TICKET_PRICE_ZERO": "The price cannot be €0.00: with no amount there is nothing to put in the piggy bank.",
         "TICKET_FEE_EXCEEDS_PRICE": "With the handling fees inside the price nothing would be left for the piggy bank: raise the price or add the fees to the buyer’s total.",
-        "RAFFLE_PRIZES": "Enter how many prizes are drawn (at most as many as tickets).",
-        "RAFFLE_NOTICE": "Confirm that the raffle complies with the rules of your region.",
         "INVALID_CATEGORY": "Choose an improvement category.",
         "CLOSING_INVALID": "The closing date is not valid.",
         "CLOSING_PAST": "The closing date has already passed: choose one after today.",
         "CLOSING_TOO_LATE": "The campaign would run longer than allowed: choose an earlier closing date.",
-        "RAFFLE_PRIZES_EXCEED": "There cannot be more prizes than tickets.",
         "TITLE_MISSING": "Write a title of at least 3 letters.",
         "MAINT_EXCEEDS_TAKINGS": "At this price and capacity the takings do not cover the platform maintenance charge: raise the price or the capacity.",
         "GOAL_TOO_HIGH": "With this budget and the platform’s terms, the goal would exceed the maximum that can be saved: lower the budget or write to KORUM."
@@ -3271,7 +3235,6 @@
           "description": "The poster is generated once the campaign is collecting: until then its QR code would lead nowhere. Publish it from the Studio and come back."
         },
         "defaultMessageTickets": "Scan the QR code with your phone, choose your ticket and pay by card or Bizum in 10 seconds.",
-        "defaultMessageRaffle": "Scan the QR code with your phone, choose your raffle tickets and pay by card or Bizum in 10 seconds.",
         "guaranteeTickets": "Secure payment with PAYCOMET. If the event is cancelled, we refund 100% of what you paid to the same payment method. Initiative piggy bank {wallet}.",
         "metaTitle": "A4 poster with QR code"
       },
@@ -3361,7 +3324,6 @@
       "blockersLabel": "What is missing before the payout",
       "blockers": {
         "NOT_READY": "This campaign is not ready to be paid out.",
-        "RAFFLE_NOT_DRAWN": "The public raffle draw is still pending: it cannot be paid out before.",
         "SPONSORS_PENDING": "Some local businesses have paid and you have not accepted or declined them yet.",
         "KYB_NOT_VERIFIED": "The account holder’s documents are not verified yet.",
         "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet.",
@@ -3413,7 +3375,6 @@
         "INVALID_TAX_ID": "The supplier’s tax ID (CIF or NIF) is not valid.",
         "NOT_FOUND": "We can’t find that campaign in your organisation.",
         "NOT_READY": "This campaign is no longer ready to be paid out (a chargeback may have sent it back to fundraising).",
-        "RAFFLE_NOT_DRAWN": "The raffle draw is still pending: it cannot be paid out before.",
         "SPONSORS_PENDING": "Some local businesses have paid and you have not accepted or declined them yet.",
         "KYB_NOT_VERIFIED": "The account holder’s documents are not verified yet.",
         "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet to receive the money.",
@@ -3463,7 +3424,6 @@
         "editCancel": "Don’t change anything",
         "notApproved": {
           "NOT_GOAL": "It could not be approved: the campaign no longer has its goal reached (a chargeback).",
-          "RAFFLE_NOT_DRAWN": "It could not be approved: the full raffle draw is still pending.",
           "SPONSORS_PENDING": "It could not be approved: some paid local businesses have not been accepted or declined.",
           "FIGURES_CHANGED": "The figures have changed since it was signed (a chargeback). Request the payout again: it will be signed again.",
           "ESCROW_MISMATCH": "The initiative’s piggy bank doesn’t match the amount raised. The KORUM team is looking into it.",
@@ -3550,11 +3510,11 @@
         "optionLength": "Write between {min} and {max} characters.",
         "removeOption": "Remove option {letter}",
         "addOption": "Add another option",
-        "refundOptionAlways": "The ballot also always includes “I’d rather have my contribution back”.",
+        "refundOptionAlways": "The vote also always includes “I’d rather have my contribution back”.",
         "launchVote": "Launch the vote",
         "voteBlockedLabel": "Why a vote is not possible",
         "voteBlocked": {
-          "NOT_BUDGET": "An event or a raffle has no smaller version: the money can only be refunded.",
+          "NOT_BUDGET": "An event with tickets has no smaller version: the money can only be refunded.",
           "NO_DONATIONS": "There are no family donations that could vote: it can only be refunded.",
           "WINDOW_TOO_SHORT": "Little is left of the 90 days in which PAYCOMET can send the money: there is no time to vote and pay out. It can only be refunded.",
           "POLL_EXISTS": "This campaign has already had its vote."
@@ -3563,21 +3523,21 @@
         "refundText": "Everyone gets back everything they paid, to their original payment method, without having to ask. Business sponsorships move to another campaign or to their pool, and the allowances go back to the organisation.",
         "refundButton": "Refund 100%",
         "confirmVoteTitle": "Launch the vote on “{title}”?",
-        "confirmVoteText": "We will send the ballot to the people who donated. It will last {days} days and the options cannot be changed. Anyone who asks for a refund will have it under way as soon as they vote, and anyone who does not vote will be refunded when it closes.",
+        "confirmVoteText": "We will send the vote to the people who donated. It will last {days} days and the options cannot be changed. Anyone who asks for a refund will have it under way as soon as they vote, and anyone who does not vote will be refunded when it closes.",
         "confirmRefundTitle": "Refund 100% of “{title}”?",
         "confirmRefundText": "We will start returning each contribution to its original payment method. Business sponsorships will move to another campaign or to their pool. This cannot be undone.",
         "confirmVote": "Yes, launch the vote",
         "confirmRefund": "Yes, refund 100%",
         "cancel": "No, go back",
         "sending": "Sending…",
-        "voteLaunched": "Vote launched. The people who donated receive their ballot by email; it closes on {date}.",
+        "voteLaunched": "Vote launched. The people who donated receive the link to vote by email; it closes on {date}.",
         "refundStarted": "Refund under way. Contributors are notified and the money goes back to their payment method over the next few days."
       },
       "errors": {
         "INVALID_INPUT": "Please check the options.",
         "NOT_FOUND": "We could not find that campaign in your organisation.",
         "WRONG_STATUS": "This campaign is no longer waiting for a decision: someone made it in the meantime.",
-        "NOT_BUDGET": "An event or a raffle has no smaller version: the money can only be refunded.",
+        "NOT_BUDGET": "An event with tickets has no smaller version: the money can only be refunded.",
         "NO_DONATIONS": "There are no family donations that could vote: it can only be refunded.",
         "WINDOW_TOO_SHORT": "Little is left of the 90 days in which PAYCOMET can send the money: it can only be refunded.",
         "POLL_EXISTS": "This campaign has already had its vote.",
@@ -3682,8 +3642,7 @@
       "title": "Box office and door",
       "intro": "Here you set the door PIN for each event and see which volunteer phones are inside. The PIN belongs to that event only, is shown once and expires six hours after the event day ends.",
       "kind": {
-        "event": "Event with tickets",
-        "raffle": "Raffle"
+        "event": "Event with tickets"
       },
       "sold": "{sold} sold",
       "soldOf": "{sold} of {max} sold",
@@ -3725,7 +3684,7 @@
       "readOnly": "Only the signatories can create the PIN and close sessions.",
       "empty": {
         "title": "There are no events with tickets yet",
-        "text": "When you publish an event or a raffle from the Studio, you can create the PIN for its door here.",
+        "text": "When you publish an event from the Studio, you can create the PIN for its door here.",
         "action": "Go to the Studio"
       },
       "errors": {
@@ -3733,57 +3692,6 @@
         "NOT_FOUND": "That event no longer exists.",
         "NOT_ALLOWED": "The PIN cannot be created: the event has already ended or its date is not valid.",
         "RATE_LIMITED": "You’ve created a lot of PINs in a row. Wait a while before creating another: each new PIN closes the gate sessions."
-      },
-      "raffle": {
-        "title": "Draw and extra rounds",
-        "notDrawn": "This raffle has not been drawn yet. The draw is made at the door on the day of the event; once it is done, you can replace an unclaimed prize here.",
-        "summary": "Prizes drawn: {drawn} of {prizes}. Replaced with extra rounds: {extra}.",
-        "round": "Round {round}",
-        "roundExtra": "Round {round} (extra: {reason})",
-        "reason": {
-          "PRIZE_UNCLAIMED": "unclaimed prize",
-          "WINNER_REFUNDED": "refunded winning ticket"
-        },
-        "download": "Download record",
-        "downloadLabel": "Download record of round {round}",
-        "extraTitle": "Extra round",
-        "extraIntro": "If nobody claims the prize of a ticket, or the person who bought it asked for a refund, you can draw another ticket to replace it. One signatory is enough: if there is another, they get a notice, and the round is recorded. It can only be done before the raffle is settled.",
-        "reasonLabel": "Reason",
-        "reasonOption": "{reason} (up to {max, plural, one {# prize} other {# prizes}})",
-        "prepare": "Prepare the extra round",
-        "confirmTitle": "Draw 1 ticket to replace {replaced}?",
-        "confirmBody": "Reason: {reason}. Do it only once the deadline to collect the prize has passed, including any longer one in the raffle rules. The draw is random and cannot be undone or repeated. It will be recorded in the draw record and the organisation’s history, and we will let the other signatory know, if there is one.",
-        "confirmYes": "Yes, draw now",
-        "confirmNo": "Cancel",
-        "drawing": "Drawing…",
-        "done": "Round {round} done: {numbers} replaces {replaced}. Note which prize it was. The other signatory will get a notice.",
-        "readOnly": "Only the signatories can make an extra round.",
-        "blocked": {
-          "prizesExhausted": "There are no prizes left to replace.",
-          "notJustified": "That reason does not allow replacing that many prizes right now. Reload the page to see how many are left.",
-          "notEnough": "There are not enough tickets left to draw that many prizes.",
-          "keyReused": "That round had already been drawn with different details. Reload the page.",
-          "other": "This draw cannot be made right now.",
-          "replacedInvalid": "Those tickets can no longer be replaced. Reload the page to see which ones are left.",
-          "tooSoon": "The minimum time to replace an unclaimed prize has not passed yet. Reload the page to see from when it is possible."
-        },
-        "errors": {
-          "FORBIDDEN": "You do not have permission to do that.",
-          "NOT_FOUND": "That raffle no longer exists.",
-          "INVALID_INPUT": "Check the round details.",
-          "NETWORK": "We could not confirm the draw. Try again: if it was already made, you will see the same round; a draw is never made twice.",
-          "DOWNLOAD": "The record could not be downloaded. Please try again."
-        },
-        "doneAlone": "Round {round} done: {numbers} replaces {replaced}. Note which prize it was. There is no other active signatory to notify; the round is in the draw record and the organisation’s history.",
-        "noneAllReplaced": "All the prizes that can be replaced have already been replaced. Each prize can only be replaced once; if it is not claimed either, the organisation decides what to do with it.",
-        "noneNoEntries": "There are no tickets left that have not already won: there is nobody to draw.",
-        "replaceLegend": "Which winning ticket are you replacing?",
-        "replaceHint": "Choose the winning ticket whose prize nobody claims. It is done one at a time: if more prizes are unclaimed, repeat the round.",
-        "replaceHintRefunded": "Only the winning tickets that were refunded are shown. It is done one at a time.",
-        "refundedTag": "refunded",
-        "selectNone": "Tick at least one winning ticket to replace it.",
-        "noneWaiting": "You will be able to replace an unclaimed prize from {date}: that is the minimum time KORUM has set for it to be claimed. If your raffle rules allow more time, wait until it ends.",
-        "replacesText": "replaces {replaced}"
       }
     },
     "welcomeCelebration": {
@@ -3812,10 +3720,6 @@
     "busyTitle": "Too many requests",
     "deviceLabel": "Name of this phone (optional)",
     "deviceHint": "For example, “North door”. That way the organisation can tell which phone is which.",
-    "raffleTitle": "Raffle draw",
-    "raffleText": "This raffle does not use a ticket scanner. When the event starts, open the draw to show it on a screen.",
-    "raffleOpen": "Open the certified draw",
-    "raffleBack": "Back to door check-in",
     "scanner": {
       "capacityTitle": "Live attendance",
       "capacity": "{checkedIn} / {capacity} people inside the venue",
@@ -3859,8 +3763,6 @@
         "revokedDetail": "It was refunded or cancelled and is no longer valid. Do not let them in.",
         "notPaid": "Ticket not paid",
         "notPaidDetail": "Payment for this ticket is not complete.",
-        "notApplicable": "This is a raffle ticket",
-        "notApplicableDetail": "Raffle tickets do not give entry: this is not an admission ticket.",
         "eventClosed": "Event closed",
         "eventClosedDetail": "The event was cancelled or refunded: do not let them in.",
         "unknown": "Not in the downloaded list",
@@ -3907,46 +3809,6 @@
         "pending": "{count, plural, one {There is # scan saved on this phone: it will be sent when you get back in with the new PIN.} other {There are # scans saved on this phone: they will be sent when you get back in with the new PIN.}}"
       },
       "capacityFull": "Attendance complete"
-    },
-    "raffle": {
-      "title": "Certified draw",
-      "fullscreen": "Full screen",
-      "exitFullscreen": "Exit full screen",
-      "entries": "Valid tickets",
-      "prizesLeft": "Prizes still to draw",
-      "winnersLabel": "How many prizes are you drawing now? ({left} left)",
-      "winnersHint": "Every round is recorded in its own record.",
-      "drawOne": "Draw",
-      "drawMany": "Draw {count} prizes",
-      "drawing": "Drawing…",
-      "result": "{count, plural, one {Round {round}: winning ticket} other {Round {round}: winning tickets}}",
-      "resultExtra": "{count, plural, one {Extra round {round}: winning ticket} other {Extra round {round}: winning tickets}}",
-      "numbersLabel": "Winning tickets",
-      "act": {
-        "time": "Draw made on",
-        "participants": "Tickets that took part",
-        "listHash": "Fingerprint of the ticket list (SHA-256)",
-        "actHash": "Fingerprint of the record (SHA-256)",
-        "verify": "With the downloaded record anyone can check that the ticket list and the result have not been changed since the draw: it contains the tickets that took part and both fingerprints. The server makes the draw with a cryptographic random generator, only among paid, non-cancelled tickets.",
-        "download": "Download the record (data file)",
-        "print": "Print the record"
-      },
-      "rounds": "Rounds made",
-      "roundButton": "Round {round}: {numbers}",
-      "blocked": {
-        "notRaffle": "This event is not a raffle.",
-        "salesOpen": "Ticket sales are still open: the draw is made once they close.",
-        "tooEarly": "The draw opens on {date}, the day of the event.",
-        "prizesNotSet": "This raffle has no prizes set: they are set in the Studio before selling.",
-        "done": "All the prizes have already been drawn.",
-        "notEnough": "There are not enough tickets to draw that many prizes.",
-        "extraNotAllowed": "Only the signatories can make an extra round.",
-        "keyReused": "That round had already been drawn with different details. Reload the screen.",
-        "busy": "Too many requests in a row. Wait a minute.",
-        "failed": "The draw could not be completed. Press again: if it was already made, you will see its record.",
-        "notAvailable": "This raffle was cancelled, has expired or is being refunded: there is no draw.",
-        "closed": "This raffle is already closed."
-      }
     },
     "organiserHint": "Are you organising the event? Create the PIN and the door check-in link in “Box office and door”.",
     "organiserLink": "Go to Box office and door",
@@ -4060,7 +3922,7 @@
         "supportGuaranteeCents": "Voluntary KORUM guarantee contributions",
         "bracketFeeCents": "Tiered commissions (works and equipment)",
         "sponsorFeeCents": "Sponsor shop fees",
-        "digitalTicketFeeCents": "Digital handling fees (box office and QR raffles)",
+        "digitalTicketFeeCents": "Digital handling fees (QR ticket sales)",
         "maintFeeCents": "Platform maintenance fees",
         "huchaTopupFeeCents": "Handling of Piggy Bank contributions"
       },
@@ -4371,7 +4233,7 @@
       "format": "Format",
       "formats": {
         "BUDGET": "Budget",
-        "TICKETING": "Box office and QR raffles"
+        "TICKETING": "QR ticket sales"
       },
       "wallet": "Piggy bank and status",
       "progress": "Progress",
@@ -4541,7 +4403,7 @@
         "INCOMPLETE": "Documents or the holder’s tax ID are missing: it cannot be verified.",
         "LEY49_NOT_DECLARED": "The entity has not declared the Law 49/2002 regime: it cannot be accredited.",
         "SPLIT_ID_IN_USE": "That destination account identifier is already used by another entity.",
-        "PUBLISHED_TICKETING": "The entity has a box office or raffle on sale: its ticket management fees are not changed in the meantime, because they would change what was already promised. Try again when it ends.",
+        "PUBLISHED_TICKETING": "The entity has a box office on sale: its ticket management fees are not changed in the meantime, because they would change what was already promised. Try again when it ends.",
         "LIMIT_BELOW_USED": "The annual exempt amount cannot be lower than what the entity has already spent this school year."
       },
       "holder": {
@@ -4840,7 +4702,7 @@
       "reason": {
         "INVALID": "Check the marked fields: one of the values is not valid.",
         "STALE": "Someone else saved changes while you were editing. Reload the page to see their changes and make yours again.",
-        "TICKETING_ON_SALE": "Nothing has been saved. A ticket sale or raffle is on sale at an organisation without its own rates and the digital handling fees cannot change until it ends, because they would change what has already been promised to buyers. Leave those two fields as they were and save again.",
+        "TICKETING_ON_SALE": "Nothing has been saved. A ticket sale is open at an organisation without its own rates and the digital handling fees cannot change until it ends, because they would change what has already been promised to buyers. Leave those two fields as they were and save again.",
         "CATEGORY_EXISTS": "A category with that name already exists.",
         "CATEGORY_NOT_FOUND": "That category no longer exists.",
         "ALERT_CHANGED": "The rules changed and this warning is now a different one.",
@@ -5266,10 +5128,6 @@
         },
         "platform_company": {
           "label": "Company details"
-        },
-        "raffle_extraRoundMinHours": {
-          "label": "Hours to wait before an extra raffle round",
-          "help": "Between 0 and 720. 0 = no wait. Set by the lawyer; refunding a winner does not wait."
         }
       },
       "secretsTitle": "Keys and passwords",
@@ -5680,7 +5538,7 @@
         "ALL": "Any date",
         "SOON": "Closing soon (under 20 days)",
         "ALMOST": "Final stretch (75% or more)",
-        "TICKETING": "Tickets and raffles only"
+        "TICKETING": "Tickets only"
       },
       "clear": "Clear filters",
       "results": "{count, plural, =0 {No initiatives match these filters} one {# initiative} other {# initiatives}}"
@@ -5702,24 +5560,23 @@
       "open": "Open the page for {title}",
       "share": "Share {title}",
       "stage": "Stage: {stage}",
-      "price": "{kind, select, RAFFLE {Raffle ticket {price}} other {Ticket {price}}}",
+      "price": "Ticket {price}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x is on: your contribution is doubled while the pool lasts.",
       "zeroCommission": "0% platform commission",
       "raisedOf": "{raised} of {goal}",
       "percent": "{pct}%",
       "progress": "Progress of {title}",
-      "ticketsSold": "{kind, select, RAFFLE {{sold} sold of {max}} other {{sold} sold · capacity {max}}}",
+      "ticketsSold": "{sold} sold · capacity {max}",
       "ticketsLeft": "{count, plural, =0 {Sold out} one {# left} other {# left}}",
       "contributions": "{count, plural, one {# contribution} other {# contributions}}",
       "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
       "completed": "Complete!",
       "refund": "100% refunded if the goal is missed",
-      "soldOut": "{kind, select, RAFFLE {Raffle tickets sold out} other {Full house · tickets sold out}}",
+      "soldOut": "Full house · tickets sold out",
       "goalReached": "100% reached! Closed",
       "contribute": "Contribute now",
       "buyTickets": "Buy tickets",
-      "buyRaffle": "Buy raffle tickets",
       "closed": "Closed"
     },
     "categories": {
@@ -5728,7 +5585,7 @@
       "tech": "Technology and resources",
       "community": "Community and trips",
       "solidarity": "Solidarity and scholarships",
-      "ticketing": "Box office and raffles"
+      "ticketing": "Ticket sales"
     },
     "detail": {
       "back": "Back to the initiatives",
@@ -5748,15 +5605,15 @@
       "contributionsDone": "{count, plural, one {# contribution made} other {# contributions made}}",
       "completedFull": "100% complete",
       "closed": "100% reached! Contributions are closed",
-      "ticketsSoldOut": "{kind, select, RAFFLE {Raffle tickets sold out!} other {Full house! Tickets sold out}}",
-      "ticketsHeading": "{kind, select, RAFFLE {Raffle ticket details} other {Digital ticketing details}}",
+      "ticketsSoldOut": "Full house! Tickets sold out",
+      "ticketsHeading": "Digital ticketing details",
       "ticketLines": {
-        "price": "{kind, select, RAFFLE {Full amount per raffle ticket for the organisation} other {Full amount per ticket for the organisation}}",
+        "price": "Full amount per ticket for the organisation",
         "fee": "Digital handling fee",
-        "total": "{kind, select, RAFFLE {Total per raffle ticket} other {Total per ticket}}",
-        "priceInc": "{kind, select, RAFFLE {Raffle ticket price} other {Ticket price}}",
+        "total": "Total per ticket",
+        "priceInc": "Ticket price",
         "feeInc": "Includes the digital handling fee",
-        "center": "{kind, select, RAFFLE {The organisation receives per raffle ticket} other {The organisation receives per ticket}}",
+        "center": "The organisation receives per ticket",
         "venue": "Venue: {venue}"
       },
       "breakdown": {
@@ -5787,8 +5644,7 @@
       },
       "cta": {
         "contribute": "Contribute to this initiative",
-        "buyTickets": "Buy tickets",
-        "buyRaffle": "Buy raffle tickets"
+        "buyTickets": "Buy tickets"
       },
       "contributionsClosed": "This initiative is no longer taking contributions",
       "selfBoost": "The KORUM platform also chipped in and helped reach the goal."
@@ -5836,7 +5692,7 @@
     },
     "og": {
       "progress": "{pct}% reached",
-      "tickets": "{kind, select, RAFFLE {{sold} of {max} raffle tickets sold} other {{sold} of {max} tickets sold}}",
+      "tickets": "{sold} of {max} tickets sold",
       "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}",
       "goalReached": "Goal reached!",
       "challengeMissing": "{missing, plural, one {Just # family to go} other {Just # families to go}} for {group} to unlock {reward}!",
@@ -5858,17 +5714,12 @@
       "title": "Your ticket",
       "event": "Event",
       "quantity": "{count, plural, one {# ticket} other {# tickets}}",
-      "numbers": "{count, plural, one {Your raffle number} other {Your raffle numbers}}",
       "qrAlt": "QR code to get in",
       "show": "Show it at the door, on your phone or printed.",
       "serial": "Code {serial}",
       "revoked": {
         "title": "This ticket is no longer valid",
         "description": "It has been refunded or cancelled, so it will not open the door. If you think this is a mistake, write to the organisation."
-      },
-      "revokedRaffle": {
-        "title": "These raffle tickets are no longer valid",
-        "description": "They have been refunded or cancelled, so they no longer count for the draw. If you think this is a mistake, write to the organisation."
       },
       "invalid": {
         "title": "We can’t open this ticket",
@@ -5878,23 +5729,7 @@
       "shareWhatsapp": "Send via WhatsApp",
       "shareWarning": "Anyone with this link can use the ticket: only send it to the person who is going.",
       "shareMessage": "Your ticket for “{title}”: {url}",
-      "actions": "Ticket actions",
-      "titleRaffle": "Your raffle tickets",
-      "quantityRaffle": "{count, plural, one {# raffle ticket} other {# raffle tickets}}",
-      "qrAltRaffle": "QR code for your raffle tickets",
-      "showRaffle": "{count, plural, one {Keep it: if your number comes up, show it on your phone or printed to claim your prize. The organisation will tell you how to collect it.} other {Keep them: if one of your numbers comes up, show them on your phone or printed to claim your prize. The organisation will tell you how to collect it.}}",
-      "showRaffleWon": "{count, plural, one {Show this page, on your phone or printed, to claim your prize. The organisation will tell you how to collect it.} other {Show this page, on your phone or printed, to claim your prizes. The organisation will tell you how to collect them.}}",
-      "shareWarningRaffle": "Anyone with this link can show these raffle tickets as their own: only send it to someone you trust.",
-      "shareMessageRaffle": "Your raffle tickets for “{title}”: {url}",
-      "actionsRaffle": "Raffle ticket actions",
-      "drawOn": "Draw: {date}",
-      "outcome": {
-        "notDrawn": "The draw hasn’t taken place yet: once it does, you’ll see here whether any of your numbers came up.",
-        "inProgress": "The draw has started and there are still prizes to draw. Open this page again to see if you’ve won.",
-        "won": "{count, plural, one {Your number {numbers} won a prize!} other {Your numbers {numbers} won prizes!}}",
-        "replaced": "{count, plural, one {Your number {numbers} came up in the draw, but the organisation has drawn that prize again. If you think this is a mistake, write to the organisation.} other {Your numbers {numbers} came up in the draw, but the organisation has drawn those prizes again. If you think this is a mistake, write to the organisation.}}",
-        "notWon": "The draw has taken place and none of your numbers came up this time. Thanks for taking part!"
-      }
+      "actions": "Ticket actions"
     },
     "error": {
       "title": "We couldn’t load the community",
@@ -5914,23 +5749,17 @@
         "error": "Enter an amount between {min} and {max}."
       },
       "ticket": {
-        "badge": {
-          "EVENT": "Ticket with limited capacity",
-          "RAFFLE": "Numbered raffle ticket"
-        },
+        "badge": "Ticket with limited capacity",
         "available": "{available} of {max} left",
         "venue": "Venue: {venue}",
-        "quantity": {
-          "EVENT": "Tickets",
-          "RAFFLE": "Raffle tickets"
-        },
+        "quantity": "Tickets",
         "less": "Remove one",
         "more": "Add one",
         "unitAdd": "Price: {price} + {fee} digital handling fee",
         "unitInc": "Price: {price} (digital handling fee included)",
         "limit": "You can choose up to {max} in this purchase.",
-        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {There are no raffle tickets left. Thanks for trying!} one {Only # raffle ticket left.} other {Only # raffle tickets left.}}} other {{count, plural, =0 {There are no places left. Thanks for trying!} one {Only # place left.} other {Only # places left.}}}}",
-        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Choose # raffle ticket} other {Choose # raffle tickets}}} other {{count, plural, one {Choose # place} other {Choose # places}}}}"
+        "soldOut": "{count, plural, =0 {There are no places left. Thanks for trying!} one {Only # place left.} other {Only # places left.}}",
+        "useAvailable": "{count, plural, one {Choose # place} other {Choose # places}}"
       },
       "group": {
         "label": {
@@ -5983,7 +5812,7 @@
         "secure": "You pay on Paycomet’s secure page. KORUM never sees your card details."
       },
       "refundNote": "If the goal is not reached in time, we refund 100% of what you paid to the same payment method.",
-      "refundNoteTickets": "{kind, select, RAFFLE {If the raffle is cancelled, we refund 100% of what you paid to the same payment method.} other {If the event is cancelled, we refund 100% of what you paid to the same payment method.}}",
+      "refundNoteTickets": "If the event is cancelled, we refund 100% of what you paid to the same payment method.",
       "errors": {
         "form": "Please check the highlighted details and try again.",
         "quantity": "Choose between 1 and {max}.",
@@ -5995,7 +5824,7 @@
       "closed": {
         "title": "Contributions are closed",
         "achieved": "Goal reached! This initiative does not need any more contributions.",
-        "soldOut": "{kind, select, RAFFLE {Raffle tickets sold out! There are none left.} other {Sold out! There are no places left.}}",
+        "soldOut": "Sold out! There are no places left.",
         "ended": "This initiative has passed its deadline and no longer accepts contributions."
       },
       "custodyTickets": "Secure payment with Paycomet",
@@ -6080,22 +5909,16 @@
       "back": "Back to the initiative",
       "confirmed": {
         "title": "Thank you! Your contribution is already counting",
-        "titleTickets": {
-          "EVENT": "Done! Your tickets are yours",
-          "RAFFLE": "Done! Your raffle tickets are yours"
-        },
+        "titleTickets": "Done! Your tickets are yours",
         "paid": "You paid {total}",
         "goalReached": "Your contribution has taken it to 100%!",
-        "soldOut": "{kind, select, RAFFLE {Your purchase has sold out the raffle tickets!} other {Your purchase has sold out the event!}}",
+        "soldOut": "Your purchase has sold out the event!",
         "count": "{count, plural, one {# contribution so far} other {# contributions so far}}",
         "progressLabel": "Progress of “{title}”",
         "group": "{group} already has {count, plural, one {# family} other {# families}} · challenge: {target}",
         "receipt": "We have emailed you the receipt.",
         "ticketsEmail": "We have also emailed it to you, with a link to open it whenever you like.",
-        "viewPass": {
-          "EVENT": "View and print my ticket",
-          "RAFFLE": "View and print my raffle tickets"
-        },
+        "viewPass": "View and print my ticket",
         "serial": "Code {serial}",
         "share": "Share the initiative so more families join in.",
         "pct": "{pct}% reached",
@@ -6423,7 +6246,7 @@
         },
         "fiscal": {
           "q": "Do I get a tax certificate for my donation?",
-          "a": "It depends on the organisation. If it falls under Law 49/2002 and has proven it, you receive a donation certificate (we need your tax ID, which is optional). If not, you receive a named contribution receipt with no tax effect. Tickets and raffles never give a certificate."
+          "a": "It depends on the organisation. If it falls under Law 49/2002 and has proven it, you receive a donation certificate (we need your tax ID, which is optional). If not, you receive a named contribution receipt with no tax effect. Tickets never give a certificate."
         },
         "ideas": {
           "q": "Is my proposal in the ideas box anonymous?",
@@ -6646,25 +6469,23 @@
     "passes": {
       "title": "My tickets",
       "where": "{organization} · {date}",
-      "numbers": "Numbers: {numbers}",
       "quantity": "{count, plural, one {# ticket} other {# tickets}}",
       "serial": "Code: {serial}",
       "revoked": "This ticket has been cancelled (because of a refund or a payment dispute) and is no longer valid at the door.",
       "viewEvent": "View my ticket",
-      "viewRaffle": "View my raffle tickets",
       "emptyTitle": "You have no tickets",
-      "emptyText": "Tickets and raffle tickets you buy with this email will show up here, ready to show at the door."
+      "emptyText": "Tickets you buy with this email will show up here, ready to show at the door."
     },
     "documents": {
       "metaTitle": "Certificates and receipts",
       "summary": "{count, plural, one {You have # donation with a document} other {You have # donations with a document}}: tax certificate or receipt, ready to print.",
-      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets and raffle tickets don’t come with a donation document.",
+      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets don’t come with a donation document.",
       "open": "View certificates and receipts",
       "openOne": "View document",
       "back": "Back to My account",
       "backToList": "Back to certificates and receipts",
       "title": "Certificates and receipts",
-      "intro": "One per donation. The tax certificate is for your income tax return if the organisation is under Spain’s Law 49/2002 and you gave your tax ID when contributing; otherwise you get a named receipt, with no tax effect. Tickets and raffle tickets don’t come with a donation document.",
+      "intro": "One per donation. The tax certificate is for your income tax return if the organisation is under Spain’s Law 49/2002 and you gave your tax ID when contributing; otherwise you get a named receipt, with no tax effect. Tickets don’t come with a donation document.",
       "year": "Tax year {year}",
       "line": "{initiative} · {date}",
       "kind": {
@@ -7107,7 +6928,7 @@
       "money": "Money and invoices",
       "campaigns": "Campaigns",
       "ideas": "Ideas box",
-      "gate": "Tickets, door and raffles",
+      "gate": "Tickets and door",
       "sponsors": "Partner businesses",
       "entity": "The organisation and its holder",
       "account": "Accounts and privacy",
@@ -7492,7 +7313,7 @@
         "guarantee": "Voluntary contribution to KORUM",
         "totalCharged": "Total charged",
         "matchedBonus": "Added by a business’s Matching 2x",
-        "ticketQuantity": "Tickets or raffle tickets",
+        "ticketQuantity": "Tickets",
         "refunded": "Refunded",
         "order": "Paycomet order",
         "authCode": "Authorisation code",
@@ -7529,7 +7350,7 @@
       },
       "formats": {
         "BUDGET": "Budget",
-        "TICKETING": "Ticketing or raffle"
+        "TICKETING": "Ticket sales"
       },
       "breakdown": {
         "line1": "Supplier and equipment budget",
@@ -7556,7 +7377,7 @@
       "contributionsAnonymous": "Contributions are anonymous to the organisation: their totals appear here and, further down, the piggy bank movements added up by type for the whole campaign, never one by one.",
       "contributionTypes": {
         "DONATION": "Donation",
-        "TICKET": "Ticket or raffle ticket",
+        "TICKET": "Ticket",
         "SPONSORSHIP": "Business sponsorship",
         "SELF_BOOST": "KORUM Auto-Boost",
         "MATCHING_FUND": "A business’s Matching 2x pool"
@@ -7641,7 +7462,7 @@
       },
       "journalKinds": {
         "PAYIN_DONATION": "Donation charged",
-        "PAYIN_TICKET": "Tickets or raffle tickets charged",
+        "PAYIN_TICKET": "Tickets charged",
         "PAYIN_SPONSOR": "Business sponsorship charged",
         "PAYIN_HUCHA_TOPUP": "My Piggy Bank top-up",
         "HUCHA_SPEND": "Payment with My Piggy Bank",
@@ -7754,7 +7575,7 @@
           "receipt": "Receipt for a contribution"
         },
         "ticket": {
-          "pass": "Tickets or raffle tickets with their QR"
+          "pass": "Tickets with their QR"
         },
         "gate": {
           "pinRevoked": "Door PIN cancelled notice"

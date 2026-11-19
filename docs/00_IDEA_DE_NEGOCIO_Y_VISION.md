@@ -4,7 +4,7 @@
 > **Claim Oficial:** *"Donde las buenas ideas suman y se logran."*
 > **Principio Innegociable de Confianza:** **100% Independencia de Proveedores y Automatización Pura** (El centro elige siempre libremente a sus instaladores o comercios locales; KORUM jamás actúa como intermediario de obras ni cobra comisiones ocultas a proveedores).
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. El modelo de ingresos se ajusta: **IVA del 21 % incluido** en los ingresos de KORUM, salvo la aportación voluntaria, que no lleva IVA (5.20); **comercios en dos modos**, con la «gestión» de KORUM al 15 % en los dos (5.16); **Mi Hucha** sale apagada y sin monedero con saldo (5.15); **Auto-Impulso** como gasto promocional, solo en campañas con presupuesto (5.21). Mensaje de valor para entidades: «entras gratis, te vas cuando quieres y solo pagas cuando obtienes resultados». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. El modelo de ingresos se ajusta: **IVA del 21 % incluido** en los ingresos de KORUM, salvo la aportación voluntaria, que no lleva IVA (5.20); **comercios en dos modos**, con la «gestión» de KORUM al 15 % en los dos (5.16); **Mi Hucha** sale apagada y sin monedero con saldo (5.15); **Auto-Impulso** como gasto promocional, solo en campañas con presupuesto (5.21). Mensaje de valor para entidades: «entras gratis, te vas cuando quieres y solo pagas cuando obtienes resultados». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ---
 
@@ -13,7 +13,7 @@
 Miles de **Colegios (públicos, concertados y privados), AFAs/AMPAs y Clubes Deportivos o Culturales** sufren tres bloqueos crónicos para mejorar sus instalaciones y organizar actividades:
 
 1. **Presupuestos públicos o cuotas ordinarias insuficientes:** La administración o la cuota básica del AMPA/Club apenas cubre el mantenimiento mínimo. Mejoras muy deseadas (climatizar aulas con ventiladores, instalar toldos de sombra en el patio, renovar canchas o marcadores deportivos, comprar pizarras digitales o financiar viajes de fin de curso) se posponen durante años.
-2. **Caos, desconfianza y desgaste en la recaudación tradicional:** Recaudar fondos o vender entradas/rifas en efectivo o por transferencia manual genera:
+2. **Caos, desconfianza y desgaste en la recaudación tradicional:** Recaudar fondos o vender entradas en efectivo o por transferencia manual genera:
    - Un desgaste administrativo enorme para voluntarios conciliando hojas de cálculo, persiguiendo pagos, confeccionando el Modelo 182 de Hacienda y controlando entradas en papel en la puerta.
    - Recelo comprensible en parte de las familias (*"¿Qué pasa con mi dinero si no se junta lo suficiente?"*, *"¿Hay intereses ocultos en la elección del proveedor?"*).
 3. **Debates estériles en grupos de WhatsApp sin gobernanza:** Las buenas ideas se diluyen en discusiones desordenadas de WhatsApp sin un canal estructurado donde proponer con privacidad, votar con rigor anti-fraude y validar mancomunadamente entre Dirección y AFA/Junta.
@@ -32,9 +32,9 @@ KORUM transforma ese problema en una infraestructura digital **100% automatizada
    - Cada iniciativa tiene su propia hucha (`WLT-ESC-XXX`): los cobros los procesa y retiene **Paycomet**, entidad de pago autorizada por el Banco de España, y KORUM los registra en un libro mayor de doble partida en céntimos enteros. KORUM es la tecnología; no custodia fondos.
    - Las familias aportan en 10 segundos con **Bizum, tarjeta, Apple/Google Pay** o con su **aportación mensual programada de Mi Hucha** (sin contraseña; solo email en modo invitado para recibir al instante el recibo y las entradas QR).
    - **Garantía absoluta:** Si no se alcanza el 100% en plazo (y no se aprueba redimensionar), Paycomet devuelve automáticamente el 100% al medio de pago original de cada familia sin pedir IBANs ni asumir riesgos de custodia manual.
-3. **Taquilla Escolar, Rifas Numeradas y "Modo Portería QR" sin Instalar App:**
-   - Venta de entradas con bloqueo atómico de aforo o papeletas de rifa numeradas correlativamente (`#0001`–`#N`), generando al instante pases firmados criptográficamente (`HMAC-SHA256`).
-   - Incluye **Modo Portería Web (`/porteria`)** accesible con PIN temporal para que los voluntarios validen entradas con la cámara del móvil (bloqueando fotocopias) y proyecten el **Sorteo Aleatorio Certificado en Vivo** en fiestas escolares.
+3. **Taquilla Escolar y "Modo Portería QR" sin Instalar App:**
+   - Venta de entradas con bloqueo atómico de aforo, generando al instante pases firmados criptográficamente (`HMAC-SHA256`).
+   - Incluye **Modo Portería Web (`/porteria`)** accesible con PIN temporal para que los voluntarios validen entradas con la cámara del móvil (bloqueando fotocopias), también en las fiestas escolares sin cobertura.
 4. **Ecosistema de Barrio, Retos Multiplicadores (*Matching 2x*) y Viralidad Nativa en WhatsApp:**
    - **Comercios Amigos (`🥇 Oro`, `🥈 Plata`, `🥉 Bronce`):** Aportan el 100% íntegro al centro a cambio de visibilidad anual ordenada por categoría (sin exponer importes en público), cupones descuento y facturación automática **Veri\*factu**. Pueden activar bonos *Matching 2x* para duplicar donaciones familiares en tramos finales.
    - **Reto Colectivo No Competitivo + Tarjetas Dinámicas WhatsApp (`next/og`):** Los cursos (o equipos en clubes deportivos) suman familias participantes para desbloquear premios colectivos para los niños, generando previsualizaciones visuales en vivo al compartir cada enlace en los grupos de WhatsApp de clase.
@@ -50,7 +50,7 @@ KORUM opera de forma 100% autónoma y escalable sin equipos comerciales pesados 
 1. **🛡️ Aportación Voluntaria a KORUM (Checkout Familias):** importe opcional, con el check **desmarcado** por defecto, con el que la familia sostiene el servicio que garantiza a todas las familias, aporten o no: donación 100% íntegra al centro, devolución automática si no se llega a la meta y emisión automática del certificado o justificante.
 2. **🏗️ Comisión por Tramos sobre Obras/Equipamiento (`5% / 4% / 3%`):** Con campañas solidarias/viajes exentas (`0%`), **Importe Exento Anual por Defecto (`1.000 €`)** y **Becas de Ampliación de Exención (`+500 €`, `+1.000 €`, `+2.000 €`)** según las Medallas `Bronce`, `Plata` y `Oro`.
 3. **🏪 Fee de Gestión Publicitaria sobre Patrocinios de Comercios (`+15%`):** Sumado encima del patrocinio con factura Veri\*factu para que al centro le llegue el 100% íntegro.
-4. **🎟️ "Gastos de gestión digital" en Entradas y Rifas QR (`Fijo + %`):** Cubren el coste real bruto de Paycomet y generan margen neto limpio por cada entrada emitida.
+4. **🎟️ "Gastos de gestión digital" en Entradas QR (`Fijo + %`):** Cubren el coste real bruto de Paycomet y generan margen neto limpio por cada entrada emitida.
 5. **⚙️ Cuota de Mantenimiento con Tope Anual Auto-Desactivable ("La Baza"):** Apagada en captación (`0,00 €`) y activable en madurez con techo anual que se auto-desactiva al alcanzarse.
 6. **🐷 Gestión de Recargas de "Mi Hucha KORUM":** Pequeño fee transparente por gestión de recargas puntuales o mensuales programadas (`JET-ID`).
 

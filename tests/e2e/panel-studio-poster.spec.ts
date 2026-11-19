@@ -45,7 +45,7 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     // --- Plantilla de mejora: el título y la descripción vienen rellenos, el presupuesto no ---
     await page.getByTestId('studio-template-climate').getByRole('link', { name: /Usar plantilla/ }).click();
     await server(page.getByRole('heading', { level: 1, name: 'Confort en las aulas' })).toBeVisible();
-    await expect(page.getByLabel('Título de la iniciativa, evento o rifa')).toHaveValue('Aulas más frescas y confortables');
+    await expect(page.getByLabel('Título de la iniciativa o del evento')).toHaveValue('Aulas más frescas y confortables');
     await expect(page.getByLabel('Presupuesto del proveedor (€)')).toHaveValue('0');
     // En escritorio ningún desplegable corta el texto de lo elegido (a 1440 la categoría se leía «Infraestructura…» y el premio del reto, a medias: repaso
     // del Sprint 5.6). En el móvil un premio largo no cabe en una línea y el desplegable del sistema lo enseña entero al abrirlo.
@@ -73,18 +73,18 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await category.selectOption('Comunidad y Viajes');
     await server(page.getByTestId('studio-lock-alert')).toContainText('ventilacion');
     await expect(page.getByTestId('studio-badge')).toContainText('Tramo');
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('Excursión de fin de curso');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('Excursión de fin de curso');
     await page.getByLabel('Descripción').fill('Autocar y entradas para todas las familias.');
     await expect(page.getByTestId('studio-lock-alert')).toHaveCount(0);
     await expect(page.getByTestId('studio-badge')).toContainText('Categoría al 0 % de comisión');
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('Ventiladores para el comedor');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('Ventiladores para el comedor');
     await server(page.getByTestId('studio-lock-alert')).toContainText('ventiladores');
     await expect(page.getByTestId('studio-badge')).not.toContainText('Categoría al 0 %');
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('Excursión de fin de curso');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('Excursión de fin de curso');
     await expect(page.getByTestId('studio-lock-alert')).toHaveCount(0);
     await expect(page.getByTestId('studio-goal')).toHaveText(/^5\.\d{3},00\s€$/);
     await category.selectOption('Infraestructura y Confort');
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('Aulas más frescas y confortables');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('Aulas más frescas y confortables');
     await page.getByLabel('Descripción').fill('Ventilación y sombra para que se estudie mejor.');
     await expect(page.getByTestId('studio-goal')).toHaveText(/^5\.874,00\s€$/);
 
@@ -129,7 +129,7 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await expect(page).toHaveURL(new RegExp(`/estudio\\?iniciativa=${initiativeId}&publicada=1$`));
     await expect(page.getByTestId('studio-publish')).toHaveCount(0);
     await expect(page.getByLabel('Presupuesto del proveedor (€)')).toBeDisabled();
-    await expect(page.getByLabel('Título de la iniciativa, evento o rifa')).toBeDisabled();
+    await expect(page.getByLabel('Título de la iniciativa o del evento')).toBeDisabled();
     await expect(page.getByLabel('Descripción')).toBeEnabled();
     await expect(page.getByTestId('studio-goal')).toHaveText(/^5\.874,00\s€$/);
     await checkPage(page, isMobile);
@@ -202,10 +202,10 @@ test.describe('Sprint 4.3 · Estudio dual y cartel A4 con QR', () => {
     await expect(page.getByTestId('studio-tco-lines')).toContainText(/2\. Beca exenta por medalla\s*1\.000,00\s€ al 0\s% \(medalla Plata · ahorro/);
     await checkPage(page, isMobile);
     // Al guardar sin título, el aviso sale junto al campo; con título, el borrador se guarda y el aviso está junto al botón.
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('');
     await page.getByTestId('studio-save').click();
     await server(page.getByRole('alert').filter({ hasText: 'título de al menos 3 letras' }).first()).toBeVisible();
-    await page.getByLabel('Título de la iniciativa, evento o rifa').fill('Patio con juegos nuevos');
+    await page.getByLabel('Título de la iniciativa o del evento').fill('Patio con juegos nuevos');
     await page.getByTestId('studio-save').click();
     await server(page.getByTestId('studio-saved')).toContainText('Borrador guardado');
     await expect(page.getByTestId('studio-discard')).toBeVisible();

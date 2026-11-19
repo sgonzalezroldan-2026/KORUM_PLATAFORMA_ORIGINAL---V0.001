@@ -95,7 +95,7 @@ export function TicketQuantityField({ offer, draft, update, error }: { offer: Ch
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded-full bg-sky-800 px-2.5 py-0.5 text-sm font-extrabold text-white">
             <span aria-hidden="true">{'🎭 '}</span>
-            {t(`badge.${ticket.subtype}`)}
+            {t('badge')}
           </span>
           <span className="font-corp font-extrabold tabular-nums text-sky-950">{t('available', { available: ticket.available, max: ticket.max })}</span>
         </div>
@@ -109,7 +109,7 @@ export function TicketQuantityField({ offer, draft, update, error }: { offer: Ch
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-patio-rule-strong bg-patio-cream p-3.5">
         <div>
           <p id={valueId} className="font-extrabold text-varsity-navy">
-            {t(`quantity.${ticket.subtype}`)}
+            {t('quantity')}
           </p>
           <p className="text-sm text-ink-soft">
             {pricing.mode === 'ADD' ? t('unitAdd', { price: money(pricing.priceCents), fee: money(pricing.feeUnitCents) }) : t('unitInc', { price: money(pricing.priceCents) })}

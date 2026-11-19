@@ -159,7 +159,7 @@
       "sections": {
         "account": "El teu compte",
         "contributions": "Aportacions i compres",
-        "tickets": "Entrades i paperetes",
+        "tickets": "Entrades",
         "consents": "Consentiments",
         "privacyRequests": "Sol·licituds de privacitat",
         "memberships": "Càrrecs en entitats",
@@ -196,7 +196,6 @@
         "serial": "Codi",
         "quantity": "Quantitat",
         "checkedIn": "Accessos",
-        "raffleNumbers": "Nombres",
         "revoked": "Anul·lada",
         "purpose": "Finalitat",
         "granted": "Acceptat",
@@ -229,7 +228,7 @@
       },
       "types": {
         "DONATION": "Donació",
-        "TICKET": "Entrada o papereta",
+        "TICKET": "Entrada",
         "SPONSORSHIP": "Patrocini",
         "SELF_BOOST": "Autoimpuls",
         "MATCHING_FUND": "Fons de Matching"
@@ -339,15 +338,11 @@
     },
     "ticket": {
       "subjectEvent": "La teva entrada per a «{initiative}»",
-      "subjectRaffle": "Les teves butlletes de «{initiative}»",
       "preheader": "El teu codi QR és a dins.",
       "titleEvent": "La teva entrada és a punt",
-      "titleRaffle": "Les teves butlletes són a punt",
       "bodyEvent": "Presenta el codi QR a la porta. El trobaràs en aquest correu com a imatge adjunta i també pots obrir-lo des del botó.",
-      "bodyRaffle": "Els teus números ja participen en el sorteig. Guarda aquest correu: el codi QR adjunt t’identifica si resultes premiat.",
       "serial": "Codi",
       "quantity": "Quantitat",
-      "numbers": "Els teus números",
       "venue": "Lloc",
       "date": "Data",
       "cta": "Veure la meva entrada",
@@ -825,22 +820,6 @@
         "cta": "Veure altres iniciatives"
       }
     },
-    "raffle": {
-      "extraRound": {
-        "subject": "S’ha fet una ronda extra del sorteig de «{initiative}»",
-        "preheader": "Si no et sona, revisa l’acta i parla amb l’altra persona signant.",
-        "title": "Ronda extra del sorteig",
-        "body": "{by} ha fet la ronda {round} del sorteig de «{initiative}»: {prizes, plural, one {substitueix # premi} other {substitueix # premis}} ({reason}). Per simplificar, la ronda extra la fa una sola persona; per això t’avisem. Queda a l’acta del sorteig, que pots revisar i descarregar a «Taquilla i porteria».",
-        "cta": "Veure el sorteig",
-        "reason": {
-          "PRIZE_UNCLAIMED": "premi sense reclamar",
-          "WINNER_REFUNDED": "butlleta guanyadora reemborsada"
-        },
-        "someone": "Una de les persones signants",
-        "factNew": "Butlletes noves",
-        "factReplaced": "Substitueixen"
-      }
-    },
     "org": {
       "kybStatus": {
         "verified": {
@@ -997,14 +976,14 @@
       "howItWorks": "Veure com funciona"
     },
     "llms": {
-      "summary": "KORUM és una plataforma tecnològica per a escoles (a través de la seva AMPA/AFA o del seu titular), clubs esportius de base i entitats culturals. Reuneix una bústia d’idees amb quòrum, campanyes de mecenatge «tot o res», taquilla i rifes amb QR, comerços amics i Mi Hucha.",
+      "summary": "KORUM és una plataforma tecnològica per a escoles (a través de la seva AMPA/AFA o del seu titular), clubs esportius de base i entitats culturals. Reuneix una bústia d’idees amb quòrum, campanyes de mecenatge «tot o res», taquilla amb QR, comerços amics i Mi Hucha.",
       "money": "Els cobraments, les retencions i les devolucions els executa PAYCOMET, entitat de pagament autoritzada pel Banc d’Espanya. KORUM no és una entitat financera ni custodia fons. Si una iniciativa no arriba a la meta, es retorna el 100 % a cada persona, al mitjà de pagament original. KORUM mai no intermedia ni cobra comissions a proveïdors d’obres o equipament: l’entitat tria lliurement.",
       "figuresTitle": "Tarifes vigents",
       "figures": [
         "Alta d’entitats: gratuïta.",
         "Els primers {exempt} de cada curs no paguen comissió; després, {t1Rate}, {t2Rate} o {t3Rate} segons la mida de la iniciativa (trams fins a {t1Max} i {t2Max}).",
         "Passarel·la de pagament: {gatewayRate} més {gatewayFixed} per aportació, inclosa a la meta que veuen les famílies.",
-        "Entrades i butlletes: «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu.",
+        "Entrades: «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu.",
         "Patrocini de comerços: el 100 % del nivell triat arriba a la iniciativa; el fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre.",
         "Durada màxima d’una campanya: {maxDays} dies."
       ],
@@ -1030,7 +1009,7 @@
       "maintOn": "{maintFee} per campanya, amb un topall anual de {maintCap}",
       "gatewayLabel": "Passarel·la de pagament (Paycomet)",
       "gatewayValue": "{gatewayRate} més {gatewayFixed} per aportació, inclosos a la meta que veuen les famílies",
-      "ticketsLabel": "Entrades i butlletes",
+      "ticketsLabel": "Entrades",
       "ticketsValue": "«Despeses de gestió digital»: {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar",
       "sponsorsLabel": "Patrocini de comerços",
       "sponsorsValue": "El 100 % del nivell triat arriba a la iniciativa. El fee de gestió publicitària ({sponsorFee} més IVA) se suma a sobre i el paga el comerç",
@@ -1054,7 +1033,7 @@
             "bullets": [
               "Obrir una bústia d’idees amb quòrum perquè les famílies proposin i recolzin millores.",
               "Llançar campanyes «tot o res» per a climatització, ombra al pati, pissarres digitals o el viatge de final de curs.",
-              "Vendre entrades i butlletes de rifa amb QR en festivals i festes, amb control d’aforament.",
+              "Vendre entrades amb QR en festivals i festes, amb control d’aforament.",
               "Plantejar reptes per curs (d’Infantil 3 anys a 4t d’ESO) i celebrar el que s’aconsegueix.",
               "Exportar el Model 182 amb un clic si l’entitat s’acull a la Llei 49/2002."
             ]
@@ -1090,9 +1069,9 @@
       },
       "clubes": {
         "title": "Recaptar fons per a clubs esportius",
-        "description": "Financia material, desplaçaments o instal·lacions del club amb campanyes tot o res, entrades i rifes amb QR, i devolució del 100 % si no s’arriba.",
+        "description": "Financia material, desplaçaments o instal·lacions del club amb campanyes tot o res, entrades amb QR, i devolució del 100 % si no s’arriba.",
         "h1": "Com recaptar fons per a un club esportiu de base",
-        "answer": "KORUM dona a un club esportiu de base una manera ordenada de recaptar: campanyes «tot o res» per a material, desplaçaments o instal·lacions, entrades i rifes amb QR per als seus esdeveniments i reptes per equip en positiu. Si una campanya no arriba a la meta, es retorna el 100 %. Els primers {exempt} de cada temporada no paguen comissió.",
+        "answer": "KORUM dona a un club esportiu de base una manera ordenada de recaptar: campanyes «tot o res» per a material, desplaçaments o instal·lacions, entrades amb QR per als seus esdeveniments i reptes per equip en positiu. Si una campanya no arriba a la meta, es retorna el 100 %. Els primers {exempt} de cada temporada no paguen comissió.",
         "sections": [
           {
             "title": "Pensat per a com funciona un club",
@@ -1104,10 +1083,10 @@
             ]
           },
           {
-            "title": "Entrades, rifes i porteria",
+            "title": "Entrades i porteria",
             "paragraphs": [
-              "Ven entrades amb aforament controlat i butlletes de rifa numerades. Els voluntaris validen a la porta amb la càmera del mòbil, amb un PIN de l’esdeveniment i sense instal·lar res. El sorteig de la rifa es fa en pantalla i deixa una acta.",
-              "Les rifes i tómboles són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia: l’entitat confirma que compleix la normativa de la seva abans de publicar."
+              "Ven entrades amb aforament controlat. Els voluntaris validen a la porta amb la càmera del mòbil, amb un PIN de l’esdeveniment i sense instal·lar res.",
+              "Cada entrada porta un codi QR signat: si algú intenta entrar dues vegades amb la mateixa, el mòbil de la porta avisa i mostra l’hora del primer accés. I si es perd la cobertura, la porteria continua funcionant."
             ]
           },
           {
@@ -1125,7 +1104,7 @@
           {
             "title": "Quant costa",
             "paragraphs": [
-              "L’alta és gratuïta i els primers {exempt} de cada temporada no paguen comissió. Les entrades i butlletes porten unes «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar."
+              "L’alta és gratuïta i els primers {exempt} de cada temporada no paguen comissió. Les entrades porten unes «Despeses de gestió digital» de {ticketFixed} més el {ticketRate} del preu, sempre desglossades abans de pagar."
             ]
           }
         ],
@@ -1294,7 +1273,7 @@
               "L’entitat no paga per donar-se d’alta.",
               "Les famílies aporten a la meta i, si volen, una aportació voluntària a KORUM que arriba desmarcada.",
               "Els comerços paguen el nivell de patrocini, que arriba íntegre, més el fee de gestió publicitària.",
-              "Qui compra una entrada o una butlleta paga les «Despeses de gestió digital», sempre a la vista."
+              "Qui compra una entrada paga les «Despeses de gestió digital», sempre a la vista."
             ]
           },
           {
@@ -1348,7 +1327,7 @@
       },
       "faq": {
         "title": "Preguntes freqüents",
-        "description": "Respostes clares sobre diners, devolucions, signatures de l’entitat, comissions, rifes, certificats fiscals i dades personals a KORUM.",
+        "description": "Respostes clares sobre diners, devolucions, signatures de l’entitat, comissions, entrades, certificats fiscals i dades personals a KORUM.",
         "h1": "Preguntes freqüents sobre KORUM",
         "answer": "Aquí responem, en llenguatge planer, el que més ens pregunten les entitats, les famílies i els comerços.",
         "sections": [
@@ -1393,8 +1372,8 @@
                 "a": "Per defecte, dues persones diferents: la gestió principal (direcció, presidència del club…) i un cosignant (presidència de l’AMPA/AFA, tresoreria del club…). Calen les dues per aprovar una idea i per alliberar fons. L’entitat pot decidir, sota la seva responsabilitat, que signi només la gestió principal."
               },
               {
-                "q": "Podem fer rifes?",
-                "a": "Sí, amb butlletes numerades i sorteig certificat en pantalla. Les rifes són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia: l’entitat confirma que compleix la seva normativa abans de publicar."
+                "q": "Podem vendre entrades per a una festa o un torneig?",
+                "a": "Sí. Publiqueu l’esdeveniment des de l’Estudi amb el preu i l’aforament; les famílies compren en uns segons i reben l’entrada amb QR per correu. A la porta, els voluntaris la validen amb la càmera del mòbil i un PIN de l’esdeveniment, sense instal·lar res."
               }
             ]
           },
@@ -1918,7 +1897,7 @@
       },
       "card": {
         "formatBudget": "Pressupost",
-        "formatTicketing": "Taquilla o rifa",
+        "formatTicketing": "Taquilla",
         "hucha": "Guardiola {id}",
         "raised": "{raised} de {goal}",
         "progress": "Avenç de «{title}»: {percent} %",
@@ -1985,7 +1964,7 @@
         }
       },
       "newInitiative": "+ Nova iniciativa",
-      "newTicketing": "+ Nova taquilla / rifa",
+      "newTicketing": "+ Nova taquilla",
       "metaTitle": "Quadre de comandament"
     },
     "medals": {
@@ -2051,7 +2030,7 @@
     },
     "model182": {
       "title": "Model 182 (donatius)",
-      "intro": "Fitxer per presentar a l’Agència Tributària amb els donatius completats i sense devolució de l’exercici. Les entrades, les rifes i les recàrregues mai no hi entren.",
+      "intro": "Fitxer per presentar a l’Agència Tributària amb els donatius completats i sense devolució de l’exercici. Les entrades i les recàrregues mai no hi entren.",
       "year": "Exercici",
       "phone": "Telèfon de contacte",
       "phoneHint": "Nou xifres: és el que figurarà com a contacte al fitxer. El nom de contacte és el del vostre compte.",
@@ -2235,7 +2214,7 @@
           "blockedTitle": "Signada, però encara no es pot enviar",
           "blocked": "Les signatures necessàries estan registrades, però falten els documents del titular verificats o el compte a PAYCOMET. S’enviarà tan aviat com hi siguin.",
           "notReadyTitle": "Signada, però la campanya encara no es pot liquidar",
-          "notReady": "Les signatures necessàries estan registrades, però falta alguna cosa abans de liquidar (el sorteig de la rifa o decidir sobre un comerç). Ho veureu a Liquidacions.",
+          "notReady": "Les signatures necessàries estan registrades, però falta alguna cosa abans de liquidar (per exemple, decidir sobre un comerç). Ho veureu a Liquidacions.",
           "invoiceTitle": "Falta una factura vàlida",
           "invoice": "La factura adjunta ja no és vàlida. Pugeu-ne una altra a Liquidacions i torneu a demanar la liquidació.",
           "providerTitle": "El pagament al proveïdor encara no està disponible",
@@ -2954,7 +2933,7 @@
       "picker": {
         "newTitle": "Començar una campanya",
         "newBudget": "+ Nova iniciativa",
-        "newTicketing": "+ Nova taquilla / rifa",
+        "newTicketing": "+ Nova taquilla",
         "tooManyDrafts": "Ja teniu {max} esborranys oberts. Publiqueu o acabeu-ne algun abans de crear-ne un altre.",
         "templatesTitle": "Plantilles a punt per fer servir",
         "templatesHint": "Omplen el títol i la descripció. El pressupost el poseu vosaltres amb el del vostre proveïdor: KORUM no proposa preus.",
@@ -2966,7 +2945,7 @@
       },
       "format": {
         "BUDGET": "Pressupost / obra",
-        "TICKETING": "Taquilla o rifa"
+        "TICKETING": "Taquilla"
       },
       "templates": {
         "climate": {
@@ -3010,12 +2989,6 @@
           "summary": "Entrades amb aforament controlat i codi QR.",
           "title": "Festival de final de curs",
           "description": "Venda d’entrades amb aforament controlat i codi QR per al nostre festival. El que es recapti es destina a les activitats de la comunitat."
-        },
-        "raffle": {
-          "name": "Rifa solidària",
-          "summary": "Butlletes numerades amb sorteig certificat.",
-          "title": "Rifa solidària de la comunitat",
-          "description": "Butlletes numerades amb sorteig en pantalla i acta. El que es recapti es destina a les activitats de la comunitat."
         },
         "playgroundClub": {
           "name": "Instal·lacions del club",
@@ -3088,33 +3061,28 @@
         "families": "Famílies i socis"
       },
       "fields": {
-        "title": "Títol de la iniciativa, esdeveniment o rifa",
+        "title": "Títol de la iniciativa o de l’esdeveniment",
         "category": "Categoria",
         "categoryChoose": "Trieu una categoria",
-        "ticketingCategory": "Taquilla i rifes",
+        "ticketingCategory": "Taquilla",
         "stage": "A qui beneficia",
         "stageChoose": "Trieu a qui beneficia",
         "closesOn": "Data límit",
         "closesOnHint": "Com a màxim {days} dies des d’avui.",
         "description": "Descripció",
-        "ticketingTitle": "Taquilla o rifa amb codi QR",
+        "ticketingTitle": "Taquilla amb codi QR",
         "ticketSubtype": "Tipus",
         "subtypeEvent": "Entrada amb control d’aforament",
-        "subtypeRaffle": "Butlleta de rifa numerada",
-        "ticketPrice": "Preu de l’entrada o butlleta (€)",
-        "ticketMax": "Aforament màxim o nombre de butlletes",
+        "ticketPrice": "Preu de l’entrada (€)",
+        "ticketMax": "Aforament màxim",
         "digitalFee": "Despeses de gestió digital (import)",
         "digitalFeeHint": "Les fixa KORUM; les veieu aquí per calcular.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} per unitat)",
-        "venue": "Lloc o data de l’acte o del sorteig",
+        "venue": "Lloc o data de l’acte",
         "venueHint": "Opcional. Es mostra a la fitxa pública.",
         "feeMode": "Qui paga les despeses de gestió digital",
         "feeModeAdd": "Sumar-les al comprador",
         "feeModeInc": "Assumir-les dins del preu de l’entrada",
-        "raffleNotice": "Les rifes i tómboles són competència de cada comunitat autònoma i poden requerir comunicació o autorització prèvia segons l’import. Els premis en espècie no es poden bescanviar per diners.",
-        "rafflePrizes": "Premis que se sortegen",
-        "rafflePrizesHint": "Es fixa abans de publicar i no es pot canviar després: sense aquest nombre no es podria sortejar.",
-        "raffleConfirm": "Confirmem que la rifa compleix la normativa de la nostra comunitat autònoma",
         "budgetTitle": "Pressupost",
         "costMat": "Pressupost del proveïdor (€)",
         "costMatHint": "El del vostre proveïdor, sense comissions de KORUM.",
@@ -3157,7 +3125,6 @@
         "gatewayCoveredNote": "El cost de la passarel·la de pagament està cobert: no es resta del que rep l’entitat.",
         "gatewayFormula": "Com es calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportació estimada} other {# aportacions estimades}} (segons l’aportació suggerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} d’arrodoniment a l’euro. Suma quadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Recaptació bruta de l’aforament (aforament × preu)",
-        "ticketGrossRaffle": "Recaptació bruta de les butlletes (butlletes × preu)",
         "ticketModelTitle": "Despeses de gestió digital (taquilla amb QR)",
         "ticketDigitalFee": "Despeses de gestió digital per entrada",
         "perUnitAdd": "{amount} per unitat (se sumen al comprador)",
@@ -3167,7 +3134,7 @@
         "ticketNet": "Net garantit per a l’entitat",
         "maintShortfall": "La recaptació no arriba a cobrir el manteniment: faltarien {amount}.",
         "gatewayNotCovered": "Amb aquests preus les despeses de gestió no cobreixen la passarel·la ({amount} per entrada). Ho revisa KORUM; no canvia el que rep l’entitat.",
-        "badgeTicketing": "Taquilla o rifa amb QR",
+        "badgeTicketing": "Taquilla amb QR",
         "badgeExempt": "Categoria al 0 % de comissió",
         "badgeBracket": "Tram {rate}",
         "badgeExact": "Desglossament exacte",
@@ -3183,16 +3150,13 @@
         "GOAL_ZERO": "Falta el pressupost: la meta no pot ser 0,00 €.",
         "STAGE_MISSING": "Indiqueu a qui beneficia la campanya.",
         "DESCRIPTION_MISSING": "Falta la descripció.",
-        "TICKET_MAX_ZERO": "Indiqueu l’aforament o el nombre de butlletes.",
+        "TICKET_MAX_ZERO": "Indiqueu l’aforament.",
         "TICKET_PRICE_ZERO": "El preu no pot ser 0,00 €: sense import no hi ha res a guardar a la guardiola.",
         "TICKET_FEE_EXCEEDS_PRICE": "Amb les despeses de gestió dins del preu no quedaria res per a la guardiola: pugeu el preu o sumeu les despeses al comprador.",
-        "RAFFLE_PRIZES": "Indiqueu quants premis se sortegen (com a màxim, tants com butlletes).",
-        "RAFFLE_NOTICE": "Confirmeu que la rifa compleix la normativa de la vostra comunitat autònoma.",
         "INVALID_CATEGORY": "Trieu una categoria de millora.",
         "CLOSING_INVALID": "La data de tancament no és vàlida.",
         "CLOSING_PAST": "La data de tancament ja ha passat: trieu-ne una de posterior a avui.",
         "CLOSING_TOO_LATE": "La campanya duraria més del màxim permès: trieu una data de tancament anterior.",
-        "RAFFLE_PRIZES_EXCEED": "No pot haver-hi més premis que butlletes.",
         "TITLE_MISSING": "Escriviu un títol d’almenys 3 lletres.",
         "MAINT_EXCEEDS_TAKINGS": "Amb aquest preu i aquest aforament la recaptació no cobreix el manteniment de la plataforma: pugeu el preu o l’aforament.",
         "GOAL_TOO_HIGH": "Amb aquest pressupost i les condicions de la plataforma la meta superaria el màxim que es pot desar: baixeu el pressupost o escriviu a KORUM."
@@ -3271,7 +3235,6 @@
           "description": "El cartell es genera quan la campanya està recaptant: fins llavors el seu codi QR no portaria a cap pàgina. Publiqueu-la des de l’Estudi i torneu aquí."
         },
         "defaultMessageTickets": "Escaneja el codi QR amb el mòbil, tria la teva entrada i paga amb Bizum o targeta en 10 segons.",
-        "defaultMessageRaffle": "Escaneja el codi QR amb el mòbil, tria les teves butlletes i paga amb Bizum o targeta en 10 segons.",
         "guaranteeTickets": "Pagament segur amb PAYCOMET. Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament. Guardiola de la iniciativa {wallet}.",
         "metaTitle": "Cartell A4 amb QR"
       },
@@ -3361,7 +3324,6 @@
       "blockersLabel": "El que falta abans de liquidar",
       "blockers": {
         "NOT_READY": "Aquesta campanya no està a punt per liquidar.",
-        "RAFFLE_NOT_DRAWN": "Falta fer el sorteig de la rifa davant del públic: no es pot liquidar abans.",
         "SPONSORS_PENDING": "Hi ha comerços cobrats que encara no heu admès ni rebutjat.",
         "KYB_NOT_VERIFIED": "Falten els documents del titular verificats.",
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET.",
@@ -3413,7 +3375,6 @@
         "INVALID_TAX_ID": "El CIF o NIF del proveïdor no és vàlid.",
         "NOT_FOUND": "No trobem aquesta campanya a la vostra entitat.",
         "NOT_READY": "Aquesta campanya ja no està a punt per liquidar (potser una retrocessió l’ha tornat a recaptar).",
-        "RAFFLE_NOT_DRAWN": "Falta fer el sorteig de la rifa: no es pot liquidar abans.",
         "SPONSORS_PENDING": "Hi ha comerços cobrats que encara no heu admès ni rebutjat.",
         "KYB_NOT_VERIFIED": "Falten els documents del titular verificats.",
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET per rebre els diners.",
@@ -3463,7 +3424,6 @@
         "editCancel": "No canviar res",
         "notApproved": {
           "NOT_GOAL": "No s’ha pogut aprovar: la campanya ja no té la meta assolida (una retrocessió).",
-          "RAFFLE_NOT_DRAWN": "No s’ha pogut aprovar: falta el sorteig complet de la rifa.",
           "SPONSORS_PENDING": "No s’ha pogut aprovar: hi ha comerços cobrats sense admetre ni rebutjar.",
           "FIGURES_CHANGED": "Les xifres han canviat des que es va signar (una retrocessió). Torneu a demanar la liquidació: es tornarà a signar.",
           "ESCROW_MISMATCH": "La guardiola no quadra amb el que s’ha recaptat. L’equip de KORUM ho està revisant.",
@@ -3550,11 +3510,11 @@
         "optionLength": "Escriviu entre {min} i {max} caràcters.",
         "removeOption": "Treure l’opció {letter}",
         "addOption": "Afegir una altra opció",
-        "refundOptionAlways": "A més, la papereta inclou sempre «Prefereixo que em retorneu la meva aportació».",
+        "refundOptionAlways": "A més, la votació inclou sempre «Prefereixo que em retorneu la meva aportació».",
         "launchVote": "Llançar la votació",
         "voteBlockedLabel": "Per què no es pot votar",
         "voteBlocked": {
-          "NOT_BUDGET": "Un esdeveniment o una rifa no tenen una versió més petita: només es poden retornar els diners.",
+          "NOT_BUDGET": "Un esdeveniment amb entrades no té una versió més petita: només es poden retornar els diners.",
           "NO_DONATIONS": "No hi ha donatius de famílies que puguin votar: només es pot retornar.",
           "WINDOW_TOO_SHORT": "Queda poc dels 90 dies en què PAYCOMET pot enviar els diners: no hi ha temps per votar i liquidar. Només es pot retornar.",
           "POLL_EXISTS": "Aquesta campanya ja va tenir la seva votació."
@@ -3563,21 +3523,21 @@
         "refundText": "Cada persona recupera tot el que va pagar, al seu mitjà de pagament original i sense haver-ho de demanar. Els patrocinis de comerços passen a una altra campanya o a la seva bossa, i les quotes tornen a l’entitat.",
         "refundButton": "Retornar el 100 %",
         "confirmVoteTitle": "Llançar la votació de «{title}»?",
-        "confirmVoteText": "Enviarem la papereta a qui va fer un donatiu. Durarà {days} dies i les opcions no es podran canviar. Qui demani la devolució la tindrà en marxa tan bon punt voti, i a qui no voti se li retornarà quan es tanqui.",
+        "confirmVoteText": "Enviarem la votació a qui va fer un donatiu. Durarà {days} dies i les opcions no es podran canviar. Qui demani la devolució la tindrà en marxa tan bon punt voti, i a qui no voti se li retornarà quan es tanqui.",
         "confirmRefundTitle": "Retornar el 100 % de «{title}»?",
         "confirmRefundText": "Començarem a retornar cada aportació al seu mitjà de pagament original. Els patrocinis de comerços passaran a una altra campanya o a la seva bossa. No es pot desfer.",
         "confirmVote": "Sí, llançar la votació",
         "confirmRefund": "Sí, retornar el 100 %",
         "cancel": "No, tornar",
         "sending": "Enviant…",
-        "voteLaunched": "Votació llançada. Qui va fer un donatiu rep la papereta per correu; es tanca el {date}.",
+        "voteLaunched": "Votació llançada. Qui va fer un donatiu rep per correu l’enllaç per votar; es tanca el {date}.",
         "refundStarted": "Devolució en marxa. Qui va fer una aportació rep un avís i els diners tornen al seu mitjà de pagament en els propers dies."
       },
       "errors": {
         "INVALID_INPUT": "Reviseu les opcions.",
         "NOT_FOUND": "No trobem aquesta campanya a la vostra entitat.",
         "WRONG_STATUS": "Aquesta campanya ja no espera cap decisió: algú l’ha presa mentrestant.",
-        "NOT_BUDGET": "Un esdeveniment o una rifa no tenen una versió més petita: només es poden retornar els diners.",
+        "NOT_BUDGET": "Un esdeveniment amb entrades no té una versió més petita: només es poden retornar els diners.",
         "NO_DONATIONS": "No hi ha donatius de famílies que puguin votar: només es pot retornar.",
         "WINDOW_TOO_SHORT": "Queda poc dels 90 dies en què PAYCOMET pot enviar els diners: només es pot retornar.",
         "POLL_EXISTS": "Aquesta campanya ja va tenir la seva votació.",
@@ -3682,8 +3642,7 @@
       "title": "Taquilla i porteria",
       "intro": "Aquí fixes el PIN de la porta de cada esdeveniment i veus quins mòbils de voluntaris són dins. El PIN és només d’aquest esdeveniment, es mostra una vegada i caduca sis hores després d’acabar el dia de l’esdeveniment.",
       "kind": {
-        "event": "Esdeveniment amb entrades",
-        "raffle": "Rifa"
+        "event": "Esdeveniment amb entrades"
       },
       "sold": "{sold, plural, one {# venuda} other {# venudes}}",
       "soldOf": "{sold} de {max} venudes",
@@ -3725,7 +3684,7 @@
       "readOnly": "Només qui signa pot crear el PIN i tancar sessions.",
       "empty": {
         "title": "Encara no hi ha esdeveniments amb entrades",
-        "text": "Quan publiquis un esdeveniment o una rifa des de l’Estudi, podràs crear aquí el PIN de la seva porta.",
+        "text": "Quan publiquis un esdeveniment des de l’Estudi, podràs crear aquí el PIN de la seva porta.",
         "action": "Anar a l’Estudi"
       },
       "errors": {
@@ -3733,57 +3692,6 @@
         "NOT_FOUND": "Aquest esdeveniment ja no existeix.",
         "NOT_ALLOWED": "No es pot crear el PIN: l’esdeveniment ja ha acabat o la seva data no és vàlida.",
         "RATE_LIMITED": "Has creat molts PIN seguits. Espera una estona abans de crear-ne un altre: cada PIN nou tanca les sessions de la porta."
-      },
-      "raffle": {
-        "title": "Sorteig i rondes extra",
-        "notDrawn": "Aquesta rifa encara no s’ha sortejat. El sorteig es fa a la porta el dia de l’esdeveniment; quan acabi, aquí podràs substituir un premi que ningú no reclami.",
-        "summary": "Premis sortejats: {drawn} de {prizes}. Substituïts amb rondes extra: {extra}.",
-        "round": "Ronda {round}",
-        "roundExtra": "Ronda {round} (extra: {reason})",
-        "reason": {
-          "PRIZE_UNCLAIMED": "premi sense reclamar",
-          "WINNER_REFUNDED": "butlleta guanyadora reemborsada"
-        },
-        "download": "Descarregar acta",
-        "downloadLabel": "Descarregar acta de la ronda {round}",
-        "extraTitle": "Ronda extra",
-        "extraIntro": "Si ningú no reclama el premi d’una butlleta, o qui la va comprar ha demanat el reemborsament, pots sortejar una altra butlleta per substituir-lo. N’hi ha prou amb una persona signant: si n’hi ha una altra, rebrà un avís, i la ronda queda a l’acta. Només es pot fer abans de liquidar la rifa.",
-        "reasonLabel": "Motiu",
-        "reasonOption": "{reason} (fins a {max, plural, one {# premi} other {# premis}})",
-        "prepare": "Preparar la ronda extra",
-        "confirmTitle": "Sortejar 1 butlleta per substituir la {replaced}?",
-        "confirmBody": "Motiu: {reason}. Fes-ho només quan hagi passat el termini per recollir el premi i el que donin les bases de la rifa. El sorteig és aleatori i no es pot desfer ni repetir. Quedarà a l’acta i a l’historial de l’entitat, i avisarem l’altra persona signant si n’hi ha.",
-        "confirmYes": "Sí, sortejar ara",
-        "confirmNo": "Cancel·lar",
-        "drawing": "Sortejant…",
-        "done": "Ronda {round} feta: {numbers} substitueix {replaced}. Anota quin premi era. L’altra persona signant rebrà un avís.",
-        "readOnly": "Només qui signa pot fer una ronda extra.",
-        "blocked": {
-          "prizesExhausted": "No queden premis que substituir.",
-          "notJustified": "Amb aquest motiu no es poden substituir tants premis ara. Recarrega la pàgina per veure’n quants queden.",
-          "notEnough": "No queden prou butlletes per sortejar tants premis.",
-          "keyReused": "Aquesta ronda ja s’havia sortejat amb altres dades. Recarrega la pàgina.",
-          "other": "Ara no es pot fer aquest sorteig.",
-          "replacedInvalid": "Aquestes butlletes ja no es poden substituir. Recarrega la pàgina per veure quines queden.",
-          "tooSoon": "Encara no ha passat el termini mínim per substituir un premi sense reclamar. Recarrega la pàgina per veure des de quan es pot."
-        },
-        "errors": {
-          "FORBIDDEN": "No tens permís per fer-ho.",
-          "NOT_FOUND": "Aquesta rifa ja no existeix.",
-          "INVALID_INPUT": "Revisa les dades de la ronda.",
-          "NETWORK": "No hem pogut confirmar el sorteig. Torna-ho a provar: si ja s’ha fet, veuràs la mateixa ronda; mai no se sorteja dues vegades.",
-          "DOWNLOAD": "No s’ha pogut descarregar l’acta. Torna-ho a provar."
-        },
-        "doneAlone": "Ronda {round} feta: {numbers} substitueix {replaced}. Anota quin premi era. No hi ha cap altra persona signant activa a qui avisar; la ronda queda a l’acta i a l’historial de l’entitat.",
-        "noneAllReplaced": "Ja s’han substituït tots els premis que es poden substituir. Cada premi només es pot substituir una vegada; si tampoc es reclama, l’entitat decideix què fer-ne.",
-        "noneNoEntries": "No queden butlletes que no hagin guanyat: no hi ha a qui sortejar.",
-        "replaceLegend": "Quina butlleta guanyadora substitueixes?",
-        "replaceHint": "Tria la butlleta guanyadora que ningú no ha reclamat. Es fa d’una en una: si hi ha més premis sense reclamar, repeteix la ronda.",
-        "replaceHintRefunded": "Només apareixen les butlletes guanyadores que s’han reemborsat. Es fa d’una en una.",
-        "refundedTag": "reemborsada",
-        "selectNone": "Marca almenys una butlleta guanyadora per substituir-la.",
-        "noneWaiting": "Podràs substituir un premi sense reclamar a partir del {date}: és el termini mínim que ha fixat KORUM perquè es pugui reclamar. Si les bases de la teva rifa donen més temps, espera que acabi.",
-        "replacesText": "substitueix {replaced}"
       }
     },
     "welcomeCelebration": {
@@ -3812,10 +3720,6 @@
     "busyTitle": "Massa peticions",
     "deviceLabel": "Nom d’aquest mòbil (opcional)",
     "deviceHint": "Per exemple, «Porta nord». Així l’entitat sabrà quin mòbil és cadascun.",
-    "raffleTitle": "Sorteig de la rifa",
-    "raffleText": "Aquesta rifa no fa servir lector d’entrades. Quan arribi l’acte, obre el sorteig per projectar-lo en pantalla.",
-    "raffleOpen": "Obrir el sorteig certificat",
-    "raffleBack": "Tornar a la porteria",
     "scanner": {
       "capacityTitle": "Aforament en directe",
       "capacity": "{checkedIn} / {capacity} assistents dins del recinte",
@@ -3859,8 +3763,6 @@
         "revokedDetail": "S’ha reemborsat o anul·lat: ja no val. No deixis entrar.",
         "notPaid": "Passi sense pagar",
         "notPaidDetail": "El pagament d’aquest passi no està completat.",
-        "notApplicable": "Això és una butlleta de rifa",
-        "notApplicableDetail": "Les butlletes no donen accés: no és una entrada.",
         "eventClosed": "Esdeveniment tancat",
         "eventClosedDetail": "L’esdeveniment s’ha cancel·lat o retornat: no deixis entrar.",
         "unknown": "No és a la llista descarregada",
@@ -3907,46 +3809,6 @@
         "pending": "{count, plural, one {Hi ha # lectura desada en aquest mòbil: s’enviarà en tornar a entrar amb el PIN nou.} other {Hi ha # lectures desades en aquest mòbil: s’enviaran en tornar a entrar amb el PIN nou.}}"
       },
       "capacityFull": "Aforament complet"
-    },
-    "raffle": {
-      "title": "Sorteig certificat",
-      "fullscreen": "Pantalla completa",
-      "exitFullscreen": "Sortir de pantalla completa",
-      "entries": "Butlletes vàlides",
-      "prizesLeft": "Premis per sortejar",
-      "winnersLabel": "Quants premis sortejes ara? (en queden {left})",
-      "winnersHint": "Cada ronda queda registrada a la seva acta.",
-      "drawOne": "Sortejar",
-      "drawMany": "Sortejar {count} premis",
-      "drawing": "Sortejant…",
-      "result": "{count, plural, one {Ronda {round}: butlleta guanyadora} other {Ronda {round}: butlletes guanyadores}}",
-      "resultExtra": "{count, plural, one {Ronda extra {round}: butlleta guanyadora} other {Ronda extra {round}: butlletes guanyadores}}",
-      "numbersLabel": "Butlletes guanyadores",
-      "act": {
-        "time": "Sorteig fet el",
-        "participants": "Butlletes que han participat",
-        "listHash": "Empremta de la llista de butlletes (SHA-256)",
-        "actHash": "Empremta de l’acta (SHA-256)",
-        "verify": "Amb l’acta descarregada qualsevol pot comprovar que la llista de butlletes i el resultat no s’han modificat després del sorteig: conté les butlletes que han participat i les dues empremtes. El sorteig el fa el servidor amb un generador aleatori criptogràfic, només entre butlletes pagades i no anul·lades.",
-        "download": "Descarregar l’acta (arxiu de dades)",
-        "print": "Imprimir l’acta"
-      },
-      "rounds": "Rondes fetes",
-      "roundButton": "Ronda {round}: {numbers}",
-      "blocked": {
-        "notRaffle": "Aquest esdeveniment no és una rifa.",
-        "salesOpen": "La venda de butlletes continua oberta: el sorteig es fa quan es tanca.",
-        "tooEarly": "El sorteig s’obre el {date}, el dia de l’esdeveniment.",
-        "prizesNotSet": "Aquesta rifa no té premis fixats: es fixen a l’Estudi abans de vendre.",
-        "done": "Ja s’han sortejat tots els premis.",
-        "notEnough": "No hi ha prou butlletes per sortejar tants premis.",
-        "extraNotAllowed": "Una ronda extra només la pot fer qui signa.",
-        "keyReused": "Aquesta ronda ja s’havia sortejat amb altres dades. Recarrega la pantalla.",
-        "busy": "Massa peticions seguides. Espera un minut.",
-        "failed": "No s’ha pogut completar el sorteig. Torna a prémer: si ja s’ha fet, en veuràs l’acta.",
-        "notAvailable": "Aquesta rifa s’ha cancel·lat, ha vençut o s’està retornant: no hi ha sorteig.",
-        "closed": "Aquesta rifa ja és tancada."
-      }
     },
     "organiserHint": "Organitzes l’esdeveniment? Crea el PIN i l’enllaç de la porteria a «Taquilla i porteria».",
     "organiserLink": "Anar a Taquilla i porteria",
@@ -4060,7 +3922,7 @@
         "supportGuaranteeCents": "Aportacions voluntàries de garantia KORUM",
         "bracketFeeCents": "Comissions per trams (obres i equipament)",
         "sponsorFeeCents": "Fee de comerços patrocinadors",
-        "digitalTicketFeeCents": "Despeses de gestió digital (taquilla i rifes QR)",
+        "digitalTicketFeeCents": "Despeses de gestió digital (taquilla QR)",
         "maintFeeCents": "Quotes de manteniment de la plataforma",
         "huchaTopupFeeCents": "Gestió de les aportacions de la Guardiola"
       },
@@ -4371,7 +4233,7 @@
       "format": "Format",
       "formats": {
         "BUDGET": "Pressupost",
-        "TICKETING": "Taquilla i rifes amb QR"
+        "TICKETING": "Taquilla amb QR"
       },
       "wallet": "Guardiola i estat",
       "progress": "Progrés",
@@ -4541,7 +4403,7 @@
         "INCOMPLETE": "Falten documents o el CIF del titular: no es pot verificar.",
         "LEY49_NOT_DECLARED": "L’entitat no ha declarat el règim de la Llei 49/2002: no es pot acreditar.",
         "SPLIT_ID_IN_USE": "Aquest identificador de compte destí ja el fa servir una altra entitat.",
-        "PUBLISHED_TICKETING": "L’entitat té una taquilla o rifa a la venda: les seves despeses de gestió d’entrades no es canvien mentrestant, perquè canviarien el que ja s’ha promès. Torna-ho a provar quan acabi.",
+        "PUBLISHED_TICKETING": "L’entitat té una taquilla a la venda: les seves despeses de gestió d’entrades no es canvien mentrestant, perquè canviarien el que ja s’ha promès. Torna-ho a provar quan acabi.",
         "LIMIT_BELOW_USED": "L’import exempt anual no pot ser menor que el que l’entitat ja ha gastat aquest curs."
       },
       "holder": {
@@ -4840,7 +4702,7 @@
       "reason": {
         "INVALID": "Revisa els camps marcats: algun valor no és vàlid.",
         "STALE": "Una altra persona ha desat canvis mentre editaves. Recarrega la pàgina per veure’n els canvis i torna a fer els teus.",
-        "TICKETING_ON_SALE": "No s’ha desat res. Hi ha una taquilla o rifa a la venda en una entitat sense tarifa pròpia i les despeses de gestió digital no poden canviar fins que acabi, perquè canviarien el que ja s’ha promès a qui compra. Deixa aquests dos camps com estaven i desa de nou.",
+        "TICKETING_ON_SALE": "No s’ha desat res. Hi ha una taquilla a la venda en una entitat sense tarifa pròpia i les despeses de gestió digital no poden canviar fins que acabi, perquè canviarien el que ja s’ha promès a qui compra. Deixa aquests dos camps com estaven i desa de nou.",
         "CATEGORY_EXISTS": "Ja existeix una categoria amb aquest nom.",
         "CATEGORY_NOT_FOUND": "Aquesta categoria ja no existeix.",
         "ALERT_CHANGED": "Les regles han canviat i aquest avís ja és un altre.",
@@ -5266,10 +5128,6 @@
         },
         "platform_company": {
           "label": "Dades de l’empresa"
-        },
-        "raffle_extraRoundMinHours": {
-          "label": "Hores d’espera abans d’una ronda extra del sorteig",
-          "help": "Entre 0 i 720. 0 = sense espera. El fixa l’advocat; el reemborsament d’un guanyador no espera."
         }
       },
       "secretsTitle": "Claus i contrasenyes",
@@ -5680,7 +5538,7 @@
         "ALL": "Qualsevol data",
         "SOON": "Tancament proper (menys de 20 dies)",
         "ALMOST": "Recta final (75 % o més)",
-        "TICKETING": "Només taquilla i rifes"
+        "TICKETING": "Només taquilla"
       },
       "clear": "Neteja els filtres",
       "results": "{count, plural, =0 {Cap iniciativa amb aquests filtres} one {# iniciativa} other {# iniciatives}}"
@@ -5702,24 +5560,23 @@
       "open": "Obre la fitxa de {title}",
       "share": "Comparteix {title}",
       "stage": "Etapa: {stage}",
-      "price": "{kind, select, RAFFLE {Butlleta {price}} other {Entrada {price}}}",
+      "price": "Entrada {price}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
       "zeroCommission": "0 % de comissió de la plataforma",
       "raisedOf": "{raised} de {goal}",
       "percent": "{pct} %",
       "progress": "Progrés de {title}",
-      "ticketsSold": "{kind, select, RAFFLE {{sold} venudes de {max}} other {{sold} venudes · aforament {max}}}",
+      "ticketsSold": "{sold} venudes · aforament {max}",
       "ticketsLeft": "{count, plural, =0 {Ja exhaurides} one {# disponible} other {# disponibles}}",
       "contributions": "{count, plural, one {# aportació} other {# aportacions}}",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "completed": "Completada!",
       "refund": "Devolució del 100 % si no s’assoleix la meta",
-      "soldOut": "{kind, select, RAFFLE {Butlletes exhaurides} other {Aforament complet · entrades exhaurides}}",
+      "soldOut": "Aforament complet · entrades exhaurides",
       "goalReached": "100 % aconseguit! Tancada",
       "contribute": "Aporta ara",
       "buyTickets": "Compra entrades",
-      "buyRaffle": "Compra butlletes",
       "closed": "Tancada"
     },
     "categories": {
@@ -5728,7 +5585,7 @@
       "tech": "Tecnologia i recursos",
       "community": "Comunitat i viatges",
       "solidarity": "Solidaritat i beques",
-      "ticketing": "Taquilla i rifes"
+      "ticketing": "Taquilla"
     },
     "detail": {
       "back": "Torna a les iniciatives",
@@ -5748,15 +5605,15 @@
       "contributionsDone": "{count, plural, one {# aportació feta} other {# aportacions fetes}}",
       "completedFull": "Completada al 100 %",
       "closed": "100 % aconseguit! Aportacions tancades",
-      "ticketsSoldOut": "{kind, select, RAFFLE {Butlletes exhaurides!} other {Aforament complet! Entrades exhaurides}}",
-      "ticketsHeading": "{kind, select, RAFFLE {Informació de les butlletes} other {Informació de taquilla digital}}",
+      "ticketsSoldOut": "Aforament complet! Entrades exhaurides",
+      "ticketsHeading": "Informació de taquilla digital",
       "ticketLines": {
-        "price": "{kind, select, RAFFLE {Import íntegre per butlleta per a l’entitat} other {Import íntegre per entrada per a l’entitat}}",
+        "price": "Import íntegre per entrada per a l’entitat",
         "fee": "Despeses de gestió digital",
-        "total": "{kind, select, RAFFLE {Total per butlleta} other {Total per entrada}}",
-        "priceInc": "{kind, select, RAFFLE {Preu de la butlleta} other {Preu de l’entrada}}",
+        "total": "Total per entrada",
+        "priceInc": "Preu de l’entrada",
         "feeInc": "Inclou despeses de gestió digital",
-        "center": "{kind, select, RAFFLE {L’entitat rep per butlleta} other {L’entitat rep per entrada}}",
+        "center": "L’entitat rep per entrada",
         "venue": "Lloc: {venue}"
       },
       "breakdown": {
@@ -5787,8 +5644,7 @@
       },
       "cta": {
         "contribute": "Aporta a aquesta iniciativa",
-        "buyTickets": "Compra entrades",
-        "buyRaffle": "Compra butlletes"
+        "buyTickets": "Compra entrades"
       },
       "contributionsClosed": "Aquesta iniciativa ja no admet aportacions",
       "selfBoost": "La plataforma KORUM també ha aportat i ha ajudat a aconseguir el repte."
@@ -5836,7 +5692,7 @@
     },
     "og": {
       "progress": "{pct} % aconseguit",
-      "tickets": "{kind, select, RAFFLE {{sold} de {max} butlletes venudes} other {{sold} de {max} entrades venudes}}",
+      "tickets": "{sold} de {max} entrades venudes",
       "daysLeft": "{count, plural, =0 {Tanca avui} one {Queda # dia} other {Queden # dies}}",
       "goalReached": "Meta aconseguida!",
       "challengeMissing": "{missing, plural, one {Només falta # família} other {Només falten # famílies}} a {group} per a {reward}!",
@@ -5858,17 +5714,12 @@
       "title": "La teva entrada",
       "event": "Esdeveniment",
       "quantity": "{count, plural, one {# entrada} other {# entrades}}",
-      "numbers": "{count, plural, one {El teu número de la rifa} other {Els teus números de la rifa}}",
       "qrAlt": "Codi QR per entrar",
       "show": "Ensenya’l a la porta, al mòbil o imprès.",
       "serial": "Codi {serial}",
       "revoked": {
         "title": "Aquesta entrada ja no és vàlida",
         "description": "S’ha reemborsat o anul·lat, així que no obrirà la porta. Si creus que és un error, escriu a l’entitat."
-      },
-      "revokedRaffle": {
-        "title": "Aquestes butlletes ja no són vàlides",
-        "description": "S’han reemborsat o anul·lat, així que ja no valen per al sorteig. Si creus que és un error, escriu a l’entitat."
       },
       "invalid": {
         "title": "No podem obrir aquesta entrada",
@@ -5878,23 +5729,7 @@
       "shareWhatsapp": "Enviar per WhatsApp",
       "shareWarning": "Qui tingui aquest enllaç pot fer servir l’entrada: envia’l només a qui hi hagi d’anar.",
       "shareMessage": "La teva entrada per a «{title}»: {url}",
-      "actions": "Accions de l’entrada",
-      "titleRaffle": "Les teves butlletes",
-      "quantityRaffle": "{count, plural, one {# butlleta} other {# butlletes}}",
-      "qrAltRaffle": "Codi QR de les teves butlletes",
-      "showRaffle": "{count, plural, one {Guarda-la: si surt el teu número, ensenya-la al mòbil o impresa per reclamar el premi. L’entitat et dirà com recollir-lo.} other {Guarda-les: si surt un dels teus números, ensenya-les al mòbil o impreses per reclamar el premi. L’entitat et dirà com recollir-lo.}}",
-      "showRaffleWon": "{count, plural, one {Ensenya aquest pas, al mòbil o imprès, per reclamar el teu premi. L’entitat t’explicarà com recollir-lo.} other {Ensenya aquest pas, al mòbil o imprès, per reclamar els teus premis. L’entitat t’explicarà com recollir-los.}}",
-      "shareWarningRaffle": "Qui tingui aquest enllaç pot ensenyar aquestes butlletes com a seves: envia’l només a algú de confiança.",
-      "shareMessageRaffle": "Les teves butlletes de «{title}»: {url}",
-      "actionsRaffle": "Accions de les butlletes",
-      "drawOn": "Sorteig: {date}",
-      "outcome": {
-        "notDrawn": "Encara no s’ha fet el sorteig: quan es faci, aquí veuràs si ha sortit algun dels teus números.",
-        "inProgress": "El sorteig ja ha començat i encara queden premis per sortejar. Torna a obrir aquesta pàgina per veure si t’ha tocat.",
-        "won": "{count, plural, one {El teu número {numbers} ha sortit premiat!} other {Els teus números {numbers} han sortit premiats!}}",
-        "replaced": "{count, plural, one {El teu número {numbers} va sortir al sorteig, però l’entitat ha tornat a sortejar aquest premi. Si creus que és un error, escriu a l’entitat.} other {Els teus números {numbers} van sortir al sorteig, però l’entitat ha tornat a sortejar aquests premis. Si creus que és un error, escriu a l’entitat.}}",
-        "notWon": "El sorteig ja s’ha fet i aquesta vegada no ha sortit cap dels teus números. Gràcies per sumar!"
-      }
+      "actions": "Accions de l’entrada"
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",
@@ -5914,23 +5749,17 @@
         "error": "Escriu un import entre {min} i {max}."
       },
       "ticket": {
-        "badge": {
-          "EVENT": "Entrada amb aforament",
-          "RAFFLE": "Butlleta de rifa numerada"
-        },
+        "badge": "Entrada amb aforament",
         "available": "En queden {available} de {max}",
         "venue": "Lloc: {venue}",
-        "quantity": {
-          "EVENT": "Entrades",
-          "RAFFLE": "Butlletes"
-        },
+        "quantity": "Entrades",
         "less": "Treure’n una",
         "more": "Afegir-ne una",
         "unitAdd": "Preu: {price} + {fee} de Despeses de gestió digital",
         "unitInc": "Preu: {price} (Despeses de gestió digital incloses)",
         "limit": "En aquesta compra en pots triar com a màxim {max}.",
-        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {Ja no queden butlletes. Gràcies per intentar-ho!} one {Només queda # butlleta.} other {Només queden # butlletes.}}} other {{count, plural, =0 {Ja no queden places lliures. Gràcies per intentar-ho!} one {Només queda # plaça lliure.} other {Només queden # places lliures.}}}}",
-        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Triar # butlleta} other {Triar # butlletes}}} other {{count, plural, one {Triar # plaça} other {Triar # places}}}}"
+        "soldOut": "{count, plural, =0 {Ja no queden places lliures. Gràcies per intentar-ho!} one {Només queda # plaça lliure.} other {Només queden # places lliures.}}",
+        "useAvailable": "{count, plural, one {Triar # plaça} other {Triar # places}}"
       },
       "group": {
         "label": {
@@ -5983,7 +5812,7 @@
         "secure": "Pagues a la pàgina segura de Paycomet. KORUM no veu mai les dades de la teva targeta."
       },
       "refundNote": "Si no s’arriba a la meta dins el termini, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
-      "refundNoteTickets": "{kind, select, RAFFLE {Si la rifa es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.} other {Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.}}",
+      "refundNoteTickets": "Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament.",
       "errors": {
         "form": "Revisa les dades marcades i torna-ho a provar.",
         "quantity": "Tria entre 1 i {max}.",
@@ -5995,7 +5824,7 @@
       "closed": {
         "title": "Ja no s’hi pot aportar",
         "achieved": "Meta assolida! Aquesta iniciativa ja no necessita més aportacions.",
-        "soldOut": "{kind, select, RAFFLE {Butlletes exhaurides! Ja no en queden.} other {Aforament complet! Ja no queden places.}}",
+        "soldOut": "Aforament complet! Ja no queden places.",
         "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions."
       },
       "custodyTickets": "Pagament segur amb Paycomet",
@@ -6080,22 +5909,16 @@
       "back": "Tornar a la iniciativa",
       "confirmed": {
         "title": "Gràcies! La teva aportació ja suma",
-        "titleTickets": {
-          "EVENT": "Fet! Les entrades ja són teves",
-          "RAFFLE": "Fet! Les butlletes ja són teves"
-        },
+        "titleTickets": "Fet! Les entrades ja són teves",
         "paid": "Has pagat {total}",
         "goalReached": "Amb la teva aportació s’ha assolit el 100 %!",
-        "soldOut": "{kind, select, RAFFLE {Amb la teva compra s’han exhaurit les butlletes!} other {Amb la teva compra s’ha completat l’aforament!}}",
+        "soldOut": "Amb la teva compra s’ha completat l’aforament!",
         "count": "Ja sumen {count, plural, one {# aportació} other {# aportacions}}",
         "progressLabel": "Avanç de «{title}»",
         "group": "{group} ja suma {count, plural, one {# família} other {# famílies}} · repte: {target}",
         "receipt": "T’hem enviat el rebut per correu.",
         "ticketsEmail": "També te l’hem enviat per correu, amb un enllaç per obrir-lo quan vulguis.",
-        "viewPass": {
-          "EVENT": "Veure i imprimir la meva entrada",
-          "RAFFLE": "Veure i imprimir les meves butlletes"
-        },
+        "viewPass": "Veure i imprimir la meva entrada",
         "serial": "Codi {serial}",
         "share": "Comparteix la iniciativa perquè s’hi sumin més famílies.",
         "pct": "{pct} % aconseguit",
@@ -6423,7 +6246,7 @@
         },
         "fiscal": {
           "q": "Rebo un certificat fiscal per la meva donació?",
-          "a": "Depèn de l’entitat. Si està acollida a la Llei 49/2002 i ho ha acreditat, reps un certificat de donació (necessitem el teu NIF, que és opcional). Si no, reps un justificant nominatiu d’aportació, sense efectes fiscals. Les entrades i les rifes mai donen certificat."
+          "a": "Depèn de l’entitat. Si està acollida a la Llei 49/2002 i ho ha acreditat, reps un certificat de donació (necessitem el teu NIF, que és opcional). Si no, reps un justificant nominatiu d’aportació, sense efectes fiscals. Les entrades mai donen certificat."
         },
         "ideas": {
           "q": "La meva proposta a la bústia d’idees és anònima?",
@@ -6628,7 +6451,7 @@
       "line": "{organization} · {date} · {type}",
       "type": {
         "DONATION": "Donació",
-        "TICKET": "Entrades o paperetes"
+        "TICKET": "Entrades"
       },
       "includesGuarantee": "Inclou la teva aportació voluntària a KORUM.",
       "status": {
@@ -6644,27 +6467,25 @@
       "emptyAction": "Cercar el meu centre o club"
     },
     "passes": {
-      "title": "Les meves entrades i paperetes",
+      "title": "Les meves entrades",
       "where": "{organization} · {date}",
-      "numbers": "Números: {numbers}",
       "quantity": "{count, plural, one {# entrada} other {# entrades}}",
       "serial": "Codi: {serial}",
       "revoked": "Aquesta entrada està anul·lada (per una devolució o una reclamació del pagament) i ja no val a la porta.",
       "viewEvent": "Veure la meva entrada",
-      "viewRaffle": "Veure les meves paperetes",
       "emptyTitle": "No tens entrades",
-      "emptyText": "Les entrades i paperetes que compris amb aquest correu apareixeran aquí, a punt per ensenyar-les a la porta."
+      "emptyText": "Les entrades que compris amb aquest correu apareixeran aquí, a punt per ensenyar-les a la porta."
     },
     "documents": {
       "metaTitle": "Certificats i justificants",
       "summary": "{count, plural, one {Tens # donació amb document} other {Tens # donacions amb document}}: certificat fiscal o justificant, a punt per imprimir.",
-      "none": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant. Les entrades i paperetes no donen document de donació.",
+      "none": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant. Les entrades no donen document de donació.",
       "open": "Veure certificats i justificants",
       "openOne": "Veure document",
       "back": "Tornar a El meu compte",
       "backToList": "Tornar a certificats i justificants",
       "title": "Certificats i justificants",
-      "intro": "Un per donació. El certificat fiscal serveix per a la declaració de la renda si l’entitat està acollida a la Llei 49/2002 i vas donar el teu NIF en aportar; si no, tens un justificant nominatiu, sense efectes fiscals. Les entrades i paperetes no donen document de donació.",
+      "intro": "Un per donació. El certificat fiscal serveix per a la declaració de la renda si l’entitat està acollida a la Llei 49/2002 i vas donar el teu NIF en aportar; si no, tens un justificant nominatiu, sense efectes fiscals. Les entrades no donen document de donació.",
       "year": "Exercici {year}",
       "line": "{initiative} · {date}",
       "kind": {
@@ -7107,7 +6928,7 @@
       "money": "Diners i factures",
       "campaigns": "Campanyes",
       "ideas": "Bústia d’idees",
-      "gate": "Taquilla, porteria i sortejos",
+      "gate": "Taquilla i porteria",
       "sponsors": "Comerços amics",
       "entity": "L’entitat i el seu titular",
       "account": "Comptes i privacitat",
@@ -7492,7 +7313,7 @@
         "guarantee": "Aportació voluntària a KORUM",
         "totalCharged": "Total cobrat",
         "matchedBonus": "Sumat pel Matching 2x d’un comerç",
-        "ticketQuantity": "Entrades o butlletes",
+        "ticketQuantity": "Entrades",
         "refunded": "Retornat",
         "order": "Comanda de Paycomet",
         "authCode": "Codi d’autorització",
@@ -7529,7 +7350,7 @@
       },
       "formats": {
         "BUDGET": "Pressupost",
-        "TICKETING": "Taquilla o rifa"
+        "TICKETING": "Taquilla"
       },
       "breakdown": {
         "line1": "Pressupost de proveïdor i equipament",
@@ -7556,7 +7377,7 @@
       "contributionsAnonymous": "Les aportacions són anònimes per a l’entitat: aquí n’apareixen els totals i, més avall, els moviments de la guardiola sumats per tipus per a tota la campanya, mai una per una.",
       "contributionTypes": {
         "DONATION": "Donació",
-        "TICKET": "Entrada o butlleta",
+        "TICKET": "Entrada",
         "SPONSORSHIP": "Patrocini d’un comerç",
         "SELF_BOOST": "Autoimpuls de KORUM",
         "MATCHING_FUND": "Bossa Matching 2x d’un comerç"
@@ -7641,7 +7462,7 @@
       },
       "journalKinds": {
         "PAYIN_DONATION": "Cobrament d’una donació",
-        "PAYIN_TICKET": "Cobrament d’entrades o butlletes",
+        "PAYIN_TICKET": "Cobrament d’entrades",
         "PAYIN_SPONSOR": "Cobrament del patrocini d’un comerç",
         "PAYIN_HUCHA_TOPUP": "Recàrrega de La Meva Guardiola",
         "HUCHA_SPEND": "Pagament amb La Meva Guardiola",
@@ -7754,7 +7575,7 @@
           "receipt": "Rebut d’una aportació"
         },
         "ticket": {
-          "pass": "Entrades o butlletes amb el seu QR"
+          "pass": "Entrades amb el seu QR"
         },
         "gate": {
           "pinRevoked": "Avís de PIN de porteria anul·lat"

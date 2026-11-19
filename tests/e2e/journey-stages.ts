@@ -142,7 +142,7 @@ export interface TicketPurchase {
 }
 
 /** Compra entradas y abre el pase con su QR. Lo cobrado es `cantidad × (precio + Gastos de gestión digital)`, con ese nombre exacto (Regla 02 §6). */
-export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug: string; initiativeId: number; email: string; quantity: number; subtype: 'EVENT' }): Promise<TicketPurchase> {
+export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug: string; initiativeId: number; email: string; quantity: number }): Promise<TicketPurchase> {
   const modal = await openCheckout(page, locale, options.slug, options.initiativeId);
   for (let added = 1; added < options.quantity; added += 1) await modal.getByRole('button', { name: t('portal.checkout.ticket.more') }).click();
   await expect(modal.getByTestId('ticket-quantity')).toHaveText(String(options.quantity));
@@ -158,7 +158,7 @@ export async function buyTickets(page: Page, t: T, locale: Lang, options: { slug
   await modal.getByLabel(t('portal.checkout.email.label')).fill(options.email);
   await modal.getByRole('button', { name: t('portal.checkout.pay.card') }).click();
   await confirmSimulatedPayment(page, t, /\/aportar\/simulador\?pedido=KT/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(t(`portal.result.confirmed.titleTickets.${options.subtype}`), NAVIGATION);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(t('portal.result.confirmed.titleTickets'), NAVIGATION);
   await page.getByTestId('view-pass').click();
   await expect(page).toHaveURL(/\/entrada\/[0-9a-f-]{36}\?sig=/, NAVIGATION);
   const url = new URL(page.url());

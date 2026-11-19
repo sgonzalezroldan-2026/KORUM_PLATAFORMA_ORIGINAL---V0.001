@@ -287,8 +287,8 @@ describe('Tarjeta social y pase anulado de una entrada (revisión de experiencia
   };
 
   it('la tarjeta para WhatsApp de un evento dice «entradas vendidas»', () => {
-    expect(translator('es', 'portal.og')('tickets', { kind: 'EVENT', sold: 3, max: 60 })).toBe('3 de 60 entradas vendidas');
-    expect(translator('en', 'portal.og')('tickets', { kind: 'EVENT', sold: 3, max: 60 })).toBe('3 of 60 tickets sold');
+    expect(translator('es', 'portal.og')('tickets', { sold: 3, max: 60 })).toBe('3 de 60 entradas vendidas');
+    expect(translator('en', 'portal.og')('tickets', { sold: 3, max: 60 })).toBe('3 of 60 tickets sold');
   });
 
   it('la entrada anulada dice que ya no vale en la puerta, en los tres idiomas', () => {

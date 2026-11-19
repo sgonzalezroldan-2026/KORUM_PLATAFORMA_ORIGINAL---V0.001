@@ -159,7 +159,7 @@
       "sections": {
         "account": "Tu cuenta",
         "contributions": "Aportaciones y compras",
-        "tickets": "Entradas y papeletas",
+        "tickets": "Entradas",
         "consents": "Consentimientos",
         "privacyRequests": "Solicitudes de privacidad",
         "memberships": "Cargos en entidades",
@@ -196,7 +196,6 @@
         "serial": "Código",
         "quantity": "Cantidad",
         "checkedIn": "Accesos",
-        "raffleNumbers": "Números",
         "revoked": "Anulada",
         "purpose": "Finalidad",
         "granted": "Aceptado",
@@ -229,7 +228,7 @@
       },
       "types": {
         "DONATION": "Donación",
-        "TICKET": "Entrada o papeleta",
+        "TICKET": "Entrada",
         "SPONSORSHIP": "Patrocinio",
         "SELF_BOOST": "Auto-Impulso",
         "MATCHING_FUND": "Fondo de Matching"
@@ -339,15 +338,11 @@
     },
     "ticket": {
       "subjectEvent": "Tu entrada para «{initiative}»",
-      "subjectRaffle": "Tus papeletas de «{initiative}»",
       "preheader": "Tu código QR está dentro.",
       "titleEvent": "Tu entrada está lista",
-      "titleRaffle": "Tus papeletas están listas",
       "bodyEvent": "Presenta el código QR en la puerta. Lo encontrarás en este email como imagen adjunta, y también puedes abrirlo desde el botón.",
-      "bodyRaffle": "Tus números ya participan en el sorteo. Guarda este email: el código QR adjunto te identifica si sales premiado.",
       "serial": "Código",
       "quantity": "Cantidad",
-      "numbers": "Tus números",
       "venue": "Lugar",
       "date": "Fecha",
       "cta": "Ver mi entrada",
@@ -825,22 +820,6 @@
         "cta": "Ver otras iniciativas"
       }
     },
-    "raffle": {
-      "extraRound": {
-        "subject": "Se ha hecho una ronda extra del sorteo de «{initiative}»",
-        "preheader": "Si no te suena, revisa el acta y habla con la otra persona firmante.",
-        "title": "Ronda extra del sorteo",
-        "body": "{by} ha hecho la ronda {round} del sorteo de «{initiative}»: {prizes, plural, one {sustituye # premio} other {sustituye # premios}} ({reason}). Para simplificar, la ronda extra la hace una sola persona; por eso te avisamos. Queda en el acta del sorteo, que puedes revisar y descargar en «Taquilla y portería».",
-        "cta": "Ver el sorteo",
-        "reason": {
-          "PRIZE_UNCLAIMED": "premio sin reclamar",
-          "WINNER_REFUNDED": "papeleta ganadora reembolsada"
-        },
-        "someone": "Una de las personas firmantes",
-        "factNew": "Papeletas nuevas",
-        "factReplaced": "Sustituyen a"
-      }
-    },
     "org": {
       "kybStatus": {
         "verified": {
@@ -997,14 +976,14 @@
       "howItWorks": "Ver cómo funciona"
     },
     "llms": {
-      "summary": "KORUM es una plataforma tecnológica para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales. Reúne un buzón de ideas con quórum, campañas de mecenazgo «todo o nada», taquilla y rifas con QR, comercios amigos y Mi Hucha.",
+      "summary": "KORUM es una plataforma tecnológica para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales. Reúne un buzón de ideas con quórum, campañas de mecenazgo «todo o nada», taquilla con QR, comercios amigos y Mi Hucha.",
       "money": "Los cobros, retenciones y devoluciones los ejecuta PAYCOMET, entidad de pago autorizada por el Banco de España. KORUM no es una entidad financiera ni custodia fondos. Si una iniciativa no llega a su meta, se devuelve el 100 % a cada persona, al medio de pago original. KORUM nunca intermedia ni cobra comisiones a proveedores de obras o equipamiento: la entidad elige libremente.",
       "figuresTitle": "Tarifas vigentes",
       "figures": [
         "Alta de entidades: gratis.",
         "Los primeros {exempt} de cada curso no pagan comisión; después, {t1Rate}, {t2Rate} o {t3Rate} según el tamaño de la iniciativa (tramos hasta {t1Max} y {t2Max}).",
         "Pasarela de pago: {gatewayRate} más {gatewayFixed} por aportación, incluida en la meta que ven las familias.",
-        "Entradas y papeletas: «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio.",
+        "Entradas: «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio.",
         "Patrocinio de comercios: el 100 % del nivel elegido llega a la iniciativa; el fee de gestión publicitaria ({sponsorFee} más IVA) se suma encima.",
         "Duración máxima de una campaña: {maxDays} días."
       ],
@@ -1030,7 +1009,7 @@
       "maintOn": "{maintFee} por campaña, con un tope anual de {maintCap}",
       "gatewayLabel": "Pasarela de pago (Paycomet)",
       "gatewayValue": "{gatewayRate} más {gatewayFixed} por aportación, incluidos en la meta que ven las familias",
-      "ticketsLabel": "Entradas y papeletas",
+      "ticketsLabel": "Entradas",
       "ticketsValue": "«Gastos de gestión digital»: {ticketFixed} más el {ticketRate} del precio, siempre desglosados antes de pagar",
       "sponsorsLabel": "Patrocinio de comercios",
       "sponsorsValue": "El 100 % del nivel elegido llega a la iniciativa. El fee de gestión publicitaria ({sponsorFee} más IVA) se suma encima y lo paga el comercio",
@@ -1054,7 +1033,7 @@
             "bullets": [
               "Abrir un buzón de ideas con quórum para que las familias propongan y respalden mejoras.",
               "Lanzar campañas «todo o nada» para climatización, sombra en el patio, pizarras digitales o el viaje de fin de curso.",
-              "Vender entradas y papeletas de rifa con QR en festivales y fiestas, con control de aforo.",
+              "Vender entradas con QR en festivales y fiestas, con control de aforo.",
               "Plantear retos por curso (de Infantil 3 años a 4º de ESO) y celebrar lo que se consigue.",
               "Exportar el Modelo 182 en un clic si la entidad se acoge a la Ley 49/2002."
             ]
@@ -1090,9 +1069,9 @@
       },
       "clubes": {
         "title": "Recaudar fondos para clubes deportivos",
-        "description": "Financia material, desplazamientos o instalaciones del club con campañas todo o nada, entradas y rifas con QR, y devolución del 100 % si no se llega.",
+        "description": "Financia material, desplazamientos o instalaciones del club con campañas todo o nada, entradas con QR, y devolución del 100 % si no se llega.",
         "h1": "Cómo recaudar fondos para un club deportivo base",
-        "answer": "KORUM da a un club deportivo base una forma ordenada de recaudar: campañas «todo o nada» para material, desplazamientos o instalaciones, entradas y rifas con QR para sus eventos y retos por equipo en positivo. Si una campaña no llega a la meta, se devuelve el 100 %. Los primeros {exempt} de cada temporada no pagan comisión.",
+        "answer": "KORUM da a un club deportivo base una forma ordenada de recaudar: campañas «todo o nada» para material, desplazamientos o instalaciones, entradas con QR para sus eventos y retos por equipo en positivo. Si una campaña no llega a la meta, se devuelve el 100 %. Los primeros {exempt} de cada temporada no pagan comisión.",
         "sections": [
           {
             "title": "Pensado para cómo funciona un club",
@@ -1104,10 +1083,10 @@
             ]
           },
           {
-            "title": "Entradas, rifas y portería",
+            "title": "Entradas y portería",
             "paragraphs": [
-              "Vende entradas con aforo controlado y papeletas de rifa numeradas. Los voluntarios validan en la puerta con la cámara del móvil, con un PIN del evento y sin instalar nada. El sorteo de la rifa se hace en pantalla y deja un acta.",
-              "Las rifas y tómbolas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa: la entidad confirma que cumple la normativa de la suya antes de publicar."
+              "Vende entradas con aforo controlado. Los voluntarios validan en la puerta con la cámara del móvil, con un PIN del evento y sin instalar nada.",
+              "Cada entrada lleva un código QR firmado: si alguien intenta entrar dos veces con la misma, el móvil de la puerta avisa y muestra la hora del primer acceso. Y si se va la cobertura, la portería sigue funcionando."
             ]
           },
           {
@@ -1125,7 +1104,7 @@
           {
             "title": "Cuánto cuesta",
             "paragraphs": [
-              "El alta es gratis y los primeros {exempt} de cada temporada no pagan comisión. Las entradas y papeletas llevan unos «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio, siempre desglosados antes de pagar."
+              "El alta es gratis y los primeros {exempt} de cada temporada no pagan comisión. Las entradas llevan unos «Gastos de gestión digital» de {ticketFixed} más el {ticketRate} del precio, siempre desglosados antes de pagar."
             ]
           }
         ],
@@ -1294,7 +1273,7 @@
               "La entidad no paga por darse de alta.",
               "Las familias aportan a la meta y, si quieren, una aportación voluntaria a KORUM que llega desmarcada.",
               "Los comercios pagan el nivel de patrocinio, que llega íntegro, más el fee de gestión publicitaria.",
-              "Quien compra una entrada o una papeleta paga los «Gastos de gestión digital», siempre a la vista."
+              "Quien compra una entrada paga los «Gastos de gestión digital», siempre a la vista."
             ]
           },
           {
@@ -1348,7 +1327,7 @@
       },
       "faq": {
         "title": "Preguntas frecuentes",
-        "description": "Respuestas claras sobre dinero, devoluciones, firmas de la entidad, comisiones, rifas, certificados fiscales y datos personales en KORUM.",
+        "description": "Respuestas claras sobre dinero, devoluciones, firmas de la entidad, comisiones, entradas, certificados fiscales y datos personales en KORUM.",
         "h1": "Preguntas frecuentes sobre KORUM",
         "answer": "Aquí respondemos, en lenguaje llano, lo que más nos preguntan las entidades, las familias y los comercios.",
         "sections": [
@@ -1393,8 +1372,8 @@
                 "a": "Por defecto, dos personas distintas: la gestión principal (dirección, presidencia del club…) y un cofirmante (presidencia del AMPA/AFA, tesorería del club…). Hacen falta las dos para aprobar una idea y para liberar fondos. La entidad puede decidir, bajo su responsabilidad, que firme solo la gestión principal."
               },
               {
-                "q": "¿Podemos hacer rifas?",
-                "a": "Sí, con papeletas numeradas y sorteo certificado en pantalla. Las rifas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa: la entidad confirma que cumple su normativa antes de publicar."
+                "q": "¿Podemos vender entradas para una fiesta o un torneo?",
+                "a": "Sí. Publicáis el evento desde el Estudio con su precio y su aforo; las familias compran en unos segundos y reciben su entrada con QR por email. En la puerta, los voluntarios la validan con la cámara del móvil y un PIN del evento, sin instalar nada."
               }
             ]
           },
@@ -1918,7 +1897,7 @@
       },
       "card": {
         "formatBudget": "Presupuesto",
-        "formatTicketing": "Taquilla o rifa",
+        "formatTicketing": "Taquilla",
         "hucha": "Hucha {id}",
         "raised": "{raised} de {goal}",
         "progress": "Avance de «{title}»: {percent} %",
@@ -1985,7 +1964,7 @@
         }
       },
       "newInitiative": "+ Nueva iniciativa",
-      "newTicketing": "+ Nueva taquilla / rifa",
+      "newTicketing": "+ Nueva taquilla",
       "metaTitle": "Cuadro de mandos"
     },
     "medals": {
@@ -2051,7 +2030,7 @@
     },
     "model182": {
       "title": "Modelo 182 (donativos)",
-      "intro": "Fichero para presentar en la Agencia Tributaria con los donativos completados y sin devolución del ejercicio. Las entradas, las rifas y las recargas nunca entran.",
+      "intro": "Fichero para presentar en la Agencia Tributaria con los donativos completados y sin devolución del ejercicio. Las entradas y las recargas nunca entran.",
       "year": "Ejercicio",
       "phone": "Teléfono de contacto",
       "phoneHint": "Nueve cifras: es el que figurará como contacto en el fichero. El nombre de contacto es el de vuestra cuenta.",
@@ -2235,7 +2214,7 @@
           "blockedTitle": "Firmada, pero aún no se puede enviar",
           "blocked": "Las firmas necesarias están registradas, pero faltan los documentos del titular verificados o la cuenta en PAYCOMET. Se enviará en cuanto estén.",
           "notReadyTitle": "Firmada, pero la campaña aún no se puede liquidar",
-          "notReady": "Las firmas necesarias están registradas, pero falta algo antes de liquidar (el sorteo de la rifa o decidir sobre un comercio). Lo veréis en Liquidaciones.",
+          "notReady": "Las firmas necesarias están registradas, pero falta algo antes de liquidar (por ejemplo, decidir sobre un comercio). Lo veréis en Liquidaciones.",
           "invoiceTitle": "Falta una factura válida",
           "invoice": "La factura adjunta ya no es válida. Subid otra en Liquidaciones y volved a pedir la liquidación.",
           "providerTitle": "El pago al proveedor aún no está disponible",
@@ -2954,7 +2933,7 @@
       "picker": {
         "newTitle": "Empezar una campaña",
         "newBudget": "+ Nueva iniciativa",
-        "newTicketing": "+ Nueva taquilla / rifa",
+        "newTicketing": "+ Nueva taquilla",
         "tooManyDrafts": "Ya tenéis {max} borradores abiertos. Publicad o terminad alguno antes de crear otro.",
         "templatesTitle": "Plantillas listas para usar",
         "templatesHint": "Rellenan el título y la descripción. El presupuesto lo ponéis vosotros con el presupuesto de vuestro proveedor: KORUM no propone precios.",
@@ -2966,7 +2945,7 @@
       },
       "format": {
         "BUDGET": "Presupuesto / obra",
-        "TICKETING": "Taquilla o rifa"
+        "TICKETING": "Taquilla"
       },
       "templates": {
         "climate": {
@@ -3010,12 +2989,6 @@
           "summary": "Entradas con aforo controlado y código QR.",
           "title": "Festival de fin de curso",
           "description": "Venta de entradas con aforo controlado y código QR para nuestro festival. Lo recaudado se destina a las actividades de la comunidad."
-        },
-        "raffle": {
-          "name": "Rifa solidaria",
-          "summary": "Papeletas numeradas con sorteo certificado.",
-          "title": "Rifa solidaria de la comunidad",
-          "description": "Papeletas numeradas con sorteo en pantalla y acta. Lo recaudado se destina a las actividades de la comunidad."
         },
         "playgroundClub": {
           "name": "Instalaciones del club",
@@ -3088,33 +3061,28 @@
         "families": "Familias y socios"
       },
       "fields": {
-        "title": "Título de la iniciativa, evento o rifa",
+        "title": "Título de la iniciativa o del evento",
         "category": "Categoría",
         "categoryChoose": "Elegid una categoría",
-        "ticketingCategory": "Taquilla y rifas",
+        "ticketingCategory": "Taquilla",
         "stage": "A quién beneficia",
         "stageChoose": "Elegid a quién beneficia",
         "closesOn": "Fecha límite",
         "closesOnHint": "Como máximo {days} días desde hoy.",
         "description": "Descripción",
-        "ticketingTitle": "Taquilla o rifa con código QR",
+        "ticketingTitle": "Taquilla con código QR",
         "ticketSubtype": "Tipo",
         "subtypeEvent": "Entrada con control de aforo",
-        "subtypeRaffle": "Papeleta de rifa numerada",
-        "ticketPrice": "Precio de la entrada o papeleta (€)",
-        "ticketMax": "Aforo máximo o número de papeletas",
+        "ticketPrice": "Precio de la entrada (€)",
+        "ticketMax": "Aforo máximo",
         "digitalFee": "Gastos de gestión digital (importe)",
         "digitalFeeHint": "Los fija KORUM; los veis aquí para calcular.",
         "digitalFeeValue": "{fixed} + {pct} ({unit} por unidad)",
-        "venue": "Lugar o fecha del acto o del sorteo",
+        "venue": "Lugar o fecha del acto",
         "venueHint": "Opcional. Se enseña en la ficha pública.",
         "feeMode": "Quién paga los gastos de gestión digital",
         "feeModeAdd": "Sumarlos al comprador",
         "feeModeInc": "Asumirlos dentro del precio de la entrada",
-        "raffleNotice": "Las rifas y tómbolas son competencia de cada comunidad autónoma y pueden requerir comunicación o autorización previa según su importe. Los premios en especie no se pueden canjear por dinero.",
-        "rafflePrizes": "Premios que se sortean",
-        "rafflePrizesHint": "Se fija antes de publicar y no se puede cambiar después: sin él no se podría sortear.",
-        "raffleConfirm": "Confirmamos que la rifa cumple la normativa de nuestra comunidad autónoma",
         "budgetTitle": "Presupuesto",
         "costMat": "Presupuesto del proveedor (€)",
         "costMatHint": "El de vuestro proveedor, sin comisiones de KORUM.",
@@ -3157,7 +3125,6 @@
         "gatewayCoveredNote": "El coste de la pasarela de pago está cubierto: no se resta de lo que recibe la entidad.",
         "gatewayFormula": "Cómo se calcula: {pct} variable sobre {subtotal} ({variable}) + {count, plural, one {# aportación estimada} other {# aportaciones estimadas}} (según la aportación sugerida de {ticket}) × {fixed} ({fixedTotal}) + {rounding} de redondeo al euro. Suma cuadrada: {net} + {fee} + {maint} + {gateway} = {goal}.",
         "ticketGross": "Recaudación bruta del aforo (aforo × precio)",
-        "ticketGrossRaffle": "Recaudación bruta de las papeletas (papeletas × precio)",
         "ticketModelTitle": "Gastos de gestión digital (taquilla con QR)",
         "ticketDigitalFee": "Gastos de gestión digital por entrada",
         "perUnitAdd": "{amount} por unidad (se suman al comprador)",
@@ -3167,7 +3134,7 @@
         "ticketNet": "Neto garantizado para la entidad",
         "maintShortfall": "La recaudación no alcanza a cubrir el mantenimiento: faltarían {amount}.",
         "gatewayNotCovered": "Con estos precios los gastos de gestión no cubren la pasarela ({amount} por entrada). Lo revisa KORUM; no cambia lo que recibe la entidad.",
-        "badgeTicketing": "Taquilla o rifa con QR",
+        "badgeTicketing": "Taquilla con QR",
         "badgeExempt": "Categoría al 0 % de comisión",
         "badgeBracket": "Tramo {rate}",
         "badgeExact": "Desglose exacto",
@@ -3183,16 +3150,13 @@
         "GOAL_ZERO": "Falta el presupuesto: la meta no puede ser 0,00 €.",
         "STAGE_MISSING": "Indicad a quién beneficia la campaña.",
         "DESCRIPTION_MISSING": "Falta la descripción.",
-        "TICKET_MAX_ZERO": "Indicad el aforo o el número de papeletas.",
+        "TICKET_MAX_ZERO": "Indicad el aforo.",
         "TICKET_PRICE_ZERO": "El precio no puede ser 0,00 €: sin importe no hay nada que guardar en la hucha.",
         "TICKET_FEE_EXCEEDS_PRICE": "Con los gastos de gestión dentro del precio no quedaría nada para la hucha: subid el precio o sumad los gastos al comprador.",
-        "RAFFLE_PRIZES": "Indicad cuántos premios se sortean (como mucho, tantos como papeletas).",
-        "RAFFLE_NOTICE": "Confirmad que la rifa cumple la normativa de vuestra comunidad autónoma.",
         "INVALID_CATEGORY": "Elegid una categoría de mejora.",
         "CLOSING_INVALID": "La fecha de cierre no es válida.",
         "CLOSING_PAST": "La fecha de cierre ya ha pasado: elegid una posterior a hoy.",
         "CLOSING_TOO_LATE": "La campaña duraría más del máximo permitido: elegid una fecha de cierre anterior.",
-        "RAFFLE_PRIZES_EXCEED": "No puede haber más premios que papeletas.",
         "TITLE_MISSING": "Escribid un título de al menos 3 letras.",
         "MAINT_EXCEEDS_TAKINGS": "Con este precio y este aforo la recaudación no cubre el mantenimiento de la plataforma: subid el precio o el aforo.",
         "GOAL_TOO_HIGH": "Con este presupuesto y las condiciones de la plataforma la meta superaría el máximo que se puede guardar: bajad el presupuesto o escribid a KORUM."
@@ -3271,7 +3235,6 @@
           "description": "El cartel se genera cuando la campaña está recaudando: hasta entonces su código QR no llevaría a ninguna página. Publicadla desde el Estudio y volved aquí."
         },
         "defaultMessageTickets": "Escanea el código QR con tu móvil, elige tu entrada y paga con Bizum o tarjeta en 10 segundos.",
-        "defaultMessageRaffle": "Escanea el código QR con tu móvil, elige tus papeletas y paga con Bizum o tarjeta en 10 segundos.",
         "guaranteeTickets": "Pago seguro con PAYCOMET. Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago. Hucha de la iniciativa {wallet}.",
         "metaTitle": "Cartel A4 con QR"
       },
@@ -3361,7 +3324,6 @@
       "blockersLabel": "Lo que falta antes de liquidar",
       "blockers": {
         "NOT_READY": "Esta campaña no está lista para liquidar.",
-        "RAFFLE_NOT_DRAWN": "Falta hacer el sorteo de la rifa ante el público: no se puede liquidar antes.",
         "SPONSORS_PENDING": "Hay comercios cobrados que aún no habéis admitido ni rechazado.",
         "KYB_NOT_VERIFIED": "Faltan los documentos del titular verificados.",
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET.",
@@ -3413,7 +3375,6 @@
         "INVALID_TAX_ID": "El CIF o NIF del proveedor no es válido.",
         "NOT_FOUND": "No encontramos esa campaña en vuestra entidad.",
         "NOT_READY": "Esta campaña ya no está lista para liquidar (puede que un contracargo la haya devuelto a recaudar).",
-        "RAFFLE_NOT_DRAWN": "Falta hacer el sorteo de la rifa: no se puede liquidar antes.",
         "SPONSORS_PENDING": "Hay comercios cobrados que aún no habéis admitido ni rechazado.",
         "KYB_NOT_VERIFIED": "Faltan los documentos del titular verificados.",
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET para recibir el dinero.",
@@ -3463,7 +3424,6 @@
         "editCancel": "No cambiar nada",
         "notApproved": {
           "NOT_GOAL": "No se ha podido aprobar: la campaña ya no tiene la meta conseguida (un contracargo).",
-          "RAFFLE_NOT_DRAWN": "No se ha podido aprobar: falta el sorteo completo de la rifa.",
           "SPONSORS_PENDING": "No se ha podido aprobar: hay comercios cobrados sin admitir ni rechazar.",
           "FIGURES_CHANGED": "Las cifras han cambiado desde que se firmó (un contracargo). Pedid la liquidación de nuevo: se volverá a firmar.",
           "ESCROW_MISMATCH": "La hucha no cuadra con lo recaudado. El equipo de KORUM lo está revisando.",
@@ -3550,11 +3510,11 @@
         "optionLength": "Escribid entre {min} y {max} caracteres.",
         "removeOption": "Quitar la opción {letter}",
         "addOption": "Añadir otra opción",
-        "refundOptionAlways": "Además, la papeleta incluye siempre «Prefiero que me devolváis mi aportación».",
+        "refundOptionAlways": "Además, la votación incluye siempre «Prefiero que me devolváis mi aportación».",
         "launchVote": "Lanzar la votación",
         "voteBlockedLabel": "Por qué no se puede votar",
         "voteBlocked": {
-          "NOT_BUDGET": "Un evento o una rifa no tienen una versión más pequeña: solo se puede devolver el dinero.",
+          "NOT_BUDGET": "Un evento con entradas no tiene una versión más pequeña: solo se puede devolver el dinero.",
           "NO_DONATIONS": "No hay donaciones de familias que puedan votar: solo se puede devolver.",
           "WINDOW_TOO_SHORT": "Queda poco de los 90 días en que PAYCOMET puede enviar el dinero: no da tiempo a votar y a liquidar. Solo se puede devolver.",
           "POLL_EXISTS": "Esta campaña ya tuvo su votación."
@@ -3563,21 +3523,21 @@
         "refundText": "Cada persona recupera todo lo que pagó, en su medio de pago original y sin tener que pedirlo. Los patrocinios de comercios pasan a otra campaña o a su bolsa, y los cupos vuelven a la entidad.",
         "refundButton": "Devolver el 100 %",
         "confirmVoteTitle": "¿Lanzar la votación de «{title}»?",
-        "confirmVoteText": "Enviaremos la papeleta a quienes donaron. Durará {days} días y las opciones no se podrán cambiar. Quien pida su devolución la tendrá en marcha en cuanto vote, y a quien no vote se le devolverá al cerrarse.",
+        "confirmVoteText": "Enviaremos la votación a quienes donaron. Durará {days} días y las opciones no se podrán cambiar. Quien pida su devolución la tendrá en marcha en cuanto vote, y a quien no vote se le devolverá al cerrarse.",
         "confirmRefundTitle": "¿Devolver el 100 % de «{title}»?",
         "confirmRefundText": "Empezaremos a devolver cada aportación a su medio de pago original. Los patrocinios de comercios pasarán a otra campaña o a su bolsa. No se puede deshacer.",
         "confirmVote": "Sí, lanzar la votación",
         "confirmRefund": "Sí, devolver el 100 %",
         "cancel": "No, volver",
         "sending": "Enviando…",
-        "voteLaunched": "Votación lanzada. Quienes donaron reciben su papeleta por email; se cierra el {date}.",
+        "voteLaunched": "Votación lanzada. Quienes donaron reciben por email el enlace para votar; se cierra el {date}.",
         "refundStarted": "Devolución en marcha. Quienes aportaron reciben un aviso y el dinero vuelve a su medio de pago en los próximos días."
       },
       "errors": {
         "INVALID_INPUT": "Revisad las opciones.",
         "NOT_FOUND": "No encontramos esa campaña en vuestra entidad.",
         "WRONG_STATUS": "Esta campaña ya no espera una decisión: alguien la ha tomado mientras tanto.",
-        "NOT_BUDGET": "Un evento o una rifa no tienen una versión más pequeña: solo se puede devolver el dinero.",
+        "NOT_BUDGET": "Un evento con entradas no tiene una versión más pequeña: solo se puede devolver el dinero.",
         "NO_DONATIONS": "No hay donaciones de familias que puedan votar: solo se puede devolver.",
         "WINDOW_TOO_SHORT": "Queda poco de los 90 días en que PAYCOMET puede enviar el dinero: solo se puede devolver.",
         "POLL_EXISTS": "Esta campaña ya tuvo su votación.",
@@ -3682,8 +3642,7 @@
       "title": "Taquilla y portería",
       "intro": "Aquí fijas el PIN de la puerta de cada evento y ves qué móviles de voluntarios están dentro. El PIN es solo de ese evento, se enseña una vez y caduca seis horas después de acabar el día del evento.",
       "kind": {
-        "event": "Evento con entradas",
-        "raffle": "Rifa"
+        "event": "Evento con entradas"
       },
       "sold": "{sold, plural, one {# vendida} other {# vendidas}}",
       "soldOf": "{sold} de {max} vendidas",
@@ -3725,7 +3684,7 @@
       "readOnly": "Solo quienes firman pueden crear el PIN y cerrar sesiones.",
       "empty": {
         "title": "Aún no hay eventos con entradas",
-        "text": "Cuando publiques un evento o una rifa desde el Estudio, podrás crear aquí el PIN de su puerta.",
+        "text": "Cuando publiques un evento desde el Estudio, podrás crear aquí el PIN de su puerta.",
         "action": "Ir al Estudio"
       },
       "errors": {
@@ -3733,57 +3692,6 @@
         "NOT_FOUND": "Ese evento ya no existe.",
         "NOT_ALLOWED": "No se puede crear el PIN: el evento ya ha terminado o su fecha no es válida.",
         "RATE_LIMITED": "Has creado muchos PIN seguidos. Espera un rato antes de crear otro: cada PIN nuevo cierra las sesiones de la puerta."
-      },
-      "raffle": {
-        "title": "Sorteo y rondas extra",
-        "notDrawn": "Esta rifa aún no se ha sorteado. El sorteo se hace en la puerta el día del evento; cuando termine, aquí podrás sustituir un premio que nadie reclame.",
-        "summary": "Premios sorteados: {drawn} de {prizes}. Sustituidos con rondas extra: {extra}.",
-        "round": "Ronda {round}",
-        "roundExtra": "Ronda {round} (extra: {reason})",
-        "reason": {
-          "PRIZE_UNCLAIMED": "premio sin reclamar",
-          "WINNER_REFUNDED": "papeleta ganadora reembolsada"
-        },
-        "download": "Descargar acta",
-        "downloadLabel": "Descargar acta de la ronda {round}",
-        "extraTitle": "Ronda extra",
-        "extraIntro": "Si nadie reclama el premio de una papeleta, o quien la compró ha pedido el reembolso, puedes sortear otra papeleta para sustituirlo. Basta con una persona firmante: si hay otra, recibirá un aviso, y la ronda queda en el acta. Solo se puede hacer antes de liquidar la rifa.",
-        "reasonLabel": "Motivo",
-        "reasonOption": "{reason} (hasta {max, plural, one {# premio} other {# premios}})",
-        "prepare": "Preparar la ronda extra",
-        "confirmTitle": "¿Sortear 1 papeleta para sustituir la {replaced}?",
-        "confirmBody": "Motivo: {reason}. Hazlo solo cuando haya pasado el plazo para recoger el premio y el que den las bases de la rifa. El sorteo es aleatorio y no se puede deshacer ni repetir. Quedará en el acta y en el historial de la entidad, y avisaremos a la otra persona firmante si la hay.",
-        "confirmYes": "Sí, sortear ahora",
-        "confirmNo": "Cancelar",
-        "drawing": "Sorteando…",
-        "done": "Ronda {round} hecha: {numbers} sustituye a {replaced}. Anota qué premio era. La otra persona firmante recibirá un aviso.",
-        "readOnly": "Solo quienes firman pueden hacer una ronda extra.",
-        "blocked": {
-          "prizesExhausted": "No quedan premios que sustituir.",
-          "notJustified": "Con ese motivo no se pueden sustituir tantos premios ahora. Recarga la página para ver cuántos quedan.",
-          "notEnough": "No quedan papeletas suficientes para sortear tantos premios.",
-          "keyReused": "Esa ronda ya se había sorteado con otros datos. Recarga la página.",
-          "other": "Ahora no se puede hacer este sorteo.",
-          "replacedInvalid": "Esas papeletas ya no se pueden sustituir. Recarga la página para ver cuáles quedan.",
-          "tooSoon": "Todavía no ha pasado el plazo mínimo para sustituir un premio sin reclamar. Recarga la página para ver desde cuándo se puede."
-        },
-        "errors": {
-          "FORBIDDEN": "No tienes permiso para hacerlo.",
-          "NOT_FOUND": "Esa rifa ya no existe.",
-          "INVALID_INPUT": "Revisa los datos de la ronda.",
-          "NETWORK": "No hemos podido confirmar el sorteo. Vuelve a intentarlo: si ya se hizo, verás la misma ronda; nunca se sortea dos veces.",
-          "DOWNLOAD": "No se ha podido descargar el acta. Inténtalo de nuevo."
-        },
-        "doneAlone": "Ronda {round} hecha: {numbers} sustituye a {replaced}. Anota qué premio era. No hay otra persona firmante activa a quien avisar; la ronda queda en el acta y en el historial de la entidad.",
-        "noneAllReplaced": "Ya se han sustituido todos los premios que se pueden sustituir. Cada premio solo se puede sustituir una vez; si tampoco se reclama, la entidad decide qué hacer con él.",
-        "noneNoEntries": "No quedan papeletas que no hayan ganado: no hay a quién sortear.",
-        "replaceLegend": "¿Qué papeleta ganadora sustituyes?",
-        "replaceHint": "Elige la papeleta ganadora cuyo premio nadie reclama. Se hace de una en una: si hay más premios sin reclamar, repite la ronda.",
-        "replaceHintRefunded": "Solo aparecen las papeletas ganadoras que se han reembolsado. Se hace de una en una.",
-        "refundedTag": "reembolsada",
-        "selectNone": "Marca al menos una papeleta ganadora para sustituirla.",
-        "noneWaiting": "Podrás sustituir un premio sin reclamar a partir del {date}: es el plazo mínimo que ha fijado KORUM para que se pueda reclamar. Si las bases de tu rifa dan más tiempo, espera a que termine.",
-        "replacesText": "sustituye a {replaced}"
       }
     },
     "welcomeCelebration": {
@@ -3812,10 +3720,6 @@
     "busyTitle": "Demasiadas peticiones",
     "deviceLabel": "Nombre de este móvil (opcional)",
     "deviceHint": "Por ejemplo, «Puerta norte». Así la entidad sabrá qué móvil es cada uno.",
-    "raffleTitle": "Sorteo de la rifa",
-    "raffleText": "Esta rifa no usa lector de entradas. Cuando llegue el acto, abre el sorteo para proyectarlo en pantalla.",
-    "raffleOpen": "Abrir el sorteo certificado",
-    "raffleBack": "Volver a la portería",
     "scanner": {
       "capacityTitle": "Aforo en directo",
       "capacity": "{checkedIn} / {capacity} asistentes dentro del recinto",
@@ -3859,8 +3763,6 @@
         "revokedDetail": "Se reembolsó o se anuló: ya no vale. No dejes entrar.",
         "notPaid": "Pase sin pagar",
         "notPaidDetail": "El pago de este pase no está completado.",
-        "notApplicable": "Esto es una papeleta de rifa",
-        "notApplicableDetail": "Las papeletas no dan acceso: no es una entrada.",
         "eventClosed": "Evento cerrado",
         "eventClosedDetail": "El evento se ha cancelado o devuelto: no dejes entrar.",
         "unknown": "No está en la lista descargada",
@@ -3907,46 +3809,6 @@
         "pending": "{count, plural, one {Hay # lectura guardada en este móvil: se enviará al volver a entrar con el PIN nuevo.} other {Hay # lecturas guardadas en este móvil: se enviarán al volver a entrar con el PIN nuevo.}}"
       },
       "capacityFull": "Aforo completo"
-    },
-    "raffle": {
-      "title": "Sorteo certificado",
-      "fullscreen": "Pantalla completa",
-      "exitFullscreen": "Salir de pantalla completa",
-      "entries": "Papeletas válidas",
-      "prizesLeft": "Premios por sortear",
-      "winnersLabel": "¿Cuántos premios sorteas ahora? (quedan {left})",
-      "winnersHint": "Cada ronda queda registrada en su acta.",
-      "drawOne": "Sortear",
-      "drawMany": "Sortear {count} premios",
-      "drawing": "Sorteando…",
-      "result": "{count, plural, one {Ronda {round}: papeleta ganadora} other {Ronda {round}: papeletas ganadoras}}",
-      "resultExtra": "{count, plural, one {Ronda extra {round}: papeleta ganadora} other {Ronda extra {round}: papeletas ganadoras}}",
-      "numbersLabel": "Papeletas ganadoras",
-      "act": {
-        "time": "Sorteo hecho el",
-        "participants": "Papeletas que participaron",
-        "listHash": "Huella de la lista de papeletas (SHA-256)",
-        "actHash": "Huella del acta (SHA-256)",
-        "verify": "Con el acta descargada cualquiera puede comprobar que la lista de papeletas y el resultado no se han modificado después del sorteo: contiene las papeletas que participaron y las dos huellas. El sorteo lo hace el servidor con un generador aleatorio criptográfico, solo entre papeletas pagadas y no anuladas.",
-        "download": "Descargar el acta (archivo de datos)",
-        "print": "Imprimir el acta"
-      },
-      "rounds": "Rondas hechas",
-      "roundButton": "Ronda {round}: {numbers}",
-      "blocked": {
-        "notRaffle": "Este evento no es una rifa.",
-        "salesOpen": "La venta de papeletas sigue abierta: el sorteo se hace cuando se cierra.",
-        "tooEarly": "El sorteo se abre el {date}, el día del evento.",
-        "prizesNotSet": "Esta rifa no tiene premios fijados: se fijan en el Estudio antes de vender.",
-        "done": "Ya se han sorteado todos los premios.",
-        "notEnough": "No hay papeletas suficientes para sortear tantos premios.",
-        "extraNotAllowed": "Una ronda extra solo la pueden hacer quienes firman.",
-        "keyReused": "Esa ronda ya se había sorteado con otros datos. Recarga la pantalla.",
-        "busy": "Demasiadas peticiones seguidas. Espera un minuto.",
-        "failed": "No se pudo completar el sorteo. Vuelve a pulsar: si ya se hizo, verás su acta.",
-        "notAvailable": "Esta rifa se ha cancelado, ha vencido o se está devolviendo: no hay sorteo.",
-        "closed": "Esta rifa ya está cerrada."
-      }
     },
     "organiserHint": "¿Organizas el evento? Crea el PIN y el enlace de la portería en «Taquilla y portería».",
     "organiserLink": "Ir a Taquilla y portería",
@@ -4060,7 +3922,7 @@
         "supportGuaranteeCents": "Aportaciones voluntarias de garantía KORUM",
         "bracketFeeCents": "Comisiones por tramos (obras y equipamiento)",
         "sponsorFeeCents": "Fee de comercios patrocinadores",
-        "digitalTicketFeeCents": "Gastos de gestión digital (taquilla y rifas QR)",
+        "digitalTicketFeeCents": "Gastos de gestión digital (taquilla QR)",
         "maintFeeCents": "Cuotas de mantenimiento de la plataforma",
         "huchaTopupFeeCents": "Gestión de las aportaciones de Mi Hucha"
       },
@@ -4371,7 +4233,7 @@
       "format": "Formato",
       "formats": {
         "BUDGET": "Presupuesto",
-        "TICKETING": "Taquilla y rifas con QR"
+        "TICKETING": "Taquilla con QR"
       },
       "wallet": "Hucha y estado",
       "progress": "Progreso",
@@ -4541,7 +4403,7 @@
         "INCOMPLETE": "Faltan documentos o el CIF del titular: no se puede verificar.",
         "LEY49_NOT_DECLARED": "La entidad no ha declarado el régimen de la Ley 49/2002: no se puede acreditar.",
         "SPLIT_ID_IN_USE": "Ese identificador de cuenta destino ya lo usa otra entidad.",
-        "PUBLISHED_TICKETING": "La entidad tiene una taquilla o rifa a la venta: sus gastos de gestión de entradas no se cambian mientras tanto, porque cambiarían lo ya prometido. Inténtalo cuando termine.",
+        "PUBLISHED_TICKETING": "La entidad tiene una taquilla a la venta: sus gastos de gestión de entradas no se cambian mientras tanto, porque cambiarían lo ya prometido. Inténtalo cuando termine.",
         "LIMIT_BELOW_USED": "El importe exento anual no puede ser menor que lo que la entidad ya ha gastado este curso."
       },
       "holder": {
@@ -4840,7 +4702,7 @@
       "reason": {
         "INVALID": "Revisa los campos marcados: algún valor no es válido.",
         "STALE": "Otra persona ha guardado cambios mientras editabas. Recarga la página para ver sus cambios y vuelve a hacer los tuyos.",
-        "TICKETING_ON_SALE": "No se ha guardado nada. Hay una taquilla o rifa a la venta en una entidad sin tarifa propia y los gastos de gestión digital no pueden cambiar hasta que termine, porque cambiarían lo ya prometido a quien compra. Deja esos dos campos como estaban y guarda de nuevo.",
+        "TICKETING_ON_SALE": "No se ha guardado nada. Hay una taquilla a la venta en una entidad sin tarifa propia y los gastos de gestión digital no pueden cambiar hasta que termine, porque cambiarían lo ya prometido a quien compra. Deja esos dos campos como estaban y guarda de nuevo.",
         "CATEGORY_EXISTS": "Ya existe una categoría con ese nombre.",
         "CATEGORY_NOT_FOUND": "Esa categoría ya no existe.",
         "ALERT_CHANGED": "Las reglas han cambiado y este aviso ya es otro.",
@@ -5266,10 +5128,6 @@
         },
         "platform_company": {
           "label": "Datos de la empresa"
-        },
-        "raffle_extraRoundMinHours": {
-          "label": "Horas de espera antes de una ronda extra del sorteo",
-          "help": "Entre 0 y 720. 0 = sin espera. Lo fija el abogado; el reembolso de un ganador no espera."
         }
       },
       "secretsTitle": "Claves y contraseñas",
@@ -5680,7 +5538,7 @@
         "ALL": "Cualquier fecha",
         "SOON": "Cierre cercano (menos de 20 días)",
         "ALMOST": "Recta final (75 % o más)",
-        "TICKETING": "Solo taquilla y rifas"
+        "TICKETING": "Solo taquilla"
       },
       "clear": "Limpiar filtros",
       "results": "{count, plural, =0 {Ninguna iniciativa con estos filtros} one {# iniciativa} other {# iniciativas}}"
@@ -5702,24 +5560,23 @@
       "open": "Abrir la ficha de {title}",
       "share": "Compartir {title}",
       "stage": "Etapa: {stage}",
-      "price": "{kind, select, RAFFLE {Papeleta {price}} other {Entrada {price}}}",
+      "price": "Entrada {price}",
       "matching": "Matching 2x",
       "matchingTip": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
       "zeroCommission": "0 % de comisión de la plataforma",
       "raisedOf": "{raised} de {goal}",
       "percent": "{pct} %",
       "progress": "Progreso de {title}",
-      "ticketsSold": "{kind, select, RAFFLE {{sold} vendidas de {max}} other {{sold} vendidas · aforo {max}}}",
+      "ticketsSold": "{sold} vendidas · aforo {max}",
       "ticketsLeft": "{count, plural, =0 {Ya agotadas} one {# disponible} other {# disponibles}}",
       "contributions": "{count, plural, one {# aportación} other {# aportaciones}}",
       "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
       "completed": "¡Completado!",
       "refund": "Devolución del 100 % si no se logra la meta",
-      "soldOut": "{kind, select, RAFFLE {Papeletas agotadas} other {Aforo completo · entradas agotadas}}",
+      "soldOut": "Aforo completo · entradas agotadas",
       "goalReached": "¡100 % conseguido! Cerrado",
       "contribute": "Aportar ahora",
       "buyTickets": "Comprar entradas",
-      "buyRaffle": "Comprar papeletas",
       "closed": "Cerrada"
     },
     "categories": {
@@ -5728,7 +5585,7 @@
       "tech": "Tecnología y Recursos",
       "community": "Comunidad y Viajes",
       "solidarity": "Solidaridad y Becas",
-      "ticketing": "Taquilla y Rifas"
+      "ticketing": "Taquilla"
     },
     "detail": {
       "back": "Volver a las iniciativas",
@@ -5748,15 +5605,15 @@
       "contributionsDone": "{count, plural, one {# aportación realizada} other {# aportaciones realizadas}}",
       "completedFull": "Completado al 100 %",
       "closed": "¡100 % conseguido! Aportaciones cerradas",
-      "ticketsSoldOut": "{kind, select, RAFFLE {¡Papeletas agotadas!} other {¡Aforo completo! Entradas agotadas}}",
-      "ticketsHeading": "{kind, select, RAFFLE {Información de las papeletas} other {Información de taquilla digital}}",
+      "ticketsSoldOut": "¡Aforo completo! Entradas agotadas",
+      "ticketsHeading": "Información de taquilla digital",
       "ticketLines": {
-        "price": "{kind, select, RAFFLE {Importe íntegro por papeleta para la entidad} other {Importe íntegro por entrada para la entidad}}",
+        "price": "Importe íntegro por entrada para la entidad",
         "fee": "Gastos de gestión digital",
-        "total": "{kind, select, RAFFLE {Total por papeleta} other {Total por entrada}}",
-        "priceInc": "{kind, select, RAFFLE {Precio de la papeleta} other {Precio de la entrada}}",
+        "total": "Total por entrada",
+        "priceInc": "Precio de la entrada",
         "feeInc": "Incluye gastos de gestión digital",
-        "center": "{kind, select, RAFFLE {La entidad recibe por papeleta} other {La entidad recibe por entrada}}",
+        "center": "La entidad recibe por entrada",
         "venue": "Lugar: {venue}"
       },
       "breakdown": {
@@ -5787,8 +5644,7 @@
       },
       "cta": {
         "contribute": "Aportar a esta iniciativa",
-        "buyTickets": "Comprar entradas",
-        "buyRaffle": "Comprar papeletas"
+        "buyTickets": "Comprar entradas"
       },
       "contributionsClosed": "Esta iniciativa ya no admite aportaciones",
       "selfBoost": "La plataforma KORUM también aportó y ayudó a conseguir el reto."
@@ -5836,7 +5692,7 @@
     },
     "og": {
       "progress": "{pct} % conseguido",
-      "tickets": "{kind, select, RAFFLE {{sold} de {max} papeletas vendidas} other {{sold} de {max} entradas vendidas}}",
+      "tickets": "{sold} de {max} entradas vendidas",
       "daysLeft": "{count, plural, =0 {Cierra hoy} one {Queda # día} other {Quedan # días}}",
       "goalReached": "¡Meta conseguida!",
       "challengeMissing": "{missing, plural, one {¡Solo falta # familia} other {¡Solo faltan # familias}} en {group} para {reward}!",
@@ -5858,17 +5714,12 @@
       "title": "Tu entrada",
       "event": "Evento",
       "quantity": "{count, plural, one {# entrada} other {# entradas}}",
-      "numbers": "{count, plural, one {Tu número de la rifa} other {Tus números de la rifa}}",
       "qrAlt": "Código QR para entrar",
       "show": "Enséñalo en la puerta, en el móvil o impreso.",
       "serial": "Código {serial}",
       "revoked": {
         "title": "Esta entrada ya no es válida",
         "description": "Se ha reembolsado o anulado, así que no abrirá la puerta. Si crees que es un error, escribe a la entidad."
-      },
-      "revokedRaffle": {
-        "title": "Estas papeletas ya no son válidas",
-        "description": "Se han reembolsado o anulado, así que ya no valen para el sorteo. Si crees que es un error, escribe a la entidad."
       },
       "invalid": {
         "title": "No podemos abrir esta entrada",
@@ -5878,23 +5729,7 @@
       "shareWhatsapp": "Enviar por WhatsApp",
       "shareWarning": "Quien tenga este enlace puede usar la entrada: envíalo solo a quien vaya a ir.",
       "shareMessage": "Tu entrada para «{title}»: {url}",
-      "actions": "Acciones de la entrada",
-      "titleRaffle": "Tus papeletas",
-      "quantityRaffle": "{count, plural, one {# papeleta} other {# papeletas}}",
-      "qrAltRaffle": "Código QR de tus papeletas",
-      "showRaffle": "{count, plural, one {Guárdala: si sale tu número, enséñala en el móvil o impresa para reclamar tu premio. La entidad te dirá cómo recogerlo.} other {Guárdalas: si sale uno de tus números, enséñalas en el móvil o impresas para reclamar tu premio. La entidad te dirá cómo recogerlo.}}",
-      "showRaffleWon": "{count, plural, one {Enseña este pase, en el móvil o impreso, para reclamar tu premio. La entidad te dirá cómo recogerlo.} other {Enseña este pase, en el móvil o impreso, para reclamar tus premios. La entidad te dirá cómo recogerlos.}}",
-      "shareWarningRaffle": "Quien tenga este enlace puede enseñar estas papeletas como suyas: envíalo solo a alguien de confianza.",
-      "shareMessageRaffle": "Tus papeletas de «{title}»: {url}",
-      "actionsRaffle": "Acciones de las papeletas",
-      "drawOn": "Sorteo: {date}",
-      "outcome": {
-        "notDrawn": "Aún no se ha hecho el sorteo: cuando se haga, aquí verás si ha salido alguno de tus números.",
-        "inProgress": "El sorteo ya ha empezado y aún quedan premios por sortear. Vuelve a abrir esta página para ver si te ha tocado.",
-        "won": "{count, plural, one {¡Tu número {numbers} ha salido premiado!} other {¡Tus números {numbers} han salido premiados!}}",
-        "replaced": "{count, plural, one {Tu número {numbers} salió en el sorteo, pero la entidad ha vuelto a sortear ese premio. Si crees que es un error, escribe a la entidad.} other {Tus números {numbers} salieron en el sorteo, pero la entidad ha vuelto a sortear esos premios. Si crees que es un error, escribe a la entidad.}}",
-        "notWon": "El sorteo ya se ha hecho y esta vez no ha salido ninguno de tus números. ¡Gracias por sumar!"
-      }
+      "actions": "Acciones de la entrada"
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",
@@ -5914,23 +5749,17 @@
         "error": "Escribe un importe entre {min} y {max}."
       },
       "ticket": {
-        "badge": {
-          "EVENT": "Entrada con aforo",
-          "RAFFLE": "Papeleta de rifa numerada"
-        },
+        "badge": "Entrada con aforo",
         "available": "Quedan {available} de {max}",
         "venue": "Lugar: {venue}",
-        "quantity": {
-          "EVENT": "Entradas",
-          "RAFFLE": "Papeletas"
-        },
+        "quantity": "Entradas",
         "less": "Quitar una",
         "more": "Añadir una",
         "unitAdd": "Precio: {price} + {fee} de Gastos de gestión digital",
         "unitInc": "Precio: {price} (Gastos de gestión digital incluidos)",
         "limit": "Puedes elegir como máximo {max} en esta compra.",
-        "soldOut": "{kind, select, RAFFLE {{count, plural, =0 {Ya no quedan papeletas. ¡Gracias por intentarlo!} one {Solo queda # papeleta.} other {Solo quedan # papeletas.}}} other {{count, plural, =0 {Ya no quedan plazas libres. ¡Gracias por intentarlo!} one {Solo queda # plaza libre.} other {Solo quedan # plazas libres.}}}}",
-        "useAvailable": "{kind, select, RAFFLE {{count, plural, one {Elegir # papeleta} other {Elegir # papeletas}}} other {{count, plural, one {Elegir # plaza} other {Elegir # plazas}}}}"
+        "soldOut": "{count, plural, =0 {Ya no quedan plazas libres. ¡Gracias por intentarlo!} one {Solo queda # plaza libre.} other {Solo quedan # plazas libres.}}",
+        "useAvailable": "{count, plural, one {Elegir # plaza} other {Elegir # plazas}}"
       },
       "group": {
         "label": {
@@ -5983,7 +5812,7 @@
         "secure": "Pagas en la página segura de Paycomet. KORUM nunca ve los datos de tu tarjeta."
       },
       "refundNote": "Si no se llega a la meta en el plazo, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
-      "refundNoteTickets": "{kind, select, RAFFLE {Si la rifa se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.} other {Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.}}",
+      "refundNoteTickets": "Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago.",
       "errors": {
         "form": "Revisa los datos marcados y vuelve a intentarlo.",
         "quantity": "Elige entre 1 y {max}.",
@@ -5995,7 +5824,7 @@
       "closed": {
         "title": "Ya no se puede aportar",
         "achieved": "¡Meta conseguida! Esta iniciativa ya no necesita más aportaciones.",
-        "soldOut": "{kind, select, RAFFLE {¡Papeletas agotadas! Ya no quedan.} other {¡Aforo completo! Ya no quedan plazas.}}",
+        "soldOut": "¡Aforo completo! Ya no quedan plazas.",
         "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones."
       },
       "custodyTickets": "Pago seguro con Paycomet",
@@ -6080,22 +5909,16 @@
       "back": "Volver a la iniciativa",
       "confirmed": {
         "title": "¡Gracias! Tu aportación ya suma",
-        "titleTickets": {
-          "EVENT": "¡Listo! Tus entradas ya son tuyas",
-          "RAFFLE": "¡Listo! Tus papeletas ya son tuyas"
-        },
+        "titleTickets": "¡Listo! Tus entradas ya son tuyas",
         "paid": "Has pagado {total}",
         "goalReached": "¡Con tu aportación se ha logrado el 100 %!",
-        "soldOut": "{kind, select, RAFFLE {¡Con tu compra se han agotado las papeletas!} other {¡Con tu compra se ha completado el aforo!}}",
+        "soldOut": "¡Con tu compra se ha completado el aforo!",
         "count": "Ya suman {count, plural, one {# aportación} other {# aportaciones}}",
         "progressLabel": "Avance de «{title}»",
         "group": "{group} ya suma {count, plural, one {# familia} other {# familias}} · reto: {target}",
         "receipt": "Te hemos enviado el recibo por email.",
         "ticketsEmail": "También te lo hemos enviado por email, con un enlace para abrirlo cuando quieras.",
-        "viewPass": {
-          "EVENT": "Ver e imprimir mi entrada",
-          "RAFFLE": "Ver e imprimir mis papeletas"
-        },
+        "viewPass": "Ver e imprimir mi entrada",
         "serial": "Código {serial}",
         "share": "Comparte la iniciativa para que se sumen más familias.",
         "pct": "{pct} % conseguido",
@@ -6423,7 +6246,7 @@
         },
         "fiscal": {
           "q": "¿Recibo un certificado fiscal por mi donación?",
-          "a": "Depende de la entidad. Si está acogida a la Ley 49/2002 y lo ha acreditado, recibes un certificado de donación (necesitamos tu NIF, que es opcional). Si no, recibes un justificante nominativo de aportación, sin efectos fiscales. Las entradas y las rifas nunca dan certificado."
+          "a": "Depende de la entidad. Si está acogida a la Ley 49/2002 y lo ha acreditado, recibes un certificado de donación (necesitamos tu NIF, que es opcional). Si no, recibes un justificante nominativo de aportación, sin efectos fiscales. Las entradas nunca dan certificado."
         },
         "ideas": {
           "q": "¿Mi propuesta en el buzón de ideas es anónima?",
@@ -6628,7 +6451,7 @@
       "line": "{organization} · {date} · {type}",
       "type": {
         "DONATION": "Donación",
-        "TICKET": "Entradas o papeletas"
+        "TICKET": "Entradas"
       },
       "includesGuarantee": "Incluye tu aportación voluntaria a KORUM.",
       "status": {
@@ -6644,27 +6467,25 @@
       "emptyAction": "Buscar mi centro o club"
     },
     "passes": {
-      "title": "Mis entradas y papeletas",
+      "title": "Mis entradas",
       "where": "{organization} · {date}",
-      "numbers": "Números: {numbers}",
       "quantity": "{count, plural, one {# entrada} other {# entradas}}",
       "serial": "Código: {serial}",
       "revoked": "Esta entrada está anulada (por una devolución o una reclamación del pago) y ya no vale en la puerta.",
       "viewEvent": "Ver mi entrada",
-      "viewRaffle": "Ver mis papeletas",
       "emptyTitle": "No tienes entradas",
-      "emptyText": "Las entradas y papeletas que compres con este email aparecerán aquí, listas para enseñar en la puerta."
+      "emptyText": "Las entradas que compres con este email aparecerán aquí, listas para enseñar en la puerta."
     },
     "documents": {
       "metaTitle": "Certificados y justificantes",
       "summary": "{count, plural, one {Tienes # donación con documento} other {Tienes # donaciones con documento}}: certificado fiscal o justificante, listo para imprimir.",
-      "none": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante. Las entradas y papeletas no dan documento de donación.",
+      "none": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante. Las entradas no dan documento de donación.",
       "open": "Ver certificados y justificantes",
       "openOne": "Ver documento",
       "back": "Volver a Mi cuenta",
       "backToList": "Volver a certificados y justificantes",
       "title": "Certificados y justificantes",
-      "intro": "Uno por donación. El certificado fiscal sirve para tu declaración de la renta si la entidad está acogida a la Ley 49/2002 y diste tu NIF al aportar; si no, tienes un justificante nominativo, sin efectos fiscales. Las entradas y papeletas no dan documento de donación.",
+      "intro": "Uno por donación. El certificado fiscal sirve para tu declaración de la renta si la entidad está acogida a la Ley 49/2002 y diste tu NIF al aportar; si no, tienes un justificante nominativo, sin efectos fiscales. Las entradas no dan documento de donación.",
       "year": "Ejercicio {year}",
       "line": "{initiative} · {date}",
       "kind": {
@@ -7107,7 +6928,7 @@
       "money": "Dinero y facturas",
       "campaigns": "Campañas",
       "ideas": "Buzón de ideas",
-      "gate": "Taquilla, portería y sorteos",
+      "gate": "Taquilla y portería",
       "sponsors": "Comercios amigos",
       "entity": "La entidad y su titular",
       "account": "Cuentas y privacidad",
@@ -7492,7 +7313,7 @@
         "guarantee": "Aportación voluntaria a KORUM",
         "totalCharged": "Total cobrado",
         "matchedBonus": "Sumado por el Matching 2x de un comercio",
-        "ticketQuantity": "Entradas o papeletas",
+        "ticketQuantity": "Entradas",
         "refunded": "Devuelto",
         "order": "Pedido de Paycomet",
         "authCode": "Código de autorización",
@@ -7529,7 +7350,7 @@
       },
       "formats": {
         "BUDGET": "Presupuesto",
-        "TICKETING": "Taquilla o rifa"
+        "TICKETING": "Taquilla"
       },
       "breakdown": {
         "line1": "Presupuesto de proveedor y equipamiento",
@@ -7556,7 +7377,7 @@
       "contributionsAnonymous": "Las aportaciones son anónimas para la entidad: aquí aparecen sus totales y, más abajo, los movimientos de la hucha sumados por tipo para toda la campaña, nunca una a una.",
       "contributionTypes": {
         "DONATION": "Donación",
-        "TICKET": "Entrada o papeleta",
+        "TICKET": "Entrada",
         "SPONSORSHIP": "Patrocinio de un comercio",
         "SELF_BOOST": "Auto-Impulso de KORUM",
         "MATCHING_FUND": "Bolsa Matching 2x de un comercio"
@@ -7641,7 +7462,7 @@
       },
       "journalKinds": {
         "PAYIN_DONATION": "Cobro de una donación",
-        "PAYIN_TICKET": "Cobro de entradas o papeletas",
+        "PAYIN_TICKET": "Cobro de entradas",
         "PAYIN_SPONSOR": "Cobro del patrocinio de un comercio",
         "PAYIN_HUCHA_TOPUP": "Recarga de Mi Hucha",
         "HUCHA_SPEND": "Pago con Mi Hucha",
@@ -7754,7 +7575,7 @@
           "receipt": "Recibo de una aportación"
         },
         "ticket": {
-          "pass": "Entradas o papeletas con su QR"
+          "pass": "Entradas con su QR"
         },
         "gate": {
           "pinRevoked": "Aviso de PIN de portería anulado"

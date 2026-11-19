@@ -76,9 +76,12 @@ afterAll(async () => {
 
 describe('QA-A05 · guardar un bloque de ajustes', () => {
   it('guarda todo el bloque con la versión de cada ajuste, deja un rastro por ajuste y lo no modificado no escribe ni audita', async () => {
+    // Una versión no se reutiliza aunque se borre la fila: sigue a los cambios ya auditados de ese ajuste (`nextVersion`). Otro archivo de la base compartida
+    // puede haberlo guardado antes, así que la versión esperada se calcula como lo hace el servicio y no se supone 1.
+    const history = await db.auditLog.count({ where: { targetType: 'PlatformSetting', targetId: 'paycomet.merchantCode', action: { in: ['settings.setting.updated', 'settings.setting.cleared'] } } });
     const result = await save('pagos', { 'paycomet.merchantCode': 'KORUM-COMERCIO', 'paycomet.terminalId': '12345', 'paycomet.jetId': 'jet-abc', 'paycomet.serverIp': '203.0.113.7' });
     expect(result.changed).toBe(4);
-    expect(result.versions['paycomet.merchantCode']).toBe(1);
+    expect(result.versions['paycomet.merchantCode']).toBe(history + 1);
     expect(await getSetting(db, 'paycomet.terminalId')).toBe('12345');
 
     const audits = await db.auditLog.findMany({ where: { action: 'settings.setting.updated', targetId: { in: ['paycomet.merchantCode', 'paycomet.serverIp'] } }, orderBy: { id: 'desc' }, take: 2 });
@@ -90,7 +93,7 @@ describe('QA-A05 · guardar un bloque de ajustes', () => {
     const again = await save('pagos', { 'paycomet.merchantCode': 'KORUM-COMERCIO', 'paycomet.terminalId': '12345' });
     expect(again.changed).toBe(0);
     expect(await db.auditLog.count({ where: { action: { startsWith: 'settings.setting.' } } })).toBe(before);
-    expect((await versionsOf(['paycomet.merchantCode']))['paycomet.merchantCode']).toBe(1);
+    expect((await versionsOf(['paycomet.merchantCode']))['paycomet.merchantCode']).toBe(history + 1);
   });
 
   it('un valor vacío borra el ajuste (vuelve el de respaldo) y la auditoría lo anota como borrado', async () => {

@@ -2,7 +2,7 @@
 
 > **Propósito:** definir el **Entorno 0** de KORUM: la web comercial (`korum.app`), que capta entidades, familias y comercios de forma autónoma y bien posicionada en buscadores y asistentes de IA, y la puerta de acceso segura para cada rol. SEO y vista previa en redes: [korum-seo-discoverability](../.agents/skills/korum-seo-discoverability/SKILL.md).
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. La landing deja de mencionarlas en el 5.12b. Se añaden las **páginas públicas de los textos legales** con archivo de versiones y la **aceptación registrada del contrato de encargo y las condiciones en el alta**, donde también se podrá elegir la firma única (5.10a y 5.10c); la preproducción no se indexa (5.10a); los colegios con ánimo de lucro se dan de alta solo para entradas y vales (5.22); y la landing recibe el mensaje de valor del promotor (5.29). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. La landing dejó de mencionarlas en el 5.12b. Se añaden las **páginas públicas de los textos legales** con archivo de versiones y la **aceptación registrada del contrato de encargo y las condiciones en el alta**, donde también se podrá elegir la firma única (5.10a y 5.10c); la preproducción no se indexa (5.10a); los colegios con ánimo de lucro se dan de alta solo para entradas y vales (5.22); y la landing recibe el mensaje de valor del promotor (5.29). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ---
 
@@ -27,7 +27,7 @@ Diseño dual de la [skill de marca](../.agents/skills/korum-brand-design-system/
 
 ### 1.2 Páginas pilar (SEO)
 
-`/para-colegios`, `/para-clubes`, `/para-entidades-culturales`, `/para-comercios`, `/como-funciona`, `/precios`, `/seguridad-y-transparencia`, `/preguntas-frecuentes` y `/guias/*` (p. ej. *"Cómo financiar la climatización del colegio"*, *"Cómo organizar una rifa solidaria legal"*). Cada una responde a su pregunta principal en el primer párrafo, en los tres idiomas.
+`/para-colegios`, `/para-clubes`, `/para-entidades-culturales`, `/para-comercios`, `/como-funciona`, `/precios`, `/seguridad-y-transparencia`, `/preguntas-frecuentes` y `/guias/*` (p. ej. *"Cómo financiar la climatización del colegio"*, *"Cómo organizar la fiesta de fin de curso con entradas"*). Cada una responde a su pregunta principal en el primer párrafo, en los tres idiomas.
 
 ---
 
@@ -38,7 +38,7 @@ Diseño dual de la [skill de marca](../.agents/skills/korum-brand-design-system/
 | **1. Familia, socio o vecino** | `/login` o modal dentro de `/[orgSlug]` | **Sin contraseña:** enlace mágico u OTP de 6 dígitos (email canónico); opcionalmente passkey | **No** para aportar ni comprar entradas (solo email). **Sí** para firmar o proponer ideas, Mi Hucha y Mi cuenta. |
 | **2. Comercio** | Checkout de patrocinio o `/login` | Alta automática al patrocinar + enlace mágico al email de facturación | Para editar su logo y su ventaja, descargar facturas o gestionar la renovación. |
 | **3. Firmantes de la entidad (`DIRECTOR` y `COSIGNER`)** | `/registro-comunidad` (alta) y `/login` → `/panel/[orgSlug]` | **Email + contraseña + 2FA obligatoria** (y enlace de un solo uso + OTP para firmar desde el móvil) | Siempre. Las **dos firmas de dos personas distintas** son necesarias para aprobar ideas y liberar fondos. |
-| **4. Voluntario de portería** | `/panel/[orgSlug]/porteria` | **PIN de 6 dígitos del evento**, con caducidad y límite de intentos | Solo escáner y sorteo de ese evento; sin acceso a datos bancarios, fiscales ni personales. |
+| **4. Voluntario de portería** | `/panel/[orgSlug]/porteria` | **PIN de 6 dígitos del evento**, con caducidad y límite de intentos | Solo el escáner de ese evento; sin acceso a datos bancarios, fiscales ni personales. |
 | **5. Super-Admin** | `/login` → `/admin` | **Contraseña + 2FA obligatoria** (passkey recomendada) | Toda la ruta `/admin/*`, con registro de auditoría. |
 
 En producción **no existe** la barra de demostración del prototipo (selector de entornos, perfiles simulados y conmutador web/móvil): solo en el entorno de demostración con `NEXT_PUBLIC_DEMO_MODE=true`.

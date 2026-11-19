@@ -51,7 +51,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const ticketing = initiative.format === 'TICKETING';
   const reached = initiative.status !== 'FUNDRAISING' || (ticketing ? initiative.ticketMax !== null && initiative.ticketsSold + initiative.ticketsHeld >= initiative.ticketMax : initiative.raisedCents >= initiative.goalCents);
   const pct = reached ? 100 : ticketing ? percentOf(initiative.ticketsSold, initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents, initiative.goalCents);
-  const progressText = ticketing && !reached ? t('tickets', { kind: 'EVENT', sold: initiative.ticketsSold, max: initiative.ticketMax ?? 0 }) : reached ? t('goalReached') : t('progress', { pct });
+  const progressText = ticketing && !reached ? t('tickets', { sold: initiative.ticketsSold, max: initiative.ticketMax ?? 0 }) : reached ? t('goalReached') : t('progress', { pct });
   const remaining = daysLeft(initiative.closesAt, new Date());
 
   const group = initiative.rewardEnabled ? findGroupBySlug(initiative.courses, query.get('grupo')) : null;

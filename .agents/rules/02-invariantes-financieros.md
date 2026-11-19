@@ -28,7 +28,7 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
   3. `Resto sujeto a tramo`.
   4. `Cargo de mantenimiento de la plataforma`: si es `0`, mostrar **solo `0,00 €`** (prohibido "(Desactivado)"). Si está activo, se aplica hasta el **tope anual**, y a partir de ahí `0,00 €` el resto del curso.
   5. `Coste de la pasarela de pago (Paycomet)`: importe exacto (incluido el redondeo al euro) con su explicación (`% variable sobre el subtotal + fijo por el nº estimado de aportaciones, calculado con el importe de aportación sugerido por defecto de la entidad`).
-- **Modo `TICKETING`:** `Recaudación bruta del aforo`, `Gastos de gestión digital por entrada`, `Coste de pasarela cubierto por la gestión`, `Mantenimiento` y `Neto garantizado para la entidad` (es el neto **si se vende todo el aforo**; la pizarra lo aclarará en el Sprint 5.13). **Las rifas se retiran** (decisión 31): el subtipo `RAFFLE` y su aviso normativo siguen en el código hasta el Sprint 5.12 y no se amplían.
+- **Modo `TICKETING`:** `Recaudación bruta del aforo`, `Gastos de gestión digital por entrada`, `Coste de pasarela cubierto por la gestión`, `Mantenimiento` y `Neto garantizado para la entidad` (es el neto **si se vende todo el aforo**; la pizarra lo aclarará en el Sprint 5.13). **Las rifas se retiraron** (decisión 31, Sprints 5.12a y 5.12b): ya no hay subtipo `RAFFLE` ni su aviso normativo.
 - **Vales** (decisión 32, pendiente de construir en el Sprint 5.14): venta de unidades de canje con precio único; su pizarra sigue el modo `TICKETING` sin aforo obligatorio (tope opcional) y con tarifa propia de «Gastos de gestión digital». La fecha de validez la fija la entidad bajo su responsabilidad, sin mínimo; si cancela la venta antes de liquidarla devuelve la plataforma y, después, la plataforma avisa y responde la entidad; los pagos «sin producto» no se devuelven salvo esa cancelación (decisión 49).
 - **Tarifas (decisión 34, pendiente de construir en el Sprint 5.18):** todo cambio global de tarifas entra en vigor a los 30 días y solo vale para lo publicado después; cada campaña, taquilla o venta de vales guarda la tarifa con la que se publicó. Hasta entonces, un cambio se aplica al momento y la compra de entradas lee la tarifa actual.
 
@@ -85,7 +85,7 @@ Cada entidad elige su modo; un cambio de modo afecta solo a los pagos nuevos. **
 
 - Se llaman única y exactamente **"Gastos de gestión digital"** y solo se configuran desde la consola del Super-Admin (`fijo + % sobre el precio`).
 - En modo `ADD`, el coste de Paycomet se calcula sobre el **total cobrado al comprador** (`precio + gastos de gestión digital`) más el fijo por transacción. El validador garantiza margen neto positivo.
-- Los vales tendrán su propia tarifa (Sprint 5.14). Las papeletas de rifa desaparecen con el Sprint 5.12.
+- Los vales tendrán su propia tarifa (Sprint 5.14). Las papeletas de rifa se retiraron en el Sprint 5.12a.
 - **Llevan el IVA dentro** (decisión 21, §11).
 
 ## 7. Reembolsos, contracargos y Auto-Impulso

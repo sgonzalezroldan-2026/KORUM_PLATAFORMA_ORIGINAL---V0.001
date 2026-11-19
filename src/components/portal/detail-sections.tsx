@@ -60,27 +60,27 @@ export function HiddenBreakdownNotice({ goalCents }: { goalCents: number }) {
 }
 
 /** Taquilla: lo que paga quien compra y lo que recibe la entidad, con la misma fórmula que el Estudio. */
-export function TicketDetails({ ticket, kind }: { ticket: TicketInfoData; kind: 'EVENT' }) {
+export function TicketDetails({ ticket }: { ticket: TicketInfoData }) {
   const t = useTranslations('portal.detail');
 
   return (
     <section aria-labelledby="tickets-heading" className="space-y-2 border-t border-patio-rule pt-4 text-sm">
       <h2 id="tickets-heading" className="font-extrabold text-varsity-navy">
         <span aria-hidden="true">{'🎟️ '}</span>
-        {t('ticketsHeading', { kind })}
+        {t('ticketsHeading')}
       </h2>
       <dl className="space-y-2 tabular-nums">
         {ticket.mode === 'ADD' ? (
           <>
-            <Row label={t('ticketLines.price', { kind })} cents={ticket.priceCents} />
+            <Row label={t('ticketLines.price')} cents={ticket.priceCents} />
             <Row label={t('ticketLines.fee')} cents={ticket.feeUnitCents} />
-            <Row label={t('ticketLines.total', { kind })} cents={ticket.buyerUnitCents} strong />
+            <Row label={t('ticketLines.total')} cents={ticket.buyerUnitCents} strong />
           </>
         ) : (
           <>
-            <Row label={t('ticketLines.priceInc', { kind })} cents={ticket.priceCents} />
+            <Row label={t('ticketLines.priceInc')} cents={ticket.priceCents} />
             <Row label={t('ticketLines.feeInc')} cents={ticket.feeUnitCents} />
-            <Row label={t('ticketLines.center', { kind })} cents={ticket.centerUnitCents} strong />
+            <Row label={t('ticketLines.center')} cents={ticket.centerUnitCents} strong />
           </>
         )}
       </dl>

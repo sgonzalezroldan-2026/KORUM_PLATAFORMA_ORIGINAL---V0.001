@@ -16,7 +16,7 @@
 - **Las referencias entre corchetes** (`[L-046]`) son nuestras: sirven para llevar cada respuesta a su punto de CUMPLIMIENTO §9. Se pueden quitar antes de enviar.
 - **Regla del promotor:** lo que él decide lo valida él mismo, no el abogado ni la asesoría, salvo que diga a quién. Lo ha dicho para cuatro puntos, que se consultarán más adelante y **no bloquean nada**: se construye con lo decidido.
 - **Adjuntos:** ninguno.
-- **Lo que ya no se pregunta** (todo en PRERREVISION §3.1): los 42 puntos aprobados en bloque; las 11 decisiones; los seis paquetes del abogado y los cuatro bloques de la asesoría, cerrados en la revisión; las rifas, que se retiran de la plataforma; el dinero propio de KORUM en el Auto-Impulso, que se compensa en el reparto; los monederos con saldo; y el uso del nombre de PAYCOMET, que se mencionará sin logotipo.
+- **Lo que ya no se pregunta** (todo en PRERREVISION §3.1): los 42 puntos aprobados en bloque; las 11 decisiones; los seis paquetes del abogado y los cuatro bloques de la asesoría, cerrados en la revisión; las rifas, ya retiradas de la plataforma (Sprints 5.12a y 5.12b); el dinero propio de KORUM en el Auto-Impulso, que se compensa en el reparto; los monederos con saldo; y el uso del nombre de PAYCOMET, que se mencionará sin logotipo.
 
 ---
 

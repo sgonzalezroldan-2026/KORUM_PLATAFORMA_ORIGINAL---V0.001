@@ -137,7 +137,6 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
   }
 
   const ticketing = row.type === 'TICKET';
-  const subtype = 'EVENT';
   const toPct = ticketing ? percentOf(initiative.ticketsSold, initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents, initiative.goalCents);
   const fromPct = ticketing ? percentOf(initiative.ticketsSold - (row.ticketQuantity ?? 0), initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents - row.amountCents, initiative.goalCents);
   const course = row.groupName && initiative.rewardEnabled ? initiative.courses.find((entry) => entry.groupName === row.groupName) : undefined;
@@ -151,7 +150,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
       {reached ? <Confetti /> : null}
       <h1 id="result-title" className="font-joy text-2xl font-bold text-varsity-navy">
         <span aria-hidden="true">{ticketing ? '🎟️ ' : '💛 '}</span>
-        {ticketing ? t(`confirmed.titleTickets.${subtype}`) : t('confirmed.title')}
+        {ticketing ? t('confirmed.titleTickets') : t('confirmed.title')}
       </h1>
       <p lang={initiative.organization.contentLocale === locale ? undefined : initiative.organization.contentLocale} className="font-corp text-lg font-extrabold text-varsity-navy wrap-anywhere">
         {title}
@@ -162,7 +161,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
         <p className="font-corp text-sm font-bold tabular-nums text-ink-soft">{t('confirmed.pct', { pct: toPct })}</p>
         <p role="status" className="font-joy text-lg font-bold text-emerald-900">
           <span aria-hidden="true">{reached ? '🎉 ' : '💛 '}</span>
-          {reached ? (ticketing ? t('confirmed.soldOut', { kind: subtype }) : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
+          {reached ? (ticketing ? t('confirmed.soldOut') : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
         </p>
       </div>
       {course ? (
@@ -181,7 +180,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
           <p className="font-mono text-sm text-ink-soft">{t('confirmed.serial', { serial: pass.serialCode })}</p>
           <Link href={`${passPath(orgSlug, pass.uuid)}?sig=${signPassView(env.QR_HMAC_SECRET, pass.uuid)}`} className={`${linkClass} w-full bg-sky-800 text-white`} data-testid="view-pass">
             <span aria-hidden="true">{'🎟️ '}</span>
-            {t(`confirmed.viewPass.${subtype}`)}
+            {t('confirmed.viewPass')}
           </Link>
           <p className="text-sm text-ink-soft">{t('confirmed.ticketsEmail')}</p>
         </div>

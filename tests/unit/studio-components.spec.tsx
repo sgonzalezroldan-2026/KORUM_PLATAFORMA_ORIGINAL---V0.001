@@ -101,7 +101,7 @@ describe('QA-S01 · Estudio de edición', () => {
     renderWithIntl(<StudioWorkbench {...props(budget({ category: 'Comunidad y Viajes', title: 'Excursión', description: 'Autocar' }))} />);
     expect(screen.queryByTestId('studio-lock-alert')).not.toBeInTheDocument();
     expect(screen.getByTestId('studio-badge')).toHaveTextContent('Categoría al 0 % de comisión');
-    const title = screen.getByLabelText('Título de la iniciativa, evento o rifa');
+    const title = screen.getByLabelText('Título de la iniciativa o del evento');
     await user.clear(title);
     await user.type(title, 'Ventiladores para el comedor');
     const alert = await screen.findByTestId('studio-lock-alert');
@@ -147,7 +147,7 @@ describe('QA-S01 · Estudio de edición', () => {
     const stored = { status: 'FUNDRAISING', walletEscrowId: 'WLT-ESC-AAAAAA', raisedCents: 1000, goalCents: 587_400, maintFeeCents: 0, defaultExemptAppliedCents: 100_000, medalExemptAppliedCents: 0, bracketRateAppliedBps: 400, bracketFeeCents: 18_440, gatewayFeeCents: 7960, absorbsGatewayCostByKorum: false };
     renderWithIntl(<StudioWorkbench {...props(budget(), { lock: 'SOFT', stored })} />);
     expect(screen.getByLabelText('Presupuesto del proveedor (€)')).toBeDisabled();
-    expect(screen.getByLabelText('Título de la iniciativa, evento o rifa')).toBeDisabled();
+    expect(screen.getByLabelText('Título de la iniciativa o del evento')).toBeDisabled();
     expect(screen.getByLabelText('Descripción')).toBeEnabled();
     expect(screen.queryByTestId('studio-publish')).not.toBeInTheDocument();
     expect(screen.getByTestId('studio-save')).toBeInTheDocument();

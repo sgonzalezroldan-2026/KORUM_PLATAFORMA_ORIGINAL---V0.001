@@ -108,7 +108,7 @@ describe('cuadro de mandos (QA-S02)', () => {
   it('una iniciativa sin ficha pública (presupuestación) no ofrece el enlace; una taquilla se rotula como tal', () => {
     board([item({ id: 3, title: 'Cine de verano', status: 'BUDGETING', stepIndex: 3, format: 'TICKETING' })]);
     expect(screen.queryByRole('link', { name: /ficha pública/ })).toBeNull();
-    expect(screen.getByText(/Taquilla o rifa/)).toBeInTheDocument();
+    expect(screen.getByText(/^Taquilla$/)).toBeInTheDocument();
   });
 
   it('si los filtros no dejan nada, lo dice y ofrece restablecer', async () => {

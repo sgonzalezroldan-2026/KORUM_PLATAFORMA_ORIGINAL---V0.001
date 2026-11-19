@@ -1,6 +1,6 @@
 # KORUM
 
-Plataforma SaaS multi-entidad para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales: buzón de ideas con quórum, campañas de mecenazgo «todo o nada», taquilla y vales con QR (las rifas se retiran en el Sprint 5.12 y los vales llegan en el 5.14; ver el [plan](docs/PLAN_IMPLEMENTACION_ATOMICO.md)), comercios amigos y Mi Hucha.
+Plataforma SaaS multi-entidad para colegios (a través de su AMPA/AFA o de su titular), clubes deportivos base y entidades culturales: buzón de ideas con quórum, campañas de mecenazgo «todo o nada», taquilla y vales con QR (las rifas se retiraron en el Sprint 5.12 y los vales llegan en el 5.14; ver el [plan](docs/PLAN_IMPLEMENTACION_ATOMICO.md)), comercios amigos y Mi Hucha.
 
 > *Donde las buenas ideas suman y se logran.*
 

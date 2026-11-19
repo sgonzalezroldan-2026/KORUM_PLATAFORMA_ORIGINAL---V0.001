@@ -4,7 +4,7 @@
 >
 > **Estado:** prototipo **congelado** (5.407 líneas). Es referencia **funcional**: su paleta, su logotipo y su barra de demostración no se trasladan a producción (ver Regla 01 §6).
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Las anclas del prototipo que describen rifas, el sorteo, el pago directo al proveedor o el monedero con saldo de Mi Hucha son **funciones retiradas o aplazadas con aprobación expresa del promotor** (Regla 01 §6): no se migran ni se amplían. Las anclas se conservan porque el prototipo está congelado. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Las anclas del prototipo que describen rifas o el sorteo son una **función retirada** de la aplicación (Sprints 5.12a y 5.12b); las del pago directo al proveedor o el monedero con saldo de Mi Hucha, **funciones aplazadas o descartadas**, todas con aprobación expresa del promotor (Regla 01 §6): no se migran ni se amplían. Las anclas se conservan porque el prototipo está congelado. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## 1. Estilos y cabecera de demostración
 
@@ -61,7 +61,7 @@
 | Checkout dual (familia, taquilla, comercio) | `id="checkout-modal"` | L1507 |
 | Retirada de saldo (en producción: reembolso al medio original) | `id="withdraw-iban-modal"` | L1664 |
 | Pop-up ejecutivo de iniciativa | `id="sa-init-popup-modal"` | L1692 |
-| Entrada / papeleta imprimible | `id="printable-ticket-modal"` | L1708 |
+| Entrada imprimible (la papeleta de rifa es función retirada) | `id="printable-ticket-modal"` | L1708 |
 | Kit de medalla | `id="medal-kit-modal"` | L1767 |
 | Nueva idea | `id="new-idea-modal"` | L1806 |
 | Detalle de comercio | `id="sponsor-detail-modal"` | L1827 |

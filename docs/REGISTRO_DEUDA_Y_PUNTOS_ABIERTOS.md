@@ -28,7 +28,7 @@
 - **144 puntos legales y fiscales** (`L-001`–`L-144`, [Anexo A](#anexo-a--los-144-puntos-legales-y-fiscales-uno-a-uno)): **92 resueltos o decididos** por el promotor y **52 abiertos**. De los abiertos, **48 son cambios pequeños en la aplicación**, cada uno con su sprint; **3 dependen de Paycomet** (`L-041`, `L-061`, `L-071`) y **1 de Veri\*factu** (`L-026`).
 - **Consultas a terceros:** a Paycomet, **21 preguntas** (12 bloquean los primeros cobros reales); a los proveedores de Veri\*factu, **8** (no bloquean hasta su sprint); al abogado, **1**, y a la asesoría, **3**, que no bloquean nada (N20). Están redactadas en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md).
 - **Trabajo de código hasta la preproducción:** 30 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 162 y 204 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
-- **Lo que el código todavía no aplica** (decidido, pendiente de construir): la retirada de las rifas (5.12), los vales (5.14), los comercios en dos modos (5.16), el IVA incluido (5.20), el Auto-Impulso siempre visible y compensado en el reparto (5.21), la liquidación solo a la entidad (5.19) y Mi Hucha apagada (5.15).
+- **Lo que el código todavía no aplica** (decidido, pendiente de construir): los vales (5.14), los comercios en dos modos (5.16), el IVA incluido (5.20), el Auto-Impulso siempre visible y compensado en el reparto (5.21), la liquidación solo a la entidad (5.19) y Mi Hucha apagada (5.15).
 - **Verificado en el código el 2026-11-17 y aún sin hacer:** no hay trámite para cambiar el email ni autoría de las consultas; no existen las páginas públicas de los textos legales; no se registra la aceptación del contrato de encargo en el alta; **no hay baja de la entidad** (verificado el 2026-11-18: nada escribe `Organization.archivedAt`; N22); la analítica no está conectada; no hay protección contra la indexación de la preproducción; `docs/MANUAL_OPERACION.md` no existe.
 
 ---
@@ -75,7 +75,7 @@
 | Punto | Qué es | Crit. | Dueño | Dónde se resuelve |
 | :--- | :--- | :-: | :--- | :--- |
 | **N1** | Textos legales, contrato de encargo, evaluación de impacto y tabla de plazos; los valida el promotor | 🔴 | Claude + Promotor | SESIÓN T1; se publican en el 5.10a. **Primera entrega hecha (2026-11-18):** los nueve textos públicos, en [docs/legal/](legal/README.md), validados por el promotor el mismo día (doce decisiones contestadas, README §6). **Segunda entrega hecha (2026-11-18):** contrato de encargo, evaluación de impacto, tabla única de plazos y registro de actividades de tratamiento, revisados por los dos agentes y **validados por el promotor el mismo día** (README §8; decisiones 55 a 62). **Sesión cerrada** |
-| **N2** | Retirada de las rifas | 🔴 | Claude | Sprints 5.12a y 5.12b |
+| **N2** | Retirada de las rifas | 🔴 | Claude | Sprints 5.12a y 5.12b. **Hecho (2026-11-18 y 2026-11-19): cerrado** |
 | **N3** | Vales | 🟠 | Claude | Sprints 5.14a, 5.14b y 5.14c |
 | **N4** | Comercios en dos modos | 🔴 | Claude | Sprints 5.16a, 5.16b y 5.16c |
 | **N5** | IVA incluido y facturas | 🔴 | Claude | Sprints 5.20a y 5.20b |
@@ -189,7 +189,7 @@ Lo técnico que es mejor tener hecho antes de tocar infraestructura real.
 7. **Reparto y conciliación:** revisar `clearRefundClaimInTx` con el desfase horario real (riesgo de doble reembolso si Paycomet no rechaza devolver de más); ampliar la conciliación a **devoluciones y repartos**. *5.11b.*
 8. **Modelo 182 con campañas sin resolver:** resuelto por la decisión 28 (solo entran las campañas conseguidas). *Sprint 5.22.*
 9. **`pg@9`:** pasar la integración con `pg@9` y usar `relationLoadStrategy: 'join'` en lecturas dentro de transacciones. *5.11b.*
-10. **Validar con PostgreSQL real** la concurrencia de las funciones que solo se han revisado leyendo código (`reserveTickets`, `checkInPass`, `openGateSession`, `issueInvoice`, `signIdea`, `requestSignature`, `completeSignature` y el canje de vales; ya sin el sorteo). *5.11b.*
+10. **Validar con PostgreSQL real** la concurrencia de las funciones que solo se han revisado leyendo código (`reserveTickets`, `checkInPass`, `openGateSession`, `issueInvoice`, `signIdea`, `requestSignature`, `completeSignature` y el canje de vales; el sorteo se retiró en el 5.12a). *5.11b.*
 11. **Excepción de `npm audit` para `picomatch`** (`GHSA-fc5q-39xc-vjpf`, sin versión corregida el 2026-11-18): está en `scripts/audit-exceptions.json` y caduca el 2026-12-18. Quien abra un sprint después de esa fecha comprueba si ya hay versión corregida: si la hay, sube la dependencia y borra la excepción; si no, la renueva un mes con su motivo. *Se cierra, como muy tarde, en el 5.11a.*
 
 ### P22 · Higiene de claves · 🟠 · S · Promotor *(tema nuevo, hacer hoy)*
@@ -207,7 +207,7 @@ Una sesión corta, con el formato «qué pasa hoy, ejemplo, opciones, recomendac
 **Ya decididas y fuera de esta lista:** el evento de taquilla que llega a su fecha sin agotar el aforo (decisión 30), el aviso por email al cambiar una tarifa global (decisión 34) y el Auto-Impulso en taquilla (decisión 33).
 
 ### P15 · Entidades piloto y su acuerdo · 🟠 · M · Promotor
-El 6.2 necesita **3 entidades reales con KYB real**. Incluye: elegir cuáles (un colegio, un club y una entidad cultural si se quiere probar las tres verticales), acuerdo de piloto (qué se promete, qué no, duración, soporte), contrato de encargo aceptado (sale de la SESIÓN T1), alta acompañada, **primera campaña de presupuesto y primera taquilla o venta de vales** (ya sin rifa), y qué se mide (depende del Sprint 5.26). Al cerrarlo se vuelve a mirar si se usan fotos reales de ambiente (SESIÓN D1: de momento bastan las ilustraciones).
+El 6.2 necesita **3 entidades reales con KYB real**. Incluye: elegir cuáles (un colegio, un club y una entidad cultural si se quiere probar las tres verticales), acuerdo de piloto (qué se promete, qué no, duración, soporte), contrato de encargo aceptado (sale de la SESIÓN T1), alta acompañada, **primera campaña de presupuesto y primera taquilla o venta de vales** (las rifas ya se retiraron), y qué se mide (depende del Sprint 5.26). Al cerrarlo se vuelve a mirar si se usan fotos reales de ambiente (SESIÓN D1: de momento bastan las ilustraciones).
 
 ### P12 · Revisión crítica de producto · 🟡 · M · Claude *(punto pedido por el promotor)*
 Un repaso crítico de toda la aplicación **poniéndolo todo en cuestión** para proponer mejoras de negocio, control, automatismos, simplificación de UX, textos y diseño. Entrega: informe con una tabla común (pantalla o flujo, problema o idea, impacto en negocio, esfuerzo, riesgo, recomendación) y una propuesta de qué entra y en qué sprint. **Va antes de P13, P5 y P11** porque sus conclusiones los alimentan. Lo ejecutan, con contexto separado, `ux-school-director-reviewer` y `korum-community-target-psychologist`, y lo sintetizo yo; después tú decides qué entra.
@@ -289,7 +289,7 @@ Alta acompañada de las 3 entidades, primera campaña y primera taquilla o venta
 El promotor confirma que **KORUM no guardará saldo**: el modo `REGULATED_WALLET` no se construye ([CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisión 38). Queda una tarea de limpieza con sprint: retirar el modo del esquema, del código, de los ajustes de la consola y de los textos, y con él el aviso oficial de retirada de saldo de la Regla 03 §3. **Destino: Sprint 5.24b.** Mi Hucha queda con dos modos: `DISABLED` (al lanzar) y `PLEDGE`.
 
 ### P26 · Deuda menor y cosmética · 🟢 · M · Claude · Sprint 5.24b
-Se barre en una sola entrega. Ya no incluye los puntos de rifas, que desaparecen con el Sprint 5.12.
+Se barre en una sola entrega. Ya no incluye los puntos de rifas, que se retiraron con el Sprint 5.12.
 - **Experiencia:** el anillo de foco de las casillas roza el emoji 🛡️ del bloque de aportación voluntaria; aviso de consola «preloaded CSS not used» (del framework); total anunciado a cada pulsación al teclear otro importe (3.4) y resumen de Mi Hucha anunciado a cada pulsación (3.8); la barra de la celebración arranca su valor accesible en el avance anterior; los errores fiscales de Mi Hucha no mueven el foco; el simulador de Mi Hucha no desglosa donación y gestión; el chat solo se refresca al recargar; el bloque de cookie y huella antes de las ideas es demasiado largo; alineación de la navegación con las tarjetas a 1440 px; encabezados de la cabecera de gestión, «tú»/«vosotros», etiqueta genérica de la cofirma y contador en «Aprobaciones» (4.2a).
 - **Mi cuenta:** tras suprimir la cuenta siguen visibles llaves e idioma hasta salir; «Dar de alta mi entidad» e «Iniciar sesión» aparecen con sesión iniciada en el cuerpo de la portada; quitar una llave de acceso no pide reautenticación; el historial de aportaciones no se filtra por ejercicio; reservar cupo antes de `requireVerifiedAccount` en la rectificación; los mensajes del alta revelan si un email ya tiene cuenta (limitado a 5 por red y hora); se pide el teléfono del cofirmante pero no se guarda.
 - **Dinero y fichas:** la ficha dice «agotadas» con plazas retenidas y barra por debajo del 100 % (M1); un `INC` con gastos ≥ precio ofrece comprar y la reserva lo rechaza (M2); «íntegro para la entidad» no descuenta el mantenimiento (M3); caché de 24 h de la tarjeta social atrasa los días restantes (M4).
@@ -307,7 +307,7 @@ Se barre en una sola entrega. Ya no incluye los puntos de rifas, que desaparecen
 El resumen de cada decisión está en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); su detalle, en [PRERREVISION_LEGAL_Y_FISCAL.md](PRERREVISION_LEGAL_Y_FISCAL.md) §3.1 hasta la 47 y en [docs/legal/README.md](legal/README.md) §6 y §8 de la 48 a la 62. Las fichas, en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 - **N1 · Sesión de escritura (SESIÓN T1).** Aviso legal; condiciones (familias, entidades, comercios, aportación mensual, entradas y vales); privacidad; cookies; primera capa de cada formulario; contrato de encargo; evaluación de impacto y tabla de plazos. Los valida el promotor. **Primera entrega (2026-11-18):** escritos y revisados los nueve textos públicos ([docs/legal/](legal/README.md)). **Segunda entrega (2026-11-18):** escritos y revisados el [contrato de encargo](legal/contrato-de-encargo.md), la [evaluación de impacto](legal/evaluacion-de-impacto.md), la [tabla única de plazos](legal/tabla-de-plazos.md) y el [registro de actividades de tratamiento](legal/registro-de-actividades.md); validados por el promotor el mismo día (README §8; decisiones 55 a 62 de CUMPLIMIENTO §8). Lo que piden al código tiene sprint: la baja de la entidad y su suspensión por el Super-Admin (N22, 5.10d), el aviso automático de 30 días (5.10a), los plazos nuevos (5.10b, 5.14c y 5.20b), los contratos y plazos de los proveedores y los procedimientos del manual (6.1a, 6.1b y 6.1c) y la opinión de las personas afectadas (6.2). El promotor contestó el mismo día las doce decisiones de la primera (README §6; decisiones 48 a 54 de CUMPLIMIENTO §8) y todo lo que traen de código tiene sprint: la casilla y la ventana de resumen de cada pago, con el aviso de quién vende (5.15 y 5.16b); los vales cancelados tras liquidar (5.14c); el contacto del comercio que dona y su plazo de 5 años (5.16b y 5.16c); la factura única con la pasarela (5.20); los patrocinios de los colegios con ánimo de lucro (5.22), y el contracargo de una campaña ya liquidada (N21, 5.19b). También asignados: la línea y la primera capa de la pantalla de acceso (5.10a) y el aviso por email a la persona representante cuando otra sube su documento de identidad (5.10c, con `L-042`).
-- **N2 · Retirada de las rifas (5.12a y 5.12b).** 231 archivos las mencionan. Papeletas numeradas, sorteo, acta, números de reserva, ronda extra, aviso normativo, textos, semilla, pruebas y documentación. **5.12a hecho (2026-11-18):** esquema, migración, motor, datos, semilla, pruebas y las pantallas que dependían del esquema. **Queda para el 5.12b:** los 243 textos de los catálogos, el parámetro `kind` de los textos, las pruebas que leen esos textos y la documentación (lista en su ficha del plan).
+- **N2 · Retirada de las rifas (5.12a y 5.12b).** 231 archivos las mencionan. Papeletas numeradas, sorteo, acta, números de reserva, ronda extra, aviso normativo, textos, semilla, pruebas y documentación. **5.12a hecho (2026-11-18):** esquema, migración, motor, datos, semilla, pruebas y las pantallas que dependían del esquema. **5.12b hecho (2026-11-19):** los textos de los catálogos, el parámetro `kind` de los textos, las pruebas que leían esos textos y la documentación; la prueba `QA-RET01` vigila ya catálogos, pruebas y documentación vigente. **Cerrado.**
 - **N3 · Vales (5.14a, 5.14b y 5.14c), en exclusiva.** Pregunta para el promotor al abrir el 5.14a (sale de la revisión legal del 2026-11-18): el pago «sin producto» ¿es una compra o una donación?, y ¿se ofrece a los colegios con ánimo de lucro? Unidades de canje en un QR con saldo; puesto con lector y PIN; devolución de 14 días; caducidad; tarifa propia; liquidación por lo vendido.
 - **N4 · Comercios en dos modos (5.16a, 5.16b y 5.16c).** Donación con solo el nombre; publicidad con IVA de la entidad; casilla de aceptación; moderación a 14 días; ampliaciones; renovación; factura de la entidad con recordatorios; mismo comercio reconocido por NIF y email; domicilio fiscal. KORUM no devuelve nada si la entidad retira el anuncio: lo resuelven fuera de la plataforma.
 - **N5 · IVA incluido y facturas (5.20a y 5.20b).** Completa a entidades y comercios; simplificada en el recibo de las familias. Una sola factura a la entidad por todo lo retenido, pasarela incluida (decisión 50); el IVA de esa línea se cuadra con el promotor al abrir el 5.20a. La factura de un comercio con contracargo solo se anula si el banco indica fraude.
@@ -445,17 +445,17 @@ Para que no se vuelvan a abrir por error. La lista completa, con fecha, está en
 | L-090 | Cobro tardío sin decisión de la entidad | 4.2f | 363 | Claude | abierto → Sprint 5.16c |
 | L-091 | «No se devuelve nunca» si la entidad incumple la publicidad | 4.2f | 364 | — | resuelto (2026-11-18) |
 
-#### Paquete 5 · Campañas, checkout, rifas y carteles (4 abiertos)
+#### Paquete 5 · Campañas, checkout, rifas (retiradas) y carteles (4 abiertos)
 
 | ID | Punto | Origen | Línea en CUMPLIMIENTO | Para | Estado |
 | :-: | :--- | :-: | :-: | :--- | :-: |
-| L-020 | Textos del checkout, de la aportación voluntaria y del aviso de rifas | varios | 249 | Claude | abierto → Sprints 5.10a y 5.15 |
+| L-020 | Textos del checkout, de la aportación voluntaria y del aviso de rifas (retirado) | varios | 249 | Claude | abierto → Sprints 5.10a y 5.15 |
 | L-022 | Publicación o no del Auto-Impulso frente al mensaje "lo han conseguido las familias". Desde el Sprint 5.2 hay un aviso… | varios | 251 | Claude | abierto → Sprint 5.21 |
 | L-023 | Para el abogado (anotado por el promotor el 2026-11-12, se trata más adelante) | varios | 252 | — | resuelto (2026-11-18) |
-| L-092 | Rifas | 4.3 | 368 | — | resuelto (2026-11-18) |
+| L-092 | Rifas | 4.3 | 368 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-093 | PAYCOMET en el cartel impreso | 4.3 | 369 | — | resuelto (2026-11-18) |
 | L-094 | Promesa impresa «se devuelve el 100 % si no se consigue» | 4.3 | 370 | — | resuelto (2026-11-17) |
-| L-095 | «Sorteo certificado» | 4.3 | 371 | — | resuelto (2026-11-18) |
+| L-095 | «Sorteo certificado» | 4.3 | 371 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-096 | Cambios con la campaña recaudando | 4.3 | 372 | Claude | abierto → Sprint 5.18 |
 | L-097 | Plantillas redactadas por KORUM | 4.3 | 373 | Claude | abierto → Sprint 5.24a |
 | L-098 | Candado semántico | 4.3 | 374 | — | resuelto (2026-11-17) |
@@ -487,19 +487,19 @@ Para que no se vuelvan a abrir por error. La lista completa, con fecha, está en
 | L-112 | Conservación de los votos | 4.4b | 394 | Claude | abierto → Sprint 5.17 |
 | L-113 | Una campaña vencida sin decidir | 4.4b | 395 | Claude | abierto → Sprint 5.17 |
 
-#### Paquete 8 · Portería y sorteo (4 abiertos)
+#### Paquete 8 · Portería y sorteo (este, retirado) (4 abiertos)
 
 | ID | Punto | Origen | Línea en CUMPLIMIENTO | Para | Estado |
 | :-: | :--- | :-: | :-: | :--- | :-: |
-| L-072 | Pase de una papeleta de rifa | 5.6 | 334 | — | resuelto (2026-11-18) |
+| L-072 | Pase de una papeleta de rifa | 5.6 | 334 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-122 | Voluntarios sin cuenta que entran con un PIN compartido | 4.5 | 414 | — | resuelto (2026-11-17) |
 | L-123 | Lista de pases y cola de lecturas en el móvil del voluntario | 4.5 | 415 | Claude | abierto → Sprint 5.13 |
 | L-124 | Conservación de las lecturas de portería (`TicketCheckIn`, `GateSession`) | 4.5 | 416 | Claude | abierto → Sprint 5.13 |
 | L-125 | El Super-Admin no entra en la portería ni crea PIN | 4.5 | 417 | — | resuelto (2026-11-17) |
 | L-126 | Lectura sin cobertura | 4.5 | 418 | — | resuelto (2026-11-17) |
 | L-127 | La cámara del voluntario | 4.5 | 419 | — | resuelto (2026-11-17) |
-| L-128 | Sorteo certificado | 4.5 | 420 | — | resuelto (2026-11-18) |
-| L-129 | Sorteo desde el día del evento | 4.5 | 421 | — | resuelto (2026-11-18) |
+| L-128 | Sorteo certificado | 4.5 | 420 | — | resuelto (2026-11-18; rifas retiradas) |
+| L-129 | Sorteo desde el día del evento | 4.5 | 421 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-130 | Evento sin el aforo completo | 4.5 | 422 | Claude | abierto → Sprint 5.13 |
 | L-131 | Ronda extra por una sola persona firmante | 4.6 | 426 | — | resuelto (2026-11-18) |
 | L-132 | Qué ven quienes participaron | 4.6 | 427 | — | resuelto (2026-11-18) |

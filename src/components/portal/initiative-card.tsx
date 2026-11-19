@@ -31,7 +31,6 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
   const t = useTranslations('portal.card');
   const money = useMoney();
   const ticketing = card.format === 'TICKETING';
-  const kind = 'EVENT';
   const category = useCategoryLabel(contentLang)(card.category);
   const href = initiativePath(orgSlug, card.id);
 
@@ -64,7 +63,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
               {ticketing ? (
                 <span className="font-corp rounded-full bg-sky-800 px-3 py-1 text-sm font-extrabold tabular-nums text-white">
                   <span aria-hidden="true">{'🎟️ '}</span>
-                  {t('price', { kind, price: money(card.ticketBuyerCents) })}
+                  {t('price', { price: money(card.ticketBuyerCents) })}
                 </span>
               ) : card.zeroCommission ? (
                 <span className="rounded-full bg-emerald-800 px-3 py-1 text-sm font-extrabold text-white">
@@ -96,7 +95,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
             <div className="flex justify-between gap-2 text-sm font-extrabold tabular-nums">
               {ticketing ? (
                 <>
-                  <span className="text-sky-900">{t('ticketsSold', { kind, sold: card.ticketsSold, max: card.ticketMax })}</span>
+                  <span className="text-sky-900">{t('ticketsSold', { sold: card.ticketsSold, max: card.ticketMax })}</span>
                   <span className="text-varsity-navy">{t('ticketsLeft', { count: card.ticketsAvailable })}</span>
                 </>
               ) : (
@@ -125,7 +124,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
         </p>
         {card.achieved || card.closed ? (
           <p className="flex min-h-11 items-center justify-center rounded-2xl bg-emerald-100 px-3 text-center font-joy text-sm font-bold text-emerald-950">
-            {card.achieved ? (ticketing ? t('soldOut', { kind }) : t('goalReached')) : t('closed')}
+            {card.achieved ? (ticketing ? t('soldOut') : t('goalReached')) : t('closed')}
           </p>
         ) : (
           <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn relative z-10 w-full rounded-2xl! font-joy">

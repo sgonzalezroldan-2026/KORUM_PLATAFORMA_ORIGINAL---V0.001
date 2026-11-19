@@ -58,7 +58,7 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |
-| No hay rifas | Todos | 5.12 |
+| No hay rifas | Todos | 5.12a y 5.12b (hecho: retiradas) |
 | Entradas: se liquida por lo vendido; cancelación; cambio de fecha con 14 días | Entradas y vales §3; entidades §8 | 5.13 |
 | Aviso al voluntario, plazo de las lecturas de portería (1 año) y «no reenvíes el enlace» | Privacidad §3.10 y §8; primeras capas §8 | 5.13 |
 | Vales (todo el apartado), con la validez que fija la entidad y la cancelación antes y después de liquidar | Entradas y vales §4; entidades §9 | 5.14 |

@@ -161,7 +161,7 @@ describe('QA-A04 · motor de reglas: formulario con salud de precios en vivo', (
     rulesActions.saveRulesAction.mockResolvedValue({ status: 'REJECTED', reason: 'TICKETING_ON_SALE', fields: ['ticketFeeFixedCents', 'ticketFeeBps'] });
     renderAll(form());
     await userEvent.click(screen.getByTestId('rules-save'));
-    expect(await screen.findByText(/No se ha guardado nada\. Hay una taquilla o rifa a la venta/)).toBeInTheDocument();
+    expect(await screen.findByText(/No se ha guardado nada\. Hay una taquilla a la venta/)).toBeInTheDocument();
     const fixed = screen.getByLabelText(/Gastos de gestión digital: fijo por entrada/);
     expect(fixed).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByLabelText(/Gastos de gestión digital: % sobre el precio/)).toHaveAttribute('aria-invalid', 'true');
@@ -206,7 +206,7 @@ describe('QA-A04 · motor de reglas: formulario con salud de precios en vivo', (
     rulesActions.saveRulesAction.mockResolvedValue({ status: 'REJECTED', reason: 'TICKETING_ON_SALE', fields: ['ticketFeeFixedCents', 'ticketFeeBps'] });
     renderAll(form());
     await userEvent.click(screen.getByTestId('rules-save'));
-    expect(await screen.findByText(/Hay una taquilla o rifa a la venta/)).toBeInTheDocument();
+    expect(await screen.findByText(/Hay una taquilla a la venta/)).toBeInTheDocument();
   });
 
   it('los niveles de la aportación voluntaria enseñan su importe en el selector', () => {

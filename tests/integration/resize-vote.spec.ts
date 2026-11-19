@@ -52,6 +52,27 @@ afterAll(async () => {
 const actorFor = (userId: string, memberships: Array<{ organizationId: string; role: MemberRole }>, secondFactor = true): Extract<SessionActor, { kind: 'user' }> => ({ kind: 'user', userId, isSuperadmin: false, memberships, secondFactor });
 const ctx = (now: Date) => ({ db, now, batchSize: 50, deps: jobDeps });
 
+/**
+ * `MASS_REFUND` recorre las devoluciones pendientes de toda la base por orden de identificador, en lotes de 50. La base se comparte entre archivos y Vitest
+ * cambia su orden entre ejecuciones, así que lo pendiente que deje otro archivo puede ocupar el primer lote: se ejecuta como en producción, mientras quede
+ * trabajo (`hasMore`) y el lote avance, como `job-drain.ts`, con un tope para que un fallo no deje la prueba en bucle. Un error del primer lote se propaga; el
+ * de un lote posterior (una devolución que dejó otro archivo y que el simulador de este rechaza) solo para la vuelta: allí la ejecución se reintentaría después
+ * y lo ya devuelto en los lotes anteriores queda hecho, que es lo que comprueba la prueba.
+ */
+async function runMassRefund(now: Date): Promise<void> {
+  for (let round = 0; round < 20; round += 1) {
+    let result: Awaited<ReturnType<typeof massRefundHandler>>;
+    try {
+      result = await massRefundHandler(ctx(now));
+    } catch (error) {
+      if (round === 0) throw error;
+      return;
+    }
+    if (!result.hasMore || result.processed === 0) return;
+  }
+  throw new Error('MASS_REFUND sigue con trabajo tras 20 lotes');
+}
+
 async function team() {
   const organization = await createOrganization(db, { paycometSplitId: uniqueId('split'), kybStatus: 'VERIFIED' });
   created.push(organization.id);
@@ -146,7 +167,7 @@ describe('QA-S03 · la entidad decide qué hacer con una campaña vencida', () =
     const view = await loadExpiredCampaigns(db, director, organization.id);
     expect(view.active.find((row) => row.id === initiative.id)?.refund).toEqual({ total: 2, done: 0, totalCents: 7_800, doneCents: 0 });
 
-    await massRefundHandler(ctx(new Date()));
+    await runMassRefund(new Date());
     for (const contribution of contributions) expect(await db.contribution.findUniqueOrThrow({ where: { id: contribution.id } })).toMatchObject({ status: 'REFUNDED', refundedCents: contribution.totalChargedCents });
     const refunded = await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } });
     expect(refunded).toMatchObject({ status: 'REFUNDED', raisedCents: 0 });
@@ -231,7 +252,7 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     expect((await db.outboxMessage.findMany({ where: { templateKey: 'initiative.resizeResult', organizationId: organization.id } })).map((message) => message.toAddress).sort()).toEqual([repeat, third].sort());
 
     // La devolución pedida sale con MASS_REFUND; la liquidación paga lo recaudado menos las comisiones nuevas.
-    await massRefundHandler(ctx(after));
+    await runMassRefund(after);
     expect(await db.contribution.findUniqueOrThrow({ where: { id: contributions[3]!.id } })).toMatchObject({ status: 'REFUNDED', refundedCents: 2_200 });
     expect(await db.contribution.findUniqueOrThrow({ where: { id: contributions[4]!.id } })).toMatchObject({ status: 'REFUNDED', refundedCents: 1_500 });
     const invoice = await db.fileAsset.create({ data: { bucket: 'korum-private', objectKey: `tests/${uniqueId('factura')}.pdf`, visibility: 'PRIVATE', purpose: 'PROVIDER_INVOICE', mimeType: 'application/pdf', sizeBytes: 2_000, sha256: 'a'.repeat(64), organizationId: organization.id } });
@@ -281,7 +302,7 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
       expect((await db.initiative.findUniqueOrThrow({ where: { id } })).status).toBe('REFUNDING');
       expect(await db.resizePoll.findUniqueOrThrow({ where: { initiativeId: id } })).toMatchObject({ status: 'CLOSED_REJECTED', winningOptionIndex: null, resultJson: { outcome } });
     }
-    await massRefundHandler(ctx(later));
+    await runMassRefund(later);
     expect((await db.initiative.findUniqueOrThrow({ where: { id: tied.initiative.id } })).status).toBe('REFUNDED');
     expect(await db.contribution.count({ where: { initiativeId: tied.initiative.id, status: 'REFUNDED' } })).toBe(2);
   });

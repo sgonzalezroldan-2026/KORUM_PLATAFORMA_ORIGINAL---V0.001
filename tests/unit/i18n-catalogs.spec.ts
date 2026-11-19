@@ -103,7 +103,7 @@ describe('QA-C05 · catálogos de traducción', () => {
       'portal.sponsorDocs.factura.vat', 'portal.sponsorDocs.justificante.initiative', 'portal.sponsorDocs.justificante.taxId', 'portal.sponsorDocs.level.PLATA', 'portal.sponsors.share', 'portal.sponsors.shareCard',
       // Mi cuenta (Sprint 3.7): «Completada», «Idioma», «Permisos», «Iniciativa», «Confirmar», «Números: …» y los patrones sin texto se escriben igual en catalán.
       'account.contributions.line', 'account.contributions.status.COMPLETED', 'account.contributions.status.FAILED', 'account.documents.line', 'account.documents.sheet.initiative',
-      'account.language.title', 'account.passes.numbers', 'account.passes.where', 'account.privacy.consents.title', 'account.privacy.requests.status.COMPLETED', 'account.reauth.confirm',
+      'account.language.title', 'account.passes.where', 'account.privacy.consents.title', 'account.privacy.requests.status.COMPLETED', 'account.reauth.confirm',
       'account.sections.language', 'privacy.export.requestStatuses.COMPLETED',
       // Mi Hucha (Sprint 3.8): «Activa», «En pausa», «Pausar», «Mes», «… al mes», «Aportar cada mes a…» y los patrones sin texto se escriben igual en catalán.
       'privacy.export.pledgeStatuses.ACTIVE', 'privacy.export.pledgeStatuses.PAUSED', 'email.pledge.month', 'email.pledge.monthValue', 'hucha.start.titleFor', 'hucha.form.perMonth',
@@ -112,7 +112,7 @@ describe('QA-C05 · catálogos de traducción', () => {
       'account.proposals.fromKorum', 'account.support.toKorum',
       // Aprobaciones (Sprint 4.2a): «Desestimar», «Verificada», «Enviar», «Convertida en iniciativa», «Desestimada» y «KORUM» se escriben igual en catalán.
       'panel.approvals.actions.reject', 'panel.approvals.audit.statusVerified', 'panel.approvals.chat.fromKorum', 'panel.approvals.chat.send', 'panel.approvals.phases.CONVERTED', 'panel.approvals.phases.REJECTED', 'panel.approvals.reject.confirm',
-      // Panel de la entidad (Sprint 4.1): «Filtrar», «Taquilla o rifa», «fase actual», «Fases de…», «Medalla…», «Plata» y «{raised} de {goal}» se escriben igual en catalán.
+      // Panel de la entidad (Sprint 4.1): «Filtrar», «Taquilla», «fase actual», «Fases de…», «Medalla…», «Plata» y «{raised} de {goal}» se escriben igual en catalán.
       'panel.dashboard.card.formatTicketing', 'panel.dashboard.card.raised', 'panel.dashboard.filter.toggle', 'panel.dashboard.stepState.current', 'panel.dashboard.timeline.stepsLabel',
       'panel.medals.kit.title', 'panel.medals.level', 'panel.medals.names.silver',
       // Ajustes de la entidad (Sprint 4.2c): «Plata (€)», «Falta», «CIF del titular», «Forma jurídica: …» y «el CIF del titular» se escriben igual en catalán.
@@ -129,12 +129,12 @@ describe('QA-C05 · catálogos de traducción', () => {
       'email.sponsor.renewalInvite.verbFuture',
       // Liquidaciones (Sprint 4.4a): «Liquidar», «Factura adjunta», «Enviada» y «Enviada el…» se escriben igual en catalán.
       'panel.dashboard.card.settle', 'panel.payouts.form.invoiceReady', 'panel.payouts.history.executed', 'panel.payouts.history.status.EXECUTED',
-      // Estudio de edición (Sprint 4.3): «Infantil», «ESO», «Plata», «Sí, publicar», «Taquilla o rifa», «Meta pública final exacta» y los patrones sin texto traducible se escriben igual en catalán.
+      // Estudio de edición (Sprint 4.3): «Infantil», «ESO», «Plata», «Sí, publicar», «Taquilla», «Meta pública final exacta» y los patrones sin texto traducible se escriben igual en catalán.
       'panel.studio.board.atZero', 'panel.studio.board.goalLabel', 'panel.studio.board.medal.2', 'panel.studio.confirm.yes', 'panel.studio.format.TICKETING', 'panel.studio.poster.withKorum', 'panel.studio.stages.eso', 'panel.studio.stages.infantil', 'panel.studio.discard.yes',
-      // Portería móvil (Sprint 4.5): «Pantalla completa», «Entra» y «Rifa» se escriben igual en catalán; los dos patrones no tienen texto traducible.
-      'gate.raffle.fullscreen', 'gate.raffle.roundButton', 'gate.scanner.result.accepted', 'panel.gate.kind.raffle', 'panel.gate.pin.digits',
-      // Ronda extra del sorteo (Sprint 4.6): «ronda» se escribe igual en catalán.
-      'panel.gate.raffle.extraTitle', 'panel.gate.raffle.prepare', 'panel.gate.raffle.round', 'panel.gate.raffle.roundExtra',
+      // Portería móvil (Sprint 4.5): «Entra» se escribe igual en catalán y el patrón del PIN no tiene texto traducible.
+      'gate.scanner.result.accepted', 'panel.gate.pin.digits',
+      // Taquilla (Sprint 5.12b): «Entrada» y «Taquilla» se escriben igual en catalán.
+      'audit.dossier.contributionTypes.TICKET', 'privacy.export.types.TICKET', 'panel.studio.fields.ticketingCategory', 'portal.categories.ticketing',
       // BI de la consola (Sprint 5.1): «Meta», «Iniciativa», «Medalla» y «Plata» se escriben igual en catalán; los porcentajes y los patrones no tienen texto traducible.
       'admin.metaTitle', 'admin.kpi.potentialGoal', 'admin.kpi.percent', 'admin.orgs.col.medal', 'admin.orgs.col.goal', 'admin.orgs.medal.2', 'admin.orgs.sponsorsValue', 'admin.orgs.noValue', 'admin.initiatives.percent', 'admin.initiatives.col.title', 'admin.initiatives.col.goal',
       // Consola (Sprint 5.2): «Medalla», «Plata», «CIF», «Forma jurídica», «Titular legal», «Número», «Rectificativa», «Total», «Falta» y las unidades se escriben igual en catalán.
@@ -145,7 +145,7 @@ describe('QA-C05 · catálogos de traducción', () => {
       'admin.settings.nav.hucha', 'admin.settings.nav.historial', 'admin.settings.sections.hucha.title', 'admin.settings.rejectedFields', 'admin.settings.fields.paycomet_terminalId.label', 'admin.settings.fields.paycomet_jetId.label', 'admin.settings.fields.paycomet_serverIp.label', 'admin.settings.fields.email_provider.options.brevo', 'admin.settings.fields.hucha_mode.options.DISABLED', 'admin.settings.payments.modes.mock', 'admin.settings.limits.colWindow', 'admin.settings.company.fields.taxId', 'admin.settings.legal.openAria', 'admin.settings.team.expires', 'admin.settings.security.pendingRow', 'admin.settings.history.system', 'admin.settings.history.detail.value', 'admin.settings.history.detail.status.SIMULATED', 'admin.settings.history.targets.legal',
       // Visor de la auditoría (Sprint 5.8a): «Factura rectificada», «Consulta creada», «Filtrar», «KORUM», «Consola», «Idea», «Factura», «Medalla», «Alerta», «Consulta» y los patrones sin texto traducible se escriben igual en catalán.
       'audit.actions.invoice.rectified', 'audit.actions.support.ticket_created', 'audit.actor.korum', 'audit.actor.korumNamed', 'audit.actor.member', 'audit.actor.person', 'audit.actor.personNoName', 'audit.filters.toggle', 'audit.list.statusChange', 'audit.list.targetWithId', 'audit.list.targetWithName', 'audit.entity.memberOption', 'audit.targets.Console', 'audit.targets.Idea', 'audit.targets.Invoice', 'audit.targets.MedalTier', 'audit.targets.OpsAlert', 'audit.targets.SupportTicket',
-      // Expediente exportable (Sprint 5.8b): «no consta», «sí», «no», «Creada el», «Meta», «Enviada el», «cobrada», «enviada», «Entra», «Taquilla o rifa» y los medios de pago se escriben igual en catalán; los demás son patrones sin texto traducible.
+      // Expediente exportable (Sprint 5.8b): «no consta», «sí», «no», «Creada el», «Meta», «Enviada el», «cobrada», «enviada», «Entra», «Taquilla» y los medios de pago se escriben igual en catalán; los demás son patrones sin texto traducible.
       'audit.dossier.none', 'audit.dossier.yes', 'audit.dossier.no', 'audit.dossier.labels.createdAt', 'audit.dossier.labels.goal', 'audit.dossier.labels.executedAt', 'audit.dossier.values.refunded', 'audit.dossier.values.member', 'audit.dossier.values.targetNamed', 'audit.dossier.values.target', 'audit.dossier.formats.TICKETING', 'audit.dossier.contributionStatuses.COMPLETED', 'audit.dossier.methods.BIZUM', 'audit.dossier.methods.APPLE_PAY', 'audit.dossier.methods.GOOGLE_PAY', 'audit.dossier.payoutStatuses.EXECUTED', 'audit.dossier.journal.in', 'audit.dossier.statusChangeLine', 'audit.dossier.notificationLine', 'audit.dossier.values.period', 'audit.dossier.movementLineUncounted']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no',
       // Consola (Sprint 5.2): el guion, «Total» y las unidades son iguales en inglés.
@@ -171,7 +171,7 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Estudio de edición (Sprint 4.3): el patrón «{entity} × KORUM» no tiene texto traducible.
       'panel.studio.poster.withKorum',
       // Portería móvil (Sprint 4.5): patrones sin texto traducible.
-      'gate.raffle.roundButton', 'panel.gate.pin.digits',
+      'panel.gate.pin.digits',
       // Motor de reglas (Sprint 5.3): las unidades son iguales en inglés.
       'admin.rules.unit.eur', 'admin.rules.unit.pct',
       // Ajustes de la plataforma (Sprint 5.4): «Mi Hucha» y «Brevo» son nombres propios, «Terminal», «JET ID», «NIF o CIF» y «Sistema» se escriben igual en inglés (o son siglas) y {table}: {count} es un patrón.

@@ -5,9 +5,9 @@ description: SEO técnico y descubribilidad de KORUM en buscadores (Google, Bing
 
 # Skill · SEO, buscadores de IA y vistas previas sociales
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. Los contenidos públicos, las páginas pilar, `llms.txt` y las tarjetas dejan de mencionarlas en el 5.12b. Se añaden las páginas de los textos legales (indexables, con `hreflang`) y la **antiindexación de todo lo que no sea producción** (5.10a). La analítica sin cookies se conecta en el 5.26. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los contenidos públicos, las páginas pilar, `llms.txt` y las tarjetas dejaron de mencionarlas en el 5.12b. Se añaden las páginas de los textos legales (indexables, con `hreflang`) y la **antiindexación de todo lo que no sea producción** (5.10a). La analítica sin cookies se conecta en el 5.26. Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 
-Objetivo: que quien busque *"cómo recaudar dinero para el AMPA"*, *"ventiladores para el colegio"*, *"rifa solidaria club deportivo"* o pregunte a un asistente de IA por plataformas de mecenazgo escolar encuentre KORUM; y que cada enlace compartido en WhatsApp se vea impecable. **Sin exponer nunca datos personales ni de menores.**
+Objetivo: que quien busque *"cómo recaudar dinero para el AMPA"*, *"ventiladores para el colegio"*, *"vender entradas fiesta del colegio"* o pregunte a un asistente de IA por plataformas de mecenazgo escolar encuentre KORUM; y que cada enlace compartido en WhatsApp se vea impecable. **Sin exponer nunca datos personales ni de menores.**
 
 ## 1. Qué se indexa y qué no
 
@@ -68,7 +68,7 @@ Objetivo: que quien busque *"cómo recaudar dinero para el AMPA"*, *"ventiladore
 ## 7. Rendimiento, idiomas y privacidad
 
 - Core Web Vitals dentro del presupuesto de [korum-nextjs-multitenant-ui](../korum-nextjs-multitenant-ui/SKILL.md) §5: también es un factor de posicionamiento.
-- Contenido de marketing **escrito de forma nativa** en castellano, catalán e inglés (no traducción literal), con palabras clave propias de cada idioma (*AMPA* / *AFA*, *rifa* / *rifa solidària*).
+- Contenido de marketing **escrito de forma nativa** en castellano, catalán e inglés (no traducción literal), con palabras clave propias de cada idioma (*AMPA* / *AFA*, *fiesta de fin de curso* / *festa de final de curs*).
 - Prohibido indexar datos personales: nombres de donantes, autores de ideas, emails, fotos con menores identificables (las fotos Antes/Después se suben con una casilla de confirmación de que no aparecen menores reconocibles).
 
 ## 8. Lista de comprobación por página pública

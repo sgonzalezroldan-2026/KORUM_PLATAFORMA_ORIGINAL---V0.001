@@ -5,7 +5,7 @@ description: Quórum del buzón de ideas, antifraude en servidor (email canónic
 
 # Skill · Quórum, antifraude, doble firma y marco fiscal y de privacidad
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiran** (papeletas, sorteo, acta y ronda extra) en el Sprint 5.12 y llegan los **vales** en el 5.14. **Fiscalidad:** el certificado solo existe cuando la campaña se consigue y el Modelo 182 recoge las campañas consolidadas en el ejercicio (5.22); lo fiscal pasa a la skill [korum-fiscal-invoicing](../korum-fiscal-invoicing/SKILL.md). **Firma única (5.19):** frase añadida a la confirmación y aviso de cada liberación al email general de la entidad; se podrá elegir en el alta (5.10c). **Privacidad (5.10):** rastros de seguridad desvinculados de la cuenta a los 12 meses, copia de «mis datos» con esos rastros, cambio de email verificado y cruce por huella solo entre cuentas con consentimiento. **Quién valida:** el promotor (Regla 04 §2). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. **Fiscalidad:** el certificado solo existe cuando la campaña se consigue y el Modelo 182 recoge las campañas consolidadas en el ejercicio (5.22); lo fiscal pasa a la skill [korum-fiscal-invoicing](../korum-fiscal-invoicing/SKILL.md). **Firma única (5.19):** frase añadida a la confirmación y aviso de cada liberación al email general de la entidad; se podrá elegir en el alta (5.10c). **Privacidad (5.10):** rastros de seguridad desvinculados de la cuenta a los 12 meses, copia de «mis datos» con esos rastros, cambio de email verificado y cruce por huella solo entre cuentas con consentimiento. **Quién valida:** el promotor (Regla 04 §2). Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](../../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 62); orden y fichas en el [plan](../../../docs/PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## 1. Dos formas de participar
 
@@ -71,7 +71,7 @@ Textos de referencia en castellano para esas claves: `⚠️ Muchas firmas desde
 
 ## 4. Candado semántico de categorías exentas (`\b`, sin falsos positivos)
 
-Cuando una entidad elige una categoría `EXEMPT` (`0 %`, distinta de *Taquilla y rifas*):
+Cuando una entidad elige una categoría `EXEMPT` (`0 %`, distinta de *Taquilla*):
 
 - **Prohibido `.includes('obra')`** (bloqueaba *"c**obra**r"*, *"s**obra**s"*, *"mani**obra**"* u *"obra de teatro"*).
 - Se normalizan acentos, se eliminan primero las expresiones culturales seguras (`obra de teatro`, `obra social`, `obra solidaria`, `taller de pintura`, `mano de obra solidaria`…) y se buscan palabras completas sobre infraestructura y equipamiento, en **castellano, catalán e inglés**. Las listas viven en `src/core/security/semantic-lock.ts`, que es lo que manda.
@@ -79,7 +79,7 @@ Cuando una entidad elige una categoría `EXEMPT` (`0 %`, distinta de *Taquilla y
 
 ## 5. Fiscalidad (Ley 49/2002 y Modelo 182)
 
-1. **Separación de conceptos:** recargas (`TOPUP`) y entradas o rifas (`TICKET`) nunca aparecen en certificados; solo las **donaciones (`DONATION`) completadas y no reembolsadas**.
+1. **Separación de conceptos:** recargas (`TOPUP`) y entradas (`TICKET`) nunca aparecen en certificados; solo las **donaciones (`DONATION`) completadas y no reembolsadas**.
 2. **Certificado fiscal y Modelo 182** solo si `organization.ley49 === true` **y** `ley49VerifiedAt` no es nulo (fundaciones y asociaciones declaradas de utilidad pública que lo hayan acreditado). El panel de la entidad ofrece en enero la descarga del fichero del **Modelo 182** (registro de declarante y registros de declarados, en formato de longitud fija de la AEAT), con el NIF, nombre, provincia, importe y marca de recurrencia de cada donante (calculada por `donorTaxIdHmac` sobre los dos ejercicios anteriores).
 3. **Resto de entidades** (la mayoría de AMPAs y clubes): se emite un **justificante nominativo de aportación**, sin efectos fiscales.
 4. **Validación de NIF/NIE/CIF** con el algoritmo oficial (módulo 23 para DNI/NIE y dígito de control para CIF).

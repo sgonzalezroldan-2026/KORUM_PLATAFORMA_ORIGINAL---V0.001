@@ -303,7 +303,7 @@ for (const locale of ['es', 'ca'] as const) {
       const buyerErrors = trackConsoleErrors(buyer.page);
       const buyerEmail = uniqueEmail('entradas');
       const since = Date.now();
-      const entries = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: eventId, email: buyerEmail, quantity: 3, subtype: 'EVENT' });
+      const entries = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: eventId, email: buyerEmail, quantity: 3 });
       // El pase que ve la familia lleva un QR de verdad: se lee como lo leería la cámara de la puerta.
       const qrPayload = await readQrCode(buyer.page.getByRole('img', { name: t('portal.pass.qrAlt') }));
       await expect(buyer.page.getByText(t('portal.pass.quantity', { count: 3 }))).toBeVisible();
@@ -311,14 +311,14 @@ for (const locale of ['es', 'ca'] as const) {
       expect(await emailTo(buyerEmail, since, (text) => text.includes('/entrada/'))).toContain(entries.passPath.split('?')[0]!);
 
       // El segundo evento: tres entradas para la misma familia y la última para una vecina, que agota el aforo.
-      const seats = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: buyerEmail, quantity: 3, subtype: 'EVENT' });
+      const seats = await buyTickets(buyer.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: buyerEmail, quantity: 3 });
       await expect(buyer.page).toHaveTitle(new RegExp(`^${t('portal.pass.title')}`));
       await expect(buyer.page.getByRole('img', { name: t('portal.pass.qrAlt') })).toBeVisible();
       await expect(buyer.page.getByText(t('portal.pass.quantity', { count: 3 }))).toBeVisible();
       await expect(buyer.page.getByText(t('portal.pass.show'))).toBeVisible();
       await checkPage(buyer.page, isMobile);
       const neighbour = await newPerson(browser, page);
-      const lastSeat = await buyTickets(neighbour.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: uniqueEmail('ultima-entrada'), quantity: 1, subtype: 'EVENT' });
+      const lastSeat = await buyTickets(neighbour.page, t, locale, { slug: entity.slug, initiativeId: soldOutId, email: uniqueEmail('ultima-entrada'), quantity: 1 });
       await expect(neighbour.page.getByText(t('portal.pass.show'))).toBeVisible();
       charges.push(entries.chargedCents, seats.chargedCents, lastSeat.chargedCents);
       // Con la última entrada el evento completa su aforo y deja de venderse.

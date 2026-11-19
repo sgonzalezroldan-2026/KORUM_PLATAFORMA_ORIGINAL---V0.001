@@ -440,8 +440,10 @@ describe('MASS_REFUND · espera entre intentos, configuración y restos en la hu
     const { donation } = await refundingWithOneDonation();
     const misconfigured = deps(async () => mock);
     misconfigured.refundOriginalIp = async () => Promise.reject(new PaymentConfigurationError(['paycomet.serverIp']));
+    // `runJob` recupera también los turnos pendientes si otro archivo de la base compartida ya ejecutó la tarea: todos deben fallar enteros.
     const results = await run('MASS_REFUND', massRefundHandler, now, misconfigured);
-    expect(results).toMatchObject([{ outcome: 'RETRY', error: expect.stringContaining('PaymentConfigurationError') }]);
+    expect(results.length).toBeGreaterThan(0);
+    for (const result of results) expect(result).toMatchObject({ outcome: 'RETRY', processed: 0, error: expect.stringContaining('PaymentConfigurationError') });
     expect(await statusOf(donation.id)).toBe('COMPLETED');
     expect(refundAttempts.get(donation.paycometOrder!)).toBeUndefined();
     expect(await db.opsAlert.findUnique({ where: { dedupeKey: `REFUND_REJECTED:${donation.id}` } })).toBeNull();
