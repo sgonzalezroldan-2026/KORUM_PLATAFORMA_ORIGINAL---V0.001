@@ -32,6 +32,7 @@ export type CampaignPayoutRejection =
   | 'PROVIDER_PAYOUT_UNAVAILABLE'
   | 'NOTHING_TO_PAY'
   | 'WINDOW_EXPIRED'
+  | 'REFUND_WINDOW_OPEN'
   | 'WRONG_STATUS'
   | 'RATE_LIMITED';
 

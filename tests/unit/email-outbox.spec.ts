@@ -93,7 +93,13 @@ const SAMPLES: Record<string, unknown> = {
   'initiative.resizePoll': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', pollId: 3, closesAt: IN_3_DAYS, voteToken: '3.41.' + 'a'.repeat(64) },
   'initiative.resizeResult': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', option: 'Comprar 14 tablets con lo recaudado', newGoalCents: 210_000 },
   'initiative.refundingSupporter': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
-  'expired.decisionReminder': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', daysLeft: 20, canVote: true, voteDaysLeft: 2, urgent: false }
+  'expired.decisionReminder': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', daysLeft: 20, canVote: true, voteDaysLeft: 2, urgent: false },
+  // Eventos con entradas: llega la fecha, cancelación y cambio de fecha (Sprint 5.13).
+  'event.dateReached': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', outcome: 'SETTLE', ticketsSold: 40, raisedCents: 20_000 },
+  'event.changed': { initiativeId: 7, change: 'RESCHEDULED', newDate: IN_3_DAYS, refundUntil: IN_3_DAYS },
+  'event.cancelledBuyer': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007' },
+  'event.rescheduledBuyer': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', rescheduleId: 2, previousDate: IN_3_DAYS, newDate: IN_3_DAYS, refundUntil: IN_3_DAYS, expiresAt: IN_3_DAYS, refundToken: '2.41.' + 'a'.repeat(64) },
+  'gate.refundedPassUsed': { initiativeId: 7, serialCode: 'PASE-2026-000041', scannedAt: IN_3_DAYS }
 };
 
 const render = (templateKey: string, locale: (typeof LOCALES)[number], overrides: Partial<RenderEmailInput> = {}) =>

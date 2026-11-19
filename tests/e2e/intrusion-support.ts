@@ -362,6 +362,9 @@ export function resourceArguments(slug: string, target: Targets): Record<string,
     answerTicketAction: [slug, { ticketCode: target.ticketCode, reply: TEXT, status: 'RESOLVED' }],
     setGatePinAction: [slug, target.eventId],
     rotateGateCodeAction: [slug, target.eventId],
+    // Sprint 5.13: cancelar y cambiar la fecha de un evento ajeno (la fecha es válida: la entidad se comprueba antes).
+    cancelEventAction: [slug, { initiativeId: target.eventId }],
+    rescheduleEventAction: [slug, { initiativeId: target.eventId, newDay: '2027-01-15' }],
     revokeGateSessionAction: [slug, target.gateSessionId],
     decideRefundAction: [slug, { initiativeId: target.campaignId }],
     launchResizeVoteAction: [slug, { initiativeId: target.campaignId, options: ['Hacer la mitad', 'Hacer un tercio'] }]

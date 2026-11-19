@@ -6,6 +6,7 @@ import {
   purgeExpiredSessions,
   purgeExpiredWebhooks,
   purgeGateDeviceLabels,
+  purgeOldGateReadings,
   purgeNetworkHashes,
   purgeOldIdeaChats,
   purgeOldNotifications,
@@ -52,6 +53,7 @@ export const dataRetentionPurgeHandler: JobHandler = async ({ db, now, batchSize
   await step('resizeVotes', () => anonymizeOldResizeVotes(db, now, batchSize));
   await step('supportTickets', () => purgeResolvedSupportTickets(db, now, batchSize));
   await step('gateDeviceLabels', () => purgeGateDeviceLabels(db, now, batchSize));
+  await step('gateReadings', () => purgeOldGateReadings(db, now, batchSize));
   await step('devices', () => purgeStaleDevices(db, now, batchSize));
   await step('networkHashes', () => purgeNetworkHashes(db, now, batchSize));
   await step('notifications', () => purgeOldNotifications(db, now, batchSize));

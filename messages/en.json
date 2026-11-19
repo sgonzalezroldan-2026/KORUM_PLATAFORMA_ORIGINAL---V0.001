@@ -864,6 +864,63 @@
       "why": "Until you decide, families don’t know what will happen to their contribution.",
       "wallet": "Initiative piggy bank",
       "cta": "Decide now"
+    },
+    "event": {
+      "dateReached": {
+        "settleSubject": "“{initiative}” is ready to be paid out",
+        "settlePreheader": "The event date has arrived: it is paid out on what was sold.",
+        "settleTitle": "The event is ready to be paid out",
+        "settleBody": "“{initiative}” reached its date with {count, plural, one {# ticket sold} other {# tickets sold}}. Even if it did not sell out, it is paid out on what was sold.",
+        "settleNext": "Request the payout from the dashboard: it goes to the organisation’s account with the usual signatures.",
+        "raised": "Raised from tickets",
+        "settleCta": "Go to payouts",
+        "emptySubject": "“{initiative}” closed without sales",
+        "emptyPreheader": "No tickets were sold: there is no money to move.",
+        "emptyTitle": "Event closed without sales",
+        "emptyBody": "“{initiative}” reached its date without any tickets sold, so it has been closed with no money to move.",
+        "emptyCta": "Go to the dashboard"
+      },
+      "changed": {
+        "cancelledSubject": "“{initiative}” has been cancelled",
+        "cancelledPreheader": "A signatory has cancelled the event.",
+        "cancelledTitle": "Event cancelled",
+        "cancelledBody": "{count, plural, =0 {“{initiative}” has been cancelled. No tickets had been sold.} one {“{initiative}” has been cancelled. The ticket sold is refunded in full and we are notifying the buyer.} other {“{initiative}” has been cancelled. The # tickets sold are refunded in full and we are notifying the buyers.}}",
+        "rescheduledSubject": "“{initiative}” has a new date",
+        "rescheduledPreheader": "A signatory has changed the event date.",
+        "rescheduledTitle": "New event date",
+        "rescheduledBody": "The new date of “{initiative}” is {date}.",
+        "rescheduledRefund": "People who bought before the change can ask for a refund until {until}. Until then the event cannot be paid out.",
+        "cta": "Go to ticket sales"
+      },
+      "cancelledBuyer": {
+        "subject": "“{initiative}” is cancelled: we are refunding 100%",
+        "preheader": "It goes back in full to your original payment method.",
+        "title": "Event cancelled",
+        "body": "{organization} has cancelled “{initiative}”. We are refunding 100% of what you paid for your tickets, digital management fees included. Your tickets are no longer valid.",
+        "how": "It goes back to your original payment method (card or Bizum) without you having to do anything. It may take a few days to show.",
+        "cta": "See the organisation’s page"
+      },
+      "rescheduledBuyer": {
+        "subject": "“{initiative}” has a new date",
+        "preheader": "New date: {date}. If it does not suit you, you can get your money back.",
+        "title": "The event has a new date",
+        "body": "{organization} has changed the date of “{initiative}”. The new date is {date}.",
+        "keep": "If it suits you, you do not need to do anything: your tickets are valid for the new date.",
+        "refund": "If not, you can get 100% back (digital management fees included) until {until} with the button in this email.",
+        "private": "This link is only for you: do not forward it.",
+        "previousDate": "Previous date",
+        "newDate": "New date",
+        "until": "You can ask for a refund until",
+        "cta": "See the date or ask for a refund"
+      },
+      "refundedPassUsed": {
+        "subject": "A ticket for “{initiative}” was used and then refunded",
+        "preheader": "Door check-in scanned it without signal before the refund was requested.",
+        "title": "Ticket used and refunded",
+        "body": "A door check-in phone for “{initiative}” scanned pass {pass} without signal at {time} and let it in. Before the phone got its connection back, the buyer asked for a refund with the date-change link, so they get 100% back.",
+        "next": "If you need to, sort it out with that person outside the platform. It is recorded in the activity log.",
+        "pass": "Pass"
+      }
     }
   },
   "nav": {
@@ -3131,7 +3188,7 @@
         "perUnitInc": "{amount} each (included in the price)",
         "ticketGateway": "Payment gateway cost (covered by the fees)",
         "ticketMaint": "Platform maintenance charge",
-        "ticketNet": "Net guaranteed for the organisation",
+        "ticketNet": "Net for the organisation if every ticket is sold",
         "maintShortfall": "The takings do not cover the maintenance charge: {amount} would be missing.",
         "gatewayNotCovered": "At these prices the handling fees do not cover the payment gateway ({amount} per ticket). KORUM reviews it; it does not change what the organisation receives.",
         "badgeTicketing": "Ticket sales with QR",
@@ -3141,7 +3198,8 @@
         "goalLabel": "Exact final public goal",
         "goalLabelTicketing": "Into the piggy bank at full capacity",
         "badgeResized": "Goal fixed by vote",
-        "goalLabelResized": "Fixed goal after the vote"
+        "goalLabelResized": "Fixed goal after the vote",
+        "ticketNetNote": "If not every ticket is sold, on the event date the organisation receives what was sold, with the maintenance charge reduced in the same proportion."
       },
       "blockers": {
         "title": "Before publishing you still need:",
@@ -3328,11 +3386,13 @@
         "KYB_NOT_VERIFIED": "The account holder’s documents are not verified yet.",
         "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet.",
         "NOTHING_TO_PAY": "There is nothing left to pay out for this campaign.",
-        "WINDOW_EXPIRED": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you."
+        "WINDOW_EXPIRED": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you.",
+        "REFUND_WINDOW_OPEN": "You changed the event date: buyers can ask for a refund for 14 days. You can request the payout once that period ends."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Review the local businesses",
-        "KYB_NOT_VERIFIED": "Go to the account holder’s documents"
+        "KYB_NOT_VERIFIED": "Go to the account holder’s documents",
+        "REFUND_WINDOW_OPEN": "Go to ticket sales"
       },
       "readOnly": "Only the organisation’s signatories can request and sign the payout.",
       "photosHint": "Before and After photos and thank-you message (families will see them once the payout is done)",
@@ -3403,7 +3463,8 @@
         "FILE_TYPE_NOT_ALLOWED": "Upload a PDF or a photo (JPG, PNG or WEBP).",
         "FILE_MIME_MISMATCH": "The file type doesn’t match its content. Save it again as PDF or JPG.",
         "FILE_EXTENSION_MISMATCH": "The file extension doesn’t match its content. Rename it or save it again.",
-        "FILE_RETENTION_REQUIRED": "We couldn’t save the file. Please try again."
+        "FILE_RETENTION_REQUIRED": "We couldn’t save the file. Please try again.",
+        "REFUND_WINDOW_OPEN": "The refund period for the date change is still open. You can request the payout once it ends."
       },
       "pending": {
         "title": "Payout {reference} · waiting for signatures",
@@ -3663,7 +3724,7 @@
         "createNew": "Create a new PIN"
       },
       "link": {
-        "hint": "Volunteers open door check-in on their phone with this link and type the PIN. They do not need an account.",
+        "hint": "Volunteers open door check-in on their phone with this link and type the PIN. They do not need an account. Share it only with this event’s volunteers and do not publish it. If it leaks, change it here.",
         "open": "Open door check-in",
         "newTab": " (opens in a new tab)",
         "afterPin": "The door check-in link appears once you create the PIN.",
@@ -3692,7 +3753,43 @@
         "NOT_FOUND": "That event no longer exists.",
         "NOT_ALLOWED": "The PIN cannot be created: the event has already ended or its date is not valid.",
         "RATE_LIMITED": "You’ve created a lot of PINs in a row. Wait a while before creating another: each new PIN closes the gate sessions."
-      }
+      },
+      "schedule": {
+        "title": "Date and cancellation",
+        "held": "The event date has passed: it is paid out on what was sold from “Payouts”. If it did not take place, you can still postpone or cancel it.",
+        "refundOpen": "People who bought before the date change can ask for a refund until {date}. Until then the event cannot be paid out.",
+        "reschedule": "Change the date",
+        "cancel": "Cancel the event",
+        "newDate": "New event date",
+        "rescheduleHint": "{count, plural, =0 {No tickets have been sold yet, so the change notifies nobody. If there is capacity left, sales stay open until the new date. {latest} at the latest.} one {The buyer of the ticket sold will get an email with a link to get 100% back for 14 days; you cannot request the payout until then. If there is capacity left, sales stay open until the new date. {latest} at the latest.} other {The buyers of the # tickets sold will get an email with a link to get 100% back for 14 days; you cannot request the payout until then. If there is capacity left, sales stay open until the new date. {latest} at the latest.}}",
+        "rescheduleChoose": "Choose the new date",
+        "rescheduleConfirm": "Move it to {date} and notify",
+        "tooLate": "The date can no longer be changed: there would not be time for the 14-day refund period before the payout. If the event cannot go ahead, cancel it and 100% will be refunded.",
+        "back": "Back",
+        "cancelWarning": "{count, plural, =0 {The event will be closed and door check-in will stop working. This cannot be undone.} one {The ticket sold will be refunded in full, digital management fees included, and we will notify whoever bought it. Door check-in will stop working. This cannot be undone.} other {The # tickets sold will be refunded in full, digital management fees included, and we will notify whoever bought them. Door check-in will stop working. This cannot be undone.}}",
+        "cancelYes": "Yes, cancel the event",
+        "cancelNo": "Do not cancel it",
+        "cancelledWithSales": "Event cancelled. We are refunding 100% to the buyers and letting them know by email.",
+        "cancelledEmpty": "Event cancelled. No tickets had been sold, so there is nothing to refund.",
+        "rescheduled": "{count, plural, =0 {Date changed to {date}. No tickets had been sold, so there is nobody to notify.} other {Date changed to {date}. We are emailing the buyers: they can ask for a refund until {until}.}}",
+        "readOnly": "Only signatories can change the date or cancel the event.",
+        "locked": "This event has already been paid out: its date can no longer be changed and it can no longer be cancelled.",
+        "errors": {
+          "INVALID_INPUT": "Check the date you chose.",
+          "NOT_FOUND": "That event no longer exists.",
+          "NOT_AN_EVENT": "This is not an event with tickets.",
+          "WRONG_STATUS": "The event has changed in the meantime. Reload the page.",
+          "ALREADY_SETTLED": "The event has already been paid out: it can no longer be changed.",
+          "DATE_INVALID": "That date does not exist.",
+          "DATE_IN_PAST": "The new date must be after today.",
+          "SAME_DATE": "That is already the event date.",
+          "DATE_TOO_LATE": "That date is too far away: there must be time to pay out within the PAYCOMET deadline.",
+          "RATE_LIMITED": "You have made many changes in a row. Wait a while before trying again.",
+          "FORBIDDEN": "You do not have permission to do this."
+        }
+      },
+      "closedState": "Event cancelled: buyers get 100% back and door check-in is closed.",
+      "closedEmpty": "Event closed with no sales: there is nothing to refund and door check-in is closed."
     },
     "welcomeCelebration": {
       "title": "Welcome to KORUM!",
@@ -3812,7 +3909,8 @@
     },
     "organiserHint": "Are you organising the event? Create the PIN and the door check-in link in “Box office and door”.",
     "organiserLink": "Go to Box office and door",
-    "metaTitle": "Door check-in"
+    "metaTitle": "Door check-in",
+    "storageNotice": "This phone keeps the event’s ticket list, and anything you scan without signal, until you close door check-in (3 days at most). Close it when you finish. The camera only reads codes: it records nothing. Do not forward this link."
   },
   "admin": {
     "headerTitle": "KORUM console",
@@ -5647,7 +5745,8 @@
         "buyTickets": "Buy tickets"
       },
       "contributionsClosed": "This initiative is no longer taking contributions",
-      "selfBoost": "The KORUM platform also chipped in and helped reach the goal."
+      "selfBoost": "The KORUM platform also chipped in and helped reach the goal.",
+      "ticketSalesClosed": "Ticket sales for this event have ended"
     },
     "share": {
       "title": "Share on KORUM",
@@ -6429,6 +6528,58 @@
         "sentBody": "If that email contributed to a campaign that’s being voted on, you’ll get your personal link in a few minutes. Check the spam folder too. Don’t share the link: it votes for you.",
         "another": "Use a different email"
       }
+    },
+    "eventRefund": {
+      "metaTitle": "Refund of your tickets",
+      "backToPortal": "Back to the organisation’s page",
+      "invalid": {
+        "title": "This refund link is not valid",
+        "description": "Use the link in the email about the date change. If you copied it, check that it is complete."
+      },
+      "noLink": {
+        "title": "Your link is missing",
+        "description": "To ask for a refund, open the link in the email about the date change."
+      },
+      "cancelled": {
+        "title": "The event has been cancelled",
+        "description": "“{title}” has been cancelled: we are refunding 100% without you having to do anything."
+      },
+      "requested": {
+        "title": "You have already asked for a refund",
+        "description": "We are refunding 100% to the payment method you used. It may take a few days to show."
+      },
+      "closed": {
+        "title": "A refund can no longer be requested",
+        "description": "The period has ended or there are no tickets left to refund. Your tickets for “{title}” are valid for {date}."
+      },
+      "title": "“{title}” has a new date",
+      "intro": "{organization} has changed the event date. If the new one suits you, you do not need to do anything.",
+      "previousDate": "Previous date",
+      "newDate": "New date",
+      "amount": "We would refund you",
+      "rules": {
+        "keep": "If you do not ask for a refund, your tickets are valid for the new date.",
+        "refund": "You can ask for it until {date}. You get 100% back, digital management fees included.",
+        "how": "It goes back to your original payment method (card or Bizum) and may take a few days to show. Your tickets will stop being valid.",
+        "used": "{count, plural, one {One of your purchases has already been used at the door: it is not refunded.} other {# of your purchases have already been used at the door: they are not refunded.}}"
+      },
+      "ask": "Refund me {amount}",
+      "confirm": "Are you sure? We will refund {amount} and your tickets will stop being valid. This cannot be undone.",
+      "yes": "Yes, refund my money",
+      "no": "No, I will keep my tickets",
+      "sending": "Requesting the refund…",
+      "done": {
+        "title": "Refund requested",
+        "text": "We are refunding 100% to your original payment method. Your tickets are no longer valid. It may take a few days to show."
+      },
+      "legal": "Event piggy bank {wallet} · the money is held by PAYCOMET until it is paid out.",
+      "errors": {
+        "INVALID_LINK": "This link is not valid. Use the one in the email about the date change.",
+        "CLOSED": "The period to ask for a refund has ended.",
+        "NOTHING_TO_REFUND": "You have no tickets left to refund: you may have already asked, or they were used at the door.",
+        "RATE_LIMITED": "Too many attempts from this connection. Wait a few minutes.",
+        "FAILED": "We could not request the refund. Try again in a few seconds."
+      }
     }
   },
   "account": {
@@ -6992,7 +7143,11 @@
       "RESIZE_VOTE_APPROVED": "the vote chose a project",
       "RESIZED_LEFT_EMPTY": "a forced refund left it with no funds",
       "ALL_REFUNDED": "everything contributed was refunded",
-      "REOPENED_BY_REVERSAL": "a forced refund left it below its goal"
+      "REOPENED_BY_REVERSAL": "a forced refund left it below its goal",
+      "EVENT_DATE_REACHED": "the event reached its date",
+      "EVENT_CANCELLED": "the organisation cancelled the event",
+      "EVENT_RESCHEDULED": "the organisation changed the event date",
+      "EVENT_EMPTIED": "the event that took place was left with no money"
     },
     "actions": {
       "tenant": {
@@ -7073,7 +7228,8 @@
         "pin_set": "Door: PIN created",
         "session_opened": "Door: session opened",
         "session_revoked": "Door: session closed",
-        "sync": "Door: offline check-ins synchronised"
+        "sync": "Door: offline check-ins synchronised",
+        "refunded_pass_used": "Door check-in: ticket scanned without signal before its refund was requested"
       },
       "idea": {
         "chat_access_denied": "Access denied to an idea’s conversation",
@@ -7256,6 +7412,13 @@
       },
       "dossier": {
         "downloaded": "Case file downloaded as PDF"
+      },
+      "event": {
+        "rate_limited": "Events: too many attempts in a row to cancel or change the date",
+        "date_reached": "Event: its date arrived",
+        "cancelled": "Event cancelled",
+        "rescheduled": "Event: date changed",
+        "reschedule_refund": "Event: refund requested after the date change"
       }
     },
     "dossier": {
@@ -7578,7 +7741,8 @@
           "pass": "Tickets with their QR"
         },
         "gate": {
-          "pinRevoked": "Door PIN cancelled notice"
+          "pinRevoked": "Door PIN cancelled notice",
+          "refundedPassUsed": "Notice of a ticket used and refunded"
         },
         "initiative": {
           "goalReached": "Goal reached notice",
@@ -7656,6 +7820,12 @@
         },
         "expired": {
           "decisionReminder": "Reminder to decide about an expired campaign"
+        },
+        "event": {
+          "dateReached": "Notice that the event reached its date",
+          "changed": "Notice of cancellation or date change to signatories",
+          "cancelledBuyer": "Notice of a cancelled event to the buyer",
+          "rescheduledBuyer": "Notice of a date change with a refund link"
         }
       },
       "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",

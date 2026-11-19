@@ -23,6 +23,8 @@ export type SponsorDocumentKind = (typeof SPONSOR_DOCUMENTS)[number];
 export const sponsorRenewalPath = (orgSlug: string): string => `/${orgSlug}/comercios/renovar`;
 /** Voto de la votación de redimensionamiento (Sprint 4.4b): `?v=` con el enlace personal del email. No se indexa ni se comparte. */
 export const resizeVotePath = (orgSlug: string): string => `/${orgSlug}/votacion`;
+/** Devolución de las entradas tras un cambio de fecha (Sprint 5.13): el enlace personal del aviso lleva `?d=`. */
+export const eventRefundPath = (orgSlug: string): string => `/${orgSlug}/entrada/devolucion`;
 export const sponsorDocumentPath = (orgSlug: string, kind: SponsorDocumentKind): string => `/${orgSlug}/comercios/documentos/${kind}`;
 /** Identificador de iniciativa válido en una URL: entero positivo de hasta 9 cifras. */
 export const INITIATIVE_ID_PATTERN = /^[1-9]\d{0,8}$/;

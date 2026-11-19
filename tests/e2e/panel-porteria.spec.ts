@@ -149,6 +149,9 @@ test.describe('Sprint 4.5 · portería móvil', () => {
     const volunteer = phone.page;
     const volunteerErrors = trackConsoleErrors(volunteer);
     await volunteer.goto(`/panel/${entity.slug}/porteria/${eventCode}`);
+    // Primera capa para quien atiende la puerta (Sprint 5.13, L-123 y L-134): qué guarda el móvil y que no reenvíe el enlace.
+    await expect(volunteer.getByTestId('gate-storage-notice')).toContainText('hasta que cierres la portería (3 días como máximo)');
+    await expect(volunteer.getByTestId('gate-storage-notice')).toContainText('No reenvíes este enlace.');
     await volunteer.getByLabel('PIN del evento').fill(pin === '000000' ? '000001' : '000000');
     await volunteer.getByRole('button', { name: 'Entrar en la portería' }).click();
     await server(volunteer.getByText('El PIN no es correcto o ya no está activo.')).toBeVisible();

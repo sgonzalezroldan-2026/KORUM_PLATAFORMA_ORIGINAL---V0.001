@@ -15,6 +15,7 @@ import { getPublicInitiative, getPublicOrganization, listPublicInitiatives } fro
 import { listIdeas, listSponsors } from '@/repositories/sponsor-idea.repository';
 import { authorizeTenant, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { EntityBrandingError, saveEntityAccent } from '@/services/panel/entity-branding.service';
+import { cancelEvent, rescheduleEvent } from '@/services/ticketing/event-schedule.service';
 import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, uniqueId } from './test-database';
 
 /** QA-SEC01 · aislamiento entre entidades (anti-IDOR): dos colegios, sus personas y sus datos. */
@@ -325,5 +326,19 @@ describe('Liquidaciones de campañas (Sprint 4.4a)', () => {
     await expect(loadCampaignPayoutRows(db, superadmin, sanJose.orgId)).resolves.toMatchObject({ ready: [], history: [] });
     const deps = { secret: TEST_HMAC_SECRET, keyring: TEST_KEYRING, providerPayoutAvailable: true };
     await expect(requestCampaignPayout(db, deps, withSecondFactor(superadmin), sanJose.orgId, { destination: 'ORGANIZATION', initiativeId: 1, invoiceFileId: null })).rejects.toBeInstanceOf(TenantAccessError);
+  });
+});
+
+describe('Fecha y cancelación de los eventos (Sprint 5.13)', () => {
+  it('el director de Cervantes no cancela ni cambia la fecha de un evento de San José; la portería y el Super-Admin, tampoco', async () => {
+    const payload = { initiativeId: sanJose.initiativeId };
+    await expect(cancelEvent(db, withSecondFactor(cervantes.director), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(rescheduleEvent(db, withSecondFactor(cervantes.director), sanJose.orgId, { ...payload, newDay: '2026-12-24' })).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await denied(sanJose.orgId, cervantes.directorId)).some((row) => (row.metadataJson as { attempted?: string } | null)?.attempted === 'event.cancel')).toBe(true);
+    // Con su propia entidad y el evento de la otra: responde como inexistente.
+    await expect(cancelEvent(db, withSecondFactor(cervantes.director), cervantes.orgId, payload)).rejects.toMatchObject({ reason: 'NOT_FOUND' });
+    await expect(cancelEvent(db, withSecondFactor(sanJose.gatekeeper), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(cancelEvent(db, withSecondFactor(superadmin), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await db.initiative.findUniqueOrThrow({ where: { id: sanJose.initiativeId } })).status).toBe('FUNDRAISING');
   });
 });

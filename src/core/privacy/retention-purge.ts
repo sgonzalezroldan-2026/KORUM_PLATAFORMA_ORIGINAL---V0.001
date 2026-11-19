@@ -94,6 +94,19 @@ export async function purgeGateDeviceLabels(db: Db, now: Date, limit: number): P
   return count;
 }
 
+/** Lecturas de la portería y sesiones de los móviles de un evento liquidado, devuelto o cerrado hace más de un año (`L-124`). Primero las lecturas; después, las sesiones que se quedan sin ninguna. */
+export async function purgeOldGateReadings(db: Db, now: Date, limit: number): Promise<number> {
+  const cutoff = daysBefore(now, RETENTION.gateReadingDaysAfterSettlement);
+  // Un evento devuelto o cerrado sin ventas no vuelve a cambiar: su última modificación es su cierre (una posterior solo retrasa el borrado).
+  const ended = { OR: [{ status: 'CLOSED' as const, closedAt: { lt: cutoff } }, { status: { in: ['REFUNDED' as const, 'CANCELLED' as const] }, updatedAt: { lt: cutoff } }] };
+  const readings = await db.ticketCheckIn.findMany({ where: { ticketPass: { initiative: ended } }, take: limit, select: { id: true } });
+  let count = readings.length > 0 ? (await db.ticketCheckIn.deleteMany({ where: { id: { in: readings.map((row) => row.id) } } })).count : 0;
+  if (count >= limit) return count;
+  const sessions = await db.gateSession.findMany({ where: { initiative: ended, checkIns: { none: {} } }, take: limit - count, select: { id: true } });
+  if (sessions.length > 0) count += (await db.gateSession.deleteMany({ where: { id: { in: sessions.map((row) => row.id) } } })).count;
+  return count;
+}
+
 /** Dispositivos sin uso en 13 meses (lo que dura su cookie): se borran con sus cuentas, porque la cookie ya no existe en ningún navegador. */
 export async function purgeStaleDevices(db: Db, now: Date, limit: number): Promise<number> {
   const stale = await db.device.findMany({ where: { lastSeenAt: { lt: daysBefore(now, RETENTION.deviceDays) } }, take: limit, select: { id: true } });

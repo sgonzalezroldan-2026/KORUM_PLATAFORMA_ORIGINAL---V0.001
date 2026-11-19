@@ -106,7 +106,8 @@ export function toCardData(row: InitiativeRow, now: Date, fees: TicketFees = NO_
     ticketPriceCents: row.ticketPriceCents ?? 0,
     ticketBuyerCents: buildTicketInfo(row, fees)?.buyerUnitCents ?? 0,
     contributions: row.totalContributions,
-    achieved: isAchieved(base) || row.status === 'GOAL_REACHED',
+    // Un evento que llegó a su fecha sin agotar el aforo también está en `GOAL_REACHED` (se liquida por lo vendido, Sprint 5.13): no está «agotado», solo cerrado.
+    achieved: isAchieved(base) || (row.status === 'GOAL_REACHED' && row.format !== 'TICKETING'),
     closed: row.status !== 'FUNDRAISING',
     matching: row.matchingPoolRemainingCents > 0,
     coverFileId: row.coverFileId ?? null,

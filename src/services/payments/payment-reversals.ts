@@ -1,6 +1,7 @@
 import { postJournal, reverseJournal } from '@/core/finance/ledger.service';
 import type { JournalLine } from '@/core/finance/ledger-accounts';
 import { PAYIN_KINDS, refundApprovalLines, refundExecutionLines } from '@/core/finance/payment-journals';
+import { syncHeldEvent } from '@/core/ticketing/held-event';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { revokePassInTx } from '@/core/ticketing/ticket-issuance';
 import { inTransaction, type Db } from '@/lib/db';
@@ -156,6 +157,9 @@ export async function removeFromInitiative(tx: Db, contribution: ContributionRow
     await tx.initiative.update({ where: { id: contribution.initiativeId }, data: { status: 'FUNDRAISING', stepIndex: 4 } });
     await recordStatusChange(tx, { initiativeId: contribution.initiativeId, organizationId: contribution.organizationId, from: 'GOAL_REACHED', to: 'FUNDRAISING', reason: 'REOPENED_BY_REVERSAL' });
   }
+  // Evento celebrado sin liquidar (Sprint 5.13): se liquida por lo vendido, y el mantenimiento sigue siendo proporcional a lo que queda.
+  // Si se queda sin dinero, se cierra como un evento sin ventas y devuelve sus cupos (auditoría financiera del 5.13).
+  if (eventAlreadyHeld) await syncHeldEvent(tx, contribution.initiativeId, at);
   // Redimensionada y sin liquidar: la meta y las comisiones bajan con lo que se pierde (auditoría financiera del 4.4b, H1).
   if (resized && initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)) await rescaleResizedAfterLoss(tx, contribution.initiativeId);
 }

@@ -11,7 +11,7 @@
 | :--- | :--- | :-: | :--- | :--- |
 | Aviso legal | [aviso-legal.md](aviso-legal.md) | 2026-11-18 | Validado por el promotor | No se acepta: se publica |
 | Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-18 | Validado por el promotor | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
-| Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-18 | Validado por el promotor | Quien compra, con casilla al pagar |
+| Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-19 | Validado por el promotor (el añadido del 3.6, el 2026-11-19) | Quien compra, con casilla al pagar |
 | Condiciones de la aportación mensual | [condiciones-aportacion-mensual.md](condiciones-aportacion-mensual.md) | 2026-11-18 | Validado por el promotor | Quien activa Mi Hucha, con casilla (apagada en el lanzamiento) |
 | Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-18 | Validado por el promotor | La entidad, en el alta |
 | Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-18 | Validado por el promotor | El comercio, con casilla, en cada pago y en cada renovación |
@@ -59,8 +59,8 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |
 | No hay rifas | Todos | 5.12a y 5.12b (hecho: retiradas) |
-| Entradas: se liquida por lo vendido; cancelación; cambio de fecha con 14 días | Entradas y vales §3; entidades §8 | 5.13 |
-| Aviso al voluntario, plazo de las lecturas de portería (1 año) y «no reenvíes el enlace» | Privacidad §3.10 y §8; primeras capas §8 | 5.13 |
+| Entradas: se liquida por lo vendido; cancelación; cambio de fecha con 14 días | Entradas y vales §3; entidades §8 | 5.13 (hecho) |
+| Aviso al voluntario, plazo de las lecturas de portería (1 año) y «no reenvíes el enlace» | Privacidad §3.10 y §8; primeras capas §8 | 5.13 (hecho) |
 | Vales (todo el apartado), con la validez que fija la entidad y la cancelación antes y después de liquidar | Entradas y vales §4; entidades §9 | 5.14 |
 | Quién vende entradas y vales (una empresa o una entidad sin ánimo de lucro), dentro de la ventana de resumen | Entradas y vales §1; primeras capas §2 | 5.15 |
 | Páginas públicas, archivo de versiones, aceptación del alta, línea de la pantalla de acceso | Todos; primeras capas §4 y §11 | 5.10a |

@@ -37,6 +37,10 @@ export function GatePinForm({ gateCode }: { gateCode: string }) {
       <button type="submit" className={primaryButton} disabled={busy || pin.length !== 6}>
         {t('enter')}
       </button>
+      {/* Primera capa para quien atiende la puerta (Sprint 5.13, `L-123` y `L-134`; docs/legal/primeras-capas.md §8). */}
+      <p className="text-sm text-ink-soft" data-testid="gate-storage-notice">
+        {t('storageNotice')}
+      </p>
     </form>
   );
 }

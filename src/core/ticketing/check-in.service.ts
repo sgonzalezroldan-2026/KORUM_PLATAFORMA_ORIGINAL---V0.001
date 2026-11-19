@@ -1,3 +1,4 @@
+import { notifySigners } from '@/core/jobs/notify';
 import type { MemberRole } from '@/generated/prisma/enums';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { requireOwnedResource } from '@/repositories/ownership';
@@ -96,7 +97,17 @@ export async function checkInPass(db: KorumPrismaClient, secret: string, actor: 
     const reject = async (reason: string) => tx.ticketCheckIn.create({ data: { ...record, quantity: people, accepted: false, reason } });
     const firstAccess = async () => (await tx.ticketCheckIn.findFirst({ where: { ticketPassId: pass.id, accepted: true }, orderBy: { createdAt: 'asc' }, select: { createdAt: true } }))?.createdAt ?? null;
 
-    if (pass.revokedAt) return (await reject('REVOKED'), { status: 'REVOKED' });
+    if (pass.revokedAt) {
+      // Sin cobertura, el pase pudo dejar entrar a alguien antes de que se pidiera su devolución (enlace de un cambio de fecha, Sprint 5.13). La persona ya
+      // está dentro y el dinero vuelve: se anota y se avisa a quienes firman, que lo resuelven con ella fuera de la plataforma.
+      const refundedAfterScan = offline && scannedAt < pass.revokedAt && (pass.contribution.status === 'REFUND_PENDING' || pass.contribution.status === 'REFUNDED');
+      await reject(refundedAfterScan ? 'REVOKED_AFTER_SCAN' : 'REVOKED');
+      if (refundedAfterScan) {
+        await recordAudit(tx, actor, { action: 'gate.refunded_pass_used', organizationId: event.organizationId, targetType: 'Initiative', targetId: String(event.initiativeId), metadata: { serialCode: pass.serialCode, scannedAt: scannedAt.toISOString() } });
+        await notifySigners(tx, event.organizationId, 'gate.refundedPassUsed', `${event.initiativeId}:${pass.id}`, { initiativeId: event.initiativeId, serialCode: pass.serialCode, scannedAt: scannedAt.toISOString() });
+      }
+      return { status: 'REVOKED' };
+    }
     if (CLOSED_EVENT_STATUSES.has(pass.initiative.status)) return (await reject('EVENT_CLOSED'), { status: 'EVENT_CLOSED' });
     if (pass.contribution.status !== 'COMPLETED') return (await reject('NOT_PAID'), { status: 'NOT_PAID' });
 

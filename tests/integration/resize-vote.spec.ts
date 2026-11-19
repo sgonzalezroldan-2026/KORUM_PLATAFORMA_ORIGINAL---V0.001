@@ -145,7 +145,8 @@ describe('QA-S03 · la entidad decide qué hacer con una campaña vencida', () =
     await expect(launchResizeVote(db, director, organization.id, { initiativeId: initiative.id, options: ['Comprar 14 tablets', 'comprar  14 TABLETS'] })).rejects.toMatchObject({ reason: 'DUPLICATE_OPTIONS' });
     await expect(launchResizeVote(db, director, organization.id, { initiativeId: initiative.id, options: ['Solo una opción posible'] })).rejects.toMatchObject({ reason: 'INVALID_INPUT' });
 
-    const ticketing = await expiredCampaign(organization.id, [[2_000]], { format: 'TICKETING', ticketSubtype: 'EVENT', ticketPriceCents: 1_000, ticketMax: 100, ticketFeeMode: 'ADD', costMatCents: 0, costInstCents: 0 });
+    // Desde el Sprint 5.13 un evento ya no vence (se liquida por lo vendido): una taquilla vencida solo existe en datos de antes, y tampoco se vota.
+    const ticketing = { initiative: await createInitiative(db, organization.id, { status: 'EXPIRED', format: 'TICKETING', ticketSubtype: 'EVENT', ticketPriceCents: 1_000, ticketMax: 100, ticketFeeMode: 'ADD', goalCents: 100_000, raisedCents: 2_000, firstPayinAt: new Date() }) };
     await expect(launchResizeVote(db, director, organization.id, { initiativeId: ticketing.initiative.id, options: OPTIONS })).rejects.toMatchObject({ reason: 'NOT_BUDGET' });
     const late = await expiredCampaign(organization.id, [[2_000]]);
     await db.initiative.update({ where: { id: late.initiative.id }, data: { firstPayinAt: new Date(Date.now() - 80 * DAY) } });

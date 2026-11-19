@@ -20,6 +20,75 @@
 
 ## Entradas
 
+### Sprint 5.13 — Reglas de las entradas: liquidar por lo vendido, cancelación y cambio de fecha (N8) · 2026-11-19 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.
+- **Duración:** estimada, 4–6 h; real, de 07:50 a 15:30 (unas 7 h 40 min), con unas 4 h en espera de los auditores y de las pruebas en segundo plano (cinco vueltas del auditor financiero, cuatro del de seguridad y tres del de experiencia).
+- **Decisiones del promotor al abrir el sprint (formato «qué pasa hoy, ejemplo, opciones, recomendación»; las cinco, la opción recomendada):**
+  1. Tras un cambio de fecha, la liquidación espera a que pasen los 14 días.
+  2. Se puede aplazar un evento ya celebrado mientras no se haya liquidado.
+  3. La fecha nueva no pasa del máximo de la campaña contado desde su publicación.
+  4. El mantenimiento de un evento que no se agota baja en proporción a lo vendido.
+  5. Durante el sprint, el promotor aprobó añadir a las condiciones de entradas §3.6: «Si la pides, tus entradas dejan de valer. Una entrada que ya se usó en la puerta no se devuelve.» (versión 2026-11-19).
+- **Qué se ha hecho:**
+  - **Llega la fecha** (`src/core/ticketing/event-date-reached.ts`, desde `CAMPAIGN_EXPIRY`):
+    - Con ventas, el evento pasa a `GOAL_REACHED` y se liquida por lo vendido con la doble firma de siempre, con el mantenimiento proporcional.
+    - Sin ventas, pasa a `CANCELLED`, sin asientos y con los cupos de vuelta.
+    - Si no hay ventas pero sí un pago en curso, espera a la ejecución siguiente.
+    - El Auto-Impulso que quedara vuelve a KORUM; el contra-asiento dice ahora el motivo.
+    - Una campaña de presupuesto sigue venciendo como antes.
+  - **Evento celebrado y sin liquidar** (`held-event.ts`, `syncHeldEvent`): tras un cobro tardío, una devolución o un contracargo, el mantenimiento se pone al día. Si se queda sin dinero, se cierra (`EVENT_EMPTIED`) y devuelve sus cupos. Al liquidar, el mantenimiento no cobrado vuelve al tope anual (`shrinkReservedMaintenance` en `approvePayout`).
+  - **Cancelar y cambiar la fecha** (`src/services/ticketing/event-schedule.service.ts`, panel «Taquilla y portería»): las hace una persona firmante con segundo factor, mientras el evento no se haya liquidado, y queda en la auditoría.
+    - Cancelar con ventas pasa por `REFUNDING` y `MASS_REFUND` hasta `REFUNDED`, y devuelve el 100 %, gastos de gestión incluidos. Cierra la portería (PIN y móviles).
+    - El cambio de fecha queda en la tabla nueva `EventReschedule`, que un *trigger* protege: no se reescribe, no se borra y su reparto solo avanza.
+    - Se avisa a quienes compraron, por lotes. El reparto sigue abierto hasta el final del plazo para quien termine de pagar después, localizado con la columna nueva `TicketPass.issuedAt`.
+    - El PIN caduca con la fecha nueva.
+  - **Enlace de devolución** (`/{entidad}/entrada/devolucion?d=`):
+    - Está firmado y no se indexa.
+    - Devuelve el 100 % de las compras de esa persona empezadas antes del cambio y sin usar en la puerta.
+    - Mientras el plazo esté abierto, la liquidación queda bloqueada (`REFUND_WINDOW_OPEN`), solo si hay alguien a quien devolver.
+    - Si un móvil sin cobertura dejó entrar una entrada que después se devolvió, se anota y se avisa a quienes firman (`gate.refundedPassUsed`).
+  - **Emails nuevos:** `event.dateReached`, `event.changed`, `event.cancelledBuyer`, `event.rescheduledBuyer` y `gate.refundedPassUsed`, en es, ca y en.
+  - **Puntos legales:**
+    - `L-123` y `L-134`: aviso en la pantalla del PIN y en el panel.
+    - `L-124`: `DATA_RETENTION_PURGE` borra las lecturas y sesiones de portería al año.
+    - `L-130`: el evento se liquida por lo vendido.
+  - **Otros cambios:**
+    - Pizarra: «Neto para la entidad si se vende todo el aforo», con su nota.
+    - Ficha pública: un evento celebrado ya no dice «agotadas».
+    - El bloqueo de tarifas cubre también los eventos celebrados sin liquidar.
+    - La regla de los 14 días es un valor único (`fourteen-day-rule.ts`).
+- **Pruebas:**
+  - `tests/unit/event-schedule-rules.spec.ts` (14).
+  - `tests/integration/event-schedule.spec.ts` (23, QA-TKT10 y los casos de las auditorías, uno con comprobación de mutación).
+  - `tests/e2e/panel-event-schedule.spec.ts`, con compra real por el portal, email, devolución sin cuenta, cancelación con el foco y pizarra.
+  - Aislamiento en `tenant-isolation.spec.ts` y en la E2E de intrusión.
+  - Adaptadas a la regla nueva: `resize-vote`, `gate-offline-limits`, `console-360`, `status-change-audit`, `email-outbox` y `transaction-errors`.
+- **Lo que salió y se corrigió dentro del sprint:**
+  - 12 hallazgos de la primera vuelta de los auditores de dinero y seguridad, y 3 de vueltas posteriores. Entre ellos:
+    - el tope anual de mantenimiento;
+    - el cobro tardío con la hora del banco;
+    - el pago en curso durante un cambio de fecha;
+    - el reparto sin páginas;
+    - los intentos sin segundo factor sin auditoría;
+    - la entrada usada sin cobertura.
+  - 10 de experiencia: estados contradictorios de un evento cancelado, los textos con cero ventas, el foco, el esqueleto de carga y el inglés.
+  - Un fallo intermitente real de la E2E: la confirmación de una cancelación se perdía al recargarse la tarjeta. Por eso ahora los eventos cancelados siguen a la vista unos días.
+  - La prueba de intrusión no cubría las dos acciones nuevas.
+- **Pendiente / deuda:** ninguna nueva. N8 cerrado y `L-123`, `L-124`, `L-130` y `L-134` resueltos (registro y CUMPLIMIENTO §9). Documentación al día: regla 02, skills de taquilla y de pagos, PRD, EXPERIENCIA, GLOSARIO, QA, DECISIONES §2.33, CUMPLIMIENTO, `docs/legal/` (condiciones, README, tabla de plazos y evaluación de impacto) y `.claude/` regenerado.
+- **Puertas:**
+  - P1 ✅: invariantes (40 migraciones, 816 documentos coherentes, `.claude/` en sincronía), `typecheck` y `lint` a 0.
+  - P2 ✅: unitarias 84/84 archivos (2.137 en verde, 1 omitida, la de siempre) e integración 51/51 archivos (1.055 en verde) contra PostgreSQL 16 real, en las dos pasadas finales.
+  - P3 ✅:
+    - `fintech-escrow-auditor`: APROBADO a la quinta vuelta, más una confirmación tras el cambio de la regla del plazo.
+    - `antifraud-legal-guardian`: APROBADO a la cuarta.
+    - `ux-school-director-reviewer`: APROBADO a la tercera.
+  - P4 ✅:
+    - E2E completa en modo CI sobre la compilación de producción: 547 en verde, 0 fallos, 33 omitidas (las deliberadas de siempre), 0 intermitencias. La primera pasada final dio 2 fallos, la intrusión ya corregida.
+    - Recorrido real con el MCP de Playwright a 1440 y 430 px en es, ca y en, a cargo del verificador y del auditor de experiencia: 0 errores de consola, sin desbordes y sin claves sin traducir.
+  - P5 ✅: tras cada corrección, P1 y unitarias completas y lo afectado (integración del área, E2E del área, también dos veces sin reintentos). Después, dos pasadas finales completas desde la 1; la segunda, en verde.
+- **Siguiente sprint:** 5.14a · Vales: motor · Claude Opus 5.5 · esfuerzo alto · 6–8 h. Al abrirlo, se le plantea al promotor si el pago «sin producto» es compra o donación y si se ofrece a los colegios con ánimo de lucro.
+
 ### Sprint 5.12b — Retirada de las rifas: pantallas, textos, pruebas de navegador y documentación (N2) · 2026-11-19 · terminado
 
 - **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `ux-school-director-reviewer` y `qa-e2e-verifier` con los modelos fijados en `.claude/agents/`.

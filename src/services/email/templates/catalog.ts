@@ -21,6 +21,7 @@ import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalIn
 import { orgKybStatus, signerHandover } from './definitions-team';
 import { platformMessage } from './definitions-platform';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
+import { eventCancelledBuyer, eventChanged, eventDateReached, eventRescheduledBuyer, gateRefundedPassUsed } from './definitions-events';
 import { expiredDecisionReminder, initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
 
 /**
@@ -109,7 +110,12 @@ const ENTRIES = [
   register('initiative.resizePoll', initiativeResizePoll),
   register('initiative.resizeResult', initiativeResizeResult),
   register('initiative.refundingSupporter', initiativeRefundingSupporter),
-  register('expired.decisionReminder', expiredDecisionReminder)
+  register('expired.decisionReminder', expiredDecisionReminder),
+  register('event.dateReached', eventDateReached),
+  register('event.changed', eventChanged),
+  register('event.cancelledBuyer', eventCancelledBuyer),
+  register('event.rescheduledBuyer', eventRescheduledBuyer),
+  register('gate.refundedPassUsed', gateRefundedPassUsed)
 ];
 
 export const TEMPLATE_CATALOG: ReadonlyMap<string, RegisteredTemplate> = new Map(ENTRIES);

@@ -864,6 +864,63 @@
       "why": "Mientras no decidáis, las familias no saben qué pasará con su aportación.",
       "wallet": "Hucha de la iniciativa",
       "cta": "Decidir ahora"
+    },
+    "event": {
+      "dateReached": {
+        "settleSubject": "«{initiative}» ya se puede liquidar",
+        "settlePreheader": "El evento llegó a su fecha: se liquida por lo vendido.",
+        "settleTitle": "El evento ya se puede liquidar",
+        "settleBody": "«{initiative}» llegó a su fecha con {count, plural, one {# entrada vendida} other {# entradas vendidas}}. Aunque no se llenara el aforo, se liquida por lo vendido.",
+        "settleNext": "Pedid la liquidación desde el panel: llega a la cuenta de la entidad con las firmas de siempre.",
+        "raised": "Recaudado con las entradas",
+        "settleCta": "Ir a las liquidaciones",
+        "emptySubject": "«{initiative}» se ha cerrado sin ventas",
+        "emptyPreheader": "No se vendió ninguna entrada: no hay dinero que mover.",
+        "emptyTitle": "Evento cerrado sin ventas",
+        "emptyBody": "«{initiative}» llegó a su fecha sin ninguna entrada vendida, así que se ha cerrado sin dinero que mover.",
+        "emptyCta": "Ir al panel"
+      },
+      "changed": {
+        "cancelledSubject": "Se ha cancelado «{initiative}»",
+        "cancelledPreheader": "Una persona firmante ha cancelado el evento.",
+        "cancelledTitle": "Evento cancelado",
+        "cancelledBody": "{count, plural, =0 {Se ha cancelado «{initiative}». No había entradas vendidas.} one {Se ha cancelado «{initiative}». Se devuelve el 100 % de la entrada vendida y avisamos a quien la compró.} other {Se ha cancelado «{initiative}». Se devuelve el 100 % de las # entradas vendidas y avisamos a quienes las compraron.}}",
+        "rescheduledSubject": "«{initiative}» cambia de fecha",
+        "rescheduledPreheader": "Una persona firmante ha cambiado la fecha del evento.",
+        "rescheduledTitle": "Nueva fecha del evento",
+        "rescheduledBody": "La nueva fecha de «{initiative}» es el {date}.",
+        "rescheduledRefund": "Quienes compraron antes del cambio pueden pedir su devolución hasta el {until}. Hasta entonces no se puede liquidar.",
+        "cta": "Ver la taquilla"
+      },
+      "cancelledBuyer": {
+        "subject": "Se cancela «{initiative}»: te devolvemos el 100 %",
+        "preheader": "Vuelve entero a tu medio de pago original.",
+        "title": "Evento cancelado",
+        "body": "{organization} ha cancelado «{initiative}». Te devolvemos el 100 % de lo que pagaste por tus entradas, también los gastos de gestión digital. Tus entradas ya no valen.",
+        "how": "Vuelve a tu medio de pago original (tarjeta o Bizum) sin que tengas que hacer nada. Puede tardar unos días en verse.",
+        "cta": "Ver la página de la entidad"
+      },
+      "rescheduledBuyer": {
+        "subject": "«{initiative}» cambia de fecha",
+        "preheader": "Nueva fecha: {date}. Si no te viene bien, puedes recuperar tu dinero.",
+        "title": "El evento cambia de fecha",
+        "body": "{organization} ha cambiado la fecha de «{initiative}». La nueva fecha es el {date}.",
+        "keep": "Si te viene bien, no tienes que hacer nada: tus entradas valen para la nueva fecha.",
+        "refund": "Si no, puedes recuperar el 100 % (también los gastos de gestión digital) hasta el {until} con el botón de este email.",
+        "private": "Este enlace es solo tuyo: no lo reenvíes.",
+        "previousDate": "Fecha anterior",
+        "newDate": "Nueva fecha",
+        "until": "Puedes pedir la devolución hasta",
+        "cta": "Ver la fecha o pedir la devolución"
+      },
+      "refundedPassUsed": {
+        "subject": "Una entrada de «{initiative}» se usó y después se devolvió",
+        "preheader": "La portería la leyó sin cobertura antes de que se pidiera la devolución.",
+        "title": "Entrada usada y devuelta",
+        "body": "Un móvil de la portería de «{initiative}» leyó sin cobertura el pase {pass} a las {time} y dejó entrar. Antes de que el móvil recuperara la conexión, quien lo compró pidió la devolución con el enlace del cambio de fecha, así que se le devuelve el 100 %.",
+        "next": "Si lo necesitáis, resolvedlo con esa persona fuera de la plataforma. En el registro de actividad queda anotado.",
+        "pass": "Pase"
+      }
     }
   },
   "nav": {
@@ -3131,7 +3188,7 @@
         "perUnitInc": "{amount} por unidad (incluidos en el precio)",
         "ticketGateway": "Coste de la pasarela (cubierto por la gestión)",
         "ticketMaint": "Cargo de mantenimiento de la plataforma",
-        "ticketNet": "Neto garantizado para la entidad",
+        "ticketNet": "Neto para la entidad si se vende todo el aforo",
         "maintShortfall": "La recaudación no alcanza a cubrir el mantenimiento: faltarían {amount}.",
         "gatewayNotCovered": "Con estos precios los gastos de gestión no cubren la pasarela ({amount} por entrada). Lo revisa KORUM; no cambia lo que recibe la entidad.",
         "badgeTicketing": "Taquilla con QR",
@@ -3141,7 +3198,8 @@
         "goalLabel": "Meta pública final exacta",
         "goalLabelTicketing": "A la hucha con el aforo completo",
         "badgeResized": "Meta fija por votación",
-        "goalLabelResized": "Meta fija tras la votación"
+        "goalLabelResized": "Meta fija tras la votación",
+        "ticketNetNote": "Si no se vende todo, al llegar la fecha del evento la entidad recibe lo vendido, con el mantenimiento rebajado en la misma proporción."
       },
       "blockers": {
         "title": "Para publicar falta:",
@@ -3328,11 +3386,13 @@
         "KYB_NOT_VERIFIED": "Faltan los documentos del titular verificados.",
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET.",
         "NOTHING_TO_PAY": "No queda nada que liquidar en esta campaña.",
-        "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros."
+        "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros.",
+        "REFUND_WINDOW_OPEN": "Cambiasteis la fecha del evento: quienes compraron pueden pedir su devolución durante 14 días. Podréis liquidar cuando termine ese plazo."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Revisar los comercios",
-        "KYB_NOT_VERIFIED": "Ir a los documentos del titular"
+        "KYB_NOT_VERIFIED": "Ir a los documentos del titular",
+        "REFUND_WINDOW_OPEN": "Ver la taquilla"
       },
       "readOnly": "Solo las personas firmantes de la entidad pueden pedir y firmar la liquidación.",
       "photosHint": "Fotos Antes y Después y agradecimiento (las familias las verán al terminar la liquidación)",
@@ -3403,7 +3463,8 @@
         "FILE_TYPE_NOT_ALLOWED": "Subid un PDF o una foto (JPG, PNG o WEBP).",
         "FILE_MIME_MISMATCH": "El tipo del fichero no coincide con su contenido. Guardadlo de nuevo como PDF o JPG.",
         "FILE_EXTENSION_MISMATCH": "La extensión del fichero no coincide con su contenido. Cambiadle el nombre o guardadlo de nuevo.",
-        "FILE_RETENTION_REQUIRED": "No hemos podido guardar el fichero. Probad de nuevo."
+        "FILE_RETENTION_REQUIRED": "No hemos podido guardar el fichero. Probad de nuevo.",
+        "REFUND_WINDOW_OPEN": "Sigue abierto el plazo de devolución por el cambio de fecha. Podréis liquidar cuando termine."
       },
       "pending": {
         "title": "Liquidación {reference} · esperando las firmas",
@@ -3663,7 +3724,7 @@
         "createNew": "Crear un PIN nuevo"
       },
       "link": {
-        "hint": "Los voluntarios abren la portería en su móvil con este enlace y escriben el PIN. No necesitan cuenta.",
+        "hint": "Los voluntarios abren la portería en su móvil con este enlace y escriben el PIN. No necesitan cuenta. Pásalo solo a los voluntarios de este evento y no lo publiques. Si se filtra, cámbialo aquí.",
         "open": "Abrir la portería",
         "newTab": " (se abre en una pestaña nueva)",
         "afterPin": "El enlace de la portería aparece al crear el PIN.",
@@ -3692,7 +3753,43 @@
         "NOT_FOUND": "Ese evento ya no existe.",
         "NOT_ALLOWED": "No se puede crear el PIN: el evento ya ha terminado o su fecha no es válida.",
         "RATE_LIMITED": "Has creado muchos PIN seguidos. Espera un rato antes de crear otro: cada PIN nuevo cierra las sesiones de la puerta."
-      }
+      },
+      "schedule": {
+        "title": "Fecha y cancelación",
+        "held": "La fecha del evento ya ha pasado: se liquida por lo vendido desde «Liquidaciones». Si no llegó a celebrarse, aún puedes aplazarlo o cancelarlo.",
+        "refundOpen": "Quienes compraron antes del cambio de fecha pueden pedir su devolución hasta el {date}. Hasta entonces no se puede liquidar el evento.",
+        "reschedule": "Cambiar la fecha",
+        "cancel": "Cancelar el evento",
+        "newDate": "Nueva fecha del evento",
+        "rescheduleHint": "{count, plural, =0 {Aún no se ha vendido ninguna entrada: el cambio no avisa a nadie. Si queda aforo, la venta sigue abierta hasta la nueva fecha. Como muy tarde, el {latest}.} one {Quien compró la entrada vendida recibirá un email con un enlace para recuperar el 100 % durante 14 días; mientras tanto no podréis liquidar. Si queda aforo, la venta sigue abierta hasta la nueva fecha. Como muy tarde, el {latest}.} other {Quienes compraron las # entradas vendidas recibirán un email con un enlace para recuperar el 100 % durante 14 días; mientras tanto no podréis liquidar. Si queda aforo, la venta sigue abierta hasta la nueva fecha. Como muy tarde, el {latest}.}}",
+        "rescheduleChoose": "Elige la nueva fecha",
+        "rescheduleConfirm": "Cambiar al {date} y avisar",
+        "tooLate": "Ya no se puede cambiar la fecha: no quedaría tiempo para los 14 días de devolución antes de liquidar. Si el evento no se puede celebrar, cancélalo y se devolverá el 100 %.",
+        "back": "Volver",
+        "cancelWarning": "{count, plural, =0 {El evento se cerrará y la portería dejará de funcionar. No se puede deshacer.} one {Se devolverá el 100 % de la entrada vendida, también los gastos de gestión digital, y avisaremos a quien la compró. La portería dejará de funcionar. No se puede deshacer.} other {Se devolverá el 100 % de las # entradas vendidas, también los gastos de gestión digital, y avisaremos a quienes las compraron. La portería dejará de funcionar. No se puede deshacer.}}",
+        "cancelYes": "Sí, cancelar el evento",
+        "cancelNo": "No cancelarlo",
+        "cancelledWithSales": "Evento cancelado. Estamos devolviendo el 100 % a quienes compraron y les avisamos por email.",
+        "cancelledEmpty": "Evento cancelado. No había entradas vendidas, así que no hay nada que devolver.",
+        "rescheduled": "{count, plural, =0 {Fecha cambiada al {date}. No había entradas vendidas, así que no hay que avisar a nadie.} other {Fecha cambiada al {date}. Avisamos por email a quienes compraron: pueden pedir su devolución hasta el {until}.}}",
+        "readOnly": "Solo quienes firman pueden cambiar la fecha o cancelar el evento.",
+        "locked": "Este evento ya se ha liquidado: ya no se puede cambiar su fecha ni cancelar.",
+        "errors": {
+          "INVALID_INPUT": "Revisa la fecha elegida.",
+          "NOT_FOUND": "Ese evento ya no existe.",
+          "NOT_AN_EVENT": "Esto no es un evento con entradas.",
+          "WRONG_STATUS": "El evento ha cambiado mientras tanto. Recarga la página.",
+          "ALREADY_SETTLED": "El evento ya se ha liquidado: ya no se puede cambiar.",
+          "DATE_INVALID": "Esa fecha no existe.",
+          "DATE_IN_PAST": "La nueva fecha tiene que ser posterior a hoy.",
+          "SAME_DATE": "Esa ya es la fecha del evento.",
+          "DATE_TOO_LATE": "Esa fecha es demasiado lejana: tiene que quedar tiempo para liquidar dentro del plazo de PAYCOMET.",
+          "RATE_LIMITED": "Has hecho muchos cambios seguidos. Espera un rato antes de volver a intentarlo.",
+          "FORBIDDEN": "No tienes permiso para hacerlo."
+        }
+      },
+      "closedState": "Evento cancelado: quien compró recupera el 100 % y la portería está cerrada.",
+      "closedEmpty": "Evento cerrado sin ventas: no hay nada que devolver y la portería está cerrada."
     },
     "welcomeCelebration": {
       "title": "¡Bienvenidos a KORUM!",
@@ -3812,7 +3909,8 @@
     },
     "organiserHint": "¿Organizas el evento? Crea el PIN y el enlace de la portería en «Taquilla y portería».",
     "organiserLink": "Ir a Taquilla y portería",
-    "metaTitle": "Portería"
+    "metaTitle": "Portería",
+    "storageNotice": "Este móvil guarda la lista de entradas del evento, y lo que leas sin cobertura, hasta que cierres la portería (3 días como máximo). Ciérrala al terminar. La cámara solo lee códigos: no graba nada. No reenvíes este enlace."
   },
   "admin": {
     "headerTitle": "Consola de KORUM",
@@ -5647,7 +5745,8 @@
         "buyTickets": "Comprar entradas"
       },
       "contributionsClosed": "Esta iniciativa ya no admite aportaciones",
-      "selfBoost": "La plataforma KORUM también aportó y ayudó a conseguir el reto."
+      "selfBoost": "La plataforma KORUM también aportó y ayudó a conseguir el reto.",
+      "ticketSalesClosed": "La venta de entradas de este evento ha terminado"
     },
     "share": {
       "title": "Compartir en KORUM",
@@ -6429,6 +6528,58 @@
         "sentBody": "Si ese email aportó a una campaña en votación, en unos minutos recibirás tu enlace personal. Mira también la carpeta de no deseado. No compartas el enlace: vota por ti.",
         "another": "Usar otro email"
       }
+    },
+    "eventRefund": {
+      "metaTitle": "Devolución de tus entradas",
+      "backToPortal": "Volver a la página de la entidad",
+      "invalid": {
+        "title": "Este enlace de devolución no es válido",
+        "description": "Usa el enlace del email que te avisó del cambio de fecha. Si lo copiaste, comprueba que esté completo."
+      },
+      "noLink": {
+        "title": "Falta tu enlace",
+        "description": "Para pedir la devolución, abre el enlace del email que te avisó del cambio de fecha."
+      },
+      "cancelled": {
+        "title": "El evento se ha cancelado",
+        "description": "«{title}» se ha cancelado: te devolvemos el 100 % sin que tengas que hacer nada."
+      },
+      "requested": {
+        "title": "Ya has pedido la devolución",
+        "description": "Te devolvemos el 100 % al medio de pago con el que compraste. Puede tardar unos días en verse."
+      },
+      "closed": {
+        "title": "Ya no se puede pedir la devolución",
+        "description": "El plazo terminó o ya no hay entradas que devolver. Tus entradas de «{title}» valen para el {date}."
+      },
+      "title": "«{title}» cambia de fecha",
+      "intro": "{organization} ha cambiado la fecha del evento. Si la nueva te viene bien, no tienes que hacer nada.",
+      "previousDate": "Fecha anterior",
+      "newDate": "Nueva fecha",
+      "amount": "Te devolveríamos",
+      "rules": {
+        "keep": "Si no pides la devolución, tus entradas valen para la nueva fecha.",
+        "refund": "Puedes pedirla hasta el {date}. Se devuelve el 100 %, también los gastos de gestión digital.",
+        "how": "Vuelve a tu medio de pago original (tarjeta o Bizum) y puede tardar unos días en verse. Tus entradas dejarán de valer.",
+        "used": "{count, plural, one {Una de tus compras ya se usó en la puerta: esa no se devuelve.} other {# de tus compras ya se usaron en la puerta: esas no se devuelven.}}"
+      },
+      "ask": "Quiero que me devolváis {amount}",
+      "confirm": "¿Seguro? Te devolveremos {amount} y tus entradas dejarán de valer. No se puede deshacer.",
+      "yes": "Sí, devolvedme el dinero",
+      "no": "No, me quedo las entradas",
+      "sending": "Pidiendo la devolución…",
+      "done": {
+        "title": "Devolución pedida",
+        "text": "Te devolvemos el 100 % a tu medio de pago original. Tus entradas ya no valen. Puede tardar unos días en verse."
+      },
+      "legal": "Hucha del evento {wallet} · el dinero queda retenido en PAYCOMET hasta liquidarse.",
+      "errors": {
+        "INVALID_LINK": "Este enlace no es válido. Usa el del email que te avisó del cambio de fecha.",
+        "CLOSED": "El plazo para pedir la devolución ha terminado.",
+        "NOTHING_TO_REFUND": "No quedan entradas tuyas que devolver: puede que ya la pidieras o que ya se usaran en la puerta.",
+        "RATE_LIMITED": "Demasiados intentos desde esta conexión. Espera unos minutos.",
+        "FAILED": "No hemos podido pedir la devolución. Prueba de nuevo en unos segundos."
+      }
     }
   },
   "account": {
@@ -6992,7 +7143,11 @@
       "RESIZE_VOTE_APPROVED": "la votación eligió un proyecto",
       "RESIZED_LEFT_EMPTY": "una devolución forzosa la dejó sin fondos",
       "ALL_REFUNDED": "se devolvió todo lo aportado",
-      "REOPENED_BY_REVERSAL": "una devolución forzosa la dejó por debajo de la meta"
+      "REOPENED_BY_REVERSAL": "una devolución forzosa la dejó por debajo de la meta",
+      "EVENT_DATE_REACHED": "el evento llegó a su fecha",
+      "EVENT_CANCELLED": "la entidad canceló el evento",
+      "EVENT_RESCHEDULED": "la entidad cambió la fecha del evento",
+      "EVENT_EMPTIED": "el evento celebrado se quedó sin dinero"
     },
     "actions": {
       "tenant": {
@@ -7073,7 +7228,8 @@
         "pin_set": "Portería: PIN creado",
         "session_opened": "Portería: sesión abierta",
         "session_revoked": "Portería: sesión cerrada",
-        "sync": "Portería: validaciones sin conexión sincronizadas"
+        "sync": "Portería: validaciones sin conexión sincronizadas",
+        "refunded_pass_used": "Portería: entrada leída sin cobertura antes de pedirse su devolución"
       },
       "idea": {
         "chat_access_denied": "Acceso denegado a la conversación de una idea",
@@ -7256,6 +7412,13 @@
       },
       "dossier": {
         "downloaded": "Expediente en PDF descargado"
+      },
+      "event": {
+        "rate_limited": "Eventos: demasiados intentos seguidos de cancelar o cambiar la fecha",
+        "date_reached": "Evento: llegó su fecha",
+        "cancelled": "Evento cancelado",
+        "rescheduled": "Evento: cambio de fecha",
+        "reschedule_refund": "Evento: devolución pedida tras el cambio de fecha"
       }
     },
     "dossier": {
@@ -7578,7 +7741,8 @@
           "pass": "Entradas con su QR"
         },
         "gate": {
-          "pinRevoked": "Aviso de PIN de portería anulado"
+          "pinRevoked": "Aviso de PIN de portería anulado",
+          "refundedPassUsed": "Aviso de una entrada usada y devuelta"
         },
         "initiative": {
           "goalReached": "Aviso de meta conseguida",
@@ -7656,6 +7820,12 @@
         },
         "expired": {
           "decisionReminder": "Recordatorio de decidir sobre una campaña vencida"
+        },
+        "event": {
+          "dateReached": "Aviso de que el evento llegó a su fecha",
+          "changed": "Aviso de cancelación o cambio de fecha a quienes firman",
+          "cancelledBuyer": "Aviso de evento cancelado a quien compró",
+          "rescheduledBuyer": "Aviso de cambio de fecha con enlace de devolución"
         }
       },
       "payoutGapMismatch": "ATENCIÓN: de la hucha salió menos que el importe para el proyecto y la comisión juntos. Hay que revisar el libro mayor.",

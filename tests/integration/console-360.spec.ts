@@ -794,13 +794,17 @@ describe('QA-A02 · Auto-Impulso de una campaña que fracasa, con contracargo re
 const FULL_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
 
 describe('QA-A03 · tarifas: taquilla en curso y vuelta a los valores globales', () => {
-  it('una taquilla que ya cumplió la meta pero no ha cerrado también protege los gastos de gestión de la entidad', async () => {
+  it('una taquilla que ya cumplió la meta o ya se celebró pero no se ha liquidado también protege los gastos de gestión de la entidad', async () => {
     const { organization } = await organizationWithSigners({ customRules: true, ticketFeeFixedCents: 50, ticketFeeBps: 100 });
     await createInitiative(db, organization.id, { status: 'GOAL_REACHED', format: 'TICKETING', closesAt: new Date(Date.now() + 5 * DAY) });
     await expect(saveOrganizationTariffs(db, verified, organization.id, { ...FULL_TARIFF, ticketFeeFixedCents: 80 })).rejects.toMatchObject({ reason: 'PUBLISHED_TICKETING' });
-    // Una taquilla que ya cerró no protege nada.
+    // Un evento ya celebrado y sin liquidar también protege (se puede aplazar y volver a vender, Sprint 5.13).
+    const { organization: held } = await organizationWithSigners({ customRules: true, ticketFeeFixedCents: 50, ticketFeeBps: 100 });
+    await createInitiative(db, held.id, { status: 'GOAL_REACHED', format: 'TICKETING', closesAt: new Date(Date.now() - DAY) });
+    await expect(saveOrganizationTariffs(db, verified, held.id, { ...FULL_TARIFF, ticketFeeFixedCents: 80 })).rejects.toMatchObject({ reason: 'PUBLISHED_TICKETING' });
+    // Una taquilla ya liquidada (cerrada) no protege nada.
     const { organization: closed } = await organizationWithSigners({ customRules: true, ticketFeeFixedCents: 50, ticketFeeBps: 100 });
-    await createInitiative(db, closed.id, { status: 'GOAL_REACHED', format: 'TICKETING', closesAt: new Date(Date.now() - DAY) });
+    await createInitiative(db, closed.id, { status: 'CLOSED', format: 'TICKETING', closesAt: new Date(Date.now() - DAY) });
     await expect(saveOrganizationTariffs(db, verified, closed.id, { ...FULL_TARIFF, ticketFeeFixedCents: 80 })).resolves.toBeUndefined();
   });
 

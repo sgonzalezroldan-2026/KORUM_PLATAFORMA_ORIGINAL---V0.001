@@ -1,4 +1,5 @@
 import { returnSelfBoostToKorum } from '@/core/finance/self-boost-return';
+import { closeEventAtDate } from '@/core/ticketing/event-date-reached';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { raiseAlert } from '../ops-alerts';
 import { inTransaction, type Db } from '@/lib/db';
@@ -21,9 +22,14 @@ import { recordStatusChange } from '@/services/audit/status-change-audit';
  *
  * Desde el Sprint 5.5b, al terminar avisa a IndexNow de las iniciativas públicas que han cambiado (vencidas hoy, conseguidas o cerradas desde el último aviso):
  * es el barrido diario de respaldo. Nunca hace fallar la tarea.
+ *
+ * Desde el Sprint 5.13 (decisión 30 del promotor) un **evento con entradas** que llega a su fecha sin agotar el aforo ya no vence: con algo vendido pasa a
+ * liquidable por lo vendido (`GOAL_REACHED`) y sin nada se cierra sin dinero que mover (`CANCELLED`). Lo hace `closeEventAtDate`.
  */
 export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, deadline, deps }) => {
   let expired = 0;
+  let eventsSettle = 0;
+  let eventsEmpty = 0;
   let examined = 0;
   let cursor = 0;
   // Una campaña que no se puede vencer (p. ej. su Auto-Impulso no tiene asiento) no frena a las demás: se anota, se avisa y la tarea falla al final.
@@ -36,7 +42,10 @@ export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, de
     const page = await db.initiative.findMany({ where: { status: 'FUNDRAISING', closesAt: { lte: now }, id: { gt: cursor } }, orderBy: { id: 'asc' }, take: batchSize, select: { id: true } });
     for (const { id } of page) {
       try {
-        if (await expireIfDue(db, id, now)) expired += 1;
+        const outcome = await expireIfDue(db, id, now);
+        if (outcome === 'EXPIRED') expired += 1;
+        else if (outcome === 'SETTLE') eventsSettle += 1;
+        else if (outcome === 'CLOSE_EMPTY') eventsEmpty += 1;
       } catch (error) {
         failure ??= error;
         await raiseAlert(db, { type: 'JOB_FAILED', severity: 'CRITICAL', dedupeKey: `CAMPAIGN_EXPIRY:${id}`, targetType: 'Initiative', targetId: String(id), detail: { job: 'CAMPAIGN_EXPIRY', error: error instanceof Error ? error.message.slice(0, 300) : 'desconocido' } }, now);
@@ -49,32 +58,33 @@ export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, de
       const indexNow = await notifyIndexNow({ db, keyring: () => deps.keyring() });
       if (polls.failure !== null) throw polls.failure;
       if (failure !== null) throw failure;
-      return { processed: examined + polls.closed, hasMore: polls.hasMore, detail: { expired, ...pollDetail, indexNowUrls: indexNow.status === 'SENT' ? indexNow.urls : 0 } };
+      return { processed: examined + polls.closed, hasMore: polls.hasMore, detail: { expired, eventsSettle, eventsEmpty, ...pollDetail, indexNowUrls: indexNow.status === 'SENT' ? indexNow.urls : 0 } };
     }
     if (deadline !== undefined && Date.now() > deadline) {
       if (failure !== null) throw failure;
-      return { processed: examined + polls.closed, hasMore: true, detail: { expired, ...pollDetail } };
+      return { processed: examined + polls.closed, hasMore: true, detail: { expired, eventsSettle, eventsEmpty, ...pollDetail } };
     }
     cursor = last.id;
   }
 };
 
-async function expireIfDue(db: Db, id: number, now: Date): Promise<boolean> {
+async function expireIfDue(db: Db, id: number, now: Date): Promise<'EXPIRED' | 'SETTLE' | 'CLOSE_EMPTY' | null> {
   return inTransaction(db, async (tx) => {
     // Bloquea la fila: un cobro que llega a la vez no puede cumplir la meta entre la lectura y el cambio de estado.
     await tx.initiative.updateMany({ where: { id }, data: { ticketsHeld: { increment: 0 } } });
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id },
-      select: { organizationId: true, format: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true }
+      select: { organizationId: true, format: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true, maintFeeCents: true, quotaReservedMaintCents: true }
     });
-    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative)) return false;
+    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative)) return null;
+    if (initiative.format === 'TICKETING') return closeEventAtDate(tx, { id, ...initiative }, now);
     const { count } = await tx.initiative.updateMany({ where: { id, status: 'FUNDRAISING' }, data: { status: 'EXPIRED' } });
-    if (count !== 1) return false;
+    if (count !== 1) return null;
     await recordStatusChange(tx, { initiativeId: id, organizationId: initiative.organizationId, from: 'FUNDRAISING', to: 'EXPIRED', reason: 'DEADLINE_PASSED' });
     const selfBoostReturnedCents = await returnSelfBoostToKorum(tx, id, now);
     const raisedCents = initiative.raisedCents - selfBoostReturnedCents;
     await tx.auditLog.create({ data: { actorType: 'SYSTEM', organizationId: initiative.organizationId, action: 'initiative.expired', targetType: 'Initiative', targetId: String(id), metadataJson: { raisedCents, goalCents: initiative.goalCents, selfBoostReturnedCents } } });
     await notifySigners(tx, initiative.organizationId, 'initiative.expired', String(id), { initiativeId: id, walletEscrowId: initiative.walletEscrowId, raisedCents, goalCents: initiative.goalCents });
-    return true;
+    return 'EXPIRED';
   });
 }

@@ -1044,6 +1044,7 @@ model Initiative {
   resizePoll          ResizePoll?
   escrowLedgerEntries EscrowLedgerEntry[]
   supporterBroadcasts SupporterBroadcast[]
+  eventReschedules    EventReschedule[]
 
   @@index([organizationId, status])
   @@index([status, closesAt])
@@ -1435,6 +1436,9 @@ model TicketPass {
   checkedInCount  Int             @default(0)
   qrHmacSignature String
   lastCheckedInAt DateTime?
+  /// Momento en que KORUM emitió el pase al procesar el pago (`createdAt` es la hora del cobro que da el banco). Con él se sabe quién terminó de pagar
+  /// después de un cambio de fecha y debe recibir su aviso (Sprint 5.13).
+  issuedAt        DateTime        @default(now())
   /// Reembolso o contracargo: el pase deja de valer en la puerta.
   revokedAt       DateTime?
   createdAt       DateTime        @default(now())
@@ -1712,6 +1716,28 @@ model SupporterBroadcast {
 
   @@unique([initiativeId, templateKey])
   @@index([completedAt, id])
+}
+
+/// Cambio de fecha de un evento con entradas (Sprint 5.13, decisión 30 del promotor). Cada comprador de antes del cambio recibe un aviso con un enlace
+/// personal para recuperar el 100 % hasta `refundUntil` (14 días); mientras alguno esté abierto, la entidad no puede liquidar. Las fechas no cambian
+/// después: un segundo cambio es otra fila. El aviso se reparte por lotes desde `cursorId` (última aportación tratada).
+model EventReschedule {
+  id                 Int        @id @default(autoincrement())
+  initiativeId       Int
+  previousDate       DateTime
+  newDate            DateTime
+  /// Hasta cuándo vale el enlace de devolución de este cambio.
+  refundUntil        DateTime
+  /// Persona firmante que cambió la fecha.
+  createdById        String?
+  createdAt          DateTime   @default(now())
+  cursorId           Int        @default(0)
+  queuedCount        Int        @default(0)
+  noticesCompletedAt DateTime?
+  initiative         Initiative @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+
+  @@index([initiativeId, refundUntil])
+  @@index([noticesCompletedAt, id])
 }
 
 /// Votación de redimensionamiento de una campaña vencida (Sprint 4.4b): votan quienes donaron, una persona un voto, durante 7 días. Sus opciones, su plazo y

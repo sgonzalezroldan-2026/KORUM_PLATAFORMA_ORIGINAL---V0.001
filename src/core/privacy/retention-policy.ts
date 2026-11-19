@@ -27,6 +27,12 @@ export const RETENTION = {
   supportTicketDaysAfterResolved: 2 * 365,
   /** Nombre que un voluntario da a su móvil de portería («Puerta norte»; puede ser un nombre de persona): se vacía 90 días después de que la sesión caduque (Sprint 4.5). */
   gateDeviceLabelDaysAfterExpiry: 90,
+  /**
+   * Lecturas de la portería (qué entrada, cuándo y si se admitió) y sesiones de los móviles: 1 año desde que se liquida el evento, o desde que terminó de
+   * devolverse o se cerró sin ventas (Sprint 5.13, `L-124`; tabla de plazos §3.6). Sirven ante un contracargo del tipo «no asistí»; después se borran y
+   * queda solo la cifra de cada pase (`checkedInCount`).
+   */
+  gateReadingDaysAfterSettlement: 365,
   /** Contenido de las notificaciones enviadas: 12 meses (se conserva el hecho del envío). */
   notificationDays: 365,
   /** Consentimientos: mientras estén vigentes + 3 años. */

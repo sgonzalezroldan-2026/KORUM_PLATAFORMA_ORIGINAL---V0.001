@@ -142,7 +142,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
 
             {card.achieved || card.closed ? (
               <p className="flex min-h-12 items-center justify-center rounded-2xl bg-emerald-100 px-4 text-center font-joy font-bold text-emerald-950">
-                {card.achieved ? (ticketing ? t('detail.ticketsSoldOut') : t('detail.closed')) : t('detail.contributionsClosed')}
+                {card.achieved ? (ticketing ? t('detail.ticketsSoldOut') : t('detail.closed')) : ticketing ? t('detail.ticketSalesClosed') : t('detail.contributionsClosed')}
               </p>
             ) : (
               <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn w-full rounded-2xl! py-4! font-joy text-base">

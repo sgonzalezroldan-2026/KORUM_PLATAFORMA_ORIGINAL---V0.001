@@ -131,7 +131,8 @@ export async function resumeCampaignPayouts(db: Db, provider: PaymentProvider, d
   // Solo las que ya tienen todas las firmas que exige su entidad (las dos, o solo la de Dirección con firma única): las que esperan una no ocupan el lote
   // (auditoría financiera del 4.4a, M5).
   const waiting = await db.escrowPayout.findMany({
-    where: { status: 'PENDING_DOUBLE_CHECK', signatures: { some: { signerRole: 'DIRECTOR' } }, OR: [{ organization: { signatureMode: 'SINGLE' } }, { signatures: { some: { signerRole: 'COSIGNER' } } }] },
+    // Y solo de campañas que siguen esperando su liquidación: la de un evento cancelado o vuelto a vender no se reintenta cada día (auditoría financiera del 5.13).
+    where: { status: 'PENDING_DOUBLE_CHECK', initiative: { status: 'GOAL_REACHED' }, signatures: { some: { signerRole: 'DIRECTOR' } }, OR: [{ organization: { signatureMode: 'SINGLE' } }, { signatures: { some: { signerRole: 'COSIGNER' } } }] },
     orderBy: { id: 'asc' },
     take: limit,
     select: { id: true }

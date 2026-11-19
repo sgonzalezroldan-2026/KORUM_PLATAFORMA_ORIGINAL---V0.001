@@ -1,3 +1,4 @@
+import { syncHeldEvent } from '@/core/ticketing/held-event';
 import { spanishFiscalYear } from '@/core/checkout/checkout-rules';
 import { postJournal } from '@/core/finance/ledger.service';
 import { bpsOf } from '@/core/finance/money';
@@ -81,7 +82,7 @@ export interface PaymentEventOptions {
   documentsSecret?: string;
 }
 
-async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions): Promise<void> {
+async function completePayment(tx: Db, notification: PaymentNotification, occurredAt: Date, options: PaymentEventOptions, processedAt: Date): Promise<void> {
   const { order } = notification;
   // Bloquea la iniciativa: dos notificaciones del mismo pedido, o un cobro y una aprobación simultáneos, van uno detrás de otro.
   const contribution = await loadLockedContribution(tx, { paycometOrder: order });
@@ -182,6 +183,8 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     // Quienes firman saben al instante que toca liquidar; el aviso sale en el propio flujo del cobro (Sprint 2.6). Quienes donaron, por lotes (Sprint 4.4a).
     await markGoalReached(tx, contribution.organizationId, contribution.initiativeId, occurredAt);
   }
+  // Un cobro de entradas que llega con el evento ya celebrado y sin liquidar sube lo vendido: el mantenimiento proporcional se pone al día (Sprint 5.13).
+  if (contribution.type === 'TICKET') await syncHeldEvent(tx, contribution.initiativeId, processedAt);
   // El recibo se escribe en la misma transacción que el asiento: o existen los dos o ninguno.
   await queueContributionReceipt(tx, contribution.id);
 }
@@ -190,7 +193,8 @@ export async function applyPaymentNotification(tx: Db, notification: PaymentNoti
   const occurredAt = notification.occurredAt ?? receivedAt;
   switch (notification.kind) {
     case 'PAYMENT_COMPLETED':
-      await completePayment(tx, notification, occurredAt, options);
+      // La hora del banco puede ser anterior a la fecha del evento aunque el aviso llegue después: lo ya celebrado se decide con la de proceso (auditoría del 5.13).
+      await completePayment(tx, notification, occurredAt, options, new Date(Math.max(occurredAt.getTime(), receivedAt.getTime())));
       return;
     case 'PAYMENT_FAILED': {
       // Se bloquea primero la iniciativa, en el mismo orden que un cobro: un fallo y un cobro simultáneos no se quedan esperándose.

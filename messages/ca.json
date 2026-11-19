@@ -864,6 +864,63 @@
       "why": "Mentre no decidiu, les famílies no saben què passarà amb la seva aportació.",
       "wallet": "Guardiola de la iniciativa",
       "cta": "Decidir ara"
+    },
+    "event": {
+      "dateReached": {
+        "settleSubject": "«{initiative}» ja es pot liquidar",
+        "settlePreheader": "L’esdeveniment ha arribat a la seva data: es liquida pel que s’ha venut.",
+        "settleTitle": "L’esdeveniment ja es pot liquidar",
+        "settleBody": "«{initiative}» ha arribat a la seva data amb {count, plural, one {# entrada venuda} other {# entrades venudes}}. Encara que no s’hagi omplert l’aforament, es liquida pel que s’ha venut.",
+        "settleNext": "Demaneu la liquidació des del tauler: arriba al compte de l’entitat amb les signatures de sempre.",
+        "raised": "Recaptat amb les entrades",
+        "settleCta": "Anar a les liquidacions",
+        "emptySubject": "«{initiative}» s’ha tancat sense vendes",
+        "emptyPreheader": "No s’ha venut cap entrada: no hi ha diners per moure.",
+        "emptyTitle": "Esdeveniment tancat sense vendes",
+        "emptyBody": "«{initiative}» ha arribat a la seva data sense cap entrada venuda, així que s’ha tancat sense diners per moure.",
+        "emptyCta": "Anar al tauler"
+      },
+      "changed": {
+        "cancelledSubject": "S’ha cancel·lat «{initiative}»",
+        "cancelledPreheader": "Una persona signant ha cancel·lat l’esdeveniment.",
+        "cancelledTitle": "Esdeveniment cancel·lat",
+        "cancelledBody": "{count, plural, =0 {S’ha cancel·lat «{initiative}». No hi havia entrades venudes.} one {S’ha cancel·lat «{initiative}». Es retorna el 100 % de l’entrada venuda i avisem qui la va comprar.} other {S’ha cancel·lat «{initiative}». Es retorna el 100 % de les # entrades venudes i avisem qui les va comprar.}}",
+        "rescheduledSubject": "«{initiative}» canvia de data",
+        "rescheduledPreheader": "Una persona signant ha canviat la data de l’esdeveniment.",
+        "rescheduledTitle": "Nova data de l’esdeveniment",
+        "rescheduledBody": "La nova data de «{initiative}» és el {date}.",
+        "rescheduledRefund": "Qui va comprar abans del canvi pot demanar-ne la devolució fins al {until}. Fins aleshores no es pot liquidar.",
+        "cta": "Veure la taquilla"
+      },
+      "cancelledBuyer": {
+        "subject": "Es cancel·la «{initiative}»: et retornem el 100 %",
+        "preheader": "Torna sencer al teu mitjà de pagament original.",
+        "title": "Esdeveniment cancel·lat",
+        "body": "{organization} ha cancel·lat «{initiative}». Et retornem el 100 % del que vas pagar per les entrades, també les despeses de gestió digital. Les teves entrades ja no valen.",
+        "how": "Torna al teu mitjà de pagament original (targeta o Bizum) sense que hagis de fer res. Pot trigar uns dies a veure’s.",
+        "cta": "Veure la pàgina de l’entitat"
+      },
+      "rescheduledBuyer": {
+        "subject": "«{initiative}» canvia de data",
+        "preheader": "Nova data: {date}. Si no et va bé, pots recuperar els diners.",
+        "title": "L’esdeveniment canvia de data",
+        "body": "{organization} ha canviat la data de «{initiative}». La nova data és el {date}.",
+        "keep": "Si et va bé, no has de fer res: les teves entrades valen per a la nova data.",
+        "refund": "Si no, pots recuperar el 100 % (també les despeses de gestió digital) fins al {until} amb el botó d’aquest correu.",
+        "private": "Aquest enllaç és només teu: no el reenviïs.",
+        "previousDate": "Data anterior",
+        "newDate": "Nova data",
+        "until": "Pots demanar la devolució fins al",
+        "cta": "Veure la data o demanar la devolució"
+      },
+      "refundedPassUsed": {
+        "subject": "Una entrada de «{initiative}» es va fer servir i després es va retornar",
+        "preheader": "La porteria la va llegir sense cobertura abans que se’n demanés la devolució.",
+        "title": "Entrada usada i retornada",
+        "body": "Un mòbil de la porteria de «{initiative}» va llegir sense cobertura el passi {pass} a les {time} i va deixar entrar. Abans que el mòbil recuperés la connexió, qui el va comprar va demanar la devolució amb l’enllaç del canvi de data, així que se li retorna el 100 %.",
+        "next": "Si cal, resoleu-ho amb aquesta persona fora de la plataforma. Al registre d’activitat queda anotat.",
+        "pass": "Passi"
+      }
     }
   },
   "nav": {
@@ -3131,7 +3188,7 @@
         "perUnitInc": "{amount} per unitat (inclosos al preu)",
         "ticketGateway": "Cost de la passarel·la (cobert per la gestió)",
         "ticketMaint": "Càrrec de manteniment de la plataforma",
-        "ticketNet": "Net garantit per a l’entitat",
+        "ticketNet": "Net per a l’entitat si es ven tot l’aforament",
         "maintShortfall": "La recaptació no arriba a cobrir el manteniment: faltarien {amount}.",
         "gatewayNotCovered": "Amb aquests preus les despeses de gestió no cobreixen la passarel·la ({amount} per entrada). Ho revisa KORUM; no canvia el que rep l’entitat.",
         "badgeTicketing": "Taquilla amb QR",
@@ -3141,7 +3198,8 @@
         "goalLabel": "Meta pública final exacta",
         "goalLabelTicketing": "A la guardiola amb l’aforament complet",
         "badgeResized": "Meta fixa per votació",
-        "goalLabelResized": "Meta fixa després de la votació"
+        "goalLabelResized": "Meta fixa després de la votació",
+        "ticketNetNote": "Si no es ven tot, en arribar la data de l’esdeveniment l’entitat rep el que s’ha venut, amb el manteniment rebaixat en la mateixa proporció."
       },
       "blockers": {
         "title": "Per publicar falta:",
@@ -3328,11 +3386,13 @@
         "KYB_NOT_VERIFIED": "Falten els documents del titular verificats.",
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET.",
         "NOTHING_TO_PAY": "No queda res per liquidar en aquesta campanya.",
-        "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres."
+        "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres.",
+        "REFUND_WINDOW_OPEN": "Vau canviar la data de l’esdeveniment: qui va comprar pot demanar-ne la devolució durant 14 dies. Podreu liquidar quan acabi aquest termini."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Revisar els comerços",
-        "KYB_NOT_VERIFIED": "Anar als documents del titular"
+        "KYB_NOT_VERIFIED": "Anar als documents del titular",
+        "REFUND_WINDOW_OPEN": "Veure la taquilla"
       },
       "readOnly": "Només les persones signants de l’entitat poden demanar i signar la liquidació.",
       "photosHint": "Fotos Abans i Després i agraïment (les famílies les veuran quan acabi la liquidació)",
@@ -3403,7 +3463,8 @@
         "FILE_TYPE_NOT_ALLOWED": "Puja un PDF o una foto (JPG, PNG o WEBP).",
         "FILE_MIME_MISMATCH": "El tipus del fitxer no coincideix amb el contingut. Torna’l a desar com a PDF o JPG.",
         "FILE_EXTENSION_MISMATCH": "L’extensió del fitxer no coincideix amb el contingut. Canvia-li el nom o torna’l a desar.",
-        "FILE_RETENTION_REQUIRED": "No hem pogut desar el fitxer. Torna-ho a provar."
+        "FILE_RETENTION_REQUIRED": "No hem pogut desar el fitxer. Torna-ho a provar.",
+        "REFUND_WINDOW_OPEN": "Continua obert el termini de devolució pel canvi de data. Podreu liquidar quan acabi."
       },
       "pending": {
         "title": "Liquidació {reference} · esperant les signatures",
@@ -3663,7 +3724,7 @@
         "createNew": "Crear un PIN nou"
       },
       "link": {
-        "hint": "Els voluntaris obren la porteria al seu mòbil amb aquest enllaç i escriuen el PIN. No necessiten compte.",
+        "hint": "Els voluntaris obren la porteria al seu mòbil amb aquest enllaç i escriuen el PIN. No necessiten compte. Passa’l només als voluntaris d’aquest esdeveniment i no el publiquis. Si es filtra, canvia’l aquí.",
         "open": "Obrir la porteria",
         "newTab": " (s’obre en una pestanya nova)",
         "afterPin": "L’enllaç de la porteria apareix en crear el PIN.",
@@ -3692,7 +3753,43 @@
         "NOT_FOUND": "Aquest esdeveniment ja no existeix.",
         "NOT_ALLOWED": "No es pot crear el PIN: l’esdeveniment ja ha acabat o la seva data no és vàlida.",
         "RATE_LIMITED": "Has creat molts PIN seguits. Espera una estona abans de crear-ne un altre: cada PIN nou tanca les sessions de la porta."
-      }
+      },
+      "schedule": {
+        "title": "Data i cancel·lació",
+        "held": "La data de l’esdeveniment ja ha passat: es liquida pel que s’ha venut des de «Liquidacions». Si no es va arribar a fer, encara el pots ajornar o cancel·lar.",
+        "refundOpen": "Qui va comprar abans del canvi de data pot demanar-ne la devolució fins al {date}. Fins aleshores no es pot liquidar l’esdeveniment.",
+        "reschedule": "Canviar la data",
+        "cancel": "Cancel·lar l’esdeveniment",
+        "newDate": "Nova data de l’esdeveniment",
+        "rescheduleHint": "{count, plural, =0 {Encara no s’ha venut cap entrada: el canvi no avisa ningú. Si queda aforament, la venda continua oberta fins a la nova data. Com a molt tard, el {latest}.} one {Qui va comprar l’entrada venuda rebrà un correu amb un enllaç per recuperar el 100 % durant 14 dies; mentrestant no podreu liquidar. Si queda aforament, la venda continua oberta fins a la nova data. Com a molt tard, el {latest}.} other {Qui va comprar les # entrades venudes rebrà un correu amb un enllaç per recuperar el 100 % durant 14 dies; mentrestant no podreu liquidar. Si queda aforament, la venda continua oberta fins a la nova data. Com a molt tard, el {latest}.}}",
+        "rescheduleChoose": "Tria la nova data",
+        "rescheduleConfirm": "Canviar al {date} i avisar",
+        "tooLate": "Ja no es pot canviar la data: no quedaria temps per als 14 dies de devolució abans de liquidar. Si l’esdeveniment no es pot fer, cancel·la’l i es retornarà el 100 %.",
+        "back": "Tornar",
+        "cancelWarning": "{count, plural, =0 {L’esdeveniment es tancarà i la porteria deixarà de funcionar. No es pot desfer.} one {Es retornarà el 100 % de l’entrada venuda, també les despeses de gestió digital, i avisarem qui la va comprar. La porteria deixarà de funcionar. No es pot desfer.} other {Es retornarà el 100 % de les # entrades venudes, també les despeses de gestió digital, i avisarem qui les va comprar. La porteria deixarà de funcionar. No es pot desfer.}}",
+        "cancelYes": "Sí, cancel·lar l’esdeveniment",
+        "cancelNo": "No cancel·lar-lo",
+        "cancelledWithSales": "Esdeveniment cancel·lat. Estem retornant el 100 % a qui va comprar i l’avisem per correu.",
+        "cancelledEmpty": "Esdeveniment cancel·lat. No hi havia entrades venudes, així que no hi ha res a retornar.",
+        "rescheduled": "{count, plural, =0 {Data canviada al {date}. No hi havia entrades venudes, així que no cal avisar ningú.} other {Data canviada al {date}. Avisem per correu qui va comprar: pot demanar-ne la devolució fins al {until}.}}",
+        "readOnly": "Només qui signa pot canviar la data o cancel·lar l’esdeveniment.",
+        "locked": "Aquest esdeveniment ja s’ha liquidat: ja no se’n pot canviar la data ni cancel·lar.",
+        "errors": {
+          "INVALID_INPUT": "Revisa la data triada.",
+          "NOT_FOUND": "Aquest esdeveniment ja no existeix.",
+          "NOT_AN_EVENT": "Això no és un esdeveniment amb entrades.",
+          "WRONG_STATUS": "L’esdeveniment ha canviat mentrestant. Torna a carregar la pàgina.",
+          "ALREADY_SETTLED": "L’esdeveniment ja s’ha liquidat: ja no es pot canviar.",
+          "DATE_INVALID": "Aquesta data no existeix.",
+          "DATE_IN_PAST": "La nova data ha de ser posterior a avui.",
+          "SAME_DATE": "Aquesta ja és la data de l’esdeveniment.",
+          "DATE_TOO_LATE": "Aquesta data és massa llunyana: ha de quedar temps per liquidar dins del termini de PAYCOMET.",
+          "RATE_LIMITED": "Has fet molts canvis seguits. Espera una estona abans de tornar-ho a provar.",
+          "FORBIDDEN": "No tens permís per fer-ho."
+        }
+      },
+      "closedState": "Esdeveniment cancel·lat: qui va comprar recupera el 100 % i la porteria està tancada.",
+      "closedEmpty": "Esdeveniment tancat sense vendes: no hi ha res a retornar i la porteria està tancada."
     },
     "welcomeCelebration": {
       "title": "Benvinguts a KORUM!",
@@ -3812,7 +3909,8 @@
     },
     "organiserHint": "Organitzes l’esdeveniment? Crea el PIN i l’enllaç de la porteria a «Taquilla i porteria».",
     "organiserLink": "Anar a Taquilla i porteria",
-    "metaTitle": "Porteria"
+    "metaTitle": "Porteria",
+    "storageNotice": "Aquest mòbil guarda la llista d’entrades de l’esdeveniment, i el que llegeixis sense cobertura, fins que tanquis la porteria (3 dies com a màxim). Tanca-la en acabar. La càmera només llegeix codis: no grava res. No reenviïs aquest enllaç."
   },
   "admin": {
     "headerTitle": "Consola de KORUM",
@@ -5647,7 +5745,8 @@
         "buyTickets": "Compra entrades"
       },
       "contributionsClosed": "Aquesta iniciativa ja no admet aportacions",
-      "selfBoost": "La plataforma KORUM també ha aportat i ha ajudat a aconseguir el repte."
+      "selfBoost": "La plataforma KORUM també ha aportat i ha ajudat a aconseguir el repte.",
+      "ticketSalesClosed": "La venda d’entrades d’aquest esdeveniment ha acabat"
     },
     "share": {
       "title": "Comparteix a KORUM",
@@ -6429,6 +6528,58 @@
         "sentBody": "Si aquest correu va aportar a una campanya en votació, d’aquí a uns minuts rebràs l’enllaç personal. Mira també la carpeta de correu brossa. No comparteixis l’enllaç: vota per tu.",
         "another": "Fer servir un altre correu"
       }
+    },
+    "eventRefund": {
+      "metaTitle": "Devolució de les teves entrades",
+      "backToPortal": "Tornar a la pàgina de l’entitat",
+      "invalid": {
+        "title": "Aquest enllaç de devolució no és vàlid",
+        "description": "Fes servir l’enllaç del correu que et va avisar del canvi de data. Si el vas copiar, comprova que sigui complet."
+      },
+      "noLink": {
+        "title": "Falta el teu enllaç",
+        "description": "Per demanar la devolució, obre l’enllaç del correu que et va avisar del canvi de data."
+      },
+      "cancelled": {
+        "title": "L’esdeveniment s’ha cancel·lat",
+        "description": "«{title}» s’ha cancel·lat: et retornem el 100 % sense que hagis de fer res."
+      },
+      "requested": {
+        "title": "Ja has demanat la devolució",
+        "description": "Et retornem el 100 % al mitjà de pagament amb què vas comprar. Pot trigar uns dies a veure’s."
+      },
+      "closed": {
+        "title": "Ja no es pot demanar la devolució",
+        "description": "El termini va acabar o ja no hi ha entrades per retornar. Les teves entrades de «{title}» valen per al {date}."
+      },
+      "title": "«{title}» canvia de data",
+      "intro": "{organization} ha canviat la data de l’esdeveniment. Si la nova et va bé, no has de fer res.",
+      "previousDate": "Data anterior",
+      "newDate": "Nova data",
+      "amount": "Et retornaríem",
+      "rules": {
+        "keep": "Si no demanes la devolució, les teves entrades valen per a la nova data.",
+        "refund": "La pots demanar fins al {date}. Es retorna el 100 %, també les despeses de gestió digital.",
+        "how": "Torna al teu mitjà de pagament original (targeta o Bizum) i pot trigar uns dies a veure’s. Les teves entrades deixaran de valer.",
+        "used": "{count, plural, one {Una de les teves compres ja es va fer servir a la porta: aquesta no es retorna.} other {# de les teves compres ja es van fer servir a la porta: aquestes no es retornen.}}"
+      },
+      "ask": "Vull que em retorneu {amount}",
+      "confirm": "Segur? Et retornarem {amount} i les teves entrades deixaran de valer. No es pot desfer.",
+      "yes": "Sí, retorneu-me els diners",
+      "no": "No, em quedo les entrades",
+      "sending": "Demanant la devolució…",
+      "done": {
+        "title": "Devolució demanada",
+        "text": "Et retornem el 100 % al teu mitjà de pagament original. Les teves entrades ja no valen. Pot trigar uns dies a veure’s."
+      },
+      "legal": "Guardiola de l’esdeveniment {wallet} · els diners queden retinguts a PAYCOMET fins que es liquiden.",
+      "errors": {
+        "INVALID_LINK": "Aquest enllaç no és vàlid. Fes servir el del correu que et va avisar del canvi de data.",
+        "CLOSED": "El termini per demanar la devolució ha acabat.",
+        "NOTHING_TO_REFUND": "No queden entrades teves per retornar: potser ja la vas demanar o ja es van fer servir a la porta.",
+        "RATE_LIMITED": "Massa intents des d’aquesta connexió. Espera uns minuts.",
+        "FAILED": "No hem pogut demanar la devolució. Torna-ho a provar d’aquí a uns segons."
+      }
     }
   },
   "account": {
@@ -6992,7 +7143,11 @@
       "RESIZE_VOTE_APPROVED": "la votació va triar un projecte",
       "RESIZED_LEFT_EMPTY": "una devolució forçosa la va deixar sense fons",
       "ALL_REFUNDED": "es va retornar tot el que es va aportar",
-      "REOPENED_BY_REVERSAL": "una devolució forçosa la va deixar per sota de l’objectiu"
+      "REOPENED_BY_REVERSAL": "una devolució forçosa la va deixar per sota de l’objectiu",
+      "EVENT_DATE_REACHED": "l’esdeveniment va arribar a la seva data",
+      "EVENT_CANCELLED": "l’entitat va cancel·lar l’esdeveniment",
+      "EVENT_RESCHEDULED": "l’entitat va canviar la data de l’esdeveniment",
+      "EVENT_EMPTIED": "l’esdeveniment celebrat es va quedar sense diners"
     },
     "actions": {
       "tenant": {
@@ -7073,7 +7228,8 @@
         "pin_set": "Porteria: PIN creat",
         "session_opened": "Porteria: sessió oberta",
         "session_revoked": "Porteria: sessió tancada",
-        "sync": "Porteria: validacions sense connexió sincronitzades"
+        "sync": "Porteria: validacions sense connexió sincronitzades",
+        "refunded_pass_used": "Porteria: entrada llegida sense cobertura abans de demanar-ne la devolució"
       },
       "idea": {
         "chat_access_denied": "Accés denegat a la conversa d’una idea",
@@ -7256,6 +7412,13 @@
       },
       "dossier": {
         "downloaded": "Expedient en PDF descarregat"
+      },
+      "event": {
+        "rate_limited": "Esdeveniments: massa intents seguits de cancel·lar o canviar la data",
+        "date_reached": "Esdeveniment: ha arribat la seva data",
+        "cancelled": "Esdeveniment cancel·lat",
+        "rescheduled": "Esdeveniment: canvi de data",
+        "reschedule_refund": "Esdeveniment: devolució demanada després del canvi de data"
       }
     },
     "dossier": {
@@ -7578,7 +7741,8 @@
           "pass": "Entrades amb el seu QR"
         },
         "gate": {
-          "pinRevoked": "Avís de PIN de porteria anul·lat"
+          "pinRevoked": "Avís de PIN de porteria anul·lat",
+          "refundedPassUsed": "Avís d’una entrada usada i retornada"
         },
         "initiative": {
           "goalReached": "Avís de meta aconseguida",
@@ -7656,6 +7820,12 @@
         },
         "expired": {
           "decisionReminder": "Recordatori de decidir sobre una campanya vençuda"
+        },
+        "event": {
+          "dateReached": "Avís que l’esdeveniment ha arribat a la seva data",
+          "changed": "Avís de cancel·lació o canvi de data a qui signa",
+          "cancelledBuyer": "Avís d’esdeveniment cancel·lat a qui va comprar",
+          "rescheduledBuyer": "Avís de canvi de data amb enllaç de devolució"
         }
       },
       "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",

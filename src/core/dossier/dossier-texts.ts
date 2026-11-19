@@ -31,7 +31,8 @@ export const DOSSIER_EMAIL_TEMPLATE_KEYS: ReadonlySet<string> = new Set([
   'sponsor.creditPool', 'sponsor.renewalInvite', 'sponsor.toEntityFund', 'sponsor.awaitingDecision', 'sponsor.lateReceived', 'activityFund.received', 'activityFund.reminder', 'activityFund.paid',
   'tax.certificateReady', 'privacy.inactivityNotice', 'account.passkeyAdded', 'support.received', 'support.replied', 'platform.message', 'pledge.charged', 'pledge.skipped', 'pledge.failed',
   'idea.quorumReached', 'idea.centerReplied', 'signer.handover', 'org.kybStatus', 'payout.executed', 'payout.changed', 'initiative.goalReachedSupporter', 'initiative.achievementPhotos',
-  'initiative.expiredDecided', 'initiative.resizeClosed', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter', 'expired.decisionReminder'
+  'initiative.expiredDecided', 'initiative.resizeClosed', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter', 'expired.decisionReminder',
+  'event.dateReached', 'event.changed', 'event.cancelledBuyer', 'event.rescheduledBuyer', 'gate.refundedPassUsed'
 ]);
 
 export function dossierTextsFrom({ dossier, audit, actions, statuses, roles }: DossierTranslators): DossierTexts {

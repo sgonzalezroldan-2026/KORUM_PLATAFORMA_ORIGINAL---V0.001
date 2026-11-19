@@ -13,7 +13,15 @@ import { reverseJournal } from './ledger.service';
  * redimensionamiento y su reembolso por falta de proyecto, así que cubre los tres caminos. Es idempotente: la clave del contra-asiento es la del pedido
  * del Auto-Impulso y una aportación ya devuelta no se vuelve a tocar. Devuelve los céntimos devueltos.
  */
-export async function returnSelfBoostToKorum(tx: Db, initiativeId: number, now: Date): Promise<number> {
+/** Por qué vuelve: el texto queda en el contra-asiento, que no se puede corregir después (auditoría financiera del Sprint 5.13). */
+const REASON_TEXT = {
+  EXPIRED: 'la campaña venció sin llegar a la meta',
+  EVENT_CANCELLED: 'el evento se canceló',
+  EVENT_HELD: 'el evento llegó a su fecha y se liquida por lo vendido'
+} as const;
+export type SelfBoostReturnReason = keyof typeof REASON_TEXT;
+
+export async function returnSelfBoostToKorum(tx: Db, initiativeId: number, now: Date, reason: SelfBoostReturnReason = 'EXPIRED'): Promise<number> {
   const boosts = await tx.contribution.findMany({
     where: { initiativeId, type: 'SELF_BOOST', status: 'COMPLETED' },
     select: { id: true, amountCents: true, paycometOrder: true },
@@ -27,7 +35,7 @@ export async function returnSelfBoostToKorum(tx: Db, initiativeId: number, now: 
     await reverseJournal(tx, {
       journalId: injection.id,
       idempotencyKey: `selfboost-return:${boost.paycometOrder ?? boost.id}`,
-      description: `Devolución a KORUM del Auto-Impulso ${boost.paycometOrder ?? boost.id}: la campaña venció sin llegar a la meta`,
+      description: `Devolución a KORUM del Auto-Impulso ${boost.paycometOrder ?? boost.id}: ${REASON_TEXT[reason]}`,
       occurredAt: now
     });
     await tx.contribution.update({ where: { id: boost.id }, data: { status: 'REFUNDED', refundedCents: boost.amountCents, refundedAt: now } });

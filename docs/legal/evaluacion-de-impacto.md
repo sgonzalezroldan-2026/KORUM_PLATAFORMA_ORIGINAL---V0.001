@@ -483,7 +483,7 @@ Todas tienen sprint en el [plan](../PLAN_IMPLEMENTACION_ATOMICO.md). **Ninguna p
 | Las búsquedas de la consola que cruzan varias entidades anotan de qué entidad son, para que la lista de accesos esté completa | R8 | 5.10c |
 | Baja de una entidad: copia de sus datos, cierre y borrado | R9 | 5.10d |
 | Claves de ejemplo rechazadas; códigos de acceso cifrados en la cola de emails; cadena de huellas de la auditoría | R2, R14 | 5.11a |
-| Plazo de las lecturas de portería y de los canjes de vales; aviso al voluntario | R13 | 5.13 y 5.14c |
+| Plazo de las lecturas de portería y de los canjes de vales; aviso al voluntario | R13 | 5.13 (hecho: lecturas y aviso) y 5.14c (canjes) |
 | Casilla de aceptación y ventana de resumen en cada pago | Todos | 5.15 |
 | Plazos del contacto y de la facturación de los comercios | R9 | 5.16c |
 | Aviso de cada liberación de dinero al email general de la entidad, cuando firma una sola persona | R19 | 5.19 |

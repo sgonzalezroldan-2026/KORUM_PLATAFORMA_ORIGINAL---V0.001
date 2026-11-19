@@ -4,6 +4,7 @@ import { revalidatePortalAfterPayout } from '@/lib/portal/revalidate-portal';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
+import { advanceRescheduleNoticesNow, EVENT_RESCHEDULED_TEMPLATE } from '@/services/notifications/event-reschedule-notices';
 import { advanceSupporterBroadcastNow, type SupporterTemplate } from '@/services/notifications/supporter-broadcast';
 
 /**
@@ -56,6 +57,22 @@ export function dispatchSupporterBroadcastSoon(db: KorumPrismaClient, hmacSecret
       if (rows.length > 0) await dispatchOutbox(db, buildOutboxDeps(db), { ids: rows.map((row) => row.id), limit: rows.length });
     } catch (error) {
       reportError(error, { stage: 'supporter-broadcast-soon' });
+    }
+  });
+}
+
+/**
+ * Reparte y envía ya, después de responder, el aviso de un cambio de fecha a quienes compraron (Sprint 5.13): el enlace de devolución dura 14 días y no debe
+ * esperar a la tarea diaria. Si falla o no termina, `SUPPORTER_BROADCAST` y `OUTBOX_DISPATCH` lo completan sin repetir a nadie.
+ */
+export function dispatchRescheduleNoticesSoon(db: KorumPrismaClient, hmacSecret: string, rescheduleId: number): void {
+  after(async () => {
+    try {
+      await advanceRescheduleNoticesNow(db, rescheduleId, { now: new Date(), batchSize: 200, deadline: Date.now() + BROADCAST_SOON_BUDGET_MS, hmacSecret });
+      const rows = await db.outboxMessage.findMany({ where: { templateKey: EVENT_RESCHEDULED_TEMPLATE, status: 'PENDING', idempotencyKey: { startsWith: `${EVENT_RESCHEDULED_TEMPLATE}:${rescheduleId}:` } }, orderBy: { id: 'asc' }, select: { id: true }, take: BROADCAST_SOON_LIMIT });
+      if (rows.length > 0) await dispatchOutbox(db, buildOutboxDeps(db), { ids: rows.map((row) => row.id), limit: rows.length });
+    } catch (error) {
+      reportError(error, { stage: 'reschedule-notices-soon' });
     }
   });
 }

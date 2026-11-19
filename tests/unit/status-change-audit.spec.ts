@@ -88,6 +88,8 @@ describe('rastro de los cambios de estado de una iniciativa', () => {
         'src/core/finance/campaign-window.ts',
         'src/core/jobs/handlers/campaign-expiry.ts',
         'src/core/jobs/handlers/mass-refund.ts',
+        'src/core/ticketing/event-date-reached.ts',
+        'src/core/ticketing/held-event.ts',
         'src/services/panel/studio.service.ts',
         'src/services/payments/campaign-close.ts',
         'src/services/payments/goal-reached.ts',
@@ -95,10 +97,11 @@ describe('rastro de los cambios de estado de una iniciativa', () => {
         'src/services/payments/payment-reversals.ts',
         'src/services/resize/expired-decision.service.ts',
         'src/services/resize/resize-close.ts',
-        'src/services/resize/resized-loss.ts'
+        'src/services/resize/resized-loss.ts',
+        'src/services/ticketing/event-schedule.service.ts'
       ].sort()
     );
-    expect(writers.reduce((sum, entry) => sum + entry.writes.length, 0)).toBe(13);
+    expect(writers.reduce((sum, entry) => sum + entry.writes.length, 0)).toBe(17);
   });
 
   it('cada cambio de estado lleva su recordStatusChange justo después, no en otra parte del archivo', () => {

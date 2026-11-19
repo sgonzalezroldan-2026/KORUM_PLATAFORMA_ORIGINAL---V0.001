@@ -43,6 +43,7 @@ function payoutOutcome(done: Done): string | null {
       return 'blocked';
     case 'NOT_GOAL':
     case 'SPONSORS_PENDING':
+    case 'REFUND_WINDOW_OPEN':
       return 'notReady';
     case 'INVOICE_INVALID':
       return 'invoice';

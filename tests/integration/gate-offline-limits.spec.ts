@@ -381,7 +381,7 @@ describe('Sprint 4.6 · avisos y panel de la portería', () => {
     expect(rows.every((row) => row.templateKey === 'gate.pinRevoked')).toBe(true);
   }, 240_000);
 
-  it('el panel dice si el PIN se anuló por abuso (y deja de decirlo al crear otro) y deja de enseñar un evento pasado hace más de una semana', async () => {
+  it('el panel dice si el PIN se anuló por abuso (y deja de decirlo al crear otro) y deja de enseñar un evento liquidado pasado hace más de una semana', async () => {
     const { event } = await eventSetup();
     const asDirector = await signerOf(db, event.organizationId);
     const find = async () => (await loadGateAdmin(db, asDirector, event.organizationId)).find((item) => item.id === event.initiativeId)!;
@@ -398,6 +398,10 @@ describe('Sprint 4.6 · avisos y panel de la portería', () => {
     const old = await eventSetup({ status: 'GOAL_REACHED', closesAt: new Date(Date.now() - 30 * 86_400_000) });
     const visible = async (target: { organization: { id: string }; initiative: { id: number } }) => (await loadGateAdmin(db, director(target.organization.id), target.organization.id)).some((item) => item.id === target.initiative.id);
     expect(await visible(recent)).toBe(true);
+    // Desde el Sprint 5.13 un evento celebrado y sin liquidar se sigue viendo (aún se puede aplazar o cancelar); liquidado y pasado hace más de una semana, ya no.
+    expect(await visible(old)).toBe(true);
+    // Liquidado: pasa a cerrado (`CLOSED`), como al terminar el envío de la liquidación.
+    await db.initiative.update({ where: { id: old.initiative.id }, data: { status: 'CLOSED', closedAt: new Date() } });
     expect(await visible(old)).toBe(false);
   }, 240_000);
 

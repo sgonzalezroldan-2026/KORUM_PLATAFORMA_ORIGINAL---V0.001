@@ -19,9 +19,13 @@ import { DONOR_RECIPIENT_SELECT, donorRecipient } from './donor-recipient';
  * mensaje), su **resultado** cuando gana un proyecto (`initiative.resizeResult`, solo a quien no pidió que le devolvieran lo suyo) y el **aviso de
  * reembolso** (`initiative.refundingSupporter`, también a quien ya tiene la devolución en marcha). Cada una solo sale mientras la campaña sigue en el
  * estado que la justifica; si no, se descarta.
+ *
+ * Sprint 5.13, eventos con entradas: el **aviso de cancelación** (`event.cancelledBuyer`) va a quien **compró** (entradas `TICKET`, no donaciones), también a
+ * quien ya tiene la devolución en marcha, una vez por persona aunque comprara varias veces. El aviso de un cambio de fecha lleva un enlace por persona y por
+ * cambio, y lo reparte `event-reschedule-notices.ts`.
  */
 
-export const SUPPORTER_TEMPLATES = ['initiative.goalReachedSupporter', 'initiative.achievementPhotos', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter'] as const;
+export const SUPPORTER_TEMPLATES = ['initiative.goalReachedSupporter', 'initiative.achievementPhotos', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter', 'event.cancelledBuyer'] as const;
 export type SupporterTemplate = (typeof SUPPORTER_TEMPLATES)[number];
 
 /** A qué donaciones llega cada aviso: el de reembolso, también a las que ya se están devolviendo (el dinero aún no ha llegado). */
@@ -30,7 +34,18 @@ const RECIPIENT_STATUSES: Record<SupporterTemplate, Array<'COMPLETED' | 'REFUND_
   'initiative.achievementPhotos': ['COMPLETED'],
   'initiative.resizePoll': ['COMPLETED'],
   'initiative.resizeResult': ['COMPLETED'],
-  'initiative.refundingSupporter': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED']
+  'initiative.refundingSupporter': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED'],
+  'event.cancelledBuyer': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED']
+};
+
+/** A qué aportaciones llega: las donaciones, salvo el aviso de un evento cancelado, que es para quien compró entradas. */
+const RECIPIENT_TYPE: Record<SupporterTemplate, 'DONATION' | 'TICKET'> = {
+  'initiative.goalReachedSupporter': 'DONATION',
+  'initiative.achievementPhotos': 'DONATION',
+  'initiative.resizePoll': 'DONATION',
+  'initiative.resizeResult': 'DONATION',
+  'initiative.refundingSupporter': 'DONATION',
+  'event.cancelledBuyer': 'TICKET'
 };
 
 const isSupporterTemplate = (key: string): key is SupporterTemplate => (SUPPORTER_TEMPLATES as readonly string[]).includes(key);
@@ -75,6 +90,7 @@ function readiness(templateKey: SupporterTemplate, status: string, poll: PollFor
     case 'initiative.resizeResult':
       return (status === 'GOAL_REACHED' || status === 'CLOSED') && poll?.status === 'CLOSED_APPROVED' ? 'SEND' : 'DROP';
     case 'initiative.refundingSupporter':
+    case 'event.cancelledBuyer':
       return status === 'REFUNDING' || status === 'REFUNDED' ? 'SEND' : 'DROP';
   }
 }
@@ -107,7 +123,7 @@ async function advance(db: Db, broadcastId: number, run: BroadcastRun): Promise<
       return { queued: 0, done: true };
     }
     const rows = await tx.contribution.findMany({
-      where: { initiativeId: broadcast.initiativeId, type: 'DONATION', status: { in: RECIPIENT_STATUSES[templateKey] }, id: { gt: broadcast.cursorId } },
+      where: { initiativeId: broadcast.initiativeId, type: RECIPIENT_TYPE[templateKey], status: { in: RECIPIENT_STATUSES[templateKey] }, id: { gt: broadcast.cursorId } },
       orderBy: { id: 'asc' },
       take: run.batchSize,
       select: { id: true, locale: true, ...DONOR_RECIPIENT_SELECT }

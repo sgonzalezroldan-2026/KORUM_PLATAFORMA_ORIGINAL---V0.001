@@ -4,12 +4,14 @@ import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { revokeGateSessionAction, rotateGateCodeAction, setGatePinAction, type GateAdminResult } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/(gestion)/taquilla/actions';
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
+import { EventSchedulePanel } from '@/components/panel/event-schedule-panel';
 import { getPathname, useRouter } from '@/i18n/navigation';
 import type { GateEventView } from '@/repositories/gate-admin.repository';
 
 /**
  * Un evento de taquilla en «Taquilla y portería»: PIN de la puerta (se enseña una vez; cambiarlo cierra las sesiones abiertas), enlace de la portería y los
- * móviles que están dentro, que se pueden cerrar uno a uno. Solo lo usan quienes firman, con segundo factor.
+ * móviles que están dentro, que se pueden cerrar uno a uno. Desde el Sprint 5.13, también cancelar el evento o cambiar su fecha. Solo lo usan quienes firman,
+ * con segundo factor.
  */
 
 export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; event: GateEventView; canAct: boolean }) {
@@ -80,6 +82,8 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
   const needsConfirm = event.pinActive || event.sessions.length > 0;
   const date = format.dateTime(new Date(event.eventDate), { dateStyle: 'long' });
   const headingId = `gate-event-${event.id}`;
+  // Cancelado (Sprint 5.13): sin PIN, enlace ni móviles; solo su estado y la confirmación de quien lo canceló.
+  const closed = event.status === 'REFUNDING' || event.status === 'REFUNDED' || event.status === 'CANCELLED';
   const pinText = revealed ? revealed.pin : null;
 
   return (
@@ -94,6 +98,12 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
         <p className="text-sm font-semibold tabular-nums">{event.ticketMax === null ? t('sold', { sold: event.ticketsSold }) : t('soldOf', { sold: event.ticketsSold, max: event.ticketMax })}</p>
       </div>
 
+      {closed ? (
+        <p className="text-sm font-semibold" data-testid="gate-admin-closed">
+          {t(event.status === 'CANCELLED' ? 'closedEmpty' : 'closedState')}
+        </p>
+      ) : (
+        <>
       {revealed ? (
         <div role="status" className="flex flex-col gap-2 rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-4 text-emerald-950" data-testid="gate-admin-pin">
           <p className="font-bold">{t('pin.created')}</p>
@@ -199,7 +209,10 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
           </ul>
         )}
       </div>
+        </>
+      )}
 
+      <EventSchedulePanel orgSlug={orgSlug} eventId={event.id} ticketsSold={event.ticketsSold} schedule={event.schedule} canAct={canAct} closed={closed} />
     </li>
   );
 }

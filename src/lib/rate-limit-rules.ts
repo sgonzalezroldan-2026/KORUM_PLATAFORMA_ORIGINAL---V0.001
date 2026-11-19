@@ -21,6 +21,12 @@ export const CAMPAIGN_PAYOUT_RULE: RateLimitRule & PurgeRule = { prefix: 'campai
 /** Decidir qué hacer con una campaña vencida (reembolsar o lanzar la votación), por persona y entidad (Sprint 4.4b). */
 export const EXPIRED_DECISION_RULE: RateLimitRule & PurgeRule = { prefix: 'expired-decision:', limit: 10, windowMs: 60 * 60_000 };
 
+/** Cancelar o cambiar de fecha un evento (Sprint 5.13), por entidad y persona firmante: cada cambio avisa por email a todas las personas que compraron. */
+export const EVENT_CHANGE_RULE: RateLimitRule & PurgeRule = { prefix: 'event-change:', limit: 10, windowMs: 60 * 60_000 };
+
+/** Devoluciones desde el enlace de un cambio de fecha (Sprint 5.13), por red: como la votación, cada enlace es personal, pero sin tope se podrían probar enlaces sin fin. */
+export const EVENT_REFUND_RULE: RateLimitRule & PurgeRule = { prefix: 'event-refund:ip:', limit: 60, windowMs: 15 * 60_000 };
+
 /**
  * Votos de redimensionamiento por red (Sprint 4.4b): cada enlace ya es personal y vota una vez, pero sin tope se podrían probar enlaces sin fin. Es
  * generoso porque un colegio entero puede votar desde el mismo wifi.

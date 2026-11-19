@@ -138,7 +138,8 @@ export async function saveGlobalRules(db: Db, actor: VerifiedSuperadminActor, ra
 
     if (changesTicketFee(before, next)) {
       const onSale = await tx.initiative.count({
-        where: { format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, closesAt: { gt: now }, organization: eligible }
+        // También un evento ya celebrado sin liquidar: se puede aplazar y volver a vender (Sprint 5.13), y su meta se calculó con la tarifa de entonces.
+        where: { format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, OR: [{ closesAt: { gt: now } }, { payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' } }], organization: eligible }
       });
       if (onSale > 0) throw new GlobalRulesRejectedError('TICKETING_ON_SALE', ['ticketFeeFixedCents', 'ticketFeeBps']);
     }

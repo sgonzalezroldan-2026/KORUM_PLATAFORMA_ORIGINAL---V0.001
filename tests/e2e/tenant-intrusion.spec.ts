@@ -67,7 +67,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       await test.step('censo de acciones del panel con la entidad de otra persona', async () => {
         // Cada acción del manifiesto tiene sus argumentos preparados, y no sobra ninguno: una acción nueva (o una que desaparece) obliga a revisar la prueba.
         expect(panelActions.map((action) => action.name).sort()).toEqual(Object.keys(forVictim).sort());
-        expect(panelActions.length).toBeGreaterThanOrEqual(43); // 45 hasta el 5.12a, que retiró dos acciones de la taquilla.
+        expect(panelActions.length).toBeGreaterThanOrEqual(45); // 45 hasta el 5.12a, que retiró dos acciones de la taquilla; 43 tras él y 45 desde el 5.13 (cancelar y cambiar la fecha de un evento).
         // Control: la misma llamada con la entidad propia sí llega a la acción y funciona. Lo que sigue se niega por la entidad, no por cómo se llama.
         const own = await invoke(page, urlOf('resendInvitationAction'), byName.get('resendInvitationAction')!.id, [attacker.slug]);
         expect(['SENT', 'NOT_NEEDED']).toContain(statusOf(own.result));

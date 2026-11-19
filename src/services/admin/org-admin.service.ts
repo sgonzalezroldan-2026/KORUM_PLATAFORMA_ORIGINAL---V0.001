@@ -25,7 +25,8 @@ export class OrgAdminRejectedError extends Error {
  * reabre y volverían a vender con la tarifa nueva): la compra de entradas lee la tarifa actual de la entidad, no la de la publicación (auditoría financiera, M2).
  */
 export async function hasTicketingOnSale(db: Db, organizationId: string, now: Date): Promise<boolean> {
-  return (await db.initiative.count({ where: { organizationId, format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, closesAt: { gt: now } } })) > 0;
+  // También un evento ya celebrado sin liquidar: se puede aplazar y volver a vender (Sprint 5.13).
+  return (await db.initiative.count({ where: { organizationId, format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, OR: [{ closesAt: { gt: now } }, { payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' } }] } })) > 0;
 }
 
 /** Bloquea la fila de la entidad y la devuelve; una entidad archivada no se toca (su ficha es solo de lectura). */

@@ -16,6 +16,8 @@
 | **`COSIGNER`** | Rol de 2ª firma mancomunada (Presidencia del AMPA/AFA, Tesorería del club, Representación del patronato, Titularidad del colegio…). Su cargo visible es `roleLabel`. |
 | **Doble firma (*2-Man Rule*)** | Aprobación que exige dos firmas de dos personas distintas (`DIRECTOR` + `COSIGNER`) para aprobar ideas y liberar fondos. |
 | **Portería** | Vista móvil para validar entradas (el sorteo se retiró en el Sprint 5.12a; desde el 5.14c, también canjear vales en el puesto) (`/panel/[orgSlug]/porteria`), con PIN por evento y `GateSession`. |
+| **Cambio de fecha de un evento** | La entidad mueve la fecha de un evento con entradas aún sin liquidar (`EventReschedule`, Sprint 5.13). Quien compró antes recibe un **enlace de devolución** personal para recuperar el 100 % durante 14 días; mientras siga abierto, el evento no se liquida. |
+| **Liquidar por lo vendido** | Lo que pasa con un evento con entradas al llegar su fecha sin agotar el aforo (decisión 30, Sprint 5.13): se liquida lo recaudado, con el mantenimiento rebajado en la misma proporción. Sin ventas, se cierra sin dinero. |
 | **Super-Admin** | Persona que opera la plataforma KORUM (`User.isSuperadmin`). |
 
 ## Campañas y estados

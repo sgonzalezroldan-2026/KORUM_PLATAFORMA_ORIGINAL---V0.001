@@ -38,6 +38,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'double_check.wrong_signer',
     'activity_fund.rate_limited',
     'expired.rate_limited',
+    'event.rate_limited',
     'payout.rate_limited',
     'file.not_available',
     'gate.pin_blocked',
@@ -116,6 +117,10 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'initiative.resized',
     'initiative.resized_emptied',
     'initiative.resized_rescaled',
+    'event.date_reached',
+    'event.cancelled',
+    'event.rescheduled',
+    'event.reschedule_refund',
     'initiative.cover_published',
     'initiative.cover_removed',
     'studio.initiative_saved',
@@ -133,7 +138,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'achievement.thanks_saved'
   ],
   ideas: ['idea.approved', 'idea.converted', 'idea.rejected', 'idea.replied', 'idea.signature_revalidated'],
-  gate: ['gate.check_in', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync'],
+  gate: ['gate.check_in', 'gate.refunded_pass_used', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync'],
   sponsors: [
     'sponsor.approved',
     'sponsor.rejected',
@@ -298,7 +303,7 @@ export const INITIATIVE_TARGET_TYPES = ['Initiative', 'INITIATIVE'] as const;
 /** Motivos de un cambio de estado de una iniciativa (`initiative.status_changed`). */
 export const STATUS_CHANGE_REASONS = [
   'PUBLISHED', 'GOAL_REACHED', 'DEADLINE_PASSED', 'DRAFT_DISCARDED', 'PAYOUT_SENT', 'ENTITY_CHOSE_REFUND', 'RESIZE_VOTE_OPENED', 'RESIZE_VOTE_WITHOUT_PROJECT', 'RESIZE_VOTE_APPROVED',
-  'RESIZED_LEFT_EMPTY', 'ALL_REFUNDED', 'REOPENED_BY_REVERSAL'
+  'RESIZED_LEFT_EMPTY', 'ALL_REFUNDED', 'REOPENED_BY_REVERSAL', 'EVENT_DATE_REACHED', 'EVENT_CANCELLED', 'EVENT_RESCHEDULED', 'EVENT_EMPTIED'
 ] as const;
 export type StatusChangeReason = (typeof STATUS_CHANGE_REASONS)[number];
 export const isStatusChangeReason = (value: unknown): value is StatusChangeReason => typeof value === 'string' && (STATUS_CHANGE_REASONS as readonly string[]).includes(value);

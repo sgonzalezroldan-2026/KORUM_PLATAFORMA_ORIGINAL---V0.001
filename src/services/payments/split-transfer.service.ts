@@ -3,6 +3,8 @@ import { getAccountBalance, postJournal } from '@/core/finance/ledger.service';
 import { payoutApprovalLines, splitTransferLines } from '@/core/finance/payment-journals';
 import { payoutFigures } from '@/core/payouts/campaign-payout-rules';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
+import { openRescheduleRefundUntil } from '@/services/ticketing/reschedule-window';
+import { shrinkReservedMaintenance } from '@/core/finance/quota-reservation';
 import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { evaluateDoubleCheck, type SignatureInvalidReason } from '@/core/security/double-check-evaluation';
 import { payoutDigestFor } from '@/core/security/signature-hash';
@@ -33,6 +35,7 @@ export type PayoutBlockCode =
   | 'PROVIDER_UNAVAILABLE'
   | 'SIGNATURES'
   | 'WINDOW_EXPIRED'
+  | 'REFUND_WINDOW_OPEN'
   | 'WRONG_STATUS';
 
 export class PayoutNotAllowedError extends Error {
@@ -122,6 +125,8 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     // Una campaña redimensionada por votación (Sprint 4.4b) tampoco vuelve a recaudar: un contracargo posterior solo baja lo que se liquida.
     const resized = initiative.resizePoll?.status === 'CLOSED_APPROVED';
     if (initiative.status !== 'GOAL_REACHED' || !(isGoalMet(initiative) || eventHeld || resized)) throw new PayoutNotAllowedError(payoutId, 'la iniciativa no ha alcanzado la meta', 'NOT_GOAL');
+    // Tras un cambio de fecha, quien compró puede pedir su dinero durante 14 días: hasta que se cierre el plazo no se liquida (Sprint 5.13).
+    if (await openRescheduleRefundUntil(tx, initiativeId, now)) throw new PayoutNotAllowedError(payoutId, 'sigue abierto el plazo de devolución por un cambio de fecha', 'REFUND_WINDOW_OPEN');
     // El dinero de un comercio cobrado y sin revisar ya cuenta para la meta, pero el centro aún puede rechazarlo y devolvérselo: liquidar antes lo
     // haría imposible (heredado del Sprint 3.5, punto 9). La iniciativa está bloqueada: nadie aprueba ni rechaza a un comercio mientras tanto.
     const unreviewed = await tx.sponsor.count({ where: { initiativeId, status: 'PENDING', paidAt: { not: null }, contribution: { status: 'COMPLETED' } } });
@@ -141,6 +146,9 @@ async function approveSignedPayout(db: Db, payoutId: number, signatureSecret: st
     } catch {
       throw new PayoutNotAllowedError(payoutId, `no quedan cobros dentro de la ventana de ${SPLIT_WINDOW_DAYS} días para repartir el neto`, 'WINDOW_EXPIRED');
     }
+    // Un evento liquidado por lo vendido cobra menos mantenimiento del reservado al publicarlo: la diferencia vuelve al tope anual de la entidad, como en una
+    // campaña redimensionada (auditoría financiera del Sprint 5.13). Se hace aquí, al fijar las cifras, porque hasta liquidar lo vendido aún puede cambiar.
+    if (initiative.format === 'TICKETING') await shrinkReservedMaintenance(tx, initiativeId, initiative.maintFeeCents);
     // Primero aprobada: la base solo admite repartos de una liquidación aprobada.
     await tx.escrowPayout.update({ where: { id: payoutId }, data: { status: 'APPROVED', approvedAt: now, destinationSplitId: account } });
     await tx.escrowPayoutSplit.createMany({ data: plan.map((split) => ({ payoutId, contributionId: split.contributionId, amountCents: split.amountCents })) });

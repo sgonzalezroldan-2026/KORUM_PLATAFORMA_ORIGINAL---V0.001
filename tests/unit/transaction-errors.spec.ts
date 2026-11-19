@@ -57,6 +57,7 @@ describe('payoutBlockers: «ventana vencida» solo cuando de verdad vence', () =
   const fakeTx = (findMany: () => Promise<unknown[]>) =>
     ({
       sponsor: { count: async () => 0 },
+      eventReschedule: { findMany: async () => [] },
       contribution: { findMany },
       sponsorAllocation: { findMany: async () => [] },
       escrowPayoutSplit: { groupBy: async () => [] },

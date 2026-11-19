@@ -25,7 +25,7 @@
 ## 2. Resumen en cifras (2026-11-18)
 
 - **48 puntos:** P1–P26 (P10 está hecho, P25 decidido en la SESIÓN D1 y P16 no se usó: 23 vivos, con P2 partido en cuatro) y **N1–N22**, más los sprints 6.1 y 6.2.
-- **144 puntos legales y fiscales** (`L-001`–`L-144`, [Anexo A](#anexo-a--los-144-puntos-legales-y-fiscales-uno-a-uno)): **92 resueltos o decididos** por el promotor y **52 abiertos**. De los abiertos, **48 son cambios pequeños en la aplicación**, cada uno con su sprint; **3 dependen de Paycomet** (`L-041`, `L-061`, `L-071`) y **1 de Veri\*factu** (`L-026`).
+- **144 puntos legales y fiscales** (`L-001`–`L-144`, [Anexo A](#anexo-a--los-144-puntos-legales-y-fiscales-uno-a-uno)): **96 resueltos o decididos** por el promotor y **48 abiertos**. De los abiertos, **44 son cambios pequeños en la aplicación**, cada uno con su sprint; **3 dependen de Paycomet** (`L-041`, `L-061`, `L-071`) y **1 de Veri\*factu** (`L-026`).
 - **Consultas a terceros:** a Paycomet, **21 preguntas** (12 bloquean los primeros cobros reales); a los proveedores de Veri\*factu, **8** (no bloquean hasta su sprint); al abogado, **1**, y a la asesoría, **3**, que no bloquean nada (N20). Están redactadas en [CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md](CONSULTAS_ABOGADO_ASESORIA_PAYCOMET.md).
 - **Trabajo de código hasta la preproducción:** 30 sesiones (sprints 5.10 a 5.24 y las sesiones T1, D1 y R1), entre 162 y 204 horas estimadas. Después, el bloque de producto (5.25 a 5.29 y la revisión de nativo) y la fase 6.
 - **Lo que el código todavía no aplica** (decidido, pendiente de construir): los vales (5.14), los comercios en dos modos (5.16), el IVA incluido (5.20), el Auto-Impulso siempre visible y compensado en el reparto (5.21), la liquidación solo a la entidad (5.19) y Mi Hucha apagada (5.15).
@@ -81,7 +81,7 @@
 | **N5** | IVA incluido y facturas | 🔴 | Claude | Sprints 5.20a y 5.20b |
 | **N6** | Veri\*factu | 🔴 | Claude + Promotor | Sprint 5.23 |
 | **N7** | Campañas: devolución automática a los 14 días | 🔴 | Claude | Sprint 5.17 |
-| **N8** | Entradas: liquidar por lo vendido, cancelación y cambio de fecha | 🔴 | Claude | Sprint 5.13 |
+| **N8** | Entradas: liquidar por lo vendido, cancelación y cambio de fecha | 🔴 | Claude | Sprint 5.13. **Hecho (2026-11-19): cerrado** |
 | **N9** | Tarifas: todo cambio a 30 días y tarifa guardada al publicar | 🟠 | Claude | Sprint 5.18 |
 | **N10** | Auto-Impulso: siempre visible, compensado en el reparto y 💎 sin IVA | 🔴 | Claude | Sprint 5.21 |
 | **N11** | Liquidación solo a la cuenta de la entidad y entrega automática | 🔴 | Claude | Sprint 5.19 |
@@ -97,14 +97,13 @@
 | **N21** | Contracargo de una campaña ya liquidada: revisión y decisión del Super-Admin, sin asumirlo de forma automática | 🟠 | Claude | Sprint 5.19b |
 | **N22** | Baja de la entidad, suspensión por el Super-Admin y fin del encargo: la aplicación no tiene forma de dar de baja a una entidad, que las condiciones y el contrato de encargo prometen, ni de suspenderla | 🔴 | Claude | Sprint 5.10d (entrega nueva, 5–7 h) |
 
-### 3.3 Los 52 puntos legales abiertos, por destino
+### 3.3 Los 48 puntos legales abiertos, por destino
 
 | Destino | Puntos |
 | :--- | :--- |
 | Sprint 5.10a | `L-057`, `L-020` (primera capa) |
 | Sprint 5.10b | `L-010`, `L-011`, `L-015`, `L-053`, `L-064` |
 | Sprint 5.10c | `L-004`, `L-005`, `L-007`, `L-018`, `L-042`, `L-045`, `L-049`, `L-054`, `L-059` |
-| Sprint 5.13 | `L-123`, `L-124`, `L-130`, `L-134` |
 | Sprint 5.15 | `L-016`, `L-020` (aceptación en el pago) |
 | Sprint 5.16b | `L-040`, `L-081`, `L-082`, `L-088` |
 | Sprint 5.16c | `L-037`, `L-038`, `L-039`, `L-078`, `L-079`, `L-087`, `L-089`, `L-090` |
@@ -313,7 +312,7 @@ El resumen de cada decisión está en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PR
 - **N5 · IVA incluido y facturas (5.20a y 5.20b).** Completa a entidades y comercios; simplificada en el recibo de las familias. Una sola factura a la entidad por todo lo retenido, pasarela incluida (decisión 50); el IVA de esa línea se cuadra con el promotor al abrir el 5.20a. La factura de un comercio con contracargo solo se anula si el banco indica fraude.
 - **N6 · Veri\*factu (5.23), sprint propio.**
 - **N7 · Campañas (5.17).** Devolución automática a los 14 días con avisos a 7, 3 y 1; email a quien donó el día del vencimiento con la fecha exacta.
-- **N8 · Entradas (5.13).** El evento se liquida por lo vendido; la cancelación devuelve el 100 %; el cambio de fecha devuelve a quien lo pida en 14 días.
+- **N8 · Entradas (5.13).** El evento se liquida por lo vendido; la cancelación devuelve el 100 %; el cambio de fecha devuelve a quien lo pida en 14 días. **Hecho (2026-11-19):** con las decisiones de apertura del promotor (la liquidación espera a que se cierren los 14 días; se puede aplazar un evento ya celebrado mientras no se haya liquidado; la fecha nueva no pasa del máximo de la campaña desde su publicación; el mantenimiento de un evento que no se agota baja en proporción a lo vendido) y los puntos `L-123`, `L-124`, `L-130` y `L-134`. **Cerrado.**
 - **N9 · Tarifas (5.18).** Todo cambio a 30 días, con email y aviso en el Estudio; se guarda la tarifa con la que se publicó cada campaña.
 - **N10 · Auto-Impulso (5.21).** Siempre visible sin importe (se quita el ajuste de divulgación), frase en el email, línea con importe en la liquidación y el expediente, solo campañas con presupuesto, compensación en el reparto y 💎 sobre la comisión sin IVA.
 - **N11 · Liquidación (5.19).** Solo a la cuenta de la entidad (pago al proveedor aplazado); entrega automática 5 días antes de vencer el plazo, también en el Fondo de actividades.
@@ -487,24 +486,24 @@ Para que no se vuelvan a abrir por error. La lista completa, con fecha, está en
 | L-112 | Conservación de los votos | 4.4b | 394 | Claude | abierto → Sprint 5.17 |
 | L-113 | Una campaña vencida sin decidir | 4.4b | 395 | Claude | abierto → Sprint 5.17 |
 
-#### Paquete 8 · Portería y sorteo (este, retirado) (4 abiertos)
+#### Paquete 8 · Portería y sorteo (este, retirado) (0 abiertos)
 
 | ID | Punto | Origen | Línea en CUMPLIMIENTO | Para | Estado |
 | :-: | :--- | :-: | :-: | :--- | :-: |
 | L-072 | Pase de una papeleta de rifa | 5.6 | 334 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-122 | Voluntarios sin cuenta que entran con un PIN compartido | 4.5 | 414 | — | resuelto (2026-11-17) |
-| L-123 | Lista de pases y cola de lecturas en el móvil del voluntario | 4.5 | 415 | Claude | abierto → Sprint 5.13 |
-| L-124 | Conservación de las lecturas de portería (`TicketCheckIn`, `GateSession`) | 4.5 | 416 | Claude | abierto → Sprint 5.13 |
+| L-123 | Lista de pases y cola de lecturas en el móvil del voluntario | 4.5 | 415 | — | resuelto (2026-11-19; Sprint 5.13) |
+| L-124 | Conservación de las lecturas de portería (`TicketCheckIn`, `GateSession`) | 4.5 | 416 | — | resuelto (2026-11-19; Sprint 5.13) |
 | L-125 | El Super-Admin no entra en la portería ni crea PIN | 4.5 | 417 | — | resuelto (2026-11-17) |
 | L-126 | Lectura sin cobertura | 4.5 | 418 | — | resuelto (2026-11-17) |
 | L-127 | La cámara del voluntario | 4.5 | 419 | — | resuelto (2026-11-17) |
 | L-128 | Sorteo certificado | 4.5 | 420 | — | resuelto (2026-11-18; rifas retiradas) |
 | L-129 | Sorteo desde el día del evento | 4.5 | 421 | — | resuelto (2026-11-18; rifas retiradas) |
-| L-130 | Evento sin el aforo completo | 4.5 | 422 | Claude | abierto → Sprint 5.13 |
+| L-130 | Evento sin el aforo completo | 4.5 | 422 | — | resuelto (2026-11-19; Sprint 5.13) |
 | L-131 | Ronda extra por una sola persona firmante | 4.6 | 426 | — | resuelto (2026-11-18) |
 | L-132 | Qué ven quienes participaron | 4.6 | 427 | — | resuelto (2026-11-18) |
 | L-133 | Nombre de quien hace la ronda extra en el aviso por email | 4.6 | 429 | — | resuelto (2026-11-17) |
-| L-134 | El enlace de la portería es una credencial compartida por WhatsApp | 4.6 | 430 | Claude | abierto → Sprint 5.13 |
+| L-134 | El enlace de la portería es una credencial compartida por WhatsApp | 4.6 | 430 | — | resuelto (2026-11-19; Sprint 5.13) |
 
 #### Paquete 9 · Consola, soporte de KORUM, auditoría y trazabilidad (6 abiertos)
 

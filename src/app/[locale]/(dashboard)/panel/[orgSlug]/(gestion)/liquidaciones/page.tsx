@@ -32,7 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 
 const BLOCKER_LINKS: Partial<Record<ReadyInitiativeView['blockers'][number], string>> = {
   SPONSORS_PENDING: 'aprobaciones#comercios',
-  KYB_NOT_VERIFIED: 'ajustes#documentos'
+  KYB_NOT_VERIFIED: 'ajustes#documentos',
+  REFUND_WINDOW_OPEN: 'taquilla'
 };
 
 export default async function CampaignPayoutsPage({ params }: { params: Promise<{ locale: Locale; orgSlug: string }> }) {

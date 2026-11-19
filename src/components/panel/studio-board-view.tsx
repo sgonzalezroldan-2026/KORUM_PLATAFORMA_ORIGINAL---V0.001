@@ -156,6 +156,9 @@ function TicketingRows({ board, mode }: { board: TicketingBoard; mode: 'ADD' | '
       </div>
       <div className="border-t border-slate-600 pt-2">
         <Row label={t('ticketNet')} value={money(board.netCents)} tone="total" />
+        <p className="mt-1.5 text-xs text-slate-300" data-testid="studio-ticket-net-note">
+          {t('ticketNetNote')}
+        </p>
       </div>
       {board.maintShortfallCents > 0 ? (
         <p role="status" className="rounded-xl bg-amber-100 p-2.5 text-xs font-semibold text-amber-950">

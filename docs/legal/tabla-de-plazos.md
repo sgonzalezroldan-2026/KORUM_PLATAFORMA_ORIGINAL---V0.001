@@ -100,9 +100,9 @@ Los 3 años de las dos últimas filas son el plazo en que prescriben las infracc
 | Dato | Responde | Plazo | Después | Estado |
 | :--- | :--- | :--- | :--- | :--- |
 | Entrada o vale: email de quien compró y código QR | KORUM | Como su compra: 6 años desde el cierre del ejercicio | Se quita el email | Hecho para las entradas. Los vales llegan en el Sprint 5.14 |
-| Lecturas de la portería (qué entrada, cuándo y si se admitió) y canjes de vales | Entidad | 1 año desde que se liquida el evento o la venta | Borrado | Sprint 5.13 para las entradas y 5.14c para los vales (hoy se conservan con el evento) |
+| Lecturas de la portería (qué entrada, cuándo y si se admitió) y canjes de vales | Entidad | 1 año desde que se liquida el evento o la venta | Borrado | Hecho para las entradas (Sprint 5.13); los vales, en el 5.14c (hoy se conservan con el evento) |
 | Nombre que un voluntario da a su móvil | Entidad | 90 días desde que caduca su sesión de portería | Se vacía | Hecho |
-| Sesión de portería de un móvil (sin datos de la persona) | Entidad | Como las lecturas | Borrado | Sprint 5.13 (hoy se conserva con el evento) |
+| Sesión de portería de un móvil (sin datos de la persona) | Entidad | Como las lecturas | Borrado | Hecho (Sprint 5.13) |
 
 ### 3.7 Votación de un proyecto más pequeño
 
@@ -254,7 +254,7 @@ Todo lo que no está hecho tiene sprint:
 | Email directo de KORUM a una entidad, 12 meses | 5.10c |
 | Las búsquedas de la consola que cruzan varias entidades anotan de qué entidad son | 5.10c |
 | Baja de una entidad: copia de sus datos durante 30 días y cierre. Suspensión: la entidad consulta su panel, pero no publica, cambia, firma ni mueve dinero; no se borra nada | 5.10d |
-| Lecturas y sesiones de portería, 1 año desde la liquidación | 5.13 |
+| Lecturas y sesiones de portería, 1 año desde la liquidación | 5.13 (hecho) |
 | Canjes de vales, 1 año desde la liquidación | 5.14c |
 | Contacto y datos de facturación de los comercios | 5.16c |
 | Relación entre el voto y la aportación | 5.17 |

@@ -1,6 +1,6 @@
 # Condiciones de entradas y vales
 
-> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que compran entradas para un evento o vales de una entidad.
 > **Se acepta en:** el pago, con la casilla obligatoria «He leído y acepto las condiciones de entradas y vales» y su ventana de resumen (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -55,7 +55,7 @@ Si la entidad cancela el evento, **te devolvemos el 100 % de lo que pagaste**, i
 
 ### 3.6 Si el evento cambia de fecha
 
-Te avisamos por email. Si la nueva fecha no te viene bien, **puedes recuperar el 100 % durante 14 días** con el enlace de ese aviso; la devolución es automática. Si no la pides, tu entrada vale para la nueva fecha.
+Te avisamos por email. Si la nueva fecha no te viene bien, **puedes recuperar el 100 % durante 14 días** con el enlace de ese aviso; la devolución es automática. Si no la pides, tu entrada vale para la nueva fecha. Si la pides, tus entradas dejan de valer. Una entrada que ya se usó en la puerta no se devuelve.
 
 ## 4. Vales
 
