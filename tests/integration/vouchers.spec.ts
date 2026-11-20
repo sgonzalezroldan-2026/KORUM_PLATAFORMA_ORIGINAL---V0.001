@@ -29,6 +29,7 @@ import { createInitiative, createOrganization, createTestClient, createUser, tes
  * - Dos lectores gastan a la vez vales del mismo QR: nunca se gasta más que el saldo y ningún vale dos veces; reenviar un canje no gasta otra vez; cada canje
  *   queda con su puesto y su hora.
  * - Una venta de vales no vence, no se cancela ni se cambia de fecha como un evento, su pase no abre la puerta de un evento y no se compra como una entrada.
+ *   Desde el Sprint 5.14c sale en «Taquilla y portería» y al cerrarse pasa a liquidable (`voucher-lifecycle.spec.ts`).
  */
 
 const secrets = { accountCode: 'KORUMOCK', terminal: '1', password: 'contraseña-de-integración-vales' };
@@ -470,7 +471,7 @@ describe('lo que pidieron las auditorías del 5.14a', () => {
 });
 
 describe('una venta de vales no es un evento', () => {
-  it('su pase no abre la puerta, no vence en su fecha, no se cancela como un evento y no aparece en «Taquilla y portería»', async () => {
+  it('su pase no abre la puerta, no se cancela como un evento, sale en «Taquilla y portería» como venta de vales y al cerrarse no vence: pasa a liquidable (Sprint 5.14c)', async () => {
     const { organization, initiative, director } = await voucherSale();
     const { pass } = await buyVouchers(initiative.id, 2);
     const stand = await gateActor(organization.id, initiative.id, director);
@@ -478,11 +479,11 @@ describe('una venta de vales no es un evento', () => {
     const cancelling = cancelEvent(db, director, organization.id, { initiativeId: initiative.id }, new Date());
     await expect(cancelling).rejects.toBeInstanceOf(EventScheduleError);
     await expect(cancelling).rejects.toMatchObject({ reason: 'NOT_AN_EVENT' });
-    expect((await loadGateAdmin(db, director, organization.id)).map((row) => row.id)).not.toContain(initiative.id);
+    expect((await loadGateAdmin(db, director, organization.id)).find((row) => row.id === initiative.id)).toMatchObject({ kind: 'VOUCHER' });
 
     await db.initiative.update({ where: { id: initiative.id }, data: { closesAt: new Date(Date.now() - 60_000) } });
     await campaignExpiryHandler({ db, now: new Date(), batchSize: 50, deps: jobDeps });
-    expect((await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } })).status).toBe('FUNDRAISING');
+    expect((await db.initiative.findUniqueOrThrow({ where: { id: initiative.id } })).status).toBe('GOAL_REACHED');
     await expect(reserveVouchers(db, { initiativeId: initiative.id, quantity: 1, mode: 'VOUCHERS', buyer: { guestEmail: 'tarde@pruebas.example' }, paymentMethod: 'CARD' })).rejects.toBeInstanceOf(VoucherReservationError);
   });
 });

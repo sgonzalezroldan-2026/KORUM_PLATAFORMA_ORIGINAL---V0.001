@@ -16,7 +16,7 @@
 ## 2. Listados, fichas públicas y viralidad
 
 - **Filtros ocultos por defecto** en el portal de familias y en el cuadro de mandos de la entidad; se despliegan con `🔍 Filtrar` y muestran un contador si hay filtros activos.
-- **Rifas retiradas** (decisión del promotor, 2026-11-18): se retiraron de la aplicación y de sus textos en los Sprints 5.12a y 5.12b, y ningún texto nuevo habla de rifas, papeletas o sorteos; los **vales** llegan en el 5.14.
+- **Rifas retiradas** (decisión del promotor, 2026-11-18): se retiraron de la aplicación y de sus textos en los Sprints 5.12a y 5.12b, y ningún texto nuevo habla de rifas, papeletas o sorteos; los **vales** llegaron en los Sprints 5.14a, 5.14b y 5.14c.
 - **En la pestaña pública "Iniciativas y taquilla" solo aparecen iniciativas `FUNDRAISING`** (etiqueta visible «Recaudando»), destacando las que tienen *Matching 2x* activo.
 - **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio y por el Auto-Impulso de KORUM (que no suma a ningún curso).
 - **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**, con su hora de cierre desde el Sprint 5.17b (decisión 79: en toda iniciativa, los pagos se cierran 20 minutos antes y la ficha lo dice).

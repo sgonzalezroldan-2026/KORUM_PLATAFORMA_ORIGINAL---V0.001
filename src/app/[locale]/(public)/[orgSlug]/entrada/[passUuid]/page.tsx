@@ -3,6 +3,7 @@ import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/serve
 import { notFound } from 'next/navigation';
 import QRCode from 'qrcode';
 import { PassActions } from '@/components/checkout/pass-actions';
+import { VoucherRefundButton } from '@/components/checkout/voucher-refund-button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { buildPassQrPayload, verifyPassViewSignature } from '@/core/ticketing/qr-signature';
 import { getEnv } from '@/config/env';
@@ -11,18 +12,29 @@ import { getPrisma } from '@/lib/prisma';
 import { absoluteUrl } from '@/lib/seo/marketing-routes';
 import { passPath } from '@/lib/seo/portal-routes';
 import { getPassForView } from '@/repositories/public.repository';
+import { loadVoucherRefund } from '@/services/ticketing/voucher-refund.service';
+import { cancelledAfterSettlement } from '@/core/ticketing/voucher-lifecycle-rules';
+import { Link } from '@/i18n/navigation';
 
 /**
  * Pase de vales (Sprint 5.14b, QA-VAL03): un solo QR por compra con su **saldo** (vales que quedan de los comprados) y hasta cuándo se pueden gastar. Se enseña
  * en el puesto de la entidad, que lee el QR y descuenta los que se gastan. Un pase sin saldo o caducado lo dice en texto, no solo con color.
+ *
+ * Desde el Sprint 5.14c: el botón de la **devolución** mientras haya un plazo abierto (14 días desde la compra sin gastar nada, o desde que la entidad acortó la
+ * validez, por lo no gastado) y, si la entidad **canceló la venta**, el aviso de que sus vales ya no se gastan: antes de liquidar, la plataforma devuelve sola lo
+ * no gastado; después, se pide a la entidad, con el enlace a su página de ayuda (decisiones 49 y 69).
  */
-async function VoucherPass({ pass, qrSvg, shareUrl, locale, now }: { pass: NonNullable<Awaited<ReturnType<typeof getPassForView>>>; qrSvg: string; shareUrl: string; locale: string; now: Date }) {
+async function VoucherPass({ pass, qrSvg, shareUrl, locale, orgSlug, signature, now }: { pass: NonNullable<Awaited<ReturnType<typeof getPassForView>>>; qrSvg: string; shareUrl: string; locale: string; orgSlug: string; signature: string; now: Date }) {
   const t = await getTranslations({ locale, namespace: 'portal.pass' });
   const format = await getFormatter({ locale });
   const balance = Math.max(0, pass.quantity - pass.checkedInCount);
   const validUntil = pass.initiative.voucherValidUntil;
   const expired = validUntil !== null && validUntil.getTime() <= now.getTime();
-  const status = expired ? t('voucherExpired') : balance === 0 ? t('voucherSpent') : null;
+  const cancelled = pass.initiative.voucherCancelledAt !== null;
+  // Cancelada cuando ya estaba liquidada responde la entidad; cancelada antes (aunque se liquidara después por lo gastado), devolvió la plataforma.
+  const settled = cancelledAfterSettlement(pass.initiative.voucherCancelledAt, pass.initiative.payout?.approvedAt ?? null);
+  const status = cancelled ? null : expired ? t('voucherExpired') : balance === 0 ? t('voucherSpent') : null;
+  const refund = await loadVoucherRefund(getPrisma(), pass.uuid, now);
   return (
     <section className="korum-trust-vault mx-auto max-w-md space-y-4 p-6 text-center" aria-labelledby="pass-title" data-testid="voucher-pass">
       <h1 id="pass-title" className="font-joy text-2xl font-bold text-varsity-navy">
@@ -31,19 +43,36 @@ async function VoucherPass({ pass, qrSvg, shareUrl, locale, now }: { pass: NonNu
       </h1>
       <p className="font-corp text-lg font-extrabold text-varsity-navy">{pass.initiative.title}</p>
       <p className="text-sm text-ink-soft">{pass.initiative.organization.name}</p>
-      <div role="img" aria-label={t('qrAltVouchers')} className="mx-auto w-64 max-w-full rounded-xl border-2 border-varsity-navy bg-white p-2 [&>svg]:h-auto [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-      <p className="font-corp text-xl font-extrabold tabular-nums text-varsity-navy" data-testid="voucher-balance">
-        {t('voucherBalance', { balance, total: pass.quantity })}
-      </p>
-      {validUntil ? <p className="text-sm font-semibold text-ink">{t('voucherValidUntil', { date: format.dateTime(validUntil, { dateStyle: 'long', timeZone: 'Europe/Madrid' }) })}</p> : null}
+      {/* Con la venta cancelada los vales ya no se gastan: ni QR, ni lo que queda, ni hasta cuándo (no hay nada que enseñar en el puesto). */}
+      {cancelled ? null : (
+        <>
+          <div role="img" aria-label={t('qrAltVouchers')} className="mx-auto w-64 max-w-full rounded-xl border-2 border-varsity-navy bg-white p-2 [&>svg]:h-auto [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+          <p className="font-corp text-xl font-extrabold tabular-nums text-varsity-navy" data-testid="voucher-balance">
+            {t('voucherBalance', { balance, total: pass.quantity })}
+          </p>
+          {validUntil ? <p className="text-sm font-semibold text-ink">{t('voucherValidUntil', { date: format.dateTime(validUntil, { dateStyle: 'long', timeZone: 'Europe/Madrid' }) })}</p> : null}
+        </>
+      )}
       {status ? (
         <p role="status" className="rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-950">
           {status}
         </p>
       ) : null}
+      {cancelled ? (
+        <div role="status" className="flex flex-col gap-1 rounded-xl bg-amber-100 px-3 py-2 text-sm text-amber-950" data-testid="voucher-pass-cancelled">
+          <p className="font-bold">{t(balance === 0 ? 'voucherCancelledSpent' : settled ? 'voucherCancelledSettled' : 'voucherCancelled')}</p>
+          {settled && balance > 0 ? (
+            <Link href={`/${orgSlug}/ayuda`} className="inline-flex min-h-11 items-center justify-center font-semibold underline underline-offset-4">
+              {t('voucherCancelledHelp')}
+            </Link>
+          ) : null}
+        </div>
+      ) : null}
       <p className="font-mono text-sm text-ink-soft">{t('serial', { serial: pass.serialCode })}</p>
-      <p className="text-sm font-semibold text-emerald-900">{t('showVouchers')}</p>
-      <PassActions title={pass.initiative.title} url={shareUrl} vouchers />
+      {cancelled ? null : <p className="text-sm font-semibold text-emerald-900">{t('showVouchers')}</p>}
+      {/* Cancelada, la devolución no se pide: antes de liquidar la hace sola la plataforma; después, se pide a la entidad. */}
+      {refund?.offer && !cancelled ? <VoucherRefundButton orgSlug={orgSlug} passUuid={pass.uuid} sig={signature} amountCents={refund.amountCents} vouchers={refund.vouchers} kind={refund.offer.kind} until={refund.offer.until.toISOString()} /> : null}
+      {cancelled ? null : <PassActions title={pass.initiative.title} url={shareUrl} vouchers />}
     </section>
   );
 }
@@ -92,12 +121,14 @@ export default async function PassPage({ params, searchParams }: PageProps) {
     return <EmptyState icon="🎟️" title={t('invalid.title')} description={t('invalid.description')} headingLevel={1} role="alert" />;
   }
   if (pass.revokedAt) {
-    return <EmptyState icon="↩️" title={t('revoked.title')} description={t('revoked.description')} headingLevel={1} role="alert" />;
+    // Un pase de vales devuelto (la devolución de 14 días, un contracargo) lo dice con sus palabras: no es una entrada ni abre ninguna puerta.
+    const key = pass.subtype === 'VOUCHER' ? 'revokedVouchers' : 'revoked';
+    return <EmptyState icon="↩️" title={t(`${key}.title`)} description={t(`${key}.description`)} headingLevel={1} role="alert" />;
   }
 
   // Un SVG de la propia biblioteca de QR (sin datos del usuario en el marcado): se incrusta tal cual.
   const qrSvg = await QRCode.toString(buildPassQrPayload(secret, pass.uuid), { type: 'svg', errorCorrectionLevel: 'M', margin: 2 });
-  if (pass.subtype === 'VOUCHER') return <VoucherPass pass={pass} qrSvg={qrSvg} shareUrl={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} locale={locale} now={new Date()} />;
+  if (pass.subtype === 'VOUCHER') return <VoucherPass pass={pass} qrSvg={qrSvg} shareUrl={`${absoluteUrl(locale, passPath(orgSlug, pass.uuid))}?sig=${signature}`} locale={locale} orgSlug={orgSlug} signature={signature} now={new Date()} />;
   // La fecha del evento es cuándo se celebra.
   const when = format.dateTime(pass.initiative.closesAt, { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/Madrid' });
 

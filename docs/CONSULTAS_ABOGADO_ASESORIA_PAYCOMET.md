@@ -78,7 +78,7 @@ Además de las respuestas, necesitamos las **credenciales del entorno de pruebas
 #### Devoluciones
 
 5. ¿Las devoluciones de tarjeta y de Bizum tienen coste? **Cuando devolvemos un cobro entero, ¿nos devuelven la comisión que cobraron al cobrarlo, o esa comisión se pierde?** Entendemos que, si una campaña no llega a la meta, se devuelve todo sin comisiones: necesitamos confirmarlo por escrito. (Por ejemplo, una campaña que no llega a la meta devuelve 200 cobros: ¿pagamos 200 comisiones de cobro, 200 de devolución, las dos o ninguna?) **¿Hasta cuántos días después del cobro se pueden hacer con cada método?** De esta respuesta dependen varios plazos nuestros: una campaña de 60 días puede devolver hasta 21 días después de vencer. `[L-089, L-090, L-113]`
-6. ¿Se admiten devoluciones parciales de un pedido? ¿Devolver más de lo cobrado se rechaza siempre, también con reintentos tras un corte de conexión?
+6. ¿Se admiten devoluciones parciales de un pedido? ¿Devolver más de lo cobrado se rechaza siempre, también con reintentos tras un corte de conexión? (Desde el Sprint 5.14c las usamos: si una entidad cancela una venta de vales antes de liquidarla, o acorta su validez, devolvemos de cada compra la parte de los vales sin gastar; por ejemplo, 14,60 € de un cobro de 20,85 €. Hemos supuesto que se pide por `/v1/payments/{order}/refund` con el importe parcial, que la notificación trae ese importe y que el resto del cobro se puede seguir repartiendo a la entidad.)
 7. En una devolución, ¿qué dirección IP hay que enviar: la de la compra original o la de nuestro servidor?
 
 #### Alta de entidades

@@ -98,11 +98,17 @@ export async function purgeGateDeviceLabels(db: Db, now: Date, limit: number): P
 export async function purgeOldGateReadings(db: Db, now: Date, limit: number): Promise<number> {
   const cutoff = daysBefore(now, RETENTION.gateReadingDaysAfterSettlement);
   // Un evento devuelto o cerrado sin ventas no vuelve a cambiar: su última modificación es su cierre (una posterior solo retrasa el borrado).
-  const ended = { OR: [{ status: 'CLOSED' as const, closedAt: { lt: cutoff } }, { status: { in: ['REFUNDED' as const, 'CANCELLED' as const] }, updatedAt: { lt: cutoff } }] };
+  // Una venta de vales, además, solo cuando sus vales ya caducaron (Sprint 5.14c): su validez puede llegar a 12 meses después del cierre y un año bisiesto tiene
+  // 366 días, así que un año desde la liquidación no basta para estar seguro de que el puesto ya no canjea.
+  const ended = {
+    OR: [{ status: 'CLOSED' as const, closedAt: { lt: cutoff } }, { status: { in: ['REFUNDED' as const, 'CANCELLED' as const] }, updatedAt: { lt: cutoff } }],
+    AND: [{ OR: [{ ticketSubtype: null }, { ticketSubtype: 'EVENT' as const }, { voucherValidUntil: { lt: now } }] }]
+  };
   const readings = await db.ticketCheckIn.findMany({ where: { ticketPass: { initiative: ended } }, take: limit, select: { id: true } });
   let count = readings.length > 0 ? (await db.ticketCheckIn.deleteMany({ where: { id: { in: readings.map((row) => row.id) } } })).count : 0;
   if (count >= limit) return count;
-  const sessions = await db.gateSession.findMany({ where: { initiative: ended, checkIns: { none: {} } }, take: limit - count, select: { id: true } });
+  // Una sesión que aún vale (un móvil dentro) no se borra aunque no tenga lecturas.
+  const sessions = await db.gateSession.findMany({ where: { initiative: ended, checkIns: { none: {} }, expiresAt: { lt: now } }, take: limit - count, select: { id: true } });
   if (sessions.length > 0) count += (await db.gateSession.deleteMany({ where: { id: { in: sessions.map((row) => row.id) } } })).count;
   return count;
 }

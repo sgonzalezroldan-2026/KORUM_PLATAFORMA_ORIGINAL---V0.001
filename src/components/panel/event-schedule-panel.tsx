@@ -103,7 +103,7 @@ export function EventSchedulePanel({ orgSlug, eventId, ticketsSold, schedule, ca
   if (closed && !done) return null;
 
   return (
-    <section className="flex flex-col gap-2 rounded-xl border-2 border-stone-200 p-4" aria-labelledby={`event-schedule-${eventId}`} data-testid="event-schedule">
+    <section className="flex flex-col gap-2 rounded-xl border-2 border-stone-200 p-4" aria-labelledby={`event-schedule-${eventId} gate-event-${eventId}`} data-testid="event-schedule">
       {heading}
       {/* El mismo árbol antes y después de cancelar: al recargarse la pantalla, el aviso de éxito no se vuelve a crear y conserva el foco. */}
       {!closed && schedule.held && schedule.canChange ? <p className="text-sm text-ink-soft">{t('held')}</p> : null}

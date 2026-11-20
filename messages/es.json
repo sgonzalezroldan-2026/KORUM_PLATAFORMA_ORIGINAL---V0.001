@@ -927,11 +927,11 @@
       "preheader": "Tu código QR está dentro.",
       "title": "Tus vales están listos",
       "body": "Has comprado {count, plural, one {# vale} other {# vales}} de {organization}. Enseña el código QR en su puesto y allí descontarán los que gastes: los que te queden siguen en el mismo código. Lo tienes como imagen adjunta y también en el botón.",
-      "refund": "Si no gastas ningún vale de esta compra, puedes pedir la devolución del 100 % durante 14 días. Después, lo pagado se queda para la causa de la entidad.",
+      "refund": "Si no gastas ningún vale de esta compra, puedes recuperar el 100 % durante 14 días con el botón «Pedir la devolución» de tus vales. Después, lo pagado se queda para la causa de la entidad.",
       "serial": "Código",
       "quantity": "Vales comprados",
       "quantityValue": "{count, plural, one {# vale} other {# vales}}",
-      "validUntil": "Se pueden gastar hasta",
+      "validUntil": "Válidos hasta el",
       "holder": "Vende la entidad",
       "cta": "Ver mis vales",
       "footnote": "El código QR es personal: no lo publiques en redes. Quien lo tenga puede gastar tus vales.",
@@ -944,6 +944,61 @@
         "equivalent": "Equivale a",
         "amount": "Para la entidad",
         "fee": "Gastos de gestión digital"
+      },
+      "saleClosed": {
+        "settleSubject": "La venta de vales «{initiative}» ha cerrado",
+        "settlePreheader": "Se liquida por lo vendido cuando pasen los 14 días de devolución.",
+        "settleTitle": "La venta de vales ha cerrado",
+        "settleBody": "«{initiative}» ha llegado a su último día con {count, plural, one {# vale vendido} other {# vales vendidos}}. Los vales siguen valiendo en vuestro puesto hasta su fecha.",
+        "settleNext": "Podréis liquidar lo vendido, con la doble firma de siempre, cuando terminen los 14 días en que quien compró puede pedir su devolución sin haber gastado ningún vale.",
+        "raised": "Recaudado",
+        "settleCta": "Ir a Liquidaciones",
+        "emptySubject": "La venta de vales «{initiative}» ha cerrado sin ventas",
+        "emptyPreheader": "No hay nada que liquidar.",
+        "emptyTitle": "La venta ha cerrado sin ventas",
+        "emptyBody": "«{initiative}» ha llegado a su último día sin vender ningún vale. Se ha cerrado sin dinero que mover y los cupos vuelven a vuestra entidad.",
+        "emptyCta": "Ir al panel"
+      },
+      "changed": {
+        "cancelledSubject": "Se ha cancelado la venta de vales «{initiative}»",
+        "cancelledPreheader": "Los vales ya no se gastan en el puesto.",
+        "cancelledTitle": "Venta de vales cancelada",
+        "cancelledBody": "{count, plural, =0 {Una persona firmante ha cancelado «{initiative}». No se había vendido ningún vale.} other {Una persona firmante ha cancelado «{initiative}». Los vales ya no se gastan en el puesto. La plataforma está devolviendo a cada persona lo que no había gastado; lo gastado se liquida desde «Liquidaciones», como siempre, cuando terminen las devoluciones.}}",
+        "cancelledSettledBody": "Una persona firmante ha cancelado «{initiative}», que ya estaba liquidada. Los vales ya no se gastan en el puesto: hemos avisado a quienes tenían vales sin gastar de que os pidan la devolución a vosotros.",
+        "datesSubject": "Han cambiado las fechas de la venta de vales «{initiative}»",
+        "datesPreheader": "Último día de venta y validez de los vales.",
+        "datesTitle": "Fechas cambiadas",
+        "datesBody": "Una persona firmante ha cambiado las fechas de «{initiative}»: la venta cierra el {close} y los vales valen hasta el {valid}.",
+        "datesNotice": "Como cambió la validez, avisamos por email a quienes tienen vales sin gastar. Si se acortó, pueden recuperar lo no gastado durante 14 días y hasta entonces no se puede liquidar.",
+        "cta": "Ver la taquilla"
+      },
+      "cancelledBuyer": {
+        "subject": "{organization} ha cancelado la venta de vales «{initiative}»",
+        "preheader": "Tus vales ya no se pueden gastar.",
+        "title": "Se ha cancelado la venta de vales",
+        "body": "{organization} ha cancelado «{initiative}». Desde ahora, los vales que no hayas gastado ya no se pueden usar en su puesto.",
+        "how": "La venta ya se había liquidado: el dinero está en la cuenta de {organization}, que es quien responde de ella. Para recuperar lo que te corresponda (los vales que no hayas gastado o tu aportación sin producto), pídeselo desde su página de ayuda.",
+        "cta": "Escribir a la entidad",
+        "preheaderRefund": "Te devolvemos lo que no hayas gastado.",
+        "refund": "Te devolvemos automáticamente lo que no hayas gastado, al mismo medio de pago con el que pagaste, sin que tengas que hacer nada. Te llegará un email por cada devolución. Lo que ya gastaste en el puesto no se devuelve.",
+        "ctaRefund": "Ver la venta"
+      },
+      "validityChanged": {
+        "subject": "Tus vales de «{initiative}» tienen otra fecha",
+        "preheader": "Cambia hasta cuándo puedes gastarlos.",
+        "title": "Cambia la validez de tus vales",
+        "body": "{organization} ha cambiado hasta cuándo valen los vales de «{initiative}»: ahora se pueden gastar hasta el {date}.",
+        "where": "Tus vales siguen en el mismo código QR. Enséñalo en el puesto de la entidad para gastarlos.",
+        "cta": "Ver mis vales",
+        "refund": "Si la nueva fecha no te va bien, puedes recuperar lo que no hayas gastado hasta el {until}, con el botón «Pedir la devolución» de tus vales."
+      },
+      "expiryReminder": {
+        "subject": "Tus vales de «{initiative}» caducan pronto",
+        "preheader": "Aún te quedan vales por gastar.",
+        "title": "Tus vales caducan pronto",
+        "body": "Aún te quedan vales de «{initiative}», de {organization}. Se pueden gastar hasta el {date}; después ya no valen ni se devuelven.",
+        "where": "Enseña tu código QR en el puesto de la entidad para gastarlos.",
+        "cta": "Ver mis vales"
       }
     }
   },
@@ -3457,7 +3512,7 @@
         "DESTINATION_ACCOUNT_MISSING": "La entidad aún no tiene su cuenta en PAYCOMET.",
         "NOTHING_TO_PAY": "No queda nada que liquidar en esta campaña.",
         "WINDOW_EXPIRED": "Algunos cobros han pasado los 90 días en que PAYCOMET puede enviarlos. El equipo de KORUM lo revisará con vosotros.",
-        "REFUND_WINDOW_OPEN": "Cambiasteis la fecha del evento: quienes compraron pueden pedir su devolución durante 14 días. Podréis liquidar cuando termine ese plazo."
+        "REFUND_WINDOW_OPEN": "Quienes compraron aún pueden pedir su devolución de 14 días (tras un cambio de fecha del evento o tras comprar vales). Podréis liquidar cuando termine ese plazo."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Revisar los comercios",
@@ -3534,7 +3589,7 @@
         "FILE_MIME_MISMATCH": "El tipo del fichero no coincide con su contenido. Guardadlo de nuevo como PDF o JPG.",
         "FILE_EXTENSION_MISMATCH": "La extensión del fichero no coincide con su contenido. Cambiadle el nombre o guardadlo de nuevo.",
         "FILE_RETENTION_REQUIRED": "No hemos podido guardar el fichero. Probad de nuevo.",
-        "REFUND_WINDOW_OPEN": "Sigue abierto el plazo de devolución por el cambio de fecha. Podréis liquidar cuando termine."
+        "REFUND_WINDOW_OPEN": "Sigue abierto un plazo de devolución de 14 días. Podréis liquidar cuando termine."
       },
       "pending": {
         "title": "Liquidación {reference} · esperando las firmas",
@@ -3771,9 +3826,10 @@
     "gate": {
       "metaTitle": "Taquilla y portería",
       "title": "Taquilla y portería",
-      "intro": "Aquí fijas el PIN de la puerta de cada evento y ves qué móviles de voluntarios están dentro. El PIN es solo de ese evento, se enseña una vez y caduca seis horas después de acabar el día del evento.",
+      "intro": "Aquí fijas el PIN de la puerta de cada evento y el del puesto de canje de cada venta de vales, y ves qué móviles de voluntarios están dentro. Cada PIN es solo de su evento o de su venta y se enseña una vez. El de un evento caduca seis horas después de acabar su día; el de un puesto de vales, cuando caducan los vales.",
       "kind": {
-        "event": "Evento con entradas"
+        "event": "Evento con entradas",
+        "vouchers": "Venta de vales"
       },
       "sold": "{sold, plural, one {# vendida} other {# vendidas}}",
       "soldOf": "{sold} de {max} vendidas",
@@ -3801,7 +3857,12 @@
         "rotate": "Cambiar el enlace de la portería",
         "rotateWarning": "El enlace anterior dejará de funcionar: quien lo tenga ya no podrá abrir la portería ni probar PINs. Los móviles que ya están dentro siguen funcionando, pero si recargan la página tendrán que abrir el enlace nuevo. Pásales el nuevo enlace.",
         "rotateYes": "Sí, cambiar el enlace",
-        "rotateNo": "No cambiarlo"
+        "rotateNo": "No cambiarlo",
+        "hintVouchers": "Quien atiende el puesto abre esta página en su móvil con este enlace y escribe el PIN. No necesita cuenta. Pásalo solo a quienes estén en el puesto y no lo publiques. Si se filtra, cámbialo aquí.",
+        "openVouchers": "Abrir el puesto de vales",
+        "rotateVouchers": "Cambiar el enlace del puesto",
+        "rotateWarningVouchers": "El enlace anterior dejará de funcionar: quien lo tenga ya no podrá abrir el puesto ni probar PINs. Los móviles que ya están dentro siguen funcionando, pero si recargan la página tendrán que abrir el enlace nuevo. Pásales el nuevo enlace.",
+        "afterPinVouchers": "El enlace del puesto aparece al crear el PIN."
       },
       "sessions": {
         "title": "{count, plural, =0 {Ningún móvil dentro} one {# móvil dentro} other {# móviles dentro}}",
@@ -3814,8 +3875,8 @@
       },
       "readOnly": "Solo quienes firman pueden crear el PIN y cerrar sesiones.",
       "empty": {
-        "title": "Aún no hay eventos con entradas",
-        "text": "Cuando publiques un evento desde el Estudio, podrás crear aquí el PIN de su puerta.",
+        "title": "Aún no hay eventos ni ventas de vales",
+        "text": "Cuando publiques un evento con entradas o una venta de vales desde el Estudio, podrás crear aquí el PIN de su puerta o de su puesto.",
         "action": "Ir al Estudio"
       },
       "errors": {
@@ -3859,7 +3920,67 @@
         }
       },
       "closedState": "Evento cancelado: quien compró recupera el 100 % y la portería está cerrada.",
-      "closedEmpty": "Evento cerrado sin ventas: no hay nada que devolver y la portería está cerrada."
+      "closedEmpty": "Evento cerrado sin ventas: no hay nada que devolver y la portería está cerrada.",
+      "vouchers": {
+        "validUntil": "valen hasta el {date}",
+        "sold": "{sold, plural, one {# vale vendido} other {# vales vendidos}}",
+        "soldOf": "{sold} de {max} vales vendidos",
+        "soldTarget": "{sold} vales vendidos · objetivo: {target}",
+        "cancelledState": "Venta cancelada: los vales ya no se gastan. La plataforma devuelve a cada persona lo que no había gastado y lo gastado se liquida desde «Liquidaciones».",
+        "cancelledStateSettled": "Venta cancelada después de liquidarla: los vales ya no se gastan. Hemos avisado a quienes tenían vales sin gastar de que os pidan la devolución a vosotros.",
+        "closedEmpty": "Venta cerrada sin vender ningún vale: no hay nada que liquidar y el puesto está cerrado.",
+        "expiredState": "Los vales de esta venta ya han caducado: el puesto está cerrado.",
+        "title": "Fechas y cancelación",
+        "refundOpen": "Alguna compra aún puede pedir su devolución de 14 días hasta el {date}. Hasta entonces no se puede liquidar la venta.",
+        "changeDates": "Cambiar las fechas",
+        "cancel": "Cancelar la venta",
+        "closeLabel": "Último día de venta",
+        "validLabel": "Los vales se pueden gastar hasta",
+        "datesHint": "{count, plural, =0 {Aún no se ha vendido ningún vale: el cambio no avisa a nadie.} other {Si alargas la validez, avisaremos por email a quienes tienen vales sin gastar. Si la acortas, además podrán recuperar lo no gastado durante 14 días y hasta entonces no podréis liquidar. Cambiar el último día de venta no avisa a nadie.}} La venta puede durar hasta el {closeMax} y los vales pueden valer hasta el {validMax}.",
+        "datesHintClosed": "{count, plural, =0 {La venta ya está cerrada: solo puedes cambiar hasta cuándo valen los vales.} other {La venta ya está cerrada: solo puedes cambiar hasta cuándo valen los vales. Avisaremos por email a quienes tienen vales sin gastar; si la acortas, podrán recuperar lo no gastado durante 14 días y hasta entonces no podréis liquidar.}} Como muy tarde, el {validMax}.",
+        "datesHintSettled": "La venta ya se ha liquidado: solo puedes alargar la validez de los vales, como muy tarde hasta el {validMax}. Avisaremos por email a quienes tienen vales sin gastar.",
+        "datesChoose": "Elige una fecha nueva",
+        "datesConfirm": "Guardar las fechas",
+        "datesSaved": "{count, plural, =0 {Fechas guardadas: la venta cierra el {close} y los vales valen hasta el {valid}.} other {Fechas guardadas: la venta cierra el {close} y los vales valen hasta el {valid}. Si cambió la validez, avisamos por email a quienes tienen vales sin gastar; si la acortaste, pueden recuperar lo no gastado durante 14 días.}}",
+        "back": "Volver",
+        "cancelWarning": "{count, plural, =0 {La venta se cerrará y el puesto dejará de funcionar. No se puede deshacer.} other {Los vales dejarán de valer en el puesto y nadie más podrá comprar. Devolveremos automáticamente a cada persona lo que no haya gastado (y las aportaciones sin producto), al mismo medio de pago. Lo ya gastado se os liquida como siempre. No se puede deshacer.}}",
+        "cancelWarningSettled": "El dinero ya está en vuestra cuenta. Los vales dejarán de valer en el puesto y avisaremos a quienes tienen vales sin gastar de que os pidan la devolución a vosotros. No se puede deshacer.",
+        "cancelYes": "Sí, cancelar la venta",
+        "cancelNo": "No cancelarla",
+        "cancelledWithSales": "Venta cancelada. Avisamos por email a quienes compraron.",
+        "cancelledSettled": "Venta cancelada. Avisamos por email a quienes compraron.",
+        "cancelledEmpty": "Venta cancelada.",
+        "readOnly": "Solo quienes firman pueden cambiar las fechas o cancelar la venta.",
+        "locked": "Esta venta ya no se puede cambiar: sus vales han caducado.",
+        "errors": {
+          "INVALID_INPUT": "Revisa las fechas elegidas.",
+          "NOT_FOUND": "Esa venta ya no existe.",
+          "NOT_A_VOUCHER_SALE": "Esto no es una venta de vales.",
+          "WRONG_STATUS": "La venta ha cambiado mientras tanto. Recarga la página.",
+          "ALREADY_CANCELLED": "La venta ya estaba cancelada.",
+          "EXPIRED": "Los vales ya han caducado: no hay nada que cambiar.",
+          "NO_CHANGE": "No has cambiado ninguna fecha.",
+          "CLOSE_NOT_CHANGEABLE": "La venta ya está cerrada: su último día ya no se puede cambiar.",
+          "CLOSE_INVALID": "Ese día de cierre no existe.",
+          "CLOSE_IN_PAST": "El último día de venta tiene que ser hoy o más adelante.",
+          "CLOSE_TOO_LATE": "Una venta de vales dura como mucho 60 días desde que se publicó.",
+          "VALIDITY_INVALID": "Esa fecha de validez no existe.",
+          "VALIDITY_BEFORE_CLOSE": "Los vales tienen que valer al menos hasta el último día de venta.",
+          "VALIDITY_IN_PAST": "La validez tiene que acabar hoy o más adelante.",
+          "VALIDITY_TOO_LATE": "Los vales pueden valer como mucho 12 meses después del cierre de la venta.",
+          "VALIDITY_SHORTER_AFTER_PAYOUT": "La venta ya se ha liquidado: la validez solo se puede alargar.",
+          "RATE_LIMITED": "Has hecho muchos cambios seguidos. Espera un rato antes de volver a intentarlo.",
+          "FORBIDDEN": "No tienes permiso para hacerlo.",
+          "SHORTEN_TOO_LATE": "Ya no se puede acortar la validez: los 14 días para recuperar lo no gastado retrasarían demasiado la liquidación (el dinero solo puede esperar retenido un tiempo limitado). Puedes alargarla o cancelar la venta."
+        },
+        "cancelledStateEmpty": "Venta cancelada sin haber vendido ningún vale: no hay nada que devolver ni liquidar y el puesto está cerrado."
+      },
+      "pinVouchers": {
+        "none": "Este puesto aún no tiene PIN: nadie puede abrirlo todavía.",
+        "create": "Crear el PIN del puesto",
+        "created": "PIN del puesto (apúntalo: no se vuelve a mostrar)",
+        "once": "Compártelo solo con quienes atiendan el puesto. Vale hasta el {date}, cuando caducan los vales."
+      }
     },
     "welcomeCelebration": {
       "title": "¡Bienvenidos a KORUM!",
@@ -3868,7 +3989,7 @@
     }
   },
   "gate": {
-    "mode": "Modo portería",
+    "mode": "Portería y puestos",
     "chooseTitle": "Portería de eventos",
     "emptyTitle": "Abre el enlace de tu evento",
     "emptyText": "Quien organiza el evento te da un enlace y un PIN de 6 cifras. Abre el enlace en este móvil y escribe el PIN.",
@@ -3979,8 +4100,79 @@
     },
     "organiserHint": "¿Organizas el evento? Crea el PIN y el enlace de la portería en «Taquilla y portería».",
     "organiserLink": "Ir a Taquilla y portería",
-    "metaTitle": "Portería",
-    "storageNotice": "Este móvil guarda la lista de entradas del evento, y lo que leas sin cobertura, hasta que cierres la portería (3 días como máximo). Ciérrala al terminar. La cámara solo lee códigos: no graba nada. No reenvíes este enlace."
+    "metaTitle": "Portería y puestos",
+    "storageNotice": "Este móvil guarda la lista de entradas del evento, y lo que leas sin cobertura, hasta que cierres la portería (3 días como máximo). Ciérrala al terminar. La cámara solo lee códigos: no graba nada. No reenvíes este enlace.",
+    "pinIntroVouchers": "Escribe el PIN de 6 cifras que te ha dado quien organiza la venta de vales.",
+    "storageNoticeVouchers": "Este móvil no guarda ninguna lista de vales: cada lectura se comprueba con el servidor, así que hace falta conexión. La sesión dura 2 días como máximo; ciérrala al terminar. La cámara solo lee códigos: no graba nada. No reenvíes este enlace.",
+    "vouchers": {
+      "title": "Puesto de canje de vales",
+      "validUntil": "Los vales de esta venta valen hasta el {date}.",
+      "spentHere": "{count, plural, =0 {Aún no se ha gastado ningún vale desde que abriste esta pantalla} one {# vale gastado desde que abriste esta pantalla} other {# vales gastados desde que abriste esta pantalla}}",
+      "onlineOnly": "Los vales solo se gastan con conexión: sin cobertura no se puede comprobar cuántos quedan.",
+      "problem": {
+        "OFFLINE": "Sin conexión: los vales solo se pueden comprobar y gastar con red. No se ha gastado nada; vuelve a intentarlo cuando la recuperes.",
+        "BUSY": "Hay muchas lecturas a la vez desde esta red. Espera unos segundos y vuelve a intentarlo.",
+        "FAILED": "No se ha podido comprobar el código. Vuelve a intentarlo.",
+        "INVALID_INPUT": "Ese código no es un vale. Prueba de nuevo.",
+        "OFFLINE_REDEEM": "Sin conexión al gastar. Cuando recuperes la red, vuelve a pulsar «Gastar»: no se gastará dos veces.",
+        "FAILED_REDEEM": "No se ha podido gastar ahora. Vuelve a pulsar «Gastar»: no se gastará dos veces."
+      },
+      "ended": {
+        "title": "La sesión del puesto ha terminado",
+        "text": "Quien organiza ha cerrado esta sesión, ha cambiado el PIN o la venta ya no admite canjes. Vuelve a entrar con el PIN vigente si te lo dan.",
+        "again": "Volver a la pantalla del PIN"
+      },
+      "camera": {
+        "title": "Lector de vales",
+        "start": "Activar la cámara",
+        "starting": "Abriendo la cámara…",
+        "stop": "Apagar la cámara",
+        "videoLabel": "Imagen de la cámara",
+        "denied": "No tenemos permiso para usar la cámara. Puedes permitirla en los ajustes del navegador o escribir el código aquí abajo.",
+        "unsupported": "Este navegador o este móvil no puede usar la cámara. Escribe el código aquí abajo o usa un lector de códigos con teclado.",
+        "error": "No se pudo abrir la cámara. Escribe el código aquí abajo."
+      },
+      "manual": {
+        "hint": "Si la cámara no funciona o usas un lector de códigos con teclado, el código llega a este campo.",
+        "label": "Código de los vales",
+        "submit": "Comprobar vales"
+      },
+      "sound": "Sonido y vibración",
+      "leave": "Cerrar el puesto en este móvil",
+      "result": {
+        "balance": "{balance, plural, one {Queda # vale de {total}} other {Quedan # vales de {total}}}",
+        "serial": "Código {serial}",
+        "howMany": "¿Cuántos vales se gastan ahora?",
+        "less": "Uno menos",
+        "more": "Uno más",
+        "quantityInvalid": "{balance, plural, one {Escribe 1: solo queda # vale.} other {Escribe un número entre 1 y #.}}",
+        "redeem": "{count, plural, =0 {Gastar vales} one {Gastar # vale} other {Gastar # vales}}",
+        "redeeming": "Gastando…",
+        "cancel": "No gastar nada",
+        "redeemed": "{spent, plural, one {Gastado # vale} other {Gastados # vales}}. {balance, plural, =0 {Ya no quedan vales en este código.} one {Queda # vale.} other {Quedan # vales.}}",
+        "duplicateAccepted": "Este canje ya se había hecho: no se ha gastado nada más. {balance, plural, =0 {Ya no quedan vales.} one {Queda # vale.} other {Quedan # vales.}}",
+        "duplicateRejected": "Este canje ya se había intentado y no se gastó nada. Vuelve a leer el código.",
+        "insufficient": "{balance, plural, =0 {Ya no quedan vales en este código.} one {Solo queda # vale: no se ha gastado nada.} other {Solo quedan # vales: no se ha gastado nada.}}",
+        "next": "Siguiente",
+        "blocked": {
+          "INVALID_SIGNATURE": "Este código no es un vale válido.",
+          "OTHER_SALE": "Este código es de otra venta o de un evento: aquí no vale.",
+          "REVOKED": "Esta compra se devolvió o se anuló: sus vales ya no valen.",
+          "NOT_PAID": "Esta compra aún no está pagada: sus vales no valen todavía.",
+          "SALE_CLOSED": "Esta venta ya no admite canjes.",
+          "SALE_CANCELLED": "La entidad canceló esta venta: sus vales ya no se gastan.",
+          "EXPIRED": "Estos vales ya han caducado.",
+          "EXHAUSTED": "Ya no quedan vales en este código."
+        }
+      },
+      "closed": {
+        "title": "Este puesto ya no está abierto",
+        "text": "Quien organiza ha cambiado el PIN o el enlace, ha cancelado la venta o los vales ya han caducado. Si tienes que seguir atendiendo el puesto, pídele el enlace y el PIN nuevos."
+      }
+    },
+    "pinVouchers": "PIN del puesto",
+    "enterVouchers": "Entrar en el puesto",
+    "deviceHintVouchers": "Por ejemplo, «Puesto de la merienda». Así la entidad sabrá qué móvil es cada uno."
   },
   "admin": {
     "headerTitle": "Consola de KORUM",
@@ -5937,7 +6129,36 @@
       "showVouchers": "Enséñalo en el puesto de la entidad, en el móvil o impreso: allí descuentan los vales que gastes.",
       "shareMessageVouchers": "Tus vales de «{title}»: {url}",
       "shareWarningVouchers": "Quien tenga este enlace puede gastar los vales: envíalo solo a quien los vaya a usar.",
-      "actionsVouchers": "Acciones de tus vales"
+      "actionsVouchers": "Acciones de tus vales",
+      "voucherCancelled": "La entidad ha cancelado esta venta: estos vales ya no se pueden gastar. Te devolvemos automáticamente lo que no hayas gastado, al mismo medio de pago.",
+      "voucherCancelledHelp": "Escribir a la entidad",
+      "revokedVouchers": {
+        "title": "Esta compra de vales ya no es válida",
+        "description": "Se ha devuelto o anulado, así que sus vales ya no se pueden gastar. Si pediste la devolución, el dinero vuelve a tu medio de pago en unos días laborables."
+      },
+      "refund": {
+        "title": "Devolución de 14 días",
+        "text": "Como aún no has gastado ningún vale de esta compra, puedes recuperar el 100 % ({amount}) hasta el {date}.",
+        "button": "Pedir la devolución",
+        "confirmText": "Te devolveremos {amount} al mismo medio de pago y estos vales dejarán de valer. No se puede deshacer.",
+        "confirmYes": "Sí, devolverme el dinero",
+        "confirmNo": "No, quedarme los vales",
+        "sending": "Pidiendo la devolución…",
+        "errors": {
+          "INVALID_LINK": "No podemos comprobar este enlace. Abre el enlace completo del email de tus vales.",
+          "RATE_LIMITED": "Ha habido muchos intentos desde esta red. Espera unos minutos y vuelve a intentarlo.",
+          "ALREADY_REFUNDED": "Esta compra ya se está devolviendo.",
+          "NOT_PAID": "Esta compra no está pagada o ya no es válida.",
+          "SPENT": "Ya se ha gastado algún vale de esta compra: ya no se puede devolver.",
+          "WINDOW_CLOSED": "Han pasado los 14 días: esta compra ya no se puede devolver.",
+          "SETTLED": "La venta ya se ha liquidado a la entidad: escríbele para pedirle la devolución.",
+          "FAILED": "No se ha podido pedir la devolución. Vuelve a intentarlo dentro de un momento."
+        },
+        "textUnspent": "La entidad acortó el plazo para gastar estos vales. Puedes recuperar lo que corresponde {count, plural, one {al vale} other {a los # vales}} sin gastar ({amount}) hasta el {date}.",
+        "confirmTextUnspent": "Te devolveremos {amount} al mismo medio de pago y {count, plural, one {el vale que te queda dejará} other {los # vales que te quedan dejarán}} de valer. No se puede deshacer."
+      },
+      "voucherCancelledSettled": "La entidad ha cancelado esta venta: estos vales ya no se pueden gastar. El dinero ya está en la cuenta de la entidad; para recuperar lo que no hayas gastado, pídeselo a ella.",
+      "voucherCancelledSpent": "La entidad ha cancelado esta venta. Ya habías gastado todos los vales de esta compra, así que no hay nada que devolver."
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",
@@ -7322,7 +7543,9 @@
       "EVENT_DATE_REACHED": "el evento llegó a su fecha",
       "EVENT_CANCELLED": "la entidad canceló el evento",
       "EVENT_RESCHEDULED": "la entidad cambió la fecha del evento",
-      "EVENT_EMPTIED": "el evento celebrado se quedó sin dinero"
+      "EVENT_EMPTIED": "el evento celebrado se quedó sin dinero",
+      "VOUCHER_SALE_CLOSED": "la venta de vales llegó a su último día",
+      "VOUCHER_SALE_CANCELLED": "la entidad canceló la venta de vales"
     },
     "actions": {
       "tenant": {
@@ -7409,7 +7632,12 @@
       "voucher": {
         "qr_invalid": "Puesto de vales: QR alterado o falsificado",
         "qr_other_sale": "Puesto de vales: QR de otra venta",
-        "redeemed": "Puesto de vales: vales canjeados por una persona firmante"
+        "redeemed": "Puesto de vales: vales canjeados por una persona firmante",
+        "rate_limited": "Vales: demasiados cambios seguidos",
+        "sale_closed": "Venta de vales: llegó su último día",
+        "sale_cancelled": "Venta de vales cancelada",
+        "dates_changed": "Venta de vales: cambio de fechas",
+        "purchase_refunded": "Vales: devolución de 14 días pedida por quien compró"
       },
       "idea": {
         "chat_access_denied": "Acceso denegado a la conversación de una idea",
@@ -8009,7 +8237,12 @@
         },
         "voucher": {
           "pass": "Vales con su código QR",
-          "noProductReceipt": "Recibo de la aportación sin producto"
+          "noProductReceipt": "Recibo de la aportación sin producto",
+          "saleClosed": "Aviso de cierre de la venta de vales a quienes firman",
+          "changed": "Aviso de cancelación o cambio de fechas de vales a quienes firman",
+          "cancelledBuyer": "Aviso de venta de vales cancelada a quien tiene vales",
+          "validityChanged": "Aviso de cambio de validez de los vales",
+          "expiryReminder": "Recordatorio de vales a punto de caducar"
         }
       },
       "payoutGapMismatch": "ATENCIÓN: de la hucha salió menos que el importe para el proyecto y la comisión juntos. Hay que revisar el libro mayor.",

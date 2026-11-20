@@ -257,6 +257,9 @@ export async function getPassForView(db: KorumPrismaClient, slug: string, passUu
           ticketVenue: true,
           closesAt: true,
           voucherValidUntil: true,
+          /** Venta de vales cancelada por la entidad (Sprint 5.14c): sus vales ya no se gastan y responde ella. */
+          voucherCancelledAt: true,
+          payout: { select: { status: true, approvedAt: true } },
           organization: { select: { name: true } }
         }
       }

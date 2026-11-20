@@ -13,8 +13,10 @@ export async function payoutCandidates(tx: Db, initiativeId: number, payoutId: n
   // Una detrás de otra: dentro de una transacción solo hay una conexión.
   const charges = await tx.contribution.findMany({
     where: { initiativeId, totalChargedCents: { gt: 0 }, ...usable },
-    select: { id: true, totalChargedCents: true, createdAt: true, sponsor: { select: { id: true, amountCents: true, reassignedCents: true, isMatchingPool: true } } }
+    select: { id: true, totalChargedCents: true, createdAt: true, partialRefund: { select: { amountCents: true } }, sponsor: { select: { id: true, amountCents: true, reassignedCents: true, isMatchingPool: true } } }
   });
+  // Lo ya devuelto de un cobro en una devolución parcial de vales (Sprint 5.14c) no se puede repartir: Paycomet solo reparte lo que queda del cobro.
+  const partiallyRefunded = new Map(charges.map((charge) => [charge.id, charge.partialRefund?.amountCents ?? 0]));
   const allocations = await tx.sponsorAllocation.findMany({
     where: { initiativeId, withdrawnAt: null, contribution: usable },
     select: { contributionId: true, amountCents: true, contribution: { select: { createdAt: true, totalChargedCents: true } } }
@@ -28,7 +30,7 @@ export async function payoutCandidates(tx: Db, initiativeId: number, payoutId: n
   const byCharge = new Map<number, SplitCandidate>();
   const add = (contributionId: number, cents: number, chargedAt: Date, totalChargedCents: number) => {
     const current = byCharge.get(contributionId);
-    const cap = totalChargedCents - (usedByCharge.get(contributionId) ?? 0);
+    const cap = totalChargedCents - (usedByCharge.get(contributionId) ?? 0) - (partiallyRefunded.get(contributionId) ?? 0);
     const wanted = (current?.totalChargedCents ?? 0) + Math.max(0, cents);
     byCharge.set(contributionId, { contributionId, totalChargedCents: Math.max(0, Math.min(wanted, cap)), chargedAt });
   };

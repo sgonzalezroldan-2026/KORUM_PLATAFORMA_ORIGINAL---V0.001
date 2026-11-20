@@ -57,6 +57,7 @@ describe('payoutBlockers: «ventana vencida» solo cuando de verdad vence', () =
   const fakeTx = (findMany: () => Promise<unknown[]>) =>
     ({
       sponsor: { count: async () => 0 },
+      initiative: { findUnique: async () => ({ ticketSubtype: null }) },
       eventReschedule: { findMany: async () => [] },
       contribution: { findMany },
       sponsorAllocation: { findMany: async () => [] },

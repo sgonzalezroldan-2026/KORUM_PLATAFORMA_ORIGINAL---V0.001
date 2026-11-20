@@ -7,7 +7,7 @@ import { authorizeSuperadmin, coarseUserAgent, recordAudit, TenantAccessError, t
 import { writeAudit } from '@/services/audit/audit.service';
 import { InvoiceNotAllowedError, resolveUnknownInvoice, type UnknownInvoiceResolution } from '@/services/invoicing/invoice.service';
 import { secretFieldsOf } from '@/services/email/templates/catalog';
-import { resolveUnknownRefund } from '@/services/payments/manual-resolutions';
+import { resolveUnknownPartialRefund, resolveUnknownRefund } from '@/services/payments/manual-resolutions';
 import { RefundNotAllowedError } from '@/services/payments/payment-reversals';
 
 /**
@@ -81,12 +81,17 @@ export async function resolveOpsAlertWithNote(db: KorumPrismaClient, actor: Sess
  * una devolución que aún está en vuelo. La alerta se cierra en la misma transacción.
  */
 export async function resolveStuckRefund(db: KorumPrismaClient, actor: VerifiedSuperadminActor, contributionId: number, refunded: boolean): Promise<void> {
-  const dedupeKey = `REFUND_STUCK:${contributionId}`;
   await inTransaction(db, async (tx) => {
-    const open = await tx.opsAlert.findFirst({ where: { dedupeKey, status: 'OPEN' }, select: { id: true } });
-    if (!open) throw new RefundNotAllowedError(contributionId, 'no tiene una alerta de devolución atascada abierta');
-    await resolveUnknownRefund(tx, actor, contributionId, { refunded });
-    await resolveAlert(tx, dedupeKey);
+    // La de lo no gastado de unos vales (Sprint 5.14c) lleva su propia alerta: la compra sigue cobrada y su devolución vive en `PartialRefund`.
+    for (const [dedupeKey, partial] of [[`REFUND_STUCK:${contributionId}`, false], [`REFUND_STUCK:partial:${contributionId}`, true]] as const) {
+      const open = await tx.opsAlert.findFirst({ where: { dedupeKey, status: 'OPEN' }, select: { id: true } });
+      if (!open) continue;
+      if (partial) await resolveUnknownPartialRefund(tx, actor, contributionId, { refunded });
+      else await resolveUnknownRefund(tx, actor, contributionId, { refunded });
+      await resolveAlert(tx, dedupeKey);
+      return;
+    }
+    throw new RefundNotAllowedError(contributionId, 'no tiene una alerta de devolución atascada abierta');
   });
 }
 

@@ -20,6 +20,51 @@
 
 ## Entradas
 
+### Sprint 5.14c — Vales: puesto con lector, devolución, caducidad, cierre, cancelación y liquidación (N3) · 2026-11-20 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.
+- **Duración:** estimada, 6–8 h; real, de 11:20 a 17:55 (unas 6 h 35 min), con unas 2 h de auditorías y pruebas en segundo plano. Del promotor: las preguntas del principio y dos más durante el sprint (la confirmación de la decisión 69 y cómo convivir con otra sesión que editaba los documentos a la vez).
+- **Decisiones del promotor (formato «qué pasa hoy, ejemplo, opciones, recomendación»):**
+  1. **Decisión 71, al abrir el sprint:** el PIN del puesto vale hasta el final de la validez de los vales (como mucho un año) y cada móvil lo vuelve a teclear cada 48 h; solo **acortar** la validez abre los 14 días para recuperar lo no gastado (alargarla solo avisa y mover el cierre no avisa); cancelada después de liquidar, los vales dejan de valer y se avisa de que responde la entidad.
+  2. **La decisión 69 se mantiene.** El promotor contestó primero «la entidad devuelve siempre». Se le enseñó que contradecía la decisión 69 y las condiciones que había validado ese mismo día, y la confirmó: cancelada antes de liquidar, la plataforma devuelve lo no gastado con el dinero aún retenido, en proporción a lo pagado si se gastó algo.
+  3. **Otra sesión trabajando a la vez:** otra sesión de Claude añadía las decisiones 72 a 81 en los mismos documentos. El promotor eligió que esa sesión terminara y commiteara primero; este sprint actualizó sus párrafos encima, sin mezclar commits.
+- **Qué se ha hecho:**
+  - **Migración `20261201090000_voucher_lifecycle`:** `voucherCancelledAt` (un *trigger* impide deshacerla), `voucherValidityShortenedAt` y la tabla `PartialRefund` (`PENDING → ON_HOLD → REFUNDED`; cifras que no se reescriben, `amountCents = escrowCents + feeCents`; una retenida no vuelve a pendiente).
+  - **Reglas puras** (`voucher-lifecycle-rules.ts`): caducidad del PIN, mantenimiento proporcional (decisión 66), la parte no gastada de cada línea del cobro (`unspentRefundLines`), la devolución que se puede pedir (`voucherRefundOffer`), el plan de fechas con los límites del motor de reglas y el recordatorio.
+  - **Puesto de canje** (`voucher-station.tsx`): desde «Taquilla y portería», con el PIN del puesto; lee el QR o el código, enseña lo que queda, deja teclear cuántos se gastan, rojo con su motivo (gastado del todo, QR falso, otra venta, devuelta, cancelada, caducada), solo con red y sin gastar dos veces al reintentar.
+  - **Devolución desde el pase:** 14 días sin gastar nada (el 100 %) o, tras acortarse la validez, lo no gastado; con confirmación; se envía al momento y, si no, la recoge `MASS_REFUND`.
+  - **Devolución parcial** (`partial-refunds.ts`): asientos de aprobación y de ejecución, confirmación por el aviso de Paycomet, resolución manual del Super-Admin si queda sin respuesta, espera y tope de reintentos, y **retención** si llega un contracargo o una devolución por otro importe de ese cobro (se revisa a mano).
+  - **Cierre** (`closeVoucherSaleAtDate`): con algo vendido, liquidable por lo vendido con el mantenimiento proporcional; sin nada, se cierra sin dinero. La liquidación espera a que se cierren todos los plazos de devolución (`openRefundWindowUntil`).
+  - **Cancelar y cambiar fechas** (`voucher-sale.service.ts`, `sale-change-auth.ts` compartido con los eventos): una persona firmante con segundo factor. Antes de liquidar, `MASS_REFUND` (y el panel al momento) devuelve lo no gastado de cada compra; después, aviso de que responde la entidad (también a quien aportó «sin producto»).
+  - **Cinco emails nuevos:** `voucher.saleClosed`, `voucher.changed`, `voucher.cancelledBuyer`, `voucher.validityChanged` y `voucher.expiryReminder` (estos dos, por compra y con el enlace a los vales). El recordatorio lo deja pendiente `SUPPORTER_BROADCAST` cada día.
+  - **Plazos:** los canjes y las sesiones del puesto se borran al año de liquidarse la venta y siempre después de que caduquen los vales.
+  - **Textos:** unas 170 claves nuevas o cambiadas por idioma (es, ca y en); «stand» y «punt» para el puesto en inglés y catalán.
+- **Pruebas:**
+  - `tests/unit/voucher-lifecycle-rules.spec.ts` (31).
+  - `tests/integration/voucher-lifecycle.spec.ts` (22; QA-VAL04 y QA-VAL05), con cancelación con compras sin gastar, en parte gastadas y gastadas del todo, liquidación de lo gastado (850 € de neto en el caso de la prueba, en céntimos), contracargo con devolución retenida, resolución manual y purga.
+  - `tests/e2e/vouchers-station.spec.ts` (2 × 2 proyectos): puesto con PIN, gasto, código agotado, QR falso, cancelación y devolución desde el pase con su email.
+  - Ajustadas: `vouchers`, `tenant-isolation` (venta de vales real de otra entidad), `event-schedule`, `email-outbox`, `status-change-audit` y `transaction-errors`.
+- **Lo que salió y se corrigió dentro del sprint:**
+  - `fintech-escrow-auditor`, 8 hallazgos en la primera vuelta (4 de operativa con dinero real: una devolución parcial se habría enviado tras un contracargo; una parcial sin respuesta no se podía resolver; reintentos sin espera; ventas canceladas que podían quedarse sin tratar) y 3 menores en la segunda.
+  - `antifraud-legal-guardian`, 8 en la primera (2 legales: el aviso tras cancelar ya liquidada no llegaba a quien aportó «sin producto»; el aviso de validez acortada prometía la devolución a quien compró después) y 3 frases de documentación en la segunda.
+  - `ux-school-director-reviewer`, 12 en la primera (el más importante: un código agotado salía en verde con «Quedan 0»), 2 en la segunda y 1 en la tercera (regiones con el mismo nombre con dos ventas a la vez).
+- **Pendiente / deuda:**
+  - **N27** (nuevo, Sprint 5.19b): herramienta de la consola para revisar y liberar o anular una devolución parcial retenida.
+  - **Paycomet:** que admite devoluciones parciales por importe (consulta 6). Hasta entonces, solo en el simulador.
+  - La decisión 76 (validez máxima de 3 meses) y la 79 (pagos cerrados 20 minutos antes) llegaron durante el sprint, desde la otra sesión: son de sprints posteriores y no se adelantan.
+  - Cámara del puesto en un móvil real: en el piloto (6.2).
+  - Revisión nativa de ca y en, al final de la batida, como siempre.
+- **Observaciones para el promotor:**
+  - Condiciones de entradas y vales §4.5: se precisó que es **acortar** el plazo lo que abre la devolución de 14 días (decisión 71). Lo valida el promotor.
+  - Hasta el Sprint 5.20b, la gestión devuelta y el coste de las devoluciones de una cancelación los asume KORUM.
+- **Puertas:**
+  - P1 ✅: invariantes (43 migraciones, 844 documentos coherentes, 9 iniciativas de la semilla cuadradas, `.claude/` en sincronía), `typecheck` y `lint` a 0.
+  - P2 ✅: unitarias 88/88 archivos (2.236 en verde, 1 omitida, la de siempre) e integración 54/54 archivos (1.112 en verde) contra PostgreSQL 16 real, en la pasada final.
+  - P3 ✅: `fintech-escrow-auditor` APROBADO a la tercera vuelta; `antifraud-legal-guardian` APROBADO a la tercera; `ux-school-director-reviewer` APROBADO a la cuarta; `qa-e2e-verifier` APROBADO en la segunda pasada final (la primera encontró que la prueba de intrusión no conocía las cuatro acciones nuevas: dos del panel y dos del puesto; corregida).
+  - P4 ✅: E2E completa en modo CI sobre la compilación de producción: 557 en verde, 0 fallos, 33 omitidas (las deliberadas de siempre) y 0 intermitencias. Recorrido real con el MCP de Playwright a 1440 y 430 px en es, ca y en, a cargo del revisor de experiencia en sus cuatro vueltas (puesto, panel con dos ventas y dos eventos, pase, corte de red y error del servidor), y del verificador con un navegador real contra la compilación en ca y en: axe sin incidencias, sin desbordes, sin claves sin traducir, sin «saldo» y 0 errores de consola de la aplicación.
+  - P5 ✅: tras cada corrección, P1 y las unitarias completas, más lo afectado (integración de vales, aislamiento y eventos; E2E de vales, portería y fechas de eventos, 14 en verde). Después, una pasada final completa desde la 1.
+- **Siguiente sprint:** SESIÓN R1 · Revisión crítica de producto · Claude Fable 5.2 · esfuerzo alto · 3–4 h (solo informe).
+
 ### Sprint 5.14b — Vales: Estudio, ficha pública, compra y pase (N3) · 2026-11-20 · terminado
 
 - **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (la alternativa que admite la ficha; la recomendada era Sonnet 5.5 · alto). Auditoría: `fintech-escrow-auditor`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.

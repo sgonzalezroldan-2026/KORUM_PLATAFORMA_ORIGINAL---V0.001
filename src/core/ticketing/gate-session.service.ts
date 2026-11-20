@@ -11,6 +11,7 @@ import { generateGateCode } from './gate-code';
 import { firstNotice, firstRejectedNotice, ipOf } from './gate-limits';
 import { generateGatePin, hashGatePin, verifyGatePin } from './gate-pin';
 import { GATE_SESSION_MAX_MS, gatePinExpiry } from './gate-rules';
+import { voucherPinExpiry } from './voucher-lifecycle-rules';
 
 export { GATE_PIN_GRACE_MS } from './gate-rules';
 
@@ -49,19 +50,48 @@ export class GatePinNotAllowedError extends Error {
   }
 }
 
+interface GateTarget {
+  format: string;
+  ticketSubtype: string | null;
+  status: string;
+  closesAt: Date;
+  voucherValidUntil: Date | null;
+  voucherCancelledAt: Date | null;
+}
+
+const GATE_TARGET_SELECT = { format: true, ticketSubtype: true, status: true, organizationId: true, closesAt: true, gateCode: true, voucherValidUntil: true, voucherCancelledAt: true } as const;
+
 /**
- * Genera el PIN de un evento. Solo lo hacen los firmantes, y se muestra una vez. Vale hasta 6 horas después de acabar el día del evento. Las sesiones abiertas con el PIN anterior se cierran:
- * cambiarlo es la forma de echar a alguien que no debería estar dentro.
+ * ¿Admite PIN y enlace? Un evento, mientras vende o espera su liquidación. Un **puesto de vales** (Sprint 5.14c), mientras sus vales se puedan gastar: a la venta,
+ * cerrada o ya liquidada, nunca cancelada.
+ */
+function gateTargetProblem(initiative: GateTarget | null): string | null {
+  if (initiative?.format !== 'TICKETING') return 'la iniciativa no vende entradas';
+  if (initiative.ticketSubtype === 'VOUCHER') {
+    if (initiative.voucherCancelledAt !== null) return 'la venta de vales está cancelada';
+    return ['FUNDRAISING', 'GOAL_REACHED', 'CLOSED'].includes(initiative.status) ? null : 'la venta de vales no está activa';
+  }
+  return initiative.status === 'FUNDRAISING' || initiative.status === 'GOAL_REACHED' ? null : 'la iniciativa no está a la venta';
+}
+
+/** Caducidad del PIN: la fecha del evento + 6 h o, en un puesto de vales, el final de su validez (como mucho un año; decisión del 2026-11-20). */
+const gatePinExpiryFor = (initiative: GateTarget, now: Date): Date =>
+  initiative.ticketSubtype === 'VOUCHER' && initiative.voucherValidUntil ? voucherPinExpiry(initiative.voucherValidUntil, now) : gatePinExpiry(initiative.closesAt);
+
+/**
+ * Genera el PIN de un evento o de un puesto de vales. Solo lo hacen los firmantes, y se muestra una vez. Vale hasta 6 horas después de acabar el día del evento o,
+ * en un puesto de vales, hasta que los vales caducan. Las sesiones abiertas con el PIN anterior se cierran: cambiarlo es la forma de echar a alguien que no debería
+ * estar dentro.
  */
 export async function setGatePin(db: KorumPrismaClient, secret: string, actor: SessionActor, organizationId: string, initiativeId: number, now: Date = new Date()): Promise<{ pin: string; expiresAt: Date }> {
   // Solo quien firma: el Super-Admin ve la pantalla pero no crea PIN (con él podría entrar en la puerta: decisión L-125, SESIÓN D1).
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'gate.pin_set', targetType: 'Initiative', targetId: initiativeId, allowSuperadmin: false });
-  const initiative = await db.initiative.findUnique({ where: { id: initiativeId }, select: { format: true, status: true, organizationId: true, closesAt: true, gateCode: true } });
+  const initiative = await db.initiative.findUnique({ where: { id: initiativeId }, select: GATE_TARGET_SELECT });
   await requireOwnedResource(db, actor, { organizationId, resourceType: 'Initiative', resourceId: initiativeId, resourceLabel: 'Initiative', ownerOrganizationId: initiative?.organizationId ?? null });
-  if (initiative?.format !== 'TICKETING') throw new GatePinNotAllowedError('la iniciativa no vende entradas');
-  if (initiative.status !== 'FUNDRAISING' && initiative.status !== 'GOAL_REACHED') throw new GatePinNotAllowedError('la iniciativa no está a la venta');
-  // La caducidad sale de la fecha del evento guardada en la iniciativa, no de lo que indique quien llama (QA-SEC09).
-  const expiresAt = gatePinExpiry(initiative.closesAt);
+  const problem = gateTargetProblem(initiative);
+  if (problem || !initiative) throw new GatePinNotAllowedError(problem ?? 'la iniciativa no existe');
+  // La caducidad sale de la fecha del evento (o de la validez de los vales) guardada en la iniciativa, no de lo que indique quien llama (QA-SEC09).
+  const expiresAt = gatePinExpiryFor(initiative, now);
   if (expiresAt <= now) throw new GatePinNotAllowedError('el evento ya ha terminado');
   if (expiresAt.getTime() > now.getTime() + MAX_PIN_LIFETIME_MS) throw new GatePinNotAllowedError('la fecha del evento es demasiado lejana');
 
@@ -105,9 +135,10 @@ export async function setGatePin(db: KorumPrismaClient, secret: string, actor: S
  */
 export async function rotateGateCode(db: KorumPrismaClient, actor: SessionActor, organizationId: string, initiativeId: number): Promise<{ gateCode: string }> {
   await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action: 'gate.code_rotate', targetType: 'Initiative', targetId: initiativeId, allowSuperadmin: false });
-  const initiative = await db.initiative.findUnique({ where: { id: initiativeId }, select: { format: true, status: true, organizationId: true, gateCode: true } });
+  const initiative = await db.initiative.findUnique({ where: { id: initiativeId }, select: GATE_TARGET_SELECT });
   await requireOwnedResource(db, actor, { organizationId, resourceType: 'Initiative', resourceId: initiativeId, resourceLabel: 'Initiative', ownerOrganizationId: initiative?.organizationId ?? null });
-  if (initiative?.format !== 'TICKETING' || (initiative.status !== 'FUNDRAISING' && initiative.status !== 'GOAL_REACHED')) throw new GatePinNotAllowedError('la iniciativa no está a la venta');
+  const problem = gateTargetProblem(initiative);
+  if (problem || !initiative) throw new GatePinNotAllowedError(problem ?? 'la iniciativa no existe');
   if (initiative.gateCode === null) throw new GatePinNotAllowedError('todavía no hay PIN ni enlace');
   const gateCode = generateGateCode();
   await db.$transaction(async (tx) => {

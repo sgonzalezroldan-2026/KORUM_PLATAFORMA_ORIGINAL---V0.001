@@ -2,7 +2,7 @@ import { planPayoutSplits } from '@/core/finance/campaign-window';
 import { payoutFigures, type CampaignPayoutRejection } from '@/core/payouts/campaign-payout-rules';
 import type { Db } from '@/lib/db';
 import { payoutCandidates } from '@/services/payments/payout-candidates';
-import { openRescheduleRefundUntil } from '@/services/ticketing/reschedule-window';
+import { openRefundWindowUntil } from '@/services/ticketing/reschedule-window';
 
 /**
  * ¿Se puede pedir ya la liquidación de esta campaña? (Sprint 4.4a). Lo comparten la petición (que lo vuelve a comprobar con la fila bloqueada) y el panel
@@ -35,8 +35,8 @@ export interface ReadinessOrganization {
 export async function payoutBlockers(tx: Db, initiative: ReadinessInitiative, organization: ReadinessOrganization, options: { destination: 'ORGANIZATION' | 'PROVIDER'; payoutId: number | null; now: Date }): Promise<PayoutBlocker[]> {
   const blockers: PayoutBlocker[] = [];
   if (initiative.status !== 'GOAL_REACHED') return ['NOT_READY'];
-  // Un cambio de fecha deja 14 días para pedir la devolución: liquidar antes la haría imposible (Sprint 5.13).
-  if (await openRescheduleRefundUntil(tx, initiative.id, options.now)) blockers.push('REFUND_WINDOW_OPEN');
+  // Un cambio de fecha (Sprint 5.13) o una compra de vales (Sprint 5.14c) deja 14 días para pedir la devolución: liquidar antes la haría imposible.
+  if (await openRefundWindowUntil(tx, initiative.id, options.now)) blockers.push('REFUND_WINDOW_OPEN');
   // Un comercio cobrado sin revisar aún se puede rechazar y devolver: liquidar antes lo impediría (heredado del 3.5).
   const unreviewed = await tx.sponsor.count({ where: { initiativeId: initiative.id, status: 'PENDING', paidAt: { not: null }, contribution: { status: 'COMPLETED' } } });
   if (unreviewed > 0) blockers.push('SPONSORS_PENDING');

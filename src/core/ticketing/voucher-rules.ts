@@ -127,11 +127,15 @@ export function noProductOffered(sale: VoucherSaleState, now: Date): boolean {
 /** Estados de la venta en los que se puede gastar un vale: a la venta, cerrada sin liquidar o ya liquidada (el vale vale hasta su fecha, no hasta la liquidación). */
 const REDEEMABLE_SALE_STATUSES = new Set(['FUNDRAISING', 'GOAL_REACHED', 'CLOSED']);
 
-export type VoucherRedeemBlock = 'REVOKED' | 'NOT_PAID' | 'SALE_CLOSED' | 'EXPIRED';
+export type VoucherRedeemBlock = 'REVOKED' | 'NOT_PAID' | 'SALE_CLOSED' | 'SALE_CANCELLED' | 'EXPIRED';
 
-/** Por qué no se puede gastar ningún vale de un pase (o `null` si se puede). El orden importa: un pase anulado se dice antes que una venta cerrada. */
-export function voucherRedeemBlock(pass: { revokedAt: Date | null; contributionStatus: string }, sale: { status: string; voucherValidUntil: Date | null }, now: Date): VoucherRedeemBlock | null {
+/**
+ * Por qué no se puede gastar ningún vale de un pase (o `null` si se puede). El orden importa: un pase anulado se dice antes que una venta cerrada. Una venta que
+ * la entidad canceló (Sprint 5.14c, decisiones 49, 69 y 71) ya no canjea nada, aunque siga pendiente de liquidar o ya liquidada: quien compró lo resuelve con la entidad.
+ */
+export function voucherRedeemBlock(pass: { revokedAt: Date | null; contributionStatus: string }, sale: { status: string; voucherValidUntil: Date | null; voucherCancelledAt?: Date | null }, now: Date): VoucherRedeemBlock | null {
   if (pass.revokedAt !== null) return 'REVOKED';
+  if (sale.voucherCancelledAt) return 'SALE_CANCELLED';
   if (!REDEEMABLE_SALE_STATUSES.has(sale.status)) return 'SALE_CLOSED';
   if (pass.contributionStatus !== 'COMPLETED') return 'NOT_PAID';
   if (sale.voucherValidUntil === null || sale.voucherValidUntil.getTime() <= now.getTime()) return 'EXPIRED';

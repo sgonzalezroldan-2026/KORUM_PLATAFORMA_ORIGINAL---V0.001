@@ -1,5 +1,6 @@
 import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { inTransaction, type Db } from '@/lib/db';
+import { settlePartialRefundInTx } from './partial-refunds';
 import { loadLockedContribution, RefundNotAllowedError, settleRefundInTx } from './payment-reversals';
 
 /**
@@ -17,6 +18,25 @@ export async function resolveUnknownRefund(db: Db, actor: VerifiedSuperadminActo
     else await tx.contribution.update({ where: { id: contributionId }, data: { refundSendingAt: null } });
     await tx.auditLog.create({
       data: { actorType: 'USER', actorUserId: actor.userId, organizationId: contribution.organizationId, action: 'payment.refund_resolved', targetType: 'Contribution', targetId: String(contributionId), metadataJson: { refunded: resolution.refunded } }
+    });
+  });
+}
+
+/**
+ * Lo mismo para la devolución de lo no gastado de unos vales (Sprint 5.14c) cuyo envío quedó sin respuesta: `refunded: true` la asienta como devuelta (asiento
+ * de ejecución y email); `false` libera la reserva y la tarea la volverá a pedir. Solo un Super-Admin verificado, con auditoría.
+ */
+export async function resolveUnknownPartialRefund(db: Db, actor: VerifiedSuperadminActor, contributionId: number, resolution: { refunded: boolean }, now: Date = new Date()): Promise<void> {
+  assertVerifiedSuperadmin(actor, 'payment.resolve_unknown_refund', now);
+  await inTransaction(db, async (tx) => {
+    await revalidateActor(tx, actor, 'payment.resolve_unknown_refund', now);
+    const contribution = await loadLockedContribution(tx, { id: contributionId });
+    const refund = await tx.partialRefund.findUnique({ where: { contributionId }, select: { status: true, sendingAt: true } });
+    if (!contribution || refund?.status !== 'PENDING' || !refund.sendingAt) throw new RefundNotAllowedError(contributionId, 'no tiene una devolución parcial de resultado desconocido');
+    if (resolution.refunded) await settlePartialRefundInTx(tx, contributionId, now);
+    else await tx.partialRefund.update({ where: { contributionId }, data: { sendingAt: null } });
+    await tx.auditLog.create({
+      data: { actorType: 'USER', actorUserId: actor.userId, organizationId: contribution.organizationId, action: 'payment.refund_resolved', targetType: 'Contribution', targetId: String(contributionId), metadataJson: { refunded: resolution.refunded, partial: true } }
     });
   });
 }

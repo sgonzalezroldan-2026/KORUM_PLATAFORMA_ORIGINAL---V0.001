@@ -151,8 +151,11 @@ async function queueNoProductReceipt(
   });
 }
 
-/** Aviso de que el dinero ya vuelve al medio de pago (`refund.issued`). Se escribe cuando el reembolso queda asentado. */
-export async function queueRefundIssued(tx: Db, contributionId: number): Promise<void> {
+/**
+ * Aviso de que el dinero ya vuelve al medio de pago (`refund.issued`). Se escribe cuando el reembolso queda asentado. `amountCents` solo en una devolución
+ * parcial de vales (Sprint 5.14c): lo que volvió, no todo lo cobrado.
+ */
+export async function queueRefundIssued(tx: Db, contributionId: number, amountCents?: number): Promise<void> {
   const contribution = await tx.contribution.findUniqueOrThrow({
     where: { id: contributionId },
     select: { id: true, organizationId: true, initiativeId: true, userId: true, guestEmail: true, locale: true, totalChargedCents: true }
@@ -168,7 +171,7 @@ export async function queueRefundIssued(tx: Db, contributionId: number): Promise
         toAddress,
         userId: contribution.userId,
         organizationId: contribution.organizationId,
-        payloadJson: { initiativeId: contribution.initiativeId, amountCents: contribution.totalChargedCents }
+        payloadJson: { initiativeId: contribution.initiativeId, amountCents: amountCents ?? contribution.totalChargedCents }
       }
     ],
     skipDuplicates: true

@@ -1,6 +1,6 @@
 # Condiciones de entradas y vales
 
-> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13; la frase del certificado en el punto 4.6, el 2026-11-19, decisión 64; la validez máxima del punto 4.3 y el cierre de los pagos del punto 2, decisiones 76 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13; la frase del certificado en el punto 4.6, el 2026-11-19, decisión 64; la precisión del punto 4.5 sobre qué cambio de fecha abre la devolución, el 2026-11-20, decisión 71, Sprint 5.14c; la validez máxima del punto 4.3 y el cierre de los pagos del punto 2, decisiones 76 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que compran entradas para un evento o vales de una entidad.
 > **Se acepta en:** el pago, con la casilla obligatoria «He leído y acepto las condiciones de entradas y vales» y su ventana de resumen (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -87,7 +87,7 @@ Los vales valen hasta la fecha que fija la entidad, bajo su responsabilidad (com
 ### 4.5 Si la venta se cancela o cambia de fecha
 
 - Si la entidad cancela la venta **antes de recibir el dinero**, te devolvemos de forma automática el 100 % de los vales que no hayas gastado. El dinero se le entrega cuando la venta se cierra y han pasado los 14 días de devolución. Si la cancela después, la plataforma ya no tiene ese dinero y **te lo tiene que devolver la entidad**: te avisamos de la cancelación y te decimos cómo pedírselo.
-- Si cambia la fecha, te avisamos y puedes recuperar el 100 % de los vales sin gastar durante 14 días, con el enlace del aviso.
+- Si la entidad **acorta** el plazo para gastarlos, te avisamos y puedes recuperar el 100 % de los vales sin gastar durante 14 días, con el botón «Pedir la devolución» de tus vales (el aviso lleva el enlace). Si lo alarga, te avisamos de la fecha nueva.
 
 ### 4.6 Seguir aportando «sin producto»
 

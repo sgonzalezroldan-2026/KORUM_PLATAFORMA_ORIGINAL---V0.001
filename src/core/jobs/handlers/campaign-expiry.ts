@@ -1,6 +1,7 @@
 import { returnSelfBoostToKorum } from '@/core/finance/self-boost-return';
 import { closeEventAtDate } from '@/core/ticketing/event-date-reached';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
+import { closeVoucherSaleAtDate } from '@/core/ticketing/voucher-sale-close';
 import { raiseAlert } from '../ops-alerts';
 import { inTransaction, type Db } from '@/lib/db';
 import { closeDueResizePolls } from '@/services/resize/resize-close';
@@ -25,6 +26,9 @@ import { recordStatusChange } from '@/services/audit/status-change-audit';
  *
  * Desde el Sprint 5.13 (decisión 30 del promotor) un **evento con entradas** que llega a su fecha sin agotar el aforo ya no vence: con algo vendido pasa a
  * liquidable por lo vendido (`GOAL_REACHED`) y sin nada se cierra sin dinero que mover (`CANCELLED`). Lo hace `closeEventAtDate`.
+ *
+ * Desde el Sprint 5.14c, una **venta de vales** que llega a su cierre hace lo mismo con sus reglas (`closeVoucherSaleAtDate`): se liquida por lo vendido, también
+ * agotada (no pasa a `GOAL_REACHED` al agotarse: sigue abierta a la aportación «sin producto» hasta el cierre), y sin nada se cierra sin dinero.
  */
 export const campaignExpiryHandler: JobHandler = async ({ db, now, batchSize, deadline, deps }) => {
   let expired = 0;
@@ -74,12 +78,12 @@ async function expireIfDue(db: Db, id: number, now: Date): Promise<'EXPIRED' | '
     await tx.initiative.updateMany({ where: { id }, data: { ticketsHeld: { increment: 0 } } });
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id },
-      select: { organizationId: true, format: true, ticketSubtype: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true, maintFeeCents: true, quotaReservedMaintCents: true }
+      select: { organizationId: true, format: true, ticketSubtype: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, voucherTargetCount: true, walletEscrowId: true, maintFeeCents: true, quotaReservedMaintCents: true }
     });
-    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative)) return null;
-    // Una venta de vales no vence como un evento: al cerrarse la venta se espera a los 14 días de devolución y se liquida por lo vendido (Sprint 5.14c).
-    // Mientras, sigue cerrada a nuevas compras (la compra comprueba la fecha) y sin liquidar.
-    if (initiative.ticketSubtype === 'VOUCHER') return null;
+    if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now) return null;
+    // Una venta de vales se cierra en su día aunque esté agotada (Sprint 5.14c): se liquida por lo vendido cuando pasen los 14 días de devolución.
+    if (initiative.ticketSubtype === 'VOUCHER') return closeVoucherSaleAtDate(tx, { id, ...initiative }, now);
+    if (isGoalMet(initiative)) return null;
     if (initiative.format === 'TICKETING') return closeEventAtDate(tx, { id, ...initiative }, now);
     const { count } = await tx.initiative.updateMany({ where: { id, status: 'FUNDRAISING' }, data: { status: 'EXPIRED' } });
     if (count !== 1) return null;

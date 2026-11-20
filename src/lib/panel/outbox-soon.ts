@@ -6,6 +6,9 @@ import { buildOutboxDeps } from '@/services/email/outbox-deps';
 import { dispatchOutbox } from '@/services/email/outbox-processor';
 import { advanceRescheduleNoticesNow, EVENT_RESCHEDULED_TEMPLATE } from '@/services/notifications/event-reschedule-notices';
 import { advanceSupporterBroadcastNow, type SupporterTemplate } from '@/services/notifications/supporter-broadcast';
+import { buildJobDeps } from '@/core/jobs/job-deps';
+import { executePendingRefund } from '@/services/payments/payment-reversals';
+import { approveCancelledVoucherRefunds, executePendingPartialRefunds } from '@/services/ticketing/voucher-cancel-refunds';
 
 /**
  * Envía ya, después de responder (`after()`), unos mensajes concretos de la bandeja de salida: un enlace de firma o el aviso de una liquidación hecha no
@@ -73,6 +76,35 @@ export function dispatchRescheduleNoticesSoon(db: KorumPrismaClient, hmacSecret:
       if (rows.length > 0) await dispatchOutbox(db, buildOutboxDeps(db), { ids: rows.map((row) => row.id), limit: rows.length });
     } catch (error) {
       reportError(error, { stage: 'reschedule-notices-soon' });
+    }
+  });
+}
+
+const VOUCHER_REFUNDS_SOON_BUDGET_MS = 20_000;
+
+/**
+ * Venta de vales cancelada antes de liquidarla (Sprint 5.14c, decisión 69): después de responder, aprueba y envía las devoluciones de lo no gastado y los avisos a
+ * quienes compraron, sin esperar a la tarea diaria. Lo que no dé tiempo lo completa `MASS_REFUND` sin repetir nada.
+ */
+export function dispatchVoucherCancelRefundsSoon(db: KorumPrismaClient, hmacSecret: string, initiativeId: number): void {
+  after(async () => {
+    const deadline = Date.now() + VOUCHER_REFUNDS_SOON_BUDGET_MS;
+    try {
+      const now = new Date();
+      await approveCancelledVoucherRefunds(db, { now, batchSize: 100, hmacSecret, deadline, initiativeId });
+      const deps = buildJobDeps(db);
+      const provider = await deps.paymentProvider();
+      const originalIp = await deps.refundOriginalIp();
+      const pending = await db.contribution.findMany({ where: { initiativeId, status: 'REFUND_PENDING', refundSendingAt: null }, orderBy: { id: 'asc' }, take: 100, select: { id: true } });
+      for (const { id } of pending) {
+        if (Date.now() > deadline) break;
+        await executePendingRefund(db, provider, id, originalIp, now);
+      }
+      if (Date.now() <= deadline) await executePendingPartialRefunds(db, provider, originalIp, { now, batchSize: 100, deadline, initiativeId });
+      const rows = await db.outboxMessage.findMany({ where: { status: 'PENDING', OR: [{ idempotencyKey: { startsWith: `voucher.cancelledBuyer:${initiativeId}:` } }, { templateKey: 'refund.issued', payloadJson: { path: ['initiativeId'], equals: initiativeId } }] }, orderBy: { id: 'asc' }, take: BROADCAST_SOON_LIMIT, select: { id: true } });
+      if (rows.length > 0) await dispatchOutbox(db, buildOutboxDeps(db), { ids: rows.map((row) => row.id), limit: rows.length });
+    } catch (error) {
+      reportError(error, { stage: 'voucher-cancel-refunds-soon', initiativeId });
     }
   });
 }

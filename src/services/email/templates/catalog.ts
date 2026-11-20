@@ -14,6 +14,7 @@ import {
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
 import { voucherNoProductReceipt, voucherPass } from './definitions-vouchers';
+import { voucherCancelledBuyer, voucherChanged, voucherExpiryReminder, voucherSaleClosed, voucherValidityChanged } from './definitions-voucher-notices';
 import { accountPasskeyAdded, supportReceived, supportReplied } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
@@ -69,6 +70,11 @@ const ENTRIES = [
   register('ticket.pass', ticketPass),
   register('voucher.pass', voucherPass),
   register('voucher.noProductReceipt', voucherNoProductReceipt),
+  register('voucher.saleClosed', voucherSaleClosed),
+  register('voucher.changed', voucherChanged),
+  register('voucher.cancelledBuyer', voucherCancelledBuyer),
+  register('voucher.validityChanged', voucherValidityChanged),
+  register('voucher.expiryReminder', voucherExpiryReminder),
   register('gate.pinRevoked', gatePinRevoked),
   register('initiative.goalReached', initiativeGoalReached),
   register('initiative.expired', initiativeExpired),

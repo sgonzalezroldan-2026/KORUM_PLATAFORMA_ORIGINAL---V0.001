@@ -22,12 +22,12 @@ import { MAX_VOUCHERS_PER_ORDER, voucherRedeemBlock, type VoucherRedeemBlock } f
  * **Quién canjea:** el puesto con el PIN de **esa** venta y las personas que firman por la entidad (`DIRECTOR`, `COSIGNER`); ni una cuenta de voluntario
  * (`GATEKEEPER`), que entraría en cualquier venta de la entidad, ni el Super-Admin (como en la portería, `L-125`). Cada canje, aceptado o no, queda como una
  * lectura (`TicketCheckIn`) con su puesto (la sesión con PIN) y su hora; el que hace una persona firmante deja además una fila de auditoría con quién fue
- * (`voucher.redeemed`), porque su lectura no tiene puesto. El puesto con lector y PIN llega en el Sprint 5.14c.
+ * (`voucher.redeemed`), porque su lectura no tiene puesto. El puesto con lector y PIN es del Sprint 5.14c (`voucher-station.tsx`); una venta cancelada ya no canjea.
  */
 
 export type VoucherLookupResult =
   | { status: 'OK'; balance: number; quantity: number; serialCode: string; validUntil: Date }
-  | { status: 'INVALID_SIGNATURE' | 'OTHER_SALE' }
+  | { status: 'INVALID_SIGNATURE' | 'OTHER_SALE' | 'EXHAUSTED' }
   | { status: VoucherRedeemBlock };
 
 export type VoucherRedeemResult =
@@ -44,6 +44,7 @@ const REJECTION_REASON: Record<VoucherRedeemBlock | 'INSUFFICIENT' | 'EXHAUSTED'
   REVOKED: 'REVOKED',
   NOT_PAID: 'NOT_PAID',
   SALE_CLOSED: 'EVENT_CLOSED',
+  SALE_CANCELLED: 'VENTA_CANCELADA',
   EXPIRED: 'VALE_CADUCADO',
   INSUFFICIENT: 'CANTIDAD_SUPERIOR',
   EXHAUSTED: 'PASE_AGOTADO'
@@ -100,10 +101,12 @@ export async function lookupVoucherBalance(db: KorumPrismaClient, secret: string
   if (resolved.status !== 'FOUND') return resolved;
   const pass = await db.ticketPass.findUniqueOrThrow({
     where: { id: resolved.passId },
-    select: { quantity: true, checkedInCount: true, serialCode: true, revokedAt: true, contribution: { select: { status: true } }, initiative: { select: { status: true, voucherValidUntil: true } } }
+    select: { quantity: true, checkedInCount: true, serialCode: true, revokedAt: true, contribution: { select: { status: true } }, initiative: { select: { status: true, voucherValidUntil: true, voucherCancelledAt: true } } }
   });
   const block = voucherRedeemBlock({ revokedAt: pass.revokedAt, contributionStatus: pass.contribution.status }, pass.initiative, now);
   if (block !== null) return { status: block };
+  // Con todos los vales gastados no hay nada que teclear: se dice en rojo, como al canjear (revisión de experiencia del 5.14c).
+  if (pass.quantity - pass.checkedInCount <= 0) return { status: 'EXHAUSTED' };
   return { status: 'OK', balance: pass.quantity - pass.checkedInCount, quantity: pass.quantity, serialCode: pass.serialCode, validUntil: pass.initiative.voucherValidUntil! };
 }
 
@@ -143,7 +146,7 @@ export async function redeemVouchers(
         select: {
           id: true, quantity: true, checkedInCount: true, serialCode: true, revokedAt: true, lastCheckedInAt: true,
           contribution: { select: { status: true } },
-          initiative: { select: { status: true, voucherValidUntil: true } }
+          initiative: { select: { status: true, voucherValidUntil: true, voucherCancelledAt: true } }
         }
       });
       // El mismo canje reenviado (tras un corte, o desde dos pestañas): con el pase ya bloqueado, un reenvío sobre este pase no tiene carrera.

@@ -16,6 +16,7 @@ import { listIdeas, listSponsors } from '@/repositories/sponsor-idea.repository'
 import { authorizeTenant, ResourceNotFoundError, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { EntityBrandingError, saveEntityAccent } from '@/services/panel/entity-branding.service';
 import { cancelEvent, rescheduleEvent } from '@/services/ticketing/event-schedule.service';
+import { cancelVoucherSale, changeVoucherDates } from '@/services/ticketing/voucher-sale.service';
 import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, uniqueId } from './test-database';
 
 /** QA-SEC01 · aislamiento entre entidades (anti-IDOR): dos colegios, sus personas y sus datos. */
@@ -340,5 +341,23 @@ describe('Fecha y cancelación de los eventos (Sprint 5.13)', () => {
     await expect(cancelEvent(db, withSecondFactor(sanJose.gatekeeper), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
     await expect(cancelEvent(db, withSecondFactor(superadmin), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
     expect((await db.initiative.findUniqueOrThrow({ where: { id: sanJose.initiativeId } })).status).toBe('FUNDRAISING');
+  });
+
+  it('el director de Cervantes no cancela ni cambia las fechas de una venta de vales de San José; la portería y el Super-Admin, tampoco (Sprint 5.14c)', async () => {
+    const voucherSale = await createInitiative(db, sanJose.orgId, {
+      status: 'FUNDRAISING', format: 'TICKETING', category: 'Taquilla', ticketSubtype: 'VOUCHER', ticketPriceCents: 200, ticketMax: 50, ticketFeeMode: 'ADD', goalCents: 10_000, voucherValidUntil: new Date(Date.now() + 40 * 86_400_000), quotaReservedAt: new Date()
+    });
+    const payload = { initiativeId: voucherSale.id };
+    await expect(cancelVoucherSale(db, withSecondFactor(cervantes.director), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(changeVoucherDates(db, withSecondFactor(cervantes.director), sanJose.orgId, { ...payload, validDay: '2027-06-30' })).rejects.toBeInstanceOf(TenantAccessError);
+    expect((await denied(sanJose.orgId, cervantes.directorId)).some((row) => (row.metadataJson as { attempted?: string } | null)?.attempted === 'voucher.cancel')).toBe(true);
+    // Con su propia entidad y la venta de la otra: responde como inexistente, sin leer nada de ella.
+    await expect(cancelVoucherSale(db, withSecondFactor(cervantes.director), cervantes.orgId, payload)).rejects.toMatchObject({ reason: 'NOT_FOUND' });
+    await expect(changeVoucherDates(db, withSecondFactor(cervantes.director), cervantes.orgId, { ...payload, validDay: '2027-06-30' })).rejects.toMatchObject({ reason: 'NOT_FOUND' });
+    await expect(cancelVoucherSale(db, withSecondFactor(sanJose.gatekeeper), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    await expect(cancelVoucherSale(db, withSecondFactor(superadmin), sanJose.orgId, payload)).rejects.toBeInstanceOf(TenantAccessError);
+    // El sondeo con su propia entidad queda en la auditoría como intento sobre algo de otra entidad.
+    expect(await db.auditLog.count({ where: { action: 'tenant.resource_outside_tenant', organizationId: cervantes.orgId, targetId: String(voucherSale.id) } })).toBeGreaterThan(0);
+    expect((await db.initiative.findUniqueOrThrow({ where: { id: voucherSale.id } })).voucherCancelledAt).toBeNull();
   });
 });

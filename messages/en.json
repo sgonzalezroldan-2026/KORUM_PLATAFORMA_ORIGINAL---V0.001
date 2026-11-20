@@ -926,12 +926,12 @@
       "subject": "Your vouchers for “{initiative}”",
       "preheader": "Your QR code is inside.",
       "title": "Your vouchers are ready",
-      "body": "You have bought {count, plural, one {# voucher} other {# vouchers}} from {organization}. Show the QR code at their stall and they will deduct the ones you spend: the rest stay on the same code. It is attached as an image and also behind the button.",
-      "refund": "If you have not spent any voucher from this purchase, you can ask for a 100% refund within 14 days. After that, what you paid stays with the organisation’s cause.",
+      "body": "You have bought {count, plural, one {# voucher} other {# vouchers}} from {organization}. Show the QR code at their stand and they will deduct the ones you spend: the rest stay on the same code. It is attached as an image and also behind the button.",
+      "refund": "If you do not spend any voucher from this purchase, you can get 100% back within 14 days with the “Ask for a refund” button on your vouchers. After that, what you paid stays with the organisation for its cause.",
       "serial": "Code",
       "quantity": "Vouchers bought",
       "quantityValue": "{count, plural, one {# voucher} other {# vouchers}}",
-      "validUntil": "Can be spent until",
+      "validUntil": "Valid until",
       "holder": "Sold by",
       "cta": "See my vouchers",
       "footnote": "The QR code is personal: do not post it on social media. Anyone who has it can spend your vouchers.",
@@ -944,6 +944,61 @@
         "equivalent": "Worth",
         "amount": "For the organisation",
         "fee": "Digital handling fees"
+      },
+      "saleClosed": {
+        "settleSubject": "The voucher sale “{initiative}” has closed",
+        "settlePreheader": "It is settled for what was sold once the 14-day refund period ends.",
+        "settleTitle": "The voucher sale has closed",
+        "settleBody": "“{initiative}” has reached its last day with {count, plural, one {# voucher sold} other {# vouchers sold}}. The vouchers remain valid at your stand until their date.",
+        "settleNext": "You will be able to settle what was sold, with the usual two signatures, once the 14 days in which buyers can ask for a refund without having spent any voucher are over.",
+        "raised": "Raised",
+        "settleCta": "Go to Payouts",
+        "emptySubject": "The voucher sale “{initiative}” has closed without sales",
+        "emptyPreheader": "There is nothing to settle.",
+        "emptyTitle": "The sale has closed without sales",
+        "emptyBody": "“{initiative}” has reached its last day without selling any voucher. It has closed with no money to move and the quotas return to your organisation.",
+        "emptyCta": "Go to the dashboard"
+      },
+      "changed": {
+        "cancelledSubject": "The voucher sale “{initiative}” has been cancelled",
+        "cancelledPreheader": "Vouchers can no longer be spent at the stand.",
+        "cancelledTitle": "Voucher sale cancelled",
+        "cancelledBody": "{count, plural, =0 {A signatory has cancelled “{initiative}”. No voucher had been sold.} other {A signatory has cancelled “{initiative}”. Vouchers can no longer be spent at the stand. The platform is refunding everyone what they had not spent; what was spent is settled from “Payouts”, as usual, once the refunds are done.}}",
+        "cancelledSettledBody": "A signatory has cancelled “{initiative}”, which had already been settled. Vouchers can no longer be spent at the stand: we have told everyone with unspent vouchers to ask you for their refund.",
+        "datesSubject": "The dates of the voucher sale “{initiative}” have changed",
+        "datesPreheader": "Last day of sale and voucher validity.",
+        "datesTitle": "Dates changed",
+        "datesBody": "A signatory has changed the dates of “{initiative}”: the sale closes on {close} and the vouchers are valid until {valid}.",
+        "datesNotice": "As the validity changed, we are emailing everyone with unspent vouchers. If it was shortened, they can get back what they have not spent for 14 days, and until then the sale cannot be settled.",
+        "cta": "See the box office"
+      },
+      "cancelledBuyer": {
+        "subject": "{organization} has cancelled the voucher sale “{initiative}”",
+        "preheader": "Your vouchers can no longer be spent.",
+        "title": "The voucher sale has been cancelled",
+        "body": "{organization} has cancelled “{initiative}”. From now on, the vouchers you have not spent can no longer be used at its stand.",
+        "how": "The sale had already been settled: the money is in the account of {organization}, which is responsible for it. To get back what you are owed (the vouchers you did not spend or your contribution without a product), ask them from their help page.",
+        "cta": "Write to the organisation",
+        "preheaderRefund": "We are refunding what you did not spend.",
+        "refund": "We will automatically refund what you did not spend to the same payment method you used, without you having to do anything. You will receive an email for each refund. What you already spent at the stand is not refunded.",
+        "ctaRefund": "See the sale"
+      },
+      "validityChanged": {
+        "subject": "Your vouchers for “{initiative}” have a new date",
+        "preheader": "How long you can spend them has changed.",
+        "title": "Your vouchers’ validity has changed",
+        "body": "{organization} has changed how long the vouchers for “{initiative}” are valid: they can now be spent until {date}.",
+        "where": "Your vouchers are still on the same QR code. Show it at the organisation’s stand to spend them.",
+        "cta": "See my vouchers",
+        "refund": "If the new date does not suit you, you can get back what you have not spent until {until}, with the “Ask for a refund” button on your vouchers."
+      },
+      "expiryReminder": {
+        "subject": "Your vouchers for “{initiative}” expire soon",
+        "preheader": "You still have vouchers to spend.",
+        "title": "Your vouchers expire soon",
+        "body": "You still have vouchers for “{initiative}”, from {organization}. They can be spent until {date}; after that they are no longer valid and are not refunded.",
+        "where": "Show your QR code at the organisation’s stand to spend them.",
+        "cta": "See my vouchers"
       }
     }
   },
@@ -3404,7 +3459,7 @@
       },
       "vouchers": {
         "title": "Voucher sale",
-        "intro": "Single-price vouchers that families spend at the organisation’s stall, with one QR code per purchase. Use the description to explain what they can be exchanged for: no list of items is needed.",
+        "intro": "Single-price vouchers that families spend at the organisation’s stand, with one QR code per purchase. Use the description to explain what they can be exchanged for: no list of items is needed.",
         "price": "Price of one voucher",
         "capMode": "Number of vouchers",
         "capped": "With a voucher limit",
@@ -3457,7 +3512,7 @@
         "DESTINATION_ACCOUNT_MISSING": "Your organisation does not have its PAYCOMET account yet.",
         "NOTHING_TO_PAY": "There is nothing left to pay out for this campaign.",
         "WINDOW_EXPIRED": "Some payments are past the 90 days in which PAYCOMET can send them. The KORUM team will look into it with you.",
-        "REFUND_WINDOW_OPEN": "You changed the event date: buyers can ask for a refund for 14 days. You can request the payout once that period ends."
+        "REFUND_WINDOW_OPEN": "Buyers can still ask for their 14-day refund (after an event date change or after buying vouchers). You will be able to settle when that period ends."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Review the local businesses",
@@ -3534,7 +3589,7 @@
         "FILE_MIME_MISMATCH": "The file type doesn’t match its content. Save it again as PDF or JPG.",
         "FILE_EXTENSION_MISMATCH": "The file extension doesn’t match its content. Rename it or save it again.",
         "FILE_RETENTION_REQUIRED": "We couldn’t save the file. Please try again.",
-        "REFUND_WINDOW_OPEN": "The refund period for the date change is still open. You can request the payout once it ends."
+        "REFUND_WINDOW_OPEN": "A 14-day refund period is still open. You will be able to settle when it ends."
       },
       "pending": {
         "title": "Payout {reference} · waiting for signatures",
@@ -3771,9 +3826,10 @@
     "gate": {
       "metaTitle": "Box office and door",
       "title": "Box office and door",
-      "intro": "Here you set the door PIN for each event and see which volunteer phones are inside. The PIN belongs to that event only, is shown once and expires six hours after the event day ends.",
+      "intro": "Here you set the door PIN for each event and the redemption stand PIN for each voucher sale, and see which volunteer phones are inside. Each PIN belongs only to its event or sale and is shown once. An event PIN expires six hours after the end of its day; a voucher stand PIN, when the vouchers expire.",
       "kind": {
-        "event": "Event with tickets"
+        "event": "Event with tickets",
+        "vouchers": "Voucher sale"
       },
       "sold": "{sold} sold",
       "soldOf": "{sold} of {max} sold",
@@ -3801,7 +3857,12 @@
         "rotate": "Change the door check-in link",
         "rotateWarning": "The old link will stop working: anyone who has it will no longer be able to open door check-in or try PINs. Phones that are already inside keep working, but if they reload the page they will have to open the new link. Send them the new link.",
         "rotateYes": "Yes, change the link",
-        "rotateNo": "Do not change it"
+        "rotateNo": "Do not change it",
+        "hintVouchers": "Whoever runs the stand opens this page on their phone with this link and types the PIN. No account needed. Share it only with the people at the stand and do not publish it. If it leaks, change it here.",
+        "openVouchers": "Open the voucher stand",
+        "rotateVouchers": "Change the stand link",
+        "rotateWarningVouchers": "The old link will stop working: whoever has it can no longer open the stand or try PINs. Phones already inside keep working, but if they reload the page they will need the new link. Send them the new link.",
+        "afterPinVouchers": "The stand link appears once you create the PIN."
       },
       "sessions": {
         "title": "{count, plural, =0 {No phones inside} one {# phone inside} other {# phones inside}}",
@@ -3814,8 +3875,8 @@
       },
       "readOnly": "Only the signatories can create the PIN and close sessions.",
       "empty": {
-        "title": "There are no events with tickets yet",
-        "text": "When you publish an event from the Studio, you can create the PIN for its door here.",
+        "title": "No events or voucher sales yet",
+        "text": "When you publish an event with tickets or a voucher sale from the Studio, you can create the PIN for its door or stand here.",
         "action": "Go to the Studio"
       },
       "errors": {
@@ -3859,7 +3920,67 @@
         }
       },
       "closedState": "Event cancelled: buyers get 100% back and door check-in is closed.",
-      "closedEmpty": "Event closed with no sales: there is nothing to refund and door check-in is closed."
+      "closedEmpty": "Event closed with no sales: there is nothing to refund and door check-in is closed.",
+      "vouchers": {
+        "validUntil": "valid until {date}",
+        "sold": "{sold, plural, one {# voucher sold} other {# vouchers sold}}",
+        "soldOf": "{sold} of {max} vouchers sold",
+        "soldTarget": "{sold} vouchers sold · target: {target}",
+        "cancelledState": "Sale cancelled: the vouchers can no longer be spent. The platform refunds everyone what they had not spent, and what was spent is settled from “Payouts”.",
+        "cancelledStateSettled": "Sale cancelled after settlement: the vouchers can no longer be spent. We have told everyone with unspent vouchers to ask you for their refund.",
+        "closedEmpty": "Sale closed without selling any voucher: there is nothing to settle and the stand is closed.",
+        "expiredState": "The vouchers of this sale have expired: the stand is closed.",
+        "title": "Dates and cancellation",
+        "refundOpen": "Some purchases can still ask for their 14-day refund until {date}. Until then the sale cannot be settled.",
+        "changeDates": "Change the dates",
+        "cancel": "Cancel the sale",
+        "closeLabel": "Last day of sale",
+        "validLabel": "Vouchers can be spent until",
+        "datesHint": "{count, plural, =0 {No voucher has been sold yet: the change notifies nobody.} other {If you extend the validity, we will email everyone with unspent vouchers. If you shorten it, they can also get back what they have not spent for 14 days, and until then you cannot settle. Changing the last day of sale notifies nobody.}} The sale can last until {closeMax} and the vouchers can be valid until {validMax}.",
+        "datesHintClosed": "{count, plural, =0 {The sale is already closed: you can only change how long the vouchers are valid.} other {The sale is already closed: you can only change how long the vouchers are valid. We will email everyone with unspent vouchers; if you shorten it, they can get back what they have not spent for 14 days, and until then you cannot settle.}} At the latest, {validMax}.",
+        "datesHintSettled": "The sale has already been settled: you can only extend the vouchers’ validity, at the latest until {validMax}. We will email everyone with unspent vouchers.",
+        "datesChoose": "Choose a new date",
+        "datesConfirm": "Save the dates",
+        "datesSaved": "{count, plural, =0 {Dates saved: the sale closes on {close} and the vouchers are valid until {valid}.} other {Dates saved: the sale closes on {close} and the vouchers are valid until {valid}. If the validity changed, we are emailing everyone with unspent vouchers; if you shortened it, they can get back what they have not spent for 14 days.}}",
+        "back": "Back",
+        "cancelWarning": "{count, plural, =0 {The sale will close and the stand will stop working. This cannot be undone.} other {The vouchers will stop working at the stand and nobody else can buy. We will automatically refund everyone what they have not spent (and any contributions without a product) to the same payment method. What has already been spent is settled to you as usual. This cannot be undone.}}",
+        "cancelWarningSettled": "The money is already in your account. The vouchers will stop working at the stand and we will tell everyone with unspent vouchers to ask you for their refund. This cannot be undone.",
+        "cancelYes": "Yes, cancel the sale",
+        "cancelNo": "Do not cancel it",
+        "cancelledWithSales": "Sale cancelled. We are emailing the buyers.",
+        "cancelledSettled": "Sale cancelled. We are emailing the buyers.",
+        "cancelledEmpty": "Sale cancelled.",
+        "readOnly": "Only signatories can change the dates or cancel the sale.",
+        "locked": "This sale can no longer be changed: its vouchers have expired.",
+        "errors": {
+          "INVALID_INPUT": "Check the dates you chose.",
+          "NOT_FOUND": "That sale no longer exists.",
+          "NOT_A_VOUCHER_SALE": "This is not a voucher sale.",
+          "WRONG_STATUS": "The sale has changed in the meantime. Reload the page.",
+          "ALREADY_CANCELLED": "The sale was already cancelled.",
+          "EXPIRED": "The vouchers have already expired: there is nothing to change.",
+          "NO_CHANGE": "You have not changed any date.",
+          "CLOSE_NOT_CHANGEABLE": "The sale is already closed: its last day can no longer be changed.",
+          "CLOSE_INVALID": "That closing day does not exist.",
+          "CLOSE_IN_PAST": "The last day of sale must be today or later.",
+          "CLOSE_TOO_LATE": "A voucher sale lasts at most 60 days from publication.",
+          "VALIDITY_INVALID": "That validity date does not exist.",
+          "VALIDITY_BEFORE_CLOSE": "The vouchers must be valid at least until the last day of sale.",
+          "VALIDITY_IN_PAST": "The validity must end today or later.",
+          "VALIDITY_TOO_LATE": "Vouchers can be valid at most 12 months after the sale closes.",
+          "VALIDITY_SHORTER_AFTER_PAYOUT": "The sale has already been settled: the validity can only be extended.",
+          "RATE_LIMITED": "You have made many changes in a row. Wait a while before trying again.",
+          "FORBIDDEN": "You do not have permission to do this.",
+          "SHORTEN_TOO_LATE": "The validity can no longer be shortened: the 14 days to get back unspent vouchers would delay the settlement too much (the money can only stay held for a limited time). You can extend it or cancel the sale."
+        },
+        "cancelledStateEmpty": "Sale cancelled without selling any voucher: there is nothing to refund or settle and the stand is closed."
+      },
+      "pinVouchers": {
+        "none": "This stand has no PIN yet: nobody can open it yet.",
+        "create": "Create the stand PIN",
+        "created": "Stand PIN (write it down: it will not be shown again)",
+        "once": "Share it only with the people running the stand. Valid until {date}, when the vouchers expire."
+      }
     },
     "welcomeCelebration": {
       "title": "Welcome to KORUM!",
@@ -3868,7 +3989,7 @@
     }
   },
   "gate": {
-    "mode": "Door mode",
+    "mode": "Check-in and stands",
     "chooseTitle": "Door check-in for events",
     "emptyTitle": "Open the link for your event",
     "emptyText": "The event organiser gives you a link and a 6-digit PIN. Open the link on this phone and type the PIN.",
@@ -3979,8 +4100,79 @@
     },
     "organiserHint": "Are you organising the event? Create the PIN and the door check-in link in “Box office and door”.",
     "organiserLink": "Go to Box office and door",
-    "metaTitle": "Door check-in",
-    "storageNotice": "This phone keeps the event’s ticket list, and anything you scan without signal, until you close door check-in (3 days at most). Close it when you finish. The camera only reads codes: it records nothing. Do not forward this link."
+    "metaTitle": "Check-in and stands",
+    "storageNotice": "This phone keeps the event’s ticket list, and anything you scan without signal, until you close door check-in (3 days at most). Close it when you finish. The camera only reads codes: it records nothing. Do not forward this link.",
+    "pinIntroVouchers": "Type the 6-digit PIN given to you by the person running the voucher sale.",
+    "storageNoticeVouchers": "This phone keeps no list of vouchers: each scan is checked with the server, so a connection is needed. The session lasts at most 2 days; close it when you finish. The camera only reads codes: it records nothing. Do not forward this link.",
+    "vouchers": {
+      "title": "Voucher redemption stand",
+      "validUntil": "The vouchers of this sale are valid until {date}.",
+      "spentHere": "{count, plural, =0 {No voucher spent since you opened this screen} one {# voucher spent since you opened this screen} other {# vouchers spent since you opened this screen}}",
+      "onlineOnly": "Vouchers can only be spent online: without coverage there is no way to check how many are left.",
+      "problem": {
+        "OFFLINE": "No connection: vouchers can only be checked and spent online. Nothing has been spent; try again when you are back online.",
+        "BUSY": "There are many scans at once from this network. Wait a few seconds and try again.",
+        "FAILED": "The code could not be checked. Try again.",
+        "INVALID_INPUT": "That code is not a voucher. Try again.",
+        "OFFLINE_REDEEM": "No connection while spending. When you are back online, press “Spend” again: it will not be spent twice.",
+        "FAILED_REDEEM": "It could not be spent right now. Press “Spend” again: it will not be spent twice."
+      },
+      "ended": {
+        "title": "The stand session has ended",
+        "text": "The organiser closed this session, changed the PIN or the sale no longer accepts redemptions. Sign in again with the current PIN if you are given it.",
+        "again": "Back to the PIN screen"
+      },
+      "camera": {
+        "title": "Voucher reader",
+        "start": "Turn on the camera",
+        "starting": "Opening the camera…",
+        "stop": "Turn off the camera",
+        "videoLabel": "Camera image",
+        "denied": "We do not have permission to use the camera. You can allow it in the browser settings or type the code below.",
+        "unsupported": "This browser or phone cannot use the camera. Type the code below or use a keyboard barcode reader.",
+        "error": "The camera could not be opened. Type the code below."
+      },
+      "manual": {
+        "hint": "If the camera does not work or you use a keyboard barcode reader, the code arrives in this field.",
+        "label": "Voucher code",
+        "submit": "Check vouchers"
+      },
+      "sound": "Sound and vibration",
+      "leave": "Close the stand on this phone",
+      "result": {
+        "balance": "{balance, plural, one {# voucher left of {total}} other {# vouchers left of {total}}}",
+        "serial": "Code {serial}",
+        "howMany": "How many vouchers are spent now?",
+        "less": "One less",
+        "more": "One more",
+        "quantityInvalid": "{balance, plural, one {Type 1: only # voucher is left.} other {Type a number between 1 and #.}}",
+        "redeem": "{count, plural, =0 {Spend vouchers} one {Spend # voucher} other {Spend # vouchers}}",
+        "redeeming": "Spending…",
+        "cancel": "Do not spend anything",
+        "redeemed": "{spent, plural, one {# voucher spent} other {# vouchers spent}}. {balance, plural, =0 {No vouchers left on this code.} one {# voucher left.} other {# vouchers left.}}",
+        "duplicateAccepted": "This redemption had already been made: nothing more was spent. {balance, plural, =0 {No vouchers left.} one {# voucher left.} other {# vouchers left.}}",
+        "duplicateRejected": "This redemption had already been tried and nothing was spent. Scan the code again.",
+        "insufficient": "{balance, plural, =0 {No vouchers left on this code.} one {Only # voucher is left: nothing was spent.} other {Only # vouchers are left: nothing was spent.}}",
+        "next": "Next",
+        "blocked": {
+          "INVALID_SIGNATURE": "This code is not a valid voucher.",
+          "OTHER_SALE": "This code belongs to another sale or to an event: it is not valid here.",
+          "REVOKED": "This purchase was refunded or cancelled: its vouchers are no longer valid.",
+          "NOT_PAID": "This purchase has not been paid yet: its vouchers are not valid yet.",
+          "SALE_CLOSED": "This sale no longer accepts redemptions.",
+          "SALE_CANCELLED": "The organisation cancelled this sale: its vouchers can no longer be spent.",
+          "EXPIRED": "These vouchers have expired.",
+          "EXHAUSTED": "No vouchers left on this code."
+        }
+      },
+      "closed": {
+        "title": "This stand is no longer open",
+        "text": "The organiser has changed the PIN or the link, cancelled the sale, or the vouchers have expired. If you still need to run the stand, ask them for the new link and PIN."
+      }
+    },
+    "pinVouchers": "Stand PIN",
+    "enterVouchers": "Open the stand",
+    "deviceHintVouchers": "For example, “Snack stand”. That way the organisation knows which phone is which."
   },
   "admin": {
     "headerTitle": "KORUM console",
@@ -5934,10 +6126,39 @@
       "voucherValidUntil": "Can be spent until {date}",
       "voucherExpired": "These vouchers have expired and can no longer be spent.",
       "voucherSpent": "You have already spent every voucher from this purchase.",
-      "showVouchers": "Show it at the organisation’s stall, on your phone or printed: they deduct the vouchers you spend there.",
+      "showVouchers": "Show it at the organisation’s stand, on your phone or printed: they deduct the vouchers you spend there.",
       "shareMessageVouchers": "Your vouchers for “{title}”: {url}",
       "shareWarningVouchers": "Anyone with this link can spend the vouchers: only send it to whoever will use them.",
-      "actionsVouchers": "Actions for your vouchers"
+      "actionsVouchers": "Actions for your vouchers",
+      "voucherCancelled": "The organisation has cancelled this sale: these vouchers can no longer be spent. We are automatically refunding what you did not spend to the same payment method.",
+      "voucherCancelledHelp": "Write to the organisation",
+      "revokedVouchers": {
+        "title": "This voucher purchase is no longer valid",
+        "description": "It has been refunded or cancelled, so its vouchers can no longer be spent. If you asked for a refund, the money returns to your payment method within a few working days."
+      },
+      "refund": {
+        "title": "14-day refund",
+        "text": "As you have not spent any voucher from this purchase yet, you can get 100% back ({amount}) until {date}.",
+        "button": "Ask for a refund",
+        "confirmText": "We will return {amount} to the same payment method and these vouchers will stop working. This cannot be undone.",
+        "confirmYes": "Yes, refund my money",
+        "confirmNo": "No, keep the vouchers",
+        "sending": "Asking for the refund…",
+        "errors": {
+          "INVALID_LINK": "We cannot check this link. Open the full link from your vouchers email.",
+          "RATE_LIMITED": "There have been many attempts from this network. Wait a few minutes and try again.",
+          "ALREADY_REFUNDED": "This purchase is already being refunded.",
+          "NOT_PAID": "This purchase is not paid or is no longer valid.",
+          "SPENT": "A voucher from this purchase has already been spent: it can no longer be refunded.",
+          "WINDOW_CLOSED": "The 14 days have passed: this purchase can no longer be refunded.",
+          "SETTLED": "The sale has already been settled to the organisation: write to them to ask for your refund.",
+          "FAILED": "The refund could not be requested. Try again in a moment."
+        },
+        "textUnspent": "The organisation shortened the time to spend these vouchers. You can get back the part for {count, plural, one {the unspent voucher} other {the # unspent vouchers}} ({amount}) until {date}.",
+        "confirmTextUnspent": "We will return {amount} to the same payment method and {count, plural, one {your remaining voucher will stop} other {your # remaining vouchers will stop}} working. This cannot be undone."
+      },
+      "voucherCancelledSettled": "The organisation has cancelled this sale: these vouchers can no longer be spent. The money is already in the organisation’s account; to get back what you did not spend, ask them.",
+      "voucherCancelledSpent": "The organisation has cancelled this sale. You had already spent all the vouchers of this purchase, so there is nothing to refund."
     },
     "error": {
       "title": "We couldn’t load the community",
@@ -6163,7 +6384,7 @@
         "vouchersSoldOut": "Your purchase sold out the vouchers!",
         "vouchersTargetReached": "Your purchase reached the voucher target!",
         "viewVouchers": "See my vouchers",
-        "vouchersEmail": "We have also emailed it to you: it is the QR code you will show at the stall.",
+        "vouchersEmail": "We have also emailed it to you: it is the QR code you will show at the stand.",
         "noProductReceipt": "We have emailed you the receipt. This contribution gives no vouchers or tax certificate.",
         "vouchersBought": "{count, plural, one {You have bought # voucher, which can be spent until {date}.} other {You have bought # vouchers, which can be spent until {date}.}}",
         "vouchersRefund": "If you spend none, you can ask for a 100% refund within 14 days."
@@ -6738,7 +6959,7 @@
       "feeInc": "Digital handling fees (included)",
       "feeValue": "{fixed} + {pct} per purchase",
       "validUntil": "Can be spent until",
-      "howToUse": "You get a single QR code with all your vouchers. Show it at the organisation’s stall and they deduct the ones you spend; the rest stay on the same code.",
+      "howToUse": "You get a single QR code with all your vouchers. Show it at the organisation’s stand and they deduct the ones you spend; the rest stay on the same code.",
       "refund": "If you have not spent any voucher from your purchase, you can ask for a 100% refund within 14 days. After that, what you paid stays with the organisation’s cause.",
       "noProduct": {
         "title": "The vouchers have sold out, but you can still contribute",
@@ -7322,7 +7543,9 @@
       "EVENT_DATE_REACHED": "the event reached its date",
       "EVENT_CANCELLED": "the organisation cancelled the event",
       "EVENT_RESCHEDULED": "the organisation changed the event date",
-      "EVENT_EMPTIED": "the event that took place was left with no money"
+      "EVENT_EMPTIED": "the event that took place was left with no money",
+      "VOUCHER_SALE_CLOSED": "the voucher sale reached its last day",
+      "VOUCHER_SALE_CANCELLED": "the organisation cancelled the voucher sale"
     },
     "actions": {
       "tenant": {
@@ -7409,7 +7632,12 @@
       "voucher": {
         "qr_invalid": "Voucher stand: tampered or forged QR",
         "qr_other_sale": "Voucher stand: QR from another sale",
-        "redeemed": "Voucher stand: vouchers redeemed by a signatory"
+        "redeemed": "Voucher stand: vouchers redeemed by a signatory",
+        "rate_limited": "Vouchers: too many changes in a row",
+        "sale_closed": "Voucher sale: its last day arrived",
+        "sale_cancelled": "Voucher sale cancelled",
+        "dates_changed": "Voucher sale: dates changed",
+        "purchase_refunded": "Vouchers: 14-day refund requested by the buyer"
       },
       "idea": {
         "chat_access_denied": "Access denied to an idea’s conversation",
@@ -8009,7 +8237,12 @@
         },
         "voucher": {
           "pass": "Vouchers with their QR code",
-          "noProductReceipt": "Receipt for the contribution without a product"
+          "noProductReceipt": "Receipt for the contribution without a product",
+          "saleClosed": "Voucher sale closing notice to signatories",
+          "changed": "Voucher cancellation or date change notice to signatories",
+          "cancelledBuyer": "Voucher sale cancelled notice to voucher holders",
+          "validityChanged": "Voucher validity change notice",
+          "expiryReminder": "Reminder of vouchers about to expire"
         }
       },
       "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",

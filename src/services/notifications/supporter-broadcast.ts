@@ -3,6 +3,7 @@ import { dataHmac } from '@/core/security/data-hmac';
 import type { Prisma } from '@/generated/prisma/client';
 import { inTransaction, type Db } from '@/lib/db';
 import { DONOR_RECIPIENT_SELECT, donorRecipient } from './donor-recipient';
+import { hasUnspentVouchers, isPerPurchase, isVoucherBroadcast, voucherBroadcastPayload, voucherBroadcastReadiness, voucherBroadcastVersion, voucherRecipientWhere } from './voucher-broadcasts';
 
 /**
  * Avisos a quienes aportaron a una iniciativa (Sprint 4.4a, heredado del 3.6): «¡Lo hemos conseguido!» al llegar al 100 % y «Mirad cómo ha quedado» con
@@ -23,9 +24,21 @@ import { DONOR_RECIPIENT_SELECT, donorRecipient } from './donor-recipient';
  * Sprint 5.13, eventos con entradas: el **aviso de cancelación** (`event.cancelledBuyer`) va a quien **compró** (entradas `TICKET`, no donaciones), también a
  * quien ya tiene la devolución en marcha, una vez por persona aunque comprara varias veces. El aviso de un cambio de fecha lleva un enlace por persona y por
  * cambio, y lo reparte `event-reschedule-notices.ts`.
+ *
+ * Sprint 5.14c, vales: la cancelación de la venta, el cambio de validez y el recordatorio de caducidad, solo a quien tiene vales sin gastar (`voucher-broadcasts.ts`).
  */
 
-export const SUPPORTER_TEMPLATES = ['initiative.goalReachedSupporter', 'initiative.achievementPhotos', 'initiative.resizePoll', 'initiative.resizeResult', 'initiative.refundingSupporter', 'event.cancelledBuyer'] as const;
+export const SUPPORTER_TEMPLATES = [
+  'initiative.goalReachedSupporter',
+  'initiative.achievementPhotos',
+  'initiative.resizePoll',
+  'initiative.resizeResult',
+  'initiative.refundingSupporter',
+  'event.cancelledBuyer',
+  'voucher.cancelledBuyer',
+  'voucher.validityChanged',
+  'voucher.expiryReminder'
+] as const;
 export type SupporterTemplate = (typeof SUPPORTER_TEMPLATES)[number];
 
 /** A qué donaciones llega cada aviso: el de reembolso, también a las que ya se están devolviendo (el dinero aún no ha llegado). */
@@ -35,7 +48,11 @@ const RECIPIENT_STATUSES: Record<SupporterTemplate, Array<'COMPLETED' | 'REFUND_
   'initiative.resizePoll': ['COMPLETED'],
   'initiative.resizeResult': ['COMPLETED'],
   'initiative.refundingSupporter': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED'],
-  'event.cancelledBuyer': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED']
+  'event.cancelledBuyer': ['COMPLETED', 'REFUND_PENDING', 'REFUNDED'],
+  // Los avisos de vales van a quien aún tiene vales: una compra devuelta ya no los tiene.
+  'voucher.cancelledBuyer': ['COMPLETED'],
+  'voucher.validityChanged': ['COMPLETED'],
+  'voucher.expiryReminder': ['COMPLETED']
 };
 
 /** A qué aportaciones llega: las donaciones, salvo el aviso de un evento cancelado, que es para quien compró entradas. */
@@ -45,7 +62,10 @@ const RECIPIENT_TYPE: Record<SupporterTemplate, 'DONATION' | 'TICKET'> = {
   'initiative.resizePoll': 'DONATION',
   'initiative.resizeResult': 'DONATION',
   'initiative.refundingSupporter': 'DONATION',
-  'event.cancelledBuyer': 'TICKET'
+  'event.cancelledBuyer': 'TICKET',
+  'voucher.cancelledBuyer': 'TICKET',
+  'voucher.validityChanged': 'TICKET',
+  'voucher.expiryReminder': 'TICKET'
 };
 
 const isSupporterTemplate = (key: string): key is SupporterTemplate => (SUPPORTER_TEMPLATES as readonly string[]).includes(key);
@@ -92,6 +112,9 @@ function readiness(templateKey: SupporterTemplate, status: string, poll: PollFor
     case 'initiative.refundingSupporter':
     case 'event.cancelledBuyer':
       return status === 'REFUNDING' || status === 'REFUNDED' ? 'SEND' : 'DROP';
+    default:
+      // Los de vales los decide `voucherBroadcastReadiness`, con la venta: aquí no llegan.
+      return 'DROP';
   }
 }
 
@@ -114,31 +137,47 @@ async function advance(db: Db, broadcastId: number, run: BroadcastRun): Promise<
     if (broadcast.completedAt) return { queued: 0, done: true };
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id: broadcast.initiativeId },
-      select: { id: true, organizationId: true, walletEscrowId: true, status: true, resizePoll: { select: { id: true, status: true, closesAt: true, optionsJson: true, winningOptionIndex: true, newGoalCents: true } } }
+      select: {
+        id: true,
+        organizationId: true,
+        walletEscrowId: true,
+        status: true,
+        ticketSubtype: true,
+        voucherValidUntil: true,
+        voucherCancelledAt: true,
+        voucherValidityShortenedAt: true,
+        resizePoll: { select: { id: true, status: true, closesAt: true, optionsJson: true, winningOptionIndex: true, newGoalCents: true } }
+      }
     });
     const templateKey = broadcast.templateKey;
-    const state = isSupporterTemplate(templateKey) ? readiness(templateKey, initiative.status, initiative.resizePoll, run.now) : 'DROP';
+    const vouchers = isVoucherBroadcast(templateKey);
+    const state = vouchers ? voucherBroadcastReadiness(templateKey, initiative, run.now) : isSupporterTemplate(templateKey) ? readiness(templateKey, initiative.status, initiative.resizePoll, run.now) : 'DROP';
     if (state !== 'SEND' || !isSupporterTemplate(templateKey)) {
       if (state === 'DROP') await tx.supporterBroadcast.update({ where: { id: broadcast.id }, data: { completedAt: run.now } });
       return { queued: 0, done: true };
     }
     const rows = await tx.contribution.findMany({
-      where: { initiativeId: broadcast.initiativeId, type: RECIPIENT_TYPE[templateKey], status: { in: RECIPIENT_STATUSES[templateKey] }, id: { gt: broadcast.cursorId } },
+      where: { initiativeId: broadcast.initiativeId, type: RECIPIENT_TYPE[templateKey], status: { in: RECIPIENT_STATUSES[templateKey] }, id: { gt: broadcast.cursorId }, ...(vouchers ? voucherRecipientWhere(templateKey, tx) : {}) },
       orderBy: { id: 'asc' },
       take: run.batchSize,
-      select: { id: true, locale: true, ...DONOR_RECIPIENT_SELECT }
+      select: { id: true, locale: true, voucherNoProduct: true, ticketPass: { select: { uuid: true, issuedAt: true, quantity: true, checkedInCount: true } }, ...DONOR_RECIPIENT_SELECT }
     });
+    // Un aviso de vales lleva la fecha en su clave (un segundo cambio vuelve a avisar) y solo va a quien aún tiene alguno por gastar.
+    const version = vouchers ? voucherBroadcastVersion(templateKey, initiative) : '';
+    const extra = (row: (typeof rows)[number]) => (vouchers ? voucherBroadcastPayload(templateKey, initiative, row.ticketPass ?? null, run.now) : extraPayload(templateKey, initiative.resizePoll, row.id, run.hmacSecret));
+    // Los avisos de vales por compra (cambio de validez, recordatorio) llevan el enlace a esos vales: uno por compra, no uno por persona.
+    const perPurchase = vouchers && isPerPurchase(templateKey);
     const data = rows.flatMap((row) => {
       const recipient = donorRecipient(row);
-      if (!recipient) return [];
+      if (!recipient || (vouchers && !hasUnspentVouchers(row))) return [];
       return [
         {
-          idempotencyKey: `${templateKey}:${initiative.id}:${dataHmac(run.hmacSecret, 'supporter-notice', recipient.canonical)}`,
+          idempotencyKey: `${templateKey}:${initiative.id}${version}:${perPurchase ? `c${row.id}` : dataHmac(run.hmacSecret, 'supporter-notice', recipient.canonical)}`,
           templateKey,
           locale: row.locale,
           toAddress: recipient.toAddress,
           organizationId: initiative.organizationId,
-          payloadJson: { initiativeId: initiative.id, walletEscrowId: initiative.walletEscrowId, ...extraPayload(templateKey, initiative.resizePoll, row.id, run.hmacSecret) }
+          payloadJson: { initiativeId: initiative.id, walletEscrowId: initiative.walletEscrowId, ...extra(row) }
         }
       ];
     });

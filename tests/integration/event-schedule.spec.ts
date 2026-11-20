@@ -24,7 +24,7 @@ import { approvePayout, PayoutNotAllowedError } from '@/services/payments/split-
 import { payoutBlockers } from '@/services/payouts/payout-readiness';
 import { claimEventRefund, loadEventRefund } from '@/services/ticketing/event-refund-link.service';
 import { cancelEvent, rescheduleEvent } from '@/services/ticketing/event-schedule.service';
-import { openRescheduleRefundUntil } from '@/services/ticketing/reschedule-window';
+import { openRefundWindowUntil } from '@/services/ticketing/reschedule-window';
 import { createInitiative, createOrganization, createTestClient, createUser, table, TEST_HMAC_SECRET, testJobDeps, uniqueId } from './test-database';
 
 /**
@@ -529,10 +529,10 @@ describe('Auditorías del 5.13 · casos límite de dinero y de portería', () =>
   it('un cambio de fecha sin nadie a quien devolver no deja abierto el plazo que bloquea la liquidación', async () => {
     const { organization, initiative, director } = await eventWithTeam();
     await rescheduleEvent(db, director, organization.id, { initiativeId: initiative.id, newDay: dayIn(8) });
-    expect(await openRescheduleRefundUntil(db, initiative.id, new Date())).toBeNull();
+    expect(await openRefundWindowUntil(db, initiative.id, new Date())).toBeNull();
     // Quien compra después del cambio ya conoce la fecha nueva: tampoco abre el plazo.
     await buy(initiative.id, 1, 'despues@pruebas.example');
-    expect(await openRescheduleRefundUntil(db, initiative.id, new Date())).toBeNull();
+    expect(await openRefundWindowUntil(db, initiative.id, new Date())).toBeNull();
     expect((await loadGateAdmin(db, director, organization.id)).find((event) => event.id === initiative.id)?.schedule.refundOpenUntil).toBeNull();
   });
 

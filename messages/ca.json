@@ -926,12 +926,12 @@
       "subject": "Els teus vals de «{initiative}»",
       "preheader": "El teu codi QR és a dins.",
       "title": "Els teus vals estan a punt",
-      "body": "Has comprat {count, plural, one {# val} other {# vals}} de {organization}. Ensenya el codi QR a la seva parada i allà descomptaran els que gastis: els que et quedin continuen al mateix codi. El tens com a imatge adjunta i també al botó.",
-      "refund": "Si no gastes cap val d’aquesta compra, pots demanar la devolució del 100 % durant 14 dies. Després, el que has pagat es queda per a la causa de l’entitat.",
+      "body": "Has comprat {count, plural, one {# val} other {# vals}} de {organization}. Ensenya el codi QR al seu punt i allà descomptaran els que gastis: els que et quedin continuen al mateix codi. El tens com a imatge adjunta i també al botó.",
+      "refund": "Si no gastes cap val d’aquesta compra, pots recuperar el 100 % durant 14 dies amb el botó «Demanar la devolució» dels teus vals. Després, el que has pagat es queda per a la causa de l’entitat.",
       "serial": "Codi",
       "quantity": "Vals comprats",
       "quantityValue": "{count, plural, one {# val} other {# vals}}",
-      "validUntil": "Es poden gastar fins al",
+      "validUntil": "Vàlids fins al",
       "holder": "Ven l’entitat",
       "cta": "Veure els meus vals",
       "footnote": "El codi QR és personal: no el publiquis a les xarxes. Qui el tingui pot gastar els teus vals.",
@@ -944,6 +944,61 @@
         "equivalent": "Equival a",
         "amount": "Per a l’entitat",
         "fee": "Despeses de gestió digital"
+      },
+      "saleClosed": {
+        "settleSubject": "La venda de vals «{initiative}» ha tancat",
+        "settlePreheader": "Es liquida pel que s’ha venut quan passin els 14 dies de devolució.",
+        "settleTitle": "La venda de vals ha tancat",
+        "settleBody": "«{initiative}» ha arribat al seu últim dia amb {count, plural, one {# val venut} other {# vals venuts}}. Els vals continuen valent al vostre punt fins a la seva data.",
+        "settleNext": "Podreu liquidar el que s’ha venut, amb la doble signatura de sempre, quan acabin els 14 dies en què qui va comprar pot demanar la devolució sense haver gastat cap val.",
+        "raised": "Recaptat",
+        "settleCta": "Anar a Liquidacions",
+        "emptySubject": "La venda de vals «{initiative}» ha tancat sense vendes",
+        "emptyPreheader": "No hi ha res a liquidar.",
+        "emptyTitle": "La venda ha tancat sense vendes",
+        "emptyBody": "«{initiative}» ha arribat al seu últim dia sense vendre cap val. S’ha tancat sense diners per moure i els cupos tornen a la vostra entitat.",
+        "emptyCta": "Anar al tauler"
+      },
+      "changed": {
+        "cancelledSubject": "S’ha cancel·lat la venda de vals «{initiative}»",
+        "cancelledPreheader": "Els vals ja no es gasten al punt.",
+        "cancelledTitle": "Venda de vals cancel·lada",
+        "cancelledBody": "{count, plural, =0 {Una persona signant ha cancel·lat «{initiative}». No s’havia venut cap val.} other {Una persona signant ha cancel·lat «{initiative}». Els vals ja no es gasten al punt. La plataforma està retornant a cada persona el que no havia gastat; el que s’ha gastat es liquida des de «Liquidacions», com sempre, quan acabin les devolucions.}}",
+        "cancelledSettledBody": "Una persona signant ha cancel·lat «{initiative}», que ja estava liquidada. Els vals ja no es gasten al punt: hem avisat qui tenia vals sense gastar que us demani la devolució a vosaltres.",
+        "datesSubject": "Han canviat les dates de la venda de vals «{initiative}»",
+        "datesPreheader": "Últim dia de venda i validesa dels vals.",
+        "datesTitle": "Dates canviades",
+        "datesBody": "Una persona signant ha canviat les dates de «{initiative}»: la venda tanca el {close} i els vals valen fins al {valid}.",
+        "datesNotice": "Com que ha canviat la validesa, avisem per correu qui té vals sense gastar. Si s’ha escurçat, poden recuperar el que no han gastat durant 14 dies i fins aleshores no es pot liquidar.",
+        "cta": "Veure la taquilla"
+      },
+      "cancelledBuyer": {
+        "subject": "{organization} ha cancel·lat la venda de vals «{initiative}»",
+        "preheader": "Els teus vals ja no es poden gastar.",
+        "title": "S’ha cancel·lat la venda de vals",
+        "body": "{organization} ha cancel·lat «{initiative}». A partir d’ara, els vals que no hagis gastat ja no es poden fer servir al seu punt.",
+        "how": "La venda ja s’havia liquidat: els diners són al compte de {organization}, que és qui en respon. Per recuperar el que et correspongui (els vals que no hagis gastat o la teva aportació sense producte), demana-li-ho des de la seva pàgina d’ajuda.",
+        "cta": "Escriure a l’entitat",
+        "preheaderRefund": "Et retornem el que no hagis gastat.",
+        "refund": "Et retornem automàticament el que no hagis gastat, al mateix mitjà de pagament amb què vas pagar, sense que hagis de fer res. Et arribarà un correu per cada devolució. El que ja vas gastar al punt no es retorna.",
+        "ctaRefund": "Veure la venda"
+      },
+      "validityChanged": {
+        "subject": "Els teus vals de «{initiative}» tenen una altra data",
+        "preheader": "Canvia fins quan els pots gastar.",
+        "title": "Canvia la validesa dels teus vals",
+        "body": "{organization} ha canviat fins quan valen els vals de «{initiative}»: ara es poden gastar fins al {date}.",
+        "where": "Els teus vals continuen al mateix codi QR. Ensenya’l al punt de l’entitat per gastar-los.",
+        "cta": "Veure els meus vals",
+        "refund": "Si la nova data no et va bé, pots recuperar el que no hagis gastat fins al {until}, amb el botó «Demanar la devolució» dels teus vals."
+      },
+      "expiryReminder": {
+        "subject": "Els teus vals de «{initiative}» caduquen aviat",
+        "preheader": "Encara et queden vals per gastar.",
+        "title": "Els teus vals caduquen aviat",
+        "body": "Encara et queden vals de «{initiative}», de {organization}. Es poden gastar fins al {date}; després ja no valen ni es retornen.",
+        "where": "Ensenya el teu codi QR al punt de l’entitat per gastar-los.",
+        "cta": "Veure els meus vals"
       }
     }
   },
@@ -3404,7 +3459,7 @@
       },
       "vouchers": {
         "title": "Venda de vals",
-        "intro": "Vals de preu únic que les famílies gasten a la parada de l’entitat, amb un sol codi QR per compra. Explica a la descripció què s’hi pot bescanviar: no cal una llista d’articles.",
+        "intro": "Vals de preu únic que les famílies gasten al punt de l’entitat, amb un sol codi QR per compra. Explica a la descripció què s’hi pot bescanviar: no cal una llista d’articles.",
         "price": "Preu d’un val",
         "capMode": "Quantitat de vals",
         "capped": "Amb un límit de vals",
@@ -3457,7 +3512,7 @@
         "DESTINATION_ACCOUNT_MISSING": "L’entitat encara no té el seu compte a PAYCOMET.",
         "NOTHING_TO_PAY": "No queda res per liquidar en aquesta campanya.",
         "WINDOW_EXPIRED": "Alguns cobraments han passat els 90 dies en què PAYCOMET els pot enviar. L’equip de KORUM ho revisarà amb vosaltres.",
-        "REFUND_WINDOW_OPEN": "Vau canviar la data de l’esdeveniment: qui va comprar pot demanar-ne la devolució durant 14 dies. Podreu liquidar quan acabi aquest termini."
+        "REFUND_WINDOW_OPEN": "Qui va comprar encara pot demanar la devolució de 14 dies (després d’un canvi de data de l’esdeveniment o després de comprar vals). Podreu liquidar quan acabi aquest termini."
       },
       "blockerCta": {
         "SPONSORS_PENDING": "Revisar els comerços",
@@ -3534,7 +3589,7 @@
         "FILE_MIME_MISMATCH": "El tipus del fitxer no coincideix amb el contingut. Torna’l a desar com a PDF o JPG.",
         "FILE_EXTENSION_MISMATCH": "L’extensió del fitxer no coincideix amb el contingut. Canvia-li el nom o torna’l a desar.",
         "FILE_RETENTION_REQUIRED": "No hem pogut desar el fitxer. Torna-ho a provar.",
-        "REFUND_WINDOW_OPEN": "Continua obert el termini de devolució pel canvi de data. Podreu liquidar quan acabi."
+        "REFUND_WINDOW_OPEN": "Encara és obert un termini de devolució de 14 dies. Podreu liquidar quan acabi."
       },
       "pending": {
         "title": "Liquidació {reference} · esperant les signatures",
@@ -3771,9 +3826,10 @@
     "gate": {
       "metaTitle": "Taquilla i porteria",
       "title": "Taquilla i porteria",
-      "intro": "Aquí fixes el PIN de la porta de cada esdeveniment i veus quins mòbils de voluntaris són dins. El PIN és només d’aquest esdeveniment, es mostra una vegada i caduca sis hores després d’acabar el dia de l’esdeveniment.",
+      "intro": "Aquí fixes el PIN de la porta de cada esdeveniment i el del punt de bescanvi de cada venda de vals, i veus quins mòbils de voluntaris hi ha a dins. Cada PIN és només del seu esdeveniment o de la seva venda i es mostra una vegada. El d’un esdeveniment caduca sis hores després d’acabar el seu dia; el d’un punt de vals, quan caduquen els vals.",
       "kind": {
-        "event": "Esdeveniment amb entrades"
+        "event": "Esdeveniment amb entrades",
+        "vouchers": "Venda de vals"
       },
       "sold": "{sold, plural, one {# venuda} other {# venudes}}",
       "soldOf": "{sold} de {max} venudes",
@@ -3801,7 +3857,12 @@
         "rotate": "Canviar l’enllaç de la porteria",
         "rotateWarning": "L’enllaç anterior deixarà de funcionar: qui el tingui ja no podrà obrir la porteria ni provar PINs. Els mòbils que ja són dins continuen funcionant, però si recarreguen la pàgina hauran d’obrir l’enllaç nou. Passa’ls el nou enllaç.",
         "rotateYes": "Sí, canviar l’enllaç",
-        "rotateNo": "No canviar-lo"
+        "rotateNo": "No canviar-lo",
+        "hintVouchers": "Qui atén el punt obre aquesta pàgina al mòbil amb aquest enllaç i escriu el PIN. No necessita compte. Passa’l només a qui sigui al punt i no el publiquis. Si es filtra, canvia’l aquí.",
+        "openVouchers": "Obrir el punt de vals",
+        "rotateVouchers": "Canviar l’enllaç del punt",
+        "rotateWarningVouchers": "L’enllaç anterior deixarà de funcionar: qui el tingui ja no podrà obrir el punt ni provar PINs. Els mòbils que ja hi són dins continuen funcionant, però si tornen a carregar la pàgina hauran d’obrir l’enllaç nou. Passa’ls l’enllaç nou.",
+        "afterPinVouchers": "L’enllaç del punt apareix en crear el PIN."
       },
       "sessions": {
         "title": "{count, plural, =0 {Cap mòbil dins} one {# mòbil dins} other {# mòbils dins}}",
@@ -3814,8 +3875,8 @@
       },
       "readOnly": "Només qui signa pot crear el PIN i tancar sessions.",
       "empty": {
-        "title": "Encara no hi ha esdeveniments amb entrades",
-        "text": "Quan publiquis un esdeveniment des de l’Estudi, podràs crear aquí el PIN de la seva porta.",
+        "title": "Encara no hi ha esdeveniments ni vendes de vals",
+        "text": "Quan publiquis un esdeveniment amb entrades o una venda de vals des de l’Estudi, podràs crear aquí el PIN de la seva porta o del seu punt.",
         "action": "Anar a l’Estudi"
       },
       "errors": {
@@ -3859,7 +3920,67 @@
         }
       },
       "closedState": "Esdeveniment cancel·lat: qui va comprar recupera el 100 % i la porteria està tancada.",
-      "closedEmpty": "Esdeveniment tancat sense vendes: no hi ha res a retornar i la porteria està tancada."
+      "closedEmpty": "Esdeveniment tancat sense vendes: no hi ha res a retornar i la porteria està tancada.",
+      "vouchers": {
+        "validUntil": "valen fins al {date}",
+        "sold": "{sold, plural, one {# val venut} other {# vals venuts}}",
+        "soldOf": "{sold} de {max} vals venuts",
+        "soldTarget": "{sold} vals venuts · objectiu: {target}",
+        "cancelledState": "Venda cancel·lada: els vals ja no es gasten. La plataforma retorna a cada persona el que no havia gastat i el que s’ha gastat es liquida des de «Liquidacions».",
+        "cancelledStateSettled": "Venda cancel·lada després de liquidar-la: els vals ja no es gasten. Hem avisat qui tenia vals sense gastar que us demani la devolució a vosaltres.",
+        "closedEmpty": "Venda tancada sense vendre cap val: no hi ha res a liquidar i el punt és tancat.",
+        "expiredState": "Els vals d’aquesta venda ja han caducat: el punt és tancat.",
+        "title": "Dates i cancel·lació",
+        "refundOpen": "Alguna compra encara pot demanar la devolució de 14 dies fins al {date}. Fins aleshores no es pot liquidar la venda.",
+        "changeDates": "Canviar les dates",
+        "cancel": "Cancel·lar la venda",
+        "closeLabel": "Últim dia de venda",
+        "validLabel": "Els vals es poden gastar fins",
+        "datesHint": "{count, plural, =0 {Encara no s’ha venut cap val: el canvi no avisa ningú.} other {Si allargues la validesa, avisarem per correu qui té vals sense gastar. Si l’escurces, a més podran recuperar el que no hagin gastat durant 14 dies i fins aleshores no podreu liquidar. Canviar l’últim dia de venda no avisa ningú.}} La venda pot durar fins al {closeMax} i els vals poden valer fins al {validMax}.",
+        "datesHintClosed": "{count, plural, =0 {La venda ja és tancada: només pots canviar fins quan valen els vals.} other {La venda ja és tancada: només pots canviar fins quan valen els vals. Avisarem per correu qui té vals sense gastar; si l’escurces, podran recuperar el que no hagin gastat durant 14 dies i fins aleshores no podreu liquidar.}} Com a molt tard, el {validMax}.",
+        "datesHintSettled": "La venda ja s’ha liquidat: només pots allargar la validesa dels vals, com a molt tard fins al {validMax}. Avisarem per correu qui té vals sense gastar.",
+        "datesChoose": "Tria una data nova",
+        "datesConfirm": "Desar les dates",
+        "datesSaved": "{count, plural, =0 {Dates desades: la venda tanca el {close} i els vals valen fins al {valid}.} other {Dates desades: la venda tanca el {close} i els vals valen fins al {valid}. Si ha canviat la validesa, avisem per correu qui té vals sense gastar; si l’has escurçada, poden recuperar el que no hagin gastat durant 14 dies.}}",
+        "back": "Tornar",
+        "cancelWarning": "{count, plural, =0 {La venda es tancarà i el punt deixarà de funcionar. No es pot desfer.} other {Els vals deixaran de valer al punt i ningú més podrà comprar. Retornarem automàticament a cada persona el que no hagi gastat (i les aportacions sense producte), al mateix mitjà de pagament. El que ja s’ha gastat se us liquida com sempre. No es pot desfer.}}",
+        "cancelWarningSettled": "Els diners ja són al vostre compte. Els vals deixaran de valer al punt i avisarem qui té vals sense gastar que us demani la devolució a vosaltres. No es pot desfer.",
+        "cancelYes": "Sí, cancel·lar la venda",
+        "cancelNo": "No cancel·lar-la",
+        "cancelledWithSales": "Venda cancel·lada. Avisem per correu qui va comprar.",
+        "cancelledSettled": "Venda cancel·lada. Avisem per correu qui va comprar.",
+        "cancelledEmpty": "Venda cancel·lada.",
+        "readOnly": "Només qui signa pot canviar les dates o cancel·lar la venda.",
+        "locked": "Aquesta venda ja no es pot canviar: els seus vals han caducat.",
+        "errors": {
+          "INVALID_INPUT": "Revisa les dates triades.",
+          "NOT_FOUND": "Aquesta venda ja no existeix.",
+          "NOT_A_VOUCHER_SALE": "Això no és una venda de vals.",
+          "WRONG_STATUS": "La venda ha canviat mentrestant. Torna a carregar la pàgina.",
+          "ALREADY_CANCELLED": "La venda ja estava cancel·lada.",
+          "EXPIRED": "Els vals ja han caducat: no hi ha res a canviar.",
+          "NO_CHANGE": "No has canviat cap data.",
+          "CLOSE_NOT_CHANGEABLE": "La venda ja és tancada: el seu últim dia ja no es pot canviar.",
+          "CLOSE_INVALID": "Aquest dia de tancament no existeix.",
+          "CLOSE_IN_PAST": "L’últim dia de venda ha de ser avui o més endavant.",
+          "CLOSE_TOO_LATE": "Una venda de vals dura com a molt 60 dies des que es va publicar.",
+          "VALIDITY_INVALID": "Aquesta data de validesa no existeix.",
+          "VALIDITY_BEFORE_CLOSE": "Els vals han de valer com a mínim fins a l’últim dia de venda.",
+          "VALIDITY_IN_PAST": "La validesa ha d’acabar avui o més endavant.",
+          "VALIDITY_TOO_LATE": "Els vals poden valer com a molt 12 mesos després del tancament de la venda.",
+          "VALIDITY_SHORTER_AFTER_PAYOUT": "La venda ja s’ha liquidat: la validesa només es pot allargar.",
+          "RATE_LIMITED": "Has fet molts canvis seguits. Espera una estona abans de tornar-ho a provar.",
+          "FORBIDDEN": "No tens permís per fer-ho.",
+          "SHORTEN_TOO_LATE": "Ja no es pot escurçar la validesa: els 14 dies per recuperar el que no s’ha gastat endarreririen massa la liquidació (els diners només poden esperar retinguts un temps limitat). Pots allargar-la o cancel·lar la venda."
+        },
+        "cancelledStateEmpty": "Venda cancel·lada sense haver venut cap val: no hi ha res a retornar ni a liquidar i el punt és tancat."
+      },
+      "pinVouchers": {
+        "none": "Aquest punt encara no té PIN: ningú no el pot obrir encara.",
+        "create": "Crear el PIN del punt",
+        "created": "PIN del punt (apunta’l: no es torna a mostrar)",
+        "once": "Comparteix-lo només amb qui atengui el punt. Val fins al {date}, quan caduquen els vals."
+      }
     },
     "welcomeCelebration": {
       "title": "Benvinguts a KORUM!",
@@ -3868,7 +3989,7 @@
     }
   },
   "gate": {
-    "mode": "Mode porteria",
+    "mode": "Porteria i punts",
     "chooseTitle": "Porteria d’esdeveniments",
     "emptyTitle": "Obre l’enllaç del teu esdeveniment",
     "emptyText": "Qui organitza l’esdeveniment et dona un enllaç i un PIN de 6 xifres. Obre l’enllaç en aquest mòbil i escriu el PIN.",
@@ -3979,8 +4100,79 @@
     },
     "organiserHint": "Organitzes l’esdeveniment? Crea el PIN i l’enllaç de la porteria a «Taquilla i porteria».",
     "organiserLink": "Anar a Taquilla i porteria",
-    "metaTitle": "Porteria",
-    "storageNotice": "Aquest mòbil guarda la llista d’entrades de l’esdeveniment, i el que llegeixis sense cobertura, fins que tanquis la porteria (3 dies com a màxim). Tanca-la en acabar. La càmera només llegeix codis: no grava res. No reenviïs aquest enllaç."
+    "metaTitle": "Porteria i punts",
+    "storageNotice": "Aquest mòbil guarda la llista d’entrades de l’esdeveniment, i el que llegeixis sense cobertura, fins que tanquis la porteria (3 dies com a màxim). Tanca-la en acabar. La càmera només llegeix codis: no grava res. No reenviïs aquest enllaç.",
+    "pinIntroVouchers": "Escriu el PIN de 6 xifres que t’ha donat qui organitza la venda de vals.",
+    "storageNoticeVouchers": "Aquest mòbil no desa cap llista de vals: cada lectura es comprova amb el servidor, així que cal connexió. La sessió dura 2 dies com a màxim; tanca-la en acabar. La càmera només llegeix codis: no grava res. No reenviïs aquest enllaç.",
+    "vouchers": {
+      "title": "Punt de bescanvi de vals",
+      "validUntil": "Els vals d’aquesta venda valen fins al {date}.",
+      "spentHere": "{count, plural, =0 {Encara no s’ha gastat cap val des que vas obrir aquesta pantalla} one {# val gastat des que vas obrir aquesta pantalla} other {# vals gastats des que vas obrir aquesta pantalla}}",
+      "onlineOnly": "Els vals només es gasten amb connexió: sense cobertura no es pot comprovar quants en queden.",
+      "problem": {
+        "OFFLINE": "Sense connexió: els vals només es poden comprovar i gastar amb xarxa. No s’ha gastat res; torna-ho a provar quan la recuperis.",
+        "BUSY": "Hi ha moltes lectures alhora des d’aquesta xarxa. Espera uns segons i torna-ho a provar.",
+        "FAILED": "No s’ha pogut comprovar el codi. Torna-ho a provar.",
+        "INVALID_INPUT": "Aquest codi no és un val. Prova-ho de nou.",
+        "OFFLINE_REDEEM": "Sense connexió en gastar. Quan recuperis la xarxa, torna a prémer «Gastar»: no es gastarà dues vegades.",
+        "FAILED_REDEEM": "No s’ha pogut gastar ara. Torna a prémer «Gastar»: no es gastarà dues vegades."
+      },
+      "ended": {
+        "title": "La sessió del punt ha acabat",
+        "text": "Qui organitza ha tancat aquesta sessió, ha canviat el PIN o la venda ja no admet bescanvis. Torna a entrar amb el PIN vigent si te’l donen.",
+        "again": "Tornar a la pantalla del PIN"
+      },
+      "camera": {
+        "title": "Lector de vals",
+        "start": "Activar la càmera",
+        "starting": "Obrint la càmera…",
+        "stop": "Apagar la càmera",
+        "videoLabel": "Imatge de la càmera",
+        "denied": "No tenim permís per fer servir la càmera. Pots permetre-la a la configuració del navegador o escriure el codi aquí sota.",
+        "unsupported": "Aquest navegador o aquest mòbil no pot fer servir la càmera. Escriu el codi aquí sota o fes servir un lector de codis amb teclat.",
+        "error": "No s’ha pogut obrir la càmera. Escriu el codi aquí sota."
+      },
+      "manual": {
+        "hint": "Si la càmera no funciona o fas servir un lector de codis amb teclat, el codi arriba a aquest camp.",
+        "label": "Codi dels vals",
+        "submit": "Comprovar vals"
+      },
+      "sound": "So i vibració",
+      "leave": "Tancar el punt en aquest mòbil",
+      "result": {
+        "balance": "{balance, plural, one {Queda # val de {total}} other {Queden # vals de {total}}}",
+        "serial": "Codi {serial}",
+        "howMany": "Quants vals es gasten ara?",
+        "less": "Un menys",
+        "more": "Un més",
+        "quantityInvalid": "{balance, plural, one {Escriu 1: només queda # val.} other {Escriu un número entre 1 i #.}}",
+        "redeem": "{count, plural, =0 {Gastar vals} one {Gastar # val} other {Gastar # vals}}",
+        "redeeming": "Gastant…",
+        "cancel": "No gastar res",
+        "redeemed": "{spent, plural, one {Gastat # val} other {Gastats # vals}}. {balance, plural, =0 {Ja no queden vals en aquest codi.} one {Queda # val.} other {Queden # vals.}}",
+        "duplicateAccepted": "Aquest bescanvi ja s’havia fet: no s’ha gastat res més. {balance, plural, =0 {Ja no queden vals.} one {Queda # val.} other {Queden # vals.}}",
+        "duplicateRejected": "Aquest bescanvi ja s’havia intentat i no es va gastar res. Torna a llegir el codi.",
+        "insufficient": "{balance, plural, =0 {Ja no queden vals en aquest codi.} one {Només queda # val: no s’ha gastat res.} other {Només queden # vals: no s’ha gastat res.}}",
+        "next": "Següent",
+        "blocked": {
+          "INVALID_SIGNATURE": "Aquest codi no és un val vàlid.",
+          "OTHER_SALE": "Aquest codi és d’una altra venda o d’un esdeveniment: aquí no val.",
+          "REVOKED": "Aquesta compra es va retornar o anul·lar: els seus vals ja no valen.",
+          "NOT_PAID": "Aquesta compra encara no està pagada: els seus vals encara no valen.",
+          "SALE_CLOSED": "Aquesta venda ja no admet bescanvis.",
+          "SALE_CANCELLED": "L’entitat va cancel·lar aquesta venda: els seus vals ja no es gasten.",
+          "EXPIRED": "Aquests vals ja han caducat.",
+          "EXHAUSTED": "Ja no queden vals en aquest codi."
+        }
+      },
+      "closed": {
+        "title": "Aquest punt ja no és obert",
+        "text": "Qui organitza ha canviat el PIN o l’enllaç, ha cancel·lat la venda o els vals ja han caducat. Si has de continuar atenent el punt, demana-li l’enllaç i el PIN nous."
+      }
+    },
+    "pinVouchers": "PIN del punt",
+    "enterVouchers": "Entrar al punt",
+    "deviceHintVouchers": "Per exemple, «Punt del berenar». Així l’entitat sabrà quin mòbil és cada un."
   },
   "admin": {
     "headerTitle": "Consola de KORUM",
@@ -5934,10 +6126,39 @@
       "voucherValidUntil": "Es poden gastar fins al {date}",
       "voucherExpired": "Aquests vals ja han caducat i no es poden gastar.",
       "voucherSpent": "Ja has gastat tots els vals d’aquesta compra.",
-      "showVouchers": "Ensenya’l a la parada de l’entitat, al mòbil o imprès: allà descompten els vals que gastis.",
+      "showVouchers": "Ensenya’l al punt de l’entitat, al mòbil o imprès: allà descompten els vals que gastis.",
       "shareMessageVouchers": "Els teus vals de «{title}»: {url}",
       "shareWarningVouchers": "Qui tingui aquest enllaç pot gastar els vals: envia’l només a qui els hagi de fer servir.",
-      "actionsVouchers": "Accions dels teus vals"
+      "actionsVouchers": "Accions dels teus vals",
+      "voucherCancelled": "L’entitat ha cancel·lat aquesta venda: aquests vals ja no es poden gastar. Et retornem automàticament el que no hagis gastat, al mateix mitjà de pagament.",
+      "voucherCancelledHelp": "Escriure a l’entitat",
+      "revokedVouchers": {
+        "title": "Aquesta compra de vals ja no és vàlida",
+        "description": "S’ha retornat o anul·lat, així que els seus vals ja no es poden gastar. Si vas demanar la devolució, els diners tornen al teu mitjà de pagament en uns dies laborables."
+      },
+      "refund": {
+        "title": "Devolució de 14 dies",
+        "text": "Com que encara no has gastat cap val d’aquesta compra, pots recuperar el 100 % ({amount}) fins al {date}.",
+        "button": "Demanar la devolució",
+        "confirmText": "Et retornarem {amount} al mateix mitjà de pagament i aquests vals deixaran de valer. No es pot desfer.",
+        "confirmYes": "Sí, retorneu-me els diners",
+        "confirmNo": "No, em quedo els vals",
+        "sending": "Demanant la devolució…",
+        "errors": {
+          "INVALID_LINK": "No podem comprovar aquest enllaç. Obre l’enllaç complet del correu dels teus vals.",
+          "RATE_LIMITED": "Hi ha hagut molts intents des d’aquesta xarxa. Espera uns minuts i torna-ho a provar.",
+          "ALREADY_REFUNDED": "Aquesta compra ja s’està retornant.",
+          "NOT_PAID": "Aquesta compra no està pagada o ja no és vàlida.",
+          "SPENT": "Ja s’ha gastat algun val d’aquesta compra: ja no es pot retornar.",
+          "WINDOW_CLOSED": "Han passat els 14 dies: aquesta compra ja no es pot retornar.",
+          "SETTLED": "La venda ja s’ha liquidat a l’entitat: escriu-li per demanar-li la devolució.",
+          "FAILED": "No s’ha pogut demanar la devolució. Torna-ho a provar d’aquí a un moment."
+        },
+        "textUnspent": "L’entitat va escurçar el termini per gastar aquests vals. Pots recuperar el que correspon {count, plural, one {al val} other {als # vals}} sense gastar ({amount}) fins al {date}.",
+        "confirmTextUnspent": "Et retornarem {amount} al mateix mitjà de pagament i {count, plural, one {el val que et queda deixarà} other {els # vals que et queden deixaran}} de valer. No es pot desfer."
+      },
+      "voucherCancelledSettled": "L’entitat ha cancel·lat aquesta venda: aquests vals ja no es poden gastar. Els diners ja són al compte de l’entitat; per recuperar el que no hagis gastat, demana-li-ho.",
+      "voucherCancelledSpent": "L’entitat ha cancel·lat aquesta venda. Ja havies gastat tots els vals d’aquesta compra, així que no hi ha res a retornar."
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",
@@ -6163,7 +6384,7 @@
         "vouchersSoldOut": "Amb la teva compra s’han esgotat els vals!",
         "vouchersTargetReached": "Amb la teva compra s’ha arribat a l’objectiu de vals!",
         "viewVouchers": "Veure els meus vals",
-        "vouchersEmail": "També te l’hem enviat per correu: és el codi QR que ensenyaràs a la parada.",
+        "vouchersEmail": "També te l’hem enviat per correu: és el codi QR que ensenyaràs al punt.",
         "noProductReceipt": "T’hem enviat el rebut per correu. Aquesta aportació no dona vals ni certificat fiscal.",
         "vouchersBought": "{count, plural, one {Has comprat # val, que es pot gastar fins al {date}.} other {Has comprat # vals, que es poden gastar fins al {date}.}}",
         "vouchersRefund": "Si no en gastes cap, pots demanar la devolució del 100 % durant 14 dies."
@@ -6738,7 +6959,7 @@
       "feeInc": "Despeses de gestió digital (incloses)",
       "feeValue": "{fixed} + {pct} per compra",
       "validUntil": "Es poden gastar fins al",
-      "howToUse": "Reps un sol codi QR amb tots els teus vals. L’ensenyes a la parada de l’entitat i allà descompten els que gastes; els que et quedin continuen al mateix codi.",
+      "howToUse": "Reps un sol codi QR amb tots els teus vals. L’ensenyes al punt de l’entitat i allà descompten els que gastes; els que et quedin continuen al mateix codi.",
       "refund": "Si no gastes cap val de la teva compra, pots demanar la devolució del 100 % durant 14 dies. Després, el que has pagat es queda per a la causa de l’entitat.",
       "noProduct": {
         "title": "Els vals s’han esgotat, però pots continuar aportant",
@@ -7322,7 +7543,9 @@
       "EVENT_DATE_REACHED": "l’esdeveniment va arribar a la seva data",
       "EVENT_CANCELLED": "l’entitat va cancel·lar l’esdeveniment",
       "EVENT_RESCHEDULED": "l’entitat va canviar la data de l’esdeveniment",
-      "EVENT_EMPTIED": "l’esdeveniment celebrat es va quedar sense diners"
+      "EVENT_EMPTIED": "l’esdeveniment celebrat es va quedar sense diners",
+      "VOUCHER_SALE_CLOSED": "la venda de vals va arribar al seu últim dia",
+      "VOUCHER_SALE_CANCELLED": "l’entitat va cancel·lar la venda de vals"
     },
     "actions": {
       "tenant": {
@@ -7409,7 +7632,12 @@
       "voucher": {
         "qr_invalid": "Lloc de vals: QR alterat o falsificat",
         "qr_other_sale": "Lloc de vals: QR d’una altra venda",
-        "redeemed": "Lloc de vals: vals bescanviats per una persona signant"
+        "redeemed": "Lloc de vals: vals bescanviats per una persona signant",
+        "rate_limited": "Vals: massa canvis seguits",
+        "sale_closed": "Venda de vals: va arribar el seu últim dia",
+        "sale_cancelled": "Venda de vals cancel·lada",
+        "dates_changed": "Venda de vals: canvi de dates",
+        "purchase_refunded": "Vals: devolució de 14 dies demanada per qui va comprar"
       },
       "idea": {
         "chat_access_denied": "Accés denegat a la conversa d’una idea",
@@ -8009,7 +8237,12 @@
         },
         "voucher": {
           "pass": "Vals amb el seu codi QR",
-          "noProductReceipt": "Rebut de l’aportació sense producte"
+          "noProductReceipt": "Rebut de l’aportació sense producte",
+          "saleClosed": "Avís de tancament de la venda de vals a qui signa",
+          "changed": "Avís de cancel·lació o canvi de dates de vals a qui signa",
+          "cancelledBuyer": "Avís de venda de vals cancel·lada a qui té vals",
+          "validityChanged": "Avís de canvi de validesa dels vals",
+          "expiryReminder": "Recordatori de vals a punt de caducar"
         }
       },
       "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",

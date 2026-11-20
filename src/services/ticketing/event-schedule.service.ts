@@ -1,7 +1,6 @@
 import { releaseInitiativeQuotas } from '@/core/finance/quota-reservation';
 import { returnSelfBoostToKorum } from '@/core/finance/self-boost-return';
 import { notifySigners } from '@/core/jobs/notify';
-import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import {
   cancelEventSchema,
   EventScheduleError,
@@ -17,11 +16,10 @@ import { gatePinExpiry } from '@/core/ticketing/gate-rules';
 import { isGoalMet } from '@/core/ticketing/ticket-goal';
 import { inTransaction, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
-import { reserveAttempt } from '@/lib/rate-limit';
-import { EVENT_CHANGE_RULE } from '@/lib/rate-limit-rules';
-import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
+import type { SessionActor } from '@/repositories/tenant-guard';
 import { recordStatusChange } from '@/services/audit/status-change-audit';
 import { queueSupporterBroadcast } from '@/services/notifications/supporter-broadcast';
+import { authorizeSaleChange } from './sale-change-auth';
 
 /**
  * Cancelar un evento con entradas o cambiar su fecha (Sprint 5.13, decisión 30 del promotor; reglas en `event-schedule-rules.ts`). Lo hace una persona
@@ -35,7 +33,6 @@ import { queueSupporterBroadcast } from '@/services/notifications/supporter-broa
  */
 
 type Action = 'event.cancel' | 'event.reschedule';
-type UserActor = Extract<SessionActor, { kind: 'user' }>;
 
 export interface EventChangeReceipt {
   initiativeId: number;
@@ -51,30 +48,9 @@ function parse<T>(schema: { safeParse: (value: unknown) => { success: true; data
   return parsed.data;
 }
 
-/** Solo `DIRECTOR` o `COSIGNER` de esa entidad, con el segundo factor, y solo sobre sus eventos (el de otra entidad responde como inexistente). */
-async function authorizeChange(db: KorumPrismaClient, actor: SessionActor, organizationId: string, action: Action, initiativeId: number, now: Date): Promise<UserActor> {
-  const target = { targetType: 'Initiative', targetId: String(initiativeId) };
-  if (actor.kind !== 'user' || actor.secondFactor !== true) {
-    await recordAudit(db, actor, { action: 'tenant.access_denied', organizationId, ...target, metadata: { reason: 'SECOND_FACTOR_REQUIRED', attempted: action } });
-    throw new TenantAccessError(actor.kind === 'user' ? 'ROLE_NOT_ALLOWED' : 'ANONYMOUS');
-  }
-  await authorizeTenant(db, actor, organizationId, { roles: SIGNER_ROLES, action, targetType: 'Initiative', targetId: initiativeId, allowSuperadmin: false });
-  const owner = await db.initiative.findUnique({ where: { id: initiativeId }, select: { organizationId: true } });
-  const probe = { organizationId, resourceType: 'Initiative', resourceId: initiativeId };
-  if (!owner) {
-    await recordMissingResourceProbe(db, actor, probe);
-    throw new EventScheduleError('NOT_FOUND');
-  }
-  if (owner.organizationId !== organizationId) {
-    await recordCrossTenantAttempt(db, actor, { ...probe, ownerOrganizationId: owner.organizationId });
-    throw new EventScheduleError('NOT_FOUND');
-  }
-  if (!(await reserveAttempt(db, `${EVENT_CHANGE_RULE.prefix}${organizationId}:${actor.userId}`, EVENT_CHANGE_RULE, now))) {
-    await recordAudit(db, actor, { action: 'event.rate_limited', organizationId, ...target, metadata: { attempted: action, limit: EVENT_CHANGE_RULE.limit } });
-    throw new EventScheduleError('RATE_LIMITED');
-  }
-  return actor;
-}
+/** Solo `DIRECTOR` o `COSIGNER` de esa entidad, con el segundo factor, y solo sobre sus eventos (`sale-change-auth.ts`, compartido con las ventas de vales). */
+const authorizeChange = (db: KorumPrismaClient, actor: SessionActor, organizationId: string, action: Action, initiativeId: number, now: Date) =>
+  authorizeSaleChange(db, actor, organizationId, action, initiativeId, now, (reason) => new EventScheduleError(reason));
 
 /** Bloquea la fila del evento y comprueba que aún se pueda cambiar (evento vivo y sin liquidar). */
 async function lockEvent(tx: Db, initiativeId: number) {

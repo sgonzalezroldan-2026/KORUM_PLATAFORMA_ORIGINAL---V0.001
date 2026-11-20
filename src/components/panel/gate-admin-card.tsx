@@ -5,12 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import { revokeGateSessionAction, rotateGateCodeAction, setGatePinAction, type GateAdminResult } from '@/app/[locale]/(dashboard)/panel/[orgSlug]/(gestion)/taquilla/actions';
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
 import { EventSchedulePanel } from '@/components/panel/event-schedule-panel';
+import { VoucherSalePanel } from '@/components/panel/voucher-sale-panel';
 import { getPathname, useRouter } from '@/i18n/navigation';
 import type { GateEventView } from '@/repositories/gate-admin.repository';
 
 /**
  * Un evento de taquilla en «Taquilla y portería»: PIN de la puerta (se enseña una vez; cambiarlo cierra las sesiones abiertas), enlace de la portería y los
- * móviles que están dentro, que se pueden cerrar uno a uno. Desde el Sprint 5.13, también cancelar el evento o cambiar su fecha. Solo lo usan quienes firman,
+ * móviles que están dentro, que se pueden cerrar uno a uno. Desde el Sprint 5.13, también cancelar el evento o cambiar su fecha. Desde el 5.14c, una venta de
+ * vales: el PIN y el enlace de su puesto de canje (valen hasta que caducan los vales) y su propia cancelación y cambio de fechas. Solo lo usan quienes firman,
  * con segundo factor.
  */
 
@@ -82,9 +84,32 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
   const needsConfirm = event.pinActive || event.sessions.length > 0;
   const date = format.dateTime(new Date(event.eventDate), { dateStyle: 'long' });
   const headingId = `gate-event-${event.id}`;
-  // Cancelado (Sprint 5.13): sin PIN, enlace ni móviles; solo su estado y la confirmación de quien lo canceló.
-  const closed = event.status === 'REFUNDING' || event.status === 'REFUNDED' || event.status === 'CANCELLED';
+  const voucher = event.voucher;
+  // Cancelado (Sprint 5.13): sin PIN, enlace ni móviles; solo su estado y la confirmación de quien lo canceló. Una venta de vales, también cuando sus vales ya
+  // no se pueden gastar: cancelada por la entidad, cerrada sin ventas o caducada (Sprint 5.14c).
+  const closed = event.status === 'REFUNDING' || event.status === 'REFUNDED' || event.status === 'CANCELLED' || (voucher !== null && (voucher.cancelled || voucher.expired));
   const pinText = revealed ? revealed.pin : null;
+  // En un puesto de vales, el PIN es «del puesto», no «de la puerta» (Sprint 5.14c).
+  const pinKey = (key: 'none' | 'create' | 'created' | 'once') => (voucher ? `pinVouchers.${key}` : `pin.${key}`);
+  const subtitle = voucher
+    ? [t('kind.vouchers'), t('vouchers.validUntil', { date: format.dateTime(new Date(voucher.validUntil), { dateStyle: 'long', timeZone: 'Europe/Madrid' }) })]
+    : [t('kind.event'), date, event.venue];
+  const soldText = voucher
+    ? event.ticketMax !== null
+      ? t('vouchers.soldOf', { sold: event.ticketsSold, max: event.ticketMax })
+      : voucher.targetCount !== null
+        ? t('vouchers.soldTarget', { sold: event.ticketsSold, target: voucher.targetCount })
+        : t('vouchers.sold', { sold: event.ticketsSold })
+    : event.ticketMax === null
+      ? t('sold', { sold: event.ticketsSold })
+      : t('soldOf', { sold: event.ticketsSold, max: event.ticketMax });
+  const closedText = voucher
+    ? voucher.cancelled
+      ? t(voucher.cancelledAfterSettlement ? 'vouchers.cancelledStateSettled' : event.ticketsSold === 0 && event.status === 'CANCELLED' ? 'vouchers.cancelledStateEmpty' : 'vouchers.cancelledState')
+      : event.status === 'CANCELLED'
+        ? t('vouchers.closedEmpty')
+        : t('vouchers.expiredState')
+    : t(event.status === 'CANCELLED' ? 'closedEmpty' : 'closedState');
 
   return (
     <li className="flex flex-col gap-4 rounded-2xl border-2 border-varsity-navy bg-white p-5" data-testid="gate-admin-event" aria-labelledby={headingId}>
@@ -92,21 +117,19 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
         <h2 id={headingId} className="font-corp wrap-break-word text-xl font-extrabold text-varsity-navy">
           {event.title}
         </h2>
-        <p className="text-sm text-ink-soft">
-          {[t('kind.event'), date, event.venue].filter(Boolean).join(' · ')}
-        </p>
-        <p className="text-sm font-semibold tabular-nums">{event.ticketMax === null ? t('sold', { sold: event.ticketsSold }) : t('soldOf', { sold: event.ticketsSold, max: event.ticketMax })}</p>
+        <p className="text-sm text-ink-soft">{subtitle.filter(Boolean).join(' · ')}</p>
+        <p className="text-sm font-semibold tabular-nums">{soldText}</p>
       </div>
 
       {closed ? (
         <p className="text-sm font-semibold" data-testid="gate-admin-closed">
-          {t(event.status === 'CANCELLED' ? 'closedEmpty' : 'closedState')}
+          {closedText}
         </p>
       ) : (
         <>
       {revealed ? (
         <div role="status" className="flex flex-col gap-2 rounded-xl border-2 border-varsity-emerald bg-emerald-50 p-4 text-emerald-950" data-testid="gate-admin-pin">
-          <p className="font-bold">{t('pin.created')}</p>
+          <p className="font-bold">{t(pinKey('created'))}</p>
           <p className="font-corp text-5xl font-extrabold tabular-nums tracking-[0.3em]">
             <span aria-hidden="true" data-testid="gate-admin-pin-digits">
               {pinText}
@@ -116,11 +139,11 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
           <button type="button" className={secondaryButton} onClick={() => void copyPin()}>
             {copied ? t('pin.copied') : t('pin.copy')}
           </button>
-          <p className="text-sm">{t('pin.once', { date: format.dateTime(new Date(revealed.expiresAt), { dateStyle: 'long', timeStyle: 'short' }) })}</p>
+          <p className="text-sm">{t(pinKey('once'), { date: format.dateTime(new Date(revealed.expiresAt), { dateStyle: 'long', timeStyle: 'short' }) })}</p>
         </div>
       ) : (
         <p className="text-sm font-semibold" data-testid="gate-admin-pin-state">
-          {event.pinActive && event.pinExpiresAt ? t('pin.active', { date: format.dateTime(new Date(event.pinExpiresAt), { dateStyle: 'long', timeStyle: 'short' }) }) : event.pinRevoked ? t('pin.revoked', { count: event.sessions.length }) : t('pin.none')}
+          {event.pinActive && event.pinExpiresAt ? t('pin.active', { date: format.dateTime(new Date(event.pinExpiresAt), { dateStyle: 'long', timeStyle: 'short' }) }) : event.pinRevoked ? t('pin.revoked', { count: event.sessions.length }) : t(pinKey('none'))}
         </p>
       )}
       {error ? <FormAlert>{t(`errors.${error.status === 'ERROR' ? error.reason : 'FORBIDDEN'}`)}</FormAlert> : null}
@@ -145,27 +168,27 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
           </div>
         ) : (
           <button ref={changeRef} type="button" className={event.pinActive ? secondaryButton : primaryButton} disabled={busy} onClick={() => (needsConfirm ? setConfirmChange(true) : void createPin())} data-testid="gate-admin-pin-button">
-            {event.pinActive ? t('pin.change') : event.pinRevoked ? t('pin.createNew') : t('pin.create')}
+            {event.pinActive ? t('pin.change') : event.pinRevoked ? t('pin.createNew') : t(pinKey('create'))}
           </button>
         )
       ) : (
         <p className="text-sm text-ink-soft">{t('readOnly')}</p>
       )}
 
-      <p className="text-sm text-ink-soft">{t('link.hint')}</p>
+      <p className="text-sm text-ink-soft">{t(voucher ? 'link.hintVouchers' : 'link.hint')}</p>
       {/* Un enlace normal (página nueva), no la navegación interna de la aplicación: la cámara solo se concede a la página que se carga entera en la portería. */}
       {event.gateCode ? (
         <a href={getPathname({ href: `/panel/${orgSlug}/porteria/${event.gateCode}`, locale })} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center font-semibold text-varsity-navy underline underline-offset-4" data-testid="gate-admin-link">
-          {t('link.open')}
+          {t(voucher ? 'link.openVouchers' : 'link.open')}
           <span className="sr-only">{t('link.newTab')}</span>
         </a>
       ) : (
-        <p className="text-sm text-ink-soft">{t('link.afterPin')}</p>
+        <p className="text-sm text-ink-soft">{t(voucher ? 'link.afterPinVouchers' : 'link.afterPin')}</p>
       )}
       {event.gateCode && canAct ? (
         confirmRotate ? (
           <div ref={rotateConfirmRef} role="alert" className="flex flex-col gap-2 rounded-xl border-2 border-varsity-navy p-3" data-testid="gate-admin-rotate-confirm">
-            <p className="font-semibold">{t('link.rotateWarning')}</p>
+            <p className="font-semibold">{t(voucher ? 'link.rotateWarningVouchers' : 'link.rotateWarning')}</p>
             <button type="button" className={primaryButton} disabled={busy} onClick={() => void rotateLink()} data-testid="gate-admin-rotate-yes">
               {t('link.rotateYes')}
             </button>
@@ -182,7 +205,7 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
           </div>
         ) : (
           <button ref={rotateRef} type="button" className={secondaryButton} disabled={busy} onClick={() => setConfirmRotate(true)} data-testid="gate-admin-rotate">
-            {t('link.rotate')}
+            {t(voucher ? 'link.rotateVouchers' : 'link.rotate')}
           </button>
         )
       ) : null}
@@ -212,7 +235,11 @@ export function GateAdminCard({ orgSlug, event, canAct }: { orgSlug: string; eve
         </>
       )}
 
-      <EventSchedulePanel orgSlug={orgSlug} eventId={event.id} ticketsSold={event.ticketsSold} schedule={event.schedule} canAct={canAct} closed={closed} />
+      {voucher ? (
+        <VoucherSalePanel orgSlug={orgSlug} saleId={event.id} ticketsSold={event.ticketsSold} sale={voucher} canAct={canAct} />
+      ) : (
+        <EventSchedulePanel orgSlug={orgSlug} eventId={event.id} ticketsSold={event.ticketsSold} schedule={event.schedule} canAct={canAct} closed={closed} />
+      )}
     </li>
   );
 }

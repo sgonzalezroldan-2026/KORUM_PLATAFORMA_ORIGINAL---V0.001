@@ -11,6 +11,7 @@ import { queueContributionReceipt } from '@/services/email/outbox-writers';
 import { pledgeChargedBackInTx, pledgeChargeFailedInTx, settlePledgePaymentInTx } from '@/services/pledges/pledge-events';
 import { applyChargebackInTx, applyConfirmedRefundInTx } from './payment-provider-reversals';
 import { approveRefundInTx, clearRefundClaimInTx, isSettled, loadLockedContribution, PaymentReconciliationError } from './payment-reversals';
+import { clearPartialRefundClaimInTx } from './partial-refunds';
 import type { PaymentNotification } from './payment-provider';
 import { markGoalReached } from './goal-reached';
 import { completeSponsorshipInTx, type InvoicingContext } from './sponsorship-events';
@@ -165,7 +166,9 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   // venta), se devuelve entero como cualquier cobro tardío (auditoría de seguridad del 5.14a). Una aportación «sin producto» no tiene vales que caduquen.
   const voucherValidity = contribution.initiative.ticketSubtype === 'VOUCHER' && !contribution.voucherNoProduct ? contribution.initiative.voucherValidUntil : null;
   const vouchersExpired = voucherValidity !== null && voucherValidity.getTime() <= processedAt.getTime();
-  const accepting = !startedAfterDeadline && !resized && !vouchersExpired && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
+  // Una venta de vales que la entidad canceló (Sprint 5.14c, decisiones 49 y 69) ya no emite vales ni acepta aportaciones «sin producto»: el pago en curso se devuelve entero.
+  const voucherSaleCancelled = contribution.initiative.ticketSubtype === 'VOUCHER' && contribution.initiative.voucherCancelledAt !== null;
+  const accepting = !startedAfterDeadline && !resized && !vouchersExpired && !voucherSaleCancelled && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
   if (!accepting) {
     if (contribution.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
     await approveRefundInTx(tx, contribution.id, { lateCharge: true });
@@ -224,6 +227,7 @@ export async function applyPaymentNotification(tx: Db, notification: PaymentNoti
     case 'REFUND_FAILED':
       // Sigue en `REFUND_PENDING`, y ahora se sabe que no se hizo: ya se puede volver a pedir.
       await clearRefundClaimInTx(tx, notification.order, notification.occurredAt);
+      await clearPartialRefundClaimInTx(tx, notification.order, notification.occurredAt);
       return;
     case 'IGNORED':
       return;

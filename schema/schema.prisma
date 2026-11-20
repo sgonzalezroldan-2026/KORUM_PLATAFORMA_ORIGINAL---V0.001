@@ -114,6 +114,14 @@ enum InitiativeFormat {
   TICKETING
 }
 
+/// Devolución parcial de un cobro (Sprint 5.14c): aprobada (el dinero ya salió de la hucha), retenida para revisarla a mano (llegó un contracargo o una
+/// devolución por otro importe de ese cobro: no se envía) o ya devuelta al medio de pago.
+enum PartialRefundStatus {
+  PENDING
+  ON_HOLD
+  REFUNDED
+}
+
 /// Máquina de estados de la iniciativa (transiciones en docs/PRD_3_ENTORNOS_KORUM.md §4).
 enum InitiativeStatus {
   BUDGETING // Presupuestación
@@ -859,6 +867,7 @@ model Organization {
   members               OrganizationMember[]
   categories            OrganizationCategory[]
   initiatives           Initiative[]
+  partialRefunds        PartialRefund[]
   ideas                 Idea[]
   sponsors              Sponsor[]
   sponsorAllocations    SponsorAllocation[]
@@ -957,48 +966,48 @@ model OrganizationCategory {
 // -----------------------------------------------------------------------------
 
 model Initiative {
-  id                         Int              @id @default(autoincrement())
-  walletEscrowId             String           @unique
+  id                         Int               @id @default(autoincrement())
+  walletEscrowId             String            @unique
   paycometEscrowOrderId      String?
-  format                     InitiativeFormat @default(BUDGET)
+  format                     InitiativeFormat  @default(BUDGET)
   organizationId             String
   academicYear               String
   title                      String
   category                   String
   stage                      String
-  status                     InitiativeStatus @default(BUDGETING)
-  stepIndex                  Int              @default(3)
+  status                     InitiativeStatus  @default(BUDGETING)
+  stepIndex                  Int               @default(3)
   closesAt                   DateTime
   /// Fecha del primer cobro: desde aquí corre la ventana de 90 días de Paycomet para repartir fondos.
   firstPayinAt               DateTime?
   quarter                    String
-  raisedCents                Int              @default(0)
+  raisedCents                Int               @default(0)
   goalCents                  Int
-  totalContributions         Int              @default(0)
-  costMatCents               Int              @default(0)
-  costInstCents              Int              @default(0)
-  contingencyBps             Int              @default(1000)
-  showPublicBreakdown        Boolean          @default(true)
-  defaultExemptAppliedCents  Int              @default(0)
-  medalExemptAppliedCents    Int              @default(0)
+  totalContributions         Int               @default(0)
+  costMatCents               Int               @default(0)
+  costInstCents              Int               @default(0)
+  contingencyBps             Int               @default(1000)
+  showPublicBreakdown        Boolean           @default(true)
+  defaultExemptAppliedCents  Int               @default(0)
+  medalExemptAppliedCents    Int               @default(0)
   /// Reserva de cupos de la entidad (exento anual, beca de medalla y tope de mantenimiento). Se reserva al pasar a
   /// FUNDRAISING y se devuelve si la campaña se cancela o se reembolsa. Las dos marcas hacen ambas operaciones idempotentes.
   quotaReservedAt            DateTime?
   quotaReleasedAt            DateTime?
   /// Instantánea de lo que se descontó realmente al reservar, y del curso de esos cupos: se devuelve exactamente esto,
   /// aunque el presupuesto cambie después, y solo si los cupos de la entidad siguen siendo del mismo curso.
-  quotaReservedExemptCents   Int              @default(0)
-  quotaReservedMedalCents    Int              @default(0)
-  quotaReservedMaintCents    Int              @default(0)
+  quotaReservedExemptCents   Int               @default(0)
+  quotaReservedMedalCents    Int               @default(0)
+  quotaReservedMaintCents    Int               @default(0)
   quotaReservedPeriod        String?
-  medalRankApplied           Int              @default(0)
-  bracketRateAppliedBps      Int              @default(0)
-  bracketFeeCents            Int              @default(0)
-  maintFeeCents              Int              @default(0)
-  gatewayFeeCents            Int              @default(0)
-  absorbsGatewayCostByKorum  Boolean          @default(false)
-  matchingPoolTotalCents     Int              @default(0)
-  matchingPoolRemainingCents Int              @default(0)
+  medalRankApplied           Int               @default(0)
+  bracketRateAppliedBps      Int               @default(0)
+  bracketFeeCents            Int               @default(0)
+  maintFeeCents              Int               @default(0)
+  gatewayFeeCents            Int               @default(0)
+  absorbsGatewayCostByKorum  Boolean           @default(false)
+  matchingPoolTotalCents     Int               @default(0)
+  matchingPoolRemainingCents Int               @default(0)
   matchingSponsorName        String?
   ticketSubtype              TicketSubtype?
   /// En una venta de vales (`VOUCHER`), el precio de **un** vale.
@@ -1006,26 +1015,33 @@ model Initiative {
   /// Aforo de un evento o, en una venta de vales, su tope de vales; `null` en una venta de vales sin tope.
   ticketMax                  Int?
   /// Solo lo pagado. Hasta liquidar, la suma de los pases no anulados cuadra con este contador; tras liquidar, un contracargo anula el pase sin recalcular el aforo.
-  ticketsSold                Int              @default(0)
+  ticketsSold                Int               @default(0)
   /// Plazas retenidas por pagos en curso. La base de datos impide que ticketsSold + ticketsHeld supere ticketMax.
-  ticketsHeld                Int              @default(0)
+  ticketsHeld                Int               @default(0)
   ticketFeeMode              TicketFeeMode?
   ticketVenue                String?
   /// Solo ventas de vales: hasta cuándo se pueden gastar (instante final; lo fija la entidad bajo su responsabilidad y sin mínimo, decisión 49). Obligatoria al publicar.
   voucherValidUntil          DateTime?
   /// Solo ventas de vales: al agotarse el tope, la entidad deja seguir aportando «sin producto» (sin vale ni QR). Nunca en un colegio con ánimo de lucro (Sprint 5.14a).
-  voucherNoProductEnabled    Boolean          @default(false)
+  voucherNoProductEnabled    Boolean           @default(false)
   /// Solo ventas de vales **sin tope**: cuántos vales espera vender la entidad. Es un objetivo orientativo (no limita la venta) para la barra de avance, la meta y el
   /// mantenimiento (decisión del promotor del 2026-11-20, Sprint 5.14b). Obligatorio al publicar una venta sin tope; vacío con tope.
   voucherTargetCount         Int?
+  /// Solo ventas de vales: cuándo la canceló la entidad (Sprint 5.14c, decisiones 49, 69 y 71). Desde entonces los vales no se gastan y nadie compra. Antes de
+  /// liquidar, la plataforma devuelve a cada persona lo que no haya gastado y lo gastado se liquida a la entidad; después, la entidad responde ante quien compró.
+  /// Se fija una vez y no se borra.
+  voucherCancelledAt         DateTime?
+  /// Solo ventas de vales: la última vez que la entidad **acortó** la validez (Sprint 5.14c, decisión 69). Durante 14 días desde entonces, quien compró antes puede
+  /// recuperar lo que no haya gastado desde sus vales, y la venta no se liquida.
+  voucherValidityShortenedAt DateTime?
   /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
   gatePinHash                String?
   gatePinExpiresAt           DateTime?
   /// Código no adivinable de la puerta del evento (10 caracteres): va en el enlace de la portería y se genera al crear el primer PIN. El identificador numérico ya no se usa en la ruta pública: no se puede recorrer.
-  gateCode                   String?          @unique
-  plaqueEnabled              Boolean          @default(true)
-  rewardEnabled              Boolean          @default(true)
-  targetFamiliesPerCourse    Int              @default(35)
+  gateCode                   String?           @unique
+  plaqueEnabled              Boolean           @default(true)
+  rewardEnabled              Boolean           @default(true)
+  targetFamiliesPerCourse    Int               @default(35)
   rewardText                 String?
   description                String
   thanksMessage              String?
@@ -1033,7 +1049,7 @@ model Initiative {
   translationsJson           Json?
   coverFileId                String?
   /// Idea del buzón de la que nació (al completar su doble firma, PRD §4.2). Única: una idea crea una sola iniciativa.
-  sourceIdeaId               Int?             @unique
+  sourceIdeaId               Int?              @unique
   beforeFileId               String?
   afterFileId                String?
   /// Momento en que la liquidación terminó de enviarse (GOAL_REACHED → CLOSED, Sprint 4.4a).
@@ -1041,8 +1057,8 @@ model Initiative {
   /// Estado de la iniciativa en el último aviso a IndexNow que los buscadores aceptaron (Sprint 5.5b). Distinto del actual y uno de los dos público:
   /// toca avisar (se publicó, se cerró o dejó de ser pública). `null`: nunca se ha avisado.
   indexNowStatus             InitiativeStatus?
-  createdAt                  DateTime         @default(now())
-  updatedAt                  DateTime         @updatedAt
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
 
   organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   coverFile           FileAsset?                 @relation("InitiativeCover", fields: [coverFileId], references: [id], onDelete: SetNull)
@@ -1061,6 +1077,7 @@ model Initiative {
   resizePoll          ResizePoll?
   escrowLedgerEntries EscrowLedgerEntry[]
   supporterBroadcasts SupporterBroadcast[]
+  partialRefunds      PartialRefund[]
   eventReschedules    EventReschedule[]
 
   @@index([organizationId, status])
@@ -1426,6 +1443,8 @@ model Contribution {
   sponsor                    Sponsor?              @relation(fields: [sponsorId], references: [id], onDelete: Restrict)
   walletSubscription         WalletSubscription?   @relation(fields: [walletSubscriptionId], references: [id], onDelete: Restrict)
   ticketPass                 TicketPass?
+  /// Devolución de la parte no gastada de una compra de vales (Sprint 5.14c): como mucho una por compra.
+  partialRefund              PartialRefund?
   walletTransactions         WalletTransaction[]
   ledgerJournals             LedgerJournal[]
   payoutSplits               EscrowPayoutSplit[]
@@ -1855,27 +1874,27 @@ model Invoice {
 }
 
 model SupportTicket {
-  id             Int                 @id @default(autoincrement())
-  ticketCode     String              @unique
-  organizationId String?
-  originLabel    String
-  senderEmail    String?
-  target         SupportTarget       @default(SUPERADMIN)
-  topic          SupportTopic        @default(OTHER)
-  subject        String
-  message        String
-  status         SupportTicketStatus @default(OPEN)
-  replyMessage   String?
+  id               Int                 @id @default(autoincrement())
+  ticketCode       String              @unique
+  organizationId   String?
+  originLabel      String
+  senderEmail      String?
+  target           SupportTarget       @default(SUPERADMIN)
+  topic            SupportTopic        @default(OTHER)
+  subject          String
+  message          String
+  status           SupportTicketStatus @default(OPEN)
+  replyMessage     String?
   /// La escribe la propia entidad desde su panel (buzón prioritario hacia KORUM, Sprint 4.4c): no es de la entidad aunque guarde su `organizationId`.
   /// Las de las familias (`false`) con `target = ORGANIZATION` son las que la entidad contesta.
-  fromOrganization Boolean           @default(false)
+  fromOrganization Boolean             @default(false)
   /// Cuándo contestó el centro (una sola respuesta por consulta: otra se pide con una consulta nueva) y cuándo se cerró; el plazo de conservación
   /// (CUMPLIMIENTO §6) cuenta desde el cierre, no desde el último cambio de la fila. `RESOLVED` ⇔ `resolvedAt` con valor (`CHECK` en la migración).
-  repliedAt      DateTime?
-  resolvedAt     DateTime?
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  organization   Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  repliedAt        DateTime?
+  resolvedAt       DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  organization     Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 
   @@index([senderEmail, createdAt])
   @@index([organizationId, target, fromOrganization, status])
@@ -2053,4 +2072,37 @@ model PrivacyRequest {
   user               User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([status, dueAt])
+}
+
+/// Devolución de **lo no gastado** de una compra de vales en la que ya se gastó algún vale (Sprint 5.14c, decisión 69): la entidad cancela la venta antes de
+/// liquidarla o acorta la validez y la persona lo pide. Se devuelve la parte de lo pagado (vales y Gastos de gestión digital) que corresponde a los vales sin
+/// gastar; lo gastado se queda y se liquida a la entidad. Una compra sin ningún vale gastado se devuelve entera por el camino de siempre. Como mucho una por
+/// compra (después, sus vales ya no valen). Las cifras no cambian una vez escritas y el estado solo avanza (lo vigila la base de datos).
+model PartialRefund {
+  id             Int                 @id @default(autoincrement())
+  contributionId Int                 @unique
+  initiativeId   Int
+  organizationId String
+  /// `VOUCHER_SALE_CANCELLED` o `VOUCHER_VALIDITY_SHORTENED`.
+  reason         String
+  /// Vales sin gastar que se devuelven.
+  vouchers       Int
+  /// Lo que vuelve al medio de pago: `escrowCents + feeCents`, en céntimos.
+  amountCents    Int
+  /// Parte que sale de la hucha de la venta.
+  escrowCents    Int
+  /// Parte de lo cobrado fuera de la hucha que se devuelve: los Gastos de gestión digital (una compra de vales no lleva aportación voluntaria a KORUM; si la
+  /// llevara, iría aquí en la misma proporción, línea a línea).
+  feeCents       Int
+  status         PartialRefundStatus @default(PENDING)
+  /// Reserva antes de pedir la devolución a Paycomet: dos ejecuciones no devuelven dos veces.
+  sendingAt      DateTime?
+  refundedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  contribution   Contribution        @relation(fields: [contributionId], references: [id], onDelete: Restrict)
+  initiative     Initiative          @relation(fields: [initiativeId], references: [id], onDelete: Restrict)
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([status, sendingAt])
+  @@index([initiativeId])
 }

@@ -41,7 +41,7 @@ export const isSettled = (payoutStatus: string | undefined): boolean => payoutSt
 export type ContributionRow = NonNullable<Awaited<ReturnType<typeof loadContribution>>>;
 
 function loadContribution(db: Db, where: { id: number } | { paycometOrder: string }) {
-  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, closesAt: true, ticketSubtype: true, voucherValidUntil: true, payout: { select: { status: true } }, resizePoll: { select: { status: true } } } } } });
+  return db.contribution.findUnique({ where, include: { initiative: { select: { status: true, goalCents: true, closesAt: true, ticketSubtype: true, voucherValidUntil: true, voucherCancelledAt: true, payout: { select: { status: true } }, resizePoll: { select: { status: true } } } } } });
 }
 
 /** Bloquea la iniciativa del cobro y lo lee después: lo que se lea ya no puede cambiar hasta confirmar la transacción. */
@@ -173,6 +173,8 @@ export async function approveRefundInTx(tx: Db, contributionId: number, options:
   if (!contribution) throw new RefundNotAllowedError(contributionId, 'no existe');
   if (contribution.status !== 'COMPLETED') return;
   const at = options.at ?? new Date();
+  // Una compra de vales ya devuelta en parte (Sprint 5.14c) no se devuelve entera: lo que queda es lo gastado, que es de la entidad.
+  if ((await tx.partialRefund.count({ where: { contributionId } })) > 0) throw new RefundNotAllowedError(contributionId, 'ya se devolvió lo no gastado de esta compra');
   const payin = await payinLinesOf(tx, contribution, at);
   // Un patrocinio reasignado no depende de que su campaña de origen esté liquidada: lo que salió con ella lo asume KORUM y el resto vuelve de donde está.
   if (!options.lateCharge && !payin.moved && isSettled(contribution.initiative.payout?.status)) throw new RefundNotAllowedError(contributionId, 'la iniciativa ya está liquidada');

@@ -2,6 +2,7 @@ import { QUEUED_TRANSACTION, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { applyPaymentNotification, type PaymentEventOptions } from './payment-events.service';
 import type { PaymentProvider } from './payment-provider';
+import { holdPartialRefundForReview, PartialRefundReviewError } from './partial-refunds';
 import { PaymentReconciliationError } from './payment-reversals';
 
 /**
@@ -73,6 +74,8 @@ export async function handlePaymentWebhook(db: KorumPrismaClient, provider: Paym
     const message = safeErrorMessage(error);
     console.error('Fallo al procesar una notificación de pago', JSON.stringify(notification.externalEventId), message);
     await db.webhookEvent.updateMany({ where: { ...key, status: { in: ['RECEIVED', 'FAILED'] } }, data: { status: 'FAILED', errorMessage: message, attempts: { increment: 1 } } });
+    // Un contracargo o una devolución por otro importe de un cobro devuelto en parte (Sprint 5.14c): la devolución parcial pendiente no debe enviarse sola.
+    if (error instanceof PartialRefundReviewError) await holdPartialRefundForReview(db, error.contributionId, now);
     return { status: 500, outcome: 'FAILED' };
   }
 }

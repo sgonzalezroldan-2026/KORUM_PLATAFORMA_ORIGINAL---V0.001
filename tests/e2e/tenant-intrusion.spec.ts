@@ -67,7 +67,7 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       await test.step('censo de acciones del panel con la entidad de otra persona', async () => {
         // Cada acción del manifiesto tiene sus argumentos preparados, y no sobra ninguno: una acción nueva (o una que desaparece) obliga a revisar la prueba.
         expect(panelActions.map((action) => action.name).sort()).toEqual(Object.keys(forVictim).sort());
-        expect(panelActions.length).toBeGreaterThanOrEqual(45); // 45 hasta el 5.12a, que retiró dos acciones de la taquilla; 43 tras él y 45 desde el 5.13 (cancelar y cambiar la fecha de un evento).
+        expect(panelActions.length).toBeGreaterThanOrEqual(47); // 45 hasta el 5.12a, que retiró dos acciones de la taquilla; 43 tras él, 45 desde el 5.13 (cancelar y cambiar la fecha de un evento) y 47 desde el 5.14c (cancelar y cambiar las fechas de una venta de vales).
         // Control: la misma llamada con la entidad propia sí llega a la acción y funciona. Lo que sigue se niega por la entidad, no por cómo se llama.
         const own = await invoke(page, urlOf('resendInvitationAction'), byName.get('resendInvitationAction')!.id, [attacker.slug]);
         expect(['SENT', 'NOT_NEEDED']).toContain(statusOf(own.result));
@@ -120,10 +120,13 @@ test.describe('Sprint 5.6 · intrusión entre entidades', () => {
       await test.step('portería de un evento de otra entidad sin su PIN', async () => {
         // Todas las acciones de la portería que reciben el evento (las que la compilación expone: las que usa alguna pantalla); entrar y salir van aparte, con el PIN.
         const gate = loadActions().filter((action) => action.file.includes('/panel/[orgSlug]/porteria/') && !/^(enterGate|leaveGate)Action$/.test(action.name));
-        expect(gate.map((action) => action.name).sort()).toEqual(['gateSummaryAction', 'loadGateListAction', 'scanPassAction', 'syncScansAction']);
+        // Desde el Sprint 5.14c, también las dos del puesto de canje de vales (leer lo que queda y gastar).
+        expect(gate.map((action) => action.name).sort()).toEqual(['gateSummaryAction', 'loadGateListAction', 'lookupVoucherAction', 'redeemVoucherAction', 'scanPassAction', 'syncScansAction']);
         const inputs: Record<string, unknown[]> = {
           scanPassAction: [victim.eventId, { payload: 'KORUM1.00000000-0000-4000-8000-000000000000.AAAA', people: 1 }],
-          syncScansAction: [victim.eventId, { scans: [] }]
+          syncScansAction: [victim.eventId, { scans: [] }],
+          lookupVoucherAction: [victim.eventId, { payload: 'korum://v1/pass/00000000-0000-4000-8000-000000000000?sig=AAAA' }],
+          redeemVoucherAction: [victim.eventId, { payload: 'korum://v1/pass/00000000-0000-4000-8000-000000000000?sig=AAAA', quantity: 1, clientScanId: 'intrusion-0001' }]
         };
         for (const action of gate) {
           const outcome = await invoke(page, pageUrl(action.pages[0]!, params), action.id, inputs[action.name] ?? [victim.eventId]);

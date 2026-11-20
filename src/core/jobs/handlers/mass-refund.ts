@@ -4,6 +4,7 @@ import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor
 import { inTransaction, type Db } from '@/lib/db';
 import { refundContribution, RefundNotAllowedError } from '@/services/payments/payment-reversals';
 import { sweepSponsorMoney } from '@/services/sponsors/sponsor-sweeps';
+import { approveCancelledVoucherRefunds, executePendingPartialRefunds, partialRejectedAlertKey } from '@/services/ticketing/voucher-cancel-refunds';
 import { retryDelayMs } from '../job-schedule';
 import type { JobHandler } from '../job-types';
 import { raiseAlert, resolveAlert, resolveAlertsNotIn } from '../ops-alerts';
@@ -21,6 +22,9 @@ import { recordStatusChange } from '@/services/audit/status-change-audit';
  * la reactive (`reactivateRejectedRefund`). Un fallo interno de una aportación concreta también cuenta como intento suyo (así una sola aportación
  * rota se aparta tras 5 y no hace fallar la tarea para siempre); la tarea solo falla si **ninguna** avanzó, que apunta a un problema general
  * (base de datos caída). Los fallos de configuración (IP del servidor) ocurren antes de empezar y no gastan intentos de nadie. Al quedar una iniciativa `REFUNDING` sin nada pendiente, pasa a `REFUNDED` y libera sus cupos.
+ *
+ * Desde el Sprint 5.14c, primero aprueba las devoluciones de las ventas de vales canceladas antes de liquidarse (decisión 69): las completas las envía este
+ * mismo lote; las de lo no gastado (parciales) se envían al final (`executePendingPartialRefunds`). Una parcial reservada hace más de 2 horas también avisa.
  */
 
 export const MAX_REFUND_ATTEMPTS = 5;
@@ -56,18 +60,23 @@ async function loadCandidates(db: Db, limit: number, excludedIds: number[]): Pro
 }
 
 async function flagStuckReservations(db: Db, now: Date): Promise<number> {
-  // Normalmente hay pocas con la reserva puesta (solo las que están a mitad de llamada o sin resolver), así que se leen todas.
   const reserved = await db.contribution.findMany({
     where: { status: 'REFUND_PENDING', refundSendingAt: { not: null } },
     select: { id: true, organizationId: true, initiativeId: true, totalChargedCents: true, refundSendingAt: true }
   });
+  // Las devoluciones de lo no gastado de unos vales (Sprint 5.14c) se reservan igual y también pueden quedarse a medias.
+  const partial = await db.partialRefund.findMany({ where: { status: 'PENDING', sendingAt: { not: null } }, select: { contributionId: true, organizationId: true, initiativeId: true, amountCents: true, sendingAt: true } });
+  const rows = [
+    ...reserved.map((row) => ({ key: `REFUND_STUCK:${row.id}`, id: row.id, organizationId: row.organizationId, initiativeId: row.initiativeId, amountCents: row.totalChargedCents, reservedAt: row.refundSendingAt, partial: false })),
+    ...partial.map((row) => ({ key: `REFUND_STUCK:partial:${row.contributionId}`, id: row.contributionId, organizationId: row.organizationId, initiativeId: row.initiativeId, amountCents: row.amountCents, reservedAt: row.sendingAt, partial: true }))
+  ];
   const limit = now.getTime() - STUCK_REFUND_AFTER_MS;
-  const stuck = reserved.filter((row) => row.refundSendingAt !== null && row.refundSendingAt.getTime() < limit);
+  const stuck = rows.filter((row) => row.reservedAt !== null && row.reservedAt.getTime() < limit);
   for (const row of stuck) {
-    await raiseAlert(db, { type: 'REFUND_STUCK', severity: 'CRITICAL', dedupeKey: `REFUND_STUCK:${row.id}`, organizationId: row.organizationId, targetType: 'Contribution', targetId: String(row.id), detail: { initiativeId: row.initiativeId, amountCents: row.totalChargedCents, reservedAt: row.refundSendingAt?.toISOString() ?? null } }, now);
+    await raiseAlert(db, { type: 'REFUND_STUCK', severity: 'CRITICAL', dedupeKey: row.key, organizationId: row.organizationId, targetType: 'Contribution', targetId: String(row.id), detail: { initiativeId: row.initiativeId, amountCents: row.amountCents, reservedAt: row.reservedAt?.toISOString() ?? null, ...(row.partial ? { partial: true } : {}) } }, now);
   }
   // Las alertas de las que ya se resolvieron (la reserva se liberó o se devolvió) se cierran solas.
-  await resolveAlertsNotIn(db, 'REFUND_STUCK', reserved.map((row) => `REFUND_STUCK:${row.id}`), now);
+  await resolveAlertsNotIn(db, 'REFUND_STUCK', rows.map((row) => row.key), now);
   return stuck.length;
 }
 
@@ -110,6 +119,7 @@ async function closeFinishedRefunds(db: Db, limit: number, now: Date): Promise<n
 }
 
 export const massRefundHandler: JobHandler = async ({ db, now, batchSize, deps, deadline: callDeadline }) => {
+  const vouchers = await approveCancelledVoucherRefunds(db, { now, batchSize, hmacSecret: deps.hmacSecret(), deadline: callDeadline });
   const exhausted = await db.opsAlert.findMany({ where: { type: 'REFUND_REJECTED', status: 'OPEN', occurrences: { gte: MAX_REFUND_ATTEMPTS } }, select: { targetId: true } });
   const exhaustedIds = exhausted.flatMap((alert) => (alert.targetId ? [Number(alert.targetId)] : []));
   const fetched = await loadCandidates(db, batchSize * FETCH_FACTOR, exhaustedIds);
@@ -156,6 +166,14 @@ export const massRefundHandler: JobHandler = async ({ db, now, batchSize, deps, 
       }
     }
   }
+  // Las parciales rechazadas esperan y se agotan como las completas: las que aún esperan o ya se agotaron no ocupan el lote.
+  const partialAlerts = await db.opsAlert.findMany({ where: { type: 'REFUND_REJECTED', status: 'OPEN', dedupeKey: { startsWith: partialRejectedAlertKey(0).slice(0, -1) } }, select: { targetId: true, occurrences: true, lastSeenAt: true } });
+  const partialSkip = new Set(
+    partialAlerts.filter((alert) => alert.occurrences >= MAX_REFUND_ATTEMPTS || alert.lastSeenAt.getTime() + retryDelayMs(Math.max(1, alert.occurrences), REFUND_RETRY_BASE_MS) > now.getTime()).flatMap((alert) => (alert.targetId ? [Number(alert.targetId)] : []))
+  );
+  const partial = (await db.partialRefund.count({ where: { status: 'PENDING', sendingAt: null } })) > 0 && Date.now() <= deadline
+    ? await executePendingPartialRefunds(db, await deps.paymentProvider(), await deps.refundOriginalIp(), { now, batchSize, deadline, skip: partialSkip })
+    : { refunded: 0, failed: 0 };
   const stuck = await flagStuckReservations(db, now);
   await closeSettledRejections(db, now);
   // Antes de cerrar las devueltas: el patrocinio de comercios aprobados no se devuelve, se reasigna (Sprint 4.2d) y así su hucha queda vacía.
@@ -165,7 +183,11 @@ export const massRefundHandler: JobHandler = async ({ db, now, batchSize, deps, 
   const progressed = counts.refunded + counts.rejected + counts.unknown + counts.inProgress + counts.notAllowed;
   const firstFailure = failures[0];
   if (firstFailure !== undefined && progressed === 0) throw firstFailure;
-  return { processed: started, hasMore: due.length > started || fetched.length >= batchSize * FETCH_FACTOR, detail: { ...counts, stuck, closed, sponsorsPlaced: sponsors.placed, sponsorsPooled: sponsors.pooled } };
+  return {
+    processed: started + partial.refunded,
+    hasMore: vouchers.hasMore || due.length > started || fetched.length >= batchSize * FETCH_FACTOR,
+    detail: { ...counts, stuck, closed, sponsorsPlaced: sponsors.placed, sponsorsPooled: sponsors.pooled, voucherRefundsApproved: vouchers.approved, partialRefunded: partial.refunded, partialRejected: partial.failed }
+  };
 };
 
 /**
@@ -177,7 +199,8 @@ export async function reactivateRejectedRefund(db: Db, actor: VerifiedSuperadmin
   return inTransaction(db, async (tx) => {
     await revalidateActor(tx, actor, 'payment.reactivate_refund', now);
     const contribution = await tx.contribution.findUniqueOrThrow({ where: { id: contributionId }, select: { organizationId: true } });
-    const { count } = await tx.opsAlert.updateMany({ where: { dedupeKey: rejectedKey(contributionId), status: 'OPEN' }, data: { occurrences: 0, lastSeenAt: new Date(now.getTime() - 24 * 3_600_000) } });
+    // También la de lo no gastado de unos vales (Sprint 5.14c), que lleva su propia alerta.
+    const { count } = await tx.opsAlert.updateMany({ where: { dedupeKey: { in: [rejectedKey(contributionId), partialRejectedAlertKey(contributionId)] }, status: 'OPEN' }, data: { occurrences: 0, lastSeenAt: new Date(now.getTime() - 24 * 3_600_000) } });
     if (count === 0) return false;
     await tx.auditLog.create({ data: { actorType: 'USER', actorUserId: actor.userId, organizationId: contribution.organizationId, action: 'payment.refund_reactivated', targetType: 'Contribution', targetId: String(contributionId), metadataJson: {} } });
     return true;

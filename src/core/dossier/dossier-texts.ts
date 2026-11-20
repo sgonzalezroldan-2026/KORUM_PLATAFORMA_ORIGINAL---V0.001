@@ -26,7 +26,7 @@ export interface DossierTranslators {
  * (`tests/unit/dossier-pdf.spec.ts` vigila que no falte ninguna). Una que aún no esté aquí sale como «otro aviso», nunca con su código interno.
  */
 export const DOSSIER_EMAIL_TEMPLATE_KEYS: ReadonlySet<string> = new Set([
-  'auth.magicLink', 'auth.otp', 'auth.invitation', 'contribution.receipt', 'ticket.pass', 'voucher.pass', 'voucher.noProductReceipt', 'gate.pinRevoked', 'initiative.goalReached', 'initiative.expired', 'refund.issued',
+  'auth.magicLink', 'auth.otp', 'auth.invitation', 'contribution.receipt', 'ticket.pass', 'voucher.pass', 'voucher.noProductReceipt', 'voucher.saleClosed', 'voucher.changed', 'voucher.cancelledBuyer', 'voucher.validityChanged', 'voucher.expiryReminder', 'gate.pinRevoked', 'initiative.goalReached', 'initiative.expired', 'refund.issued',
   'doubleCheck.pending', 'split.windowExpiring', 'split.windowExpired', 'sponsor.renewalNotice', 'sponsor.welcome', 'sponsor.rejected', 'sponsor.renewalLink', 'sponsor.renewed', 'sponsor.reassigned',
   'sponsor.creditPool', 'sponsor.renewalInvite', 'sponsor.toEntityFund', 'sponsor.awaitingDecision', 'sponsor.lateReceived', 'activityFund.received', 'activityFund.reminder', 'activityFund.paid',
   'tax.certificateReady', 'privacy.inactivityNotice', 'account.passkeyAdded', 'support.received', 'support.replied', 'platform.message', 'pledge.charged', 'pledge.skipped', 'pledge.failed',

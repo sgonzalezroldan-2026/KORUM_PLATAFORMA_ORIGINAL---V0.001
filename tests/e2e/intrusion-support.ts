@@ -365,6 +365,9 @@ export function resourceArguments(slug: string, target: Targets): Record<string,
     // Sprint 5.13: cancelar y cambiar la fecha de un evento ajeno (la fecha es válida: la entidad se comprueba antes).
     cancelEventAction: [slug, { initiativeId: target.eventId }],
     rescheduleEventAction: [slug, { initiativeId: target.eventId, newDay: '2027-01-15' }],
+    // Sprint 5.14c: cancelar y cambiar las fechas de una venta de vales ajena (la entidad se comprueba antes de leer la taquilla, sea evento o venta de vales).
+    cancelVoucherSaleAction: [slug, { initiativeId: target.eventId }],
+    changeVoucherDatesAction: [slug, { initiativeId: target.eventId, validDay: '2027-06-30' }],
     revokeGateSessionAction: [slug, target.gateSessionId],
     decideRefundAction: [slug, { initiativeId: target.campaignId }],
     launchResizeVoteAction: [slug, { initiativeId: target.campaignId, options: ['Hacer la mitad', 'Hacer un tercio'] }]

@@ -39,6 +39,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'activity_fund.rate_limited',
     'expired.rate_limited',
     'event.rate_limited',
+    'voucher.rate_limited',
     'payout.rate_limited',
     'file.not_available',
     'gate.pin_blocked',
@@ -123,6 +124,10 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'event.cancelled',
     'event.rescheduled',
     'event.reschedule_refund',
+    'voucher.sale_closed',
+    'voucher.sale_cancelled',
+    'voucher.dates_changed',
+    'voucher.purchase_refunded',
     'initiative.cover_published',
     'initiative.cover_removed',
     'studio.initiative_saved',
@@ -305,7 +310,8 @@ export const INITIATIVE_TARGET_TYPES = ['Initiative', 'INITIATIVE'] as const;
 /** Motivos de un cambio de estado de una iniciativa (`initiative.status_changed`). */
 export const STATUS_CHANGE_REASONS = [
   'PUBLISHED', 'GOAL_REACHED', 'DEADLINE_PASSED', 'DRAFT_DISCARDED', 'PAYOUT_SENT', 'ENTITY_CHOSE_REFUND', 'RESIZE_VOTE_OPENED', 'RESIZE_VOTE_WITHOUT_PROJECT', 'RESIZE_VOTE_APPROVED',
-  'RESIZED_LEFT_EMPTY', 'ALL_REFUNDED', 'REOPENED_BY_REVERSAL', 'EVENT_DATE_REACHED', 'EVENT_CANCELLED', 'EVENT_RESCHEDULED', 'EVENT_EMPTIED'
+  'RESIZED_LEFT_EMPTY', 'ALL_REFUNDED', 'REOPENED_BY_REVERSAL', 'EVENT_DATE_REACHED', 'EVENT_CANCELLED', 'EVENT_RESCHEDULED', 'EVENT_EMPTIED',
+  'VOUCHER_SALE_CLOSED', 'VOUCHER_SALE_CANCELLED'
 ] as const;
 export type StatusChangeReason = (typeof STATUS_CHANGE_REASONS)[number];
 export const isStatusChangeReason = (value: unknown): value is StatusChangeReason => typeof value === 'string' && (STATUS_CHANGE_REASONS as readonly string[]).includes(value);

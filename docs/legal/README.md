@@ -11,7 +11,7 @@
 | :--- | :--- | :-: | :--- | :--- |
 | Aviso legal | [aviso-legal.md](aviso-legal.md) | 2026-11-18 | Validado por el promotor | No se acepta: se publica |
 | Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-20 | Validado por el promotor (la campaña que supera la meta, la aportación mínima, el cierre de los pagos y la aportación voluntaria, decisiones 68, 73, 79 y 80, el 2026-11-20) | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
-| Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-20 | Validado por el promotor (el añadido del 3.6, el 2026-11-19; la validez máxima y el cierre de los pagos, decisiones 76 y 79, el 2026-11-20) | Quien compra, con casilla al pagar |
+| Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-20 | Validado por el promotor (el añadido del 3.6, el 2026-11-19; la precisión del 4.5, el 2026-11-20; la validez máxima y el cierre de los pagos, decisiones 76 y 79, el 2026-11-20) | Quien compra, con casilla al pagar |
 | Condiciones de la aportación mensual | [condiciones-aportacion-mensual.md](condiciones-aportacion-mensual.md) | 2026-11-18 | Validado por el promotor | Quien activa Mi Hucha, con casilla (apagada en el lanzamiento) |
 | Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-20 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19; la meta superada y quién paga las devoluciones, decisiones 68 a 70, y las deudas con KORUM, la validez de los vales, el comercio sin moderar y el cierre de los pagos, decisiones 75, 76, 78 y 79, el 2026-11-20) | La entidad, en el alta |
 | Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-20 | Validado por el promotor (el patrocinio sin moderar, decisión 78, el 2026-11-20) | El comercio, con casilla, en cada pago y en cada renovación |
@@ -61,7 +61,7 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | No hay rifas | Todos | 5.12a y 5.12b (hecho: retiradas) |
 | Entradas: se liquida por lo vendido; cancelación; cambio de fecha con 14 días | Entradas y vales §3; entidades §8 | 5.13 (hecho) |
 | Aviso al voluntario, plazo de las lecturas de portería (1 año) y «no reenvíes el enlace» | Privacidad §3.10 y §8; primeras capas §8 | 5.13 (hecho) |
-| Vales (todo el apartado), con la validez que fija la entidad y la cancelación antes y después de liquidar | Entradas y vales §4; entidades §9 | 5.14 |
+| Vales (todo el apartado), con la validez que fija la entidad y la cancelación antes y después de liquidar | Entradas y vales §4; entidades §9 | 5.14a, 5.14b y 5.14c (hecho) |
 | Quién vende entradas y vales (una empresa o una entidad sin ánimo de lucro), dentro de la ventana de resumen | Entradas y vales §1; primeras capas §2 | 5.15 |
 | Páginas públicas, archivo de versiones, aceptación del alta, línea de la pantalla de acceso | Todos; primeras capas §4 y §11 | 5.10a |
 | Rastros de seguridad a 12 meses y dentro de la copia de datos; texto de la supresión | Privacidad §8, §9 y §10 | 5.10b |

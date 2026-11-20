@@ -8,6 +8,7 @@ import type { PaymentNotification } from './payment-provider';
 import { approveRefundInTx, isSettled, loadLockedContribution, payinLinesOf, PaymentReconciliationError, removeFromInitiative, settleRefundInTx, type ContributionRow } from './payment-reversals';
 import { korumLossDebits, rectifySponsorFeeAfterReversal, retireMatchingPool } from './sponsor-reversals';
 import type { InvoicingContext } from './sponsorship-events';
+import { applyConfirmedPartialRefundInTx, assertNoPartialRefund } from './partial-refunds';
 
 /**
  * Lo que Paycomet avisa que ya ha pasado con un cobro (Sprint 2.1, separado de `payment-reversals.ts` en el 4.2b): una devolución hecha (pedida por
@@ -51,6 +52,8 @@ const laterOf = (occurredAt: Date): Date => new Date(Math.max(occurredAt.getTime
 export async function applyConfirmedRefundInTx(tx: Db, notification: PaymentNotification, occurredAt: Date, invoicing?: InvoicingContext): Promise<void> {
   const contribution = await loadLockedContribution(tx, { paycometOrder: notification.order });
   if (!contribution) throw new PaymentReconciliationError(`Reembolso de un pedido desconocido: ${notification.order}`);
+  // La devolución de lo no gastado de una compra de vales (Sprint 5.14c) es parcial: se confirma la suya y nada más.
+  if (await applyConfirmedPartialRefundInTx(tx, contribution.id, notification, occurredAt)) return;
   assertMatchesCharge(contribution, notification, 'Reembolso');
   // Un patrocinio reasignado (Sprint 4.2d) no sigue el camino «ya liquidada»: su dinero puede estar en la bolsa o en otras campañas, y sale de allí.
   if (contribution.status === 'COMPLETED' && isSettled(contribution.initiative.payout?.status) && !(await isMovedSponsorship(tx, contribution))) {
@@ -92,6 +95,7 @@ export async function applyChargebackInTx(tx: Db, notification: PaymentNotificat
   const { order } = notification;
   const contribution = await loadLockedContribution(tx, { paycometOrder: order });
   if (!contribution) throw new PaymentReconciliationError(`Contracargo de un cobro desconocido: ${order}`);
+  await assertNoPartialRefund(tx, contribution.id, order, 'Contracargo');
   assertMatchesCharge(contribution, notification, 'Contracargo');
   if (contribution.status !== 'COMPLETED' && contribution.status !== 'REFUND_PENDING' && contribution.status !== 'REFUNDED') return false;
   await tx.contribution.update({ where: { id: contribution.id }, data: { status: 'CHARGEBACK', refundSendingAt: null } });
