@@ -19,7 +19,7 @@
 - **Rifas retiradas** (decisión del promotor, 2026-11-18): se retiraron de la aplicación y de sus textos en los Sprints 5.12a y 5.12b, y ningún texto nuevo habla de rifas, papeletas o sorteos; los **vales** llegan en el 5.14.
 - **En la pestaña pública "Iniciativas y taquilla" solo aparecen iniciativas `FUNDRAISING`** (etiqueta visible «Recaudando»), destacando las que tienen *Matching 2x* activo.
 - **Contador `💛 X aportaciones`** bajo la barra de progreso: `+1` por cada aportación completada de una persona o comercio y por el Auto-Impulso de KORUM (que no suma a ningún curso).
-- **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**.
+- **Ficha pública sin la barra de 6 estados:** solo la **hucha de la iniciativa (`WLT-ESC-XXX`)** y la **fecha límite**, con su hora de cierre desde el Sprint 5.17b (decisión 79: en toda iniciativa, los pagos se cierran 20 minutos antes y la ficha lo dice).
 - **Tarjetas para WhatsApp y redes (`next/og`):** todo enlace de iniciativa o curso genera su imagen en servidor (logo del centro, `%` de avance, días restantes y reto del curso o equipo). Detalle en [korum-seo-discoverability](../skills/korum-seo-discoverability/SKILL.md).
 - **Comercios amigos por categoría, sin importes en público:** `🥇 Categoría ORO`, `🥈 Categoría PLATA`, `🥉 Categoría BRONCE`, siempre en ese orden. Las categorías son del **modo publicidad**. En el **modo donación** (por defecto desde el Sprint 5.16) el comercio no tiene categoría, ventaja ni cartel: la entidad puede agradecerlo **solo con su nombre** («Gracias a Ferretería Sol»), si lo activa, en orden alfabético y durante 12 meses; el Matching 2x es anónimo («Un comercio del barrio duplica tu aportación»).
 

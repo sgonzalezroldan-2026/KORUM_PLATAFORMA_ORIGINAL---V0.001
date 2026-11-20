@@ -46,7 +46,7 @@ Al crear una cuenta, aportar, comprar o firmar una idea aceptas estas condicione
 
 ### 4.1 Cómo funciona: «todo o nada»
 
-1. La entidad publica una campaña con una **meta** y una **fecha límite**, que ves en su ficha. Los pagos se cierran 20 minutos antes de esa fecha. La plataforma limita la duración de las campañas (hoy, a 60 días como máximo).
+1. La entidad publica una campaña con una **meta** y una **fecha límite**, con su hora, que ves en su ficha. Los pagos se cierran 20 minutos antes de esa hora. La plataforma limita la duración de las campañas (hoy, a 60 días como máximo).
 2. Tu aportación va a la **hucha de la iniciativa**, que es el fondo reservado solo para esa campaña: el dinero queda retenido en PAYCOMET hasta lograr la meta. No es dinero de KORUM, y ni la entidad ni KORUM pueden disponer de él mientras tanto.
 3. **Si se logra la meta**, el dinero se entrega a la cuenta verificada de la entidad para que pague el proyecto. La campaña sigue abierta hasta su fecha límite, salvo que la entidad la cierre antes: si aportas cuando la meta ya está conseguida, te lo decimos antes de pagar, y lo que se recaude de más va al proyecto, como reserva adicional, descontados el coste de la pasarela de esos pagos y la comisión de la plataforma. Una campaña cerrada no admite aportaciones.
 4. **Si no se logra**, recuperas tu dinero como se explica en el punto 4.3.

@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, y lo que debáis a KORUM de los §7.6 y §15.2, la validez máxima de los vales del §9 y el comercio sin moderar del §10, decisiones 75, 76 y 78, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, y lo que debáis a KORUM de los §7.6 y §15.2, la validez máxima de los vales del §9 el comercio sin moderar del §10 y el cierre de los pagos del §7.1, decisiones 75, 76, 78 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -124,6 +124,8 @@ En una campaña con presupuesto, KORUM puede completar lo que falta para llegar 
 ### 7.1 Mientras se recauda
 
 Las aportaciones quedan retenidas en PAYCOMET, en la hucha de la iniciativa. Ni la entidad ni KORUM pueden disponer de ellas hasta que la campaña se consigue.
+
+Los pagos de toda iniciativa (campaña, entradas o vales) se cierran **20 minutos antes** de su fecha y hora de cierre, que la plataforma muestra siempre juntas a quien paga y en vuestro panel. Tenedlo en cuenta al fijarlas.
 
 ### 7.2 Campaña conseguida
 

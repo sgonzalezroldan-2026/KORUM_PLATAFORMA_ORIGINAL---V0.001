@@ -1,6 +1,6 @@
 # Condiciones de entradas y vales
 
-> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13; la frase del certificado en el punto 4.6, el 2026-11-19, decisión 64) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13; la frase del certificado en el punto 4.6, el 2026-11-19, decisión 64; la validez máxima del punto 4.3 y el cierre de los pagos del punto 2, decisiones 76 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que compran entradas para un evento o vales de una entidad.
 > **Se acepta en:** el pago, con la casilla obligatoria «He leído y acepto las condiciones de entradas y vales» y su ventana de resumen (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -27,6 +27,7 @@ Estas condiciones completan las [condiciones de uso](condiciones-generales.md), 
 - Antes de pagar ves el precio de cada entrada o de cada vale y los **Gastos de gestión digital**, que pueden ir sumados al precio o incluidos en él. El total que ves es lo que pagas: no hay ningún otro cargo.
 - Los Gastos de gestión digital llevan el IVA incluido. Tu recibo incluye los datos de su factura simplificada.
 - Las entradas y los vales son compras, no donaciones: **no dan derecho a certificado fiscal**.
+- Cada venta se cierra en la fecha y hora que ves en su ficha. **Los pagos se cierran 20 minutos antes**, para que ningún pago llegue con la venta ya cerrada.
 
 ## 3. Entradas
 
