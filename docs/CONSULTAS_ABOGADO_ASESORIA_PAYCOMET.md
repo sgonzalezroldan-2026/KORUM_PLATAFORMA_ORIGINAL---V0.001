@@ -71,13 +71,13 @@ Además de las respuestas, necesitamos las **credenciales del entorno de pruebas
 #### Retención y reparto
 
 1. ¿Se pueden retener los cobros de cada campaña hasta 90 días y repartirlos solo si se alcanza la meta? ¿Hay algún límite de saldo retenido?
-2. La API exige citar el cobro original en cada reparto. ¿Una liquidación son tantos repartos como cobros? ¿El tope de cada uno es lo cobrado en ese pedido? ¿Hay límite de repartos o una forma de agruparlos? ¿Puede la entidad recibir varios repartos de un mismo pedido?
+2. La API exige citar el cobro original en cada reparto. ¿Una liquidación son tantos repartos como cobros? ¿El tope de cada uno es lo cobrado en ese pedido? ¿Hay límite de repartos o una forma de agruparlos? ¿Puede la entidad recibir varios repartos de un mismo pedido? **¿Cada reparto tiene coste?** Si una campaña de 200 cobros se liquida con 200 repartos, ¿pagamos 200 veces?
 3. ¿Se puede repartir un cobro hacia la cuenta de la entidad desde la liquidación de una campaña distinta de la del pedido, dentro de los 90 días de ese cobro?
 4. Nuestro sistema entregará de forma automática a la cuenta de la entidad, cinco días antes del día 90, todo cobro de una campaña conseguida que siga sin repartir. Si aun así algún saldo pasa del día 90, ¿qué se puede hacer con él: entregarlo a la entidad por otra vía, devolverlo al pagador o hacer un reparto manual? ¿Con qué plazo? `[L-050]`
 
 #### Devoluciones
 
-5. ¿Las devoluciones de tarjeta y de Bizum tienen coste? **Cuando devolvemos un cobro entero, ¿nos devuelven la comisión que cobraron al cobrarlo, o esa comisión se pierde?** (Por ejemplo, una campaña que no llega a la meta devuelve 200 cobros: ¿pagamos 200 comisiones de cobro, 200 de devolución, las dos o ninguna?) **¿Hasta cuántos días después del cobro se pueden hacer con cada método?** De esta respuesta dependen varios plazos nuestros: una campaña de 60 días puede devolver hasta 21 días después de vencer. `[L-089, L-090, L-113]`
+5. ¿Las devoluciones de tarjeta y de Bizum tienen coste? **Cuando devolvemos un cobro entero, ¿nos devuelven la comisión que cobraron al cobrarlo, o esa comisión se pierde?** Entendemos que, si una campaña no llega a la meta, se devuelve todo sin comisiones: necesitamos confirmarlo por escrito. (Por ejemplo, una campaña que no llega a la meta devuelve 200 cobros: ¿pagamos 200 comisiones de cobro, 200 de devolución, las dos o ninguna?) **¿Hasta cuántos días después del cobro se pueden hacer con cada método?** De esta respuesta dependen varios plazos nuestros: una campaña de 60 días puede devolver hasta 21 días después de vencer. `[L-089, L-090, L-113]`
 6. ¿Se admiten devoluciones parciales de un pedido? ¿Devolver más de lo cobrado se rechaza siempre, también con reintentos tras un corte de conexión?
 7. En una devolución, ¿qué dirección IP hay que enviar: la de la compra original o la de nuestro servidor?
 
@@ -88,7 +88,7 @@ Además de las respuestas, necesitamos las **credenciales del entorno de pruebas
 #### Contracargos
 
 9. Proceso, plazos y quién asume el importe si la campaña ya se liquidó. ¿Cobran una tasa por cada contracargo, la ganemos o la perdamos?
-10. ¿Qué pruebas aportan ustedes por sí mismos y qué necesitan de KORUM (nombre, email, IP de la compra, justificante de la campaña)? `[L-071]`
+10. ¿Qué pruebas aportan ustedes por sí mismos y qué necesitan de KORUM (nombre, email, IP de la compra, justificante de la campaña)? ¿Podemos personalizar el texto que ve quien paga en el extracto de su banco con el nombre de cada entidad (por ejemplo, «KORUM*AMPA SOL»), para que lo reconozca y no dispute el cargo? `[L-071]`
 
 #### Venta de vales
 

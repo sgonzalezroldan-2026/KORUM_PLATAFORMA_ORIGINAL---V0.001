@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, y lo que debáis a KORUM de los §7.6 y §15.2, la validez máxima de los vales del §9 y el comercio sin moderar del §10, decisiones 75, 76 y 78, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -151,6 +151,17 @@ Cuando vence el plazo sin lograr la meta, tenéis **14 días** para decidir:
 
 La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campaña había reservado vuelven a estar disponibles si esa campaña se cancela o se devuelve.
 
+### 7.6 Lo que debáis a KORUM
+
+Si la entidad debe algo a KORUM (por ejemplo, los costes de una cancelación o de un cambio de fecha que su venta no cubra, o un importe que se os reclame tras un contracargo, punto 7.4):
+
+- **Os avisamos por email** con lo que debéis, su motivo y el plazo para pagarlo.
+- **KORUM puede cobrarlo de vuestras liquidaciones posteriores**: de otra campaña, evento, venta de vales o del Fondo de actividades. Lo veréis en el justificante de esa liquidación.
+- **Mientras la deuda siga vencida, KORUM puede impedir que publiquéis** campañas, eventos o ventas de vales nuevos.
+- **Si no la pagáis, KORUM puede suspender la entidad** (punto 15.2).
+
+Cada uno de estos pasos lo decide una persona del equipo de KORUM, queda registrado y se avisa a quienes firmáis.
+
 ## 8. Entradas y portería
 
 - **Vendéis vosotros.** La entidad es la organizadora del evento y responde de que se celebre, del aforo, de la seguridad y de sus permisos.
@@ -168,7 +179,7 @@ La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campa�
 - La entidad describe la venta con un texto; KORUM no lleva el inventario de lo que se entrega en el puesto.
 - El puesto funciona con un lector móvil y un PIN, como la portería. Si lo atiende otra organización (por ejemplo, una ONG), la entidad le pasa el PIN bajo su responsabilidad y arregla cuentas con ella fuera de la plataforma: el dinero de la venta llega solo a la entidad.
 - Quien compra puede recuperar el 100 % durante 14 días si no ha gastado ningún vale de esa compra. Después, los vales sin gastar se quedan en la entidad para su causa. La devolución la hace la plataforma y la paga la entidad, que es quien vende: de la liquidación de la venta se descuentan los Gastos de gestión digital devueltos y el coste de la pasarela y de cada devolución.
-- **La fecha hasta la que valen los vales la fijáis vosotros** y respondéis de ella: KORUM no impone un plazo mínimo. Dad un plazo razonable para gastarlos.
+- **La fecha hasta la que valen los vales la fijáis vosotros** y respondéis de ella: KORUM no impone un plazo mínimo, pero sí uno máximo, **3 meses desde el cierre de la venta**. Dad un plazo razonable para gastarlos.
 - Si canceláis la venta antes de la liquidación, la plataforma devuelve el 100 % de los vales sin gastar, y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo. Si la canceláis después, cuando el dinero ya está en vuestra cuenta, la plataforma ya no puede devolverlo: avisa de la cancelación a quienes compraron, con el modo de pediros la devolución que nos indiquéis, y devolverles lo no gastado es responsabilidad de la entidad, que responde ante ellos. Si cambiáis la fecha, se aplica la misma regla que a las entradas, también en quién paga cada devolución.
 - La venta dura 60 días como máximo y se liquida por lo vendido al cerrarse, pasados los 14 días de devolución.
 
@@ -186,7 +197,7 @@ Un colegio privado con ánimo de lucro solo puede usar el patrocinio con publici
 ### 10.2 Si elegís el patrocinio con publicidad
 
 - **Declaráis en el panel que la entidad puede facturar con IVA.** Es una declaración bajo vuestra responsabilidad; se avisa a la otra persona firmante y queda registrada. KORUM no la comprueba.
-- **Revisáis a cada comercio** antes de que aparezca. Tenéis **14 días** desde su pago. Si no lo admitís, o si no decidís en ese plazo, se le devuelve el 100 % de forma automática. Os lo recordamos 7, 3 y 1 días antes.
+- **Revisáis a cada comercio** antes de que aparezca. Tenéis **14 días** desde su pago. Si no lo admitís, se le devuelve el 100 % de forma automática. **Si no decidís en ese plazo, se entiende que lo admitís:** aparece, su dinero se liquida como el de cualquier comercio admitido y os toca emitirle vuestra factura. Si después os arrepentís, lo resolvéis con el comercio (punto 10.3). Os lo recordamos 7, 3 y 1 días antes.
 - **Emitís vuestra factura al comercio** por el importe de su patrocinio, con vuestro IVA, y la subís a la plataforma después de admitirlo. Os lo recordaremos hasta que esté subida.
 - **Al admitir a un comercio le autorizáis a usar el nombre de la entidad** en el cartel de comercio amigo, mientras dure su distintivo.
 - Si no admitís a un comercio, el motivo lo escribís vosotros y le llega tal cual.
@@ -260,6 +271,7 @@ KORUM puede suspender la actividad de una entidad, o solo una de sus campañas, 
 - si la usa para algo contrario a la ética de la plataforma, es decir: para publicar contenidos ofensivos, discriminatorios, violentos o que inciten al odio, para fines ajenos a los de la entidad o para engañar a las familias sobre el destino del dinero;
 - si los documentos del titular (punto 3.1) no son correctos;
 - si incumple estas condiciones de forma grave;
+- si tiene con KORUM una deuda vencida que no paga (punto 7.6);
 - si lo exige PAYCOMET o una autoridad.
 
 Qué pasa entonces:

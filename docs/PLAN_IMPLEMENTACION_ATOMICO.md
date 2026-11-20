@@ -28,9 +28,9 @@ Sustituye a cualquier orden anterior. Las fichas están en «FASE 5 (continuaci�
 | 8 | 5.15 · Aceptación en el pago y devoluciones de 14 días | N13, N14, N15 | 1 | 6–8 h |
 | 9 | 5.16 · Comercios en dos modos | N4 | 3 | 6–8 h |
 | 10 | 5.17 · Campañas vencidas y campañas que superan la meta | N7, N24 | 2 | 4–6 h |
-| 11 | 5.18 · Tarifas a 30 días | N9 | 1 | 4–6 h |
+| 11 | 5.18 · Tarifas a 30 días, márgenes y topes | N9, N26 | 1 | 6–8 h |
 | 12 | 5.19 · Liquidación, firma única y contracargos tras liquidar | N11, N12, N21 | 2 | 6–8 h y 4–6 h |
-| 13 | 5.20 · IVA incluido y facturas | N5 | 2 | 6–8 h |
+| 13 | 5.20 · IVA incluido, facturas y deudas de la entidad | N5, N25 | 3 | 6–8 h (la tercera, 4–6 h) |
 | 14 | 5.21 · Auto-Impulso | N10 | 1 | 5–7 h |
 | 15 | 5.22 · Donativos y Modelo 182 | N17, N18 | 1 | 5–7 h |
 | 16 | 5.23 · Veri\*factu | N6, P2b | 1–2 | 6–8 h |
@@ -47,7 +47,7 @@ Sustituye a cualquier orden anterior. Las fichas están en «FASE 5 (continuaci�
 | 27 | 6.1e · Correcciones de las revisiones externas | P21, P6, P7 | 1–3 | 5–7 h |
 | 28 | 6.2 · Piloto con 3 entidades | 6.2, P15 | semanas | sesiones de 1–3 h |
 
-**Hasta dejar el código listo para la preproducción (puntos 1 a 18): unas 31 sesiones y entre 166 y 210 horas de trabajo del asistente** (con el Sprint 5.17b, añadido el 2026-11-20). Son estimaciones: la bitácora no guardaba duraciones hasta ahora.
+**Hasta dejar el código listo para la preproducción (puntos 1 a 18): unas 32 sesiones y entre 172 y 218 horas de trabajo del asistente** (con los Sprints 5.17b y 5.20c y el 5.18 ampliado, el 2026-11-20). Son estimaciones: la bitácora no guardaba duraciones hasta ahora.
 
 **En paralelo, sin código y a cargo del promotor:** P22 (rotar la clave de Stitch, hoy), P14 (dominio, datos de la empresa, cuentas y correo), P1 (proveedor de pagos definitivo), P3 (presupuesto, con seguros), P15 (entidades piloto), P2b (pedir ya los precios de Veri\*factu), el certificado digital para el Sprint 5.22, P2a (las 21 preguntas a Paycomet, justo antes del 6.1) y, cuando quiera, las cuatro consultas de N20.
 
@@ -731,7 +731,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.15 — Aceptación en el pago y devoluciones de 14 días (N13, N14, N15):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** **casilla obligatoria** de aceptación junto al botón de pago de donaciones, entradas, vales y aportación mensual, y **ventana accesible «Las condiciones, en resumen»** que se abre desde ella (lo que se acepta, qué se hace con los datos y el enlace al texto completo; en entradas y vales, si quien vende es una empresa o una entidad sin ánimo de lucro, según su `legalForm`, comprobando a qué grupo va cada forma jurídica: un club que sea sociedad anónima deportiva vende como empresa), con el enlace «Cómo usamos tus datos» junto a la casilla, que abre la ventana por el bloque de los datos; versión aceptada guardada en cada pago y resumen de lo que aplica en el email del recibo (decisiones 39 y 48; textos en [docs/legal/primeras-capas.md](legal/primeras-capas.md)); enlace en el recibo para recuperar la **aportación voluntaria** durante 14 días, automático y con su contra-asiento (decisión 22); **Mi Hucha apagada por defecto** (`hucha.mode = DISABLED`), condiciones propias con versión y devolución automática de la gestión si se cancela en 14 días, nunca de la donación (decisión 38, `L-016`). Los textos oficiales de la Regla 03 §3 no cambian.
+  - **Alcance:** **casilla obligatoria** de aceptación junto al botón de pago de donaciones, entradas, vales y aportación mensual, y **ventana accesible «Las condiciones, en resumen»** que se abre desde ella (lo que se acepta, qué se hace con los datos y el enlace al texto completo; en entradas y vales, si quien vende es una empresa o una entidad sin ánimo de lucro, según su `legalForm`, comprobando a qué grupo va cada forma jurídica: un club que sea sociedad anónima deportiva vende como empresa), con el enlace «Cómo usamos tus datos» junto a la casilla, que abre la ventana por el bloque de los datos; versión aceptada guardada en cada pago y resumen de lo que aplica en el email del recibo (decisiones 39 y 48; textos en [docs/legal/primeras-capas.md](legal/primeras-capas.md)); **sin** enlace para recuperar la aportación voluntaria (la decisión 80 lo quita: solo se devuelve si la campaña no se consigue); **donación mínima de 5 €** (decisión 73; la aportación voluntaria sigue desde 0 €); **Mi Hucha apagada por defecto** (`hucha.mode = DISABLED`), condiciones propias con versión y devolución automática de la gestión si se cancela en 14 días, nunca de la donación (decisión 38, `L-016`). Los textos oficiales de la Regla 03 §3 no cambian.
   - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`, `korum-fiscal-invoicing`.
   - **Gate QA:** `QA-LEG06`, `QA-PAY12`.
   - ⛓️ **Depende de:** el Sprint 5.10a (versiones publicadas).
@@ -755,7 +755,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
 - [ ] **SPRINT 5.16c — Comercios en dos modos: plazos, renovación y avisos (N4):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 6–8 h.
-  - **Alcance:** moderación en modo publicidad con devolución automática a los 14 días y avisos a 7, 3 y 1 (decisión 24, `L-090`); factura de la entidad subida tras admitir, con recordatorios; enlace de renovación que se cierra al pagarse, segundo pago devuelto con un botón durante 14 días (`L-089`); la renovación propone la categoría actual; página de renovación que enseña y deja corregir los datos de facturación (`L-079`); enlace de baja en cada email de renovación y baja de la invitación (`L-078`, `L-087`); texto del email de no admisión (`L-037`), retirada del cartel (`L-038`) y purga del contacto de un comercio cobrado (`L-039`; el de un comercio que dona, a los 5 años de su última donación, decisión 52) y de sus datos de facturación a los 6 años desde el cierre del ejercicio de su último cobro ([tabla de plazos](legal/tabla-de-plazos.md) §3.8).
+  - **Alcance:** moderación en modo publicidad: **sin decisión en 14 días, el comercio queda admitido** y su dinero se liquida como el de cualquier comercio admitido, con los recordatorios de la factura de la entidad; si la entidad lo rechaza, se devuelve el 100 % con rectificativa; avisos a 7, 3 y 1 días que dicen qué pasará si no decide (decisión 78, que cambia la 24; `L-090`); factura de la entidad subida tras admitir, con recordatorios; enlace de renovación que se cierra al pagarse, segundo pago devuelto con un botón durante 14 días (`L-089`); la renovación propone la categoría actual; página de renovación que enseña y deja corregir los datos de facturación (`L-079`); enlace de baja en cada email de renovación y baja de la invitación (`L-078`, `L-087`); texto del email de no admisión (`L-037`), retirada del cartel (`L-038`) y purga del contacto de un comercio cobrado (`L-039`; el de un comercio que dona, a los 5 años de su última donación, decisión 52) y de sus datos de facturación a los 6 años desde el cierre del ejercicio de su último cobro ([tabla de plazos](legal/tabla-de-plazos.md) §3.8).
   - **Skills:** `korum-escrow-payments`, `korum-fiscal-invoicing`, `korum-nextjs-multitenant-ui`.
   - **Gate QA:** `QA-COM13`, `QA-COM14`.
 
@@ -771,15 +771,17 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - ⏱️ **Duración estimada:** 4–6 h. Tiempo del promotor: unos 15 minutos al abrirlo, para validar la fórmula de la comisión sobre lo recaudado de más.
   - **Alcance (decisión 68):** una campaña con presupuesto que llega a la meta **sigue abierta hasta su fecha límite** (hoy pasa a `GOAL_REACHED` y se cierra al momento); la ficha y la tarjeta dicen «¡Meta superada!» y siguen en la pestaña «Iniciativas y taquilla»; **antes de pagar** se avisa de que la meta está conseguida y de que lo nuevo va a la *Reserva adicional del proyecto*; lo recaudado de más lleva el **coste real de la pasarela** de esos cobros y la **comisión de KORUM** (al abrir el sprint se le propone al promotor la fórmula, con el formato «qué pasa hoy, ejemplo, opciones, recomendación», y se comprueba que las 4 líneas públicas siguen cuadrando al céntimo con lo recaudado); la entidad puede **cerrar la campaña antes de tiempo** con una firma, con auditoría, para liquidar ya; la bolsa *Matching 2x* deja de duplicar al llegar a la meta y lo que quede se reasigna como hoy; los retos por curso siguen sumando; el 💎 y el Auto-Impulso no se ofrecen en una campaña que ya llegó a la meta; una campaña cerrada, por su fecha o por la entidad, no admite ningún pago, y el pago empezado antes del cierre y confirmado después se devuelve entero, como hoy. Las condiciones para familias (§4.1) y para entidades (§7.2) ya lo dicen (versión 2026-11-20); falta la FAQ. Vales y entradas no cambian (la venta de vales sin tope ya sigue al pasar del 100 %, decisión 66).
   - **Skills:** `korum-tco-calculator`, `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Añadido (decisión 79, 2026-11-20):** los pagos se cierran **20 minutos antes** de la fecha límite: no se abre ningún pago nuevo y la sesión de pago de Paycomet caduca antes del cierre; la ficha lo dice. El plazo es un valor único de configuración.
   - **Gate QA:** `QA-PAY18`.
   - ⛓️ **Depende de:** el Sprint 5.17 (mismo ciclo de vida de la campaña).
 
 - [ ] **SPRINT 5.18 — Tarifas: todo cambio a 30 días y condiciones guardadas al publicar (N9):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
-  - ⏱️ **Duración estimada:** 4–6 h.
+  - ⏱️ **Duración estimada:** 6–8 h (ampliado el 2026-11-20).
   - **Alcance (decisión 34, `L-056`):** todo cambio global de tarifas entra en vigor a los 30 días y solo vale para lo publicado después; email automático a quienes firman y aviso en el Estudio durante esos 30 días; cada campaña, taquilla y venta de vales **guarda la tarifa con la que se publicó** (hoy la compra de entradas lee la tarifa actual); tarifas propias de una entidad: al momento si mejoran, a 30 días y con aviso si empeoran; texto anterior guardado en cada cambio con la campaña recaudando (`L-096`).
   - **Skills:** `korum-tco-calculator`, `korum-ticketing-qr`, `korum-nextjs-multitenant-ui`.
-  - **Gate QA:** `QA-FIN07`.
+  - **Añadido (decisiones 74, 76 y 77, 2026-11-20):** (1) **margen negativo:** el Estudio no deja publicar una taquilla o una venta de vales en la que la comisión de Paycomet supere los Gastos de gestión digital y ofrece en un clic pasar a «gestión encima del precio»; (2) **validez de los vales:** como máximo 3 meses desde el cierre de la venta y, por defecto, lo que llegue antes, el inicio del curso siguiente o esos 3 meses (el PIN del puesto la sigue; cambia el máximo de 12 meses de las decisiones 67 y 71); (3) **tope de la meta:** módulo en el motor de reglas globales y en la ficha 360º para fijar una meta máxima global o por entidad, **sin límite por defecto**, con auditoría.
+  - **Gate QA:** `QA-FIN07`, `QA-FIN10`.
 
 - [ ] **SPRINT 5.19 — Liquidación: solo a la cuenta de la entidad, entrega automática y firma única (N11, N12):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
@@ -793,6 +795,7 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - ⏱️ **Duración estimada:** 4–6 h.
   - **Alcance (decisión 53):** un contracargo que llega con la campaña, el evento, la venta de vales o el Fondo ya liquidados deja de asumirse de forma automática: se asienta en una cuenta de contracargos en revisión y abre un caso en la consola, con el expediente del cobro para discutirlo con el banco a través de Paycomet y una petición de información a la entidad; a la entidad no se le descuenta nada mientras tanto. Al cerrar el caso, el Super-Admin decide y aprueba, con reautenticación y auditoría, si lo asume KORUM (`CHARGEBACK_LOSSES`) o se reclama a la entidad por engaño o incumplimiento, y la entidad recibe el resultado con su motivo. El contracargo de una campaña sin liquidar sigue como hoy. Al abrir el sprint se le plantea al promotor cómo se cobra esa reclamación.
   - **Skills:** `korum-escrow-payments`, `korum-nextjs-multitenant-ui`.
+  - **Añadido (decisión 72, 2026-11-20):** el expediente de pruebas para el banco reúne el recibo, la fecha, la campaña y, si la hay, la lectura del QR en la puerta o el puesto; las tasas de cada contracargo se asientan como coste de KORUM y entran en la medida del Sprint 5.20a. El nombre de la entidad en el texto del cargo del extracto («KORUM*AMPA SOL») se configura con Paycomet en el 6.1, si lo permite (pregunta 10).
   - **Gate QA:** `QA-PAY17`.
   - ⛓️ **Depende de:** lo que Paycomet responda sobre los plazos y la documentación de una disputa, solo para cobros reales; se construye contra el simulador.
 
@@ -801,7 +804,8 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - ⏱️ **Duración estimada:** 6–8 h.
   - **Alcance (decisión 21):** la cuota de IVA (21/121 del importe mostrado) se separa en los asientos de la comisión por tramos, el mantenimiento, los Gastos de gestión digital (entradas y vales) y la gestión de Mi Hucha; nadie paga más y metas, pizarra y textos oficiales no cambian; el BI, las seis fuentes, la proyección y las alertas 🚨 y 💎 cuentan el ingreso **sin IVA**; la aportación voluntaria, sin IVA. **Coste de la pasarela (decisión 50):** entra en la factura a la entidad con su base y su IVA; al abrir el sprint se cuadra con el promotor cómo se separa ese IVA sin que nadie pague más, y el libro mayor distingue lo que es para Paycomet, lo que es IVA y lo que es ingreso de KORUM. Se actualiza el plan de negocio.
   - **Skills:** `korum-fiscal-invoicing`, `korum-tco-calculator`, `korum-escrow-payments`.
-  - **Gate QA:** `QA-FIS10`, `QA-FIN08`.
+  - **Añadido (decisión 72, 2026-11-20):** el BI de la consola mide lo que cuestan a KORUM las **devoluciones** (comisiones de Paycomet de los cobros devueltos y de cada devolución) y los **contracargos** (tasas e importes perdidos), en total y por campaña fallida media, y avisa si la comisión de las campañas conseguidas no los cubre. Si Paycomet confirma que las devoluciones de una campaña fallida no cuestan nada (pregunta 5), la medida lo mostrará así y no se toca la comisión.
+  - **Gate QA:** `QA-FIS10`, `QA-FIN08`, `QA-FIN11`.
 
 - [ ] **SPRINT 5.20b — Facturas: completa a entidades y comercios, simplificada en el recibo (N5):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `qa-e2e-verifier`.
@@ -812,11 +816,20 @@ Salen de una conversación con el promotor tras el 5.8b. Ninguno está decidido:
   - **Añadido (decisiones 69 y 70 del promotor, 2026-11-20; N23):** la misma regla para el **cambio de fecha** de un evento o de una venta de vales y para la **devolución de vales en 14 días**. Con el dinero aún retenido, devuelve la plataforma (la familia recupera el 100 %) y la entidad paga a KORUM, **descontado de la liquidación de esa misma venta**, la gestión devuelta y el coste de la pasarela y de las devoluciones; lo que esa venta no cubra (en una cancelación se devuelve todo) se cobra como se decida para la decisión 63. Aviso del coste en el panel antes de confirmar un cambio de fecha. Las condiciones para entidades (§8 y §9) ya lo dicen (versión 2026-11-20).
   - **Gate QA:** `QA-FIS11`, `QA-FIS12`, `QA-PAY19`.
 
+- [ ] **SPRINT 5.20c — Deudas de la entidad: detección automática y gestión desde la consola (N25):**
+  - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo alto** · auditoría `fintech-escrow-auditor` + `antifraud-legal-guardian` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
+  - ⏱️ **Duración estimada:** 4–6 h.
+  - **Alcance (decisión 75):** la plataforma **detecta sola** lo que una entidad debe a KORUM (los cargos de las decisiones 63, 69 y 70 que su venta no cubra y lo que se le reclame tras un contracargo, decisión 53) y lo lleva a un **módulo de la consola del Super-Admin** con su detalle, su antigüedad y su origen. **Todo lo demás lo aprueba el Super-Admin**, con reautenticación y auditoría: (1) enviar el **aviso** a quienes firman y al email general de la entidad, con lo que debe, el motivo y el plazo; (2) **cobrarlo de las liquidaciones** de sus iniciativas posteriores (campaña, evento, venta de vales o Fondo de actividades), con su asiento y su línea en el justificante y en la factura; (3) **impedirle publicar** mientras la deuda siga vencida (el panel lo dice); (4) si no paga, **suspenderla** con el procedimiento del Sprint 5.10d (decisión 56). Levantar cada medida, también con aprobación y auditoría. Las condiciones para entidades ya lo dicen (§7.6 y §15.2).
+  - **Skills:** `korum-escrow-payments`, `korum-fiscal-invoicing`, `korum-nextjs-multitenant-ui`.
+  - **Gate QA:** `QA-PAY20`.
+  - ⛓️ **Depende de:** los Sprints 5.10d (suspensión), 5.19b (reclamaciones tras un contracargo) y 5.20b (cargos a la entidad).
+
 - [ ] **SPRINT 5.21 — Auto-Impulso: siempre visible, compensado en el reparto y 💎 sin IVA (N10):**
   - 🤖 **IA recomendada:** **Claude Opus 5.5 · esfuerzo extra alto** (alternativa: Claude Fable 5.2 · alto) · auditoría `fintech-escrow-auditor` + `ux-school-director-reviewer` + `qa-e2e-verifier`.
   - ⏱️ **Duración estimada:** 5–7 h.
   - **Alcance (decisión 33):** desaparecen el ajuste `autoBoost.publicDisclosureDefault` y la elección en cada ejecución; la ficha lo dice siempre, sin importe; frase en el email a quienes donaron («gracias a ti y a toda la comunidad»); línea «Aportación de la plataforma KORUM» con su importe en el justificante de liquidación y en el expediente; solo en campañas con presupuesto (se rechaza y se oculta el 💎 en entradas y vales); **compensación en el reparto** (KORUM cobra esa cantidad de menos; la factura sigue siendo por la comisión entera); 💎 calculado sobre la comisión sin IVA.
   - **Skills:** `korum-tco-calculator`, `korum-escrow-payments`, `korum-fiscal-invoicing`.
+  - **Añadido (decisión 81, 2026-11-20):** el Auto-Impulso nunca supera la comisión de KORUM en esa campaña y desaparece la opción de ejecutarlo «aceptando la pérdida», para que KORUM no tenga que poner dinero propio.
   - **Gate QA:** `QA-FIN09`, `QA-PAY15`.
   - ⛓️ **Depende de:** el Sprint 5.20a.
 

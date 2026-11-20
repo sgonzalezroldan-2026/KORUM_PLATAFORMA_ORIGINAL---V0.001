@@ -10,14 +10,14 @@
 | Documento | Archivo | Versión | Estado | Quién lo acepta y cuándo |
 | :--- | :--- | :-: | :--- | :--- |
 | Aviso legal | [aviso-legal.md](aviso-legal.md) | 2026-11-18 | Validado por el promotor | No se acepta: se publica |
-| Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-20 | Validado por el promotor (la campaña que supera la meta, decisión 68, el 2026-11-20) | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
+| Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-20 | Validado por el promotor (la campaña que supera la meta, la aportación mínima, el cierre de los pagos y la aportación voluntaria, decisiones 68, 73, 79 y 80, el 2026-11-20) | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
 | Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-19 | Validado por el promotor (el añadido del 3.6, el 2026-11-19) | Quien compra, con casilla al pagar |
 | Condiciones de la aportación mensual | [condiciones-aportacion-mensual.md](condiciones-aportacion-mensual.md) | 2026-11-18 | Validado por el promotor | Quien activa Mi Hucha, con casilla (apagada en el lanzamiento) |
-| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-20 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19; la meta superada y quién paga las devoluciones, decisiones 68 a 70, el 2026-11-20) | La entidad, en el alta |
-| Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-18 | Validado por el promotor | El comercio, con casilla, en cada pago y en cada renovación |
+| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-20 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19; la meta superada y quién paga las devoluciones, decisiones 68 a 70, y las deudas con KORUM, la validez de los vales y el comercio sin moderar, decisiones 75, 76 y 78, el 2026-11-20) | La entidad, en el alta |
+| Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-20 | Validado por el promotor (el patrocinio sin moderar, decisión 78, el 2026-11-20) | El comercio, con casilla, en cada pago y en cada renovación |
 | Política de privacidad | [politica-de-privacidad.md](politica-de-privacidad.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
 | Política de cookies | [politica-de-cookies.md](politica-de-cookies.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
-| Primera capa de cada formulario | [primeras-capas.md](primeras-capas.md) | 2026-11-18 | Validado por el promotor | Textos cortos de los formularios (van a los catálogos) |
+| Primera capa de cada formulario | [primeras-capas.md](primeras-capas.md) | 2026-11-20 | Validado por el promotor (la aportación voluntaria y el patrocinio sin moderar, decisiones 78 y 80, el 2026-11-20) | Textos cortos de los formularios (van a los catálogos) |
 | Contrato de encargo del tratamiento | [contrato-de-encargo.md](contrato-de-encargo.md) | 2026-11-18 | Validado por el promotor | La entidad, en el alta |
 | Evaluación de impacto (modelo de la AEPD) | [evaluacion-de-impacto.md](evaluacion-de-impacto.md) | 2026-11-18 | Validado por el promotor | No se acepta ni se publica: documento interno |
 | Tabla única de plazos de conservación | [tabla-de-plazos.md](tabla-de-plazos.md) | 2026-11-18 | Validado por el promotor | No se acepta ni se publica: documento interno. Manda sobre CUMPLIMIENTO §6 y sobre la política de privacidad §8 |
@@ -54,7 +54,7 @@ Aparecen entre dobles corchetes y salen del ajuste `platform.company` de la cons
 
 ## 4. Lo que estos textos describen y el código todavía no hace
 
-Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 70 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
+Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 81 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
 
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |
@@ -67,8 +67,8 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Rastros de seguridad a 12 meses y dentro de la copia de datos; texto de la supresión | Privacidad §8, §9 y §10 | 5.10b |
 | Documento de identidad visible solo para quien lo sube, con aviso por email a la persona representante si lo sube otra; párrafo de la invitación; cookie del buzón con su plazo | Privacidad §3.9; primeras capas §4 y §5 | 5.10c |
 | Casilla obligatoria y ventana de resumen en cada pago, versión guardada y resumen en el recibo | Primeras capas §1, §2, §3 y §7 | 5.15 (comercios, 5.16b) |
-| Aportación voluntaria recuperable 14 días; Mi Hucha apagada, con condiciones propias y devolución de la gestión | Generales §5; aportación mensual | 5.15 |
-| Comercios en dos modos, casilla, 14 días de moderación, ampliaciones, renovación doble, baja de los emails, datos que recibe la entidad (el contacto, en los dos modos), plazo del contacto (5 años si dona) | Comercios; entidades §10; privacidad §3.8 y §8 | 5.16 |
+| Aportación voluntaria sin recuperación en 14 días (decisión 80); Mi Hucha apagada, con condiciones propias y devolución de la gestión | Generales §5; aportación mensual | 5.15 |
+| Comercios en dos modos, casilla, 14 días de moderación (sin decisión, admitido: decisión 78), ampliaciones, renovación doble, baja de los emails, datos que recibe la entidad (el contacto, en los dos modos), plazo del contacto (5 años si dona) | Comercios; entidades §10; privacidad §3.8 y §8 | 5.16 |
 | Campaña vencida: 14 días y devolución automática; email con la fecha exacta; vínculo del voto | Generales §4.3; entidades §7.3 | 5.17 |
 | Tarifas a 30 días y tarifa guardada; versión anterior de los textos de una campaña | Entidades §5.3 y §6.3 | 5.18 |
 | Liquidación solo a la entidad, entrega automática y aviso de cada liberación con firma única | Entidades §4.2 y §7.2 | 5.19 |
@@ -111,7 +111,7 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Cámara de la portería (`L-127`) | Privacidad §3.10 |
 | Obligaciones fiscales de la entidad | Entidades §12 |
 | Mayoría de edad | Generales §2; privacidad §4 |
-| Regla de los 14 días: aportación voluntaria | Generales §5 |
+| Aportación voluntaria: solo se devuelve si la campaña no se consigue (decisión 80) | Generales §5 |
 | Regla de los 14 días: gestión de Mi Hucha | Aportación mensual §6 |
 | Regla de los 14 días: vales | Entradas y vales §4.4 |
 | Regla de los 14 días: cambio de fecha | Entradas y vales §3.6 y §4.5 |

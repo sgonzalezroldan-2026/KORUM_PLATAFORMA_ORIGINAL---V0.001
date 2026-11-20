@@ -75,7 +75,7 @@ Un vale es una **unidad de canje**, como la ficha de una feria. La entidad fija 
 
 ### 4.3 Hasta cuándo valen
 
-Los vales valen hasta la fecha que fija la entidad, bajo su responsabilidad. La ves antes de comprar y en tu código. Una semana antes te enviamos un recordatorio si aún te quedan vales. **Pasada esa fecha, los vales sin gastar ya no se pueden usar ni se devuelven**, salvo que aún estés dentro de los 14 días del punto 4.4 y no hayas gastado ninguno de esa compra.
+Los vales valen hasta la fecha que fija la entidad, bajo su responsabilidad (como mucho, 3 meses después de que se cierre la venta). La ves antes de comprar y en tu código. Una semana antes te enviamos un recordatorio si aún te quedan vales. **Pasada esa fecha, los vales sin gastar ya no se pueden usar ni se devuelven**, salvo que aún estés dentro de los 14 días del punto 4.4 y no hayas gastado ninguno de esa compra.
 
 ### 4.4 Devolución durante 14 días
 

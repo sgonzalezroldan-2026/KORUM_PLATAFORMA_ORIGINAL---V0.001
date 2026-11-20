@@ -1,6 +1,6 @@
 # Condiciones para comercios
 
-> **Documento:** `condiciones-comercios` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-comercios` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el patrocinio sin moderar de los §5.2 y §6, decisión 78, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** comercios, empresas y profesionales que apoyan a una entidad.
 > **Se acepta en:** el pago del comercio, con la casilla obligatoria «He leído y acepto las condiciones para comercios» y su ventana de resumen (Sprint 5.16b), y en cada renovación. Las notas de este recuadro no forman parte del texto publicado.
 
@@ -63,7 +63,7 @@ La publicidad te la presta la entidad. Por eso es ella quien te emite la factura
 ### 5.2 La entidad revisa tu solicitud
 
 - La entidad comprueba que tu comercio encaja con sus valores y sus normas. Tiene **14 días** desde tu pago.
-- **Si no te admite, o si no decide en esos 14 días, te devolvemos el 100 % de lo que pagaste** (el importe, el IVA, la gestión de KORUM y su IVA), de forma automática y al mismo medio de pago, con su factura rectificativa.
+- **Si no te admite en esos 14 días, te devolvemos el 100 % de lo que pagaste** (el importe, el IVA, la gestión de KORUM y su IVA), de forma automática y al mismo medio de pago, con su factura rectificativa. **Si no decide en ese plazo, quedas admitido** y tu patrocinio sigue adelante como el de cualquier comercio admitido.
 - Si no te admite, el motivo lo escribe la entidad y te llega tal cual. KORUM no lo redacta ni lo revisa.
 - Para revisar tu solicitud, contactarte y emitirte su factura, **la entidad recibe los datos de tu comercio**: nombre comercial, razón social, NIF, domicilio fiscal y tus datos de contacto (persona, email, teléfono, dirección y página web).
 
@@ -91,7 +91,7 @@ Si ya eres comercio amigo y aportas de nuevo por tu cuenta, es una **ampliación
 
 Si apoyas con un patrocinio con publicidad, solo en estos dos casos:
 
-1. Si la entidad **no te admite o no decide en 14 días** (punto 5.2).
+1. Si la entidad **no te admite** en los 14 días siguientes a tu pago (punto 5.2). Si no decide, quedas admitido.
 2. Si una **renovación se paga dos veces** y pides la devolución en 14 días (punto 5.5).
 
 Además, en cualquiera de los dos modos, si por un error técnico te cobramos dos veces, te devolvemos siempre el cobro de más.

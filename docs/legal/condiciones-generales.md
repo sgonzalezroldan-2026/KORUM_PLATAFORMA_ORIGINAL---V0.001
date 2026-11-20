@@ -1,6 +1,6 @@
 # Condiciones de uso de KORUM
 
-> **Documento:** `condiciones-generales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; la campaña que supera la meta del §4.1, decisión 68, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-generales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; la campaña que supera la meta del §4.1, decisión 68, y la aportación mínima, el cierre de los pagos y la aportación voluntaria de los §4.1, §4.2 y §5, decisiones 73, 79 y 80, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** familias, socios, vecinos y cualquier persona que aporta, compra, firma una idea o escribe a soporte.
 > **Se publica en:** `/condiciones` (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -46,14 +46,14 @@ Al crear una cuenta, aportar, comprar o firmar una idea aceptas estas condicione
 
 ### 4.1 Cómo funciona: «todo o nada»
 
-1. La entidad publica una campaña con una **meta** y una **fecha límite**, que ves en su ficha. La plataforma limita la duración de las campañas (hoy, a 60 días como máximo).
+1. La entidad publica una campaña con una **meta** y una **fecha límite**, que ves en su ficha. Los pagos se cierran 20 minutos antes de esa fecha. La plataforma limita la duración de las campañas (hoy, a 60 días como máximo).
 2. Tu aportación va a la **hucha de la iniciativa**, que es el fondo reservado solo para esa campaña: el dinero queda retenido en PAYCOMET hasta lograr la meta. No es dinero de KORUM, y ni la entidad ni KORUM pueden disponer de él mientras tanto.
 3. **Si se logra la meta**, el dinero se entrega a la cuenta verificada de la entidad para que pague el proyecto. La campaña sigue abierta hasta su fecha límite, salvo que la entidad la cierre antes: si aportas cuando la meta ya está conseguida, te lo decimos antes de pagar, y lo que se recaude de más va al proyecto, como reserva adicional, descontados el coste de la pasarela de esos pagos y la comisión de la plataforma. Una campaña cerrada no admite aportaciones.
 4. **Si no se logra**, recuperas tu dinero como se explica en el punto 4.3.
 
 ### 4.2 Qué incluye la meta
 
-La meta que ves ya incluye todos los costes: el presupuesto del proveedor, la instalación, una reserva para imprevistos, y la pasarela de pago, el servicio de la plataforma, la gestión y la garantía de devolución. La entidad puede enseñar ese desglose en la ficha. Tú pagas exactamente el importe que eliges: no se te añade nada.
+La meta que ves ya incluye todos los costes: el presupuesto del proveedor, la instalación, una reserva para imprevistos, y la pasarela de pago, el servicio de la plataforma, la gestión y la garantía de devolución. La entidad puede enseñar ese desglose en la ficha. Tú pagas exactamente el importe que eliges, desde 5 €: no se te añade nada.
 
 ### 4.3 Si la campaña no llega a la meta
 
@@ -101,7 +101,6 @@ Al aportar a una campaña puedes añadir, si quieres, una aportación voluntaria
 - Es **opcional**: la casilla aparece desmarcada y el importe lo eliges tú, desde 0 €.
 - **No cambia nada** de tu donación ni te da ninguna ventaja. Las garantías de la plataforma son las mismas para todas las familias, la hagas o no.
 - No lleva IVA ni genera factura.
-- **Puedes recuperarla durante 14 días** desde el pago, con el enlace que encontrarás en tu recibo. La devolución es automática y no afecta a tu donación.
 - Si la campaña no se consigue, se te devuelve junto con tu donación.
 
 ## 6. Certificado fiscal y justificante

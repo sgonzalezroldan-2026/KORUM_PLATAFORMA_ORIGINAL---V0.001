@@ -1,6 +1,6 @@
 # Aceptación de las condiciones y primera capa de privacidad de cada formulario
 
-> **Documento:** `primeras-capas` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `primeras-capas` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; la aportación voluntaria y el patrocinio sin moderar, decisiones 78 y 80, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **Qué es:** los textos cortos que acompañan a cada formulario. No son páginas: van a los catálogos `messages/{es,ca,en}.json` en los sprints que se indican (5.10a, 5.15, 5.16b, 5.10c y 5.24a).
 > **Criterio (decisión 48 del promotor, 2026-11-18, que cambia la 39):** en todo pago hay una **casilla obligatoria**, desmarcada, con la que la persona acepta las condiciones de forma expresa. Al pulsar sobre «las condiciones» se abre una **ventana con el resumen** de lo que acepta y de lo que se hace con sus datos, con el enlace al texto completo. Junto al botón no hay avisos legales largos. Los formularios que no son un pago llevan una línea y un desplegable.
 
@@ -38,7 +38,7 @@ En los textos, `{entidad}` es el nombre de la entidad y `{titular}` su titular l
 > - **Todo o nada:** tu aportación queda retenida en PAYCOMET hasta que la campaña llega a su meta. Si no llega, te devolvemos el 100 %, sin que tengas que pedirlo.
 > - **Si la entidad propone un proyecto más pequeño,** te pedimos tu voto. Si no votas o prefieres la devolución, recuperas el 100 %.
 > - **Una donación no es una compra:** no se devuelve por cambiar de opinión.
-> - **La aportación voluntaria a KORUM** es opcional. Si la das, puedes recuperarla durante 14 días con el enlace de tu recibo.
+> - **La aportación voluntaria a KORUM** es opcional. Si la campaña no se consigue, se te devuelve con tu donación.
 > - **Para aportar** tienes que ser mayor de 18 años.
 >
 > **Tus datos**
@@ -87,7 +87,6 @@ En los textos, `{entidad}` es el nombre de la entidad y `{titular}` su titular l
 - Entradas: «Tus entradas son para un evento con fecha: no se devuelven por cambiar de opinión. Si el evento se cancela, te devolvemos el 100 %. Si cambia de fecha, podrás recuperar el 100 % durante 14 días.»
 - Vales: «Puedes recuperar el 100 % de esta compra hasta el {fecha} si no has gastado ningún vale. Tus vales valen hasta el {fecha de validez}.»
 - Donación: «Si la campaña no llega a su meta, te devolvemos el 100 %, sin que tengas que pedirlo. Solo se queda en la campaña si la entidad propone un proyecto más pequeño y tú votas por mantenerla.»
-- Aportación voluntaria a KORUM, si la hay: «Puedes recuperar tu aportación voluntaria a KORUM hasta el {fecha} con este enlace.»
 
 ## 3. Pago de comercios
 
@@ -104,7 +103,7 @@ En los textos, `{entidad}` es el nombre de la entidad y `{titular}` su titular l
 > **Lo que aceptas**
 >
 > - **Tu importe llega íntegro a {entidad}.** La gestión de KORUM va aparte y la ves antes de pagar.
-> - **Tu aportación no se devuelve.** Una donación, nunca. Un patrocinio con publicidad, solo si {entidad} no te admite o no decide en 14 días, o si una renovación se paga dos veces y lo pides en 14 días.
+> - **Tu aportación no se devuelve.** Una donación, nunca. Un patrocinio con publicidad, solo si {entidad} no te admite en los 14 días siguientes a tu pago (si no decide, quedas admitido), o si una renovación se paga dos veces y lo pides en 14 días.
 > - **Si la campaña que eliges no sale adelante,** tu dinero va a otro proyecto de {entidad}.
 > - **Lo que acuerdes con {entidad} sobre tu publicidad es cosa vuestra.** KORUM no interviene.
 >
