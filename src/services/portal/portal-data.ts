@@ -99,7 +99,7 @@ export const loadInitiativePage = cache(async (slug: string, initiativeId: numbe
   const [[fact], selfBoostShown] = await Promise.all([listPricingFacts(db, slug, [initiativeId]), isSelfBoostShown(db, initiativeId)]);
   const rest = withPricingFacts(publicFields, fact);
   const localized = localizeRow(rest, locale, organization.contentLocale);
-  const detail = toDetailData(localized.row, { vertical: context.vertical, participationGroupsJson: context.participationGroupsJson, ticketFeeFixedCents: context.ticketFeeFixedCents, ticketFeeBps: context.ticketFeeBps }, now);
+  const detail = toDetailData(localized.row, context, now);
   const names = rest.rewardEnabled ? orderedGroupNames(context.vertical, context.participationGroupsJson) : [];
   const match = findGroupBySlug(rest.courses, requestedGroup || null);
   return {

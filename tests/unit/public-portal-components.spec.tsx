@@ -33,6 +33,7 @@ const card = (overrides: Partial<InitiativeCardData> = {}): InitiativeCardData =
   id: 1,
   format: 'BUDGET',
   subtype: null,
+  voucher: null,
   title: 'Ventiladores para las aulas',
   category: 'Infraestructura',
   stage: 'Primaria',

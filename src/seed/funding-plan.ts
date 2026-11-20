@@ -149,9 +149,11 @@ export function planInitiativeFunding(seed: KorumSeedData, initiativeId: number)
       }
     }
     const feePerTicket = org.ticketFeeFixedCents + bpsOf(price, org.ticketFeeBps);
+    // Los vales pagan sus Gastos de gestión digital una vez por compra, con su tarifa propia (Sprint 5.14a), como `voucherCharge`.
+    const vouchers = initiative.ticketSubtype === 'VOUCHER';
     for (const quantity of quantities) {
       const amountCents = quantity * price;
-      const serviceFeeCents = quantity * feePerTicket;
+      const serviceFeeCents = vouchers ? org.voucherFeeFixedCents + bpsOf(amountCents, org.voucherFeeBps) : quantity * feePerTicket;
       const totalChargedCents = amountCents + serviceFeeCents;
       people.push({
         type: 'TICKET',

@@ -58,7 +58,8 @@ export default async function PosterPage({ params }: { params: Promise<{ locale:
 
   const contentT = await getTranslations({ locale: data.organization.contentLocale, namespace: 'panel.studio.poster' });
   // Una entrada no es una donación y su garantía no es la de una meta: el cartel de taquilla dice lo aprobado para taquilla (3.4).
-  const kind = data.initiative.format === 'TICKETING' ? 'Tickets' : '';
+  // Una venta de vales (Sprint 5.14b) tampoco: su cartel habla de vales y de su devolución, no de entradas.
+  const kind = data.initiative.format === 'TICKETING' ? (data.initiative.ticketSubtype === 'VOUCHER' ? 'Vouchers' : 'Tickets') : '';
   const url = absoluteUrl(data.organization.contentLocale, initiativePath(data.organization.slug, data.initiative.id));
   const [qrSvg, qrPng] = await Promise.all([QRCode.toString(url, { type: 'svg', errorCorrectionLevel: 'M', margin: 1 }), QRCode.toDataURL(url, { errorCorrectionLevel: 'M', margin: 2, width: 1024 })]);
 
@@ -84,7 +85,7 @@ export default async function PosterPage({ params }: { params: Promise<{ locale:
           payments: contentT('payments'),
           withKorum: contentT('withKorum', { entity: data.organization.name }),
           qrLabel: contentT('qrLabel'),
-          guarantee: contentT(kind === '' ? 'guarantee' : 'guaranteeTickets', { wallet: data.initiative.walletEscrowId })
+          guarantee: contentT(`guarantee${kind}`, { wallet: data.initiative.walletEscrowId })
         }}
       />
     </div>

@@ -6,7 +6,8 @@ import { discardStudioAction, publishStudioAction, saveStudioAction } from '@/ap
 import { FormAlert, primaryButton, secondaryButton } from '@/components/auth/auth-ui';
 import { formatCents } from '@/core/finance/money';
 import { tryResizedBudgetBoard } from '@/core/studio/resized-board';
-import { computeStudioBoard, computeTicketingBoard, publishBlockers, saveProblems, storedBudgetBoard, type PublishBlocker, type StudioContext } from '@/core/studio/studio-board';
+import { computeStudioBoard, computeTicketingBoard, isVoucherDraft, publishBlockers, saveProblems, storedBudgetBoard, type PublishBlocker, type StudioContext } from '@/core/studio/studio-board';
+import { computeVoucherBoard } from '@/core/studio/voucher-board';
 import type { RewardPreset, StudioDraft } from '@/core/studio/studio-draft';
 import { Link, useRouter } from '@/i18n/navigation';
 import { isLocale } from '@/i18n/routing';
@@ -71,8 +72,15 @@ const FIELD_FOR: Partial<Record<PublishBlocker, keyof StudioFieldErrors>> = {
   CLOSING_TOO_LATE: 'closesOn',
   TICKET_MAX_ZERO: 'ticketMax',
   TICKET_PRICE_ZERO: 'ticketPrice',
-  TICKET_FEE_EXCEEDS_PRICE: 'ticketPrice'
+  TICKET_FEE_EXCEEDS_PRICE: 'ticketPrice',
+  VOUCHER_TARGET_ZERO: 'ticketMax',
+  VOUCHER_MAX_ZERO: 'ticketMax',
+  VALIDITY_INVALID: 'voucherValidOn',
+  VALIDITY_BEFORE_CLOSE: 'voucherValidOn',
+  VALIDITY_TOO_LATE: 'voucherValidOn'
 };
+
+const VOUCHER_LIVE = new Set<PublishBlocker>(['TICKET_PRICE_ZERO', 'TICKET_FEE_EXCEEDS_PRICE', 'VOUCHER_MAX_ZERO', 'VOUCHER_TARGET_ZERO']);
 
 const ERROR_KEYS = ['INVALID_INPUT', 'PROBLEMS', 'BLOCKED', 'NOT_EDITABLE', 'STALE_BOARD', 'QUOTA', 'NOT_PUBLISHABLE', 'TOO_MANY_DRAFTS', 'SEMANTIC_LOCK', 'FORBIDDEN'];
 
@@ -119,6 +127,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
 
   const board = useMemo(() => {
     if (editable || !stored) return computeStudioBoard(context, draft);
+    if (isVoucherDraft(draft)) return computeVoucherBoard(context, draft, stored.maintFeeCents);
     return draft.format === 'TICKETING' ? computeTicketingBoard(context, draft, stored.maintFeeCents) : storedBudgetBoard({ ...stored, costMatCents: draft.costMatCents, costInstCents: draft.costInstCents, contingencyBps: draft.contingencyBps });
   }, [context, draft, editable, stored]);
   const resizedResult = useMemo(
@@ -129,8 +138,15 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
   // Lo guardado no cuadra con la meta: se avisa y no se enseña ninguna pizarra (una pizarra de dinero nunca se enseña descuadrada).
   const resizedMismatch = resizedResult?.kind === 'MISMATCH';
   const blockers = useMemo(() => (editable ? publishBlockers(context, draft, board, now) : []), [context, draft, board, now, editable]);
-  // En vivo solo la fecha (su error se arregla al momento); lo demás, tras el primer intento de guardar o publicar: no se grita a quien aún está escribiendo.
-  const live = useMemo(() => saveProblems(context, draft, now).filter((problem) => problem.startsWith('CLOSING')), [context, draft, now]);
+  // En vivo solo las fechas (su error se arregla al momento); lo demás, tras el primer intento de guardar o publicar: no se grita a quien aún está escribiendo.
+  const live = useMemo<PublishBlocker[]>(
+    () => [
+      ...saveProblems(context, draft, now).filter((problem) => problem.startsWith('CLOSING') || problem.startsWith('VALIDITY')),
+      // En una venta de vales, el precio y el tope u objetivo se avisan al momento junto al campo, con el mismo criterio que la validez (revisión de experiencia del 5.14b).
+      ...(isVoucherDraft(draft) ? blockers.filter((blocker) => VOUCHER_LIVE.has(blocker)) : [])
+    ],
+    [context, draft, now, blockers]
+  );
   const ticketFeeUnitCents = board.kind === 'TICKETING' ? board.digitalFeeUnitCents : computeTicketingBoard(context, { ...draft, format: 'TICKETING' }).digitalFeeUnitCents;
 
   const errors: StudioFieldErrors = {};
@@ -390,7 +406,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
           ) : null}
         </div>
       ) : null}
-      {lock === 'SOFT' ? <FormAlert tone="info">{t('lock.soft')}</FormAlert> : null}
+      {lock === 'SOFT' ? <FormAlert tone="info">{t(isVoucherDraft(draft) ? 'lock.softVouchers' : 'lock.soft')}</FormAlert> : null}
       {resizedMismatch ? (
         <FormAlert tone="error">
           <span data-testid="studio-resized-mismatch">{t('resized.mismatch')}</span>
@@ -433,7 +449,7 @@ export function StudioWorkbench({ orgSlug, context, initialDraft, lock, stored, 
       ) : null}
       <div className="mobile-stack grid gap-6 lg:grid-cols-12">
         <section aria-label={t('formLabel')} className="korum-trust-vault p-5 sm:p-6 lg:col-span-7">
-          <StudioFields draft={draft} context={context} lock={lock} rewardPresets={rewardPresets} ticketFeeUnitCents={ticketFeeUnitCents} today={today} maxCloseOn={maxCloseOn} onChange={change} errors={errors} />
+          <StudioFields draft={draft} context={context} lock={lock} rewardPresets={rewardPresets} ticketFeeUnitCents={ticketFeeUnitCents} board={board} today={today} maxCloseOn={maxCloseOn} onChange={change} errors={errors} />
         </section>
         <div className="lg:col-span-5">
           {resizedMismatch ? null : (

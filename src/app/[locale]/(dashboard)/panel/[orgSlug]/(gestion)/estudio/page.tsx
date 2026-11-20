@@ -7,7 +7,7 @@ import { StudioPicker } from '@/components/panel/studio-picker';
 import { StudioWorkbench, type StoredPricing } from '@/components/panel/studio-workbench';
 import { findTemplate, draftFromTemplate, REWARD_PRESET_SECTION, templateTextKey } from '@/core/studio/campaign-templates';
 import { effectiveMaxCampaignDays, latestCloseOn } from '@/core/studio/studio-board';
-import { REWARD_PRESETS, blankStudioDraft, defaultCloseOn, madridIsoDate, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
+import { REWARD_PRESETS, VOUCHER_SALE_MAX_DAYS, blankStudioDraft, defaultCloseOn, defaultVoucherValidOn, madridIsoDate, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
 import { Link } from '@/i18n/navigation';
 import { FILE_RULES } from '@/services/storage/file-rules';
 import type { Locale } from '@/i18n/routing';
@@ -19,7 +19,7 @@ import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 
 /**
  * Estudio de edición de la entidad (Sprint 4.3, `sch-sub-studio`). Sin parámetros enseña el punto de entrada (campañas, empezar en blanco y plantillas);
- * con `?iniciativa=` abre esa campaña, y con `?nueva=presupuesto|taquilla` (y `&plantilla=`) empieza una nueva. Dinámica: depende de la sesión y de los
+ * con `?iniciativa=` abre esa campaña, y con `?nueva=presupuesto|taquilla|vales` (y `&plantilla=`, salvo los vales) empieza una nueva. Dinámica: depende de la sesión y de los
  * cupos de la entidad. Los textos que se guardan (plantillas y premios del reto) salen en el idioma en que escribe la entidad, no en el de quien edita.
  */
 export const dynamic = 'force-dynamic';
@@ -30,16 +30,18 @@ const DEFAULT_CAMPAIGN_DAYS = 30;
  * Una idea convertida nace con un cierre provisional a `maxCampaignDays` desde hoy, que con el cierre a las 23:59 ya pasa del máximo: en un borrador se
  * enseña el último día permitido en lugar de un error en cuanto se abre.
  */
-function draftFromStored(initiative: StudioInitiative & { ticketSubtype: 'EVENT' | null }, firstReward: string, latestClose: string): StudioDraft {
+function draftFromStored(initiative: StudioInitiative, firstReward: string, latestClose: string): StudioDraft {
   const stored = madridIsoDate(initiative.closesAt);
   const ticketing = initiative.format === 'TICKETING';
+  const vouchers = ticketing && initiative.ticketSubtype === 'VOUCHER';
+  const closesOn = initiative.status === 'BUDGETING' && stored > latestClose ? latestClose : stored;
   return {
     initiativeId: initiative.id,
     format: initiative.format,
     title: initiative.title,
     category: initiative.category,
     stage: initiative.stage,
-    closesOn: initiative.status === 'BUDGETING' && stored > latestClose ? latestClose : stored,
+    closesOn,
     description: initiative.description,
     showPublicBreakdown: initiative.showPublicBreakdown,
     plaqueEnabled: initiative.plaqueEnabled,
@@ -51,9 +53,14 @@ function draftFromStored(initiative: StudioInitiative & { ticketSubtype: 'EVENT'
     contingencyBps: initiative.contingencyBps,
     ticketSubtype: initiative.ticketSubtype ?? 'EVENT',
     ticketPriceCents: ticketing ? (initiative.ticketPriceCents ?? 0) : 500,
-    ticketMax: ticketing ? (initiative.ticketMax ?? 0) : 200,
+    // Una venta de vales sin tope guarda `ticketMax` vacío: en el formulario se enseña el tope de partida por si la entidad decide ponerlo.
+    ticketMax: ticketing ? (initiative.ticketMax ?? (vouchers ? 200 : 0)) : 200,
     ticketFeeMode: initiative.ticketFeeMode ?? 'ADD',
-    ticketVenue: initiative.ticketVenue
+    ticketVenue: initiative.ticketVenue,
+    voucherCapped: !vouchers || initiative.ticketMax !== null,
+    voucherTargetCount: initiative.voucherTargetCount ?? (vouchers ? 200 : 0),
+    voucherValidOn: vouchers ? (initiative.voucherValidUntil ? madridIsoDate(initiative.voucherValidUntil) : defaultVoucherValidOn(closesOn)) : null,
+    voucherNoProductEnabled: initiative.voucherNoProductEnabled
   };
 }
 
@@ -83,6 +90,8 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
   const maxDays = effectiveMaxCampaignDays(context.maxCampaignDays);
   const closeDefault = defaultCloseOn(now, Math.min(maxDays, DEFAULT_CAMPAIGN_DAYS));
   const common = { orgSlug, context, rewardPresets, nowIso: now.toISOString(), today: madridIsoDate(now), maxCloseOn: latestCloseOn(now, maxDays) };
+  // Una venta de vales dura como mucho 60 días (decisión 32), aunque el motor de reglas admita campañas más largas.
+  const voucherCloseMax = latestCloseOn(now, Math.min(maxDays, VOUCHER_SALE_MAX_DAYS));
 
   const idParam = first('iniciativa');
   const newParam = first('nueva');
@@ -98,9 +107,7 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       if (error instanceof ResourceNotFoundError) notFound();
       throw error;
     }
-    // Una venta de vales se edita en su propio formulario del Estudio, que llega en el Sprint 5.14b: este no sabría guardarla.
-    if (initiative.ticketSubtype === 'VOUCHER') notFound();
-    const editable = { ...initiative, ticketSubtype: initiative.ticketSubtype };
+    const vouchers = initiative.format === 'TICKETING' && initiative.ticketSubtype === 'VOUCHER';
     // Rehecha por votación: su meta es fija y nada se edita, sea cual sea su estado (Sprint 5.6). Si un contracargo le quita dinero no vuelve a recaudar:
     // su meta y sus comisiones bajan otra vez en proporción (`rescaleResizedAfterLoss`) y la pizarra sigue cuadrando.
     const resized =
@@ -126,7 +133,7 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
     const canEditCover = !actor.isSuperadmin && ['BUDGETING', 'FUNDRAISING', 'GOAL_REACHED', 'CLOSED'].includes(initiative.status);
     workbench = (
       <>
-        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(editable, firstReward, common.maxCloseOn)} lock={lock}
+        <StudioWorkbench key={initiative.id} {...common} maxCloseOn={vouchers ? voucherCloseMax : common.maxCloseOn} initialDraft={draftFromStored(initiative, firstReward, vouchers ? voucherCloseMax : common.maxCloseOn)} lock={lock}
           stored={stored}
           resized={resized}
           justPublished={first('publicada') === '1'}
@@ -135,13 +142,15 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
         <InitiativeCoverForm orgSlug={orgSlug} initiativeId={initiative.id} coverFileId={initiative.coverFileId} maxBytes={FILE_RULES.INITIATIVE_COVER.maxBytes} canEdit={canEditCover} canRemove={!actor.isSuperadmin && initiative.coverFileId !== null} />
       </>
     );
-  } else if (newParam === 'presupuesto' || newParam === 'taquilla') {
+  } else if (newParam === 'presupuesto' || newParam === 'taquilla' || newParam === 'vales') {
     if (!canCreate) {
       return <StudioShell title={t('title')} back={t('back')} orgSlug={orgSlug}><StudioPicker locale={locale} orgSlug={orgSlug} vertical={context.vertical} canCreate={false} initiatives={initiatives} maxDrafts={MAX_OPEN_DRAFTS} /></StudioShell>;
     }
-    const format = newParam === 'taquilla' ? 'TICKETING' : 'BUDGET';
-    const template = findTemplate(first('plantilla'), context.vertical);
-    let draft = blankStudioDraft(format, context.vertical, closeDefault);
+    const format = newParam === 'presupuesto' ? 'BUDGET' : 'TICKETING';
+    const vouchers = newParam === 'vales';
+    // Las plantillas son de presupuesto o de eventos: una venta de vales empieza siempre en blanco, con su texto libre (sin lista de artículos).
+    const template = vouchers ? undefined : findTemplate(first('plantilla'), context.vertical);
+    let draft = blankStudioDraft(format, context.vertical, closeDefault, vouchers ? 'VOUCHER' : 'EVENT');
     if (template && template.format === format) {
       draft = draftFromTemplate(
         template,
@@ -149,10 +158,10 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
         { vertical: context.vertical, defaultCloseOn: closeDefault, availableCategories: context.categories.map((category) => category.name) }
       );
     }
-    heading = template ? t(`templates.${templateTextKey(template, context.vertical)}.name`) : t(format === 'TICKETING' ? 'picker.newTicketing' : 'picker.newBudget');
+    heading = template ? t(`templates.${templateTextKey(template, context.vertical)}.name`) : t(vouchers ? 'picker.newVouchers' : format === 'TICKETING' ? 'picker.newTicketing' : 'picker.newBudget');
     workbench = (
       <>
-        <StudioWorkbench key={`${newParam}:${template?.key ?? ''}`} {...common} initialDraft={{ ...draft, rewardText: draft.rewardText ?? firstReward }} lock="NONE" stored={null} justPublished={false} />
+        <StudioWorkbench key={`${newParam}:${template?.key ?? ''}`} {...common} maxCloseOn={vouchers ? voucherCloseMax : common.maxCloseOn} initialDraft={{ ...draft, rewardText: draft.rewardText ?? firstReward }} lock="NONE" stored={null} justPublished={false} />
         <p className="text-sm font-semibold text-ink-soft" data-testid="cover-after-save">
           {t('cover.afterSave')}
         </p>

@@ -27,7 +27,7 @@ const IN_3_DAYS = new Date(NOW.getTime() + 3 * 86_400_000).toISOString();
 const PASS_UUID = randomUUID();
 
 const ORGANIZATION = { name: 'AMPA Colegio Sol', legalName: 'AMPA del Colegio Sol', slug: 'colegio-sol' };
-const initiative = (ticketSubtype: 'EVENT' | null = null) => ({
+const initiative = (ticketSubtype: 'EVENT' | 'VOUCHER' | null = null) => ({
   id: 7,
   title: 'Techar el patio',
   closesAt: new Date('2026-12-19T00:00:00.000Z'),
@@ -35,7 +35,9 @@ const initiative = (ticketSubtype: 'EVENT' | null = null) => ({
   raisedCents: 90_000,
   totalContributions: 48,
   ticketSubtype,
-  ticketVenue: ticketSubtype ? 'Salón de actos' : null
+  ticketVenue: ticketSubtype === 'EVENT' ? 'Salón de actos' : null,
+  // Una venta de vales lleva su validez (Sprint 5.14b): el email la dice.
+  voucherValidUntil: ticketSubtype === 'VOUCHER' ? new Date('2027-01-10T22:59:00.000Z') : null
 });
 
 /** Un payload válido por plantilla. Si se añade una plantilla al catálogo sin ejemplo aquí, el test de cobertura falla. */
@@ -45,6 +47,8 @@ const SAMPLES: Record<string, unknown> = {
   'auth.otp': { code: '123456', minutes: 10 },
   'contribution.receipt': { initiativeId: 7, amountCents: 2_500, guaranteeCents: 150, totalCents: 2_650, reference: 'KOR-2026-0001', groupName: '3º de Primaria', fiscalCertificate: true },
   'ticket.pass': { passUuid: PASS_UUID, serialCode: 'PASE-2026-000012', initiativeId: 7, quantity: 2 },
+  'voucher.pass': { passUuid: PASS_UUID, serialCode: 'VALE-2026-000013', initiativeId: 7, quantity: 3 },
+  'voucher.noProductReceipt': { initiativeId: 7, equivalentVouchers: 3, amountCents: 600, feeCents: 57, guaranteeCents: 0, totalCents: 657, reference: 'KV0123456789ABCDEF' },
   'gate.pinRevoked': { initiativeId: 7 },
   'initiative.goalReached': { initiativeId: 7 },
   'initiative.expired': { initiativeId: 7, walletEscrowId: 'WLT-ESC-007', raisedCents: 90_000, goalCents: 120_000 },
@@ -341,6 +345,41 @@ describe('QA-NOT01 · entradas', () => {
   });
 });
 
+describe('QA-VAL03 · emails de los vales', () => {
+  it('el pase de vales adjunta solo el QR (sin calendario), dice cuántos vales son y hasta cuándo valen, y nunca habla de «saldo»', async () => {
+    for (const locale of LOCALES) {
+      const email = await render('voucher.pass', locale, { initiative: initiative('VOUCHER') });
+      expect(email.attachments.map((attachment) => attachment.filename)).toEqual(['VALE-2026-000013.png']);
+      expect(email.html).not.toContain('korum://v1/pass');
+      expect(email.text).not.toMatch(/\bsaldo\b|\bbalance\b/i);
+    }
+    const es = await render('voucher.pass', 'es', { initiative: initiative('VOUCHER') });
+    expect(es.subject).toBe('Tus vales de «Techar el patio»');
+    expect(es.text).toContain('3 vales');
+    expect(es.text).toContain('10 de enero de 2027');
+    expect(es.text).toContain('14 días');
+    const url = new URL(/(https:\/\/korum\.test\/colegio-sol\/entrada\/[^\s]+)/.exec(es.text)![1]!);
+    expect(verifyPassViewSignature(QR_SECRET, PASS_UUID, url.searchParams.get('sig')!)).toBe(true);
+    expect(verifyPassSignature(QR_SECRET, PASS_UUID, url.searchParams.get('sig')!)).toBe(false);
+  });
+
+  it('el recibo «sin producto» se mide en vales, desglosa la gestión y dice que no da vales, ni certificado, ni devolución', async () => {
+    const email = await render('voucher.noProductReceipt', 'es', { initiative: initiative('VOUCHER') });
+    expect(email.attachments).toEqual([]);
+    expect(email.text).toContain('equivalente a 3 vales');
+    expect(email.text).toContain('Gastos de gestión digital');
+    expect(email.text).toContain('0,57');
+    expect(email.text).toContain('no da derecho a certificado fiscal');
+    expect(email.text).toContain('no se devuelve');
+    // Sin aportación voluntaria no hay línea suya.
+    expect(email.text).not.toContain('Aportación voluntaria a KORUM');
+  });
+
+  it('sin QR_HMAC_SECRET no se compone el pase de vales', async () => {
+    await expect(render('voucher.pass', 'es', { initiative: initiative('VOUCHER'), qrSecret: undefined })).rejects.toThrow(/QR_HMAC_SECRET/);
+  });
+});
+
 describe('QA-NOT01 · firma pendiente y datos de un solo uso', () => {
   it('el enlace de firma lleva el token en el fragmento (#), que el navegador no envía al servidor, y el código en el cuerpo', async () => {
     const email = await render('doubleCheck.pending', 'es');
@@ -522,7 +561,7 @@ describe('vista previa local de todas las plantillas', () => {
     await mkdir(directory, { recursive: true });
     for (const templateKey of Object.keys(SAMPLES)) {
       for (const locale of LOCALES) {
-        const email = await render(templateKey, locale, { initiative: initiative(templateKey === 'ticket.pass' ? 'EVENT' : null) });
+        const email = await render(templateKey, locale, { initiative: initiative(templateKey === 'ticket.pass' ? 'EVENT' : templateKey.startsWith('voucher.') ? 'VOUCHER' : null) });
         const name = `${templateKey}.${locale}`;
         await writeFile(path.join(directory, `${name}.html`), email.html, 'utf8');
         await writeFile(path.join(directory, `${name}.txt`), `Asunto: ${email.subject}

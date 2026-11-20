@@ -54,7 +54,7 @@ Aparecen entre dobles corchetes y salen del ajuste `platform.company` de la cons
 
 ## 4. Lo que estos textos describen y el código todavía no hace
 
-Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 65 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
+Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 67 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
 
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |

@@ -921,6 +921,30 @@
         "next": "Si cal, resoleu-ho amb aquesta persona fora de la plataforma. Al registre d’activitat queda anotat.",
         "pass": "Passi"
       }
+    },
+    "voucher": {
+      "subject": "Els teus vals de «{initiative}»",
+      "preheader": "El teu codi QR és a dins.",
+      "title": "Els teus vals estan a punt",
+      "body": "Has comprat {count, plural, one {# val} other {# vals}} de {organization}. Ensenya el codi QR a la seva parada i allà descomptaran els que gastis: els que et quedin continuen al mateix codi. El tens com a imatge adjunta i també al botó.",
+      "refund": "Si no gastes cap val d’aquesta compra, pots demanar la devolució del 100 % durant 14 dies. Després, el que has pagat es queda per a la causa de l’entitat.",
+      "serial": "Codi",
+      "quantity": "Vals comprats",
+      "quantityValue": "{count, plural, one {# val} other {# vals}}",
+      "validUntil": "Es poden gastar fins al",
+      "holder": "Ven l’entitat",
+      "cta": "Veure els meus vals",
+      "footnote": "El codi QR és personal: no el publiquis a les xarxes. Qui el tingui pot gastar els teus vals.",
+      "noProduct": {
+        "subject": "Rebut de la teva aportació a «{initiative}»",
+        "preheader": "Gràcies per sumar. Aquí tens el rebut.",
+        "title": "Gràcies per sumar!",
+        "body": "Hem rebut la teva aportació sense producte, equivalent a {count, plural, one {# val} other {# vals}}, per a «{initiative}», de {organization}.",
+        "conditions": "És una aportació sense producte: no dona vals ni codi QR, no dona dret a certificat fiscal de donació i no es retorna, llevat que l’entitat cancel·li la venda. Guarda aquest correu com a rebut.",
+        "equivalent": "Equival a",
+        "amount": "Per a l’entitat",
+        "fee": "Despeses de gestió digital"
+      }
     }
   },
   "nav": {
@@ -2998,11 +3022,13 @@
         "existingTitle": "Les vostres campanyes",
         "existingEmpty": "Encara no hi ha cap campanya. Comenceu amb una plantilla o en blanc.",
         "edit": "Editar a l’Estudi",
-        "open": "Obrir"
+        "open": "Obrir",
+        "newVouchers": "+ Nova venda de vals"
       },
       "format": {
         "BUDGET": "Pressupost / obra",
-        "TICKETING": "Taquilla"
+        "TICKETING": "Taquilla",
+        "VOUCHER": "Venda de vals"
       },
       "templates": {
         "climate": {
@@ -3199,7 +3225,9 @@
         "goalLabelTicketing": "A la guardiola amb l’aforament complet",
         "badgeResized": "Meta fixa per votació",
         "goalLabelResized": "Meta fixa després de la votació",
-        "ticketNetNote": "Si no es ven tot, en arribar la data de l’esdeveniment l’entitat rep el que s’ha venut, amb el manteniment rebaixat en la mateixa proporció."
+        "ticketNetNote": "Si no es ven tot, en arribar la data de l’esdeveniment l’entitat rep el que s’ha venut, amb el manteniment rebaixat en la mateixa proporció.",
+        "badgeVouchers": "Vals",
+        "goalLabelVouchers": "Meta (vals venuts)"
       },
       "blockers": {
         "title": "Per publicar falta:",
@@ -3217,7 +3245,12 @@
         "CLOSING_TOO_LATE": "La campanya duraria més del màxim permès: trieu una data de tancament anterior.",
         "TITLE_MISSING": "Escriviu un títol d’almenys 3 lletres.",
         "MAINT_EXCEEDS_TAKINGS": "Amb aquest preu i aquest aforament la recaptació no cobreix el manteniment de la plataforma: pugeu el preu o l’aforament.",
-        "GOAL_TOO_HIGH": "Amb aquest pressupost i les condicions de la plataforma la meta superaria el màxim que es pot desar: baixeu el pressupost o escriviu a KORUM."
+        "GOAL_TOO_HIGH": "Amb aquest pressupost i les condicions de la plataforma la meta superaria el màxim que es pot desar: baixeu el pressupost o escriviu a KORUM.",
+        "VOUCHER_TARGET_ZERO": "Indica l’objectiu de vals.",
+        "VALIDITY_INVALID": "Indica fins quan es poden gastar els vals.",
+        "VALIDITY_BEFORE_CLOSE": "Els vals no poden caducar abans del dia de tancament de la venda.",
+        "VALIDITY_TOO_LATE": "La validesa dels vals no pot passar de 12 mesos des del tancament de la venda.",
+        "VOUCHER_MAX_ZERO": "Indica el límit de vals."
       },
       "errors": {
         "INVALID_INPUT": "Hi ha dades que no són vàlides. Reviseu el formulari.",
@@ -3262,7 +3295,8 @@
       },
       "lock": {
         "soft": "La campanya ja està recaptant: només es poden canviar la descripció, el desglossament públic, el repte i la placa. El pressupost, el preu i la data ja els fan servir les aportacions.",
-        "all": "Aquesta campanya ja està tancada: es mostra sense poder canviar res."
+        "all": "Aquesta campanya ja està tancada: es mostra sense poder canviar res.",
+        "softVouchers": "La venda ja està en marxa: només es pot canviar la descripció. El preu, el límit, la validesa i la data ja els fan servir les compres."
       },
       "lockAlert": {
         "title": "Avís d’auditoria de categoria",
@@ -3294,7 +3328,9 @@
         },
         "defaultMessageTickets": "Escaneja el codi QR amb el mòbil, tria la teva entrada i paga amb Bizum o targeta en 10 segons.",
         "guaranteeTickets": "Pagament segur amb PAYCOMET. Si l’esdeveniment es cancel·la, et retornem el 100 % del que vas pagar, al mateix mitjà de pagament. Guardiola de la iniciativa {wallet}.",
-        "metaTitle": "Cartell A4 amb QR"
+        "metaTitle": "Cartell A4 amb QR",
+        "defaultMessageVouchers": "Escaneja el codi QR amb el mòbil, tria quants vals vols i paga amb Bizum o targeta en 10 segons.",
+        "guaranteeVouchers": "Pagament segur amb PAYCOMET. Si no gastes cap val, pots demanar la devolució del 100 % durant 14 dies. Guardiola de la iniciativa {wallet}."
       },
       "discard": {
         "title": "Voleu descartar aquest esborrany?",
@@ -3365,6 +3401,40 @@
         "gatewayAbsorbed": "Cost de la passarel·la de pagament (cobert: no es resta de la meta)",
         "detailAfterLoss": "Qui hi va aportar va decidir tirar endavant amb el que s’havia recaptat: la meta va passar de {original} a {voted} i les comissions van baixar en la mateixa proporció. Després, una retrocessió (un cobrament que es va retornar al seu titular) la va deixar en {goal}, amb les comissions una altra vegada en proporció. Les xifres es mostren sense poder-se canviar.",
         "entitySame": "Per al projecte en liquidar: la meta menys les comissions (el mateix import que el cost del projecte)"
+      },
+      "vouchers": {
+        "title": "Venda de vals",
+        "intro": "Vals de preu únic que les famílies gasten a la parada de l’entitat, amb un sol codi QR per compra. Explica a la descripció què s’hi pot bescanviar: no cal una llista d’articles.",
+        "price": "Preu d’un val",
+        "capMode": "Quantitat de vals",
+        "capped": "Amb un límit de vals",
+        "open": "Sense límit",
+        "max": "Límit de vals",
+        "maxHint": "En arribar al límit, la venda s’esgota.",
+        "target": "Objectiu de vals",
+        "targetHint": "És orientatiu: no limita la venda. Serveix per a la barra d’avanç i per comprovar que el manteniment queda cobert.",
+        "validOn": "Els vals es poden gastar fins al",
+        "validOnHint": "Per defecte, fins a l’inici del curs següent. La pots canviar: des del dia de tancament de la venda fins a 12 mesos després.",
+        "feeValue": "{fixed} + {pct} per compra",
+        "feeExamples": "Es cobren una vegada per compra, no per val: 1 val, {one}; {count} vals, {largest}.",
+        "noProduct": "En esgotar-se, deixar continuar aportant «sense producte»",
+        "noProductHint": "Qui arribi tard podrà aportar l’equivalent a uns vals sense rebre’ls. És una aportació sense certificat fiscal, sense val ni codi QR, i no es retorna llevat que cancel·leu la venda.",
+        "noProductForProfit": "En esgotar-se, la venda queda esgotada: a una escola amb ànim de lucre no se li pot oferir l’aportació «sense producte».",
+        "noProductOpen": "Una venda sense límit no s’esgota, així que no cal l’aportació «sense producte».",
+        "boardGross": "Preu {count, plural, one {del # val} other {dels # vals}} del límit",
+        "boardGrossTarget": "Preu {count, plural, one {del # val} other {dels # vals}} de l’objectiu",
+        "boardModelTitle": "Model de vals",
+        "boardFeeAdd": "{amount} en una compra d’1 val (se sumen a qui compra)",
+        "boardFeeInc": "{amount} en una compra d’1 val (inclosos en el preu)",
+        "boardFeeLargest": "Despeses de gestió digital en una compra de {count} vals",
+        "boardNet": "Net per a l’entitat si es venen tots els vals",
+        "boardNetTarget": "Net per a l’entitat si s’arriba a l’objectiu",
+        "boardNetNoteAdd": "Les Despeses de gestió digital les paga qui compra, a sobre del preu. Si es ven menys, l’entitat rep el que s’ha venut, amb el manteniment rebaixat en la mateixa proporció.",
+        "boardNetNoteInc": "És el mínim que rep l’entitat si es venen tots, es comprin com es comprin: si es compren diversos vals alhora, es paguen menys despeses i l’entitat sol rebre una mica més. Si es ven menys, rep el que s’ha venut, amb el manteniment rebaixat en la mateixa proporció.",
+        "gatewayNotCovered": "Amb la tarifa actual, les Despeses de gestió digital no cobreixen el cost de la passarel·la en alguna compra. Ho avisarem a l’equip de KORUM: a l’entitat no se li resta res.",
+        "boardFee": "Despeses de gestió digital per compra",
+        "feeModeAdd": "Sumar-les a qui compra",
+        "feeModeInc": "Assumir-les dins del preu del val"
       }
     },
     "payouts": {
@@ -5684,7 +5754,18 @@
       "goalReached": "100 % aconseguit! Tancada",
       "contribute": "Aporta ara",
       "buyTickets": "Compra entrades",
-      "closed": "Tancada"
+      "closed": "Tancada",
+      "voucherPrice": "{price} / val",
+      "vouchersSold": "{sold} de {max} vals venuts",
+      "vouchersSoldOpen": "{sold, plural, one {# val venut} other {# vals venuts}}",
+      "vouchersLeft": "{count, plural, =0 {Ja esgotats} one {Queda # val} other {Queden # vals}}",
+      "vouchersTarget": "Objectiu: {count, plural, one {# val} other {# vals}}",
+      "refundVouchers": "Devolució del 100 % en 14 dies si no gastes cap val",
+      "vouchersSoldOut": "Vals esgotats",
+      "buyVouchers": "Comprar vals",
+      "noProduct": "Aportar sense producte",
+      "refundNoProduct": "Vals esgotats: l’aportació sense producte no es retorna",
+      "voucherPriceAdd": "{price} / val + despeses"
     },
     "categories": {
       "comfort": "Infraestructura i confort",
@@ -5701,7 +5782,9 @@
         "label": "Guardiola de la iniciativa",
         "refund": "Devolució del 100 % si no s’assoleix la meta",
         "independence": "Independència total de proveïdors",
-        "deadline": "Data límit"
+        "deadline": "Data límit",
+        "refundVouchers": "Devolució del 100 % en 14 dies si no gastes cap val",
+        "refundNoProduct": "Vals esgotats: l’aportació sense producte no es retorna"
       },
       "plaque": "Inclou placa commemorativa d’agraïment",
       "matching": "Matching 2x actiu: la teva aportació es duplica mentre quedi bossa.",
@@ -5751,11 +5834,15 @@
       },
       "cta": {
         "contribute": "Aporta a aquesta iniciativa",
-        "buyTickets": "Compra entrades"
+        "buyTickets": "Compra entrades",
+        "buyVouchers": "Comprar vals",
+        "noProduct": "Aportar sense producte"
       },
       "contributionsClosed": "Aquesta iniciativa ja no admet aportacions",
       "selfBoost": "La plataforma KORUM també ha aportat i ha ajudat a aconseguir el repte.",
-      "ticketSalesClosed": "La venda d’entrades d’aquest esdeveniment ha acabat"
+      "ticketSalesClosed": "La venda d’entrades d’aquest esdeveniment ha acabat",
+      "voucherSalesClosed": "La venda de vals ha acabat",
+      "vouchersSoldOut": "Vals esgotats. Gràcies per voler sumar!"
     },
     "share": {
       "title": "Comparteix a KORUM",
@@ -5816,7 +5903,10 @@
         },
         "promise": "Idees, campanyes i fites de tota la comunitat. Si no s’arriba a la meta, es retorna el 100 %.",
         "poweredBy": "Amb la tecnologia de {brand}"
-      }
+      },
+      "vouchers": "{sold} de {max} vals venuts",
+      "vouchersOpen": "{sold, plural, one {# val venut} other {# vals venuts}}",
+      "vouchersClosed": "Venda de vals completada!"
     },
     "pass": {
       "title": "La teva entrada",
@@ -5837,7 +5927,17 @@
       "shareWhatsapp": "Enviar per WhatsApp",
       "shareWarning": "Qui tingui aquest enllaç pot fer servir l’entrada: envia’l només a qui hi hagi d’anar.",
       "shareMessage": "La teva entrada per a «{title}»: {url}",
-      "actions": "Accions de l’entrada"
+      "actions": "Accions de l’entrada",
+      "titleVouchers": "Els teus vals",
+      "qrAltVouchers": "Codi QR dels teus vals",
+      "voucherBalance": "{balance, plural, =0 {Vals per gastar: 0 de {total}} one {Et queda # val de {total}} other {Et queden # vals de {total}}}",
+      "voucherValidUntil": "Es poden gastar fins al {date}",
+      "voucherExpired": "Aquests vals ja han caducat i no es poden gastar.",
+      "voucherSpent": "Ja has gastat tots els vals d’aquesta compra.",
+      "showVouchers": "Ensenya’l a la parada de l’entitat, al mòbil o imprès: allà descompten els vals que gastis.",
+      "shareMessageVouchers": "Els teus vals de «{title}»: {url}",
+      "shareWarningVouchers": "Qui tingui aquest enllaç pot gastar els vals: envia’l només a qui els hagi de fer servir.",
+      "actionsVouchers": "Accions dels teus vals"
     },
     "error": {
       "title": "No hem pogut carregar la comunitat",
@@ -5911,7 +6011,10 @@
         "donationOnly": "{donation} al projecte",
         "ticketsAdd": "{count} × {price} + {fee} de Despeses de gestió digital",
         "ticketsInc": "{count} × {price} (Despeses de gestió digital incloses)",
-        "total": "Total"
+        "total": "Total",
+        "vouchersAdd": "{count, plural, one {# val} other {# vals}} ({amount}) + {fee} de Despeses de gestió digital",
+        "vouchersInc": "{count, plural, one {# val} other {# vals}} ({amount}, Despeses de gestió digital incloses)",
+        "noProduct": "Sense producte · equival a {count, plural, one {# val} other {# vals}}"
       },
       "pay": {
         "bizum": "Pagar {total} amb Bizum",
@@ -5927,13 +6030,17 @@
         "closed": "Aquesta iniciativa ja no admet aportacions. Gràcies per voler sumar!",
         "rateLimited": "Has fet molts intents seguits. Espera uns minuts i torna-ho a provar.",
         "unavailable": "No hem pogut obrir el pagament segur. No se t’ha cobrat res: torna-ho a provar d’aquí a uns minuts.",
-        "network": "S’ha tallat la connexió. No se t’ha cobrat res: comprova la connexió i torna-ho a provar."
+        "network": "S’ha tallat la connexió. No se t’ha cobrat res: comprova la connexió i torna-ho a provar.",
+        "changed": "La venda ha canviat mentre triaves (torna a haver-hi vals a la venda). No se t’ha cobrat res: torna a obrir la fitxa."
       },
       "closed": {
         "title": "Ja no s’hi pot aportar",
         "achieved": "Meta assolida! Aquesta iniciativa ja no necessita més aportacions.",
         "soldOut": "Aforament complet! Ja no queden places.",
-        "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions."
+        "ended": "Aquesta iniciativa ha acabat el termini i ja no admet aportacions.",
+        "achievedVouchers": "Vals esgotats! Ja no queden vals a la venda.",
+        "soldOutVouchers": "Vals esgotats! Ja no queden vals a la venda.",
+        "endedVouchers": "La venda de vals ha acabat."
       },
       "custodyTickets": "Pagament segur amb Paycomet",
       "tabs": {
@@ -5990,7 +6097,27 @@
           "unavailable": "No hem pogut obrir la pàgina de pagament. No se t’ha cobrat res; torna-ho a provar d’aquí a uns minuts.",
           "network": "No hem pogut connectar. No se t’ha cobrat res; torna-ho a provar."
         }
-      }
+      },
+      "voucher": {
+        "fee": "{fixed} + {pct} per compra",
+        "badge": "Vals",
+        "badgeNoProduct": "Aportació sense producte",
+        "soldOut": "Vals esgotats",
+        "available": "En queden {available} de {max}",
+        "unlimited": "Sense límit de vals",
+        "validUntil": "Es poden gastar fins al {date}.",
+        "quantity": "Quants vals?",
+        "quantityNoProduct": "A quants vals equival la teva aportació?",
+        "unitAdd": "{price} cada val + Despeses de gestió digital ({fee})",
+        "unitInc": "{price} cada val (Despeses de gestió digital incloses)",
+        "less": "Un val menys",
+        "more": "Un val més",
+        "limit": "Pots triar-ne fins a {max} a cada compra.",
+        "soldOutError": "{count, plural, =0 {Ja no queden vals. Gràcies per intentar-ho!} one {Només queda # val.} other {Només queden # vals.}}",
+        "useAvailable": "{count, plural, one {Triar # val} other {Triar # vals}}"
+      },
+      "refundNoteVouchers": "Rebràs un sol codi QR amb els teus vals. Si no en gastes cap, pots demanar la devolució del 100 % durant 14 dies.",
+      "refundNoteNoProduct": "L’aportació sense producte no dona vals ni certificat fiscal i no es retorna, llevat que l’entitat cancel·li la venda."
     },
     "simulator": {
       "metaTitle": "Pagament simulat",
@@ -6030,7 +6157,16 @@
         "serial": "Codi {serial}",
         "share": "Comparteix la iniciativa perquè s’hi sumin més famílies.",
         "pct": "{pct} % aconseguit",
-        "groupReached": "{group} ha aconseguit el seu repte amb {count, plural, one {# família} other {# famílies}}!"
+        "groupReached": "{group} ha aconseguit el seu repte amb {count, plural, one {# família} other {# famílies}}!",
+        "titleVouchers": "Fet! Els vals ja són teus",
+        "titleNoProduct": "Gràcies! La teva aportació ja suma",
+        "vouchersSoldOut": "Amb la teva compra s’han esgotat els vals!",
+        "vouchersTargetReached": "Amb la teva compra s’ha arribat a l’objectiu de vals!",
+        "viewVouchers": "Veure els meus vals",
+        "vouchersEmail": "També te l’hem enviat per correu: és el codi QR que ensenyaràs a la parada.",
+        "noProductReceipt": "T’hem enviat el rebut per correu. Aquesta aportació no dona vals ni certificat fiscal.",
+        "vouchersBought": "{count, plural, one {Has comprat # val, que es pot gastar fins al {date}.} other {Has comprat # vals, que es poden gastar fins al {date}.}}",
+        "vouchersRefund": "Si no en gastes cap, pots demanar la devolució del 100 % durant 14 dies."
       },
       "pending": {
         "title": "Estem confirmant el teu pagament…",
@@ -6589,6 +6725,30 @@
         "RATE_LIMITED": "Massa intents des d’aquesta connexió. Espera uns minuts.",
         "FAILED": "No hem pogut demanar la devolució. Torna-ho a provar d’aquí a uns segons."
       }
+    },
+    "voucher": {
+      "soldOf": "{sold} de {max} vals venuts",
+      "sold": "{sold, plural, one {# val venut} other {# vals venuts}}",
+      "left": "{count, plural, =0 {Ja esgotats} one {Queda # val} other {Queden # vals}}",
+      "target": "Objectiu: {count, plural, one {# val} other {# vals}}",
+      "heading": "Com funcionen els vals",
+      "price": "Preu d’un val",
+      "priceInc": "Preu d’un val (despeses incloses)",
+      "fee": "Despeses de gestió digital (se sumen)",
+      "feeInc": "Despeses de gestió digital (incloses)",
+      "feeValue": "{fixed} + {pct} per compra",
+      "validUntil": "Es poden gastar fins al",
+      "howToUse": "Reps un sol codi QR amb tots els teus vals. L’ensenyes a la parada de l’entitat i allà descompten els que gastes; els que et quedin continuen al mateix codi.",
+      "refund": "Si no gastes cap val de la teva compra, pots demanar la devolució del 100 % durant 14 dies. Després, el que has pagat es queda per a la causa de l’entitat.",
+      "noProduct": {
+        "title": "Els vals s’han esgotat, però pots continuar aportant",
+        "body": "És una aportació «sense producte»: tries a quants vals equival i tot va a la causa de l’entitat.",
+        "noVoucher": "No reps vals ni codi QR.",
+        "noCertificate": "No dona dret a certificat fiscal de donació.",
+        "noRefund": "No es retorna, llevat que l’entitat cancel·li la venda."
+      },
+      "perVoucherAdd": "cada val, més despeses per compra",
+      "perVoucherInc": "cada val, despeses incloses"
     }
   },
   "account": {
@@ -6598,7 +6758,7 @@
     "sectionsLabel": "Apartats d’El meu compte",
     "sections": {
       "contributions": "Aportacions",
-      "passes": "Entrades",
+      "passes": "Entrades i vals",
       "documents": "Certificats",
       "privacy": "Privadesa",
       "security": "Claus d’accés",
@@ -6611,7 +6771,9 @@
       "line": "{organization} · {date} · {type}",
       "type": {
         "DONATION": "Donació",
-        "TICKET": "Entrades"
+        "TICKET": "Entrades",
+        "VOUCHER": "Vals",
+        "NO_PRODUCT": "Aportació sense producte"
       },
       "includesGuarantee": "Inclou la teva aportació voluntària a KORUM.",
       "status": {
@@ -6627,19 +6789,23 @@
       "emptyAction": "Cercar el meu centre o club"
     },
     "passes": {
-      "title": "Les meves entrades",
+      "title": "Les meves entrades i vals",
       "where": "{organization} · {date}",
       "quantity": "{count, plural, one {# entrada} other {# entrades}}",
       "serial": "Codi: {serial}",
       "revoked": "Aquesta entrada està anul·lada (per una devolució o una reclamació del pagament) i ja no val a la porta.",
       "viewEvent": "Veure la meva entrada",
       "emptyTitle": "No tens entrades",
-      "emptyText": "Les entrades que compris amb aquest correu apareixeran aquí, a punt per ensenyar-les a la porta."
+      "emptyText": "Les entrades que compris amb aquest correu apareixeran aquí, a punt per ensenyar-les a la porta.",
+      "voucherWhere": "{organization} · es poden gastar fins al {date}",
+      "voucherBalance": "{balance, plural, =0 {Vals per gastar: 0 de {total}} one {Et queda # val de {total}} other {Et queden # vals de {total}}}",
+      "revokedVouchers": "Aquests vals estan anul·lats (per una devolució o una reclamació del pagament) i ja no es poden gastar.",
+      "viewVouchers": "Veure els meus vals"
     },
     "documents": {
       "metaTitle": "Certificats i justificants",
       "summary": "{count, plural, one {Tens # donació amb document} other {Tens # donacions amb document}}: certificat fiscal o justificant, a punt per imprimir.",
-      "none": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant. Les entrades no donen document de donació.",
+      "none": "Quan facis una donació, aquí tindràs el seu certificat fiscal o el seu justificant. Les entrades i els vals no donen document de donació.",
       "open": "Veure certificats i justificants",
       "openOne": "Veure document",
       "back": "Tornar a El meu compte",
@@ -7840,6 +8006,10 @@
           "changed": "Avís de cancel·lació o canvi de data a qui signa",
           "cancelledBuyer": "Avís d’esdeveniment cancel·lat a qui va comprar",
           "rescheduledBuyer": "Avís de canvi de data amb enllaç de devolució"
+        },
+        "voucher": {
+          "pass": "Vals amb el seu codi QR",
+          "noProductReceipt": "Rebut de l’aportació sense producte"
         }
       },
       "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",

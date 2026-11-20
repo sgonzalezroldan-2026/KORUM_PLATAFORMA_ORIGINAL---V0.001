@@ -122,6 +122,8 @@ const CONTEXT: StudioContext = {
   medalRank: 0,
   maint: { active: false, perInitCents: 4900, annualCapCents: 14_700, paidCents: 0 },
   ticketFee: { fixedCents: 45, pctBps: 200 },
+  voucherFee: { fixedCents: 45, pctBps: 200 },
+  forProfitSchool: false,
   maxCampaignDays: 60,
   categories: [
     { name: 'Infraestructura y Confort', icon: '🌡️', rule: 'BRACKETS' },

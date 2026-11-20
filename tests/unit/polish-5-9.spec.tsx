@@ -32,6 +32,7 @@ const baseCard = (overrides: Partial<InitiativeCardData> = {}): InitiativeCardDa
   id: 1,
   format: 'TICKETING',
   subtype: 'EVENT',
+  voucher: null,
   title: 'Fiesta de Navidad',
   category: 'Taquilla',
   stage: 'Todo el centro',

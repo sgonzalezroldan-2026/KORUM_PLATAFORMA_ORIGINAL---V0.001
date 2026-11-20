@@ -48,7 +48,8 @@ describe('QA-FIN05 · ingresos reales (libro mayor) por entidad', () => {
   it.each([
     ['CERVANTES', 53_000],
     ['SANJOSE', -389],
-    ['CLUBKORUM', 3_458],
+    // 34,58 € de su campaña más 9,66 € de su venta de vales de la semilla (Sprint 5.14b): 13,20 € de gestión de 24 compras menos 3,54 € de pasarela.
+    ['CLUBKORUM', 4_424],
     ['MEDITERRANEO', -2_856]
   ])('el neto real de %s es el de su balance: ingresos − gastos === activo − pasivo', async (organizationId, expectedNetCents) => {
     const snapshot = await loadBiSnapshot(db, { organizationId });

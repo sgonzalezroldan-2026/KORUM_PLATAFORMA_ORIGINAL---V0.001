@@ -66,6 +66,8 @@ export async function getCheckoutResult(db: KorumPrismaClient, slug: string, ini
     select: {
       type: true,
       status: true,
+      /** Aportación «sin producto» de una venta de vales (Sprint 5.14b): sin vales ni pase. */
+      voucherNoProduct: true,
       createdAt: true,
       amountCents: true,
       guaranteeContributionCents: true,
@@ -86,6 +88,9 @@ export async function getCheckoutResult(db: KorumPrismaClient, slug: string, ini
           totalContributions: true,
           ticketMax: true,
           ticketsSold: true,
+          ticketSubtype: true,
+          voucherTargetCount: true,
+          voucherValidUntil: true,
           rewardEnabled: true,
           targetFamiliesPerCourse: true,
           courses: { select: { groupName: true, familiesCount: true } },

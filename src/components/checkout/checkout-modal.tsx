@@ -87,10 +87,10 @@ export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startA
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2.5">
               <KorumMark size={40} decorative className="shrink-0" />
-              {/* En taquilla no hay meta que esperar: solo se habla de pago seguro (Regla 03 §4, revisión de experiencia del 3.4). */}
+              {/* En taquilla y en vales no hay meta que esperar: solo se habla de pago seguro (Regla 03 §4, revisión de experiencia del 3.4). */}
               <p className="inline-flex rounded-full border border-emerald-700 bg-emerald-50 px-2 py-0.5 text-xs font-extrabold text-emerald-900">
                 <span aria-hidden="true">{'🔒 '}</span>
-                {offer.kind === 'TICKET' ? t('custodyTickets') : t('custody')}
+                {offer.kind === 'DONATION' ? t('custody') : t('custodyTickets')}
               </p>
             </div>
             <button type="button" onClick={() => dialog.current?.close()} aria-label={t('close')} className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-xl font-bold text-ink-soft hover:bg-patio-rule">
@@ -106,7 +106,7 @@ export function CheckoutModal({ offer, restore, restoreMethod, retryHint, startA
         {offer.closedReason ? (
           <div role="status" className="space-y-3 rounded-2xl bg-emerald-50 p-4 text-center">
             <p className="font-joy text-lg font-bold text-emerald-950">{t('closed.title')}</p>
-            <p className="text-ink">{t(`closed.${offer.closedReason}`)}</p>
+            <p className="text-ink">{t(offer.kind === 'VOUCHER' ? `closed.${offer.closedReason}Vouchers` : `closed.${offer.closedReason}`)}</p>
             <button type="button" onClick={() => dialog.current?.close()} className="tactile-btn w-full rounded-2xl! py-3!">
               {t('close')}
             </button>

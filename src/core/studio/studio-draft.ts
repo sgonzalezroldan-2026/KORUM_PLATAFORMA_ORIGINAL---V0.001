@@ -9,6 +9,10 @@ import { z } from 'zod';
 export const STUDIO_FORMATS = ['BUDGET', 'TICKETING'] as const;
 export type StudioFormat = (typeof STUDIO_FORMATS)[number];
 
+/** Tipos de taquilla: un evento con aforo y fecha o una venta de vales (Sprint 5.14b). Los dos son `TICKETING` y comparten la categoría «Taquilla». */
+export const TICKET_SUBTYPES = ['EVENT', 'VOUCHER'] as const;
+export type StudioTicketSubtype = (typeof TICKET_SUBTYPES)[number];
+
 /** Categoría fija de las campañas de taquilla (no es una mejora: el buzón de ideas la excluye). Siempre al 0 %, sin tramos. */
 export const TICKETING_CATEGORY = 'Taquilla';
 
@@ -88,19 +92,30 @@ export const studioDraftSchema = z
     costMatCents: cents(STUDIO_LIMITS.maxBudgetCents),
     costInstCents: cents(STUDIO_LIMITS.maxBudgetCents),
     contingencyBps: cents(STUDIO_LIMITS.maxContingencyBps),
-    ticketSubtype: z.enum(['EVENT']),
+    ticketSubtype: z.enum(TICKET_SUBTYPES),
     ticketPriceCents: cents(STUDIO_LIMITS.maxTicketPriceCents),
     ticketMax: z.number().int().min(0).max(STUDIO_LIMITS.maxTicketMax),
     ticketFeeMode: z.enum(['ADD', 'INC']),
-    ticketVenue: plainText(STUDIO_LIMITS.venueMax).nullable()
+    ticketVenue: plainText(STUDIO_LIMITS.venueMax).nullable(),
+    /**
+     * Solo ventas de vales (Sprint 5.14b). Con valores por defecto: un borrador de presupuesto o de evento no los necesita y un cliente anterior que no los
+     * envía sigue funcionando. `voucherCapped`: con tope (`ticketMax`) o sin él (`voucherTargetCount`, objetivo orientativo que no limita la venta).
+     */
+    voucherCapped: z.boolean().default(true),
+    voucherTargetCount: z.number().int().min(0).max(STUDIO_LIMITS.maxTicketMax).default(0),
+    /** Último día en que se pueden gastar los vales, `AAAA-MM-DD` en hora de España. */
+    voucherValidOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+    /** Al agotarse el tope, seguir aportando «sin producto». El servidor lo apaga en un colegio con ánimo de lucro (decisión 65). */
+    voucherNoProductEnabled: z.boolean().default(false)
   })
   .strict();
 
 export type StudioDraft = z.infer<typeof studioDraftSchema>;
 
 /** Valores de una campaña nueva en blanco. El presupuesto va a 0: KORUM nunca propone el precio de un proveedor. */
-export function blankStudioDraft(format: StudioFormat, vertical: StudioVertical, defaultCloseOn: string): StudioDraft {
+export function blankStudioDraft(format: StudioFormat, vertical: StudioVertical, defaultCloseOn: string, subtype: StudioTicketSubtype = 'EVENT'): StudioDraft {
   const stage = STUDIO_STAGES[vertical][0]?.value ?? '';
+  const vouchers = format === 'TICKETING' && subtype === 'VOUCHER';
   return {
     initiativeId: null,
     format,
@@ -110,19 +125,54 @@ export function blankStudioDraft(format: StudioFormat, vertical: StudioVertical,
     closesOn: defaultCloseOn,
     description: '',
     showPublicBreakdown: true,
-    plaqueEnabled: true,
-    rewardEnabled: true,
+    // Una compra de vales no se apunta a un curso ni lleva placa (Sprint 5.14b).
+    plaqueEnabled: !vouchers,
+    rewardEnabled: !vouchers,
     rewardText: null,
     targetFamiliesPerCourse: STUDIO_LIMITS.defaultFamiliesPerCourse,
     costMatCents: 0,
     costInstCents: 0,
     contingencyBps: STUDIO_LIMITS.defaultContingencyBps,
-    ticketSubtype: 'EVENT',
-    ticketPriceCents: 500,
+    ticketSubtype: vouchers ? 'VOUCHER' : 'EVENT',
+    ticketPriceCents: vouchers ? 200 : 500,
     ticketMax: 200,
     ticketFeeMode: 'ADD',
-    ticketVenue: null
+    ticketVenue: null,
+    voucherCapped: true,
+    voucherTargetCount: vouchers ? 200 : 0,
+    voucherValidOn: vouchers ? defaultVoucherValidOn(defaultCloseOn) : null,
+    voucherNoProductEnabled: false
   };
+}
+
+/** Meses que un vale puede seguir valiendo después del cierre de su venta, como mucho: frena una errata (2036 por 2026) sin limitar a la entidad (Sprint 5.14b). */
+export const VOUCHER_VALIDITY_MAX_MONTHS = 12;
+/** Días que dura como mucho una venta de vales (decisión 32), aunque el motor de reglas admita campañas más largas. */
+export const VOUCHER_SALE_MAX_DAYS = 60;
+
+const isoDay = (year: number, month: number, day: number) => `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+/**
+ * Validez por defecto de los vales: hasta el **inicio del curso siguiente**, el primer 1 de septiembre posterior al cierre de la venta (decisión del promotor del
+ * 2026-11-20). La entidad la puede cambiar. `''` si la fecha de cierre no es válida.
+ */
+export function defaultVoucherValidOn(closesOn: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(closesOn);
+  if (!match) return '';
+  const [year, month] = [Number(match[1]), Number(match[2])];
+  // El 1 de septiembre de ese año si el cierre es anterior (agosto o antes); si no, el del año siguiente. Un cierre el mismo 1 de septiembre ya es del curso nuevo.
+  return isoDay(month <= 8 ? year : year + 1, 9, 1);
+}
+
+/** Último día que admite la validez: el cierre de la venta más `VOUCHER_VALIDITY_MAX_MONTHS` meses (el 31 de un mes corto se queda en su último día). */
+export function latestVoucherValidOn(closesOn: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(closesOn);
+  if (!match) return '';
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const total = year * 12 + (month - 1) + VOUCHER_VALIDITY_MAX_MONTHS;
+  const [targetYear, targetMonth] = [Math.floor(total / 12), (total % 12) + 1];
+  const lastDay = new Date(Date.UTC(targetYear, targetMonth, 0)).getUTCDate();
+  return isoDay(targetYear, targetMonth, Math.min(day, lastDay));
 }
 
 const MADRID = 'Europe/Madrid';

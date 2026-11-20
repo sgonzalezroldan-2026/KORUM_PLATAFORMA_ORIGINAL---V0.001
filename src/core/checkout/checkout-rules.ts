@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
 import { dataHmac, safeEqual } from '@/core/security/data-hmac';
-import { CHECKOUT_METHODS, DONATION_MAX_CENTS, DONATION_MIN_CENTS, GUARANTEE_MAX_CENTS, MAX_TICKETS_PER_ORDER } from './checkout-limits';
+import { CHECKOUT_METHODS, DONATION_MAX_CENTS, DONATION_MIN_CENTS, GUARANTEE_MAX_CENTS, MAX_TICKETS_PER_ORDER, MAX_VOUCHERS_PER_ORDER } from './checkout-limits';
 
 /**
  * Reglas del checkout de familias (Sprint 3.4, QA-F04 · QA-F07 · QA-F10). Funciones puras: lo que el navegador envía se valida aquí y todo
@@ -46,6 +46,13 @@ export const checkoutInputSchema = z.discriminatedUnion('kind', [
     kind: z.literal('TICKET'),
     ...common,
     quantity: z.number().int().min(1).max(MAX_TICKETS_PER_ORDER)
+  }),
+  /** Vales (Sprint 5.14b): cuántos se compran o, «sin producto» con la venta agotada, a cuántos vales equivale la aportación (decisión 64). */
+  z.object({
+    kind: z.literal('VOUCHER'),
+    ...common,
+    quantity: z.number().int().min(1).max(MAX_VOUCHERS_PER_ORDER),
+    mode: z.enum(['VOUCHERS', 'NO_PRODUCT'])
   })
 ]);
 
@@ -82,8 +89,8 @@ export function newDonationOrder(): string {
   return `KD${randomBytes(8).toString('hex').toUpperCase()}`;
 }
 
-/** `KD` donación, `KT` entrada, `KS` patrocinio, `KR` su renovación anual y `KH` primer pago de Mi Hucha (que también pasa por la página de pago). */
-const ORDER_PATTERN = /^K[DSTHR][0-9A-F]{16}$/;
+/** `KD` donación, `KT` entrada, `KV` vales (Sprint 5.14a), `KS` patrocinio, `KR` su renovación anual y `KH` primer pago de Mi Hucha (que también pasa por la página de pago). */
+const ORDER_PATTERN = /^K[DSTVHR][0-9A-F]{16}$/;
 const SIGNATURE_PATTERN = /^[0-9a-f]{64}$/;
 
 export const isCheckoutOrder = (value: string): boolean => ORDER_PATTERN.test(value);

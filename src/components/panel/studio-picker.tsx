@@ -8,7 +8,7 @@ import { TemplateArt } from './template-illustration';
 
 /**
  * Punto de entrada del Estudio (`studio-select-initiative` del prototipo, «+ Nueva iniciativa» y «+ Nueva taquilla»): las campañas que ya tiene la
- * entidad, dos botones para empezar en blanco y las plantillas listas para usar. Una plantilla solo rellena textos y, en taquilla, un precio y un aforo de
+ * entidad, tres botones para empezar en blanco (presupuesto, evento con entradas y, desde el Sprint 5.14b, venta de vales) y las plantillas listas para usar. Una plantilla solo rellena textos y, en taquilla, un precio y un aforo de
  * partida: el presupuesto de un proveedor lo escribe siempre la entidad.
  */
 
@@ -19,7 +19,7 @@ export interface StudioPickerProps {
   orgSlug: string;
   vertical: StudioVertical;
   canCreate: boolean;
-  initiatives: Array<{ id: number; walletEscrowId: string; title: string; format: 'BUDGET' | 'TICKETING'; status: string }>;
+  initiatives: Array<{ id: number; walletEscrowId: string; title: string; format: 'BUDGET' | 'TICKETING'; ticketSubtype: 'EVENT' | 'VOUCHER' | null; status: string }>;
   maxDrafts: number;
 }
 
@@ -43,6 +43,10 @@ export async function StudioPicker({ locale, orgSlug, vertical, canCreate, initi
             <Link href={`${base}?nueva=taquilla`} className="tactile-btn" data-testid="studio-new-ticketing">
               <span aria-hidden="true">{'🎟️ '}</span>
               {t('picker.newTicketing')}
+            </Link>
+            <Link href={`${base}?nueva=vales`} className="tactile-btn" data-testid="studio-new-vouchers">
+              <span aria-hidden="true">{'🧾 '}</span>
+              {t('picker.newVouchers')}
             </Link>
           </div>
         ) : (
@@ -88,7 +92,7 @@ export async function StudioPicker({ locale, orgSlug, vertical, canCreate, initi
               <li key={item.id} className="korum-trust-vault flex flex-wrap items-center justify-between gap-3 p-3">
                 <div className="flex min-w-0 flex-col">
                   <span className="font-corp font-extrabold text-varsity-navy wrap-anywhere">{item.title}</span>
-                  <span className="text-xs text-ink-soft">{`${item.walletEscrowId} · ${t(`format.${item.format}`)}`}</span>
+                  <span className="text-xs text-ink-soft">{`${item.walletEscrowId} · ${t(`format.${item.ticketSubtype === 'VOUCHER' ? 'VOUCHER' : item.format}`)}`}</span>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <StatusBadge status={item.status as Status} />

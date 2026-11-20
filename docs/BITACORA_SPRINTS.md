@@ -20,6 +20,90 @@
 
 ## Entradas
 
+### Sprint 5.14b — Vales: Estudio, ficha pública, compra y pase (N3) · 2026-11-20 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (la alternativa que admite la ficha; la recomendada era Sonnet 5.5 · alto). Auditoría: `fintech-escrow-auditor`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.
+- **Duración:** estimada, 6–8 h; real, de 06:40 a 10:00 (unas 3 h 20 min), con las auditorías y la E2E en segundo plano. Del promotor, solo las dos preguntas del principio.
+- **Decisiones del promotor al abrir el sprint (formato «qué pasa hoy, ejemplo, opciones, recomendación»):**
+  1. **Decisión 66 (la recomendada):** una venta de vales **sin tope** lleva un **objetivo orientativo** de vales. No limita la venta; da la meta y la barra, y con él se comprueba que el mantenimiento queda cubierto.
+  2. **Decisión 67:** la validez va por defecto hasta el **inicio del curso siguiente** (el primer 1 de septiembre posterior al cierre de la venta) y la entidad la puede cambiar. Para frenar erratas, el asistente propuso estos límites: desde el día de cierre de la venta (sin mínimo, decisión 49) hasta 12 meses después. **Se le comunican al promotor al cerrar.**
+- **Qué se ha hecho:**
+  - **Migración `20261130090000_voucher_target`:** columna `voucherTargetCount` con dos guardas: solo en una venta de vales sin tope y positiva; y una venta publicada tiene tope u objetivo.
+  - **Estudio** (`?nueva=vales`, botón «+ Nueva venta de vales»):
+    - formulario propio (`studio-voucher-fields.tsx`): texto libre sin lista de artículos, precio, tope u objetivo, validez, gastos sumados o incluidos, y «sin producto» (no se ofrece sin tope ni a un colegio con ánimo de lucro, y el servidor lo apaga igualmente);
+    - sin reto por curso ni placa;
+    - venta de 60 días como máximo;
+    - los avisos de precio, tope y validez salen junto al campo al momento;
+    - una venta publicada no cambia de tipo, y al publicar se comprueba que la tarifa de vales no cambió.
+  - **Pizarra** (`src/core/studio/voucher-board.ts`): fórmulas del motor (`voucherCharge`):
+    - con los gastos incluidos, la meta usa el **peor neto por vale** de cualquier compra de 1 a 50 vales, así que es de verdad lo mínimo que recibe la entidad;
+    - la pasarela se comprueba en la compra de 1 vale y en la de 50;
+    - el mantenimiento se compara con la meta.
+  - **Ficha y tarjeta** (`voucher-card.ts`, `voucher-sections.tsx`):
+    - precio de un vale («2,00 € / vale + gastos»), validez, existencias u objetivo, cómo se gastan y la devolución de 14 días;
+    - con la venta agotada y «sin producto», el botón «Aportar sin producto» y el aviso (sin vale, sin certificado y sin devolución) **antes de pagar**;
+    - sin `Event` en los datos estructurados.
+  - **Pago:**
+    - `kind: 'VOUCHER'`, en modo `VOUCHERS` o `NO_PRODUCT`, con pedidos `KV`;
+    - hasta 50 vales por compra, sin aportación voluntaria a KORUM ni NIF;
+    - vales retenidos limitados por red (`voucherHoldLimit`);
+    - `CHANGED` si la venta deja de estar agotada mientras se elige;
+    - la vuelta del pago dice cuántos vales, hasta cuándo valen y la devolución, y solo celebra el pago que llega al 100 %.
+  - **Pase:** un QR por compra con los vales que quedan y la validez, sin la palabra «saldo».
+  - **Emails nuevos:** `voucher.pass` (QR adjunto) y `voucher.noProductReceipt` (a cuántos vales equivale, sin certificado), en la transacción del cobro y en el expediente.
+  - **Otras pantallas:** «Mi cuenta» (pestaña «Entradas y vales»), el cartel A4 y la tarjeta social.
+  - **Semilla:** venta de vales de demostración en el club de básquet (iniciativa 9) y la tarifa de vales de cada entidad. El neto real del club sube 9,66 €.
+  - **Textos:** unas 120 claves nuevas por idioma (es, ca y en).
+  - Tres módulos se partieron para no pasar de 300 líneas: `voucher-card.ts`, `stored-board.ts` y `studio-columns.ts`.
+- **Pruebas:**
+  - `tests/unit/voucher-studio.spec.ts` (26) y `tests/unit/voucher-components.spec.tsx` (11).
+  - `tests/integration/voucher-sales.spec.ts` (11, QA-VAL03).
+  - `tests/e2e/vouchers-sale.spec.ts` (3 × 2 proyectos).
+  - Ajustadas: `email-outbox` (las dos plantillas en es, ca y en), `seed-clock`, `seed-plan`, `raffle-retirement`, `vouchers`, `console-360`, `console-rules`, `console-bi`, `seed` y `public-portal`.
+- **Lo que salió y se corrigió dentro del sprint:**
+  - **`fintech-escrow-auditor`, 5 hallazgos en la primera vuelta y 1 en la segunda, todos menores:**
+    - la meta con gastos incluidos no era un mínimo real sin fijo por compra;
+    - un rótulo de la pizarra decía «por entrada»;
+    - la nota del neto no hablaba del mantenimiento proporcional;
+    - el resultado celebraba un agotado o un objetivo que ese pago no había causado;
+    - un comentario de la semilla;
+    - la tarjeta enseñaba el precio sin decir que se suman gastos.
+  - **`ux-school-director-reviewer`, 11 hallazgos en la primera vuelta (4 medios) y 2 en la segunda:**
+    - la garantía de 14 días junto al «sin producto»;
+    - vocabulario de entradas en el Estudio;
+    - dos maneras de enseñar el precio;
+    - la fecha de la descripción de la semilla;
+    - el título del pase;
+    - el plural en inglés;
+    - la pestaña de «Mi cuenta»;
+    - los avisos al momento;
+    - el resultado poco informativo;
+    - el pie del pago en el móvil;
+    - la concordancia de «1 vale».
+  - **En el recorrido manual:** «Ya has gastado tus 1 vales» en un pase gastado, y el aviso de la venta publicada en el Estudio, que mencionaba el reto y la placa.
+  - **En las pruebas:** cinco pruebas de integración daban por hechas cosas que este sprint cambia (ventas sin objetivo, el neto del club y el contexto público), y la palabra «RIFA» en una prueba nueva.
+- **Pendiente / deuda:** ninguna nueva.
+  - Lo que queda de N3 (el puesto con lector, la devolución de 14 días, la caducidad, el cierre, la liquidación y el cambio de fecha) está en la ficha del 5.14c, con lo que deja este sprint.
+  - **Hasta el 5.14c no se vende con dinero real.**
+  - Revisión nativa de ca y en, al final de la batida, como siempre.
+- **Observaciones para el promotor:**
+  - La ficha de una venta agotada con «sin producto» sigue explicando, en «Cómo funcionan los vales», la devolución de 14 días de quien compró vales. El auditor no lo cuenta como problema.
+  - `studio-workbench.tsx` ya pasaba de 300 líneas antes de este sprint, y este le añade unas pocas.
+- **Puertas:**
+  - P1 ✅: invariantes (42 migraciones, 829 documentos coherentes, 9 iniciativas de la semilla cuadradas, `.claude/` en sincronía), `typecheck` y `lint` a 0.
+  - P2 ✅: unitarias 87/87 archivos (2.200 en verde, 1 omitida, la de siempre) e integración 53/53 archivos (1.089 en verde) contra PostgreSQL 16 real, en la pasada final.
+  - P3 ✅:
+    - `fintech-escrow-auditor`: APROBADO a la tercera vuelta, sin hallazgos.
+    - `ux-school-director-reviewer`: APROBADO a la tercera vuelta, sin hallazgos.
+    - `qa-e2e-verifier`: APROBADO.
+  - P4 ✅:
+    - E2E completa en modo CI sobre la compilación de producción: 553 en verde, 0 fallos, 33 omitidas (las deliberadas de siempre) y 0 intermitencias, dos veces (antes y después de las auditorías).
+    - Recorrido real con el MCP de Playwright a 1440 y 430 px en es, ca y en, del auditor de experiencia, del verificador y mío: publicar la venta, su ficha, el cartel A4, la compra, el pase vigente y el gastado, y «Mi cuenta». 0 errores de consola de la aplicación, sin desbordes y sin claves sin traducir.
+  - P5 ✅:
+    - Tras cada corrección, P1 y las unitarias completas, más lo afectado: integración de vales, Estudio, pago, semilla, BI, portal y cuenta; E2E de vales, pago de entradas, «Mi cuenta», Estudio y ficha.
+    - Después, una pasada final completa desde la 1, toda en verde.
+- **Siguiente sprint:** 5.14c · Vales: puesto con lector, devolución, caducidad y liquidación · Claude Opus 5.5 · esfuerzo alto · 6–8 h.
+
 ### Sprint 5.14a — Vales: el motor (N3) · 2026-11-19 · terminado
 
 - **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor` y `antifraud-legal-guardian`, con los modelos fijados en `.claude/agents/`.

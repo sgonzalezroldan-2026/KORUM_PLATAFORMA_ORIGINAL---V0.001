@@ -6,13 +6,14 @@ import { CurrencyText } from '@/components/ui/currency-text';
 import { useHydrated } from '@/components/ui/use-hydrated';
 import { useMoney } from '@/components/portal/use-money';
 import type { CheckoutMethod } from '@/core/checkout/checkout-limits';
-import { donationSummary, maxSelectableTickets, ticketSummary } from '@/core/checkout/checkout-summary';
+import { donationSummary, ticketSummary, voucherSummary } from '@/core/checkout/checkout-summary';
 import { isLocale } from '@/i18n/routing';
 import type { CheckoutStart } from '@/services/checkout/checkout.service';
-import { buildCheckoutPayload, clampQuantity, donationCents, guaranteeCents, saveDraft, type CheckoutDraft, type CheckoutOffer } from './checkout-draft';
+import { buildCheckoutPayload, clampQuantity, donationCents, guaranteeCents, maxQuantity, saveDraft, type CheckoutDraft, type CheckoutOffer } from './checkout-draft';
 import { DonationAmountField, EmailField, GroupField, TicketQuantityField } from './checkout-fields';
 import { FiscalFields, type FiscalError } from './fiscal-fields';
 import { GuaranteeField } from './guarantee-field';
+import { VoucherQuantityField } from './voucher-quantity-field';
 
 /**
  * Formulario del checkout: donación o taquilla, sin registro (solo el email), con la aportación voluntaria **desmarcada** (QA-F04 · QA-F07). Al
@@ -21,7 +22,7 @@ import { GuaranteeField } from './guarantee-field';
  */
 
 type FormError =
-  | { kind: 'email' | 'amount' | 'form' | 'closed' | 'rateLimited' | 'unavailable' | 'network' | 'quantity' }
+  | { kind: 'email' | 'amount' | 'form' | 'closed' | 'rateLimited' | 'unavailable' | 'network' | 'quantity' | 'changed' }
   | { kind: 'soldOut'; available: number }
   | { kind: 'fiscal'; detail: Exclude<FiscalError, null> };
 
@@ -55,12 +56,20 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
   };
 
   const ticketing = offer.kind === 'TICKET' && offer.ticket !== null;
-  const maxTickets = maxSelectableTickets(offer.ticket?.available ?? 0);
-  const summary = ticketing && offer.ticket ? ticketSummary(draft.quantity, offer.ticket.pricing, offer.ticket.available) : donationSummary(donationCents(offer, draft, locale), guaranteeCents(draft));
+  const vouchers = offer.kind === 'VOUCHER' && offer.voucher !== null;
+  // Entradas y vales no llevan la aportación voluntaria a KORUM ni el certificado: es una compra (o, sin producto, una aportación sin certificado, decisión 64).
+  const purchase = ticketing || vouchers;
+  const maxTickets = maxQuantity(offer);
+  const summary =
+    vouchers && offer.voucher
+      ? voucherSummary(draft.quantity, offer.voucher.pricing, maxTickets)
+      : ticketing && offer.ticket
+        ? ticketSummary(draft.quantity, offer.ticket.pricing, offer.ticket.available)
+        : donationSummary(donationCents(offer, draft, locale), guaranteeCents(draft));
 
   function validate(): FormError | null {
     if (summary.kind === 'DONATION' && !summary.valid) return { kind: 'amount' };
-    if (summary.kind === 'TICKET' && !summary.valid) return { kind: 'quantity' };
+    if ((summary.kind === 'TICKET' || summary.kind === 'VOUCHER') && !summary.valid) return { kind: 'quantity' };
     if (!offer.sessionEmail && !EMAIL_SHAPE.test(draft.email.trim())) return { kind: 'email' };
     if (offer.kind === 'DONATION' && offer.certificate && draft.wantsCertificate) {
       if (taxId.trim().length < 5) return { kind: 'fiscal', detail: 'taxId' };
@@ -81,7 +90,16 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
         return;
       case 'SOLD_OUT':
         setError({ kind: 'soldOut', available: result.available });
-        setOffer((previous) => (previous.ticket ? { ...previous, ticket: { ...previous.ticket, available: result.available } } : previous));
+        setOffer((previous) =>
+          previous.ticket
+            ? { ...previous, ticket: { ...previous.ticket, available: result.available } }
+            : previous.voucher && previous.voucher.capped
+              ? { ...previous, voucher: { ...previous.voucher, available: result.available } }
+              : previous
+        );
+        return;
+      case 'CHANGED':
+        setError({ kind: 'changed' });
         return;
       case 'CLOSED':
         setError({ kind: 'closed' });
@@ -128,7 +146,7 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
   function formMessage(): string | null {
     if (error === null) return null;
     if (error.kind === 'email' || error.kind === 'amount' || error.kind === 'fiscal' || error.kind === 'form') return t('errors.form');
-    if (error.kind === 'soldOut') return t('ticket.soldOut', { count: error.available });
+    if (error.kind === 'soldOut') return t(vouchers ? 'voucher.soldOutError' : 'ticket.soldOut', { count: error.available });
     if (error.kind === 'quantity') return t('errors.quantity', { max: maxTickets });
     return t(`errors.${error.kind}`);
   }
@@ -136,21 +154,23 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
 
   return (
     <form ref={form} onSubmit={submit} noValidate className="space-y-4">
-      {ticketing ? (
+      {vouchers ? (
+        <VoucherQuantityField offer={offer} draft={draft} update={update} max={maxTickets} error={error?.kind === 'quantity' ? t('errors.quantity', { max: maxTickets }) : null} />
+      ) : ticketing ? (
         <TicketQuantityField offer={offer} draft={draft} update={update} error={error?.kind === 'quantity' ? t('errors.quantity', { max: maxTickets }) : null} />
       ) : (
         <DonationAmountField offer={offer} draft={draft} update={update} error={error?.kind === 'amount'} />
       )}
       <GroupField offer={offer} draft={draft} update={update} />
-      {offer.plaque && !ticketing ? (
+      {offer.plaque && !purchase ? (
         <p className="rounded-xl bg-amber-100 p-3 text-sm font-semibold text-amber-950">
           <span aria-hidden="true">{'🏅 '}</span>
           {t('plaque')}
         </p>
       ) : null}
-      {ticketing ? null : <GuaranteeField offer={offer} draft={draft} update={update} />}
+      {purchase ? null : <GuaranteeField offer={offer} draft={draft} update={update} />}
       <EmailField offer={offer} draft={draft} update={update} error={error?.kind === 'email'} />
-      {ticketing ? null : (
+      {purchase ? null : (
         <FiscalFields
           offer={offer}
           draft={draft}
@@ -165,14 +185,20 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
         />
       )}
 
-      <p className="text-center text-sm italic text-ink-soft">{ticketing ? t('refundNoteTickets') : t('refundNote')}</p>
+      <p className="text-center text-sm italic text-ink-soft">{vouchers ? t(offer.voucher?.noProduct ? 'refundNoteNoProduct' : 'refundNoteVouchers') : ticketing ? t('refundNoteTickets') : t('refundNote')}</p>
 
       {/* Barra fija al pie del diálogo: el total y los botones de pago siempre a la vista, también en el móvil (pago en 10 segundos). */}
       <div className="sticky bottom-0 z-10 -mx-5 -mb-5 space-y-2 border-t border-patio-rule bg-white px-5 pb-4 pt-3 shadow-[0_-10px_16px_-14px_rgb(16_31_56/0.45)] sm:-mx-6 sm:-mb-6 sm:px-6">
       <div id={summaryId} aria-live="polite" className="flex flex-wrap items-center justify-between gap-x-2 rounded-2xl bg-patio-cream px-3.5 py-2" data-testid="checkout-summary">
         <p className="text-sm text-ink-soft">
           <span className="sr-only">{`${t('summary.label')}: `}</span>
-          {summary.kind === 'TICKET'
+          {summary.kind === 'VOUCHER'
+            ? offer.voucher?.noProduct
+              ? t('summary.noProduct', { count: summary.quantity, total: money(summary.totalCents) })
+              : offer.voucher?.pricing.mode === 'ADD'
+                ? t('summary.vouchersAdd', { count: summary.quantity, amount: money(summary.vouchersCents), fee: money(summary.feeCents) })
+                : t('summary.vouchersInc', { count: summary.quantity, amount: money(summary.vouchersCents) })
+            : summary.kind === 'TICKET'
             ? offer.ticket?.pricing.mode === 'ADD'
               ? t('summary.ticketsAdd', { count: summary.quantity, price: money(offer.ticket.pricing.priceCents), fee: money(summary.feeCents) })
               : t('summary.ticketsInc', { count: summary.quantity, price: money(offer.ticket?.pricing.priceCents ?? 0) })
@@ -190,8 +216,8 @@ export function CheckoutForm({ offer: initialOffer, initial, askTaxIdAgain, star
         <div role={fieldError ? 'status' : 'alert'} className="space-y-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-bold text-red-900">
           <p>{message}</p>
           {error?.kind === 'soldOut' && error.available > 0 ? (
-            <button type="button" onClick={() => update({ quantity: clampQuantity(error.available, error.available) })} className="min-h-11 rounded-lg bg-white px-3 font-extrabold text-varsity-navy underline">
-              {t('ticket.useAvailable', { count: error.available })}
+            <button type="button" onClick={() => update({ quantity: clampQuantity(error.available, error.available, vouchers ? maxTickets : undefined) })} className="min-h-11 rounded-lg bg-white px-3 font-extrabold text-varsity-navy underline">
+              {t(vouchers ? 'voucher.useAvailable' : 'ticket.useAvailable', { count: error.available })}
             </button>
           ) : null}
         </div>

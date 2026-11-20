@@ -64,7 +64,9 @@ export async function loadAccountOverview(db: Db, userId: string) {
         totalChargedCents: true,
         refundedCents: true,
         groupName: true,
-        initiative: { select: { id: true, title: true } },
+        /** Aportación «sin producto» de una venta de vales (Sprint 5.14b): se nombra así, no como una compra. */
+        voucherNoProduct: true,
+        initiative: { select: { id: true, title: true, ticketSubtype: true } },
         organization: { select: { slug: true, name: true } }
       }
     }),
@@ -75,9 +77,12 @@ export async function loadAccountOverview(db: Db, userId: string) {
       select: {
         uuid: true,
         serialCode: true,
+        /** Un pase de vales (Sprint 5.14b) enseña su saldo y su validez en lugar de la fecha y el lugar del evento. */
+        subtype: true,
         quantity: true,
+        checkedInCount: true,
         revokedAt: true,
-        initiative: { select: { title: true, closesAt: true, ticketVenue: true, organization: { select: { slug: true, name: true } } } }
+        initiative: { select: { title: true, closesAt: true, ticketVenue: true, voucherValidUntil: true, organization: { select: { slug: true, name: true } } } }
       }
     }),
     currentConsents(db, userId),

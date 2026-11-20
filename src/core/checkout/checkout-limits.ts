@@ -11,6 +11,8 @@ export const DONATION_MAX_CENTS = 500_000;
 export const GUARANTEE_MAX_CENTS = 5_000;
 /** Entradas por compra (también lo comprueba `reserveTickets`). */
 export const MAX_TICKETS_PER_ORDER = 20;
+/** Vales por compra: el mismo tope que el motor (`voucher-rules`), aquí para el selector del navegador. */
+export { MAX_VOUCHERS_PER_ORDER } from '@/core/ticketing/voucher-rules';
 
 /**
  * Tarjeta, Apple Pay y Google Pay se pagan en el mismo formulario seguro de Paycomet (`methodId 1`): para quien paga es un solo botón. Bizum

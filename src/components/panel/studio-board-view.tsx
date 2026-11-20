@@ -6,6 +6,8 @@ import { formatBps, formatCents } from '@/core/finance/money';
 import type { ResizedBoard } from '@/core/studio/resized-board';
 import type { BudgetBoard, StudioBoard, StudioContext, TicketingBoard } from '@/core/studio/studio-board';
 import { isLocale } from '@/i18n/routing';
+import { Row } from './studio-board-row';
+import { VoucherRows } from './studio-voucher-rows';
 
 /**
  * Pizarra TCO del Estudio (`st-tco-budget-panel` y `st-tco-ticketing-panel` del prototipo): la auditoría interna de la entidad, al céntimo. Es la misma
@@ -13,29 +15,6 @@ import { isLocale } from '@/i18n/routing';
  * (Regla 02 §2). Zona de dinero: azul marino, `tabular-nums` y `Plus Jakarta Sans`. Una campaña rehecha por votación (Sprint 4.4b) enseña sus cifras guardadas
  * (`ResizedRows`): su meta ya no sale de la fórmula y el exento o el «resto sujeto a tramo» no la explicarían.
  */
-
-/**
- * Una línea de la pizarra: rótulo a la izquierda y valor a la derecha. Un importe nunca se parte (el rótulo baja de línea). Un valor que es una frase
- * («0,49 € por unidad (se suman al comprador)», la beca de medalla con su ahorro) lleva `phrase`: si no cabe junto al rótulo baja entero a su propia línea,
- * en vez de dejar al rótulo sin sitio y partirlo letra a letra (repaso del Sprint 5.6).
- */
-function Row({ label, value, tone = 'plain', phrase = false }: { label: ReactNode; value: ReactNode; tone?: 'plain' | 'emerald' | 'gold' | 'sky' | 'total'; phrase?: boolean }) {
-  const color = { plain: 'text-slate-200', emerald: 'text-emerald-300', gold: 'text-amber-300', sky: 'text-sky-300', total: 'text-amber-300 font-extrabold' }[tone];
-  if (phrase) {
-    return (
-      <div className={`flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 text-sm ${color}`} data-board-row="phrase">
-        <span>{label}</span>
-        <span className="ms-auto text-end font-bold tabular-nums text-white">{value}</span>
-      </div>
-    );
-  }
-  return (
-    <div className={`flex items-baseline justify-between gap-4 text-sm ${color}`} data-board-row="amount">
-      <span className="min-w-0 wrap-anywhere">{label}</span>
-      <span className="shrink-0 whitespace-nowrap text-end font-bold tabular-nums text-white">{value}</span>
-    </div>
-  );
-}
 
 function BudgetRows({ board, context, contingencyBps, gatewayCovered }: { board: BudgetBoard; context: StudioContext; contingencyBps: number; gatewayCovered: boolean }) {
   const t = useTranslations('panel.studio.board');
@@ -195,7 +174,7 @@ export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode,
   const locale = isLocale(current) ? current : 'es';
   const badge = resized
     ? t('badgeResized')
-    : board.kind === 'TICKETING' ? t('badgeTicketing') : board.categoryExempt ? t('badgeExempt') : board.rateBps > 0 || board.bracketFeeCents > 0 ? t('badgeBracket', { rate: formatBps(board.rateBps, locale) }) : t('badgeExact');
+    : board.kind === 'VOUCHER' ? t('badgeVouchers') : board.kind === 'TICKETING' ? t('badgeTicketing') : board.categoryExempt ? t('badgeExempt') : board.rateBps > 0 || board.bracketFeeCents > 0 ? t('badgeBracket', { rate: formatBps(board.rateBps, locale) }) : t('badgeExact');
 
   return (
     <aside aria-label={t('label')} className="korum-trust-vault flex flex-col justify-between gap-5 rounded-3xl bg-varsity-navy p-5 font-corp text-white sm:p-6" data-testid="studio-board">
@@ -210,13 +189,15 @@ export function StudioBoardView({ board, context, contingencyBps, ticketFeeMode,
           <ResizedRows board={resized} contingencyBps={contingencyBps} settles={resizedSettles} />
         ) : board.kind === 'BUDGET' ? (
           <BudgetRows board={board} context={context} contingencyBps={contingencyBps} gatewayCovered={gatewayCovered} />
+        ) : board.kind === 'VOUCHER' ? (
+          <VoucherRows board={board} mode={ticketFeeMode} />
         ) : (
           <TicketingRows board={board} mode={ticketFeeMode} />
         )}
       </div>
       <div className="flex flex-col gap-3 border-t border-slate-600 pt-4">
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-xs font-bold uppercase text-slate-200">{t(resized ? 'goalLabelResized' : board.kind === 'BUDGET' ? 'goalLabel' : 'goalLabelTicketing')}</span>
+          <span className="text-xs font-bold uppercase text-slate-200">{t(resized ? 'goalLabelResized' : board.kind === 'BUDGET' ? 'goalLabel' : board.kind === 'VOUCHER' ? 'goalLabelVouchers' : 'goalLabelTicketing')}</span>
           <span className="font-corp text-2xl font-extrabold tabular-nums text-amber-400" data-testid="studio-goal">
             {formatCents(resized ? resized.goalCents : board.goalCents, locale)}
           </span>

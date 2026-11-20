@@ -204,6 +204,9 @@ export interface KorumOrganization {
   fullIntegrityCheckCents: number;
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
+  /** Gastos de gestión digital de los vales, por compra (Sprint 5.14a). */
+  voucherFeeFixedCents: number;
+  voucherFeeBps: number;
   maintActive: boolean;
   maintPerInitCents: number;
   maintAnnualCapCents: number;
@@ -256,12 +259,16 @@ export interface KorumInitiative {
   matchingPoolTotalCents?: number;
   matchingPoolRemainingCents?: number;
   matchingSponsorName?: string | null;
-  ticketSubtype?: 'EVENT';
+  ticketSubtype?: 'EVENT' | 'VOUCHER';
   ticketPriceCents?: number;
   ticketMax?: number;
   ticketsSold?: number;
   ticketFeeMode?: 'ADD' | 'INC';
   ticketVenue?: string;
+  /** Solo ventas de vales (Sprint 5.14b): hasta cuándo se gastan, «sin producto» al agotarse y objetivo orientativo sin tope. */
+  voucherValidUntil?: string;
+  voucherNoProductEnabled?: boolean;
+  voucherTargetCount?: number;
   plaqueEnabled: boolean;
   rewardEnabled: boolean;
   targetFamiliesPerCourse: number;

@@ -86,7 +86,9 @@ async function voucherSale(options: { ticketMax?: number | null; noProduct?: boo
     ticketPriceCents: 200,
     ticketMax,
     ticketFeeMode: options.feeMode ?? 'ADD',
-    goalCents: ticketMax === null ? 0 : 200 * ticketMax,
+    // Sin tope, la venta lleva su objetivo orientativo (Sprint 5.14b): la base de datos ya no deja publicar una sin tope ni objetivo.
+    goalCents: 200 * (ticketMax ?? 150),
+    voucherTargetCount: ticketMax === null ? 150 : null,
     voucherValidUntil: new Date(Date.now() + 40 * DAY),
     voucherNoProductEnabled: options.noProduct ?? false
   });
@@ -139,8 +141,10 @@ describe('QA-VAL01 · compra de vales en un QR con saldo', () => {
     expect(gateway!.kind).toBe('GATEWAY_FEE');
     expect(await getRaisedFromLedger(db, initiative.id)).toBe(1_000);
     expect((await getAccountBalance(db, 'INITIATIVE_ESCROW', { initiativeId: initiative.id })).balanceCents).toBe(1_000);
-    // No sale por la bandeja el email del pase de una entrada: el de los vales, con su saldo, llega en el Sprint 5.14b.
+    // El pase sale por la bandeja con el email de los vales (Sprint 5.14b), nunca con el de una entrada: el mensaje lleva el identificador del pase, no el QR.
     expect(await db.outboxMessage.count({ where: { templateKey: 'ticket.pass', idempotencyKey: `ticket.pass:${contribution.id}` } })).toBe(0);
+    const message = await db.outboxMessage.findUniqueOrThrow({ where: { idempotencyKey: `voucher.pass:${contribution.id}` } });
+    expect(message).toMatchObject({ templateKey: 'voucher.pass', payloadJson: { passUuid: pass!.uuid, serialCode: pass!.serialCode, initiativeId: initiative.id, quantity: 5 } });
   });
 
   it('en INC los gastos van dentro: la hucha recibe 9,35 € de una compra de 10 €', async () => {

@@ -22,9 +22,13 @@ export function buildCheckoutOffer(input: {
   const { detail, context } = input;
   const { card } = detail;
   const ticketing = context.format === 'TICKETING';
+  const voucher = card.voucher;
   const organization = context.organization;
-  const closedReason = card.achieved ? (ticketing ? 'soldOut' : 'achieved') : card.closed || context.closesAt <= input.now ? 'ended' : ticketing && card.ticketsAvailable === 0 ? 'soldOut' : null;
-  const clusters = context.rewardEnabled ? orderedGroupClusters(organization.vertical, organization.participationGroupsJson) : [];
+  // Una venta de vales agotada sigue abierta si ofrece «sin producto»; cerrada o pasada su validez, ya no (`card.closed` lo dice con las reglas del motor).
+  const closedReason = voucher
+    ? card.closed || context.closesAt <= input.now ? 'ended' : card.achieved && !voucher.noProduct ? 'soldOut' : null
+    : card.achieved ? (ticketing ? 'soldOut' : 'achieved') : card.closed || context.closesAt <= input.now ? 'ended' : ticketing && card.ticketsAvailable === 0 ? 'soldOut' : null;
+  const clusters = context.rewardEnabled && !voucher ? orderedGroupClusters(organization.vertical, organization.participationGroupsJson) : [];
   const allGroups = clusters.flatMap((cluster) => cluster.items);
   // `?grupo=` del enlace compartido preselecciona el curso: se compara con los grupos de la entidad, nunca se usa el texto tal cual.
   const preselected = input.requestedGroup ? (allGroups.find((groupName) => groupSlug(groupName) === input.requestedGroup) ?? null) : null;
@@ -37,11 +41,14 @@ export function buildCheckoutOffer(input: {
     legalName: organization.legalName,
     vertical: organization.vertical,
     contentLang: input.contentLang,
-    kind: ticketing ? 'TICKET' : 'DONATION',
+    kind: voucher ? 'VOUCHER' : ticketing ? 'TICKET' : 'DONATION',
     closedReason,
     donation: ticketing ? null : { presetsCents: organization.donationPresetsCents, defaultIdx: organization.defaultDonationIdx },
+    voucher: voucher
+      ? { capped: voucher.capped, available: voucher.available, units: voucher.units, validUntilIso: voucher.validUntilIso, noProduct: voucher.noProduct, pricing: { mode: voucher.feeMode, priceCents: voucher.priceCents, fee: { fixedCents: voucher.feeFixedCents, pctBps: voucher.feeBps } } }
+      : null,
     ticket:
-      ticketing && detail.ticket
+      ticketing && !voucher && detail.ticket
         ? {
             subtype: 'EVENT',
             available: card.ticketsAvailable,
@@ -52,7 +59,7 @@ export function buildCheckoutOffer(input: {
         : null,
     groups: clusters.map((cluster) => ({ group: cluster.group, items: cluster.items })),
     initialGroup: preselected,
-    plaque: context.plaqueEnabled,
+    plaque: context.plaqueEnabled && !voucher,
     guarantee: { suggestedCents: organization.fullIntegrityCheckCents, choicesCents: guaranteeChoices(context.guaranteePresetsCents, organization.fullIntegrityCheckCents) },
     certificate,
     provinces: certificate ? PROVINCES.map((province) => ({ code: province.code, name: province.name })) : [],

@@ -90,9 +90,9 @@ describe('QA-RET01 · el código ya no tiene rifas', () => {
     expect(hits(files)).toEqual([]);
   });
 
-  it('el borrador del Estudio solo admite eventos y la categoría fija es «Taquilla»; ninguna plantilla ofrece otra cosa', () => {
+  it('el borrador del Estudio admite eventos y, desde el Sprint 5.14b, ventas de vales; la categoría fija es «Taquilla»; ninguna plantilla ofrece otra cosa', () => {
     expect(TICKETING_CATEGORY).toBe('Taquilla');
-    expect(studioDraftSchema.shape.ticketSubtype.options).toEqual(['EVENT']);
+    expect(studioDraftSchema.shape.ticketSubtype.options).toEqual(['EVENT', 'VOUCHER']);
     expect(Object.keys(studioDraftSchema.shape).filter((key) => RAFFLE_WORDS.test(key))).toEqual([]);
     expect(CAMPAIGN_TEMPLATES.filter((template) => template.ticket !== undefined).every((template) => template.ticket!.subtype === 'EVENT')).toBe(true);
   });

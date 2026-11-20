@@ -18,9 +18,16 @@ export interface InitiativeCardProps {
   shareButton?: ReactNode;
 }
 
-/** Texto del botón principal según el tipo de campaña. */
-export function ctaKey(card: Pick<InitiativeCardData, 'format'>): 'contribute' | 'buyTickets' {
+/** Texto del botón principal según el tipo de campaña: aportar, comprar entradas, comprar vales o, con los vales agotados, aportar «sin producto». */
+export function ctaKey(card: Pick<InitiativeCardData, 'format' | 'voucher'>): 'contribute' | 'buyTickets' | 'buyVouchers' | 'noProduct' {
+  if (card.voucher) return card.voucher.noProduct ? 'noProduct' : 'buyVouchers';
   return card.format === 'TICKETING' ? 'buyTickets' : 'contribute';
+}
+
+/** ¿Se puede pagar desde la tarjeta o la ficha? Abierta y sin agotar o, con los vales agotados, si se ofrece «sin producto». */
+export function canPay(card: Pick<InitiativeCardData, 'achieved' | 'closed' | 'voucher'>): boolean {
+  if (card.closed) return false;
+  return !card.achieved || card.voucher?.noProduct === true;
 }
 
 /**
@@ -31,6 +38,7 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
   const t = useTranslations('portal.card');
   const money = useMoney();
   const ticketing = card.format === 'TICKETING';
+  const voucher = card.voucher;
   const category = useCategoryLabel(contentLang)(card.category);
   const href = initiativePath(orgSlug, card.id);
 
@@ -60,7 +68,12 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
                   </span>
                 </DelayedTooltip>
               ) : null}
-              {ticketing ? (
+              {voucher ? (
+                <span className="font-corp rounded-full bg-sky-800 px-3 py-1 text-sm font-extrabold tabular-nums text-white" data-testid="voucher-price">
+                  <span aria-hidden="true">{'🧾 '}</span>
+                  {t(voucher.feeMode === 'ADD' ? 'voucherPriceAdd' : 'voucherPrice', { price: money(voucher.priceCents) })}
+                </span>
+              ) : ticketing ? (
                 <span className="font-corp rounded-full bg-sky-800 px-3 py-1 text-sm font-extrabold tabular-nums text-white">
                   <span aria-hidden="true">{'🎟️ '}</span>
                   {t('price', { price: money(card.ticketBuyerCents) })}
@@ -93,7 +106,12 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
           </h3>
           <div className="space-y-1.5">
             <div className="flex justify-between gap-2 text-sm font-extrabold tabular-nums">
-              {ticketing ? (
+              {voucher ? (
+                <>
+                  <span className="text-sky-900">{voucher.capped ? t('vouchersSold', { sold: card.ticketsSold, max: voucher.units }) : t('vouchersSoldOpen', { sold: card.ticketsSold })}</span>
+                  <span className="text-varsity-navy">{voucher.capped ? t('vouchersLeft', { count: voucher.available ?? 0 }) : t('vouchersTarget', { count: voucher.units })}</span>
+                </>
+              ) : ticketing ? (
                 <>
                   <span className="text-sky-900">{t('ticketsSold', { sold: card.ticketsSold, max: card.ticketMax })}</span>
                   <span className="text-varsity-navy">{t('ticketsLeft', { count: card.ticketsAvailable })}</span>
@@ -120,15 +138,15 @@ export function InitiativeCard({ orgSlug, card, contentLang, shareButton }: Init
       <div className="space-y-2 px-5 pb-5 pt-1">
         <p className="px-1 text-sm font-bold text-emerald-900">
           <span aria-hidden="true">{'🛡️ '}</span>
-          {t('refund')}
+          {t(voucher ? (voucher.noProduct ? 'refundNoProduct' : 'refundVouchers') : 'refund')}
         </p>
-        {card.achieved || card.closed ? (
+        {!canPay(card) ? (
           <p className="flex min-h-11 items-center justify-center rounded-2xl bg-emerald-100 px-3 text-center font-joy text-sm font-bold text-emerald-950">
-            {card.achieved ? (ticketing ? t('soldOut') : t('goalReached')) : t('closed')}
+            {card.achieved ? (voucher ? t('vouchersSoldOut') : ticketing ? t('soldOut') : t('goalReached')) : t('closed')}
           </p>
         ) : (
           <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn relative z-10 w-full rounded-2xl! font-joy">
-            <span aria-hidden="true">{ticketing ? '🎟️' : '💛'}</span>
+            <span aria-hidden="true">{voucher ? (voucher.noProduct ? '💛' : '🧾') : ticketing ? '🎟️' : '💛'}</span>
             {t(ctaKey(card))}
           </Link>
         )}

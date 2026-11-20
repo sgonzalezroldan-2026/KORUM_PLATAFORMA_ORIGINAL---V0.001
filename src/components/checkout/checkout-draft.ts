@@ -1,5 +1,5 @@
 import { GUARANTEE_MAX_CENTS, MAX_TICKETS_PER_ORDER, type CheckoutMethod } from '@/core/checkout/checkout-limits';
-import { maxSelectableTickets, type TicketPricing } from '@/core/checkout/checkout-summary';
+import { maxSelectableTickets, maxSelectableVouchers, type TicketPricing, type VoucherPricing } from '@/core/checkout/checkout-summary';
 import { MoneyParseError, parseEurosToCents, type MoneyLocale } from '@/core/finance/money';
 import { clearSponsorDraft } from './sponsor-draft';
 
@@ -16,11 +16,16 @@ export interface CheckoutOffer {
   legalName: string;
   vertical: string;
   contentLang?: string;
-  kind: 'DONATION' | 'TICKET';
+  kind: 'DONATION' | 'TICKET' | 'VOUCHER';
   /** Por qué ya no se puede pagar, o `null` si se puede. */
   closedReason: 'achieved' | 'soldOut' | 'ended' | null;
   donation: { presetsCents: number[]; defaultIdx: number } | null;
   ticket: { subtype: 'EVENT'; available: number; max: number; venue: string | null; pricing: TicketPricing } | null;
+  /**
+   * Venta de vales (Sprint 5.14b): quedan `available` (`null` sin tope) de `units` (tope u objetivo), válidos hasta `validUntilIso`. Con `noProduct`, la venta
+   * está agotada y lo que se ofrece es la aportación «sin producto», medida en vales (decisión 64).
+   */
+  voucher: { capped: boolean; available: number | null; units: number; validUntilIso: string; noProduct: boolean; pricing: VoucherPricing } | null;
   /** Grupos del reto en el orden de la entidad; vacío si el reto está desactivado. */
   groups: Array<{ group: string; items: string[] }>;
   initialGroup: string | null;
@@ -50,13 +55,20 @@ export interface CheckoutDraft {
   method: CheckoutMethod;
 }
 
+/** Cuántas unidades se pueden elegir en este pago: entradas o vales (o su equivalente «sin producto»); 1 en una donación. */
+export function maxQuantity(offer: CheckoutOffer): number {
+  if (offer.voucher) return maxSelectableVouchers(offer.voucher.available, offer.voucher.noProduct);
+  if (offer.ticket) return maxSelectableTickets(offer.ticket.available);
+  return 1;
+}
+
 export function initialDraft(offer: CheckoutOffer): CheckoutDraft {
   const presets = offer.donation?.presetsCents ?? [];
   const defaultIdx = offer.donation && offer.donation.defaultIdx < presets.length ? offer.donation.defaultIdx : presets.length > 0 ? 0 : null;
   return {
     presetIdx: defaultIdx,
     customAmount: '',
-    quantity: offer.ticket ? Math.min(1, maxSelectableTickets(offer.ticket.available)) : 1,
+    quantity: Math.min(1, maxQuantity(offer)),
     groupName: offer.initialGroup ?? '',
     guaranteeOn: false,
     guaranteeCents: offer.guarantee.suggestedCents,
@@ -102,7 +114,7 @@ export function loadDraft(offer: CheckoutOffer, method: CheckoutMethod | null): 
   return {
     presetIdx: presetIdx ?? (text('customAmount', 12) === '' ? base.presetIdx : null),
     customAmount: text('customAmount', 12),
-    quantity: offer.ticket ? Math.min(Math.max(1, quantity), Math.max(1, maxSelectableTickets(offer.ticket.available))) : 1,
+    quantity: offer.ticket || offer.voucher ? Math.min(Math.max(1, quantity), Math.max(1, maxQuantity(offer))) : 1,
     groupName: allGroups.includes(groupName) ? groupName : base.groupName,
     guaranteeOn: value.guaranteeOn === true,
     guaranteeCents: Math.min(Math.max(0, guaranteeCents), GUARANTEE_MAX_CENTS),
@@ -138,7 +150,7 @@ export function guaranteeCents(draft: CheckoutDraft): number {
   return draft.guaranteeOn ? Math.min(Math.max(0, draft.guaranteeCents), GUARANTEE_MAX_CENTS) : 0;
 }
 
-export const clampQuantity = (quantity: number, available: number): number => Math.min(Math.max(1, quantity), Math.max(1, Math.min(MAX_TICKETS_PER_ORDER, available)));
+export const clampQuantity = (quantity: number, available: number, perOrder: number = MAX_TICKETS_PER_ORDER): number => Math.min(Math.max(1, quantity), Math.max(1, Math.min(perOrder, available)));
 
 /** La petición que se envía al servidor. Solo lo que elige la persona: precios y gastos los vuelve a calcular el servidor. */
 export function buildCheckoutPayload(offer: CheckoutOffer, draft: CheckoutDraft, taxId: string, locale: MoneyLocale, method: CheckoutMethod) {
@@ -151,6 +163,8 @@ export function buildCheckoutPayload(offer: CheckoutOffer, draft: CheckoutDraft,
     email: offer.sessionEmail ? null : draft.email.trim()
   };
   if (offer.kind === 'TICKET') return { kind: 'TICKET' as const, ...common, quantity: draft.quantity };
+  // Una compra de vales no se apunta a un curso (`reserveVouchers` no recibe grupo) ni lleva la aportación voluntaria a KORUM, como las entradas.
+  if (offer.kind === 'VOUCHER') return { kind: 'VOUCHER' as const, ...common, groupName: null, quantity: draft.quantity, mode: offer.voucher?.noProduct ? ('NO_PRODUCT' as const) : ('VOUCHERS' as const) };
   const fiscal = offer.certificate && draft.wantsCertificate ? { taxId: taxId.trim(), fullName: draft.fullName.trim(), provinceCode: draft.provinceCode } : null;
   return { kind: 'DONATION' as const, ...common, amountCents: donationCents(offer, draft, locale) ?? 0, guaranteeCents: guaranteeCents(draft), fiscal };
 }
@@ -182,7 +196,7 @@ export function draftFromHint(offer: CheckoutOffer, hint: RetryHint, method: Che
     ...base,
     presetIdx: amount === null ? base.presetIdx : matched >= 0 ? matched : null,
     customAmount: amount !== null && matched < 0 ? centsToInput(amount, locale) : '',
-    quantity: offer.ticket && hint.quantity !== null ? clampQuantity(hint.quantity, offer.ticket.available) : base.quantity,
+    quantity: (offer.ticket || offer.voucher) && hint.quantity !== null ? clampQuantity(hint.quantity, maxQuantity(offer), maxQuantity(offer)) : base.quantity,
     guaranteeOn: guarantee > 0,
     guaranteeCents: guarantee > 0 ? guarantee : base.guaranteeCents,
     method: method ?? base.method

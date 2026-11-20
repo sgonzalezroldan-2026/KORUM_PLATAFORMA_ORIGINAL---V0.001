@@ -49,9 +49,22 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const [t, logo, cover] = await Promise.all([getTranslations({ locale, namespace: 'portal.og' }), ogEntityLogo(getPrisma(), initiative.organization.logoFileId), ogCoverThumbnail(getPrisma(), initiative.coverFileId)]);
   const brand = await getTranslations({ locale, namespace: 'brand' });
   const ticketing = initiative.format === 'TICKETING';
+  // Venta de vales (Sprint 5.14b): el avance va en vales sobre el tope o, sin tope, sobre el objetivo orientativo. Sin tope nunca se «agota»: sigue a la venta hasta su cierre.
+  const vouchers = ticketing && initiative.ticketSubtype === 'VOUCHER';
+  const units = vouchers ? (initiative.ticketMax ?? initiative.voucherTargetCount ?? 0) : (initiative.ticketMax ?? 0);
   const reached = initiative.status !== 'FUNDRAISING' || (ticketing ? initiative.ticketMax !== null && initiative.ticketsSold + initiative.ticketsHeld >= initiative.ticketMax : initiative.raisedCents >= initiative.goalCents);
-  const pct = reached ? 100 : ticketing ? percentOf(initiative.ticketsSold, initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents, initiative.goalCents);
-  const progressText = ticketing && !reached ? t('tickets', { sold: initiative.ticketsSold, max: initiative.ticketMax ?? 0 }) : reached ? t('goalReached') : t('progress', { pct });
+  const pct = reached ? 100 : ticketing ? percentOf(initiative.ticketsSold, units) : percentOf(initiative.raisedCents, initiative.goalCents);
+  const progressText = vouchers
+    ? reached
+      ? t('vouchersClosed')
+      : initiative.ticketMax !== null
+        ? t('vouchers', { sold: initiative.ticketsSold, max: initiative.ticketMax })
+        : t('vouchersOpen', { sold: initiative.ticketsSold })
+    : ticketing && !reached
+      ? t('tickets', { sold: initiative.ticketsSold, max: initiative.ticketMax ?? 0 })
+      : reached
+        ? t('goalReached')
+        : t('progress', { pct });
   const remaining = daysLeft(initiative.closesAt, new Date());
 
   const group = initiative.rewardEnabled ? findGroupBySlug(initiative.courses, query.get('grupo')) : null;

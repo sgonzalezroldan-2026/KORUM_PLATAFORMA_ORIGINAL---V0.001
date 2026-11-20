@@ -65,7 +65,8 @@ const contributionRow = (overrides: Partial<AccountOverview['contributions'][num
   totalChargedCents: 2_680,
   refundedCents: 0,
   groupName: null,
-  initiative: { id: 4, title: 'Toldos para el patio' },
+  voucherNoProduct: false,
+  initiative: { id: 4, title: 'Toldos para el patio', ticketSubtype: null },
   organization: { slug: 'cervantes', name: 'CEIP Cervantes' },
   ...overrides
 });
@@ -87,7 +88,7 @@ describe('Mi cuenta · historial', () => {
   });
 
   it('una entrada válida enlaza con la firma de vista; una anulada lo dice y no enlaza', () => {
-    const base = { serialCode: 'TKT-1', quantity: 2, initiative: { title: 'Festival de primavera', closesAt: new Date('2026-12-01T18:00:00Z'), ticketVenue: 'Patio', organization: { slug: 'cervantes', name: 'CEIP Cervantes' } } };
+    const base = { serialCode: 'TKT-1', subtype: 'EVENT' as const, quantity: 2, checkedInCount: 0, initiative: { title: 'Festival de primavera', closesAt: new Date('2026-12-01T18:00:00Z'), ticketVenue: 'Patio', voucherValidUntil: null, organization: { slug: 'cervantes', name: 'CEIP Cervantes' } } };
     renderWithIntl(
       <AccountPasses
         passes={[

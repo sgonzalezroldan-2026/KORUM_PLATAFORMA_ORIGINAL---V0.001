@@ -921,6 +921,30 @@
         "next": "Si lo necesitáis, resolvedlo con esa persona fuera de la plataforma. En el registro de actividad queda anotado.",
         "pass": "Pase"
       }
+    },
+    "voucher": {
+      "subject": "Tus vales de «{initiative}»",
+      "preheader": "Tu código QR está dentro.",
+      "title": "Tus vales están listos",
+      "body": "Has comprado {count, plural, one {# vale} other {# vales}} de {organization}. Enseña el código QR en su puesto y allí descontarán los que gastes: los que te queden siguen en el mismo código. Lo tienes como imagen adjunta y también en el botón.",
+      "refund": "Si no gastas ningún vale de esta compra, puedes pedir la devolución del 100 % durante 14 días. Después, lo pagado se queda para la causa de la entidad.",
+      "serial": "Código",
+      "quantity": "Vales comprados",
+      "quantityValue": "{count, plural, one {# vale} other {# vales}}",
+      "validUntil": "Se pueden gastar hasta",
+      "holder": "Vende la entidad",
+      "cta": "Ver mis vales",
+      "footnote": "El código QR es personal: no lo publiques en redes. Quien lo tenga puede gastar tus vales.",
+      "noProduct": {
+        "subject": "Recibo de tu aportación a «{initiative}»",
+        "preheader": "Gracias por sumar. Aquí tienes tu recibo.",
+        "title": "¡Gracias por sumar!",
+        "body": "Hemos recibido tu aportación sin producto, equivalente a {count, plural, one {# vale} other {# vales}}, para «{initiative}», de {organization}.",
+        "conditions": "Es una aportación sin producto: no da vales ni código QR, no da derecho a certificado fiscal de donación y no se devuelve, salvo que la entidad cancele la venta. Guarda este email como recibo.",
+        "equivalent": "Equivale a",
+        "amount": "Para la entidad",
+        "fee": "Gastos de gestión digital"
+      }
     }
   },
   "nav": {
@@ -2998,11 +3022,13 @@
         "existingTitle": "Vuestras campañas",
         "existingEmpty": "Aún no hay ninguna campaña. Empezad con una plantilla o en blanco.",
         "edit": "Editar en Estudio",
-        "open": "Abrir"
+        "open": "Abrir",
+        "newVouchers": "+ Nueva venta de vales"
       },
       "format": {
         "BUDGET": "Presupuesto / obra",
-        "TICKETING": "Taquilla"
+        "TICKETING": "Taquilla",
+        "VOUCHER": "Venta de vales"
       },
       "templates": {
         "climate": {
@@ -3199,7 +3225,9 @@
         "goalLabelTicketing": "A la hucha con el aforo completo",
         "badgeResized": "Meta fija por votación",
         "goalLabelResized": "Meta fija tras la votación",
-        "ticketNetNote": "Si no se vende todo, al llegar la fecha del evento la entidad recibe lo vendido, con el mantenimiento rebajado en la misma proporción."
+        "ticketNetNote": "Si no se vende todo, al llegar la fecha del evento la entidad recibe lo vendido, con el mantenimiento rebajado en la misma proporción.",
+        "badgeVouchers": "Vales",
+        "goalLabelVouchers": "Meta (vales vendidos)"
       },
       "blockers": {
         "title": "Para publicar falta:",
@@ -3217,7 +3245,12 @@
         "CLOSING_TOO_LATE": "La campaña duraría más del máximo permitido: elegid una fecha de cierre anterior.",
         "TITLE_MISSING": "Escribid un título de al menos 3 letras.",
         "MAINT_EXCEEDS_TAKINGS": "Con este precio y este aforo la recaudación no cubre el mantenimiento de la plataforma: subid el precio o el aforo.",
-        "GOAL_TOO_HIGH": "Con este presupuesto y las condiciones de la plataforma la meta superaría el máximo que se puede guardar: bajad el presupuesto o escribid a KORUM."
+        "GOAL_TOO_HIGH": "Con este presupuesto y las condiciones de la plataforma la meta superaría el máximo que se puede guardar: bajad el presupuesto o escribid a KORUM.",
+        "VOUCHER_TARGET_ZERO": "Indica el objetivo de vales.",
+        "VALIDITY_INVALID": "Indica hasta cuándo se pueden gastar los vales.",
+        "VALIDITY_BEFORE_CLOSE": "Los vales no pueden caducar antes del día de cierre de la venta.",
+        "VALIDITY_TOO_LATE": "La validez de los vales no puede pasar de 12 meses desde el cierre de la venta.",
+        "VOUCHER_MAX_ZERO": "Indica el tope de vales."
       },
       "errors": {
         "INVALID_INPUT": "Hay datos que no son válidos. Revisad el formulario.",
@@ -3262,7 +3295,8 @@
       },
       "lock": {
         "soft": "La campaña ya está recaudando: solo se pueden cambiar la descripción, el desglose público, el reto y la placa. El presupuesto, el precio y la fecha ya los usan las aportaciones.",
-        "all": "Esta campaña ya está cerrada: se muestra sin poder cambiar nada."
+        "all": "Esta campaña ya está cerrada: se muestra sin poder cambiar nada.",
+        "softVouchers": "La venta ya está en marcha: solo se puede cambiar la descripción. El precio, el tope, la validez y la fecha ya los usan las compras."
       },
       "lockAlert": {
         "title": "Aviso de auditoría de categoría",
@@ -3294,7 +3328,9 @@
         },
         "defaultMessageTickets": "Escanea el código QR con tu móvil, elige tu entrada y paga con Bizum o tarjeta en 10 segundos.",
         "guaranteeTickets": "Pago seguro con PAYCOMET. Si el evento se cancela, te devolvemos el 100 % de lo que pagaste, al mismo medio de pago. Hucha de la iniciativa {wallet}.",
-        "metaTitle": "Cartel A4 con QR"
+        "metaTitle": "Cartel A4 con QR",
+        "defaultMessageVouchers": "Escanea el código QR con tu móvil, elige cuántos vales quieres y paga con Bizum o tarjeta en 10 segundos.",
+        "guaranteeVouchers": "Pago seguro con PAYCOMET. Si no gastas ningún vale, puedes pedir la devolución del 100 % durante 14 días. Hucha de la iniciativa {wallet}."
       },
       "discard": {
         "title": "¿Descartar este borrador?",
@@ -3365,6 +3401,40 @@
         "gatewayAbsorbed": "Coste de la pasarela de pago (cubierto: no se resta de la meta)",
         "detailAfterLoss": "Quienes aportaron decidieron seguir adelante con lo recaudado: la meta pasó de {original} a {voted} y las comisiones bajaron en la misma proporción. Después, un contracargo (un cobro que se devolvió a su titular) la dejó en {goal}, con las comisiones otra vez en proporción. Las cifras se muestran sin poder cambiarse.",
         "entitySame": "Para el proyecto al liquidar: la meta menos las comisiones (el mismo importe que el coste del proyecto)"
+      },
+      "vouchers": {
+        "title": "Venta de vales",
+        "intro": "Vales de precio único que las familias gastan en el puesto de la entidad, con un solo código QR por compra. Explica en la descripción qué se puede canjear con ellos: no hace falta una lista de artículos.",
+        "price": "Precio de un vale",
+        "capMode": "Cantidad de vales",
+        "capped": "Con un tope de vales",
+        "open": "Sin tope",
+        "max": "Tope de vales",
+        "maxHint": "Al llegar al tope, la venta se agota.",
+        "target": "Objetivo de vales",
+        "targetHint": "Es orientativo: no limita la venta. Sirve para la barra de avance y para comprobar que el mantenimiento queda cubierto.",
+        "validOn": "Los vales se pueden gastar hasta",
+        "validOnHint": "Por defecto, hasta el inicio del curso siguiente. Puedes cambiarla: desde el día de cierre de la venta hasta 12 meses después.",
+        "feeValue": "{fixed} + {pct} por compra",
+        "feeExamples": "Se cobran una vez por compra, no por vale: 1 vale, {one}; {count} vales, {largest}.",
+        "noProduct": "Al agotarse, dejar seguir aportando «sin producto»",
+        "noProductHint": "Quien llegue tarde podrá aportar el equivalente a unos vales sin recibirlos. Es una aportación sin certificado fiscal, sin vale ni código QR, y no se devuelve salvo que canceléis la venta.",
+        "noProductForProfit": "Al agotarse, la venta se queda agotada: a un colegio con ánimo de lucro no se le puede ofrecer la aportación «sin producto».",
+        "noProductOpen": "Una venta sin tope no se agota, así que no hace falta la aportación «sin producto».",
+        "boardGross": "Precio de los {count, plural, one {# vale} other {# vales}} del tope",
+        "boardGrossTarget": "Precio de los {count, plural, one {# vale} other {# vales}} del objetivo",
+        "boardModelTitle": "Modelo de vales",
+        "boardFeeAdd": "{amount} en una compra de 1 vale (se suman a quien compra)",
+        "boardFeeInc": "{amount} en una compra de 1 vale (incluidos en el precio)",
+        "boardFeeLargest": "Gastos de gestión digital en una compra de {count} vales",
+        "boardNet": "Neto para la entidad si se venden todos los vales",
+        "boardNetTarget": "Neto para la entidad si se llega al objetivo",
+        "boardNetNoteAdd": "Los Gastos de gestión digital los paga quien compra, encima del precio. Si se vende menos, la entidad recibe lo vendido, con el mantenimiento rebajado en la misma proporción.",
+        "boardNetNoteInc": "Es lo mínimo que recibe la entidad si se venden todos, se compren como se compren: si se compran varios vales a la vez, se pagan menos gastos y la entidad suele recibir algo más. Si se vende menos, recibe lo vendido, con el mantenimiento rebajado en la misma proporción.",
+        "gatewayNotCovered": "Con la tarifa actual, los Gastos de gestión digital no cubren el coste de la pasarela en alguna compra. Avisaremos al equipo de KORUM: a la entidad no se le resta nada.",
+        "boardFee": "Gastos de gestión digital por compra",
+        "feeModeAdd": "Sumarlos a quien compra",
+        "feeModeInc": "Asumirlos dentro del precio del vale"
       }
     },
     "payouts": {
@@ -5684,7 +5754,18 @@
       "goalReached": "¡100 % conseguido! Cerrado",
       "contribute": "Aportar ahora",
       "buyTickets": "Comprar entradas",
-      "closed": "Cerrada"
+      "closed": "Cerrada",
+      "voucherPrice": "{price} / vale",
+      "vouchersSold": "{sold} de {max} vales vendidos",
+      "vouchersSoldOpen": "{sold, plural, one {# vale vendido} other {# vales vendidos}}",
+      "vouchersLeft": "{count, plural, =0 {Ya agotados} one {Queda # vale} other {Quedan # vales}}",
+      "vouchersTarget": "Objetivo: {count, plural, one {# vale} other {# vales}}",
+      "refundVouchers": "Devolución del 100 % en 14 días si no gastas ningún vale",
+      "vouchersSoldOut": "Vales agotados",
+      "buyVouchers": "Comprar vales",
+      "noProduct": "Aportar sin producto",
+      "refundNoProduct": "Vales agotados: la aportación sin producto no se devuelve",
+      "voucherPriceAdd": "{price} / vale + gastos"
     },
     "categories": {
       "comfort": "Infraestructura y Confort",
@@ -5701,7 +5782,9 @@
         "label": "Hucha de la iniciativa",
         "refund": "Devolución del 100 % si no se logra la meta",
         "independence": "Independencia total de proveedores",
-        "deadline": "Fecha límite"
+        "deadline": "Fecha límite",
+        "refundVouchers": "Devolución del 100 % en 14 días si no gastas ningún vale",
+        "refundNoProduct": "Vales agotados: la aportación sin producto no se devuelve"
       },
       "plaque": "Incluye placa conmemorativa de agradecimiento",
       "matching": "Matching 2x activo: tu aportación se duplica mientras quede bolsa.",
@@ -5751,11 +5834,15 @@
       },
       "cta": {
         "contribute": "Aportar a esta iniciativa",
-        "buyTickets": "Comprar entradas"
+        "buyTickets": "Comprar entradas",
+        "buyVouchers": "Comprar vales",
+        "noProduct": "Aportar sin producto"
       },
       "contributionsClosed": "Esta iniciativa ya no admite aportaciones",
       "selfBoost": "La plataforma KORUM también aportó y ayudó a conseguir el reto.",
-      "ticketSalesClosed": "La venta de entradas de este evento ha terminado"
+      "ticketSalesClosed": "La venta de entradas de este evento ha terminado",
+      "voucherSalesClosed": "La venta de vales ha terminado",
+      "vouchersSoldOut": "Vales agotados. ¡Gracias por querer sumar!"
     },
     "share": {
       "title": "Compartir en KORUM",
@@ -5816,7 +5903,10 @@
         },
         "promise": "Ideas, campañas y logros de toda la comunidad. Si no se llega a la meta, se devuelve el 100 %.",
         "poweredBy": "Con la tecnología de {brand}"
-      }
+      },
+      "vouchers": "{sold} de {max} vales vendidos",
+      "vouchersOpen": "{sold, plural, one {# vale vendido} other {# vales vendidos}}",
+      "vouchersClosed": "¡Venta de vales completada!"
     },
     "pass": {
       "title": "Tu entrada",
@@ -5837,7 +5927,17 @@
       "shareWhatsapp": "Enviar por WhatsApp",
       "shareWarning": "Quien tenga este enlace puede usar la entrada: envíalo solo a quien vaya a ir.",
       "shareMessage": "Tu entrada para «{title}»: {url}",
-      "actions": "Acciones de la entrada"
+      "actions": "Acciones de la entrada",
+      "titleVouchers": "Tus vales",
+      "qrAltVouchers": "Código QR de tus vales",
+      "voucherBalance": "{balance, plural, =0 {Vales por gastar: 0 de {total}} one {Te queda # vale de {total}} other {Te quedan # vales de {total}}}",
+      "voucherValidUntil": "Se pueden gastar hasta el {date}",
+      "voucherExpired": "Estos vales ya han caducado y no se pueden gastar.",
+      "voucherSpent": "Ya has gastado todos los vales de esta compra.",
+      "showVouchers": "Enséñalo en el puesto de la entidad, en el móvil o impreso: allí descuentan los vales que gastes.",
+      "shareMessageVouchers": "Tus vales de «{title}»: {url}",
+      "shareWarningVouchers": "Quien tenga este enlace puede gastar los vales: envíalo solo a quien los vaya a usar.",
+      "actionsVouchers": "Acciones de tus vales"
     },
     "error": {
       "title": "No hemos podido cargar la comunidad",
@@ -5911,7 +6011,10 @@
         "donationOnly": "{donation} al proyecto",
         "ticketsAdd": "{count} × {price} + {fee} de Gastos de gestión digital",
         "ticketsInc": "{count} × {price} (Gastos de gestión digital incluidos)",
-        "total": "Total"
+        "total": "Total",
+        "vouchersAdd": "{count, plural, one {# vale} other {# vales}} ({amount}) + {fee} de Gastos de gestión digital",
+        "vouchersInc": "{count, plural, one {# vale} other {# vales}} ({amount}, Gastos de gestión digital incluidos)",
+        "noProduct": "Sin producto · equivale a {count, plural, one {# vale} other {# vales}}"
       },
       "pay": {
         "bizum": "Pagar {total} con Bizum",
@@ -5927,13 +6030,17 @@
         "closed": "Esta iniciativa ya no admite aportaciones. ¡Gracias por querer sumar!",
         "rateLimited": "Has hecho muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
         "unavailable": "No hemos podido abrir el pago seguro. No se te ha cobrado nada: vuelve a intentarlo en unos minutos.",
-        "network": "Se ha cortado la conexión. No se te ha cobrado nada: comprueba tu conexión y vuelve a intentarlo."
+        "network": "Se ha cortado la conexión. No se te ha cobrado nada: comprueba tu conexión y vuelve a intentarlo.",
+        "changed": "La venta ha cambiado mientras elegías (vuelve a haber vales a la venta). No se te ha cobrado nada: vuelve a abrir la ficha."
       },
       "closed": {
         "title": "Ya no se puede aportar",
         "achieved": "¡Meta conseguida! Esta iniciativa ya no necesita más aportaciones.",
         "soldOut": "¡Aforo completo! Ya no quedan plazas.",
-        "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones."
+        "ended": "Esta iniciativa ha terminado su plazo y ya no admite aportaciones.",
+        "achievedVouchers": "¡Vales agotados! Ya no quedan vales a la venta.",
+        "soldOutVouchers": "¡Vales agotados! Ya no quedan vales a la venta.",
+        "endedVouchers": "La venta de vales ha terminado."
       },
       "custodyTickets": "Pago seguro con Paycomet",
       "tabs": {
@@ -5990,7 +6097,27 @@
           "unavailable": "No hemos podido abrir la página de pago. No se te ha cobrado nada; prueba de nuevo en unos minutos.",
           "network": "No hemos podido conectar. No se te ha cobrado nada; vuelve a probarlo."
         }
-      }
+      },
+      "voucher": {
+        "fee": "{fixed} + {pct} por compra",
+        "badge": "Vales",
+        "badgeNoProduct": "Aportación sin producto",
+        "soldOut": "Vales agotados",
+        "available": "Quedan {available} de {max}",
+        "unlimited": "Sin límite de vales",
+        "validUntil": "Se pueden gastar hasta el {date}.",
+        "quantity": "¿Cuántos vales?",
+        "quantityNoProduct": "¿A cuántos vales equivale tu aportación?",
+        "unitAdd": "{price} cada vale + Gastos de gestión digital ({fee})",
+        "unitInc": "{price} cada vale (Gastos de gestión digital incluidos)",
+        "less": "Un vale menos",
+        "more": "Un vale más",
+        "limit": "Puedes elegir hasta {max} en cada compra.",
+        "soldOutError": "{count, plural, =0 {Ya no quedan vales. ¡Gracias por intentarlo!} one {Solo queda # vale.} other {Solo quedan # vales.}}",
+        "useAvailable": "{count, plural, one {Elegir # vale} other {Elegir # vales}}"
+      },
+      "refundNoteVouchers": "Recibirás un solo código QR con tus vales. Si no gastas ninguno, puedes pedir la devolución del 100 % durante 14 días.",
+      "refundNoteNoProduct": "La aportación sin producto no da vales ni certificado fiscal y no se devuelve, salvo que la entidad cancele la venta."
     },
     "simulator": {
       "metaTitle": "Pago simulado",
@@ -6030,7 +6157,16 @@
         "serial": "Código {serial}",
         "share": "Comparte la iniciativa para que se sumen más familias.",
         "pct": "{pct} % conseguido",
-        "groupReached": "¡{group} ha conseguido su reto con {count, plural, one {# familia} other {# familias}}!"
+        "groupReached": "¡{group} ha conseguido su reto con {count, plural, one {# familia} other {# familias}}!",
+        "titleVouchers": "¡Listo! Tus vales ya son tuyos",
+        "titleNoProduct": "¡Gracias! Tu aportación ya suma",
+        "vouchersSoldOut": "¡Con tu compra se han agotado los vales!",
+        "vouchersTargetReached": "¡Con tu compra se ha llegado al objetivo de vales!",
+        "viewVouchers": "Ver mis vales",
+        "vouchersEmail": "También te lo hemos enviado por email: es el código QR que enseñarás en el puesto.",
+        "noProductReceipt": "Te hemos enviado el recibo por email. Esta aportación no da vales ni certificado fiscal.",
+        "vouchersBought": "{count, plural, one {Has comprado # vale, que se puede gastar hasta el {date}.} other {Has comprado # vales, que se pueden gastar hasta el {date}.}}",
+        "vouchersRefund": "Si no gastas ninguno, puedes pedir la devolución del 100 % durante 14 días."
       },
       "pending": {
         "title": "Estamos confirmando tu pago…",
@@ -6589,6 +6725,30 @@
         "RATE_LIMITED": "Demasiados intentos desde esta conexión. Espera unos minutos.",
         "FAILED": "No hemos podido pedir la devolución. Prueba de nuevo en unos segundos."
       }
+    },
+    "voucher": {
+      "soldOf": "{sold} de {max} vales vendidos",
+      "sold": "{sold, plural, one {# vale vendido} other {# vales vendidos}}",
+      "left": "{count, plural, =0 {Ya agotados} one {Queda # vale} other {Quedan # vales}}",
+      "target": "Objetivo: {count, plural, one {# vale} other {# vales}}",
+      "heading": "Cómo funcionan los vales",
+      "price": "Precio de un vale",
+      "priceInc": "Precio de un vale (gastos incluidos)",
+      "fee": "Gastos de gestión digital (se suman)",
+      "feeInc": "Gastos de gestión digital (incluidos)",
+      "feeValue": "{fixed} + {pct} por compra",
+      "validUntil": "Se pueden gastar hasta el",
+      "howToUse": "Recibes un solo código QR con todos tus vales. Lo enseñas en el puesto de la entidad y allí descuentan los que gastas; los que te queden siguen en el mismo código.",
+      "refund": "Si no gastas ningún vale de tu compra, puedes pedir la devolución del 100 % durante 14 días. Después, lo pagado se queda para la causa de la entidad.",
+      "noProduct": {
+        "title": "Los vales se han agotado, pero puedes seguir aportando",
+        "body": "Es una aportación «sin producto»: eliges a cuántos vales equivale y todo va a la causa de la entidad.",
+        "noVoucher": "No recibes vales ni código QR.",
+        "noCertificate": "No da derecho a certificado fiscal de donación.",
+        "noRefund": "No se devuelve, salvo que la entidad cancele la venta."
+      },
+      "perVoucherAdd": "cada vale, más gastos por compra",
+      "perVoucherInc": "cada vale, gastos incluidos"
     }
   },
   "account": {
@@ -6598,7 +6758,7 @@
     "sectionsLabel": "Apartados de Mi cuenta",
     "sections": {
       "contributions": "Aportaciones",
-      "passes": "Entradas",
+      "passes": "Entradas y vales",
       "documents": "Certificados",
       "privacy": "Privacidad",
       "security": "Llaves de acceso",
@@ -6611,7 +6771,9 @@
       "line": "{organization} · {date} · {type}",
       "type": {
         "DONATION": "Donación",
-        "TICKET": "Entradas"
+        "TICKET": "Entradas",
+        "VOUCHER": "Vales",
+        "NO_PRODUCT": "Aportación sin producto"
       },
       "includesGuarantee": "Incluye tu aportación voluntaria a KORUM.",
       "status": {
@@ -6627,19 +6789,23 @@
       "emptyAction": "Buscar mi centro o club"
     },
     "passes": {
-      "title": "Mis entradas",
+      "title": "Mis entradas y vales",
       "where": "{organization} · {date}",
       "quantity": "{count, plural, one {# entrada} other {# entradas}}",
       "serial": "Código: {serial}",
       "revoked": "Esta entrada está anulada (por una devolución o una reclamación del pago) y ya no vale en la puerta.",
       "viewEvent": "Ver mi entrada",
       "emptyTitle": "No tienes entradas",
-      "emptyText": "Las entradas que compres con este email aparecerán aquí, listas para enseñar en la puerta."
+      "emptyText": "Las entradas que compres con este email aparecerán aquí, listas para enseñar en la puerta.",
+      "voucherWhere": "{organization} · se pueden gastar hasta el {date}",
+      "voucherBalance": "{balance, plural, =0 {Vales por gastar: 0 de {total}} one {Te queda # vale de {total}} other {Te quedan # vales de {total}}}",
+      "revokedVouchers": "Estos vales están anulados (por una devolución o una reclamación del pago) y ya no se pueden gastar.",
+      "viewVouchers": "Ver mis vales"
     },
     "documents": {
       "metaTitle": "Certificados y justificantes",
       "summary": "{count, plural, one {Tienes # donación con documento} other {Tienes # donaciones con documento}}: certificado fiscal o justificante, listo para imprimir.",
-      "none": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante. Las entradas no dan documento de donación.",
+      "none": "Cuando hagas una donación, aquí tendrás su certificado fiscal o su justificante. Las entradas y los vales no dan documento de donación.",
       "open": "Ver certificados y justificantes",
       "openOne": "Ver documento",
       "back": "Volver a Mi cuenta",
@@ -7840,6 +8006,10 @@
           "changed": "Aviso de cancelación o cambio de fecha a quienes firman",
           "cancelledBuyer": "Aviso de evento cancelado a quien compró",
           "rescheduledBuyer": "Aviso de cambio de fecha con enlace de devolución"
+        },
+        "voucher": {
+          "pass": "Vales con su código QR",
+          "noProductReceipt": "Recibo de la aportación sin producto"
         }
       },
       "payoutGapMismatch": "ATENCIÓN: de la hucha salió menos que el importe para el proyecto y la comisión juntos. Hay que revisar el libro mayor.",

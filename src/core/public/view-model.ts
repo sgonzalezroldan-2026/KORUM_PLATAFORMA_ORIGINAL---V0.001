@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { reportError } from '@/lib/error-reporting';
 import { daysLeft, isAchieved, progressPercent, ticketsAvailable, type PublicFormat } from './catalog';
 import { buildCourseChallenge, orderedGroupNames, type CourseChallengeLine, type CourseProgressRow } from './course-challenge';
+import { buildVoucherCard, toVoucherCardData, type VoucherCardData } from './voucher-card';
 
 /**
  * Del dato de la base al dato que pinta el portal. Todo lo que sale de aquí es serializable (sin `Date`) para poder cruzar de un componente de
@@ -25,13 +26,17 @@ export interface InitiativeRow {
   showPublicBreakdown: boolean;
   matchingPoolRemainingCents: number;
   matchingSponsorName: string | null;
-  ticketSubtype: 'EVENT' | null;
+  ticketSubtype: 'EVENT' | 'VOUCHER' | null;
   ticketPriceCents: number | null;
   ticketMax: number | null;
   ticketsSold: number;
   ticketsHeld: number;
   ticketFeeMode: 'ADD' | 'INC' | null;
   ticketVenue: string | null;
+  /** Solo ventas de vales (Sprint 5.14b): validez, «sin producto» al agotarse y objetivo orientativo de una venta sin tope. */
+  voucherValidUntil?: Date | null;
+  voucherNoProductEnabled?: boolean;
+  voucherTargetCount?: number | null;
   plaqueEnabled: boolean;
   rewardEnabled: boolean;
   rewardText: string | null;
@@ -50,10 +55,14 @@ export interface InitiativeRow {
   coverFileId?: string | null;
 }
 
+export type { VoucherCardData };
+
 export interface InitiativeCardData {
   id: number;
   format: PublicFormat;
-  subtype: 'EVENT' | null;
+  subtype: 'EVENT' | 'VOUCHER' | null;
+  /** Solo ventas de vales. */
+  voucher: VoucherCardData | null;
   title: string;
   category: string;
   stage: string;
@@ -79,20 +88,27 @@ export interface InitiativeCardData {
   coverFileId: string | null;
 }
 
-/** Gastos de gestión digital de la entidad (tarifa pública de taquilla). */
+/** Gastos de gestión digital de la entidad (tarifa pública de taquilla y, desde el 5.14a, la de los vales) y su forma jurídica, que decide la aportación «sin producto». */
 export interface TicketFees {
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
+  voucherFeeFixedCents?: number;
+  voucherFeeBps?: number;
+  legalForm?: string;
 }
+
 const NO_TICKET_FEES: TicketFees = { ticketFeeFixedCents: 0, ticketFeeBps: 0 };
 
 export function toCardData(row: InitiativeRow, now: Date, fees: TicketFees = NO_TICKET_FEES): InitiativeCardData {
+  const voucher = buildVoucherCard(row, now, fees);
+  if (voucher) return toVoucherCardData(row, voucher, now);
   const ticketMax = row.ticketMax ?? 0;
   const base = { format: row.format, raisedCents: row.raisedCents, goalCents: row.goalCents, ticketsSold: row.ticketsSold, ticketMax, ticketsHeld: row.ticketsHeld };
   return {
     id: row.id,
     format: row.format,
     subtype: row.ticketSubtype,
+    voucher: null,
     title: row.title,
     category: row.category,
     stage: row.stage,
@@ -172,10 +188,11 @@ export interface TicketInfoData {
 
 /** Información de taquilla con las mismas fórmulas del Estudio (`calculateStudioTicketingTCO`): `ADD` suma la gestión al precio, `INC` la incluye. */
 export function buildTicketInfo(
-  row: Pick<InitiativeRow, 'format' | 'ticketPriceCents' | 'ticketFeeMode' | 'ticketVenue'>,
+  row: Pick<InitiativeRow, 'format' | 'ticketPriceCents' | 'ticketFeeMode' | 'ticketVenue'> & { ticketSubtype?: InitiativeRow['ticketSubtype'] },
   fees: TicketFees
 ): TicketInfoData | null {
-  if (row.format !== 'TICKETING' || row.ticketPriceCents === null || row.ticketFeeMode === null) return null;
+  // Una venta de vales tiene su tarifa por compra (`VoucherCardData`): la de las entradas, por unidad, no le corresponde.
+  if (row.format !== 'TICKETING' || row.ticketSubtype === 'VOUCHER' || row.ticketPriceCents === null || row.ticketFeeMode === null) return null;
   const pricing = calculateStudioTicketingTCO({
     ticketPriceCents: row.ticketPriceCents,
     ticketMax: 1,
@@ -208,11 +225,9 @@ export interface InitiativeDetailData {
   challenge: { enabled: boolean; rewardText: string | null; target: number; lines: CourseChallengeLine[] };
 }
 
-export interface DetailContext {
+export interface DetailContext extends TicketFees {
   vertical: string;
   participationGroupsJson: unknown;
-  ticketFeeFixedCents: number;
-  ticketFeeBps: number;
 }
 
 export function toDetailData(row: InitiativeRow, context: DetailContext, now: Date): InitiativeDetailData {

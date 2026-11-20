@@ -1,7 +1,8 @@
-import { bpsOf } from '@/core/finance/money';
 import { calculateStudioBudgetTCO, calculateStudioTicketingTCO, evaluateMaintenanceCapShutoff, type BracketConfig, type GatewayRates } from '@/core/finance/tco.service';
 import { evaluateSemanticLock } from '@/core/security/semantic-lock';
-import { endOfDayInMadrid, madridIsoDate, TICKETING_CATEGORY, type StudioDraft, type StudioVertical } from './studio-draft';
+import { endOfDayInMadrid, madridIsoDate, TICKETING_CATEGORY, VOUCHER_SALE_MAX_DAYS, type StudioDraft, type StudioVertical } from './studio-draft';
+import { storedBudgetBoard } from './stored-board';
+import { computeVoucherBoard, voucherUnits, voucherValidityProblem, type VoucherBoard } from './voucher-board';
 
 /**
  * Pizarra del Estudio y requisitos para publicar (Sprint 4.3, `recalcStudioTCO` del prototipo). Funciones puras: la pantalla las llama en cada
@@ -31,6 +32,10 @@ export interface StudioContext {
   medalRank: number;
   maint: { active: boolean; perInitCents: number; annualCapCents: number; paidCents: number };
   ticketFee: { fixedCents: number; pctBps: number };
+  /** Gastos de gestión digital de los vales: por compra, con su tarifa propia (Sprint 5.14a). */
+  voucherFee: { fixedCents: number; pctBps: number };
+  /** Colegio con ánimo de lucro (`isForProfitSchool`): no se le ofrece la aportación «sin producto» (decisión 65). */
+  forProfitSchool: boolean;
   maxCampaignDays: number;
   categories: readonly StudioCategory[];
   kybVerified: boolean;
@@ -84,7 +89,12 @@ export interface TicketingBoard {
   isGatewayCovered: boolean;
 }
 
-export type StudioBoard = BudgetBoard | TicketingBoard;
+export type StudioBoard = BudgetBoard | TicketingBoard | VoucherBoard;
+export type { VoucherBoard };
+export { storedBudgetBoard, voucherValidityProblem };
+
+/** ¿Es una venta de vales? (Taquilla de tipo `VOUCHER`.) */
+export const isVoucherDraft = (draft: Pick<StudioDraft, 'format' | 'ticketSubtype'>): boolean => draft.format === 'TICKETING' && draft.ticketSubtype === 'VOUCHER';
 
 /** Categoría elegida entre las de la entidad. Una que no existe no es válida para guardar. */
 export function findCategory(context: StudioContext, name: string): StudioCategory | undefined {
@@ -174,44 +184,8 @@ export function computeTicketingBoard(context: StudioContext, draft: StudioDraft
 }
 
 export function computeStudioBoard(context: StudioContext, draft: StudioDraft): StudioBoard {
+  if (isVoucherDraft(draft)) return computeVoucherBoard(context, draft);
   return draft.format === 'TICKETING' ? computeTicketingBoard(context, draft) : computeBudgetBoard(context, draft);
-}
-
-/** Pizarra de una campaña ya publicada: lo que se guardó al publicarla, sin recalcular (los cupos ya se descontaron y volver a calcularlos los contaría dos veces). */
-export function storedBudgetBoard(stored: {
-  costMatCents: number;
-  costInstCents: number;
-  contingencyBps: number;
-  goalCents: number;
-  defaultExemptAppliedCents: number;
-  medalExemptAppliedCents: number;
-  bracketRateAppliedBps: number;
-  bracketFeeCents: number;
-  maintFeeCents: number;
-  gatewayFeeCents: number;
-}): BudgetBoard {
-  const baseCents = stored.costMatCents + stored.costInstCents;
-  const contingencyCents = bpsOf(baseCents, stored.contingencyBps);
-  const netCents = baseCents + contingencyCents;
-  const exempt = stored.defaultExemptAppliedCents + stored.medalExemptAppliedCents;
-  return {
-    kind: 'BUDGET',
-    baseCents,
-    contingencyCents,
-    netCents,
-    defaultExemptCents: stored.defaultExemptAppliedCents,
-    medalExemptCents: stored.medalExemptAppliedCents,
-    medalSavedCents: 0,
-    taxableCents: stored.bracketFeeCents === 0 && stored.bracketRateAppliedBps === 0 ? 0 : Math.max(0, netCents - exempt),
-    rateBps: stored.bracketRateAppliedBps,
-    bracketFeeCents: stored.bracketFeeCents,
-    maintFeeCents: stored.maintFeeCents,
-    gatewayDetail: null,
-    gatewayFeeCents: stored.gatewayFeeCents,
-    goalCents: stored.goalCents,
-    categoryExempt: stored.bracketRateAppliedBps === 0 && stored.bracketFeeCents === 0 && netCents > 0,
-    lock: { requested: false, blocked: false, term: null }
-  };
 }
 
 /** Días de campaña desde `from` hasta el cierre, redondeando hacia arriba (como `campaignDays` del cierre de campañas). */
@@ -243,7 +217,22 @@ export function latestCloseOn(now: Date, maxDays: number): string {
 /** Lo que cabe en `Initiative.goalCents` (un entero de 32 bits de PostgreSQL): con reglas extremas la meta calculada podría pasarlo y guardar fallaría con un error de la base de datos. */
 export const MAX_GOAL_CENTS = 2_147_483_647;
 
-export type SaveProblem = 'GOAL_TOO_HIGH' | 'TITLE_MISSING' | 'INVALID_CATEGORY' | 'CLOSING_INVALID' | 'CLOSING_PAST' | 'CLOSING_TOO_LATE';
+export type SaveProblem =
+  | 'GOAL_TOO_HIGH'
+  | 'TITLE_MISSING'
+  | 'INVALID_CATEGORY'
+  | 'CLOSING_INVALID'
+  | 'CLOSING_PAST'
+  | 'CLOSING_TOO_LATE'
+  | 'VALIDITY_INVALID'
+  | 'VALIDITY_BEFORE_CLOSE'
+  | 'VALIDITY_TOO_LATE';
+
+/** Días que admite el cierre de este borrador: los de la consola (nunca más de 75) y, en una venta de vales, nunca más de 60 (decisión 32). */
+export function maxDaysFor(context: Pick<StudioContext, 'maxCampaignDays'>, draft: Pick<StudioDraft, 'format' | 'ticketSubtype'>): number {
+  const max = effectiveMaxCampaignDays(context.maxCampaignDays);
+  return isVoucherDraft(draft) ? Math.min(max, VOUCHER_SALE_MAX_DAYS) : max;
+}
 
 /** Lo que impide guardar el borrador. Es poco: un borrador a medias se puede guardar; lo que falta para publicar lo dice `publishBlockers`. */
 export function saveProblems(context: StudioContext, draft: StudioDraft, now: Date): SaveProblem[] {
@@ -256,7 +245,11 @@ export function saveProblems(context: StudioContext, draft: StudioDraft, now: Da
   const closesAt = endOfDayInMadrid(draft.closesOn);
   if (!closesAt) problems.push('CLOSING_INVALID');
   else if (closesAt.getTime() <= now.getTime()) problems.push('CLOSING_PAST');
-  else if (campaignDaysFrom(now, closesAt) > effectiveMaxCampaignDays(context.maxCampaignDays)) problems.push('CLOSING_TOO_LATE');
+  else if (campaignDaysFrom(now, closesAt) > maxDaysFor(context, draft)) problems.push('CLOSING_TOO_LATE');
+  if (isVoucherDraft(draft)) {
+    const validity = voucherValidityProblem(draft);
+    if (validity) problems.push(validity);
+  }
   return problems;
 }
 
@@ -269,6 +262,8 @@ export type PublishBlocker =
   | 'TICKET_PRICE_ZERO'
   | 'TICKET_FEE_EXCEEDS_PRICE'
   | 'MAINT_EXCEEDS_TAKINGS'
+  | 'VOUCHER_TARGET_ZERO'
+  | 'VOUCHER_MAX_ZERO'
   | SaveProblem;
 
 /**
@@ -282,6 +277,13 @@ export function publishBlockers(context: StudioContext, draft: StudioDraft, boar
   if (draft.description.trim() === '') blockers.push('DESCRIPTION_MISSING');
   if (board.kind === 'BUDGET') {
     if (board.goalCents <= 0) blockers.push('GOAL_ZERO');
+  } else if (board.kind === 'VOUCHER') {
+    // Con tope, el tope; sin él, el objetivo orientativo (decisión del promotor del 2026-11-20): sin uno de los dos no hay meta ni barra.
+    if (voucherUnits(draft) <= 0) blockers.push(draft.voucherCapped ? 'VOUCHER_MAX_ZERO' : 'VOUCHER_TARGET_ZERO');
+    // Sin importe para la hucha no hay asiento posible: `reserveVouchers` rechazaría cada compra de un vale.
+    if (draft.ticketPriceCents <= 0) blockers.push('TICKET_PRICE_ZERO');
+    else if (draft.ticketFeeMode === 'INC' && draft.ticketPriceCents <= board.feeOneCents) blockers.push('TICKET_FEE_EXCEEDS_PRICE');
+    if (board.maintShortfallCents > 0) blockers.push('MAINT_EXCEEDS_TAKINGS');
   } else {
     if (draft.ticketMax <= 0) blockers.push('TICKET_MAX_ZERO');
     // Sin importe para la hucha no hay asiento posible: `reserveTickets` rechazaría cada compra (heredado del Sprint 2.3).

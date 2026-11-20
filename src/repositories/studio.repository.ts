@@ -2,6 +2,7 @@ import { academicYearFor } from '@/core/finance/academic-year';
 import { renewOrganizationQuotas } from '@/core/finance/quota-reservation';
 import { bracketConfigFor } from '@/core/finance/tco.service';
 import { TICKETING_CATEGORY, type StudioVertical } from '@/core/studio/studio-draft';
+import { isForProfitSchool } from '@/core/ticketing/voucher-rules';
 import type { StudioCategory, StudioContext } from '@/core/studio/studio-board';
 import type { Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -54,6 +55,9 @@ const STUDIO_INITIATIVE_VIEW = {
   ticketsSold: true,
   ticketFeeMode: true,
   ticketVenue: true,
+  voucherValidUntil: true,
+  voucherNoProductEnabled: true,
+  voucherTargetCount: true,
   coverFileId: true,
   sourceIdeaId: true,
   // Votación de redimensionamiento (Sprint 4.4b): si se cerró con un proyecto, el Estudio enseña la campaña en solo lectura con su meta fija (Sprint 5.6).
@@ -93,6 +97,9 @@ export async function loadStudioContext(db: Db, organizationId: string): Promise
         maintPaidCents: true,
         ticketFeeFixedCents: true,
         ticketFeeBps: true,
+        voucherFeeFixedCents: true,
+        voucherFeeBps: true,
+        legalForm: true,
         donationPresetsCents: true,
         defaultDonationIdx: true
       }
@@ -122,6 +129,8 @@ export async function loadStudioContext(db: Db, organizationId: string): Promise
     medalRank: organization.medalRank,
     maint: { active: organization.maintActive, perInitCents: organization.maintPerInitCents, annualCapCents: organization.maintAnnualCapCents, paidCents: organization.maintPaidCents },
     ticketFee: { fixedCents: organization.ticketFeeFixedCents, pctBps: organization.ticketFeeBps },
+    voucherFee: { fixedCents: organization.voucherFeeFixedCents, pctBps: organization.voucherFeeBps },
+    forProfitSchool: isForProfitSchool(organization.legalForm),
     maxCampaignDays: global.maxCampaignDays,
     categories,
     kybVerified: organization.kybStatus === 'VERIFIED'
@@ -144,7 +153,7 @@ export async function getStudioOverview(db: KorumPrismaClient, actor: SessionAct
   await authorizeTenant(db, actor, organizationId, { roles: STAFF, action: 'studio.overview', targetType: 'Initiative' });
   const context = await loadFreshStudioContext(db, organizationId, new Date());
   const [initiatives, openDrafts] = await Promise.all([
-    db.initiative.findMany({ where: { organizationId }, orderBy: { id: 'desc' }, select: { id: true, walletEscrowId: true, title: true, format: true, status: true } }),
+    db.initiative.findMany({ where: { organizationId }, orderBy: { id: 'desc' }, select: { id: true, walletEscrowId: true, title: true, format: true, ticketSubtype: true, status: true } }),
     db.initiative.count({ where: { organizationId, status: 'BUDGETING' } })
   ]);
   return { context, initiatives, canCreate: openDrafts < MAX_OPEN_DRAFTS };

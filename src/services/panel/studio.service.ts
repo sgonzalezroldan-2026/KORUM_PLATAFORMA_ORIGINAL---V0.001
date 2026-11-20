@@ -3,9 +3,10 @@ import { academicYearFor } from '@/core/finance/academic-year';
 import { CampaignDurationError, InitiativeNotPublishableError, PublishGoalChangedError, publishInitiative } from '@/core/finance/campaign-window';
 import { InsufficientQuotaError, QuotaConcurrencyError } from '@/core/finance/quota-reservation';
 import { allocateWalletId, quarterOf } from '@/core/ideas/idea-conversion';
-import { computeStudioBoard, evaluateStudioLock, publishBlockers, saveProblems, type PublishBlocker, type StudioBoard, type StudioContext } from '@/core/studio/studio-board';
+import { computeStudioBoard, evaluateStudioLock, isVoucherDraft, publishBlockers, saveProblems, type PublishBlocker, type StudioBoard, type StudioContext } from '@/core/studio/studio-board';
 import { endOfDayInMadrid, studioDraftSchema, TICKETING_CATEGORY, type StudioDraft } from '@/core/studio/studio-draft';
 import { inTransaction, type Db } from '@/lib/db';
+import { pricingColumns, softColumns } from './studio-columns';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { MAX_OPEN_DRAFTS, loadFreshStudioContext } from '@/repositories/studio.repository';
 import { requireOwnedResource } from '@/repositories/ownership';
@@ -54,62 +55,6 @@ function parseDraft(raw: unknown): StudioDraft {
   const parsed = studioDraftSchema.safeParse(raw);
   if (!parsed.success) throw new StudioError('INVALID_INPUT', [...new Set(parsed.error.issues.map((issue) => issue.path.join('.')))]);
   return parsed.data;
-}
-
-/** Campos que dependen del formato y de la pizarra: se escriben siempre juntos para que una campaña nunca quede con la mitad de otro formato. */
-function pricingColumns(draft: StudioDraft, board: StudioBoard, context: StudioContext) {
-  if (board.kind === 'BUDGET') {
-    return {
-      goalCents: board.goalCents,
-      costMatCents: draft.costMatCents,
-      costInstCents: draft.costInstCents,
-      contingencyBps: draft.contingencyBps,
-      defaultExemptAppliedCents: board.defaultExemptCents,
-      medalExemptAppliedCents: board.medalExemptCents,
-      medalRankApplied: board.medalExemptCents > 0 ? context.medalRank : 0,
-      bracketRateAppliedBps: board.rateBps,
-      bracketFeeCents: board.bracketFeeCents,
-      maintFeeCents: board.maintFeeCents,
-      gatewayFeeCents: board.gatewayFeeCents,
-      ticketSubtype: null,
-      ticketPriceCents: null,
-      ticketMax: null,
-      ticketFeeMode: null,
-      ticketVenue: null
-    };
-  }
-  return {
-    goalCents: board.goalCents,
-    costMatCents: 0,
-    costInstCents: 0,
-    contingencyBps: draft.contingencyBps,
-    defaultExemptAppliedCents: 0,
-    medalExemptAppliedCents: 0,
-    medalRankApplied: 0,
-    bracketRateAppliedBps: 0,
-    bracketFeeCents: 0,
-    maintFeeCents: board.maintFeeCents,
-    // En taquilla la pasarela ya la pagan los gastos de gestión digital (cuentas `KORUM_REVENUE_TICKET_FEE` y `GATEWAY_FEES_EXPENSE`): guardarla aquí haría que la
-    // liquidación la restara otra vez de la hucha. La pizarra la enseña como coste cubierto, no como parte de la meta (auditoría financiera del 4.3).
-    gatewayFeeCents: 0,
-    ticketSubtype: draft.ticketSubtype,
-    ticketPriceCents: draft.ticketPriceCents,
-    ticketMax: draft.ticketMax,
-    ticketFeeMode: draft.ticketFeeMode,
-    ticketVenue: draft.ticketVenue
-  };
-}
-
-/** Lo que no mueve dinero y se puede cambiar con la campaña ya recaudando. */
-function softColumns(draft: StudioDraft) {
-  return {
-    description: draft.description,
-    showPublicBreakdown: draft.showPublicBreakdown,
-    plaqueEnabled: draft.plaqueEnabled,
-    rewardEnabled: draft.rewardEnabled,
-    rewardText: draft.rewardEnabled ? draft.rewardText : null,
-    targetFamiliesPerCourse: draft.targetFamiliesPerCourse
-  };
 }
 
 /** 404 uniforme (y rastro del sondeo) si la campaña no es de esta entidad. */
@@ -175,9 +120,11 @@ async function persistDraft(
       if (count === 0) {
         const current = await tx.initiative.findFirst({
           where: { id: initiativeId, organizationId },
-          select: { status: true, format: true, category: true, title: true, goalCents: true, bracketFeeCents: true, bracketRateAppliedBps: true }
+          select: { status: true, format: true, ticketSubtype: true, category: true, title: true, goalCents: true, bracketFeeCents: true, bracketRateAppliedBps: true }
         });
-        if (!current || current.status !== 'FUNDRAISING' || current.format !== draft.format) throw new StudioError('NOT_EDITABLE', [], initiativeId);
+        // Un evento no se convierte en una venta de vales (ni al revés) una vez publicado: lo vendido es de un tipo concreto.
+        const sameKind = current !== null && current.format === draft.format && (current.format !== 'TICKETING' || (current.ticketSubtype ?? 'EVENT') === draft.ticketSubtype);
+        if (!current || current.status !== 'FUNDRAISING' || !sameKind) throw new StudioError('NOT_EDITABLE', [], initiativeId);
         // Una campaña que se publicó al 0 % no puede cambiar su texto a uno de equipamiento: el candado se pasó con el texto de entonces.
         if (current.format === 'BUDGET' && current.bracketFeeCents === 0 && current.bracketRateAppliedBps === 0 && evaluateStudioLock(context, { category: current.category, title: current.title, description: draft.description }).blocked) {
           // El rastro lo escribe quien llama, fuera de esta transacción: el error la deshace y se llevaría la fila con ella.
@@ -260,8 +207,12 @@ export async function publishStudioInitiative(db: KorumPrismaClient, actor: Sess
       // entradas, ya están confirmados y se ven aquí. Con otra tarifa que la de la pizarra aceptada, la meta de una taquilla `INC` no sumaría: no se publica (auditoría
       // financiera del 5.3, M3).
       if (published.published && draft.format === 'TICKETING') {
-        const fee = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { ticketFeeFixedCents: true, ticketFeeBps: true } });
-        if (fee.ticketFeeFixedCents !== context.ticketFee.fixedCents || fee.ticketFeeBps !== context.ticketFee.pctBps) throw new PublishGoalChangedError(saved.initiativeId);
+        const fee = await tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true } });
+        // Una venta de vales tiene su propia tarifa (Sprint 5.14a): es la que entra en su meta.
+        const changed = isVoucherDraft(draft)
+          ? fee.voucherFeeFixedCents !== context.voucherFee.fixedCents || fee.voucherFeeBps !== context.voucherFee.pctBps
+          : fee.ticketFeeFixedCents !== context.ticketFee.fixedCents || fee.ticketFeeBps !== context.ticketFee.pctBps;
+        if (changed) throw new PublishGoalChangedError(saved.initiativeId);
       }
       if (published.published) {
         await recordAudit(tx, signer, { action: 'studio.initiative_published', organizationId, targetType: 'Initiative', targetId: String(saved.initiativeId), metadata: { initiativeId: saved.initiativeId, format: draft.format, goalCents: board.goalCents } }, { required: true });

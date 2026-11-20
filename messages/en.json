@@ -921,6 +921,30 @@
         "next": "If you need to, sort it out with that person outside the platform. It is recorded in the activity log.",
         "pass": "Pass"
       }
+    },
+    "voucher": {
+      "subject": "Your vouchers for “{initiative}”",
+      "preheader": "Your QR code is inside.",
+      "title": "Your vouchers are ready",
+      "body": "You have bought {count, plural, one {# voucher} other {# vouchers}} from {organization}. Show the QR code at their stall and they will deduct the ones you spend: the rest stay on the same code. It is attached as an image and also behind the button.",
+      "refund": "If you have not spent any voucher from this purchase, you can ask for a 100% refund within 14 days. After that, what you paid stays with the organisation’s cause.",
+      "serial": "Code",
+      "quantity": "Vouchers bought",
+      "quantityValue": "{count, plural, one {# voucher} other {# vouchers}}",
+      "validUntil": "Can be spent until",
+      "holder": "Sold by",
+      "cta": "See my vouchers",
+      "footnote": "The QR code is personal: do not post it on social media. Anyone who has it can spend your vouchers.",
+      "noProduct": {
+        "subject": "Receipt for your contribution to “{initiative}”",
+        "preheader": "Thank you for helping. Here is your receipt.",
+        "title": "Thank you for helping!",
+        "body": "We have received your contribution without a product, worth {count, plural, one {# voucher} other {# vouchers}}, for “{initiative}”, from {organization}.",
+        "conditions": "It is a contribution without a product: it gives no vouchers or QR code, does not entitle you to a donation tax certificate and is not refunded, unless the organisation cancels the sale. Keep this email as your receipt.",
+        "equivalent": "Worth",
+        "amount": "For the organisation",
+        "fee": "Digital handling fees"
+      }
     }
   },
   "nav": {
@@ -2998,11 +3022,13 @@
         "existingTitle": "Your campaigns",
         "existingEmpty": "There are no campaigns yet. Start from a template or from scratch.",
         "edit": "Edit in Studio",
-        "open": "Open"
+        "open": "Open",
+        "newVouchers": "+ New voucher sale"
       },
       "format": {
         "BUDGET": "Budget / works",
-        "TICKETING": "Ticket sales"
+        "TICKETING": "Ticket sales",
+        "VOUCHER": "Voucher sale"
       },
       "templates": {
         "climate": {
@@ -3199,7 +3225,9 @@
         "goalLabelTicketing": "Into the piggy bank at full capacity",
         "badgeResized": "Goal fixed by vote",
         "goalLabelResized": "Fixed goal after the vote",
-        "ticketNetNote": "If not every ticket is sold, on the event date the organisation receives what was sold, with the maintenance charge reduced in the same proportion."
+        "ticketNetNote": "If not every ticket is sold, on the event date the organisation receives what was sold, with the maintenance charge reduced in the same proportion.",
+        "badgeVouchers": "Vouchers",
+        "goalLabelVouchers": "Goal (vouchers sold)"
       },
       "blockers": {
         "title": "Before publishing you still need:",
@@ -3217,7 +3245,12 @@
         "CLOSING_TOO_LATE": "The campaign would run longer than allowed: choose an earlier closing date.",
         "TITLE_MISSING": "Write a title of at least 3 letters.",
         "MAINT_EXCEEDS_TAKINGS": "At this price and capacity the takings do not cover the platform maintenance charge: raise the price or the capacity.",
-        "GOAL_TOO_HIGH": "With this budget and the platform’s terms, the goal would exceed the maximum that can be saved: lower the budget or write to KORUM."
+        "GOAL_TOO_HIGH": "With this budget and the platform’s terms, the goal would exceed the maximum that can be saved: lower the budget or write to KORUM.",
+        "VOUCHER_TARGET_ZERO": "Enter the voucher target.",
+        "VALIDITY_INVALID": "Enter until when the vouchers can be spent.",
+        "VALIDITY_BEFORE_CLOSE": "Vouchers cannot expire before the day the sale closes.",
+        "VALIDITY_TOO_LATE": "Vouchers cannot stay valid for more than 12 months after the sale closes.",
+        "VOUCHER_MAX_ZERO": "Enter the voucher limit."
       },
       "errors": {
         "INVALID_INPUT": "Some data is not valid. Check the form.",
@@ -3262,7 +3295,8 @@
       },
       "lock": {
         "soft": "The campaign is already collecting: only the description, the public breakdown, the challenge and the plaque can be changed. The budget, price and date are already used by contributions.",
-        "all": "This campaign is closed: it is shown without any option to change it."
+        "all": "This campaign is closed: it is shown without any option to change it.",
+        "softVouchers": "The sale is already running: only the description can be changed. The price, limit, validity and date are already used by purchases."
       },
       "lockAlert": {
         "title": "Category audit notice",
@@ -3294,7 +3328,9 @@
         },
         "defaultMessageTickets": "Scan the QR code with your phone, choose your ticket and pay by card or Bizum in 10 seconds.",
         "guaranteeTickets": "Secure payment with PAYCOMET. If the event is cancelled, we refund 100% of what you paid to the same payment method. Initiative piggy bank {wallet}.",
-        "metaTitle": "A4 poster with QR code"
+        "metaTitle": "A4 poster with QR code",
+        "defaultMessageVouchers": "Scan the QR code with your phone, choose how many vouchers you want and pay by Bizum or card in 10 seconds.",
+        "guaranteeVouchers": "Secure payment with PAYCOMET. If you have not spent any voucher, you can ask for a 100% refund within 14 days. Initiative piggy bank {wallet}."
       },
       "discard": {
         "title": "Discard this draft?",
@@ -3365,6 +3401,40 @@
         "gatewayAbsorbed": "Payment gateway cost (covered: not deducted from the goal)",
         "detailAfterLoss": "The people who contributed chose to go ahead with what had been raised: the goal went from {original} to {voted} and the fees went down in the same proportion. Later, a chargeback (a payment that was returned to its holder) left it at {goal}, with the fees again in proportion. The figures are shown and cannot be changed.",
         "entitySame": "For the project at payout: the goal minus fees (the same amount as the project cost)"
+      },
+      "vouchers": {
+        "title": "Voucher sale",
+        "intro": "Single-price vouchers that families spend at the organisation’s stall, with one QR code per purchase. Use the description to explain what they can be exchanged for: no list of items is needed.",
+        "price": "Price of one voucher",
+        "capMode": "Number of vouchers",
+        "capped": "With a voucher limit",
+        "open": "No limit",
+        "max": "Voucher limit",
+        "maxHint": "Once the limit is reached, the sale is sold out.",
+        "target": "Voucher target",
+        "targetHint": "It is only a guide: it does not limit the sale. It drives the progress bar and checks that the maintenance fee is covered.",
+        "validOn": "Vouchers can be spent until",
+        "validOnHint": "By default, until the start of the next school year. You can change it: from the day the sale closes up to 12 months later.",
+        "feeValue": "{fixed} + {pct} per purchase",
+        "feeExamples": "Charged once per purchase, not per voucher: 1 voucher, {one}; {count} vouchers, {largest}.",
+        "noProduct": "When sold out, let people keep contributing “without a product”",
+        "noProductHint": "Latecomers can contribute the equivalent of some vouchers without receiving them. It is a contribution with no tax certificate, no voucher and no QR code, and it is not refunded unless you cancel the sale.",
+        "noProductForProfit": "When it sells out, the sale stays sold out: a for-profit school cannot be offered the “without a product” contribution.",
+        "noProductOpen": "A sale with no limit never sells out, so the “without a product” contribution is not needed.",
+        "boardGross": "Price of the {count, plural, one {# voucher} other {# vouchers}} in the limit",
+        "boardGrossTarget": "Price of the {count, plural, one {# voucher} other {# vouchers}} in the target",
+        "boardModelTitle": "Voucher model",
+        "boardFeeAdd": "{amount} on a 1-voucher purchase (added for the buyer)",
+        "boardFeeInc": "{amount} on a 1-voucher purchase (included in the price)",
+        "boardFeeLargest": "Digital handling fees on a purchase of {count} vouchers",
+        "boardNet": "Net for the organisation if every voucher is sold",
+        "boardNetTarget": "Net for the organisation if the target is reached",
+        "boardNetNoteAdd": "Buyers pay the Digital handling fees on top of the price. If fewer are sold, the organisation receives what was sold, with the maintenance fee reduced in the same proportion.",
+        "boardNetNoteInc": "This is the least the organisation receives if every voucher is sold, however people buy them: buying several at once means lower fees, so the organisation usually receives a little more. If fewer are sold, it receives what was sold, with the maintenance fee reduced in the same proportion.",
+        "gatewayNotCovered": "With the current rate, the Digital handling fees do not cover the payment gateway cost on some purchases. We will let the KORUM team know: nothing is deducted from the organisation.",
+        "boardFee": "Digital handling fees per purchase",
+        "feeModeAdd": "Add them for the buyer",
+        "feeModeInc": "Absorb them within the voucher price"
       }
     },
     "payouts": {
@@ -5684,7 +5754,18 @@
       "goalReached": "100% reached! Closed",
       "contribute": "Contribute now",
       "buyTickets": "Buy tickets",
-      "closed": "Closed"
+      "closed": "Closed",
+      "voucherPrice": "{price} / voucher",
+      "vouchersSold": "{sold} of {max} vouchers sold",
+      "vouchersSoldOpen": "{sold, plural, one {# voucher sold} other {# vouchers sold}}",
+      "vouchersLeft": "{count, plural, =0 {Sold out} one {# voucher left} other {# vouchers left}}",
+      "vouchersTarget": "Target: {count, plural, one {# voucher} other {# vouchers}}",
+      "refundVouchers": "100% refund within 14 days if you spend no voucher",
+      "vouchersSoldOut": "Vouchers sold out",
+      "buyVouchers": "Buy vouchers",
+      "noProduct": "Contribute without a product",
+      "refundNoProduct": "Vouchers sold out: a contribution without a product is not refunded",
+      "voucherPriceAdd": "{price} / voucher + fees"
     },
     "categories": {
       "comfort": "Infrastructure and comfort",
@@ -5701,7 +5782,9 @@
         "label": "Initiative piggy bank",
         "refund": "100% refunded if the goal is missed",
         "independence": "Full independence from suppliers",
-        "deadline": "Deadline"
+        "deadline": "Deadline",
+        "refundVouchers": "100% refund within 14 days if you spend no voucher",
+        "refundNoProduct": "Vouchers sold out: a contribution without a product is not refunded"
       },
       "plaque": "Includes a commemorative thank-you plaque",
       "matching": "Matching 2x is on: your contribution is doubled while the pool lasts.",
@@ -5751,11 +5834,15 @@
       },
       "cta": {
         "contribute": "Contribute to this initiative",
-        "buyTickets": "Buy tickets"
+        "buyTickets": "Buy tickets",
+        "buyVouchers": "Buy vouchers",
+        "noProduct": "Contribute without a product"
       },
       "contributionsClosed": "This initiative is no longer taking contributions",
       "selfBoost": "The KORUM platform also chipped in and helped reach the goal.",
-      "ticketSalesClosed": "Ticket sales for this event have ended"
+      "ticketSalesClosed": "Ticket sales for this event have ended",
+      "voucherSalesClosed": "The voucher sale has ended",
+      "vouchersSoldOut": "Vouchers sold out. Thank you for wanting to help!"
     },
     "share": {
       "title": "Share on KORUM",
@@ -5816,7 +5903,10 @@
         },
         "promise": "Ideas, campaigns and achievements from the whole community. If the goal isn’t reached, 100% is refunded.",
         "poweredBy": "Powered by {brand}"
-      }
+      },
+      "vouchers": "{sold} of {max} vouchers sold",
+      "vouchersOpen": "{sold, plural, one {# voucher sold} other {# vouchers sold}}",
+      "vouchersClosed": "Voucher sale complete!"
     },
     "pass": {
       "title": "Your ticket",
@@ -5837,7 +5927,17 @@
       "shareWhatsapp": "Send via WhatsApp",
       "shareWarning": "Anyone with this link can use the ticket: only send it to the person who is going.",
       "shareMessage": "Your ticket for “{title}”: {url}",
-      "actions": "Ticket actions"
+      "actions": "Ticket actions",
+      "titleVouchers": "Your vouchers",
+      "qrAltVouchers": "QR code for your vouchers",
+      "voucherBalance": "{balance, plural, =0 {Vouchers left: 0 of {total}} one {Vouchers left: # of {total}} other {Vouchers left: # of {total}}}",
+      "voucherValidUntil": "Can be spent until {date}",
+      "voucherExpired": "These vouchers have expired and can no longer be spent.",
+      "voucherSpent": "You have already spent every voucher from this purchase.",
+      "showVouchers": "Show it at the organisation’s stall, on your phone or printed: they deduct the vouchers you spend there.",
+      "shareMessageVouchers": "Your vouchers for “{title}”: {url}",
+      "shareWarningVouchers": "Anyone with this link can spend the vouchers: only send it to whoever will use them.",
+      "actionsVouchers": "Actions for your vouchers"
     },
     "error": {
       "title": "We couldn’t load the community",
@@ -5911,7 +6011,10 @@
         "donationOnly": "{donation} to the project",
         "ticketsAdd": "{count} × {price} + {fee} digital handling fee",
         "ticketsInc": "{count} × {price} (digital handling fee included)",
-        "total": "Total"
+        "total": "Total",
+        "vouchersAdd": "{count, plural, one {# voucher} other {# vouchers}} ({amount}) + {fee} Digital handling fees",
+        "vouchersInc": "{count, plural, one {# voucher} other {# vouchers}} ({amount}, Digital handling fees included)",
+        "noProduct": "Without a product · worth {count, plural, one {# voucher} other {# vouchers}}"
       },
       "pay": {
         "bizum": "Pay {total} with Bizum",
@@ -5927,13 +6030,17 @@
         "closed": "This initiative no longer accepts contributions. Thank you for wanting to help!",
         "rateLimited": "You have made many attempts in a row. Wait a few minutes and try again.",
         "unavailable": "We could not open the secure payment. You have not been charged: please try again in a few minutes.",
-        "network": "The connection dropped. You have not been charged: check your connection and try again."
+        "network": "The connection dropped. You have not been charged: check your connection and try again.",
+        "changed": "The sale changed while you were choosing (vouchers are on sale again). You have not been charged: open the page again."
       },
       "closed": {
         "title": "Contributions are closed",
         "achieved": "Goal reached! This initiative does not need any more contributions.",
         "soldOut": "Sold out! There are no places left.",
-        "ended": "This initiative has passed its deadline and no longer accepts contributions."
+        "ended": "This initiative has passed its deadline and no longer accepts contributions.",
+        "achievedVouchers": "Vouchers sold out! There are no vouchers left on sale.",
+        "soldOutVouchers": "Vouchers sold out! There are no vouchers left on sale.",
+        "endedVouchers": "The voucher sale has ended."
       },
       "custodyTickets": "Secure payment with Paycomet",
       "tabs": {
@@ -5990,7 +6097,27 @@
           "unavailable": "We could not open the payment page. You have not been charged; please try again in a few minutes.",
           "network": "We could not connect. You have not been charged; please try again."
         }
-      }
+      },
+      "voucher": {
+        "fee": "{fixed} + {pct} per purchase",
+        "badge": "Vouchers",
+        "badgeNoProduct": "Contribution without a product",
+        "soldOut": "Vouchers sold out",
+        "available": "{available} of {max} left",
+        "unlimited": "No voucher limit",
+        "validUntil": "Can be spent until {date}.",
+        "quantity": "How many vouchers?",
+        "quantityNoProduct": "How many vouchers is your contribution worth?",
+        "unitAdd": "{price} per voucher + Digital handling fees ({fee})",
+        "unitInc": "{price} per voucher (Digital handling fees included)",
+        "less": "One voucher less",
+        "more": "One voucher more",
+        "limit": "You can choose up to {max} per purchase.",
+        "soldOutError": "{count, plural, =0 {There are no vouchers left. Thanks for trying!} one {Only # voucher left.} other {Only # vouchers left.}}",
+        "useAvailable": "{count, plural, one {Choose # voucher} other {Choose # vouchers}}"
+      },
+      "refundNoteVouchers": "You will get a single QR code with your vouchers. If you spend none, you can ask for a 100% refund within 14 days.",
+      "refundNoteNoProduct": "The contribution without a product gives no vouchers or tax certificate and is not refunded, unless the organisation cancels the sale."
     },
     "simulator": {
       "metaTitle": "Simulated payment",
@@ -6030,7 +6157,16 @@
         "serial": "Code {serial}",
         "share": "Share the initiative so more families join in.",
         "pct": "{pct}% reached",
-        "groupReached": "{group} has reached its challenge with {count, plural, one {# family} other {# families}}!"
+        "groupReached": "{group} has reached its challenge with {count, plural, one {# family} other {# families}}!",
+        "titleVouchers": "Done! Your vouchers are yours",
+        "titleNoProduct": "Thank you! Your contribution already counts",
+        "vouchersSoldOut": "Your purchase sold out the vouchers!",
+        "vouchersTargetReached": "Your purchase reached the voucher target!",
+        "viewVouchers": "See my vouchers",
+        "vouchersEmail": "We have also emailed it to you: it is the QR code you will show at the stall.",
+        "noProductReceipt": "We have emailed you the receipt. This contribution gives no vouchers or tax certificate.",
+        "vouchersBought": "{count, plural, one {You have bought # voucher, which can be spent until {date}.} other {You have bought # vouchers, which can be spent until {date}.}}",
+        "vouchersRefund": "If you spend none, you can ask for a 100% refund within 14 days."
       },
       "pending": {
         "title": "We are confirming your payment…",
@@ -6589,6 +6725,30 @@
         "RATE_LIMITED": "Too many attempts from this connection. Wait a few minutes.",
         "FAILED": "We could not request the refund. Try again in a few seconds."
       }
+    },
+    "voucher": {
+      "soldOf": "{sold} of {max} vouchers sold",
+      "sold": "{sold, plural, one {# voucher sold} other {# vouchers sold}}",
+      "left": "{count, plural, =0 {Sold out} one {# voucher left} other {# vouchers left}}",
+      "target": "Target: {count, plural, one {# voucher} other {# vouchers}}",
+      "heading": "How the vouchers work",
+      "price": "Price of one voucher",
+      "priceInc": "Price of one voucher (fees included)",
+      "fee": "Digital handling fees (added)",
+      "feeInc": "Digital handling fees (included)",
+      "feeValue": "{fixed} + {pct} per purchase",
+      "validUntil": "Can be spent until",
+      "howToUse": "You get a single QR code with all your vouchers. Show it at the organisation’s stall and they deduct the ones you spend; the rest stay on the same code.",
+      "refund": "If you have not spent any voucher from your purchase, you can ask for a 100% refund within 14 days. After that, what you paid stays with the organisation’s cause.",
+      "noProduct": {
+        "title": "The vouchers have sold out, but you can still contribute",
+        "body": "It is a contribution “without a product”: you choose how many vouchers it is worth and it all goes to the organisation’s cause.",
+        "noVoucher": "You do not receive vouchers or a QR code.",
+        "noCertificate": "It does not entitle you to a donation tax certificate.",
+        "noRefund": "It is not refunded, unless the organisation cancels the sale."
+      },
+      "perVoucherAdd": "per voucher, plus fees per purchase",
+      "perVoucherInc": "per voucher, fees included"
     }
   },
   "account": {
@@ -6598,7 +6758,7 @@
     "sectionsLabel": "My account sections",
     "sections": {
       "contributions": "Contributions",
-      "passes": "Tickets",
+      "passes": "Tickets and vouchers",
       "documents": "Certificates",
       "privacy": "Privacy",
       "security": "Passkeys",
@@ -6611,7 +6771,9 @@
       "line": "{organization} · {date} · {type}",
       "type": {
         "DONATION": "Donation",
-        "TICKET": "Tickets"
+        "TICKET": "Tickets",
+        "VOUCHER": "Vouchers",
+        "NO_PRODUCT": "Contribution without a product"
       },
       "includesGuarantee": "Includes your voluntary contribution to KORUM.",
       "status": {
@@ -6627,19 +6789,23 @@
       "emptyAction": "Find my school or club"
     },
     "passes": {
-      "title": "My tickets",
+      "title": "My tickets and vouchers",
       "where": "{organization} · {date}",
       "quantity": "{count, plural, one {# ticket} other {# tickets}}",
       "serial": "Code: {serial}",
       "revoked": "This ticket has been cancelled (because of a refund or a payment dispute) and is no longer valid at the door.",
       "viewEvent": "View my ticket",
       "emptyTitle": "You have no tickets",
-      "emptyText": "Tickets you buy with this email will show up here, ready to show at the door."
+      "emptyText": "Tickets you buy with this email will show up here, ready to show at the door.",
+      "voucherWhere": "{organization} · can be spent until {date}",
+      "voucherBalance": "{balance, plural, =0 {Vouchers left: 0 of {total}} one {Vouchers left: # of {total}} other {Vouchers left: # of {total}}}",
+      "revokedVouchers": "These vouchers are cancelled (because of a refund or a payment dispute) and can no longer be spent.",
+      "viewVouchers": "See my vouchers"
     },
     "documents": {
       "metaTitle": "Certificates and receipts",
       "summary": "{count, plural, one {You have # donation with a document} other {You have # donations with a document}}: tax certificate or receipt, ready to print.",
-      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets don’t come with a donation document.",
+      "none": "When you make a donation, its tax certificate or receipt will be here. Tickets and vouchers don’t come with a donation document.",
       "open": "View certificates and receipts",
       "openOne": "View document",
       "back": "Back to My account",
@@ -7840,6 +8006,10 @@
           "changed": "Notice of cancellation or date change to signatories",
           "cancelledBuyer": "Notice of a cancelled event to the buyer",
           "rescheduledBuyer": "Notice of a date change with a refund link"
+        },
+        "voucher": {
+          "pass": "Vouchers with their QR code",
+          "noProductReceipt": "Receipt for the contribution without a product"
         }
       },
       "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",

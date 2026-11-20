@@ -13,6 +13,7 @@ import {
   taxCertificateReady
 } from './definitions-operations';
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
+import { voucherNoProductReceipt, voucherPass } from './definitions-vouchers';
 import { accountPasskeyAdded, supportReceived, supportReplied } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
@@ -66,6 +67,8 @@ const ENTRIES = [
   register('auth.invitation', authInvitation),
   register('contribution.receipt', contributionReceipt),
   register('ticket.pass', ticketPass),
+  register('voucher.pass', voucherPass),
+  register('voucher.noProductReceipt', voucherNoProductReceipt),
   register('gate.pinRevoked', gatePinRevoked),
   register('initiative.goalReached', initiativeGoalReached),
   register('initiative.expired', initiativeExpired),

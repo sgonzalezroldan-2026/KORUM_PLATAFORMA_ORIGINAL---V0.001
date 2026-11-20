@@ -77,7 +77,7 @@ Además de las respuestas, necesitamos las **credenciales del entorno de pruebas
 
 #### Devoluciones
 
-5. ¿Las devoluciones de tarjeta y de Bizum tienen coste? **¿Hasta cuántos días después del cobro se pueden hacer con cada método?** De esta respuesta dependen varios plazos nuestros: una campaña de 60 días puede devolver hasta 21 días después de vencer. `[L-089, L-090, L-113]`
+5. ¿Las devoluciones de tarjeta y de Bizum tienen coste? **Cuando devolvemos un cobro entero, ¿nos devuelven la comisión que cobraron al cobrarlo, o esa comisión se pierde?** (Por ejemplo, una campaña que no llega a la meta devuelve 200 cobros: ¿pagamos 200 comisiones de cobro, 200 de devolución, las dos o ninguna?) **¿Hasta cuántos días después del cobro se pueden hacer con cada método?** De esta respuesta dependen varios plazos nuestros: una campaña de 60 días puede devolver hasta 21 días después de vencer. `[L-089, L-090, L-113]`
 6. ¿Se admiten devoluciones parciales de un pedido? ¿Devolver más de lo cobrado se rechaza siempre, también con reintentos tras un corte de conexión?
 7. En una devolución, ¿qué dirección IP hay que enviar: la de la compra original o la de nuestro servidor?
 
@@ -87,7 +87,7 @@ Además de las respuestas, necesitamos las **credenciales del entorno de pruebas
 
 #### Contracargos
 
-9. Proceso, plazos y quién asume el importe si la campaña ya se liquidó.
+9. Proceso, plazos y quién asume el importe si la campaña ya se liquidó. ¿Cobran una tasa por cada contracargo, la ganemos o la perdamos?
 10. ¿Qué pruebas aportan ustedes por sí mismos y qué necesitan de KORUM (nombre, email, IP de la compra, justificante de la campaña)? `[L-071]`
 
 #### Venta de vales

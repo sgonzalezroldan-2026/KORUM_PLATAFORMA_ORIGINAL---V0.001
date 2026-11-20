@@ -116,9 +116,10 @@ describe('QA-F03 · ficha pública y aislamiento entre entidades', () => {
     }
   });
 
-  it('del contexto de la entidad solo salen el vertical, los grupos y las tarifas públicas de taquilla', async () => {
+  it('del contexto de la entidad solo salen el vertical, los grupos, las tarifas públicas de taquilla y de vales y la forma jurídica (ya pública en la portada)', async () => {
     const detail = await getPublicInitiative(db, a.slug, ids.aFund!);
-    expect(Object.keys(detail.organization).sort()).toEqual(['participationGroupsJson', 'ticketFeeBps', 'ticketFeeFixedCents', 'vertical']);
+    // La forma jurídica decide si se ofrece la aportación «sin producto» de una venta de vales (decisión 65, Sprint 5.14b).
+    expect(Object.keys(detail.organization).sort()).toEqual(['legalForm', 'participationGroupsJson', 'ticketFeeBps', 'ticketFeeFixedCents', 'vertical', 'voucherFeeBps', 'voucherFeeFixedCents']);
   });
 
   it('la entidad pública no devuelve CIF, IBAN, correos ni teléfono', async () => {

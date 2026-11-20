@@ -37,8 +37,16 @@ describe('splitEuros · reparto exacto y realista', () => {
 describe('planInitiativeFunding · los pagos cuadran con la semilla', () => {
   const plans = planAllFunding(seed);
 
-  it('planifica las 8 iniciativas', () => {
-    expect(plans.map((plan) => plan.initiativeId)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+  it('planifica las 9 iniciativas (la 9, venta de vales del Sprint 5.14b)', () => {
+    expect(plans.map((plan) => plan.initiativeId)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  });
+
+  it('los vales de la semilla pagan sus Gastos de gestión digital una vez por compra, con la tarifa de vales de su entidad', () => {
+    const sale = seed.initiatives.find((candidate) => candidate.ticketSubtype === 'VOUCHER')!;
+    const org = seed.schools.find((candidate) => candidate.id === sale.organizationId)!;
+    const plan = plans.find((candidate) => candidate.initiativeId === sale.id)!;
+    expect(plan.payments.reduce((sum, payment) => sum + (payment.quantity ?? 0), 0)).toBe(sale.ticketsSold);
+    for (const payment of plan.payments) expect(payment.serviceFeeCents).toBe(org.voucherFeeFixedCents + Math.round((payment.amountCents * org.voucherFeeBps) / 10_000));
   });
 
   it.each(seed.initiatives.map((initiative) => [initiative.id, initiative.title] as const))('iniciativa %i suma raisedCents y totalContributions: %s', (id) => {

@@ -15,8 +15,9 @@ async function recipientOf(tx: Db, contribution: { userId: string | null; guestE
 }
 
 /**
- * Recibo de una donación confirmada (`contribution.receipt`). Las entradas llevan su propio email con el QR (`ticket.pass`). Un mes de Mi Hucha
- * lleva el suyo (`pledge.charged`): el mismo recibo más el mes, la gestión y el enlace para pausar o cambiar.
+ * Recibo de una donación confirmada (`contribution.receipt`). Las entradas llevan su propio email con el QR (`ticket.pass`) y los vales el suyo (`voucher.pass`). Un mes de
+ * Mi Hucha lleva el suyo (`pledge.charged`): el mismo recibo más el mes, la gestión y el enlace para pausar o cambiar. Una aportación «sin producto» de una venta de vales
+ * (Sprint 5.14b, decisión 64) lleva su recibo, sin certificado: `voucher.noProductReceipt`.
  */
 export async function queueContributionReceipt(tx: Db, contributionId: number): Promise<void> {
   const contribution = await tx.contribution.findUniqueOrThrow({
@@ -36,9 +37,15 @@ export async function queueContributionReceipt(tx: Db, contributionId: number): 
       paycometOrder: true,
       pledgeCycle: true,
       walletSubscription: { select: { totalMonths: true } },
+      voucherNoProduct: true,
+      initiative: { select: { ticketPriceCents: true, ticketFeeMode: true } },
       organization: { select: { ley49: true, ley49VerifiedAt: true } }
     }
   });
+  if (contribution.type === 'TICKET' && contribution.voucherNoProduct && contribution.paycometOrder) {
+    await queueNoProductReceipt(tx, { ...contribution, paycometOrder: contribution.paycometOrder });
+    return;
+  }
   if (contribution.type !== 'DONATION' || !contribution.paycometOrder) return;
   const toAddress = await recipientOf(tx, contribution);
   if (!toAddress) return;
@@ -87,6 +94,56 @@ export async function queueContributionReceipt(tx: Db, contributionId: number): 
           reference: contribution.paycometOrder,
           groupName: contribution.groupName,
           fiscalCertificate
+        }
+      }
+    ],
+    skipDuplicates: true
+  });
+}
+
+/**
+ * Recibo de una aportación «sin producto» (decisión 64): sin vales, sin QR y sin certificado. Se mide en vales: el precio de la venta no cambia una vez publicada, así
+ * que a cuántos vales equivale sale del importe (en `ADD`, lo que llega a la venta; en `INC`, lo cobrado por los vales, con la gestión dentro).
+ */
+async function queueNoProductReceipt(
+  tx: Db,
+  contribution: {
+    id: number;
+    organizationId: string;
+    initiativeId: number;
+    userId: string | null;
+    guestEmail: string | null;
+    locale: 'es' | 'ca' | 'en';
+    amountCents: number;
+    guaranteeContributionCents: number;
+    totalChargedCents: number;
+    paycometOrder: string;
+    initiative: { ticketPriceCents: number | null; ticketFeeMode: 'ADD' | 'INC' | null };
+  }
+): Promise<void> {
+  const toAddress = await recipientOf(tx, contribution);
+  const price = contribution.initiative.ticketPriceCents;
+  if (!toAddress || price === null || price <= 0) return;
+  const grossCents = contribution.initiative.ticketFeeMode === 'INC' ? contribution.totalChargedCents - contribution.guaranteeContributionCents : contribution.amountCents;
+  const feeCents = contribution.totalChargedCents - contribution.guaranteeContributionCents - contribution.amountCents;
+  await tx.outboxMessage.createMany({
+    data: [
+      {
+        idempotencyKey: `voucher.noProductReceipt:${contribution.id}`,
+        templateKey: 'voucher.noProductReceipt',
+        locale: contribution.locale,
+        toAddress,
+        userId: contribution.userId,
+        organizationId: contribution.organizationId,
+        payloadJson: {
+          initiativeId: contribution.initiativeId,
+          equivalentVouchers: Math.max(1, Math.round(grossCents / price)),
+          amountCents: contribution.amountCents,
+          // Lo cobrado (sin la aportación voluntaria) menos lo que llega a la venta: en `ADD` la gestión se sumó y en `INC` iba dentro del importe de los vales.
+          feeCents,
+          guaranteeCents: contribution.guaranteeContributionCents,
+          totalCents: contribution.totalChargedCents,
+          reference: contribution.paycometOrder
         }
       }
     ],

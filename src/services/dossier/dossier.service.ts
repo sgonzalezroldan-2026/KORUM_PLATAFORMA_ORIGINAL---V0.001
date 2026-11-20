@@ -254,7 +254,7 @@ export async function loadDossier(db: Db, scope: DossierScope, subject: DossierS
     const journalWhere: Prisma.LedgerJournalWhereInput = {
       OR: [{ contributionId: subject.id }, { reversesJournal: { contributionId: subject.id } }, ...(order ? [{ paycometReference: order }, { contribution: { paycometOrder: `${order}-match` } }] : [])]
     };
-    const emailKeys = ['contribution.receipt', 'ticket.pass', 'refund.issued', 'pledge.charged'].map((template) => `${template}:${subject.id}`);
+    const emailKeys = ['contribution.receipt', 'ticket.pass', 'voucher.pass', 'voucher.noProductReceipt', 'refund.issued', 'pledge.charged'].map((template) => `${template}:${subject.id}`);
     const ledger = await loadDossierLedger(db, scope, journalWhere, own);
     const emails = await loadDossierEmails(db, scope, organizationId, since, { OR: [{ idempotencyKey: { in: emailKeys } }, { payloadJson: { path: ['contributionId'], equals: subject.id } }, ...(order ? [{ payloadJson: { path: ['order'], equals: order } }] : [])] });
     const audit = await loadDossierAudit(db, scope, organizationId, { subject: { targetTypes: ['Contribution', 'CONTRIBUTION'], id: subject.id, metadataKey: 'contributionId' } });

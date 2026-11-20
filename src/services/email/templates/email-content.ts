@@ -45,6 +45,8 @@ export interface TemplateContext {
     totalContributions: number;
     ticketSubtype: 'EVENT' | 'VOUCHER' | null;
     ticketVenue: string | null;
+    /** Validez de los vales de una venta de vales (Sprint 5.14b); `null` en cualquier otra campaña. */
+    voucherValidUntil?: Date | null;
     /** Estado al enviar el mensaje (no al escribirlo): un aviso que sale tarde dice lo que ya es verdad (Sprint 5.5b). */
     status?: string;
   };

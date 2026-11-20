@@ -30,6 +30,9 @@ const PUBLIC_ORGANIZATION_VIEW = {
   /** Gastos de gestión digital de la taquilla: tarifa pública, se enseña en la ficha. */
   ticketFeeFixedCents: true,
   ticketFeeBps: true,
+  /** Gastos de gestión digital de los vales, por compra (Sprint 5.14a): también son una tarifa pública. */
+  voucherFeeFixedCents: true,
+  voucherFeeBps: true,
   /** Grupos del reto por curso, equipo o grupo (solo sus nombres). */
   participationGroupsJson: true,
   publicIndexing: true,
@@ -60,6 +63,10 @@ const PUBLIC_INITIATIVE_VIEW = {
   ticketsHeld: true,
   ticketFeeMode: true,
   ticketVenue: true,
+  /** Venta de vales (Sprint 5.14b): validez, «sin producto» al agotarse y objetivo orientativo sin tope. */
+  voucherValidUntil: true,
+  voucherNoProductEnabled: true,
+  voucherTargetCount: true,
   plaqueEnabled: true,
   rewardEnabled: true,
   rewardText: true,
@@ -102,7 +109,7 @@ export async function getPublicInitiative(db: KorumPrismaClient, slug: string, i
     where: { id: initiativeId, status: { in: [...PUBLIC_STATUSES] }, organization: { slug, archivedAt: null } },
     select: {
       ...PUBLIC_INITIATIVE_VIEW,
-      organization: { select: { vertical: true, participationGroupsJson: true, ticketFeeFixedCents: true, ticketFeeBps: true } }
+      organization: { select: { vertical: true, participationGroupsJson: true, ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true, legalForm: true } }
     }
   });
   if (!initiative) throw new ResourceNotFoundError('Iniciativa');
@@ -128,6 +135,7 @@ export async function getPublicInitiativeCard(db: KorumPrismaClient, initiativeI
       ticketsHeld: true,
       ticketMax: true,
       ticketSubtype: true,
+      voucherTargetCount: true,
       closesAt: true,
       rewardEnabled: true,
       rewardText: true,
@@ -237,7 +245,10 @@ export async function getPassForView(db: KorumPrismaClient, slug: string, passUu
     select: {
       uuid: true,
       serialCode: true,
+      /** Evento o vales (Sprint 5.14b): un pase de vales enseña su saldo y su validez en lugar de la fecha y el lugar. */
+      subtype: true,
       quantity: true,
+      checkedInCount: true,
       revokedAt: true,
       initiative: {
         select: {
@@ -245,6 +256,7 @@ export async function getPassForView(db: KorumPrismaClient, slug: string, passUu
           title: true,
           ticketVenue: true,
           closesAt: true,
+          voucherValidUntil: true,
           organization: { select: { name: true } }
         }
       }

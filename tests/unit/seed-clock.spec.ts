@@ -80,7 +80,9 @@ describe('shiftSeedData · fechas, cursos, trimestres y facturas desplazados', (
       expect(initiative.academicYear).toBe(shiftCourse(original.academicYear, clock.courseOffset));
       expect(initiative.quarter).toBe(quarterOf(new Date(initiative.closesAt)));
       // Nada más cambia: importes, estados y textos son los del archivo.
-      expect({ ...initiative, closesAt: original.closesAt, academicYear: original.academicYear, quarter: original.quarter }).toEqual(original);
+      expect({ ...initiative, closesAt: original.closesAt, academicYear: original.academicYear, quarter: original.quarter, voucherValidUntil: original.voucherValidUntil }).toEqual(original);
+      // La validez de una venta de vales se mueve lo mismo que su cierre (Sprint 5.14b): nunca caduca antes de que acabe la venta.
+      if (original.voucherValidUntil) expect(time(initiative.voucherValidUntil!) - time(original.voucherValidUntil)).toBe(time(initiative.closesAt) - time(original.closesAt));
       if (original.status === 'FUNDRAISING') {
         const daysLeft = (time(initiative.closesAt) - loadedAt.getTime()) / DAY;
         expect(daysLeft, `iniciativa ${initiative.id}`).toBeGreaterThan(distanceFromReference(original.closesAt) / DAY - 1);

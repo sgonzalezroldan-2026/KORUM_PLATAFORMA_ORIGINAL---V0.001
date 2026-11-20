@@ -1015,6 +1015,9 @@ model Initiative {
   voucherValidUntil          DateTime?
   /// Solo ventas de vales: al agotarse el tope, la entidad deja seguir aportando «sin producto» (sin vale ni QR). Nunca en un colegio con ánimo de lucro (Sprint 5.14a).
   voucherNoProductEnabled    Boolean          @default(false)
+  /// Solo ventas de vales **sin tope**: cuántos vales espera vender la entidad. Es un objetivo orientativo (no limita la venta) para la barra de avance, la meta y el
+  /// mantenimiento (decisión del promotor del 2026-11-20, Sprint 5.14b). Obligatorio al publicar una venta sin tope; vacío con tope.
+  voucherTargetCount         Int?
   /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
   gatePinHash                String?
   gatePinExpiresAt           DateTime?

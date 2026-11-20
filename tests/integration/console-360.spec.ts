@@ -465,7 +465,7 @@ describe('QA-A03 · tarifas y categorías de una entidad', () => {
 
   it('con una venta de vales abierta no se cambia la tarifa de los vales; la de las entradas sí, y al revés (Sprint 5.14a)', async () => {
     const { organization } = await organizationWithSigners({ customRules: true, voucherFeeFixedCents: 45, voucherFeeBps: 200 });
-    await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'VOUCHER', ticketPriceCents: 200, ticketFeeMode: 'ADD', goalCents: 0, voucherValidUntil: new Date(Date.now() + 10 * 86_400_000) });
+    await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'VOUCHER', ticketPriceCents: 200, ticketFeeMode: 'ADD', goalCents: 20_000, voucherTargetCount: 100, voucherValidUntil: new Date(Date.now() + 10 * 86_400_000) });
     await expect(saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, voucherFeeBps: 300 })).rejects.toMatchObject({ reason: 'PUBLISHED_VOUCHERS', fields: ['voucherFeeFixedCents', 'voucherFeeBps'] });
     // Una venta de vales no bloquea la tarifa de las entradas.
     await saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, ticketFeeFixedCents: 60 });

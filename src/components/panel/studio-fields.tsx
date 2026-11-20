@@ -4,10 +4,11 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
 import { CheckboxField, Field, SelectField, fieldClass } from '@/components/auth/auth-ui';
 import { formatBps, formatCents } from '@/core/finance/money';
-import { effectiveMaxCampaignDays, type StudioContext } from '@/core/studio/studio-board';
-import { REWARD_PRESETS, STUDIO_LIMITS, STUDIO_STAGES, TICKETING_CATEGORY, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
+import { isVoucherDraft, maxDaysFor, type StudioBoard, type StudioContext } from '@/core/studio/studio-board';
+import { REWARD_PRESETS, STUDIO_LIMITS, STUDIO_STAGES, TICKETING_CATEGORY, defaultVoucherValidOn, type RewardPreset, type StudioDraft } from '@/core/studio/studio-draft';
 import { isLocale } from '@/i18n/routing';
 import { IntField, MoneyField } from './studio-money-field';
+import { StudioVoucherFields } from './studio-voucher-fields';
 
 /**
  * Campos del Estudio (`sch-sub-studio`): qué se escribe en cada formato. Con la campaña ya publicada solo se pueden tocar los que no mueven dinero
@@ -17,7 +18,7 @@ import { IntField, MoneyField } from './studio-money-field';
 export type StudioLock = 'NONE' | 'SOFT' | 'ALL';
 
 /** Avisos junto a cada campo: lo que falta para guardar o publicar se dice donde se arregla, no solo en la lista del panel. */
-export type StudioFieldErrors = Partial<Record<'title' | 'category' | 'stage' | 'closesOn' | 'description' | 'costMat' | 'ticketMax' | 'ticketPrice', string>>;
+export type StudioFieldErrors = Partial<Record<'title' | 'category' | 'stage' | 'closesOn' | 'description' | 'costMat' | 'ticketMax' | 'ticketPrice' | 'voucherValidOn', string>>;
 
 export interface StudioFieldsProps {
   draft: StudioDraft;
@@ -27,6 +28,8 @@ export interface StudioFieldsProps {
   rewardPresets: Record<RewardPreset, string>;
   /** Gastos de gestión digital por entrada, ya calculados con el precio actual. */
   ticketFeeUnitCents: number;
+  /** La pizarra en vivo: una venta de vales enseña con ella los gastos de una compra pequeña y de una grande. */
+  board: StudioBoard;
   /** Hoy en hora de España (`AAAA-MM-DD`), para limitar el selector de fecha. */
   today: string;
   maxCloseOn: string;
@@ -35,7 +38,7 @@ export interface StudioFieldsProps {
   errors?: StudioFieldErrors;
 }
 
-export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUnitCents, today, maxCloseOn, onChange, errors = {} }: StudioFieldsProps) {
+export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUnitCents, board, today, maxCloseOn, onChange, errors = {} }: StudioFieldsProps) {
   const t = useTranslations('panel.studio.fields');
   const tStage = useTranslations('panel.studio.stages');
   const current = useLocale();
@@ -44,10 +47,17 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
   const moneyLocked = lock !== 'NONE';
   const allLocked = lock === 'ALL';
   const ticketing = draft.format === 'TICKETING';
+  const vouchers = isVoucherDraft(draft);
   const [customReward, setCustomReward] = useState(() => draft.rewardText !== null && !Object.values(rewardPresets).includes(draft.rewardText));
   const rewardChoice = customReward ? 'CUSTOM' : (REWARD_PRESETS.find((key) => rewardPresets[key] === draft.rewardText) ?? REWARD_PRESETS[0]);
   const categories = context.categories.filter((category) => category.name !== TICKETING_CATEGORY);
-  const maxDays = effectiveMaxCampaignDays(context.maxCampaignDays);
+  const maxDays = maxDaysFor(context, draft);
+
+  /** Si la validez de los vales sigue siendo la de por defecto (el curso siguiente), se mueve con el cierre; una que la entidad ha cambiado no se toca. */
+  function changeClose(closesOn: string) {
+    const followsDefault = vouchers && draft.voucherValidOn === defaultVoucherValidOn(draft.closesOn);
+    onChange(followsDefault ? { closesOn, voucherValidOn: defaultVoucherValidOn(closesOn) || draft.voucherValidOn } : { closesOn });
+  }
 
   function chooseReward(value: string) {
     if (value === 'CUSTOM') {
@@ -92,7 +102,7 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
           max={maxCloseOn}
           disabled={moneyLocked}
           error={errors.closesOn}
-          onChange={(event) => onChange({ closesOn: event.target.value })}
+          onChange={(event) => changeClose(event.target.value)}
         />
       </div>
 
@@ -118,7 +128,9 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
         ) : null}
       </div>
 
-      {ticketing ? (
+      {vouchers && board.kind === 'VOUCHER' ? (
+        <StudioVoucherFields draft={draft} context={context} board={board} disabled={moneyLocked} onChange={onChange} errors={errors} />
+      ) : ticketing ? (
         <fieldset disabled={moneyLocked} className="flex flex-col gap-4 rounded-2xl border-2 border-sky-300 bg-sky-50 p-4">
           <legend className="px-2 font-corp font-extrabold text-sky-950">{t('ticketingTitle')}</legend>
           <div className="mobile-stack grid gap-4 sm:grid-cols-3">
@@ -180,6 +192,8 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
         </fieldset>
       ) : null}
 
+      {/* Una compra de vales no se apunta a un curso ni lleva placa (`reserveVouchers` no recibe grupo): ese bloque no tendría efecto. */}
+      {vouchers ? null : (
       <fieldset disabled={allLocked} className="flex flex-col gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
         <legend className="px-2 font-corp font-extrabold text-amber-950">{t('rewardTitle')}</legend>
         <CheckboxField label={t('rewardEnabled')} hint={t('rewardHint')} checked={draft.rewardEnabled} onChange={(event) => onChange({ rewardEnabled: event.target.checked })} />
@@ -199,6 +213,7 @@ export function StudioFields({ draft, context, lock, rewardPresets, ticketFeeUni
           </div>
         ) : null}
       </fieldset>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ClearCheckoutDraft, Confetti, PendingRefresh, RisingProgress } from '@/components/checkout/checkout-celebration';
 import { SponsorshipResult } from '@/components/checkout/sponsorship-result';
@@ -137,20 +137,28 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
   }
 
   const ticketing = row.type === 'TICKET';
-  const toPct = ticketing ? percentOf(initiative.ticketsSold, initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents, initiative.goalCents);
-  const fromPct = ticketing ? percentOf(initiative.ticketsSold - (row.ticketQuantity ?? 0), initiative.ticketMax ?? 0) : percentOf(initiative.raisedCents - row.amountCents, initiative.goalCents);
+  // Venta de vales (Sprint 5.14b): el avance va en vales sobre el tope o, sin tope, sobre el objetivo orientativo. Una aportación «sin producto» no mueve los vales.
+  const vouchers = initiative.ticketSubtype === 'VOUCHER';
+  const noProduct = vouchers && row.voucherNoProduct;
+  const units = vouchers ? (initiative.ticketMax ?? initiative.voucherTargetCount ?? 0) : (initiative.ticketMax ?? 0);
+  const toPct = ticketing ? percentOf(initiative.ticketsSold, units) : percentOf(initiative.raisedCents, initiative.goalCents);
+  const fromPct = ticketing ? percentOf(initiative.ticketsSold - (row.ticketQuantity ?? 0), units) : percentOf(initiative.raisedCents - row.amountCents, initiative.goalCents);
+  const heading = noProduct ? t('confirmed.titleNoProduct') : vouchers ? t('confirmed.titleVouchers') : ticketing ? t('confirmed.titleTickets') : t('confirmed.title');
+  const reachedLabel = vouchers ? (initiative.ticketMax !== null ? t('confirmed.vouchersSoldOut') : t('confirmed.vouchersTargetReached')) : ticketing ? t('confirmed.soldOut') : t('confirmed.goalReached');
   const course = row.groupName && initiative.rewardEnabled ? initiative.courses.find((entry) => entry.groupName === row.groupName) : undefined;
   const pass = row.ticketPass && !row.ticketPass.revokedAt ? row.ticketPass : null;
   const shareGroups = initiative.rewardEnabled ? orderedGroupNames(initiative.organization.vertical, initiative.organization.participationGroupsJson).map((name) => ({ slug: groupSlug(name), name })) : [];
-  const reached = toPct >= 100;
+  // Se celebra el pago que llega al 100 %, no los que vienen después (una venta sin tope sigue vendiendo pasado su objetivo), y nunca una aportación «sin
+  // producto», que llega con la venta ya agotada (auditoría financiera del 5.14b). En una campaña, la que cruza la meta (o la completa ya conseguida) lo celebra.
+  const reached = vouchers ? !noProduct && fromPct < 100 && toPct >= 100 : toPct >= 100;
 
   return (
     <section className="korum-trust-vault mx-auto max-w-lg space-y-5 p-6 text-center" aria-labelledby="result-title" data-testid="checkout-celebration">
       <ClearCheckoutDraft initiativeId={initiativeId} />
       {reached ? <Confetti /> : null}
       <h1 id="result-title" className="font-joy text-2xl font-bold text-varsity-navy">
-        <span aria-hidden="true">{ticketing ? '🎟️ ' : '💛 '}</span>
-        {ticketing ? t('confirmed.titleTickets') : t('confirmed.title')}
+        <span aria-hidden="true">{noProduct ? '💛 ' : vouchers ? '🧾 ' : ticketing ? '🎟️ ' : '💛 '}</span>
+        {heading}
       </h1>
       <p lang={initiative.organization.contentLocale === locale ? undefined : initiative.organization.contentLocale} className="font-corp text-lg font-extrabold text-varsity-navy wrap-anywhere">
         {title}
@@ -161,7 +169,7 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
         <p className="font-corp text-sm font-bold tabular-nums text-ink-soft">{t('confirmed.pct', { pct: toPct })}</p>
         <p role="status" className="font-joy text-lg font-bold text-emerald-900">
           <span aria-hidden="true">{reached ? '🎉 ' : '💛 '}</span>
-          {reached ? (ticketing ? t('confirmed.soldOut') : t('confirmed.goalReached')) : t('confirmed.count', { count: initiative.totalContributions })}
+          {reached ? reachedLabel : t('confirmed.count', { count: initiative.totalContributions })}
         </p>
       </div>
       {course ? (
@@ -177,15 +185,21 @@ export default async function CheckoutResultPage({ params, searchParams }: PageP
       ) : null}
       {pass ? (
         <div className="space-y-2 rounded-2xl border border-sky-300 bg-sky-50 p-4">
+          {vouchers && initiative.voucherValidUntil ? (
+            <div className="space-y-1 text-sm text-ink" data-testid="result-vouchers">
+              <p className="font-bold">{t('confirmed.vouchersBought', { count: row.ticketQuantity ?? 0, date: (await getFormatter({ locale })).dateTime(initiative.voucherValidUntil, { dateStyle: 'long', timeZone: 'Europe/Madrid' }) })}</p>
+              <p>{t('confirmed.vouchersRefund')}</p>
+            </div>
+          ) : null}
           <p className="font-mono text-sm text-ink-soft">{t('confirmed.serial', { serial: pass.serialCode })}</p>
           <Link href={`${passPath(orgSlug, pass.uuid)}?sig=${signPassView(env.QR_HMAC_SECRET, pass.uuid)}`} className={`${linkClass} w-full bg-sky-800 text-white`} data-testid="view-pass">
-            <span aria-hidden="true">{'🎟️ '}</span>
-            {t('confirmed.viewPass')}
+            <span aria-hidden="true">{vouchers ? '🧾 ' : '🎟️ '}</span>
+            {vouchers ? t('confirmed.viewVouchers') : t('confirmed.viewPass')}
           </Link>
-          <p className="text-sm text-ink-soft">{t('confirmed.ticketsEmail')}</p>
+          <p className="text-sm text-ink-soft">{vouchers ? t('confirmed.vouchersEmail') : t('confirmed.ticketsEmail')}</p>
         </div>
       ) : (
-        <p className="text-sm text-ink-soft">{t('confirmed.receipt')}</p>
+        <p className="text-sm text-ink-soft" data-testid={noProduct ? 'result-no-product' : undefined}>{noProduct ? t('confirmed.noProductReceipt') : t('confirmed.receipt')}</p>
       )}
       {/* «Para que se sumen más familias» solo mientras la campaña recauda: conseguida o cerrada ya no admite aportaciones. */}
       {nav.canRetry ? (

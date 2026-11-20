@@ -130,9 +130,10 @@ export async function seedInitiatives(db: KorumPrismaClient, seed: KorumSeedData
         thanksMessage: initiative.thanksMessage ?? null,
         matchingSponsorName: initiative.matchingSponsorName ?? null,
         closesAt,
+        voucherValidUntil: initiative.voucherValidUntil ? new Date(initiative.voucherValidUntil) : null,
         createdAt,
         firstPayinAt: plan?.firstPayinAt ?? null,
-        // Las 8 campañas de la semilla están publicadas: reservaron sus cupos en su curso. Cancelar una del curso actual los
+        // Todas las campañas de la semilla están publicadas: reservaron sus cupos en su curso. Cancelar una del curso actual los
         // devuelve a la entidad; una de un curso pasado cierra la reserva sin abonar nada (`releaseInitiativeQuotas`).
         quotaReservedAt: createdAt,
         quotaReservedExemptCents: initiative.defaultExemptAppliedCents,

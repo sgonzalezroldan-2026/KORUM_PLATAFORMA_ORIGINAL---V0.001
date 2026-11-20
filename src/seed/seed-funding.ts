@@ -211,7 +211,7 @@ export async function seedFunding(
           uuid,
           contributionId: contributionId(payment.key),
           initiativeId: plan.initiativeId,
-          serialCode: `PASE-${spanishFiscalYear(payment.createdAt)}-${String(ticketNumber).padStart(4, '0')}`,
+          serialCode: `${initiative.ticketSubtype === 'VOUCHER' ? 'VALE' : 'PASE'}-${spanishFiscalYear(payment.createdAt)}-${String(ticketNumber).padStart(4, '0')}`,
           subtype: initiative.ticketSubtype ?? 'EVENT',
           holderEmail: payment.email,
           quantity: payment.quantity,

@@ -4,7 +4,8 @@ import type { InitiativeDetailData } from '@/core/public/view-model';
 import { Link } from '@/i18n/navigation';
 import { checkoutPath, portalPath } from '@/lib/seo/portal-routes';
 import { CourseChallenge, HiddenBreakdownNotice, PublicBreakdown, TicketDetails } from './detail-sections';
-import { ctaKey } from './initiative-card';
+import { canPay, ctaKey } from './initiative-card';
+import { VoucherDetails, VoucherStock } from './voucher-sections';
 import { ProgressBar } from './progress-bar';
 import { ShareButton } from './share-button';
 import type { ShareGroup } from './share-modal';
@@ -34,6 +35,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
   const money = useMoney();
   const { card } = detail;
   const ticketing = card.format === 'TICKETING';
+  const voucher = card.voucher;
   const category = useCategoryLabel(contentLang)(card.category);
   const deadline = format.dateTime(new Date(detail.closesAtIso), { dateStyle: 'long', timeZone: 'Europe/Madrid' });
 
@@ -58,7 +60,7 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
           </p>
           <span className="rounded-full border border-emerald-700 bg-emerald-50 px-2.5 py-0.5 text-sm font-extrabold text-emerald-900">
             <span aria-hidden="true">{'🔒 '}</span>
-            {t('detail.vault.refund')}
+            {t(voucher ? (voucher.noProduct ? 'detail.vault.refundNoProduct' : 'detail.vault.refundVouchers') : 'detail.vault.refund')}
           </span>
           <span className="rounded-full border border-amber-600 bg-amber-50 px-2.5 py-0.5 text-sm font-bold text-amber-950">{t('detail.vault.independence')}</span>
         </div>
@@ -104,7 +106,9 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
 
         <div className="space-y-6 lg:col-span-5">
           <div className="korum-trust-vault space-y-4 p-6">
-            {ticketing ? (
+            {voucher ? (
+              <VoucherStock voucher={voucher} sold={card.ticketsSold} />
+            ) : ticketing ? (
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="font-joy text-2xl font-bold text-sky-900 tabular-nums">
                   <span aria-hidden="true">{'🎟️ '}</span>
@@ -140,17 +144,28 @@ export function InitiativeDetail({ orgSlug, entityName, vertical, detail, shareU
               </span>
             </div>
 
-            {card.achieved || card.closed ? (
+            {!canPay(card) ? (
               <p className="flex min-h-12 items-center justify-center rounded-2xl bg-emerald-100 px-4 text-center font-joy font-bold text-emerald-950">
-                {card.achieved ? (ticketing ? t('detail.ticketsSoldOut') : t('detail.closed')) : ticketing ? t('detail.ticketSalesClosed') : t('detail.contributionsClosed')}
+                {voucher
+                  ? card.achieved
+                    ? t('detail.vouchersSoldOut')
+                    : t('detail.voucherSalesClosed')
+                  : card.achieved
+                    ? ticketing
+                      ? t('detail.ticketsSoldOut')
+                      : t('detail.closed')
+                    : ticketing
+                      ? t('detail.ticketSalesClosed')
+                      : t('detail.contributionsClosed')}
               </p>
             ) : (
-              <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn w-full rounded-2xl! py-4! font-joy text-base">
-                <span aria-hidden="true">{ticketing ? '🎟️' : '💛'}</span>
+              <Link href={checkoutPath(orgSlug, card.id)} prefetch={false} className="tactile-btn w-full rounded-2xl! py-4! font-joy text-base" data-testid="detail-cta">
+                <span aria-hidden="true">{voucher ? (voucher.noProduct ? '💛' : '🧾') : ticketing ? '🎟️' : '💛'}</span>
                 {t(`detail.cta.${ctaKey(card)}`)}
               </Link>
             )}
 
+            {voucher ? <VoucherDetails voucher={voucher} /> : null}
             {ticketing && detail.ticket ? <TicketDetails ticket={detail.ticket} /> : null}
             {detail.breakdown.kind === 'shown' ? <PublicBreakdown breakdown={detail.breakdown.data} /> : null}
             {detail.breakdown.kind === 'hidden' ? <HiddenBreakdownNotice goalCents={card.goalCents} /> : null}

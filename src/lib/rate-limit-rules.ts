@@ -85,6 +85,16 @@ export function seatHoldLimit(ticketMax: number): number {
 }
 
 /**
+ * Vales retenidos por red y venta (Sprint 5.14b), con la misma regla que las plazas: un cuarto del tope, nunca menos que una compra máxima de vales (50) y nunca
+ * más que el propio tope. Sin tope no hay nada que agotar, pero se limita igual a cuatro compras máximas a la vez: corta un guion sin molestar a nadie.
+ */
+export function voucherHoldLimit(ticketMax: number | null, maxPerOrder: number): number {
+  if (ticketMax === null) return maxPerOrder * 4;
+  const capacity = Math.max(1, Math.floor(ticketMax));
+  return Math.min(capacity, Math.max(maxPerOrder, Math.ceil(capacity / 4)));
+}
+
+/**
  * Firmas de ideas por persona (Sprint 3.6): firmar es un clic y cada firma escribe en la auditoría; el tope impide que una cuenta robada o un
  * guion rellene el buzón de filas. Es muy superior a lo que firma una familia (unas pocas ideas abiertas a la vez).
  */

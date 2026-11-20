@@ -6,10 +6,12 @@ import { hashIpSubnet } from '@/core/security/device-signals';
 import type { Keyring } from '@/core/security/crypto';
 import { validateTaxId } from '@/core/tax/tax-id';
 import { releaseTicketHoldInTx, reserveTickets, TicketReservationError } from '@/core/ticketing/ticket-reservation.service';
+import { reserveVouchers, VoucherReservationError } from '@/core/ticketing/voucher-reservation.service';
+import { MAX_VOUCHERS_PER_ORDER } from '@/core/ticketing/voucher-rules';
 import { inTransaction } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { releaseUnits, reserveAttempt, reserveUnits } from '@/lib/rate-limit';
-import { CHECKOUT_RULE, CHECKOUT_SEATS_RULE, seatHoldLimit } from '@/lib/rate-limit-rules';
+import { CHECKOUT_RULE, CHECKOUT_SEATS_RULE, seatHoldLimit, voucherHoldLimit } from '@/lib/rate-limit-rules';
 import { getCheckoutContext } from '@/repositories/checkout.repository';
 import { ResourceNotFoundError } from '@/repositories/tenant-guard';
 import { loadLockedContribution } from '@/services/payments/payment-reversals';
@@ -43,6 +45,8 @@ export type CheckoutStart =
   | { status: 'INVALID'; field: CheckoutInvalidField }
   | { status: 'CLOSED' }
   | { status: 'SOLD_OUT'; available: number }
+  /** La venta de vales cambió mientras se elegía (p. ej. volvieron a quedar vales y ya no se ofrece «sin producto»): hay que volver a mirar la ficha. */
+  | { status: 'CHANGED' }
   | { status: 'RATE_LIMITED' }
   | { status: 'UNAVAILABLE' };
 
@@ -87,7 +91,9 @@ async function createIntent(deps: CheckoutDeps, input: CheckoutInput, buyer: { u
     return { status: 'CREATED', order: intent.paycometOrder, totalChargedCents: intent.totalChargedCents } as const;
   }
 
-  if (context.format !== 'TICKETING') return { status: 'INVALID', field: 'form' } as const;
+  if (input.kind === 'VOUCHER') return createVoucherIntent(deps, input, context, buyer, network, now);
+
+  if (context.format !== 'TICKETING' || context.ticketSubtype === 'VOUCHER') return { status: 'INVALID', field: 'form' } as const;
   // Plazas retenidas por red y evento: cada compra consume tantas unidades como plazas. Sin esto, una sola conexión podría dejar agotado el
   // evento encadenando reservas que nunca paga. Si la reserva no llega a hacerse (sin plazas, cerrado), las unidades se devuelven.
   const seatsKey = `${CHECKOUT_SEATS_RULE.prefix}${network}:${context.id}`;
@@ -97,6 +103,31 @@ async function createIntent(deps: CheckoutDeps, input: CheckoutInput, buyer: { u
     return { status: 'CREATED', order: reservation.paycometOrder, totalChargedCents: reservation.totalChargedCents } as const;
   } catch (error) {
     await releaseUnits(deps.db, seatsKey, input.quantity);
+    throw error;
+  }
+}
+
+/**
+ * Compra de vales o aportación «sin producto» (Sprint 5.14b). Los vales retenidos cuentan contra el límite por red y venta, como las plazas de un evento; la
+ * aportación «sin producto» no retiene nada, así que no consume ese límite. Precio, tarifa, tope y si se ofrece «sin producto» los decide `reserveVouchers`.
+ */
+async function createVoucherIntent(
+  deps: CheckoutDeps,
+  input: Extract<CheckoutInput, { kind: 'VOUCHER' }>,
+  context: Awaited<ReturnType<typeof getCheckoutContext>>,
+  buyer: { userId: string; email: string } | { guestEmail: string },
+  network: string,
+  now: Date
+) {
+  if (context.format !== 'TICKETING' || context.ticketSubtype !== 'VOUCHER') return { status: 'INVALID', field: 'form' } as const;
+  const holds = input.mode === 'VOUCHERS';
+  const unitsKey = `${CHECKOUT_SEATS_RULE.prefix}${network}:${context.id}`;
+  if (holds && !(await reserveUnits(deps.db, unitsKey, { ...CHECKOUT_SEATS_RULE, limit: voucherHoldLimit(context.ticketMax, MAX_VOUCHERS_PER_ORDER) }, input.quantity, now))) return { status: 'RATE_LIMITED' } as const;
+  try {
+    const reservation = await reserveVouchers(deps.db, { initiativeId: context.id, quantity: input.quantity, mode: input.mode, buyer, paymentMethod: input.method, locale: input.locale }, now);
+    return { status: 'CREATED', order: reservation.paycometOrder, totalChargedCents: reservation.totalChargedCents } as const;
+  } catch (error) {
+    if (holds) await releaseUnits(deps.db, unitsKey, input.quantity);
     throw error;
   }
 }
@@ -122,6 +153,13 @@ export async function startCheckout(deps: CheckoutDeps, raw: unknown, context: C
     if (error instanceof DonationIntentError) {
       if (error.reason === 'INVALID_AMOUNT') return { status: 'INVALID', field: 'amount' };
       if (error.reason === 'FISCAL_NOT_AVAILABLE') return { status: 'INVALID', field: 'fiscal' };
+      return { status: 'CLOSED' };
+    }
+    if (error instanceof VoucherReservationError) {
+      if (error.reason === 'SOLD_OUT') return { status: 'SOLD_OUT', available: error.availableVouchers ?? 0 };
+      if (error.reason === 'INVALID_QUANTITY') return { status: 'INVALID', field: 'quantity' };
+      if (error.reason === 'INVALID_GUARANTEE') return { status: 'INVALID', field: 'amount' };
+      if (error.reason === 'NO_PRODUCT_NOT_OFFERED') return { status: 'CHANGED' };
       return { status: 'CLOSED' };
     }
     if (error instanceof TicketReservationError) {

@@ -33,6 +33,7 @@ const offer = (overrides: Partial<CheckoutOffer> = {}): CheckoutOffer => ({
   kind: 'DONATION',
   closedReason: null,
   donation: { presetsCents: [1_000, 2_500, 5_000], defaultIdx: 1 },
+  voucher: null,
   ticket: null,
   groups: orderedGroupClusters('SCHOOL', null),
   initialGroup: null,

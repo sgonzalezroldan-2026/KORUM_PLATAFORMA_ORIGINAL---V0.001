@@ -98,6 +98,8 @@ export function shiftSeedData(seed: KorumSeedData, clock: Pick<SeedClock, 'offse
   const shifted = structuredClone(seed);
   for (const initiative of shifted.initiatives) {
     initiative.closesAt = shiftIso(clock, initiative.closesAt);
+    // La validez de una venta de vales se mueve con su cierre: nunca caduca antes de que acabe la venta (Sprint 5.14b).
+    if (initiative.voucherValidUntil) initiative.voucherValidUntil = shiftIso(clock, initiative.voucherValidUntil);
     initiative.academicYear = shiftCourse(initiative.academicYear, clock.courseOffset);
     initiative.quarter = quarterOf(new Date(initiative.closesAt));
   }

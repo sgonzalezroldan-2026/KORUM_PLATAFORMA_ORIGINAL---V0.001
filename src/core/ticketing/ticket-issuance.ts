@@ -60,15 +60,13 @@ export async function settleTicketSeatInTx(tx: Db, contribution: ContributionFor
     data: { uuid, contributionId: contribution.id, initiativeId: contribution.initiativeId, serialCode, subtype, holderEmail, quantity, qrHmacSignature: signPass(qrSecret, uuid), createdAt: occurredAt }
   });
 
-  // Una venta de vales no se agota en el sentido de un evento: sigue abierta (para la aportación «sin producto» y la devolución de 14 días) hasta su cierre.
-  // Su email con el QR y el saldo llega con la ficha y la compra (Sprint 5.14b); hasta entonces no hay manera de comprar vales desde la aplicación.
-  if (subtype === 'VOUCHER') return { issued: true, passUuid: uuid, capacityFull: false };
-
-  // El mensaje lleva el identificador del pase, nunca el QR firmado: lo compone quien lo envía (Sprint 2.6).
+  // El mensaje lleva el identificador del pase, nunca el QR firmado: lo compone quien lo envía (Sprint 2.6). Un pase de vales lleva su propio email, con el saldo
+  // y la validez en lugar de la fecha y el lugar (Sprint 5.14b).
+  const templateKey = subtype === 'VOUCHER' ? 'voucher.pass' : 'ticket.pass';
   await tx.outboxMessage.create({
     data: {
-      idempotencyKey: `ticket.pass:${contribution.id}`,
-      templateKey: 'ticket.pass',
+      idempotencyKey: `${templateKey}:${contribution.id}`,
+      templateKey,
       locale: contribution.locale,
       toAddress: holderEmail,
       userId: contribution.userId,
@@ -76,6 +74,8 @@ export async function settleTicketSeatInTx(tx: Db, contribution: ContributionFor
       payloadJson: { passUuid: uuid, serialCode, initiativeId: contribution.initiativeId, quantity }
     }
   });
+  // Una venta de vales no se agota en el sentido de un evento: sigue abierta (para la aportación «sin producto» y la devolución de 14 días) hasta su cierre.
+  if (subtype === 'VOUCHER') return { issued: true, passUuid: uuid, capacityFull: false };
   return { issued: true, passUuid: uuid, capacityFull: initiative.ticketMax !== null && updated.ticketsSold >= initiative.ticketMax };
 }
 
