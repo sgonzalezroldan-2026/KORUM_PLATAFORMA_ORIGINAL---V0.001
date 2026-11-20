@@ -17,6 +17,7 @@ export const TARIFF_LIMITS = {
   exemptLimitCents: 100_000_000,
   fullIntegrityCheckCents: GUARANTEE_MAX_CENTS,
   ticketFeeFixedCents: 100_000,
+  voucherFeeFixedCents: 100_000,
   maintPerInitCents: 10_000_000,
   maintAnnualCapCents: 100_000_000
 } as const;
@@ -33,6 +34,8 @@ export const customTariffSchema = z
     fullIntegrityCheckCents: cents(TARIFF_LIMITS.fullIntegrityCheckCents),
     ticketFeeFixedCents: cents(TARIFF_LIMITS.ticketFeeFixedCents),
     ticketFeeBps: bps,
+    voucherFeeFixedCents: cents(TARIFF_LIMITS.voucherFeeFixedCents),
+    voucherFeeBps: bps,
     maintActive: z.boolean(),
     maintPerInitCents: cents(TARIFF_LIMITS.maintPerInitCents),
     maintAnnualCapCents: cents(TARIFF_LIMITS.maintAnnualCapCents)
@@ -43,7 +46,7 @@ export const tariffSchema = z.discriminatedUnion('customRules', [customTariffSch
 export type TariffInput = z.infer<typeof tariffSchema>;
 export type CustomTariff = z.infer<typeof customTariffSchema>;
 
-/** Los once valores de una tarifa (los mismos campos en `Organization` y en `GlobalConfig`). */
+/** Los trece valores de una tarifa (los mismos campos en `Organization` y en `GlobalConfig`). */
 export type TariffValues = Omit<CustomTariff, 'customRules'>;
 
 /** Copia solo los campos de la tarifa de cualquier objeto que los tenga (una entidad, la configuración global o un formulario). */
@@ -57,6 +60,8 @@ export function pickTariffValues(source: TariffValues): TariffValues {
     fullIntegrityCheckCents: source.fullIntegrityCheckCents,
     ticketFeeFixedCents: source.ticketFeeFixedCents,
     ticketFeeBps: source.ticketFeeBps,
+    voucherFeeFixedCents: source.voucherFeeFixedCents,
+    voucherFeeBps: source.voucherFeeBps,
     maintActive: source.maintActive,
     maintPerInitCents: source.maintPerInitCents,
     maintAnnualCapCents: source.maintAnnualCapCents

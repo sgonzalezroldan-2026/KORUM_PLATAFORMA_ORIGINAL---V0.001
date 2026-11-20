@@ -1,6 +1,7 @@
 import { assertVerifiedSuperadmin, revalidateActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { categoryRuleSchema, categorySchema, invalidTariffFields, pickTariffValues, shiftedExemptRemaining, tariffSchema } from '@/core/admin/org-360-rules';
 import { inTransaction, isUniqueViolation, type Db } from '@/lib/db';
+import { ticketingOnSaleWhere } from './global-rules.service';
 
 /**
  * Acciones de la ficha 360º sobre una entidad (Sprint 5.2): sus tarifas propias y sus categorías. Quién firma por la entidad lo regula ella misma (decisión del promotor, 2026-11-12): el Super-Admin no da de baja ni confirma puestos.
@@ -8,7 +9,7 @@ import { inTransaction, isUniqueViolation, type Db } from '@/lib/db';
  * y dejan en la auditoría el antes y el después, sin datos personales.
  */
 
-export type OrgAdminRejection = 'NOT_FOUND' | 'ARCHIVED' | 'INVALID' | 'PUBLISHED_TICKETING' | 'LIMIT_BELOW_USED' | 'CATEGORY_EXISTS' | 'CATEGORY_NOT_FOUND';
+export type OrgAdminRejection = 'NOT_FOUND' | 'ARCHIVED' | 'INVALID' | 'PUBLISHED_TICKETING' | 'PUBLISHED_VOUCHERS' | 'LIMIT_BELOW_USED' | 'CATEGORY_EXISTS' | 'CATEGORY_NOT_FOUND';
 
 export class OrgAdminRejectedError extends Error {
   constructor(
@@ -24,9 +25,9 @@ export class OrgAdminRejectedError extends Error {
  * ¿Tiene la entidad una taquilla a la venta? Cuenta las que recaudan y también las que ya cumplieron la meta pero aún no han cerrado (un contracargo las
  * reabre y volverían a vender con la tarifa nueva): la compra de entradas lee la tarifa actual de la entidad, no la de la publicación (auditoría financiera, M2).
  */
-export async function hasTicketingOnSale(db: Db, organizationId: string, now: Date): Promise<boolean> {
-  // También un evento ya celebrado sin liquidar: se puede aplazar y volver a vender (Sprint 5.13).
-  return (await db.initiative.count({ where: { organizationId, format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, OR: [{ closesAt: { gt: now } }, { payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' } }] } })) > 0;
+export async function hasTicketingOnSale(db: Db, organizationId: string, now: Date, kind: 'EVENT' | 'VOUCHER' = 'EVENT'): Promise<boolean> {
+  // También un evento ya celebrado sin liquidar: se puede aplazar y volver a vender (Sprint 5.13). Los vales, con su tarifa propia, aparte (Sprint 5.14a).
+  return (await db.initiative.count({ where: { organizationId, ...ticketingOnSaleWhere(now, kind) } })) > 0;
 }
 
 /** Bloquea la fila de la entidad y la devuelve; una entidad archivada no se toca (su ficha es solo de lectura). */
@@ -54,13 +55,16 @@ export async function saveOrganizationTariffs(db: Db, actor: VerifiedSuperadminA
     await revalidateActor(tx, actor, 'organization.tariffs_update', now);
     await lockOrganization(tx, organizationId, now);
     const [before, global] = await Promise.all([
-      tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { customRules: true, exemptLimitCents: true, exemptRemainingCents: true, t1Bps: true, t2Bps: true, t3Bps: true, sponsorFeeBps: true, fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true, maintActive: true, maintPerInitCents: true, maintAnnualCapCents: true } }),
+      tx.organization.findUniqueOrThrow({ where: { id: organizationId }, select: { customRules: true, exemptLimitCents: true, exemptRemainingCents: true, t1Bps: true, t2Bps: true, t3Bps: true, sponsorFeeBps: true, fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true, maintActive: true, maintPerInitCents: true, maintAnnualCapCents: true } }),
       tx.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' } })
     ]);
     const values = pickTariffValues(input.customRules ? input : global);
     // La compra de entradas lee la tarifa actual de la entidad: con una taquilla a la venta no se cambian sus gastos de gestión (cambiaría lo prometido).
     if ((values.ticketFeeFixedCents !== before.ticketFeeFixedCents || values.ticketFeeBps !== before.ticketFeeBps) && (await hasTicketingOnSale(tx, organizationId, now))) {
       throw new OrgAdminRejectedError('PUBLISHED_TICKETING', ['ticketFeeFixedCents', 'ticketFeeBps']);
+    }
+    if ((values.voucherFeeFixedCents !== before.voucherFeeFixedCents || values.voucherFeeBps !== before.voucherFeeBps) && (await hasTicketingOnSale(tx, organizationId, now, 'VOUCHER'))) {
+      throw new OrgAdminRejectedError('PUBLISHED_VOUCHERS', ['voucherFeeFixedCents', 'voucherFeeBps']);
     }
     const exemptRemainingCents = shiftedExemptRemaining(before.exemptLimitCents, values.exemptLimitCents, before.exemptRemainingCents);
     // Un límite propio por debajo de lo ya gastado se rechaza al editarlo. Al **volver a los globales** se acepta aunque el global sea menor que lo gastado (la

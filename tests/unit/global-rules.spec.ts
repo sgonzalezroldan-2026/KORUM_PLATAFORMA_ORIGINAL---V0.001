@@ -33,6 +33,8 @@ const DEFAULTS: GlobalRulesInput = {
   topupFeeBps: 0,
   ticketFeeFixedCents: 45,
   ticketFeeBps: 200,
+  voucherFeeFixedCents: 45,
+  voucherFeeBps: 200,
   maintActive: false,
   maintPerInitCents: 4_900,
   maintAnnualCapCents: 14_700,

@@ -62,6 +62,8 @@ export interface BiInitiativeFacts {
   sunkCostsCents?: number;
   /** Auto-Impulso anterior que sigue puesto en la campaña (neto de lo devuelto): vuelve a KORUM si vence sin meta, así que el 💎 lo descuenta. */
   selfBoostStandingCents?: number;
+  /** Venta de vales (Sprint 5.14a): no se proyecta y nunca lleva 💎. */
+  voucherSale?: boolean;
 }
 
 export interface BiInitiativeRow {
@@ -207,7 +209,8 @@ export function buildBiInitiativeRow(facts: BiInitiativeFacts): BiInitiativeRow 
     netProfitAfterBoostCents: analysis.netProfitAfterBoostCents,
     recoverableSelfBoostCents: analysis.recoverableSelfBoostCents,
     isNegativeReturnAlert: netRevenueCents < 0,
-    isProfitableSelfBoost: analysis.isProfitableSelfBoost
+    // Una venta de vales no tiene meta que completar: nunca lleva Auto-Impulso (Sprint 5.14a).
+    isProfitableSelfBoost: facts.voucherSale !== true && analysis.isProfitableSelfBoost
   };
 }
 

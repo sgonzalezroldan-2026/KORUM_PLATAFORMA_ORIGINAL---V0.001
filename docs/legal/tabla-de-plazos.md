@@ -99,8 +99,8 @@ Los 3 años de las dos últimas filas son el plazo en que prescriben las infracc
 
 | Dato | Responde | Plazo | Después | Estado |
 | :--- | :--- | :--- | :--- | :--- |
-| Entrada o vale: email de quien compró y código QR | KORUM | Como su compra: 6 años desde el cierre del ejercicio | Se quita el email | Hecho para las entradas. Los vales llegan en el Sprint 5.14 |
-| Lecturas de la portería (qué entrada, cuándo y si se admitió) y canjes de vales | Entidad | 1 año desde que se liquida el evento o la venta | Borrado | Hecho para las entradas (Sprint 5.13); los vales, en el 5.14c (hoy se conservan con el evento) |
+| Entrada o vale: email de quien compró y código QR | KORUM | Como su compra: 6 años desde el cierre del ejercicio | Se quita el email | Hecho para entradas y vales (el pase de vales existe desde el Sprint 5.14a y la supresión y la purga lo tratan como el de una entrada) |
+| Lecturas de la portería (qué entrada, cuándo y si se admitió) y canjes de vales | Entidad | 1 año desde que se liquida el evento o la venta | Borrado | Hecho para las entradas (Sprint 5.13). Los canjes de vales son lecturas de la misma tabla desde el 5.14a; su borrado al año de liquidarse la venta se comprueba en el 5.14c, que construye esa liquidación |
 | Nombre que un voluntario da a su móvil | Entidad | 90 días desde que caduca su sesión de portería | Se vacía | Hecho |
 | Sesión de portería de un móvil (sin datos de la persona) | Entidad | Como las lecturas | Borrado | Hecho (Sprint 5.13) |
 

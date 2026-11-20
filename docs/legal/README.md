@@ -54,7 +54,7 @@ Aparecen entre dobles corchetes y salen del ajuste `platform.company` de la cons
 
 ## 4. Lo que estos textos describen y el código todavía no hace
 
-Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 63 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
+Los textos describen la plataforma **como saldrá a cobrar dinero real**, con las decisiones 21 a 65 ya aplicadas. Hasta que cada sprint se cierre, la aplicación hace lo anterior. Ningún texto se publica como definitivo mientras su fila siga abierta, y **el sprint que construye cada regla comprueba que el texto coincide con lo construido**.
 
 | Qué dice el texto | Documento | Sprint que lo construye |
 | :--- | :--- | :-: |
@@ -151,7 +151,7 @@ También van en el borrador, y quedan validados con la lectura del promotor: el 
 
 Revisada el 2026-11-18 por `korum-legal-fiscal-prereviewer` (tres pasadas: 36 hallazgos, 2 y 0) y por `korum-community-target-psychologist` (tres pasadas: 36 hallazgos, 10 y 0). Los dos terminan en **APROBADO**.
 
-Tras la validación del promotor (el mismo día) los dos revisaron de nuevo solo los pasajes cambiados: el revisor legal, 12 hallazgos y después 0; el de comprensión, 4, después 1 y después 0. Los dos terminan otra vez en **APROBADO**. De esa revisión salen dos cosas para más adelante: comprobar en el Sprint 5.15 a qué grupo («empresa» o «entidad sin ánimo de lucro») va cada forma jurídica, y preguntar al promotor, al abrir el Sprint 5.14a, si el pago «sin producto» de los vales es una compra o una donación.
+Tras la validación del promotor (el mismo día) los dos revisaron de nuevo solo los pasajes cambiados: el revisor legal, 12 hallazgos y después 0; el de comprensión, 4, después 1 y después 0. Los dos terminan otra vez en **APROBADO**. De esa revisión salen dos cosas para más adelante: comprobar en el Sprint 5.15 a qué grupo («empresa» o «entidad sin ánimo de lucro») va cada forma jurídica, y preguntar al promotor, al abrir el Sprint 5.14a, si el pago «sin producto» de los vales es una compra o una donación. **Respondido el 2026-11-19 (decisiones 64 y 65):** es una aportación sin certificado, y no se ofrece a los colegios con ánimo de lucro; condiciones de entradas y vales §4.6 al día.
 
 **Segunda entrega (2026-11-18).** Los cuatro documentos (contrato de encargo, evaluación de impacto, tabla de plazos y registro de actividades) y los pasajes tocados de la primera entrega los revisaron los mismos dos agentes, cada uno en su contexto. `korum-legal-fiscal-prereviewer`: cuatro pasadas y una confirmación (39 hallazgos, 13, 3 y 0). `korum-community-target-psychologist`: seis pasadas (45 hallazgos, 15, 19, 6, 3 y 0). Los dos terminan en **APROBADO**, sin ningún hallazgo pendiente. De la revisión legal salieron el registro de actividades, que no estaba previsto, y cinco de los puntos que valida el promotor (§8.3, §8.5, §8.6, §8.7 y §8.10).
 

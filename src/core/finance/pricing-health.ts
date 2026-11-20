@@ -1,3 +1,4 @@
+import { voucherFeeMarginCents } from '@/core/ticketing/voucher-rules';
 import type { KorumGlobalRulesCents } from '@/types/korum.types';
 import type { RevenueSourceKey } from './bi-analytics.service';
 import { bpsOf } from './money';
@@ -12,6 +13,7 @@ import { bracketConfigFor, calculateBracketFeeCents, gatewayChargeCostCents } fr
 export type PricingAlertCode =
   | 'HUCHA_FEE_BELOW_GATEWAY_COST'
   | 'TICKET_FEE_BELOW_GATEWAY_COST'
+  | 'VOUCHER_FEE_BELOW_GATEWAY_COST'
   | 'SPONSOR_FEE_BELOW_GATEWAY_COST'
   | 'RULE_VALUE_INVALID'
   | 'BRACKET_THRESHOLDS_INVALID'
@@ -47,6 +49,12 @@ export type ReviewedPricingAlert = PricingAlert & { acknowledgement: PricingAckn
 
 export const HUCHA_PROBE_AMOUNTS_CENTS = [500, 1000, 2500, 5000, 10000] as const;
 export const TICKET_PROBE_PRICES_CENTS = [200, 500, 1000, 2000, 5000] as const;
+/**
+ * Importes de una compra de vales con los que se prueba su tarifa (los gastos van por compra, no por vale). Llegan hasta la compra más grande realista (50 vales
+ * de 100 €): el margen cambia en línea recta con el importe y, si el porcentaje de los vales es menor que el de la pasarela, se pierde en las compras grandes
+ * aunque las pequeñas ganen (auditoría financiera del 5.14a).
+ */
+export const VOUCHER_PROBE_AMOUNTS_CENTS = [100, 300, 500, 1000, 2000, 5000, 25_000, 100_000, 500_000] as const;
 /** Niveles de patrocinio de la Regla 02 §5. */
 export const SPONSOR_TIERS_CENTS = [10000, 25000, 50000] as const;
 /** Cargo de Mi Hucha con el que se explica el aviso si pierde dinero: un importe fácil de imaginar. */
@@ -57,19 +65,21 @@ type RuleKey = keyof KorumGlobalRulesCents;
 const GATEWAY_KEYS: readonly RuleKey[] = ['gatewayPctBps', 'gatewayFixedCents'];
 const HUCHA_KEYS: readonly RuleKey[] = ['topupFeeCents', 'topupFeeBps', ...GATEWAY_KEYS];
 const TICKET_KEYS: readonly RuleKey[] = ['ticketFeeFixedCents', 'ticketFeeBps', ...GATEWAY_KEYS];
+const VOUCHER_KEYS: readonly RuleKey[] = ['voucherFeeFixedCents', 'voucherFeeBps', ...GATEWAY_KEYS];
 const SPONSOR_KEYS: readonly RuleKey[] = ['sponsorFeeBps', ...GATEWAY_KEYS];
 const BRACKET_RATE_KEYS: readonly RuleKey[] = ['t1Bps', 't2Bps', 't3Bps'];
 const BRACKET_KEYS: readonly RuleKey[] = ['bracketMode', 't1MaxCents', 't2MaxCents', ...BRACKET_RATE_KEYS, 'exemptLimitCents'];
 
 /** Valores que entran en los cálculos. Por encima de este límite (10 M€ o 10.000.000 %) no es una regla de precios, es una errata. */
-const NUMERIC_RULE_KEYS: readonly RuleKey[] = ['exemptLimitCents', 't1MaxCents', 't2MaxCents', ...BRACKET_RATE_KEYS, 'sponsorFeeBps', 'gatewayPctBps', 'gatewayFixedCents', 'topupFeeCents', 'topupFeeBps', 'ticketFeeFixedCents', 'ticketFeeBps'];
+const NUMERIC_RULE_KEYS: readonly RuleKey[] = ['exemptLimitCents', 't1MaxCents', 't2MaxCents', ...BRACKET_RATE_KEYS, 'sponsorFeeBps', 'gatewayPctBps', 'gatewayFixedCents', 'topupFeeCents', 'topupFeeBps', 'ticketFeeFixedCents', 'ticketFeeBps', 'voucherFeeFixedCents', 'voucherFeeBps'];
 const MAX_RULE_VALUE = 1_000_000_000;
 
 const SOURCE_KEYS: Record<RevenueSourceKey, readonly RuleKey[]> = {
   bracketFeeCents: [...BRACKET_KEYS, ...GATEWAY_KEYS],
   supportGuaranteeCents: ['fullIntegrityCheckCents', 'guaranteePresetsCents', 'defaultGuaranteeIdx', ...GATEWAY_KEYS],
   sponsorFeeCents: SPONSOR_KEYS,
-  digitalTicketFeeCents: TICKET_KEYS,
+  // Entradas y vales ingresan en la misma cuenta (Gastos de gestión digital): el margen de la fuente depende de las dos tarifas.
+  digitalTicketFeeCents: [...new Set([...TICKET_KEYS, ...VOUCHER_KEYS])],
   maintFeeCents: ['maintActive', 'maintPerInitCents', 'maintAnnualCapCents', ...GATEWAY_KEYS],
   huchaTopupFeeCents: HUCHA_KEYS
 };
@@ -125,6 +135,21 @@ function evaluateTicketFee(rules: KorumGlobalRulesCents, gateway: { pctBps: numb
     params: { priceCents: worst.priceCents, feeCents: worst.feeCents, gatewayCostCents: worst.gatewayCostCents, lossCents: Math.abs(worst.marginCents) },
     fingerprint: fingerprintOf('TICKET_FEE_BELOW_GATEWAY_COST', rules, TICKET_KEYS),
     settingKeys: [...TICKET_KEYS]
+  };
+}
+
+/** Lo mismo para los vales, con su tarifa propia y por compra (Sprint 5.14a): el margen de cada compra probada debe ser estrictamente positivo. */
+function evaluateVoucherFee(rules: KorumGlobalRulesCents, gateway: { pctBps: number; fixedCents: number }): PricingAlert | null {
+  const fee = { fixedCents: rules.voucherFeeFixedCents, pctBps: rules.voucherFeeBps };
+  const probes = VOUCHER_PROBE_AMOUNTS_CENTS.map((grossCents) => ({ grossCents, ...voucherFeeMarginCents(grossCents, fee, gateway) }));
+  const worst = probes.reduce((lowest, probe) => (probe.marginCents < lowest.marginCents ? probe : lowest));
+  if (worst.marginCents > 0) return null;
+  return {
+    code: 'VOUCHER_FEE_BELOW_GATEWAY_COST',
+    severity: 'CRITICAL',
+    params: { amountCents: worst.grossCents, feeCents: worst.feeCents, gatewayCostCents: worst.gatewayCostCents, lossCents: Math.abs(worst.marginCents) },
+    fingerprint: fingerprintOf('VOUCHER_FEE_BELOW_GATEWAY_COST', rules, VOUCHER_KEYS),
+    settingKeys: [...VOUCHER_KEYS]
   };
 }
 
@@ -239,6 +264,7 @@ export function evaluatePricingHealth(rules: KorumGlobalRulesCents, realSourceMa
   return [
     evaluateHuchaFee(rules, gateway),
     evaluateTicketFee(rules, gateway),
+    evaluateVoucherFee(rules, gateway),
     evaluateSponsorFee(rules, gateway),
     ...sourceAlerts,
     evaluateBracketThresholds(rules),
@@ -262,6 +288,16 @@ export function reviewPricingAlerts(alerts: readonly PricingAlert[], acknowledge
 export function countOpenPricingAlerts(reviewed: readonly ReviewedPricingAlert[]): { open: number; openCritical: number } {
   const open = reviewed.filter((alert) => alert.acknowledgement === null);
   return { open: open.length, openCritical: open.filter((alert) => alert.severity === 'CRITICAL').length };
+}
+
+/** Compra de vales de muestra del validador en vivo de su tarifa: 10 € en vales. */
+export const VOUCHER_SAMPLE_AMOUNT_CENTS = 1000;
+
+/** Lo que ve quien edita la tarifa de los vales mientras escribe, con una compra de muestra. Mismas fórmulas que `VOUCHER_FEE_BELOW_GATEWAY_COST`; `null` si aún no se puede calcular. */
+export function sampleVoucherMargin(rules: Pick<KorumGlobalRulesCents, 'voucherFeeFixedCents' | 'voucherFeeBps' | 'gatewayPctBps' | 'gatewayFixedCents'>, grossCents: number = VOUCHER_SAMPLE_AMOUNT_CENTS): { grossCents: number; feeCents: number; gatewayCostCents: number; marginCents: number } | null {
+  const values = [rules.voucherFeeFixedCents, rules.voucherFeeBps, rules.gatewayPctBps, rules.gatewayFixedCents];
+  if (!values.every((value) => Number.isSafeInteger(value) && value >= 0 && value <= MAX_RULE_VALUE)) return null;
+  return { grossCents, ...voucherFeeMarginCents(grossCents, { fixedCents: rules.voucherFeeFixedCents, pctBps: rules.voucherFeeBps }, { pctBps: rules.gatewayPctBps, fixedCents: rules.gatewayFixedCents }) };
 }
 
 /** Importe de referencia del validador en vivo de los gastos de gestión digital (prototipo `validateTicketFeeCoverageLive`): una entrada de 5 €. */

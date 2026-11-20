@@ -128,6 +128,9 @@ export interface KorumGlobalRulesCents {
   topupFeeBps: number;
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
+  /** Gastos de gestión digital de los vales (Sprint 5.14a): fijo por compra + porcentaje sobre el importe de la compra. */
+  voucherFeeFixedCents: number;
+  voucherFeeBps: number;
   maintActive: boolean;
   maintPerInitCents: number;
   maintAnnualCapCents: number;

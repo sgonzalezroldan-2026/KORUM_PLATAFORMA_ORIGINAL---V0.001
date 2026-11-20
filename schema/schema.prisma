@@ -127,9 +127,11 @@ enum InitiativeStatus {
   CANCELLED // Cancelada antes de recaudar
 }
 
-/// Tipo de venta de una taquilla: hoy solo hay eventos con entradas (Sprint 5.12a, decisión 31 del promotor).
+/// Tipo de venta de una taquilla: eventos con entradas y, desde el Sprint 5.14a, ventas de vales (decisión 32 del promotor).
 enum TicketSubtype {
   EVENT
+  /// Venta de vales: unidades de canje de precio único que se gastan en el puesto de la entidad. Un solo pase por compra, con su saldo.
+  VOUCHER
 }
 
 enum TicketFeeMode {
@@ -560,6 +562,9 @@ model GlobalConfig {
   topupFeeBps             Int         @default(0)
   ticketFeeFixedCents     Int         @default(45)
   ticketFeeBps            Int         @default(200)
+  /// Gastos de gestión digital de los vales (Sprint 5.14a), tarifa propia: fijo **por compra** + porcentaje sobre el importe de la compra.
+  voucherFeeFixedCents    Int         @default(45)
+  voucherFeeBps           Int         @default(200)
   maintActive             Boolean     @default(false)
   maintPerInitCents       Int         @default(4900)
   maintAnnualCapCents     Int         @default(14700)
@@ -816,6 +821,9 @@ model Organization {
   fullIntegrityCheckCents  Int                  @default(180)
   ticketFeeFixedCents      Int                  @default(45)
   ticketFeeBps             Int                  @default(200)
+  /// Copia de la tarifa de vales (fijo por compra + porcentaje): la global o, con `customRules`, la propia de la entidad.
+  voucherFeeFixedCents     Int                  @default(45)
+  voucherFeeBps            Int                  @default(200)
   maintActive              Boolean              @default(false)
   maintPerInitCents        Int                  @default(4900)
   maintAnnualCapCents      Int                  @default(14700)
@@ -993,7 +1001,9 @@ model Initiative {
   matchingPoolRemainingCents Int              @default(0)
   matchingSponsorName        String?
   ticketSubtype              TicketSubtype?
+  /// En una venta de vales (`VOUCHER`), el precio de **un** vale.
   ticketPriceCents           Int?
+  /// Aforo de un evento o, en una venta de vales, su tope de vales; `null` en una venta de vales sin tope.
   ticketMax                  Int?
   /// Solo lo pagado. Hasta liquidar, la suma de los pases no anulados cuadra con este contador; tras liquidar, un contracargo anula el pase sin recalcular el aforo.
   ticketsSold                Int              @default(0)
@@ -1001,6 +1011,10 @@ model Initiative {
   ticketsHeld                Int              @default(0)
   ticketFeeMode              TicketFeeMode?
   ticketVenue                String?
+  /// Solo ventas de vales: hasta cuándo se pueden gastar (instante final; lo fija la entidad bajo su responsabilidad y sin mínimo, decisión 49). Obligatoria al publicar.
+  voucherValidUntil          DateTime?
+  /// Solo ventas de vales: al agotarse el tope, la entidad deja seguir aportando «sin producto» (sin vale ni QR). Nunca en un colegio con ánimo de lucro (Sprint 5.14a).
+  voucherNoProductEnabled    Boolean          @default(false)
   /// PIN de portería por EVENTO (hash Argon2/scrypt), con caducidad. Nunca en claro.
   gatePinHash                String?
   gatePinExpiresAt           DateTime?
@@ -1371,8 +1385,10 @@ model Contribution {
   fiscalYear                 Int
   type                       ContributionType      @default(DONATION)
   groupName                  String?
-  /// Solo TICKET: entradas de esta compra.
+  /// Solo TICKET: entradas o vales de esta compra (`null` en una aportación «sin producto»).
   ticketQuantity             Int?
+  /// Solo TICKET de una venta de vales: aportación «sin producto» (decisión del promotor del 2026-11-19): sin vale ni QR, sin certificado y fuera del Modelo 182.
+  voucherNoProduct           Boolean               @default(false)
   /// Solo TICKET: con valor mientras esta compra retiene plazas en `Initiative.ticketsHeld`.
   ticketHoldUntil            DateTime?
   amountCents                Int
@@ -1432,7 +1448,9 @@ model TicketPass {
   serialCode      String          @unique
   subtype         TicketSubtype   @default(EVENT)
   holderEmail     String
+  /// Entradas o, en un pase de vales, vales comprados.
   quantity        Int             @default(1)
+  /// Personas que han entrado o, en un pase de vales, vales ya gastados: el saldo es `quantity − checkedInCount` y la base de datos impide pasarse.
   checkedInCount  Int             @default(0)
   qrHmacSignature String
   lastCheckedInAt DateTime?
@@ -1460,6 +1478,7 @@ model GateSession {
   checkIns     TicketCheckIn[]
 }
 
+/// Lectura de un QR: en la puerta de un evento o, en una venta de vales, un canje en el puesto (`quantity` = vales gastados).
 model TicketCheckIn {
   id            Int          @id @default(autoincrement())
   ticketPassId  Int

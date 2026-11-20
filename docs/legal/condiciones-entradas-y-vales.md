@@ -1,6 +1,6 @@
 # Condiciones de entradas y vales
 
-> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entradas-y-vales` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el añadido del punto 3.6, el 2026-11-19, Sprint 5.13; la frase del certificado en el punto 4.6, el 2026-11-19, decisión 64) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** personas que compran entradas para un evento o vales de una entidad.
 > **Se acepta en:** el pago, con la casilla obligatoria «He leído y acepto las condiciones de entradas y vales» y su ventana de resumen (Sprint 5.15). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -90,7 +90,7 @@ Los vales valen hasta la fecha que fija la entidad, bajo su responsabilidad. La 
 
 ### 4.6 Seguir aportando «sin producto»
 
-Cuando los vales se agotan, la entidad puede dejar abierta la opción de seguir aportando **sin recibir vales**. Si la eliges, te lo avisamos con claridad antes de pagar: no recibirás ningún vale ni código, y ese pago no se devuelve, salvo que la entidad cancele la venta antes de recibir el dinero: en ese caso te lo devolvemos entero. Si la cancela después, se aplica lo mismo que a los vales (punto 4.5).
+Cuando los vales se agotan, la entidad puede dejar abierta la opción de seguir aportando **sin recibir vales**. Si la eliges, te lo avisamos con claridad antes de pagar: no recibirás ningún vale ni código, esa aportación **no da derecho a certificado fiscal**, y ese pago no se devuelve, salvo que la entidad cancele la venta antes de recibir el dinero: en ese caso te lo devolvemos entero. Si la cancela después, se aplica lo mismo que a los vales (punto 4.5).
 
 ## 5. Devoluciones
 

@@ -49,7 +49,7 @@ export async function executeSelfBoost(db: Db, actor: VerifiedSuperadminActor, i
     await revalidateActor(tx, actor, 'selfboost.execute', now);
     // Bloquea la iniciativa antes de leer nada: un cobro, una devolución o este mismo botón a la vez se ordenan.
     const locked = await tx.initiative.updateMany({ where: { id: input.initiativeId, status: 'FUNDRAISING' }, data: { updatedAt: now } });
-    const initiative = await tx.initiative.findUnique({ where: { id: input.initiativeId }, select: { organizationId: true, status: true, goalCents: true, raisedCents: true, closesAt: true, walletEscrowId: true, organization: { select: { archivedAt: true } } } });
+    const initiative = await tx.initiative.findUnique({ where: { id: input.initiativeId }, select: { organizationId: true, status: true, goalCents: true, raisedCents: true, closesAt: true, ticketSubtype: true, walletEscrowId: true, organization: { select: { archivedAt: true } } } });
     if (!initiative) throw new SelfBoostNotAllowedError(input.initiativeId, 'NOT_FOUND', 'no existe');
     if (initiative.organization.archivedAt !== null) throw new SelfBoostNotAllowedError(input.initiativeId, 'ORG_ARCHIVED', 'la entidad está archivada');
     if (locked.count === 0) throw new SelfBoostNotAllowedError(input.initiativeId, 'NOT_FUNDRAISING', `está en estado ${initiative.status}`);
@@ -121,12 +121,19 @@ export class TariffFixNotNeededError extends Error {
 export async function previewNegativeReturnFix(db: Db, initiativeId: number): Promise<NegativeReturnFixPlan | null> {
   const initiative = await db.initiative.findUnique({
     where: { id: initiativeId },
-    select: { status: true, absorbsGatewayCostByKorum: true, organizationId: true, organization: { select: { customRules: true, fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true } } }
+    select: {
+      status: true,
+      absorbsGatewayCostByKorum: true,
+      ticketSubtype: true,
+      organizationId: true,
+      organization: { select: { customRules: true, fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true } }
+    }
   });
   if (!initiative) return null;
-  const hasPublishedTicketing = await hasTicketingOnSale(db, initiative.organizationId, new Date());
-  const global = await db.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true } });
-  return planNegativeReturnFix(initiative, { ...initiative.organization, hasPublishedTicketing }, global);
+  const now = new Date();
+  const [hasPublishedTicketing, hasPublishedVouchers] = await Promise.all([hasTicketingOnSale(db, initiative.organizationId, now), hasTicketingOnSale(db, initiative.organizationId, now, 'VOUCHER')]);
+  const global = await db.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' }, select: { fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true } });
+  return planNegativeReturnFix(initiative, { ...initiative.organization, hasPublishedTicketing, hasPublishedVouchers }, global);
 }
 
 /**
@@ -149,7 +156,7 @@ export async function fixNegativeReturnTariff(db: Db, actor: VerifiedSuperadminA
     await tx.organization.updateMany({ where: { id: initiative.organizationId }, data: { updatedAt: now } });
     const plan = await previewNegativeReturnFix(tx, initiativeId);
     if (!plan || !fixHasEffect(plan)) throw new TariffFixNotNeededError(initiativeId);
-    const before = await tx.organization.findUniqueOrThrow({ where: { id: initiative.organizationId }, select: { fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true } });
+    const before = await tx.organization.findUniqueOrThrow({ where: { id: initiative.organizationId }, select: { fullIntegrityCheckCents: true, ticketFeeFixedCents: true, ticketFeeBps: true, voucherFeeFixedCents: true, voucherFeeBps: true } });
     if (Object.keys(plan.organization).length > 0) await tx.organization.update({ where: { id: initiative.organizationId }, data: plan.organization });
     await tx.auditLog.create({
       data: {

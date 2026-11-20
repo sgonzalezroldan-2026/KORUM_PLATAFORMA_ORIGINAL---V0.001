@@ -55,8 +55,8 @@ describe('QA-A02 · Auto-Impulso: cuándo se puede aportar', () => {
 });
 
 describe('QA-A02 · «Corregir tarifas en 1 clic»: solo lo que no se ha prometido (decisión del promotor, 2026-11-11)', () => {
-  const global = { fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200 };
-  const own = { customRules: true, fullIntegrityCheckCents: 0, ticketFeeFixedCents: 10, ticketFeeBps: 300, hasPublishedTicketing: false };
+  const global = { fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, voucherFeeFixedCents: 45, voucherFeeBps: 200 };
+  const own = { customRules: true, fullIntegrityCheckCents: 0, ticketFeeFixedCents: 10, ticketFeeBps: 300, voucherFeeFixedCents: 20, voucherFeeBps: 100, hasPublishedTicketing: false, hasPublishedVouchers: false };
 
   it('sube a los valores globales solo las tarifas propias que están por debajo', () => {
     const plan = planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false }, own, global);
@@ -72,6 +72,17 @@ describe('QA-A02 · «Corregir tarifas en 1 clic»: solo lo que no se ha prometi
     const onlyTickets = planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false }, { ...own, fullIntegrityCheckCents: 180, hasPublishedTicketing: true }, global);
     expect(onlyTickets.organization).toEqual({});
     expect(fixHasEffect(onlyTickets)).toBe(false);
+  });
+
+  it('en una venta de vales sube la tarifa de los vales y no la de las entradas; con una venta de vales abierta la retiene (Sprint 5.14a)', () => {
+    const plan = planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false, ticketSubtype: 'VOUCHER' }, own, global);
+    expect(plan.organization).toEqual({ fullIntegrityCheckCents: 180, voucherFeeFixedCents: 45, voucherFeeBps: 200 });
+    // Una taquilla de entradas abierta no retiene la tarifa de los vales.
+    expect(planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false, ticketSubtype: 'VOUCHER' }, { ...own, hasPublishedTicketing: true }, global).organization).toMatchObject({ voucherFeeFixedCents: 45 });
+    const held = planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false, ticketSubtype: 'VOUCHER' }, { ...own, fullIntegrityCheckCents: 180, hasPublishedVouchers: true }, global);
+    expect(held).toEqual({ organization: {}, publishedLeftUntouched: true });
+    // Y en un evento no se toca la tarifa de los vales.
+    expect(planNegativeReturnFix({ status: 'FUNDRAISING', absorbsGatewayCostByKorum: false, ticketSubtype: 'EVENT' }, own, global).organization).toEqual({ fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45 });
   });
 
   it('una entidad con las tarifas globales no cambia, aunque la campaña pierda dinero', () => {
@@ -104,6 +115,8 @@ describe('QA-A03 · tarifas individuales: Zod rechaza lo imposible, nunca lo «p
     fullIntegrityCheckCents: 180,
     ticketFeeFixedCents: 45,
     ticketFeeBps: 200,
+    voucherFeeFixedCents: 45,
+    voucherFeeBps: 200,
     maintActive: false,
     maintPerInitCents: 4_900,
     maintAnnualCapCents: 14_700
@@ -115,7 +128,7 @@ describe('QA-A03 · tarifas individuales: Zod rechaza lo imposible, nunca lo «p
   });
 
   it('acepta tarifas que pierden dinero: eso lo avisa la salud de precios, no bloquea el guardado', () => {
-    expect(tariffSchema.safeParse({ ...valid, ticketFeeFixedCents: 0, ticketFeeBps: 0, fullIntegrityCheckCents: 0, t1Bps: 0, t2Bps: 0, t3Bps: 0, sponsorFeeBps: 0 }).success).toBe(true);
+    expect(tariffSchema.safeParse({ ...valid, ticketFeeFixedCents: 0, ticketFeeBps: 0, voucherFeeFixedCents: 0, voucherFeeBps: 0, fullIntegrityCheckCents: 0, t1Bps: 0, t2Bps: 0, t3Bps: 0, sponsorFeeBps: 0 }).success).toBe(true);
   });
 
   it.each([
@@ -139,9 +152,9 @@ describe('QA-A03 · tarifas individuales: Zod rechaza lo imposible, nunca lo «p
     expect(tariffSchema.safeParse({ customRules: false, t1Bps: 1 }).success).toBe(false);
   });
 
-  it('copia solo los once campos de la tarifa', () => {
+  it('copia solo los trece campos de la tarifa (con la de los vales, Sprint 5.14a)', () => {
     const picked = pickTariffValues({ ...valid, extra: 'no' } as never);
-    expect(Object.keys(picked).sort()).toEqual(['exemptLimitCents', 'fullIntegrityCheckCents', 'maintActive', 'maintAnnualCapCents', 'maintPerInitCents', 'sponsorFeeBps', 't1Bps', 't2Bps', 't3Bps', 'ticketFeeBps', 'ticketFeeFixedCents']);
+    expect(Object.keys(picked).sort()).toEqual(['exemptLimitCents', 'fullIntegrityCheckCents', 'maintActive', 'maintAnnualCapCents', 'maintPerInitCents', 'sponsorFeeBps', 't1Bps', 't2Bps', 't3Bps', 'ticketFeeBps', 'ticketFeeFixedCents', 'voucherFeeBps', 'voucherFeeFixedCents']);
   });
 
   it('cambiar el límite exento mueve el cupo restante lo mismo: lo gastado no cambia y nunca pasa del límite ni baja de 0', () => {

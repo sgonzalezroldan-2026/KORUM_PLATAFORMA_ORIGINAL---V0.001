@@ -4274,6 +4274,7 @@
       "message": {
         "HUCHA_FEE_BELOW_GATEWAY_COST": "Un cargo de {amountCents} en Mi Hucha cuesta {gatewayCostCents} de pasarela y cobras {feeCents}: pierdes {lossCents} por cargo.{profitableUpToCentsRaw, plural, =0 {} other { Es rentable hasta {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { Es rentable desde {profitableFromCents}.}}",
         "TICKET_FEE_BELOW_GATEWAY_COST": "Con una entrada de {priceCents}, los gastos de gestión digital ({feeCents}) {lossCentsRaw, plural, =0 {no dejan margen sobre la pasarela ({gatewayCostCents}): KORUM no gana nada con esa entrada.} other {no cubren la pasarela ({gatewayCostCents}): pierdes {lossCents} por entrada.}}",
+        "VOUCHER_FEE_BELOW_GATEWAY_COST": "Con una compra de vales de {amountCents}, los gastos de gestión digital ({feeCents}) {lossCentsRaw, plural, =0 {no dejan margen sobre la pasarela ({gatewayCostCents}): KORUM no gana nada con esa compra.} other {no cubren la pasarela ({gatewayCostCents}): pierdes {lossCents} por compra.}}",
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "Con un patrocinio de {tierCents}, el fee ({feeCents}) no cubre la pasarela ({gatewayCostCents}): pierdes {lossCents} por patrocinio.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hay # valor vacío, negativo o con decimales en las reglas de precios.} other {Hay # valores vacíos, negativos o con decimales en las reglas de precios.}} Mientras no se corrija, no se pueden calcular los demás avisos.",
         "BRACKET_THRESHOLDS_INVALID": "El límite del tramo 1 ({t1MaxCents}) supera al del tramo 2 ({t2MaxCents}): el tramo 2 queda vacío.",
@@ -4502,6 +4503,7 @@
         "LEY49_NOT_DECLARED": "La entidad no ha declarado el régimen de la Ley 49/2002: no se puede acreditar.",
         "SPLIT_ID_IN_USE": "Ese identificador de cuenta destino ya lo usa otra entidad.",
         "PUBLISHED_TICKETING": "La entidad tiene una taquilla a la venta: sus gastos de gestión de entradas no se cambian mientras tanto, porque cambiarían lo ya prometido. Inténtalo cuando termine.",
+        "PUBLISHED_VOUCHERS": "La entidad tiene una venta de vales abierta: sus gastos de gestión de vales no se cambian mientras tanto, porque cambiarían lo ya prometido. Inténtalo cuando termine.",
         "LIMIT_BELOW_USED": "El importe exento anual no puede ser menor que lo que la entidad ya ha gastado este curso."
       },
       "holder": {
@@ -4638,6 +4640,8 @@
           "fullIntegrityCheckCents": "Aportación voluntaria sugerida (garantía KORUM)",
           "ticketFeeFixedCents": "Gastos de gestión digital fijos por entrada",
           "ticketFeeBps": "Gastos de gestión digital variables sobre el precio",
+          "voucherFeeFixedCents": "Gastos de gestión digital de los vales, fijos por compra",
+          "voucherFeeBps": "Gastos de gestión digital de los vales, variables sobre la compra",
           "maintPerInitCents": "Cargo de mantenimiento por iniciativa",
           "maintAnnualCapCents": "Tope anual de mantenimiento"
         },
@@ -4801,6 +4805,7 @@
         "INVALID": "Revisa los campos marcados: algún valor no es válido.",
         "STALE": "Otra persona ha guardado cambios mientras editabas. Recarga la página para ver sus cambios y vuelve a hacer los tuyos.",
         "TICKETING_ON_SALE": "No se ha guardado nada. Hay una taquilla a la venta en una entidad sin tarifa propia y los gastos de gestión digital no pueden cambiar hasta que termine, porque cambiarían lo ya prometido a quien compra. Deja esos dos campos como estaban y guarda de nuevo.",
+        "VOUCHERS_ON_SALE": "No se ha guardado nada. Hay una venta de vales abierta en una entidad sin tarifa propia y sus gastos de gestión digital no pueden cambiar hasta que termine, porque cambiarían lo ya prometido a quien compra. Deja esos dos campos como estaban y guarda de nuevo.",
         "CATEGORY_EXISTS": "Ya existe una categoría con ese nombre.",
         "CATEGORY_NOT_FOUND": "Esa categoría ya no existe.",
         "ALERT_CHANGED": "Las reglas han cambiado y este aviso ya es otro.",
@@ -4809,7 +4814,7 @@
       },
       "gateway": {
         "title": "Pasarela, Mi Hucha y gastos de gestión digital",
-        "hint": "Lo que cuesta cada cobro en Paycomet y lo que cobra KORUM por gestionar una recarga de Mi Hucha o una entrada. Cada importe se prueba con cobros de ejemplo.",
+        "hint": "Lo que cuesta cada cobro en Paycomet y lo que cobra KORUM por gestionar una recarga de Mi Hucha, una entrada o una compra de vales. Cada importe se prueba con cobros de ejemplo.",
         "pct": "% variable de la pasarela",
         "fixed": "Fijo por transacción",
         "topupFixed": "Comisión de Mi Hucha: fijo por cargo",
@@ -4817,7 +4822,11 @@
         "topupPct": "Comisión de Mi Hucha: % sobre el cargo",
         "ticketFixed": "Gastos de gestión digital: fijo por entrada",
         "ticketPct": "Gastos de gestión digital: % sobre el precio",
-        "ticketOk": "En una entrada de {price}: gastos de gestión digital {fee}, pasarela {gateway}. Margen neto de KORUM: +{margin} por entrada."
+        "ticketOk": "En una entrada de {price}: gastos de gestión digital {fee}, pasarela {gateway}. Margen neto de KORUM: +{margin} por entrada.",
+        "voucherFixed": "Gastos de gestión digital de los vales: fijo por compra",
+        "voucherPct": "Gastos de gestión digital de los vales: % sobre el importe de la compra",
+        "voucherHint": "Los vales tienen su propia tarifa y se cobra una vez por compra, no por vale: quien compra 10 vales paga un solo fijo.",
+        "voucherOk": "En una compra de {amount} en vales: gastos de gestión digital {fee}, pasarela {gateway}. Margen neto de KORUM: +{margin} por compra."
       },
       "brackets": {
         "title": "Tramos de comisión, exento y comercios",
@@ -7230,6 +7239,11 @@
         "session_revoked": "Portería: sesión cerrada",
         "sync": "Portería: validaciones sin conexión sincronizadas",
         "refunded_pass_used": "Portería: entrada leída sin cobertura antes de pedirse su devolución"
+      },
+      "voucher": {
+        "qr_invalid": "Puesto de vales: QR alterado o falsificado",
+        "qr_other_sale": "Puesto de vales: QR de otra venta",
+        "redeemed": "Puesto de vales: vales canjeados por una persona firmante"
       },
       "idea": {
         "chat_access_denied": "Acceso denegado a la conversación de una idea",

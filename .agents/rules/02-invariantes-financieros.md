@@ -2,7 +2,7 @@
 
 > Fórmulas exactas: [korum-tco-calculator](../skills/korum-tco-calculator/SKILL.md). Flujos de cobro, asientos tipo y Paycomet: [korum-escrow-payments](../skills/korum-escrow-payments/SKILL.md). Marco legal y decisiones del negocio: [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md).
 
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 63). Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
+> **Decisiones del promotor del 2026-11-17 al 2026-11-19** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 65), pendientes de construir salvo las que ya dicen que están construidas. Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
 
 ## 1. Céntimos enteros y cuadre exacto de la meta (4 líneas públicas = meta)
 
@@ -29,7 +29,7 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
   4. `Cargo de mantenimiento de la plataforma`: si es `0`, mostrar **solo `0,00 €`** (prohibido "(Desactivado)"). Si está activo, se aplica hasta el **tope anual**, y a partir de ahí `0,00 €` el resto del curso.
   5. `Coste de la pasarela de pago (Paycomet)`: importe exacto (incluido el redondeo al euro) con su explicación (`% variable sobre el subtotal + fijo por el nº estimado de aportaciones, calculado con el importe de aportación sugerido por defecto de la entidad`).
 - **Modo `TICKETING`:** `Recaudación bruta del aforo`, `Gastos de gestión digital por entrada`, `Coste de pasarela cubierto por la gestión`, `Mantenimiento` y `Neto para la entidad si se vende todo el aforo` (la pizarra lo aclara desde el Sprint 5.13: si no se vende todo, al llegar la fecha la entidad recibe lo vendido, con el mantenimiento rebajado en la misma proporción). **Las rifas se retiraron** (decisión 31, Sprints 5.12a y 5.12b): ya no hay subtipo `RAFFLE` ni su aviso normativo.
-- **Vales** (decisión 32, pendiente de construir en el Sprint 5.14): venta de unidades de canje con precio único; su pizarra sigue el modo `TICKETING` sin aforo obligatorio (tope opcional) y con tarifa propia de «Gastos de gestión digital». La fecha de validez la fija la entidad bajo su responsabilidad, sin mínimo; si cancela la venta antes de liquidarla devuelve la plataforma y, después, la plataforma avisa y responde la entidad; los pagos «sin producto» no se devuelven salvo esa cancelación (decisión 49).
+- **Vales** (decisión 32; el motor se construyó en el Sprint 5.14a y las pantallas, el puesto, la devolución, la caducidad y la liquidación llegan en los 5.14b y 5.14c): venta de unidades de canje con precio único (`TicketSubtype.VOUCHER`); su pizarra sigue el modo `TICKETING` sin aforo obligatorio (tope opcional) y con tarifa propia de «Gastos de gestión digital», **fija por compra, no por vale** (`fijo + % × importe de la compra`). Cada compra tiene un solo pase con su saldo y un vale no se gasta dos veces. Al agotarse, la aportación «sin producto» es una **aportación sin certificado** con los mismos gastos (decisión 64) y no se ofrece a un colegio con ánimo de lucro (decisión 65). Una venta de vales nunca lleva Auto-Impulso ni 💎. La fecha de validez la fija la entidad bajo su responsabilidad, sin mínimo; si cancela la venta antes de liquidarla devuelve la plataforma y, después, la plataforma avisa y responde la entidad; los pagos «sin producto» no se devuelven salvo esa cancelación (decisión 49).
 - **Tarifas (decisión 34, pendiente de construir en el Sprint 5.18):** todo cambio global de tarifas entra en vigor a los 30 días y solo vale para lo publicado después; cada campaña, taquilla o venta de vales guarda la tarifa con la que se publicó. Hasta entonces, un cambio se aplica al momento y la compra de entradas lee la tarifa actual.
 
 ## 3. Libro mayor de doble partida (`LedgerJournal` + `EscrowLedgerEntry`)
@@ -85,7 +85,7 @@ Cada entidad elige su modo; un cambio de modo afecta solo a los pagos nuevos. **
 
 - Se llaman única y exactamente **"Gastos de gestión digital"** y solo se configuran desde la consola del Super-Admin (`fijo + % sobre el precio`).
 - En modo `ADD`, el coste de Paycomet se calcula sobre el **total cobrado al comprador** (`precio + gastos de gestión digital`) más el fijo por transacción. El validador garantiza margen neto positivo.
-- Los vales tendrán su propia tarifa (Sprint 5.14). Las papeletas de rifa se retiraron en el Sprint 5.12a.
+- Los vales tienen su propia tarifa, que se cobra **una vez por compra** (Sprint 5.14a; `voucherFeeFixedCents` + `voucherFeeBps`, en el motor de reglas globales y en la ficha 360º). Las papeletas de rifa se retiraron en el Sprint 5.12a.
 - **Llevan el IVA dentro** (decisión 21, §11).
 
 ## 7. Reembolsos, contracargos y Auto-Impulso

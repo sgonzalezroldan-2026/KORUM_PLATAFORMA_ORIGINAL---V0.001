@@ -30,7 +30,7 @@ const DEFAULT_CAMPAIGN_DAYS = 30;
  * Una idea convertida nace con un cierre provisional a `maxCampaignDays` desde hoy, que con el cierre a las 23:59 ya pasa del máximo: en un borrador se
  * enseña el último día permitido en lugar de un error en cuanto se abre.
  */
-function draftFromStored(initiative: StudioInitiative, firstReward: string, latestClose: string): StudioDraft {
+function draftFromStored(initiative: StudioInitiative & { ticketSubtype: 'EVENT' | null }, firstReward: string, latestClose: string): StudioDraft {
   const stored = madridIsoDate(initiative.closesAt);
   const ticketing = initiative.format === 'TICKETING';
   return {
@@ -98,6 +98,9 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
       if (error instanceof ResourceNotFoundError) notFound();
       throw error;
     }
+    // Una venta de vales se edita en su propio formulario del Estudio, que llega en el Sprint 5.14b: este no sabría guardarla.
+    if (initiative.ticketSubtype === 'VOUCHER') notFound();
+    const editable = { ...initiative, ticketSubtype: initiative.ticketSubtype };
     // Rehecha por votación: su meta es fija y nada se edita, sea cual sea su estado (Sprint 5.6). Si un contracargo le quita dinero no vuelve a recaudar:
     // su meta y sus comisiones bajan otra vez en proporción (`rescaleResizedAfterLoss`) y la pizarra sigue cuadrando.
     const resized =
@@ -123,7 +126,7 @@ export default async function StudioPage({ params, searchParams }: { params: Pro
     const canEditCover = !actor.isSuperadmin && ['BUDGETING', 'FUNDRAISING', 'GOAL_REACHED', 'CLOSED'].includes(initiative.status);
     workbench = (
       <>
-        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(initiative, firstReward, common.maxCloseOn)} lock={lock}
+        <StudioWorkbench key={initiative.id} {...common} initialDraft={draftFromStored(editable, firstReward, common.maxCloseOn)} lock={lock}
           stored={stored}
           resized={resized}
           justPublished={first('publicada') === '1'}

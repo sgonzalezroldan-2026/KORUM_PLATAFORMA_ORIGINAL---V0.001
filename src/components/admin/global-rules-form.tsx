@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useState } from 'react';
 import { saveRulesAction } from '@/app/[locale]/(superadmin)/admin/reglas/actions';
 import { pricingRulesOf, type GlobalRulesInput } from '@/core/admin/global-rules';
 import { formatBps, formatCents, type MoneyLocale } from '@/core/finance/money';
-import { evaluatePricingHealth, reviewPricingAlerts, sampleTicketMargin, type PricingAcknowledgement, type PricingAlert, type PricingAlertCode } from '@/core/finance/pricing-health';
+import { evaluatePricingHealth, reviewPricingAlerts, sampleTicketMargin, sampleVoucherMargin, type PricingAcknowledgement, type PricingAlert, type PricingAlertCode } from '@/core/finance/pricing-health';
 import type { RevenueSourceKey } from '@/core/finance/bi-analytics.service';
 import { isLocale } from '@/i18n/routing';
 import { Block, FIELD, PRIMARY } from './entity-action';
@@ -23,6 +23,7 @@ const SOURCE_GROUP: Partial<Record<RevenueSourceKey, Group>> = { digitalTicketFe
 const CODE_GROUP: Record<Exclude<PricingAlertCode, 'SOURCE_NEGATIVE_MARGIN' | 'RULE_VALUE_INVALID'>, Group> = {
   HUCHA_FEE_BELOW_GATEWAY_COST: 'gateway',
   TICKET_FEE_BELOW_GATEWAY_COST: 'gateway',
+  VOUCHER_FEE_BELOW_GATEWAY_COST: 'gateway',
   SPONSOR_FEE_BELOW_GATEWAY_COST: 'brackets',
   BRACKET_THRESHOLDS_INVALID: 'brackets',
   BRACKET_CLIFF: 'brackets',
@@ -65,6 +66,7 @@ export function GlobalRulesForm({ rules, version, margins, acknowledgements }: G
     return reviewPricingAlerts(draft, acknowledgements).map((alert) => ({ ...alert, unsaved: !savedAlerts.some((saved) => sameAlert(saved, alert)) }));
   }, [parsed.rules, savedAlerts, margins, acknowledgements]);
   const ticketSample = parsed.rules ? sampleTicketMargin(parsed.rules) : null;
+  const voucherSample = parsed.rules ? sampleVoucherMargin(parsed.rules) : null;
   // Campos que el servidor ha rechazado (por ejemplo los gastos de gestión con una taquilla a la venta): se marcan igual que los imposibles.
   const serverFields: NumericKey[] = action.outcome?.status === 'REJECTED' ? action.outcome.fields.filter((key): key is NumericKey => NUMERIC_KEYS.has(key)) : [];
 
@@ -164,12 +166,20 @@ export function GlobalRulesForm({ rules, version, margins, acknowledgements }: G
           {field('topupFeeBps', t('gateway.topupPct'))}
           {field('ticketFeeFixedCents', t('gateway.ticketFixed'))}
           {field('ticketFeeBps', t('gateway.ticketPct'))}
+          {field('voucherFeeFixedCents', t('gateway.voucherFixed'), t('gateway.voucherHint'))}
+          {field('voucherFeeBps', t('gateway.voucherPct'))}
         </div>
         <div aria-live="polite">
           {ticketSample && ticketSample.marginCents > 0 ? (
             <p className="text-sm font-bold tabular-nums text-emerald-800" data-testid="ticket-margin-ok">
               <span aria-hidden="true">{'✔️ '}</span>
               {t('gateway.ticketOk', { price: money(ticketSample.priceCents), fee: money(ticketSample.feeCents), gateway: money(ticketSample.gatewayCostCents), margin: money(ticketSample.marginCents) })}
+            </p>
+          ) : null}
+          {voucherSample && voucherSample.marginCents > 0 ? (
+            <p className="text-sm font-bold tabular-nums text-emerald-800" data-testid="voucher-margin-ok">
+              <span aria-hidden="true">{'✔️ '}</span>
+              {t('gateway.voucherOk', { amount: money(voucherSample.grossCents), fee: money(voucherSample.feeCents), gateway: money(voucherSample.gatewayCostCents), margin: money(voucherSample.marginCents) })}
             </p>
           ) : null}
         </div>

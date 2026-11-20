@@ -2,7 +2,7 @@
 
 > Significado único de cada término. Si un documento usa un término de otra forma, manda este glosario. Los **códigos internos** (en `monoespacio`) no se traducen; las **etiquetas visibles** viven en `messages/{es,ca,en}.json`.
 >
-> **Decisiones del promotor del 2026-11-17 y del 2026-11-18, pendientes de construir.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) se retiraron con ellas; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 63); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
+> **Decisiones del promotor del 2026-11-17 al 2026-11-19, pendientes de construir salvo las que ya dicen que están construidas.** **Las rifas se retiraron** (papeletas, sorteo, acta y ronda extra) en los Sprints 5.12a y 5.12b, y llegan los **vales** en el 5.14. Los términos de rifa (papeleta, sorteo, acta, ronda extra) se retiraron con ellas; se añaden abajo «vale», «modo donación», «modo publicidad», «regla de los 14 días» y «entrega automática». Hasta el sprint indicado, lo que sigue describe lo que el código hace hoy y **no se adelanta la regla nueva**. Lista completa en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) (decisiones 21 a 65); orden y fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 
 ## Entidades y personas
 
@@ -54,7 +54,7 @@
 | **Comisión por tramos** | Porcentaje de KORUM sobre el resto sujeto (`t1`/`t2`/`t3`). |
 | **Mantenimiento ("La Baza")** | Cuota opcional por campaña con tope anual que se desactiva sola al alcanzarse. |
 | **Aportación voluntaria a KORUM** | Importe opcional que la familia puede añadir para sostener la plataforma (`guaranteeContributionCents`; sugerido por `fullIntegrityCheckCents`). Check **desmarcado** por defecto. Nunca "propina". |
-| **Gastos de gestión digital** | Importe por entrada o por vale (la papeleta de rifa se retiró en el Sprint 5.12a) que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
+| **Gastos de gestión digital** | Importe por entrada o, en los vales, por compra (la papeleta de rifa se retiró en el Sprint 5.12a) que cubre la pasarela y el servicio en taquilla. Nombre exacto obligatorio. |
 | **Matching 2x** | Bolsa de un comercio que duplica las donaciones de las familias hasta agotarse. |
 | **Comercios amigos** | Patrocinadores locales por categoría ORO, PLATA o BRONCE. El 100 % va a la iniciativa; el fee se cobra encima. |
 | **`CREDIT_POOL`** | Bolsa donde espera (retenido en Paycomet) un patrocinio cuya campaña falló o una renovación, mientras no hay campaña a la que llevarlo; plazo limitado por la ventana de 90 días. Al vencer (día 70 desde el cobro como mucho) no se devuelve al comercio: pasa al Fondo de actividades de la entidad. |
@@ -67,7 +67,8 @@
 | **6 fuentes de ingresos** | Aportación voluntaria, comisión por tramos, fee de comercios, gastos de gestión digital, mantenimiento y gestión de recargas de la Hucha. |
 | **Real frente a proyectado** | Ingresos ya asentados en el libro mayor frente a los previstos si las campañas llegan al 100 %. |
 | **Mi Hucha** | Área de la familia para aportar de forma recurrente. Modos: `DISABLED` (así sale en el lanzamiento, Sprint 5.15) y `PLEDGE` (aportación mensual programada, sin saldo). `REGULATED_WALLET` (monedero con saldo) queda **descartado** y se retira del código en el Sprint 5.24b. |
-| **Vale** | Unidad de canje de pago anticipado que vende una entidad, como la ficha de una feria: precio único, sin numerar, en un solo QR con saldo que se gasta en su puesto. No es dinero ni una donación: sin certificado y fuera del Modelo 182. Sprint 5.14. |
+| **Vale** | Unidad de canje de pago anticipado que vende una entidad, como la ficha de una feria: precio único, sin numerar, en un solo QR con saldo que se gasta en su puesto. No es dinero ni una donación: sin certificado y fuera del Modelo 182. Sus Gastos de gestión digital van por compra, no por vale. Motor en el Sprint 5.14a; pantallas y puesto en los 5.14b y 5.14c. |
+| **Aportación «sin producto»** | Pago a una venta de vales agotada, si la entidad lo permite, sin recibir vales ni QR. Es una aportación sin certificado, fuera del Modelo 182, con los mismos Gastos de gestión digital; no se ofrece a un colegio con ánimo de lucro (decisiones 64 y 65). Sprint 5.14a. |
 | **Modo donación / modo publicidad** | Los dos modos en que una entidad recibe dinero de comercios. *Donación* (por defecto): entra directo, sin moderación, y la entidad puede agradecerlo solo con el nombre. *Publicidad*: la entidad factura con IVA y el comercio recibe distintivo, categoría, ventaja y cartel. Sprint 5.16. |
 | **Gestión (de comercios)** | Comisión de KORUM sobre la aportación de un comercio, con un porcentaje para cada modo. Sustituye a «gestión publicitaria» en el Sprint 5.16. |
 | **Regla de los 14 días** | Plazo único de las devoluciones automáticas cuando quien debe decidir calla o cuando una persona se arrepiente de un pago que no es una donación (Regla 02 §12). |

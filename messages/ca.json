@@ -4274,6 +4274,7 @@
       "message": {
         "HUCHA_FEE_BELOW_GATEWAY_COST": "Un càrrec de {amountCents} a la Guardiola costa {gatewayCostCents} de passarel·la i cobres {feeCents}: perds {lossCents} per càrrec.{profitableUpToCentsRaw, plural, =0 {} other { És rendible fins a {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { És rendible a partir de {profitableFromCents}.}}",
         "TICKET_FEE_BELOW_GATEWAY_COST": "Amb una entrada de {priceCents}, les despeses de gestió digital ({feeCents}) {lossCentsRaw, plural, =0 {no deixen marge sobre la passarel·la ({gatewayCostCents}): KORUM no guanya res amb aquesta entrada.} other {no cobreixen la passarel·la ({gatewayCostCents}): perds {lossCents} per entrada.}}",
+        "VOUCHER_FEE_BELOW_GATEWAY_COST": "Amb una compra de vals de {amountCents}, les despeses de gestió digital ({feeCents}) {lossCentsRaw, plural, =0 {no deixen marge sobre la passarel·la ({gatewayCostCents}): KORUM no hi guanya res amb aquesta compra.} other {no cobreixen la passarel·la ({gatewayCostCents}): perds {lossCents} per compra.}}",
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "Amb un patrocini de {tierCents}, el fee ({feeCents}) no cobreix la passarel·la ({gatewayCostCents}): perds {lossCents} per patrocini.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {Hi ha # valor buit, negatiu o amb decimals a les regles de preus.} other {Hi ha # valors buits, negatius o amb decimals a les regles de preus.}} Mentre no es corregeixi, no es poden calcular els altres avisos.",
         "BRACKET_THRESHOLDS_INVALID": "El límit del tram 1 ({t1MaxCents}) supera el del tram 2 ({t2MaxCents}): el tram 2 queda buit.",
@@ -4502,6 +4503,7 @@
         "LEY49_NOT_DECLARED": "L’entitat no ha declarat el règim de la Llei 49/2002: no es pot acreditar.",
         "SPLIT_ID_IN_USE": "Aquest identificador de compte destí ja el fa servir una altra entitat.",
         "PUBLISHED_TICKETING": "L’entitat té una taquilla a la venda: les seves despeses de gestió d’entrades no es canvien mentrestant, perquè canviarien el que ja s’ha promès. Torna-ho a provar quan acabi.",
+        "PUBLISHED_VOUCHERS": "L’entitat té una venda de vals oberta: les seves despeses de gestió de vals no es canvien mentrestant, perquè canviarien el que ja s’ha promès. Torna-ho a provar quan acabi.",
         "LIMIT_BELOW_USED": "L’import exempt anual no pot ser menor que el que l’entitat ja ha gastat aquest curs."
       },
       "holder": {
@@ -4638,6 +4640,8 @@
           "fullIntegrityCheckCents": "Aportació voluntària suggerida (garantia KORUM)",
           "ticketFeeFixedCents": "Despeses de gestió digital fixes per entrada",
           "ticketFeeBps": "Despeses de gestió digital variables sobre el preu",
+          "voucherFeeFixedCents": "Despeses de gestió digital dels vals, fixes per compra",
+          "voucherFeeBps": "Despeses de gestió digital dels vals, variables sobre la compra",
           "maintPerInitCents": "Càrrec de manteniment per iniciativa",
           "maintAnnualCapCents": "Topall anual de manteniment"
         },
@@ -4801,6 +4805,7 @@
         "INVALID": "Revisa els camps marcats: algun valor no és vàlid.",
         "STALE": "Una altra persona ha desat canvis mentre editaves. Recarrega la pàgina per veure’n els canvis i torna a fer els teus.",
         "TICKETING_ON_SALE": "No s’ha desat res. Hi ha una taquilla a la venda en una entitat sense tarifa pròpia i les despeses de gestió digital no poden canviar fins que acabi, perquè canviarien el que ja s’ha promès a qui compra. Deixa aquests dos camps com estaven i desa de nou.",
+        "VOUCHERS_ON_SALE": "No s’ha desat res. Hi ha una venda de vals oberta en una entitat sense tarifa pròpia i les seves despeses de gestió digital no poden canviar fins que acabi, perquè canviarien el que ja s’ha promès a qui compra. Deixa aquests dos camps com estaven i desa de nou.",
         "CATEGORY_EXISTS": "Ja existeix una categoria amb aquest nom.",
         "CATEGORY_NOT_FOUND": "Aquesta categoria ja no existeix.",
         "ALERT_CHANGED": "Les regles han canviat i aquest avís ja és un altre.",
@@ -4809,7 +4814,7 @@
       },
       "gateway": {
         "title": "Passarel·la, Guardiola i despeses de gestió digital",
-        "hint": "El que costa cada cobrament a Paycomet i el que cobra KORUM per gestionar una recàrrega de la Guardiola o una entrada. Cada import es prova amb cobraments d’exemple.",
+        "hint": "El que costa cada cobrament a Paycomet i el que cobra KORUM per gestionar una recàrrega de la Guardiola, una entrada o una compra de vals. Cada import es prova amb cobraments d’exemple.",
         "pct": "% variable de la passarel·la",
         "fixed": "Fix per transacció",
         "topupFixed": "Comissió de la Guardiola: fix per càrrec",
@@ -4817,7 +4822,11 @@
         "topupPct": "Comissió de la Guardiola: % sobre el càrrec",
         "ticketFixed": "Despeses de gestió digital: fix per entrada",
         "ticketPct": "Despeses de gestió digital: % sobre el preu",
-        "ticketOk": "En una entrada de {price}: despeses de gestió digital {fee}, passarel·la {gateway}. Marge net de KORUM: +{margin} per entrada."
+        "ticketOk": "En una entrada de {price}: despeses de gestió digital {fee}, passarel·la {gateway}. Marge net de KORUM: +{margin} per entrada.",
+        "voucherFixed": "Despeses de gestió digital dels vals: fix per compra",
+        "voucherPct": "Despeses de gestió digital dels vals: % sobre l’import de la compra",
+        "voucherHint": "Els vals tenen la seva pròpia tarifa i es cobra una vegada per compra, no per val: qui compra 10 vals paga un sol fix.",
+        "voucherOk": "En una compra de {amount} en vals: despeses de gestió digital {fee}, passarel·la {gateway}. Marge net de KORUM: +{margin} per compra."
       },
       "brackets": {
         "title": "Trams de comissió, exempt i comerços",
@@ -7230,6 +7239,11 @@
         "session_revoked": "Porteria: sessió tancada",
         "sync": "Porteria: validacions sense connexió sincronitzades",
         "refunded_pass_used": "Porteria: entrada llegida sense cobertura abans de demanar-ne la devolució"
+      },
+      "voucher": {
+        "qr_invalid": "Lloc de vals: QR alterat o falsificat",
+        "qr_other_sale": "Lloc de vals: QR d’una altra venda",
+        "redeemed": "Lloc de vals: vals bescanviats per una persona signant"
       },
       "idea": {
         "chat_access_denied": "Accés denegat a la conversa d’una idea",

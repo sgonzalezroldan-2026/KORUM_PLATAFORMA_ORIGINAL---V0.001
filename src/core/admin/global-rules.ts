@@ -51,6 +51,8 @@ export const globalRulesSchema = z
     topupFeeBps: bps,
     ticketFeeFixedCents: cents(GLOBAL_RULE_LIMITS.smallCents),
     ticketFeeBps: bps,
+    voucherFeeFixedCents: cents(GLOBAL_RULE_LIMITS.smallCents),
+    voucherFeeBps: bps,
     maintActive: z.boolean(),
     maintPerInitCents: cents(GLOBAL_RULE_LIMITS.maintPerInitCents),
     maintAnnualCapCents: cents(GLOBAL_RULE_LIMITS.maintAnnualCapCents),
@@ -81,6 +83,11 @@ export function changedRuleKeys(before: GlobalRulesInput, after: GlobalRulesInpu
 /** Los gastos de gestión digital de las entradas: con una taquilla a la venta no pueden cambiar (cambiaría lo prometido a quien compra y la meta). */
 export function changesTicketFee(before: GlobalRulesInput, after: GlobalRulesInput): boolean {
   return before.ticketFeeFixedCents !== after.ticketFeeFixedCents || before.ticketFeeBps !== after.ticketFeeBps;
+}
+
+/** Los gastos de gestión digital de los vales: con una venta de vales a la venta tampoco cambian (la compra lee la tarifa actual, Sprint 5.14a). */
+export function changesVoucherFee(before: Pick<GlobalRulesInput, 'voucherFeeFixedCents' | 'voucherFeeBps'>, after: Pick<GlobalRulesInput, 'voucherFeeFixedCents' | 'voucherFeeBps'>): boolean {
+  return before.voucherFeeFixedCents !== after.voucherFeeFixedCents || before.voucherFeeBps !== after.voucherFeeBps;
 }
 
 // --- Medallas ------------------------------------------------------------------------------------------------------------------------------
@@ -116,6 +123,7 @@ export type MedalsInput = z.infer<typeof medalsSchema>;
 export const PRICING_CODES = [
   'HUCHA_FEE_BELOW_GATEWAY_COST',
   'TICKET_FEE_BELOW_GATEWAY_COST',
+  'VOUCHER_FEE_BELOW_GATEWAY_COST',
   'SPONSOR_FEE_BELOW_GATEWAY_COST',
   'RULE_VALUE_INVALID',
   'BRACKET_THRESHOLDS_INVALID',

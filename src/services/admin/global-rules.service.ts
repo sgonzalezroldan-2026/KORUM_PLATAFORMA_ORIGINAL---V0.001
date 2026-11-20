@@ -2,6 +2,7 @@ import { categoryRuleSchema, categorySchema, reviewNote } from '@/core/admin/org
 import {
   changedRuleKeys,
   changesTicketFee,
+  changesVoucherFee,
   globalRulesSchema,
   invalidRuleFields,
   MAX_ACKNOWLEDGEMENTS,
@@ -33,7 +34,7 @@ import { loadPricingHealth } from './pricing-health-data';
  *   ya publicada conserva su pizarra.
  */
 
-export type GlobalRulesRejection = 'INVALID' | 'STALE' | 'TICKETING_ON_SALE' | 'CREDIT_POOL_OPEN' | 'CATEGORY_EXISTS' | 'CATEGORY_NOT_FOUND' | 'ALERT_CHANGED' | 'ALERT_NOT_FOUND';
+export type GlobalRulesRejection = 'INVALID' | 'STALE' | 'TICKETING_ON_SALE' | 'VOUCHERS_ON_SALE' | 'CREDIT_POOL_OPEN' | 'CATEGORY_EXISTS' | 'CATEGORY_NOT_FOUND' | 'ALERT_CHANGED' | 'ALERT_NOT_FOUND';
 
 export class GlobalRulesRejectedError extends Error {
   constructor(
@@ -63,6 +64,8 @@ const RULE_COLUMNS = [
   'topupFeeBps',
   'ticketFeeFixedCents',
   'ticketFeeBps',
+  'voucherFeeFixedCents',
+  'voucherFeeBps',
   'maintActive',
   'maintPerInitCents',
   'maintAnnualCapCents',
@@ -85,6 +88,21 @@ export async function loadGlobalRulesView(db: Db): Promise<GlobalRulesView> {
   return { rules, version: rulesVersionOf(rules) };
 }
 
+/**
+ * Taquillas a la venta de un tipo: las que recaudan y las que ya cumplieron la meta o se celebraron sin liquidar (se pueden reabrir o aplazar). Los eventos
+ * incluyen las taquillas sin tipo (anteriores a los tipos); las ventas de vales son las de tipo `VOUCHER`.
+ */
+export function ticketingOnSaleWhere(now: Date, kind: 'EVENT' | 'VOUCHER') {
+  return {
+    format: 'TICKETING' as const,
+    status: { in: ['FUNDRAISING' as const, 'GOAL_REACHED' as const] },
+    AND: [
+      { OR: [{ closesAt: { gt: now } }, { payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' as const } }] },
+      kind === 'VOUCHER' ? { ticketSubtype: 'VOUCHER' as const } : { OR: [{ ticketSubtype: null }, { ticketSubtype: 'EVENT' as const }] }
+    ]
+  };
+}
+
 /** Quién y desde dónde (HMAC de la IP y familia de navegador), para las operaciones que cambian precios o salen con el nombre de la plataforma. */
 export const auditWho = (actor: VerifiedSuperadminActor, meta?: RequestMeta) => ({ actorType: 'USER' as const, actorUserId: actor.userId, ipHash: meta?.ipHash ?? null, userAgent: coarseUserAgent(meta?.userAgent) });
 
@@ -103,6 +121,8 @@ function tariffCopyOf(rules: GlobalRulesInput) {
     fullIntegrityCheckCents: rules.fullIntegrityCheckCents,
     ticketFeeFixedCents: rules.ticketFeeFixedCents,
     ticketFeeBps: rules.ticketFeeBps,
+    voucherFeeFixedCents: rules.voucherFeeFixedCents,
+    voucherFeeBps: rules.voucherFeeBps,
     maintActive: rules.maintActive,
     maintPerInitCents: rules.maintPerInitCents,
     maintAnnualCapCents: rules.maintAnnualCapCents
@@ -139,9 +159,13 @@ export async function saveGlobalRules(db: Db, actor: VerifiedSuperadminActor, ra
     if (changesTicketFee(before, next)) {
       const onSale = await tx.initiative.count({
         // También un evento ya celebrado sin liquidar: se puede aplazar y volver a vender (Sprint 5.13), y su meta se calculó con la tarifa de entonces.
-        where: { format: 'TICKETING', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, OR: [{ closesAt: { gt: now } }, { payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' } }], organization: eligible }
+        where: { ...ticketingOnSaleWhere(now, 'EVENT'), organization: eligible }
       });
       if (onSale > 0) throw new GlobalRulesRejectedError('TICKETING_ON_SALE', ['ticketFeeFixedCents', 'ticketFeeBps']);
+    }
+    // Lo mismo con los vales y su tarifa propia (Sprint 5.14a): una venta abierta cobraría otra cosa de lo que enseñó.
+    if (changesVoucherFee(before, next) && (await tx.initiative.count({ where: { ...ticketingOnSaleWhere(now, 'VOUCHER'), organization: eligible } })) > 0) {
+      throw new GlobalRulesRejectedError('VOUCHERS_ON_SALE', ['voucherFeeFixedCents', 'voucherFeeBps']);
     }
     if (before.creditPoolMaxDays !== next.creditPoolMaxDays && (await tx.sponsor.count({ where: { creditPoolAt: { not: null } } })) > 0) {
       throw new GlobalRulesRejectedError('CREDIT_POOL_OPEN', ['creditPoolMaxDays']);

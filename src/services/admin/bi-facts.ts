@@ -48,6 +48,8 @@ export async function loadGlobalRules(db: Db): Promise<KorumGlobalRulesCents> {
     topupFeeBps: config.topupFeeBps,
     ticketFeeFixedCents: config.ticketFeeFixedCents,
     ticketFeeBps: config.ticketFeeBps,
+    voucherFeeFixedCents: config.voucherFeeFixedCents,
+    voucherFeeBps: config.voucherFeeBps,
     maintActive: config.maintActive,
     maintPerInitCents: config.maintPerInitCents,
     maintAnnualCapCents: config.maintAnnualCapCents
@@ -77,7 +79,8 @@ const emptyLedger = (): LedgerPerInitiative => ({
 
 const INITIATIVE_SELECT = {
   id: true, walletEscrowId: true, title: true, organizationId: true, status: true, format: true, quarter: true, closesAt: true, goalCents: true, raisedCents: true, totalContributions: true,
-  bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, absorbsGatewayCostByKorum: true, ticketPriceCents: true, ticketMax: true, ticketsSold: true, ticketFeeMode: true
+  bracketFeeCents: true, maintFeeCents: true, gatewayFeeCents: true, absorbsGatewayCostByKorum: true, ticketPriceCents: true, ticketMax: true, ticketsSold: true, ticketFeeMode: true,
+  ticketSubtype: true
 } as const;
 
 /**
@@ -228,7 +231,9 @@ export async function loadBiFacts(db: Db, rules: KorumGlobalRulesCents): Promise
       entitySample: entitySamples.get(initiative.organizationId) ?? { contributions: 0, contributionsWithGuarantee: 0, guaranteeCents: 0 },
       platformSample
     });
-    const ticketing = initiative.format === 'TICKETING' && initiative.ticketPriceCents !== null && initiative.ticketMax !== null && initiative.ticketFeeMode !== null;
+    // Una venta de vales no se proyecta (sus gastos de gestión van por compra y no se sabe cuántas compras habrá): cuenta solo lo ya cobrado (Regla 02 §10).
+    const voucherSale = initiative.ticketSubtype === 'VOUCHER';
+    const ticketing = !voucherSale && initiative.format === 'TICKETING' && initiative.ticketPriceCents !== null && initiative.ticketMax !== null && initiative.ticketFeeMode !== null;
     const ticketPlan = ticketing
       ? calculateStudioTicketingTCO({
           ticketPriceCents: initiative.ticketPriceCents!,
@@ -246,7 +251,8 @@ export async function loadBiFacts(db: Db, rules: KorumGlobalRulesCents): Promise
     // Sin plan de taquilla (campaña de presupuesto o sin precio) no hay nada que proyectar, pero lo ya cobrado no se pierde.
     const ticketMarginAt100Cents = ticketPlan ? ticketMarginRealizedCents + remainingTickets * ticketPlan.netKorumMarginPerTicketCents : ticketMarginRealizedCents;
     // En taquilla solo se cobra el mantenimiento que la recaudación cubre: lo que no alcanza no es ingreso (`maintShortfallCents`).
-    const maintFeeCents = initiative.maintFeeCents - (ticketPlan?.maintShortfallCents ?? 0);
+    // Una venta de vales tampoco proyecta su mantenimiento (su regla proporcional llega con su liquidación, Sprint 5.14c): solo cuenta el ya asentado.
+    const maintFeeCents = voucherSale ? money.maintFee : initiative.maintFeeCents - (ticketPlan?.maintShortfallCents ?? 0);
     facts.push({
       id: initiative.id,
       walletEscrowId: initiative.walletEscrowId,
@@ -285,7 +291,8 @@ export async function loadBiFacts(db: Db, rules: KorumGlobalRulesCents): Promise
         sunkCostsCents: money.autoBoost + money.chargebacks
       },
       sunkCostsCents: money.autoBoost + money.chargebacks,
-      selfBoostStandingCents: money.autoBoost
+      selfBoostStandingCents: money.autoBoost,
+      voucherSale
     });
   }
 

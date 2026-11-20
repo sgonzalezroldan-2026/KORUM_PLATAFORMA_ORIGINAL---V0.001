@@ -74,9 +74,12 @@ async function expireIfDue(db: Db, id: number, now: Date): Promise<'EXPIRED' | '
     await tx.initiative.updateMany({ where: { id }, data: { ticketsHeld: { increment: 0 } } });
     const initiative = await tx.initiative.findUniqueOrThrow({
       where: { id },
-      select: { organizationId: true, format: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true, maintFeeCents: true, quotaReservedMaintCents: true }
+      select: { organizationId: true, format: true, ticketSubtype: true, status: true, closesAt: true, raisedCents: true, goalCents: true, ticketsSold: true, ticketMax: true, walletEscrowId: true, maintFeeCents: true, quotaReservedMaintCents: true }
     });
     if (initiative.status !== 'FUNDRAISING' || initiative.closesAt > now || isGoalMet(initiative)) return null;
+    // Una venta de vales no vence como un evento: al cerrarse la venta se espera a los 14 días de devolución y se liquida por lo vendido (Sprint 5.14c).
+    // Mientras, sigue cerrada a nuevas compras (la compra comprueba la fecha) y sin liquidar.
+    if (initiative.ticketSubtype === 'VOUCHER') return null;
     if (initiative.format === 'TICKETING') return closeEventAtDate(tx, { id, ...initiative }, now);
     const { count } = await tx.initiative.updateMany({ where: { id, status: 'FUNDRAISING' }, data: { status: 'EXPIRED' } });
     if (count !== 1) return null;

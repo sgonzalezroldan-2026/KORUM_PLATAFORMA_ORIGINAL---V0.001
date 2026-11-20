@@ -4274,6 +4274,7 @@
       "message": {
         "HUCHA_FEE_BELOW_GATEWAY_COST": "A Piggy Bank charge of {amountCents} costs {gatewayCostCents} in gateway fees and you collect {feeCents}: you lose {lossCents} per charge.{profitableUpToCentsRaw, plural, =0 {} other { It is profitable up to {profitableUpToCents}.}}{profitableFromCentsRaw, plural, =0 {} other { It is profitable from {profitableFromCents}.}}",
         "TICKET_FEE_BELOW_GATEWAY_COST": "With a {priceCents} ticket, the digital handling fees ({feeCents}) {lossCentsRaw, plural, =0 {leave no margin over the gateway cost ({gatewayCostCents}): KORUM earns nothing on that ticket.} other {do not cover the gateway cost ({gatewayCostCents}): you lose {lossCents} per ticket.}}",
+        "VOUCHER_FEE_BELOW_GATEWAY_COST": "With a {amountCents} voucher purchase, the digital handling fees ({feeCents}) {lossCentsRaw, plural, =0 {leave no margin over the gateway ({gatewayCostCents}): KORUM earns nothing on that purchase.} other {do not cover the gateway ({gatewayCostCents}): you lose {lossCents} per purchase.}}",
         "SPONSOR_FEE_BELOW_GATEWAY_COST": "With a {tierCents} sponsorship, the fee ({feeCents}) does not cover the gateway cost ({gatewayCostCents}): you lose {lossCents} per sponsorship.",
         "RULE_VALUE_INVALID": "{invalidCount, plural, one {There is # empty, negative or decimal value in the pricing rules.} other {There are # empty, negative or decimal values in the pricing rules.}} Until it is fixed, the other warnings cannot be calculated.",
         "BRACKET_THRESHOLDS_INVALID": "The tier 1 limit ({t1MaxCents}) is higher than the tier 2 limit ({t2MaxCents}): tier 2 is left empty.",
@@ -4502,6 +4503,7 @@
         "LEY49_NOT_DECLARED": "The entity has not declared the Law 49/2002 regime: it cannot be accredited.",
         "SPLIT_ID_IN_USE": "That destination account identifier is already used by another entity.",
         "PUBLISHED_TICKETING": "The entity has a box office on sale: its ticket management fees are not changed in the meantime, because they would change what was already promised. Try again when it ends.",
+        "PUBLISHED_VOUCHERS": "The organisation has a voucher sale open: its voucher handling fees are not changed in the meantime, because they would change what was already promised. Try again when it ends.",
         "LIMIT_BELOW_USED": "The annual exempt amount cannot be lower than what the entity has already spent this school year."
       },
       "holder": {
@@ -4638,6 +4640,8 @@
           "fullIntegrityCheckCents": "Suggested voluntary contribution (KORUM guarantee)",
           "ticketFeeFixedCents": "Fixed digital management fees per ticket",
           "ticketFeeBps": "Variable digital management fees on the price",
+          "voucherFeeFixedCents": "Digital handling fees for vouchers, fixed per purchase",
+          "voucherFeeBps": "Digital handling fees for vouchers, variable on the purchase",
           "maintPerInitCents": "Maintenance charge per initiative",
           "maintAnnualCapCents": "Annual maintenance cap"
         },
@@ -4801,6 +4805,7 @@
         "INVALID": "Check the marked fields: one of the values is not valid.",
         "STALE": "Someone else saved changes while you were editing. Reload the page to see their changes and make yours again.",
         "TICKETING_ON_SALE": "Nothing has been saved. A ticket sale is open at an organisation without its own rates and the digital handling fees cannot change until it ends, because they would change what has already been promised to buyers. Leave those two fields as they were and save again.",
+        "VOUCHERS_ON_SALE": "Nothing has been saved. A voucher sale is open at an organisation without its own rates and its digital handling fees cannot change until it ends, because they would change what has already been promised to buyers. Leave those two fields as they were and save again.",
         "CATEGORY_EXISTS": "A category with that name already exists.",
         "CATEGORY_NOT_FOUND": "That category no longer exists.",
         "ALERT_CHANGED": "The rules changed and this warning is now a different one.",
@@ -4809,7 +4814,7 @@
       },
       "gateway": {
         "title": "Gateway, Piggy Bank and digital handling fees",
-        "hint": "What each payment costs in Paycomet and what KORUM charges to handle a Piggy Bank top-up or a ticket. Each amount is tested with sample payments.",
+        "hint": "What each payment costs in Paycomet and what KORUM charges to handle a Piggy Bank top-up, a ticket or a voucher purchase. Each amount is tested with sample payments.",
         "pct": "Variable gateway %",
         "fixed": "Fixed per transaction",
         "topupFixed": "Piggy Bank commission: fixed per charge",
@@ -4817,7 +4822,11 @@
         "topupPct": "Piggy Bank commission: % of the charge",
         "ticketFixed": "Digital handling fees: fixed per ticket",
         "ticketPct": "Digital handling fees: % of the price",
-        "ticketOk": "On a {price} ticket: digital handling fee {fee}, gateway {gateway}. KORUM net margin: +{margin} per ticket."
+        "ticketOk": "On a {price} ticket: digital handling fee {fee}, gateway {gateway}. KORUM net margin: +{margin} per ticket.",
+        "voucherFixed": "Digital handling fees for vouchers: fixed per purchase",
+        "voucherPct": "Digital handling fees for vouchers: % of the purchase amount",
+        "voucherHint": "Vouchers have their own rate and it is charged once per purchase, not per voucher: someone buying 10 vouchers pays a single fixed fee.",
+        "voucherOk": "On a {amount} voucher purchase: digital handling fee {fee}, gateway {gateway}. KORUM net margin: +{margin} per purchase."
       },
       "brackets": {
         "title": "Fee bands, exempt amount and shops",
@@ -7230,6 +7239,11 @@
         "session_revoked": "Door: session closed",
         "sync": "Door: offline check-ins synchronised",
         "refunded_pass_used": "Door check-in: ticket scanned without signal before its refund was requested"
+      },
+      "voucher": {
+        "qr_invalid": "Voucher stand: tampered or forged QR",
+        "qr_other_sale": "Voucher stand: QR from another sale",
+        "redeemed": "Voucher stand: vouchers redeemed by a signatory"
       },
       "idea": {
         "chat_access_denied": "Access denied to an idea’s conversation",

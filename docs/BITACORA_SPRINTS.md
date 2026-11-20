@@ -20,6 +20,92 @@
 
 ## Entradas
 
+### Sprint 5.14a — Vales: el motor (N3) · 2026-11-19 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor` y `antifraud-legal-guardian`, con los modelos fijados en `.claude/agents/`.
+- **Duración:** estimada, 6–8 h; real, de 21:50 a 23:55 (unas 2 h 5 min), con las auditorías, la integración y la E2E en segundo plano. Del promotor, solo las dos preguntas del principio.
+- **Decisiones del promotor al abrir el sprint (formato «qué pasa hoy, ejemplo, opciones, recomendación»; las dos, la opción recomendada):**
+  1. **Decisión 64:** el pago «sin producto» es una **aportación sin certificado**. No es una compra ni una donación con certificado. No da vale ni QR, queda fuera del Modelo 182 y lleva los mismos Gastos de gestión digital.
+  2. **Decisión 65:** **no se ofrece a los colegios con ánimo de lucro**, que sí pueden vender vales. Hoy se reconocen por la forma jurídica `SCHOOL_OWNER`.
+- **Qué se ha hecho:**
+  - **Migración `20261129090000_vouchers`:**
+    - el tipo `TicketSubtype` gana `VOUCHER`;
+    - campos nuevos: `voucherValidUntil` y `voucherNoProductEnabled` en la venta y `voucherNoProduct` en la aportación;
+    - tarifa propia `voucherFeeFixedCents` y `voucherFeeBps` en `GlobalConfig` y en `Organization`, que arranca con los valores de las entradas;
+    - cinco guardas: validez obligatoria al publicar, campos de vales solo en ventas de vales, «sin producto» sin vales ni retención, y tarifa válida en la configuración global y en cada entidad.
+  - **Reglas puras** (`src/core/ticketing/voucher-rules.ts`):
+    - los Gastos de gestión digital van **por compra**, no por vale (fijo + % del importe), en `ADD` o `INC`;
+    - vales disponibles, bloqueos de la venta y bloqueos del canje;
+    - «sin producto» solo con la venta agotada de verdad y nunca en un colegio con ánimo de lucro.
+  - **Compra** (`reserveVouchers`, pedido `KV`):
+    - tope o sin tope, retención de 15 minutos y hasta 50 vales por compra;
+    - no se vende pasada la validez;
+    - asiento `PAYIN_TICKET`: el precio va a la hucha y la gestión a `KORUM_REVENUE_TICKET_FEE`;
+    - el webhook emite **un solo pase** firmado por compra, con su saldo (serie `VALE-`);
+    - un cobro que se confirma pasada la validez se devuelve entero.
+  - **Canje** (`lookupVoucherBalance` y `redeemVouchers`):
+    - es parcial y atómico: se bloquea el pase y la base impide gastar más de lo comprado;
+    - el identificador del lector evita gastar dos veces al reenviar;
+    - solo funciona con red;
+    - canjean el puesto con el PIN de esa venta y quienes firman, nunca el Super-Admin ni una cuenta de voluntario;
+    - el canje de una persona firmante queda en la auditoría (`voucher.redeemed`).
+  - **Consola:**
+    - la tarifa de los vales tiene su campo en el motor de reglas globales y en la ficha 360º, con su margen de muestra;
+    - aviso `VOUCHER_FEE_BELOW_GATEWAY_COST`, probado con compras de hasta 5.000 €;
+    - la tarifa no cambia con una venta de vales abierta (`VOUCHERS_ON_SALE` y `PUBLISHED_VOUCHERS`); eventos y vales ya no se bloquean entre sí;
+    - «Corregir tarifas» corrige la tarifa que corresponde;
+    - una venta de vales no lleva Auto-Impulso ni 💎, y el BI no la proyecta.
+  - **Lo que es de eventos deja fuera los vales hasta el 5.14b y el 5.14c:** la compra de entradas, la puerta, el vencimiento en su fecha, cancelar y cambiar la fecha, «Taquilla y portería» y el Estudio.
+  - **Textos:**
+    - 12 claves nuevas por idioma (es, ca y en): consola, avisos, motivos y auditoría; y el texto de ayuda del bloque de la pasarela nombra los vales;
+    - las condiciones de entradas y vales §4.6 dicen que la aportación «sin producto» no da derecho a certificado fiscal (decisión 64).
+- **Pruebas:**
+  - `tests/unit/voucher-rules.spec.ts` (18).
+  - `tests/integration/vouchers.spec.ts` (21; QA-VAL01 y QA-VAL02), con compras y canjes simultáneos contra PostgreSQL real, aislamiento, contracargos y cobros tardíos.
+  - Ajustadas `console-rules`, `console-360` (dos pruebas nuevas de los bloqueos de tarifa) y `console-360-rules`.
+- **Lo que salió y se corrigió dentro del sprint:**
+  - **En la primera prueba de integración:**
+    - una guarda de la migración dejaba pasar una fila con el tipo vacío (`IS NOT DISTINCT FROM`);
+    - el Super-Admin podía canjear (`allowSuperadmin: false`).
+  - **`antifraud-legal-guardian`, 12 hallazgos (2 medios):**
+    - el canje de una persona firmante no dejaba rastro de quién lo hizo;
+    - un cobro tardío emitía vales caducados;
+    - «sin producto» se ofrecía con vales solo retenidos;
+    - un identificador de canje repetido con otro pase;
+    - filas de auditoría sin tope para una persona;
+    - una cuenta de voluntario podía canjear;
+    - faltaban pruebas;
+    - y cinco de documentación.
+  - **`fintech-escrow-auditor`, 9 hallazgos (3 medios):**
+    - el validador no miraba las compras grandes;
+    - el cobro tardío (el mismo que vio el de seguridad);
+    - «Corregir tarifas» no conocía la tarifa de vales;
+    - la consola ofrecía el Auto-Impulso;
+    - el BI proyectaba el mantenimiento;
+    - un motivo de error equivocado;
+    - el recibo de «sin producto» para el 5.14b;
+    - y faltaba la prueba de los contracargos.
+  - **En el recorrido manual:** el texto de ayuda del bloque de la pasarela no nombraba los vales (corregido en los tres idiomas).
+- **Pendiente / deuda:** ninguna nueva.
+  - Lo que queda de N3 está detallado en las fichas del 5.14b y del 5.14c: Estudio, ficha, pago, email del pase, recibo de «sin producto», semilla, puesto con PIN, cierre, devolución de 14 días, caducidad y liquidación.
+  - **Hasta el 5.14c no se vende con dinero real.**
+- **Observación para el promotor:** la huella del aviso de margen negativo de los Gastos de gestión digital incluye ahora la tarifa de los vales. Si alguna vez se aceptó ese aviso, la consola lo volverá a pedir una vez.
+- **Puertas:**
+  - P1 ✅: invariantes (41 migraciones, 819 documentos coherentes, `.claude/` en sincronía), `typecheck` y `lint` a 0.
+  - P2 ✅: unitarias 85/85 archivos (2.156 en verde, 1 omitida, la de siempre) e integración 52/52 archivos (1.078 en verde) contra PostgreSQL 16 real, en las dos pasadas finales.
+  - P3 ✅:
+    - `fintech-escrow-auditor`: APROBADO a la segunda vuelta, sin hallazgos.
+    - `antifraud-legal-guardian`: APROBADO a la tercera vuelta (la última, por dos cabeceras de documentación), sin hallazgos.
+  - P4 ✅:
+    - E2E completa en modo CI sobre la compilación de producción: 547 en verde, 0 fallos, 33 omitidas (las deliberadas de siempre) y 0 intermitencias, dos veces.
+    - Antes, las E2E del área (motor de reglas, ficha 360º, roles e intrusión): 39 en verde.
+    - Recorrido real con el MCP de Playwright a 1440 y 430 px, en es, ca y en: el motor de reglas, con los dos campos nuevos, el margen de muestra y el aviso en vivo al dejar la tarifa a cero; y las tarifas de la ficha 360º, con el error junto al campo y el foco en él. 0 errores de consola, sin desbordes y sin claves sin traducir.
+    - El sprint no tiene pantallas de familias: las de los vales llegan en el 5.14b.
+  - P5 ✅:
+    - Tras cada corrección, P1 y las unitarias completas, más lo afectado: la integración de vales, consola, BI, pagos, checkout, portería, eventos, auditoría y aislamiento (10 archivos, 329 pruebas).
+    - Después, una pasada final completa desde la 1. El recorrido manual encontró el texto de ayuda sin los vales; corregido, se repitió una segunda pasada final completa, toda en verde.
+- **Siguiente sprint:** 5.14b · Vales: Estudio, ficha pública, compra y pase · Claude Sonnet 5.5 · esfuerzo alto (alternativa: Claude Opus 5.5 · alto) · 6–8 h.
+
 ### Sprint 5.13 — Reglas de las entradas: liquidar por lo vendido, cancelación y cambio de fecha (N8) · 2026-11-19 · terminado
 
 - **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.

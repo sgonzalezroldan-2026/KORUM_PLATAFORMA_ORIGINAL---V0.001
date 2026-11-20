@@ -72,9 +72,10 @@ export async function checkInPass(db: KorumPrismaClient, secret: string, actor: 
     if (await noteOnce('invalid')) await recordAudit(db, actor, { action: 'gate.qr_invalid', organizationId: event.organizationId, targetType: 'Initiative', targetId: String(event.initiativeId), metadata: {} });
     return { status: 'INVALID_SIGNATURE' };
   }
-  const reference = await db.ticketPass.findUnique({ where: { uuid: parsed.passUuid }, select: { id: true, initiativeId: true, initiative: { select: { organizationId: true } } } });
-  // También la entidad: quien tiene cargo en la suya no puede pasar el identificador de un evento ajeno.
-  if (!reference || reference.initiativeId !== event.initiativeId || reference.initiative.organizationId !== event.organizationId) {
+  const reference = await db.ticketPass.findUnique({ where: { uuid: parsed.passUuid }, select: { id: true, subtype: true, initiativeId: true, initiative: { select: { organizationId: true } } } });
+  // También la entidad: quien tiene cargo en la suya no puede pasar el identificador de un evento ajeno. Un pase de vales no abre ninguna puerta: se gasta en el
+  // puesto de su venta (`redeemVouchers`), que comprueba su validez y descuenta su saldo.
+  if (!reference || reference.subtype === 'VOUCHER' || reference.initiativeId !== event.initiativeId || reference.initiative.organizationId !== event.organizationId) {
     // Sin revelar de qué evento o entidad es; el identificador solo queda en la auditoría (una vez por ventana y sesión).
     if (await noteOnce('other_event')) await recordAudit(db, actor, { action: 'gate.qr_other_event', organizationId: event.organizationId, targetType: 'Initiative', targetId: String(event.initiativeId), metadata: { passUuid: parsed.passUuid } });
     return { status: 'OTHER_EVENT' };

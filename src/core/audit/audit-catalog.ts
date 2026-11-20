@@ -47,6 +47,8 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'gate.qr_other_event',
     'gate.request_limited',
     'gate.session_rejected',
+    'voucher.qr_invalid',
+    'voucher.qr_other_sale',
     'idea.chat_access_denied',
     'kyb.document_not_found',
     'panel.medal_kit_denied',
@@ -138,7 +140,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'achievement.thanks_saved'
   ],
   ideas: ['idea.approved', 'idea.converted', 'idea.rejected', 'idea.replied', 'idea.signature_revalidated'],
-  gate: ['gate.check_in', 'gate.refunded_pass_used', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync'],
+  gate: ['gate.check_in', 'gate.refunded_pass_used', 'gate.code_rotated', 'gate.pin_revoked', 'gate.pin_set', 'gate.session_opened', 'gate.session_revoked', 'gate.sync', 'voucher.redeemed'],
   sponsors: [
     'sponsor.approved',
     'sponsor.rejected',

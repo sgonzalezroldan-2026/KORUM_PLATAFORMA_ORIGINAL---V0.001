@@ -19,6 +19,8 @@ const FIELDS: ReadonlyArray<{ key: NumericField; kind: 'eur' | 'pct'; max: numbe
   { key: 'fullIntegrityCheckCents', kind: 'eur', max: TARIFF_LIMITS.fullIntegrityCheckCents },
   { key: 'ticketFeeFixedCents', kind: 'eur', max: TARIFF_LIMITS.ticketFeeFixedCents },
   { key: 'ticketFeeBps', kind: 'pct', max: 10_000 },
+  { key: 'voucherFeeFixedCents', kind: 'eur', max: TARIFF_LIMITS.voucherFeeFixedCents },
+  { key: 'voucherFeeBps', kind: 'pct', max: 10_000 },
   { key: 'maintPerInitCents', kind: 'eur', max: TARIFF_LIMITS.maintPerInitCents },
   { key: 'maintAnnualCapCents', kind: 'eur', max: TARIFF_LIMITS.maintAnnualCapCents }
 ];
@@ -45,7 +47,7 @@ export function parseTariffText(text: string, locale: 'es' | 'ca' | 'en', max: n
 }
 
 /**
- * Condiciones económicas individuales de la entidad (`Aplicar tarifa personalizada`): once valores, en euros y porcentajes en pantalla y en céntimos y puntos
+ * Condiciones económicas individuales de la entidad (`Aplicar tarifa personalizada`): trece valores, en euros y porcentajes en pantalla y en céntimos y puntos
  * básicos enteros en el servidor. Apagada, la entidad usa las globales (se ven, sin poder editarse). Solo afecta a campañas futuras. Ninguna combinación se
  * bloquea por «perder dinero» (lo avisa la salud de precios), pero lo imposible se rechaza aquí y en el servidor.
  */

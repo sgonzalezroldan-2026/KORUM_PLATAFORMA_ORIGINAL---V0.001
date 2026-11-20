@@ -56,7 +56,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-const GLOBAL: TariffValues = { exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
+const GLOBAL: TariffValues = { exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, voucherFeeFixedCents: 45, voucherFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
 const withToasts = (node: ReactNode) => <ToastProvider>{node}</ToastProvider>;
 const renderAll = (node: ReactNode, locale: Locale = 'es') => renderWithIntl(withToasts(node), locale);
 

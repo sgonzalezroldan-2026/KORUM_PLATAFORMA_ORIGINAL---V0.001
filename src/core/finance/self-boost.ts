@@ -10,7 +10,7 @@ import type { InitiativeStatus } from '@/generated/prisma/enums';
  * - No hay coste de pasarela: no es una compra con tarjeta, así que el retorno del 💎 ya lo cuenta entero como `AUTO_BOOST_EXPENSE`.
  */
 
-export type SelfBoostRejection = 'NOT_FOUND' | 'NOT_FUNDRAISING' | 'NOTHING_MISSING' | 'AMOUNT_CHANGED' | 'PAST_DEADLINE' | 'ORG_ARCHIVED' | 'NOT_PROFITABLE' | 'NEGATIVE_RETURN';
+export type SelfBoostRejection = 'NOT_FOUND' | 'NOT_FUNDRAISING' | 'NOTHING_MISSING' | 'AMOUNT_CHANGED' | 'PAST_DEADLINE' | 'ORG_ARCHIVED' | 'NOT_PROFITABLE' | 'NEGATIVE_RETURN' | 'VOUCHER_SALE';
 
 export class SelfBoostNotAllowedError extends Error {
   constructor(
@@ -40,7 +40,9 @@ export function missingToGoal(goalCents: number, raisedCents: number): number {
  * ¿Se puede aportar ahora? Devuelve el motivo, o `null` si sí. `expectedAmountCents` es lo que el Super-Admin tenía en pantalla: si otra aportación
  * llegó entre medias, lo que falta cambia y no se gasta más de lo que vio.
  */
-export function selfBoostRejection(initiative: { status: InitiativeStatus; goalCents: number; raisedCents: number; closesAt: Date }, expectedAmountCents: number, now: Date): SelfBoostRejection | null {
+export function selfBoostRejection(initiative: { status: InitiativeStatus; goalCents: number; raisedCents: number; closesAt: Date; ticketSubtype?: string | null }, expectedAmountCents: number, now: Date): SelfBoostRejection | null {
+  // Una venta de vales no tiene una meta que completar: nunca lleva Auto-Impulso (decisión 33 y `L-023`; Sprint 5.14a).
+  if (initiative.ticketSubtype === 'VOUCHER') return 'VOUCHER_SALE';
   if (initiative.status !== 'FUNDRAISING') return 'NOT_FUNDRAISING';
   // Una campaña pasada de su fecha límite la cierra la tarea de vencimiento: completarla ahora la convertiría en lograda fuera de plazo.
   if (initiative.closesAt.getTime() <= now.getTime()) return 'PAST_DEADLINE';
@@ -56,22 +58,28 @@ export interface OrganizationRuleFacts {
   fullIntegrityCheckCents: number;
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
+  voucherFeeFixedCents: number;
+  voucherFeeBps: number;
   /**
    * La entidad tiene una taquilla a la venta. La compra de entradas lee la tarifa **actual** de la entidad (no guarda la de la publicación), así
    * que cambiar sus gastos de gestión cambiaría lo que paga quien compra o lo que recibe la entidad en una campaña ya prometida (auditoría financiera, B1).
    */
   hasPublishedTicketing: boolean;
+  /** Lo mismo con las ventas de vales y su tarifa propia (Sprint 5.14a). */
+  hasPublishedVouchers: boolean;
 }
 
 export interface GlobalRuleFacts {
   fullIntegrityCheckCents: number;
   ticketFeeFixedCents: number;
   ticketFeeBps: number;
+  voucherFeeFixedCents: number;
+  voucherFeeBps: number;
 }
 
 export interface NegativeReturnFixPlan {
   /** Campos de la entidad que suben al valor global (solo con tarifa propia y solo los que están por debajo). */
-  organization: Partial<Pick<OrganizationRuleFacts, 'fullIntegrityCheckCents' | 'ticketFeeFixedCents' | 'ticketFeeBps'>>;
+  organization: Partial<Pick<OrganizationRuleFacts, 'fullIntegrityCheckCents' | 'ticketFeeFixedCents' | 'ticketFeeBps' | 'voucherFeeFixedCents' | 'voucherFeeBps'>>;
   /** Hay algo que corregir pero la campaña ya está publicada y no se toca (la pantalla lo explica). */
   publishedLeftUntouched: boolean;
 }
@@ -82,16 +90,25 @@ export interface NegativeReturnFixPlan {
  * el BI no incluye borradores, así que el botón nunca llega a actuar sobre uno (auditoría financiera del 5.2, M1).
  */
 export function planNegativeReturnFix(
-  initiative: { status: InitiativeStatus; absorbsGatewayCostByKorum: boolean },
+  initiative: { status: InitiativeStatus; absorbsGatewayCostByKorum: boolean; ticketSubtype?: string | null },
   organization: OrganizationRuleFacts,
   global: GlobalRuleFacts
 ): NegativeReturnFixPlan {
   const raise: NegativeReturnFixPlan['organization'] = {};
   // Los gastos de gestión de las entradas no se tocan mientras la entidad tenga una taquilla a la venta: cambiarían lo prometido.
   let ticketingFeesHeld = false;
+  // Una venta de vales pierde por su tarifa propia: se corrige esa, no la de las entradas (y se retiene igual si hay una venta de vales abierta).
+  const voucherSale = initiative.ticketSubtype === 'VOUCHER';
   if (organization.customRules) {
     if (organization.fullIntegrityCheckCents < global.fullIntegrityCheckCents) raise.fullIntegrityCheckCents = global.fullIntegrityCheckCents;
-    if (organization.ticketFeeFixedCents < global.ticketFeeFixedCents || organization.ticketFeeBps < global.ticketFeeBps) {
+    if (voucherSale && (organization.voucherFeeFixedCents < global.voucherFeeFixedCents || organization.voucherFeeBps < global.voucherFeeBps)) {
+      if (organization.hasPublishedVouchers) ticketingFeesHeld = true;
+      else {
+        if (organization.voucherFeeFixedCents < global.voucherFeeFixedCents) raise.voucherFeeFixedCents = global.voucherFeeFixedCents;
+        if (organization.voucherFeeBps < global.voucherFeeBps) raise.voucherFeeBps = global.voucherFeeBps;
+      }
+    }
+    if (!voucherSale && (organization.ticketFeeFixedCents < global.ticketFeeFixedCents || organization.ticketFeeBps < global.ticketFeeBps)) {
       if (organization.hasPublishedTicketing) ticketingFeesHeld = true;
       else {
         if (organization.ticketFeeFixedCents < global.ticketFeeFixedCents) raise.ticketFeeFixedCents = global.ticketFeeFixedCents;

@@ -52,7 +52,7 @@ export async function loadInitiativePopup(db: Db, initiativeId: number, now: Dat
   const snapshot = await loadBiSnapshot(db, {});
   const row = snapshot.initiatives.find((candidate) => candidate.id === initiativeId);
   if (!row) return null;
-  const [sponsors, previous, defaultDisclosure, plan] = await Promise.all([
+  const [sponsors, previous, defaultDisclosure, plan, kind] = await Promise.all([
     db.sponsor.findMany({
       where: { initiativeId },
       orderBy: [{ tierRank: 'desc' }, { id: 'asc' }],
@@ -60,9 +60,11 @@ export async function loadInitiativePopup(db: Db, initiativeId: number, now: Dat
     }),
     db.contribution.findMany({ where: { initiativeId, type: 'SELF_BOOST', status: 'COMPLETED' }, orderBy: { id: 'asc' }, select: { amountCents: true, publiclyDisclosed: true, createdAt: true } }),
     getSetting(db, 'autoBoost.publicDisclosureDefault'),
-    row.isNegativeReturnAlert ? previewNegativeReturnFix(db, initiativeId) : Promise.resolve(null)
+    row.isNegativeReturnAlert ? previewNegativeReturnFix(db, initiativeId) : Promise.resolve(null),
+    db.initiative.findUnique({ where: { id: initiativeId }, select: { ticketSubtype: true } })
   ]);
-  const open = row.status === 'FUNDRAISING' && new Date(row.closesAt).getTime() > now.getTime();
+  // Una venta de vales no tiene meta que completar: nunca se le ofrece el Auto-Impulso (el servidor también lo rechaza, `VOUCHER_SALE`).
+  const open = row.status === 'FUNDRAISING' && new Date(row.closesAt).getTime() > now.getTime() && kind?.ticketSubtype !== 'VOUCHER';
   return {
     row,
     publicPath: `/${row.organizationSlug}/iniciativas/${row.id}`,

@@ -189,6 +189,24 @@ describe('QA-A04 · motor de reglas globales', () => {
     await restoreRules();
   });
 
+  it('la tarifa propia de los vales tampoco cambia con una venta de vales abierta en una entidad sin tarifa propia; y se copia a esas entidades al guardarla (Sprint 5.14a)', async () => {
+    const view = await loadGlobalRulesView(db);
+    const vouchersElsewhere = await db.initiative.count({ where: { format: 'TICKETING', ticketSubtype: 'VOUCHER', status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, organization: { customRules: false, archivedAt: null } } });
+    const plain = await createOrganization(db, { customRules: false });
+    const sale = await createInitiative(db, plain.id, { format: 'TICKETING', status: 'FUNDRAISING', ticketSubtype: 'VOUCHER', ticketPriceCents: 200, ticketFeeMode: 'ADD', goalCents: 0, voucherValidUntil: new Date(Date.now() + 10 * 86_400_000) });
+
+    await expect(saveGlobalRules(db, await verified(), { ...view.rules, voucherFeeBps: view.rules.voucherFeeBps + 50 }, view.version)).rejects.toMatchObject({ reason: 'VOUCHERS_ON_SALE', fields: ['voucherFeeFixedCents', 'voucherFeeBps'] });
+    expect((await db.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' } })).voucherFeeBps).toBe(view.rules.voucherFeeBps);
+
+    await db.initiative.update({ where: { id: sale.id }, data: { status: 'CLOSED' } });
+    if (vouchersElsewhere === 0) {
+      await save({ voucherFeeFixedCents: view.rules.voucherFeeFixedCents + 5 });
+      expect((await db.globalConfig.findUniqueOrThrow({ where: { id: 'GLOBAL' } })).voucherFeeFixedCents).toBe(view.rules.voucherFeeFixedCents + 5);
+      expect(await db.organization.findUniqueOrThrow({ where: { id: plain.id } })).toMatchObject({ voucherFeeFixedCents: view.rules.voucherFeeFixedCents + 5 });
+    }
+    await restoreRules();
+  });
+
   it('pide el Super-Admin verificado con segundo factor reciente: con la sesión de hace más de 10 minutos no se guarda', async () => {
     const view = await loadGlobalRulesView(db);
     const stale = await verified();

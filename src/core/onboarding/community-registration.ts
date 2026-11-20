@@ -134,6 +134,8 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
         fullIntegrityCheckCents: rules.fullIntegrityCheckCents,
         ticketFeeFixedCents: rules.ticketFeeFixedCents,
         ticketFeeBps: rules.ticketFeeBps,
+        voucherFeeFixedCents: rules.voucherFeeFixedCents,
+        voucherFeeBps: rules.voucherFeeBps,
         maintActive: rules.maintActive,
         maintPerInitCents: rules.maintPerInitCents,
         maintAnnualCapCents: rules.maintAnnualCapCents,

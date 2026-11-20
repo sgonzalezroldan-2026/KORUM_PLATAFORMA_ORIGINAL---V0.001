@@ -44,6 +44,8 @@ const LIVE_STATUSES: ReadonlySet<string> = new Set(['FUNDRAISING', 'GOAL_REACHED
 
 export interface EventState {
   format: string;
+  /** Una venta de vales no es un evento: su cancelación y su cambio de fecha llegan en el Sprint 5.14c, con sus propias reglas (solo lo no gastado). */
+  ticketSubtype?: string | null;
   status: string;
   /** Estado de su liquidación, si se ha pedido. Solo una pendiente de firmas deja cancelar o cambiar la fecha. */
   payoutStatus: string | null;
@@ -51,7 +53,7 @@ export interface EventState {
 
 /** Por qué no se puede cancelar ni cambiar de fecha este evento, o `null` si se puede. */
 export function eventChangeProblem(event: EventState): EventScheduleRejection | null {
-  if (event.format !== 'TICKETING') return 'NOT_AN_EVENT';
+  if (event.format !== 'TICKETING' || event.ticketSubtype === 'VOUCHER') return 'NOT_AN_EVENT';
   if (!LIVE_STATUSES.has(event.status)) return 'WRONG_STATUS';
   if (event.payoutStatus !== null && event.payoutStatus !== 'PENDING_DOUBLE_CHECK') return 'ALREADY_SETTLED';
   return null;

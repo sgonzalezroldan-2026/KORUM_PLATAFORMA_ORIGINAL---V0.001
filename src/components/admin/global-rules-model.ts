@@ -22,6 +22,8 @@ export type NumericKey =
   | 'topupFeeBps'
   | 'ticketFeeFixedCents'
   | 'ticketFeeBps'
+  | 'voucherFeeFixedCents'
+  | 'voucherFeeBps'
   | 'maintPerInitCents'
   | 'maintAnnualCapCents'
   | 'maxCampaignDays'
@@ -57,6 +59,8 @@ export const NUMERIC_FIELDS: readonly FieldDef[] = [
   pct('topupFeeBps'),
   eur('ticketFeeFixedCents', GLOBAL_RULE_LIMITS.smallCents),
   pct('ticketFeeBps'),
+  eur('voucherFeeFixedCents', GLOBAL_RULE_LIMITS.smallCents),
+  pct('voucherFeeBps'),
   eur('maintPerInitCents', GLOBAL_RULE_LIMITS.maintPerInitCents),
   eur('maintAnnualCapCents', GLOBAL_RULE_LIMITS.maintAnnualCapCents),
   { key: 'maxCampaignDays', kind: 'days', max: GLOBAL_RULE_LIMITS.maxCampaignDays, min: 1 },
@@ -135,6 +139,8 @@ export function parseState(state: RulesFormState, locale: 'es' | 'ca' | 'en'): {
     topupFeeBps: values.topupFeeBps,
     ticketFeeFixedCents: values.ticketFeeFixedCents,
     ticketFeeBps: values.ticketFeeBps,
+    voucherFeeFixedCents: values.voucherFeeFixedCents,
+    voucherFeeBps: values.voucherFeeBps,
     maintActive: state.maintActive,
     maintPerInitCents: values.maintPerInitCents,
     maintAnnualCapCents: values.maintAnnualCapCents,

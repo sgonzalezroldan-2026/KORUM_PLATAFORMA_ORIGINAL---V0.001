@@ -65,6 +65,8 @@ export async function loadGateAdmin(db: KorumPrismaClient, actor: SessionActor, 
     where: {
       organizationId,
       format: 'TICKETING',
+      // Solo eventos: el puesto de canje de una venta de vales es otra pantalla (Sprint 5.14c).
+      AND: [{ OR: [{ ticketSubtype: null }, { ticketSubtype: 'EVENT' }] }],
       OR: [
         { status: { in: ['FUNDRAISING', 'GOAL_REACHED'] }, OR: [{ closesAt: { gt: new Date(now.getTime() - PAST_EVENT_DAYS * DAY_MS) } }, { status: 'GOAL_REACHED', OR: [{ payout: null }, { payout: { status: 'PENDING_DOUBLE_CHECK' } }] }] },
         // Un evento cancelado hace poco sigue a la vista con su estado (no un borrador descartado, que nunca se publicó): quien lo canceló ve la confirmación.

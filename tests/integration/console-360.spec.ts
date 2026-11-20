@@ -424,12 +424,14 @@ describe('QA-A03 · tarifas y categorías de una entidad', () => {
       fullIntegrityCheckCents: 200,
       ticketFeeFixedCents: 50,
       ticketFeeBps: 250,
+      voucherFeeFixedCents: 40,
+      voucherFeeBps: 150,
       maintActive: true,
       maintPerInitCents: 3_000,
       maintAnnualCapCents: 9_000
     });
     const after = await db.organization.findUniqueOrThrow({ where: { id: organization.id } });
-    expect(after).toMatchObject({ customRules: true, exemptLimitCents: 150_000, exemptRemainingCents: 90_000, t1Bps: 450, sponsorFeeBps: 1_200, maintActive: true, maintAnnualCapCents: 9_000 });
+    expect(after).toMatchObject({ customRules: true, exemptLimitCents: 150_000, exemptRemainingCents: 90_000, t1Bps: 450, sponsorFeeBps: 1_200, voucherFeeFixedCents: 40, voucherFeeBps: 150, maintActive: true, maintAnnualCapCents: 9_000 });
     const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'organization.tariffs_updated', organizationId: organization.id } });
     expect(audit.metadataJson).toMatchObject({ before: { customRules: false, exemptLimitCents: 100_000, exemptRemainingCents: 40_000 }, after: { customRules: true, exemptLimitCents: 150_000, exemptRemainingCents: 90_000 } });
   });
@@ -442,13 +444,13 @@ describe('QA-A03 · tarifas y categorías de una entidad', () => {
     ['un tope de mantenimiento imposible', { maintAnnualCapCents: 1_000_000_000 }]
   ])('rechaza %s y no cambia ni una fila ni deja auditoría', async (_name, patch) => {
     const { organization } = await organizationWithSigners();
-    const valid = { customRules: true, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
+    const valid = { customRules: true, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, voucherFeeFixedCents: 45, voucherFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
     await expect(saveOrganizationTariffs(db, verified, organization.id, { ...valid, ...patch })).rejects.toMatchObject({ reason: 'INVALID' });
     expect((await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).customRules).toBe(false);
     expect(await db.auditLog.count({ where: { action: 'organization.tariffs_updated', organizationId: organization.id } })).toBe(0);
   });
 
-  const OWN_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
+  const OWN_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, voucherFeeFixedCents: 45, voucherFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
 
   it('con una taquilla a la venta no se cambian los gastos de gestión de las entradas, ni a mano ni volviendo a los valores globales; el resto sí (auditoría financiera, B1)', async () => {
     const { organization } = await organizationWithSigners({ customRules: true, ticketFeeFixedCents: 0, ticketFeeBps: 0 });
@@ -459,6 +461,20 @@ describe('QA-A03 · tarifas y categorías de una entidad', () => {
     // Dejando los gastos de gestión como están, el resto de la tarifa sí se guarda.
     await saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, ticketFeeFixedCents: 0, ticketFeeBps: 0, t1Bps: 450 });
     expect(await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).toMatchObject({ t1Bps: 450, ticketFeeFixedCents: 0 });
+  });
+
+  it('con una venta de vales abierta no se cambia la tarifa de los vales; la de las entradas sí, y al revés (Sprint 5.14a)', async () => {
+    const { organization } = await organizationWithSigners({ customRules: true, voucherFeeFixedCents: 45, voucherFeeBps: 200 });
+    await createInitiative(db, organization.id, { status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'VOUCHER', ticketPriceCents: 200, ticketFeeMode: 'ADD', goalCents: 0, voucherValidUntil: new Date(Date.now() + 10 * 86_400_000) });
+    await expect(saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, voucherFeeBps: 300 })).rejects.toMatchObject({ reason: 'PUBLISHED_VOUCHERS', fields: ['voucherFeeFixedCents', 'voucherFeeBps'] });
+    // Una venta de vales no bloquea la tarifa de las entradas.
+    await saveOrganizationTariffs(db, verified, organization.id, { ...OWN_TARIFF, ticketFeeFixedCents: 60 });
+    expect(await db.organization.findUniqueOrThrow({ where: { id: organization.id } })).toMatchObject({ ticketFeeFixedCents: 60, voucherFeeFixedCents: 45, voucherFeeBps: 200 });
+    // Y un evento a la venta no bloquea la de los vales.
+    const { organization: withEvent } = await organizationWithSigners({ customRules: true });
+    await createInitiative(db, withEvent.id, { status: 'FUNDRAISING', format: 'TICKETING', ticketSubtype: 'EVENT', ticketPriceCents: 1_000, ticketMax: 50 });
+    await saveOrganizationTariffs(db, verified, withEvent.id, { ...OWN_TARIFF, voucherFeeFixedCents: 30, voucherFeeBps: 100 });
+    expect(await db.organization.findUniqueOrThrow({ where: { id: withEvent.id } })).toMatchObject({ voucherFeeFixedCents: 30, voucherFeeBps: 100 });
   });
 
   it('el límite exento nunca crea cupo de la nada: bajar por debajo de lo gastado se rechaza, y bajar y volver a subir deja el mismo cupo (auditoría financiera, I4)', async () => {
@@ -791,7 +807,7 @@ describe('QA-A02 · Auto-Impulso de una campaña que fracasa, con contracargo re
   });
 });
 
-const FULL_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
+const FULL_TARIFF = { customRules: true as const, exemptLimitCents: 100_000, t1Bps: 500, t2Bps: 400, t3Bps: 300, sponsorFeeBps: 1_500, fullIntegrityCheckCents: 180, ticketFeeFixedCents: 45, ticketFeeBps: 200, voucherFeeFixedCents: 45, voucherFeeBps: 200, maintActive: false, maintPerInitCents: 4_900, maintAnnualCapCents: 14_700 };
 
 describe('QA-A03 · tarifas: taquilla en curso y vuelta a los valores globales', () => {
   it('una taquilla que ya cumplió la meta o ya se celebró pero no se ha liquidado también protege los gastos de gestión de la entidad', async () => {

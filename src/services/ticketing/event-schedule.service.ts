@@ -85,6 +85,7 @@ async function lockEvent(tx: Db, initiativeId: number) {
       id: true,
       organizationId: true,
       format: true,
+      ticketSubtype: true,
       status: true,
       closesAt: true,
       raisedCents: true,
@@ -99,7 +100,7 @@ async function lockEvent(tx: Db, initiativeId: number) {
       payout: { select: { status: true } }
     }
   });
-  const problem = eventChangeProblem({ format: event.format, status: event.status, payoutStatus: event.payout?.status ?? null });
+  const problem = eventChangeProblem({ format: event.format, ticketSubtype: event.ticketSubtype, status: event.status, payoutStatus: event.payout?.status ?? null });
   if (problem) throw new EventScheduleError(problem);
   return event as typeof event & { status: 'FUNDRAISING' | 'GOAL_REACHED' };
 }

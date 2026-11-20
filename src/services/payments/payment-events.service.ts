@@ -161,14 +161,19 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
   const startedAfterDeadline = initiative.status === 'FUNDRAISING' && contribution.createdAt >= contribution.initiative.closesAt;
   // Una campaña redimensionada por votación ya está decidida: un cobro que llega después no la engorda (no votó el proyecto), se devuelve (4.4b, H2).
   const resized = contribution.initiative.resizePoll?.status === 'CLOSED_APPROVED';
-  const accepting = !startedAfterDeadline && !resized && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
+  // Unos vales que ya no se pueden gastar no se emiten: si el cobro se confirma pasada su validez (la entidad la fija sin mínimo y puede acabar antes que la
+  // venta), se devuelve entero como cualquier cobro tardío (auditoría de seguridad del 5.14a). Una aportación «sin producto» no tiene vales que caduquen.
+  const voucherValidity = contribution.initiative.ticketSubtype === 'VOUCHER' && !contribution.voucherNoProduct ? contribution.initiative.voucherValidUntil : null;
+  const vouchersExpired = voucherValidity !== null && voucherValidity.getTime() <= processedAt.getTime();
+  const accepting = !startedAfterDeadline && !resized && !vouchersExpired && (initiative.status === 'FUNDRAISING' || (initiative.status === 'GOAL_REACHED' && !isSettled(contribution.initiative.payout?.status)));
   if (!accepting) {
     if (contribution.type === 'TICKET') await releaseTicketHoldInTx(tx, contribution);
     await approveRefundInTx(tx, contribution.id, { lateCharge: true });
     return;
   }
   let capacityFull = false;
-  if (contribution.type === 'TICKET') {
+  // Una aportación «sin producto» de una venta de vales (Sprint 5.14a) suma a la hucha sin vales ni pase: no hay nada que emitir.
+  if (contribution.type === 'TICKET' && !contribution.voucherNoProduct) {
     if (!options.qrSecret) throw new PaymentReconciliationError(`Cobro ${order}: falta el secreto del QR para emitir el pase.`);
     const seat = await settleTicketSeatInTx(tx, contribution, options.qrSecret, occurredAt);
     if (!seat.issued) {
@@ -179,7 +184,9 @@ async function completePayment(tx: Db, notification: PaymentNotification, occurr
     capacityFull = seat.capacityFull;
   }
   const bonusCents = contribution.type === 'DONATION' ? await releaseMatching(tx, { ...contribution, fiscalYear }, order, occurredAt) : 0;
-  if (initiative.status === 'FUNDRAISING' && (capacityFull || initiative.raisedCents + bonusCents >= initiative.goalCents)) {
+  // Una venta de vales no tiene una meta que cumplir: sigue a la venta hasta su cierre, también agotada (Sprint 5.14a).
+  const voucherSale = contribution.initiative.ticketSubtype === 'VOUCHER';
+  if (!voucherSale && initiative.status === 'FUNDRAISING' && (capacityFull || initiative.raisedCents + bonusCents >= initiative.goalCents)) {
     // Quienes firman saben al instante que toca liquidar; el aviso sale en el propio flujo del cobro (Sprint 2.6). Quienes donaron, por lotes (Sprint 4.4a).
     await markGoalReached(tx, contribution.organizationId, contribution.initiativeId, occurredAt);
   }
