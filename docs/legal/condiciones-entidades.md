@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-19 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -127,7 +127,7 @@ Las aportaciones quedan retenidas en PAYCOMET, en la hucha de la iniciativa. Ni 
 
 ### 7.2 Campaña conseguida
 
-- Al alcanzar la meta, la campaña deja de admitir aportaciones. Si la última aportación supera la meta, lo que sobra es para la entidad, como reserva adicional del proyecto.
+- Al alcanzar la meta, la campaña **sigue abierta hasta su fecha límite**: quien quiera seguir apoyándola puede hacerlo, avisado antes de pagar de que la meta ya se ha conseguido. Lo que se recaude de más es para la entidad, como reserva adicional del proyecto, descontados el coste de la pasarela de esos pagos y la comisión de KORUM. Si preferís cerrarla antes para liquidar ya, lo hace una persona firmante desde el panel. Una campaña cerrada no admite más aportaciones.
 - **Liquidar** una campaña es pedir que su dinero se entregue a la cuenta de la entidad. Se pide desde el panel, con la factura o la proforma del proveedor adjunta, y se aprueba con las firmas que correspondan a vuestro modo de firma.
 - **El dinero se entrega solo a la cuenta verificada de la entidad.** Después pagáis a vuestro proveedor por vuestros medios.
 - **Hay que liquidar a tiempo.** PAYCOMET solo puede repartir un cobro durante 90 días. Os avisamos cuando queden 15 días. Si cinco días antes de que venza ese plazo nadie ha liquidado, **la plataforma entrega ese dinero de forma automática a la cuenta verificada de la entidad**, con aviso a quienes firmáis y constancia en el registro de actividad.
@@ -155,8 +155,9 @@ La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campa�
 
 - **Vendéis vosotros.** La entidad es la organizadora del evento y responde de que se celebre, del aforo, de la seguridad y de sus permisos.
 - **Un evento que llega a su fecha se liquida por lo vendido**, aunque no se haya llenado el aforo. Si no se vendió nada, se cierra sin dinero que mover.
-- **Si canceláis el evento**, se devuelve el 100 % a todas las personas y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo de la cancelación. Cambiar la fecha no tiene coste.
-- **Si cambiáis la fecha**, cada persona recibe un aviso con un enlace para recuperar el 100 % durante 14 días. Quien no lo pide conserva su entrada para la nueva fecha.
+- **Si canceláis el evento**, se devuelve el 100 % a todas las personas y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo de la cancelación.
+- **Si cambiáis la fecha**, cada persona recibe un aviso con un enlace para recuperar el 100 % durante 14 días. Quien no lo pide conserva su entrada para la nueva fecha. Por cada persona que pide la devolución, la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de la devolución.
+- **Quién hace estas devoluciones y quién las paga.** Mientras el dinero sigue retenido en PAYCOMET, la devolución la hace la plataforma con ese dinero, de forma automática, y lo que la entidad debe a KORUM se descuenta de la liquidación de ese mismo evento. Si no alcanza (en una cancelación se devuelve todo), lo que falte se os cobra aparte, con su factura. KORUM presta su servicio de plataforma y no asume el coste de las decisiones de la entidad.
 - **La portería** se abre con un PIN por evento. Los voluntarios que la atienden actúan por cuenta de la entidad, que les da el enlace y el PIN y responde de a quién se los da. El enlace no debe publicarse; si se filtra, se cambia desde el panel.
 - **El móvil del voluntario** guarda la lista de entradas del evento y lo que lea sin cobertura hasta que se cierra la portería (como mucho, 3 días).
 - **Sin conexión**, la portería valida con la lista descargada y puede admitir una entrada que ya se usó en otro móvil. La portería enseña esos casos al recuperar la conexión; la entidad asume ese riesgo.
@@ -166,9 +167,9 @@ La cantidad exenta, la beca de medalla y el tope de mantenimiento que una campa�
 - Un vale es una unidad de canje que vende la entidad a un precio único y que se gasta en su puesto. No es dinero ni se cambia por dinero.
 - La entidad describe la venta con un texto; KORUM no lleva el inventario de lo que se entrega en el puesto.
 - El puesto funciona con un lector móvil y un PIN, como la portería. Si lo atiende otra organización (por ejemplo, una ONG), la entidad le pasa el PIN bajo su responsabilidad y arregla cuentas con ella fuera de la plataforma: el dinero de la venta llega solo a la entidad.
-- Quien compra puede recuperar el 100 % durante 14 días si no ha gastado ningún vale de esa compra. Después, los vales sin gastar se quedan en la entidad para su causa.
+- Quien compra puede recuperar el 100 % durante 14 días si no ha gastado ningún vale de esa compra. Después, los vales sin gastar se quedan en la entidad para su causa. La devolución la hace la plataforma y la paga la entidad, que es quien vende: de la liquidación de la venta se descuentan los Gastos de gestión digital devueltos y el coste de la pasarela y de cada devolución.
 - **La fecha hasta la que valen los vales la fijáis vosotros** y respondéis de ella: KORUM no impone un plazo mínimo. Dad un plazo razonable para gastarlos.
-- Si canceláis la venta antes de la liquidación, la plataforma devuelve el 100 % de los vales sin gastar, y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo. Si la canceláis después, cuando el dinero ya está en vuestra cuenta, la plataforma ya no puede devolverlo: avisa de la cancelación a quienes compraron, con el modo de pediros la devolución que nos indiquéis, y devolverles lo no gastado es responsabilidad de la entidad, que responde ante ellos. Si cambiáis la fecha, se aplica la misma regla que a las entradas.
+- Si canceláis la venta antes de la liquidación, la plataforma devuelve el 100 % de los vales sin gastar, y la entidad paga a KORUM los Gastos de gestión digital devueltos y el coste de la pasarela y de las devoluciones, sea cual sea el motivo. Si la canceláis después, cuando el dinero ya está en vuestra cuenta, la plataforma ya no puede devolverlo: avisa de la cancelación a quienes compraron, con el modo de pediros la devolución que nos indiquéis, y devolverles lo no gastado es responsabilidad de la entidad, que responde ante ellos. Si cambiáis la fecha, se aplica la misma regla que a las entradas, también en quién paga cada devolución.
 - La venta dura 60 días como máximo y se liquida por lo vendido al cerrarse, pasados los 14 días de devolución.
 
 ## 10. Comercios

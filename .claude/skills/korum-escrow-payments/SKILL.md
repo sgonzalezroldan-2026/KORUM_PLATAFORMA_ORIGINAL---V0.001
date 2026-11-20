@@ -63,7 +63,7 @@ Implementación (Sprint 1.2), que es la única puerta de entrada al libro:
 - **NIF opcional** ("Quiero mi certificado fiscal"): solo en entidades con Ley 49/2002 verificada. Se cifra y se guarda junto a la provincia.
 - **Pagar con Mi Hucha** solo existe en modo `REGULATED_WALLET` y si el saldo cubre el total.
 - **Matching 2x:** si `matchingPoolRemainingCents > 0`, al confirmarse la donación se libera `Math.min(donationAmountCents, matchingPoolRemainingCents)` de la bolsa del patrocinador (asiento `MATCHING_RELEASE`).
-- **Excedente al cruzar el 100 %:** la iniciativa pasa a `GOAL_REACHED`, bloquea nuevos cobros y el excedente se liquida íntegro a la entidad.
+- **Excedente al cruzar el 100 %:** la iniciativa pasa a `GOAL_REACHED`, bloquea nuevos cobros y el excedente se liquida íntegro a la entidad. **Decisión 68, pendiente de construir en el Sprint 5.17b:** la campaña seguirá abierta hasta su fecha límite (o hasta que la entidad la cierre con una firma), con aviso antes de pagar, y lo recaudado de más llevará el coste real de su pasarela y la comisión de KORUM (Regla 02 §1). Hasta ese sprint, lo de antes.
 
 ## 5. Ventana de 90 días (restricción de Paycomet)
 

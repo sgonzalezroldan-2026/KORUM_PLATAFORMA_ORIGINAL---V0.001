@@ -1,6 +1,6 @@
 # Condiciones de uso de KORUM
 
-> **Documento:** `condiciones-generales` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-generales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; la campaña que supera la meta del §4.1, decisión 68, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** familias, socios, vecinos y cualquier persona que aporta, compra, firma una idea o escribe a soporte.
 > **Se publica en:** `/condiciones` (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -48,7 +48,7 @@ Al crear una cuenta, aportar, comprar o firmar una idea aceptas estas condicione
 
 1. La entidad publica una campaña con una **meta** y una **fecha límite**, que ves en su ficha. La plataforma limita la duración de las campañas (hoy, a 60 días como máximo).
 2. Tu aportación va a la **hucha de la iniciativa**, que es el fondo reservado solo para esa campaña: el dinero queda retenido en PAYCOMET hasta lograr la meta. No es dinero de KORUM, y ni la entidad ni KORUM pueden disponer de él mientras tanto.
-3. **Si se logra la meta**, la campaña deja de admitir aportaciones y el dinero se entrega a la cuenta verificada de la entidad para que pague el proyecto. Si la última aportación hace que se supere la meta, lo que sobra también es para el proyecto, como reserva adicional.
+3. **Si se logra la meta**, el dinero se entrega a la cuenta verificada de la entidad para que pague el proyecto. La campaña sigue abierta hasta su fecha límite, salvo que la entidad la cierre antes: si aportas cuando la meta ya está conseguida, te lo decimos antes de pagar, y lo que se recaude de más va al proyecto, como reserva adicional, descontados el coste de la pasarela de esos pagos y la comisión de la plataforma. Una campaña cerrada no admite aportaciones.
 4. **Si no se logra**, recuperas tu dinero como se explica en el punto 4.3.
 
 ### 4.2 Qué incluye la meta
