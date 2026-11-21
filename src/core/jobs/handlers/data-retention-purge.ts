@@ -16,12 +16,14 @@ import {
   purgeUnactivatedInvitees,
   purgeUnpaidSponsors
 } from '@/core/privacy/retention-purge';
+import { emptyOldIdeaDescriptions, purgeClosedPrivacyRequests, purgeFinishedJobs, purgeResolvedOpsAlerts, purgeUnverifiedSignups } from '@/core/privacy/retention-cleanup';
+import { unlinkExpiredAuditRows, unlinkExpiredContributions, unlinkExpiredHandovers, unlinkExpiredPollCreators, unlinkOldSecurityTraces } from '@/core/privacy/retention-unlink';
 import type { JobHandler } from '../job-types';
 
 const MAX_CONSENT_ROUNDS = 50;
 
 /**
- * `DATA_RETENTION_PURGE` (semanal, QA-PRIV02): aplica los plazos de CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD §6 (`retention-policy.ts`). Cada paso
+ * `DATA_RETENTION_PURGE` (semanal, QA-PRIV02 y QA-LEG04): aplica la tabla de plazos (`docs/legal/tabla-de-plazos.md`, en el código `retention-policy.ts`). Cada paso
  * trata como mucho un lote; si alguno lo llena, la tarea devuelve `hasMore` y el procesador la vuelve a pasar en la misma llamada.
  * Nunca borra asientos, importes de aportaciones, facturas, firmas de liquidaciones ni la auditoría: de ellos solo anonimiza lo personal.
  *
@@ -50,6 +52,7 @@ export const dataRetentionPurgeHandler: JobHandler = async ({ db, now, batchSize
   await step('donorData', () => purgeExpiredDonorData(db, now, batchSize));
   await step('ideaSignatures', () => anonymizeOldIdeaSignatures(db, now, batchSize));
   await step('ideaChats', () => purgeOldIdeaChats(db, now, batchSize));
+  await step('ideaDescriptions', () => emptyOldIdeaDescriptions(db, now, batchSize));
   await step('resizeVotes', () => anonymizeOldResizeVotes(db, now, batchSize));
   await step('supportTickets', () => purgeResolvedSupportTickets(db, now, batchSize));
   await step('gateDeviceLabels', () => purgeGateDeviceLabels(db, now, batchSize));
@@ -61,6 +64,16 @@ export const dataRetentionPurgeHandler: JobHandler = async ({ db, now, batchSize
   await step('sessions', () => purgeExpiredSessions(db, now, batchSize));
   await step('unpaidSponsors', () => purgeUnpaidSponsors(db, now, batchSize));
   await step('unactivatedInvitees', () => purgeUnactivatedInvitees(db, now, batchSize));
+  await step('unverifiedSignups', () => purgeUnverifiedSignups(db, now, batchSize));
+  // Desvincular a la persona de lo que se conserva (Sprint 5.10b): rastros de seguridad a los 12 meses; el resto, a los 6 años desde el cierre del ejercicio.
+  await step('securityTraces', () => unlinkOldSecurityTraces(db, now, batchSize));
+  await step('auditRows', () => unlinkExpiredAuditRows(db, now, batchSize));
+  await step('handovers', () => unlinkExpiredHandovers(db, now, batchSize));
+  await step('pollCreators', () => unlinkExpiredPollCreators(db, now, batchSize));
+  await step('accountContributions', () => unlinkExpiredContributions(db, now, batchSize));
+  await step('privacyRequests', () => purgeClosedPrivacyRequests(db, now, batchSize));
+  await step('opsAlerts', () => purgeResolvedOpsAlerts(db, now, batchSize));
+  await step('jobs', () => purgeFinishedJobs(db, now, batchSize));
   await step(
     'consents',
     async () => {

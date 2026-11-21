@@ -1,5 +1,5 @@
 import { ErasureBlockedError, erasePersonalData, type ErasureBlock, type ErasureDeps } from '@/core/privacy/erasure.service';
-import { renderPersonalDataPdf, type ExportLocale, type ExportTranslator } from '@/core/privacy/export-pdf';
+import { processingInfoSections, renderPersonalDataPdf, type ExportLocale, type ExportTranslator, type PersonalDataFile } from '@/core/privacy/export-pdf';
 import { buildPersonalDataExport } from '@/core/privacy/personal-data-export';
 import { closePrivacyRequest, openPrivacyRequest } from '@/core/privacy/privacy-requests';
 import type { Keyring } from '@/core/security/crypto';
@@ -32,6 +32,14 @@ export type ExportOutcome = { status: 'OK'; file: ExportFile } | { status: 'RATE
 /** Nombre del fichero: fecha, sin el email ni el nombre de la persona (los nombres de las descargas quedan en el historial del navegador). */
 export const exportFileName = (format: ExportFormat, now: Date) => `korum-mis-datos-${now.toISOString().slice(0, 10)}.${format}`;
 
+/** Nombre de la empresa y email de privacidad (`platform.company`, los de la política publicada). Sin datos en la consola, el texto lo dice en vez de inventarlos. */
+async function companyForExport(db: Db, t: ExportTranslator): Promise<{ legalName: string; privacyEmail: string }> {
+  const row = await db.platformSetting.findUnique({ where: { key: 'platform.company' }, select: { valueJson: true } });
+  const value = (row?.valueJson && typeof row.valueJson === 'object' && !Array.isArray(row.valueJson) ? row.valueJson : {}) as Record<string, unknown>;
+  const text = (key: string) => (typeof value[key] === 'string' && (value[key] as string).trim() ? (value[key] as string).trim() : null);
+  return { legalName: text('legalName') ?? 'KORUM', privacyEmail: text('privacyEmail') ?? t('processingInfo.privacyEmailMissing') };
+}
+
 export async function exportOwnData(
   db: Db,
   deps: { keyring: Keyring; hmacSecret: string },
@@ -42,7 +50,8 @@ export async function exportOwnData(
   const request = await openPrivacyRequest(db, deps.hmacSecret, { actor: input.actor, type: 'EXPORT', notes: `formato:${input.format}` }, now);
   let bytes: Uint8Array;
   try {
-    const data = await buildPersonalDataExport(db, deps.keyring, { kind: 'self', actor: input.actor }, now);
+    // Primero lo que dice el artículo 15.1 sobre el tratamiento (`L-011`), en el idioma de la persona; después sus datos.
+    const data: PersonalDataFile = { processingInfo: processingInfoSections(input.t, await companyForExport(db, input.t)), ...(await buildPersonalDataExport(db, deps.keyring, { kind: 'self', actor: input.actor }, now)) };
     bytes = input.format === 'pdf' ? renderPersonalDataPdf(data, input.t, input.locale) : new TextEncoder().encode(`${JSON.stringify(data, null, 2)}\n`);
   } catch (error) {
     // La solicitud no se queda «Recibida» para siempre: se cierra como no atendida y la persona puede volver a pedirla.

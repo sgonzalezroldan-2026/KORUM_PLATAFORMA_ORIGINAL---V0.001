@@ -216,7 +216,10 @@ if (fs.existsSync(migrationsDir)) {
     // El archivo de los textos legales y las aceptaciones son la prueba de lo que se publicó y de lo que aceptó cada persona (Sprint 5.10a).
     'LegalDocumentVersion_keep_history',
     'LegalDocumentVersion_no_truncate',
-    'LegalAcceptance_keep_history'
+    'LegalAcceptance_keep_history',
+    // Una aceptación solo se borra con el alta sin verificar a la que pertenece, y la tabla no se vacía (Sprint 5.10b).
+    'LegalAcceptance_delete_guard',
+    'LegalAcceptance_no_truncate'
   ];
   // Lo que cuenta es el estado FINAL de cada guarda: se recorren las migraciones en orden y gana el último evento (crear/eliminar).
   // Una migración puede eliminar una guarda y otra posterior restaurarla (ocurrió en 1.3); lo que no puede quedar es eliminada.

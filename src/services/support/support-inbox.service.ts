@@ -117,7 +117,7 @@ export async function sendMessageToKorum(deps: InboxDeps & { hmacSecret: string 
     const ticketCode = await allocateTicketCode(tx);
     if (ticketCode === null) return { status: 'REJECTED', reason: 'CODE_EXHAUSTED' };
     const created = await tx.supportTicket.create({
-      data: { ticketCode, organizationId, originLabel: organization.name, senderEmail: user.email, target: 'SUPERADMIN', fromOrganization: true, topic: message.topic, subject: message.subject, message: message.message, createdAt: now }
+      data: { ticketCode, organizationId, originLabel: organization.name, senderEmail: user.email, senderUserId: signer.userId, target: 'SUPERADMIN', fromOrganization: true, topic: message.topic, subject: message.subject, message: message.message, createdAt: now }
     });
     await writeAudit(tx, { actorType: 'USER', actorUserId: signer.userId, organizationId, action: 'support.korum_message_created', targetType: 'SupportTicket', targetId: String(created.id), metadata: { topic: message.topic } });
     const mail = await tx.outboxMessage.create({

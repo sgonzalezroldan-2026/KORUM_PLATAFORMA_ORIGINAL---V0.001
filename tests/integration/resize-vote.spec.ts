@@ -213,6 +213,13 @@ describe('QA-S03 · votación vinculante: una persona un voto, devolución en el
     // Su otro enlace (la segunda donación) es la misma persona.
     const secondLink = signResizeVoteToken(SECRET, poll.id, contributions[1]!.id);
     await expect(vote(organization.slug, secondLink, { kind: 'OPTION', index: 1 })).rejects.toMatchObject({ reason: 'ALREADY_VOTED' });
+    // Sprint 5.10b: si quien votó cambia el email de su cuenta, sus donaciones pasan al email nuevo pero el voto sigue con el antiguo; el voto se reconoce
+    // también por la donación, así que no vota dos veces y su enlace sigue enseñando lo que votó.
+    const renamed = `${uniqueId('renombrada')}@pruebas.example`;
+    await db.contribution.update({ where: { id: contributions[2]!.id }, data: { guestEmail: renamed, canonicalEmail: renamed } });
+    await expect(vote(organization.slug, links.get(third)!, { kind: 'OPTION', index: 1 })).rejects.toMatchObject({ reason: 'ALREADY_VOTED' });
+    expect(await loadResizeBallot(db, SECRET, organization.slug, links.get(third)!)).toMatchObject({ vote: { kind: 'OPTION', index: 0 } });
+    await db.contribution.update({ where: { id: contributions[2]!.id }, data: { guestEmail: third, canonicalEmail: third } });
 
     // Quien pide su devolución la tiene aprobada en el acto (con su aportación a KORUM) y deja de contar.
     expect(await vote(organization.slug, links.get(asksBack)!, { kind: 'REFUND' })).toEqual({ choice: { kind: 'REFUND' }, refundedCents: 2_200 });

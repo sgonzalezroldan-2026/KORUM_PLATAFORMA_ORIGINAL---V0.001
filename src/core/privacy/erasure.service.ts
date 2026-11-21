@@ -4,6 +4,7 @@ import { clearFingerprintsOf, ideaSignerMarker } from '@/core/security/device-qu
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { assertVerifiedActor, revalidateActor, type VerifiedAccountActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import type { Prisma } from '@/generated/prisma/client';
+import { pendingAccessCodesWhere } from '@/lib/auth/access-codes';
 import { inTransaction, type Db } from '@/lib/db';
 import { writeAudit } from '@/services/audit/audit.service';
 import { deleteStoredCard } from '@/services/payments/card-tokens';
@@ -13,7 +14,7 @@ import type { PaymentProvider } from '@/services/payments/payment-provider';
  * Derecho de supresión (RGPD art. 17, QA-REG03). La persona deja de ser identificable y **se conserva lo que exige la ley**:
  *
  * - **Se anonimiza:** nombre, email (de la cuenta y, si su email está verificado, de sus compras como invitada y sus entradas), NIF de la
- *   cuenta, domicilio, mensajes, soporte, votos de redimensionamiento e identificadores de dispositivo (email en `DeviceAccount`, firmas e
+ *   cuenta, domicilio, mensajes (los suyos y las respuestas del centro en su conversación), soporte, votos de redimensionamiento e identificadores de dispositivo (email en `DeviceAccount`, firmas e
  *   ideas propuestas) y huellas. En firmas e ideas queda un HMAC (`ideaSignerMarker`) para que no pueda volver a firmar la misma idea.
  * - **Se borra:** sesiones, credenciales, códigos de acceso, 2FA y llaves de acceso; los cargos que no firman. Las tarjetas se revocan y se
  *   borran en Paycomet; si Paycomet no responde, la supresión sigue y la purga semanal reintenta el borrado.
@@ -107,6 +108,8 @@ export async function deleteCardsOf(db: Db, deps: Pick<ErasureDeps, 'paymentProv
 async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, now: Date): Promise<number> {
   // Las compras como invitada solo se atribuyen a la cuenta si su email está verificado: si no, serían las de quien sí lo controla.
   const mine: Prisma.ContributionWhereInput = user.emailVerified ? { OR: [{ userId: user.id }, { canonicalEmail: user.canonicalEmail }] } : { userId: user.id };
+  // Sus donaciones, antes de soltarlas: un voto se encuentra también por la donación desde la que se emitió (si cambió de email, el voto conserva el anterior).
+  const mineIds = (await tx.contribution.findMany({ where: mine, select: { id: true } })).map((row) => row.id);
   // Primero las entradas (se localizan por su compra) y después las compras, que pierden el email con el que se encuentran.
   await tx.ticketPass.updateMany({ where: { OR: [{ contribution: mine }, ...(user.emailVerified ? [{ holderEmail: user.email }] : [])] }, data: { holderEmail: anonymizedMarker('pase', user.id) } });
   const fiscal = await tx.contribution.updateMany({ where: { AND: [mine, DECLARABLE_DONATION] }, data: { guestEmail: null, canonicalEmail: null } });
@@ -121,10 +124,12 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   // marcar las dos chocaría con la unicidad por idea.
   const byEmail = user.emailVerified ? [{ canonicalEmail: user.canonicalEmail, userId: null }] : [];
   await tx.ideaSignatureAudit.updateMany({ where: { OR: [{ userId: user.id }, ...byEmail] }, data: { canonicalEmail: signerMarker } });
-  // Lo que la familia escribió en el chat de sus propuestas es texto libre y puede delatarla: se borra. Las respuestas del centro se quedan, sin nadie detrás.
-  if (user.emailVerified) await tx.ideaMessage.deleteMany({ where: { senderRole: 'FAMILY', idea: { authorCanonicalEmail: user.canonicalEmail } } });
+  // Lo que la familia escribió en el chat de sus propuestas es texto libre y puede delatarla: se borra, y con ello las respuestas del centro, que sin la pregunta
+  // no se entienden y pueden aludir a ella (tabla de plazos §3.4, Sprint 5.10b).
+  if (user.emailVerified) await tx.ideaMessage.deleteMany({ where: { idea: { authorCanonicalEmail: user.canonicalEmail } } });
   if (user.emailVerified) await tx.idea.updateMany({ where: { authorCanonicalEmail: user.canonicalEmail }, data: { authorCanonicalEmail: signerMarker } });
-  const votes = user.emailVerified ? await tx.resizeVote.findMany({ where: { canonicalEmail: user.canonicalEmail }, select: { id: true } }) : [];
+  const voteOwners = [...(user.emailVerified ? [{ canonicalEmail: user.canonicalEmail }] : []), ...(mineIds.length > 0 ? [{ contributionId: { in: mineIds } }] : [])];
+  const votes = voteOwners.length > 0 ? await tx.resizeVote.findMany({ where: { OR: voteOwners, NOT: { canonicalEmail: { startsWith: 'anonimizado:' } } }, select: { id: true } }) : [];
   for (const vote of votes) await tx.resizeVote.update({ where: { id: vote.id }, data: { canonicalEmail: anonymizedMarker('voto', vote.id), contributionId: null } });
 
   const messages = { OR: [{ userId: user.id }, ...(user.emailVerified ? [{ toAddress: user.email }] : [])] };
@@ -132,10 +137,10 @@ async function anonymizeRecords(tx: Db, user: ErasedUser, hmacSecret: string, no
   await tx.outboxMessage.updateMany({ where: messages, data: { toAddress: anonymizedEmailOf(user.id), payloadJson: {}, lastError: null } });
   // Las consultas de soporte (sobre todo las de «Corregir mis datos») llevan datos personales en texto libre: se vacían con el email, no solo el email.
   // Las que la persona escribió en nombre de su entidad hacia KORUM (`fromOrganization`) son de la entidad: solo se suelta su email (Sprint 4.4c).
-  if (user.emailVerified) {
-    await tx.supportTicket.updateMany({ where: { senderEmail: user.email, fromOrganization: false }, data: { senderEmail: null, subject: '', message: '', replyMessage: null } });
-    await tx.supportTicket.updateMany({ where: { senderEmail: user.email, fromOrganization: true }, data: { senderEmail: null } });
-  }
+  // Se encuentran por su autora (`senderUserId`, Sprint 5.10b) y, si el email está verificado, también por él (las que no tienen autora guardada).
+  const ownTickets = { OR: [{ senderUserId: user.id }, ...(user.emailVerified ? [{ senderEmail: user.email }] : [])] };
+  await tx.supportTicket.updateMany({ where: { ...ownTickets, fromOrganization: false }, data: { senderEmail: null, senderUserId: null, subject: '', message: '', replyMessage: null } });
+  await tx.supportTicket.updateMany({ where: { ...ownTickets, fromOrganization: true }, data: { senderEmail: null, senderUserId: null } });
   await tx.consentRecord.updateMany({ where: { userId: user.id }, data: { subjectEmailHmac: null } });
   await tx.walletSubscription.updateMany({ where: { userId: user.id, status: { in: ['PENDING', 'ACTIVE', 'PAUSED'] } }, data: { status: 'CANCELLED', statusReason: 'ACCOUNT_ERASED', statusChangedAt: now } });
   await clearFingerprintsOf(tx, user.id);
@@ -148,9 +153,9 @@ async function wipeAccount(tx: Db, user: ErasedUser, now: Date): Promise<void> {
   await tx.account.deleteMany({ where: { userId: user.id } });
   await tx.twoFactor.deleteMany({ where: { userId: user.id } });
   await tx.passkey.deleteMany({ where: { userId: user.id } });
-  // Códigos y enlaces de acceso pendientes: el identificador es el email, a veces con un prefijo del tipo de código.
-  const identifiers = [...new Set([user.email, user.canonicalEmail])];
-  await tx.verification.deleteMany({ where: { OR: identifiers.flatMap((email) => [{ identifier: email }, { identifier: { endsWith: `-${email}` } }, { identifier: { endsWith: `:${email}` } }]) } });
+  // Códigos y enlaces de acceso pendientes de su email, por su forma exacta (un `endsWith` borraría los de otra cuenta cuyo email acaba igual).
+  await tx.verification.deleteMany({ where: pendingAccessCodesWhere([user.email, user.canonicalEmail]) });
+  await tx.verification.deleteMany({ where: { identifier: { in: [`korum-email-change:${user.id}`, `korum-email-revert:${user.id}`, `korum-email-lock:${user.id}`] } } });
   // Invitaciones a firmar por una entidad (cofirma o relevo): su identificador lleva la cuenta, no el email.
   await tx.verification.deleteMany({ where: { identifier: { startsWith: `korum-invite:${user.id}:` } } });
   // Relevos de firmantes hacia esta persona: el abierto se cierra y el nombre que escribió quien la propuso se anonimiza en todos (el rastro de quién

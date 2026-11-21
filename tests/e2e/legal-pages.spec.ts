@@ -30,7 +30,7 @@ test.describe('QA-LEG01 · páginas públicas de los textos legales', () => {
       const article = browser.getByTestId('legal-page');
       await expect(article).toHaveAttribute('data-document', page.document);
       await expect(browser.getByRole('heading', { level: 1, name: page.title })).toBeVisible();
-      await expect(browser.getByTestId('legal-version')).toContainText(/Versión \d{4}-\d{2}-\d{2} · publicada el/);
+      await expect(browser.getByTestId('legal-version')).toContainText(/Versión \d{4}-\d{2}-\d{2}(?:\.[1-9]\d{0,2})? · publicada el/);
       await expect(browser.getByTestId('legal-hash')).toHaveText(/^[0-9a-f]{64}$/);
       const text = await article.innerText();
       // Las marcas se sustituyen (por el dato o por «dato pendiente») y las notas del recuadro no se publican.

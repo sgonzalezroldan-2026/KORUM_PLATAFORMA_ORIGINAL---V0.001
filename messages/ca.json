@@ -171,7 +171,10 @@
         "supportTickets": "Consultes de suport",
         "passkeys": "Claus d’accés",
         "ideaProposals": "Propostes d’idees i xat amb el centre",
-        "legalAcceptances": "Textos legals que has acceptat"
+        "legalAcceptances": "Textos legals que has acceptat",
+        "processingInfo": "Informació sobre el tractament",
+        "securityTraces": "Rastres de seguretat (darrers 12 mesos)",
+        "resizeVotes": "Vots en votacions de projecte"
       },
       "fields": {
         "name": "Nom",
@@ -226,7 +229,11 @@
         "nextCharge": "Proper cobrament",
         "alias": "Codi",
         "sender": "Remitent",
-        "document": "Document"
+        "document": "Document",
+        "securityEvent": "Què va passar",
+        "reason": "Motiu",
+        "failures": "Intents fallits",
+        "choice": "Elecció"
       },
       "types": {
         "DONATION": "Donació",
@@ -275,7 +282,55 @@
         "PAUSED": "En pausa",
         "CANCELLED": "Cancel·lada",
         "FINISHED": "Acabada"
-      }
+      },
+      "securityEvents": {
+        "signInFailed": "Intents fallits d’entrar al teu compte",
+        "accessDenied": "Accés denegat"
+      },
+      "processingInfo": {
+        "privacyEmailMissing": "l’adreça de privacitat que indica la política de privacitat",
+        "controller": {
+          "title": "Qui n’és responsable",
+          "text": "{company} («KORUM») és responsable del teu compte, dels teus pagaments, de la prevenció del frau i de la seguretat de la plataforma. Cada entitat és responsable de la gestió de la seva comunitat (la moderació d’idees, els seus missatges, qui signa per ella, els seus voluntaris i els certificats fiscals que emet), i KORUM tracta aquestes dades per compte de l’entitat i seguint les seves instruccions. Contacte de privacitat: {privacyEmail}."
+        },
+        "purposes": {
+          "title": "Per a què fem servir les teves dades",
+          "text": "Per gestionar el teu compte; cobrar, retornar i justificar les teves aportacions i compres (rebuts, entrades, vals i certificats); la bústia d’idees i la seva protecció contra signatures repetides; atendre les teves consultes; enviar-te els avisos del que fas a KORUM; i protegir la plataforma davant d’accessos indeguts."
+        },
+        "legalBases": {
+          "title": "Amb quina base legal",
+          "text": "La prestació del servei que demanes (compte, pagaments, entrades, vals i consultes); el compliment d’obligacions legals (comptabilitat, factures i dades fiscals dels donatius amb certificat); l’interès legítim en la seguretat i a evitar el frau (rastres de seguretat i control de signatures); i el teu consentiment quan el dones (per exemple, l’empremta del navegador), que pots retirar en qualsevol moment."
+        },
+        "recipients": {
+          "title": "Qui rep les teves dades",
+          "text": "L’entitat a la qual dones suport, que no sap qui ha aportat ni quant tret que demanis certificat fiscal; PAYCOMET, que processa els pagaments i les devolucions; l’Agència Tributària, quan la llei ho exigeix; i els proveïdors que ens presten servei amb contracte (allotjament, base de dades, enviament de correus, errors tècnics, estadístiques sense galetes i facturació). No cedim les teves dades a ningú més."
+        },
+        "transfers": {
+          "title": "Fora de la Unió Europea",
+          "text": "Les teves dades s’allotgen a la Unió Europea. Si un proveïdor d’un grup amb seu als Estats Units hi pogués accedir des de fora, s’apliquen les garanties del RGPD (el Marc de Privacitat de Dades UE-EUA o les clàusules contractuals tipus)."
+        },
+        "retention": {
+          "title": "Quant de temps les conservem",
+          "text": "El que mou diners, 6 anys des del tancament de l’exercici, i després sense res que t’identifiqui; el teu compte, mentre el facis servir (amb 3 anys sense activitat t’avisem i se suprimeix 30 dies després); les idees i els seus missatges, mentre duri la idea i un any més; les consultes, 2 anys des que es resolen; els rastres de seguretat i el contingut dels correus, 12 mesos; els consentiments, mentre siguin vigents i 3 anys més. El detall és al punt 8 de la política de privacitat."
+        },
+        "source": {
+          "title": "D’on surten",
+          "text": "De tu, quan crees el compte, aportes, compres, signes una idea o escrius; de PAYCOMET, el resultat de cada pagament (mai el número de la teva targeta); i d’una entitat, només si et convida a signar per ella."
+        },
+        "automated": {
+          "title": "Decisions automàtiques",
+          "text": "No prenem decisions que t’afectin de manera important només amb mitjans automàtics. La bústia d’idees deixa en revisió, de manera automàtica, algunes signatures (més de dos comptes en un mateix dispositiu o moltes signatures seguides) fins que una persona de l’entitat les revisa."
+        },
+        "rights": {
+          "title": "Els teus drets",
+          "text": "Pots accedir a les teves dades, rectificar-les (el correu del teu compte el canvies tu a El meu compte › Privacitat i accés; la resta, des del formulari d’ajuda), suprimir-les, oposar-te a un tractament, demanar que es limiti, endur-te-les a un altre servei i retirar un consentiment. Et responem en un mes com a màxim i és gratuït."
+        },
+        "complaint": {
+          "title": "Si no hi estàs d’acord",
+          "text": "Pots reclamar davant l’Agència Espanyola de Protecció de Dades (www.aepd.es). T’agrairem que abans ens escriguis a {privacyEmail}: gairebé sempre ho podrem resoldre."
+        }
+      },
+      "refundChoice": "Que em retornéssiu la meva aportació"
     }
   },
   "email": {
@@ -556,6 +611,23 @@
         "body": "S’acaba d’afegir una clau d’accés al teu compte de KORUM: amb ella es pot entrar sense correu ni contrasenya. Si has estat tu, no cal que facis res.",
         "footnote": "Si no has estat tu, entra a El meu compte, treu la clau i escriu-nos al suport.",
         "cta": "Revisar les meves claus"
+      },
+      "emailChangeCode": {
+        "subject": "El teu codi per canviar el correu del teu compte de KORUM",
+        "preheader": "És un codi d’un sol ús.",
+        "title": "Confirma el teu correu nou",
+        "body": "Algú amb un compte de KORUM vol que aquest sigui el seu correu. Si ets tu, escriu aquest codi a El meu compte. Caduca d’aquí a {minutes} minuts.",
+        "codeLabel": "Codi",
+        "footnote": "Si no l’has demanat tu, ignora aquest missatge: sense aquest codi el teu correu no es farà servir."
+      },
+      "emailChanged": {
+        "subject": "El correu del teu compte de KORUM ha canviat",
+        "preheader": "Si no has estat tu, avisa’ns.",
+        "title": "El teu compte ja no fa servir aquest correu",
+        "body": "El {date} es va canviar el correu del teu compte de KORUM. Des de llavors no es pot entrar amb aquest correu i aquí ja no rebràs els avisos d’aquest compte.",
+        "notYou": "Si no has estat tu, prem «No he estat jo»: tornem el compte a aquest correu i tanquem totes les seves sessions. L’enllaç serveix una sola vegada i durant {days} dies.",
+        "footnote": "Per seguretat, aquest avís no inclou el correu nou.",
+        "cta": "No he estat jo"
       }
     },
     "pledge": {
@@ -1024,6 +1096,16 @@
         "urgentOptions": "Us podeu oposar al canvi des del formulari d’ajuda del panell i, si no us convenç, deixar la plataforma sense cap cost.",
         "summary": "Què canvia: {summary}",
         "campaigns": "Les campanyes que ja teníeu publicades continuen amb les condicions amb què es van publicar."
+      },
+      "privacyChange": {
+        "subject": "Canvis a la política de privacitat de KORUM",
+        "preheader": "T’expliquem què canvia.",
+        "title": "Hem actualitzat la nostra política de privacitat",
+        "body": "Hem publicat una versió nova de la nostra política de privacitat amb un canvi important.",
+        "summary": "Què canvia: {summary}",
+        "rights": "La pots llegir sencera al web. Si no hi estàs d’acord, pots exercir els teus drets des d’El meu compte o suprimir el compte quan vulguis.",
+        "version": "Versió",
+        "cta": "Llegir la política de privacitat"
       }
     }
   },
@@ -1746,6 +1828,23 @@
       "unknown": "No ha funcionat. Torna-ho a provar d’aquí a uns segons.",
       "otherAccount": "Has iniciat sessió amb un altre compte. Aquesta invitació és per a {email}: entra-hi i torna a obrir l’enllaç del correu.",
       "acceptRole": "Acceptar el càrrec"
+    },
+    "emailRevert": {
+      "metaTitle": "Recuperar el correu del teu compte",
+      "title": "No he estat jo",
+      "intro": "Si tu no vas canviar el correu del teu compte de KORUM, prem el botó: el compte torna a aquest correu, es tanquen totes les seves sessions i hauràs de tornar a entrar.",
+      "confirm": "Tornar el compte al meu correu",
+      "working": "Tornant…",
+      "done": "Fet. El teu compte torna a ser {email} i s’han tancat totes les seves sessions. Torna a entrar i, si algú va fer servir la teva sessió, revisa les teves claus d’accés.",
+      "signIn": "Entrar al meu compte",
+      "errors": {
+        "INVALID": "Aquest enllaç no és vàlid o ja s’ha fet servir. Si algú ha canviat el correu del teu compte i no ho pots desfer, escriu-nos al correu de privacitat que trobaràs a la política de privacitat.",
+        "EXPIRED": "Aquest enllaç ha caducat (dura 14 dies). Si algú ha canviat el correu del teu compte, escriu-nos al correu de privacitat que trobaràs a la política de privacitat.",
+        "EMAIL_TAKEN": "El teu correu anterior ja el fa servir un altre compte de KORUM, així que no el podem tornar. Escriu-nos al correu de privacitat que trobaràs a la política de privacitat.",
+        "FAILED": "No ho hem pogut completar. Torna-ho a provar d’aquí a uns minuts."
+      },
+      "removed": "Per seguretat també hem tret totes les claus d’accés del compte i la contrasenya o la verificació en dos passos que s’han afegit o canviat després del canvi de correu. Torna a afegir les teves a El meu compte. El correu no es podrà tornar a canviar durant 14 dies.",
+      "help": "Llegir la política de privacitat"
     }
   },
   "registration": {
@@ -5330,13 +5429,13 @@
       "rectification": {
         "title": "Sol·licitud de rectificació de dades (RGPD)",
         "open": "S’ha d’atendre abans del {date}.",
-        "overdue": "El termini legal d’un mes va vèncer el {date}: atén-la avui (si és un canvi d’email, que l’equip tècnic ho resolgui avui).",
+        "overdue": "El termini legal d’un mes va vèncer el {date}: atén-la avui (si és un canvi de correu, respon-li com fer-ho des d’El meu compte).",
         "done": "Sol·licitud tancada: {status}.",
         "status": {
           "COMPLETED": "feta",
           "REJECTED": "rebutjada"
         },
-        "how": "Des d’aquí pots corregir el nom del compte. El canvi d’email encara no es pot fer: no hi ha encara cap tràmit que comprovi que la persona controla el nou email. No canviïs l’email a mà i no rebutgis la sol·licitud per això: deixa-la oberta i escriu a l’equip tècnic de KORUM amb el codi de la consulta perquè es resolgui, perquè el termini legal d’un mes corre. Després de corregir el nom, tanca la sol·licitud.",
+        "how": "Des d’aquí pots corregir el nom del compte. El correu el canvia la mateixa persona a El meu compte › Privacitat i accés, amb un codi al correu actual i un altre al nou: respon-li indicant-l’hi. No canviïs mai un correu a mà. Si ja no pot entrar al correu antic, la via és obrir un compte nou amb el nou. Després, tanca la sol·licitud.",
         "notes": "Nota interna (opcional, sense dades personals; mínim 10 caràcters si l’escrius)",
         "markDone": "Canvi fet: tancar la sol·licitud",
         "markRejected": "Rebutjar la sol·licitud",
@@ -5351,7 +5450,7 @@
           "NO_ACCOUNT": "Qui va escriure ja no té un compte actiu: no hi ha cap nom per corregir."
         },
         "rejectTitle": "Confirma que rebutges la sol·licitud",
-        "rejectText": "Rebutjar tanca la sol·licitud sense fer el canvi: la persona no veurà corregida la seva dada. Fes-ho només si no s’ha pogut comprovar la seva identitat o la petició no procedeix. Si el que demana és canviar el seu email, no la rebutgis: deixa-la oberta i avisa l’equip tècnic.",
+        "rejectText": "Rebutjar tanca la sol·licitud sense fer el canvi: la persona no veurà corregida la seva dada. Fes-ho només si no s’ha pogut comprovar la seva identitat o la petició no procedeix. Si el que demana és canviar el seu correu, no la rebutgis: respon-li que ho faci des d’El meu compte › Privacitat i accés i tanca-la com a feta.",
         "rejectYes": "Sí, rebutjar la sol·licitud",
         "rejectBack": "No, tornar",
         "nameLabel": "Nom correcte del compte",
@@ -5476,8 +5575,9 @@
         "WALLET_PROVIDER_LOCKED": "Hi ha famílies amb saldo al moneder: no es pot canviar l’entitat que el custodia fins que no n’hi quedi cap.",
         "UNKNOWN_MARKER": "El text té una marca entre claudàtors dobles que no existeix. Les que valen són: [[RAZÓN SOCIAL]], [[NIF]], [[DOMICILIO SOCIAL]], [[EMAIL DE SOPORTE]], [[EMAIL DE PRIVACIDAD]], [[DATOS REGISTRALES]] i [[DOMINIO]].",
         "MISSING_COMPANY_DATA": "El text fa servir dades de l’empresa que encara no són a «Dades de l’empresa». Omple-les abans de publicar: la pàgina no pot dir «dada pendent».",
-        "SUMMARY_REQUIRED": "Escriu què canvia: va a l’avís a les persones signants.",
-        "URGENT_NOT_ONLY_PROVIDERS": "Un canvi urgent només pot tocar la llista de proveïdors (annex III). Si canvia res més, publica’l sense marcar-lo com a urgent: s’aplicarà al cap de 30 dies."
+        "SUMMARY_REQUIRED": "Escriu què canvia: va a l’avís.",
+        "URGENT_NOT_ONLY_PROVIDERS": "Un canvi urgent només pot tocar la llista de proveïdors (annex III). Si canvia res més, publica’l sense marcar-lo com a urgent: s’aplicarà al cap de 30 dies.",
+        "IMPORTANT_NOT_ALLOWED": "Només la política de privacitat admet un canvi important, i només en una versió que en substitueix una altra ja publicada."
       },
       "fields": {
         "paycomet_merchantCode": {
@@ -5781,9 +5881,11 @@
         "archiveHash": "empremta {hash}…",
         "urgentLabel": "Canvi urgent de proveïdor: s’aplica al moment",
         "urgentHint": "Només si un proveïdor deixa de prestar el servei o hi ha un problema de seguretat i l’únic que canvia és la llista de proveïdors (annex III). Qualsevol altre canvi del contracte porta els seus 30 dies. Les persones signants reben l’avís igualment.",
-        "changeSummaryLabel": "Què canvia (obligatori en una versió nova de les condicions per a entitats o del contracte d’encàrrec)",
+        "changeSummaryLabel": "Què canvia (obligatori en una versió nova de les condicions per a entitats o del contracte d’encàrrec, i en un canvi important de la política de privacitat)",
         "changeSummaryHint": "En poques paraules i sense dades de persones: va a l’email a les persones signants i a la pàgina. Si canvia un proveïdor, digues quin entra i quin surt.",
-        "markerMissing": "Dades de l’empresa: falta {marker}"
+        "markerMissing": "Dades de l’empresa: falta {marker}",
+        "importantLabel": "Canvi important: avisar tots els comptes",
+        "importantHint": "Només a la política de privacitat. Surt una franja d’avís durant 30 dies a El meu compte i al panell de cada entitat, i un correu a tots els comptes amb el correu verificat. «Què canvia» és obligatori."
       },
       "team": {
         "intro": "Aquestes persones poden veure i canviar tot el d’aquesta consola. Qui rep una invitació només té accés quan l’accepta, amb una contrasenya d’almenys 12 caràcters i el segon factor activat. Un compte que signa per una entitat no pot ser Super-Admin.",
@@ -6829,7 +6931,7 @@
           "RECTIFICATION": "Corregir les meves dades personals",
           "OTHER": "Una altra consulta o un suggeriment"
         },
-        "rectificationHint": "Explica’ns quina dada s’ha de corregir i quina és la correcta. Per protegir el teu compte et demanarem un codi per correu, i obrirem una sol·licitud de rectificació amb termini d’un mes.",
+        "rectificationHint": "Explica’ns quina dada cal corregir i quina és la correcta. Per protegir el teu compte et demanarem un codi per correu, i obrirem una sol·licitud de rectificació amb termini d’un mes. El correu del teu compte el pots canviar tu mateix a El meu compte › Privacitat i accés.",
         "subjectLabel": "Assumpte",
         "messageLabel": "El teu missatge",
         "counter": "{count} de {max} caràcters",
@@ -7066,11 +7168,13 @@
       "contributions": "Aportacions",
       "passes": "Entrades i vals",
       "documents": "Certificats",
-      "privacy": "Privadesa",
+      "privacy": "Privacitat",
       "security": "Claus d’accés",
       "language": "Idioma",
       "ideas": "Propostes i signatures",
-      "support": "Les meves consultes"
+      "support": "Les meves consultes",
+      "email": "Correu del compte",
+      "privacyAccess": "Privacitat i accés"
     },
     "contributions": {
       "title": "Les meves aportacions",
@@ -7151,7 +7255,7 @@
       "revealTaxId": "Mostrar el NIF sencer"
     },
     "privacy": {
-      "title": "Privadesa i les teves dades",
+      "title": "Privacitat i les teves dades",
       "consents": {
         "title": "Permisos",
         "fingerprintText": "Empremta del navegador per a la bústia d’idees: ajuda a comprovar que ningú signa diverses vegades des del mateix dispositiu. Només s’utilitza si l’acceptes en signar una idea i es desa com un codi irreversible, mai tal qual.",
@@ -7190,9 +7294,9 @@
     },
     "erase": {
       "title": "Suprimir el meu compte",
-      "deleted": "Esborrarem el teu nom, el teu correu, les teves sessions, les teves claus d’accés i les teves targetes desades, i traurem el teu correu de les teves compres, entrades, signatures i idees. No es pot desfer.",
-      "kept": "Per llei conservem, sense res que t’identifiqui, els imports i les dates de les teves aportacions. I si vas donar el teu NIF per a un certificat fiscal, l’entitat ha de desar aquest NIF, el teu nom i la teva província durant 6 anys per a Hisenda (Model 182).",
-      "signIn": "Després podràs crear un altre compte amb el mateix correu, però començarà buit.",
+      "deleted": "Esborrarem el teu nom, el teu correu, les teves sessions, les teves claus d’accés i les teves targetes desades; traurem el teu correu de les teves compres, entrades, signatures i idees, i esborrarem les teves consultes i les converses de les teves idees. No es pot desfer.",
+      "kept": "Per llei conservem, sense res que t’identifiqui, els imports i les dates de les teves aportacions. I si vas demanar un certificat fiscal, KORUM conserva per compte de l’entitat el teu NIF, el teu nom i la teva província units a aquest donatiu durant 6 anys des del tancament de l’exercici, perquè l’entitat l’ha de poder acreditar davant d’Hisenda (Model 182). Després s’esborren.",
+      "signIn": "Només queda un codi irreversible, que no diu qui ets, perquè la mateixa idea no es pugui signar dues vegades. Podràs crear un altre compte amb el mateix correu, però començarà buit.",
       "understand": "Entenc que el meu compte s’esborra per sempre",
       "button": "Suprimir el meu compte",
       "blocked": {
@@ -7205,7 +7309,7 @@
       "done": {
         "title": "El teu compte s’ha suprimit",
         "text": "Ja no desem el teu nom ni el teu correu. Només queda un codi irreversible que impedeix signar dues vegades la mateixa idea. Gràcies per haver sumat.",
-        "retained": "{count, plural, one {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donació amb certificat, que la llei obliga a conservar.} other {Ja no desem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donacions amb certificat, que la llei obliga a conservar.}}",
+        "retained": "{count, plural, one {Ja no guardem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donació amb certificat, que KORUM conserva per compte de l’entitat perquè la llei ho exigeix.} other {Ja no guardem el teu nom ni el teu correu. Només queden un codi irreversible que impedeix signar dues vegades la mateixa idea i les dades fiscals de # donacions amb certificat, que KORUM conserva per compte de l’entitat perquè la llei ho exigeix.}}",
         "home": "Anar a la portada"
       },
       "erasing": "Suprimint…"
@@ -7324,6 +7428,54 @@
         "open": "Anar a la bústia de {entity}"
       },
       "refreshHint": "Les respostes del centre apareixen en tornar a obrir o recarregar aquesta pàgina."
+    },
+    "privacyAccess": {
+      "metaTitle": "Privacitat i accés",
+      "title": "Privacitat i accés",
+      "intro": "El teu correu, els teus permisos, la còpia de les teves dades, la supressió del compte, les teves claus d’accés i l’idioma dels teus correus.",
+      "sectionsLabel": "Apartats de Privacitat i accés",
+      "back": "Tornar a El meu compte",
+      "summary": "El teu correu, els teus permisos, la còpia de les teves dades, la supressió del compte, les claus d’accés i l’idioma dels teus correus.",
+      "open": "Anar a Privacitat i accés"
+    },
+    "email": {
+      "title": "Correu del compte",
+      "current": "El teu correu: {email}",
+      "intro": "És el que fas servir per entrar i al qual t’enviem els rebuts, les entrades i els avisos. El pots canviar quan vulguis.",
+      "start": "Canviar el meu correu",
+      "whatMoves": "Tot el que tens amb el correu actual passa al nou: les teves aportacions i compres, les teves entrades i vals, les teves idees i les teves consultes. En acabar tancarem la sessió als altres dispositius i avisarem el teu correu actual.",
+      "newLabel": "El teu correu nou",
+      "hint": "T’enviarem un codi al correu nou. Si cal, abans et demanarem un altre codi al correu actual per confirmar que ets tu.",
+      "hintSigner": "T’enviarem un codi al correu nou. Com que signes per una entitat, abans et demanarem el codi de la teva app de verificació.",
+      "send": "Enviar el codi",
+      "sending": "Enviant…",
+      "cancel": "Cancel·lar",
+      "codeSent": "T’hem enviat un codi a {email}. Caduca d’aquí a {minutes} minuts.",
+      "codeLabel": "Codi del correu nou",
+      "sessionsNote": "En confirmar, el teu correu canvia i es tanca la sessió als altres dispositius.",
+      "confirm": "Confirmar el canvi",
+      "confirming": "Confirmant…",
+      "again": "Corregir el correu o demanar un altre codi",
+      "done": {
+        "title": "El teu correu ha canviat",
+        "text": "A partir d’ara el teu compte és {email}. Hem avisat el teu correu anterior."
+      },
+      "errors": {
+        "INVALID_EMAIL": "Revisa el correu: no sembla vàlid.",
+        "DISPOSABLE_EMAIL": "Aquest correu és d’un servei de correu temporal. Fes-ne servir un que hagis de conservar.",
+        "SAME_EMAIL": "Aquest ja és el correu del teu compte.",
+        "RATE_LIMITED": "Avui has demanat molts codis. Torna-ho a provar demà.",
+        "SECOND_FACTOR_REQUIRED": "Cal el codi de la teva app de verificació.",
+        "NO_PENDING": "No hi ha cap canvi pendent. Escriu una altra vegada el teu correu nou.",
+        "EXPIRED": "El codi ha caducat. Demana’n un altre.",
+        "INVALID_CODE": "Aquest codi no és correcte. Revisa’l i torna-ho a provar.",
+        "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana’n un altre.",
+        "EMAIL_TAKEN": "Aquest correu ja té un compte a KORUM. Si és teu, entra-hi; si prefereixes quedar-te’n només un, suprimeix el que no facis servir.",
+        "LOGIN_REQUIRED": "La sessió ha caducat. Torna a entrar.",
+        "FAILED": "No hem pogut completar el canvi. Torna-ho a provar d’aquí a uns minuts.",
+        "RECENTLY_CHANGED": "Fa poc que vas canviar el correu del teu compte. Per seguretat no es pot tornar a canviar fins al {date}. Si t’has equivocat, fes servir l’enllaç «No he estat jo» que vam enviar al teu correu anterior.",
+        "RECENTLY_REVERTED": "Per seguretat, després de desfer un canvi de correu no es pot tornar a canviar fins al {date}. Si necessites canviar-lo abans, escriu-nos al correu de privacitat de la política de privacitat."
+      }
     }
   },
   "hucha": {
@@ -7647,7 +7799,11 @@
         "passkey_delete_denied": "Intent de treure la clau d’accés d’una altra persona",
         "invitation_accepted": "Invitació acceptada",
         "passkey_added": "Clau d’accés afegida",
-        "passkey_deleted": "Clau d’accés treta"
+        "passkey_deleted": "Clau d’accés treta",
+        "email_change_requested": "Canvi de correu demanat (codi enviat al correu nou)",
+        "email_changed": "Correu del compte canviat",
+        "email_change_locked": "Codi de canvi de correu esgotat (massa intents)",
+        "email_change_reverted": "Canvi de correu desfet des de l’enllaç «No he estat jo»"
       },
       "api": {
         "panel_cover_denied": "Pujada de la portada d’una campanya denegada",
@@ -7858,7 +8014,8 @@
         "erasure_completed": "Compte suprimit",
         "export": "Dades personals exportades",
         "request_closed": "Privacitat: petició tancada",
-        "request_opened": "Privacitat: petició oberta"
+        "request_opened": "Privacitat: petició oberta",
+        "unverified_signup_deleted": "Alta sense verificar esborrada als 7 dies"
       },
       "support": {
         "direct_email_sent": "Correu directe de KORUM a l’entitat",
@@ -8283,7 +8440,9 @@
           "inactivityNotice": "Avís de compte sense activitat"
         },
         "account": {
-          "passkeyAdded": "Avís de clau d’accés afegida"
+          "passkeyAdded": "Avís de clau d’accés afegida",
+          "emailChangeCode": "Codi per canviar el correu del compte",
+          "emailChanged": "Avís de correu del compte canviat"
         },
         "support": {
           "received": "Justificant d’una consulta",
@@ -8330,7 +8489,8 @@
           "expiryReminder": "Recordatori de vals a punt de caducar"
         },
         "legal": {
-          "changeNotice": "Avís de canvi de les condicions per a entitats o del contracte d’encàrrec"
+          "changeNotice": "Avís de canvi de les condicions per a entitats o del contracte d’encàrrec",
+          "privacyChange": "Avís de canvi important de la política de privacitat"
         }
       },
       "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",
@@ -8414,6 +8574,12 @@
     "staleNotice": "La traducció d’aquest text encara no està al dia. Es mostra la versió en castellà, que és la que s’aplica.",
     "stillAppliesNotice": "Estàs llegint la versió {version}, que es continua aplicant a les entitats que ja estaven donades d’alta fins al {date}.",
     "changeSummaryTitle": "Què canvia en aquesta versió",
-    "versionCurrentFrom": "vigent; per a les entitats ja donades d’alta, des del {date}"
+    "versionCurrentFrom": "vigent; per a les entitats ja donades d’alta, des del {date}",
+    "privacyNotice": {
+      "title": "Hem canviat la nostra política de privacitat",
+      "text": "El {date} vam publicar una versió nova amb un canvi important.",
+      "read": "Llegir la política de privacitat",
+      "summaryLabel": "Què canvia:"
+    }
   }
 }

@@ -11,7 +11,9 @@ import { approveRefundInTx } from '@/services/payments/payment-reversals';
  * El voto de quien donó a una campaña vencida (Sprint 4.4b, decisión del promotor del 2026-11-11). Se llega desde el enlace personal del email
  * (`/{entidad}/votacion?v=`), sin cuenta: el enlace firma la votación y una donación, y de la donación sale la persona (su email canónico).
  *
- * - **Una persona, un voto**, aunque donara varias veces o tenga varios enlaces: el voto es por email canónico y no cambia.
+ * - **Una persona, un voto**, aunque donara varias veces o tenga varios enlaces: el voto es por email canónico y no cambia. Desde el Sprint 5.10b el voto se
+ *   reconoce también por sus donaciones (`votedWith`): si la persona cambia el email de su cuenta con la votación abierta, sus donaciones pasan al email nuevo
+ *   pero el voto sigue con el antiguo, y no puede votar otra vez.
  * - **«Prefiero que me devolváis mi aportación»** devuelve en el acto el 100 % de **todas** sus donaciones a esa campaña (también la aportación voluntaria
  *   a KORUM), al medio de pago original: se aprueba aquí y la tarea `MASS_REFUND` la envía a Paycomet. Deja de contar en lo recaudado al momento, así que
  *   la meta nueva sale sola de lo que queda.
@@ -55,6 +57,11 @@ async function loadLinkedDonation(db: Db, secret: string, orgSlug: string, token
   return { contribution, poll, canonical: recipient.canonical };
 }
 
+/** El voto de esta persona en la votación: por su email canónico o por cualquiera de sus donaciones (un voto sigue a la donación desde la que se emitió). */
+function votedWith(db: Db, pollId: number, canonical: string, donationIds: readonly number[]) {
+  return db.resizeVote.findFirst({ where: { pollId, OR: [{ canonicalEmail: canonical }, ...(donationIds.length > 0 ? [{ contributionId: { in: [...donationIds] } }] : [])] }, select: { id: true, optionIndex: true, wantsRefund: true } });
+}
+
 /** Las donaciones aún completadas de esta persona en la campaña (las que votan y las que se le devolverían). */
 async function donationsOf(db: Db, initiativeId: number, canonical: string) {
   const rows = await db.contribution.findMany({
@@ -72,7 +79,8 @@ export async function loadResizeBallot(db: KorumPrismaClient, secret: string, or
   if (!linked) return { status: 'INVALID' };
   const { poll, contribution, canonical } = linked;
   const options = parsePollOptions(poll.optionsJson);
-  const [vote, donations] = await Promise.all([db.resizeVote.findUnique({ where: { pollId_canonicalEmail: { pollId: poll.id, canonicalEmail: canonical } }, select: { optionIndex: true, wantsRefund: true } }), donationsOf(db, poll.initiativeId, canonical)]);
+  const donations = await donationsOf(db, poll.initiativeId, canonical);
+  const vote = await votedWith(db, poll.id, canonical, [contribution.id, ...donations.map((row) => row.id)]);
   return {
     status: isOpen(poll, now) ? 'OPEN' : 'CLOSED',
     title: poll.initiative.title,
@@ -114,8 +122,8 @@ export async function castResizeVote(db: KorumPrismaClient, secret: string, payl
     if (!isOpen(poll, now)) throw new ResizeVoteError('CLOSED');
     const options = parsePollOptions(poll.optionsJson);
     if (input.choice.kind === 'OPTION' && input.choice.index >= options.length) throw new ResizeVoteError('INVALID_CHOICE');
-    if (await tx.resizeVote.findUnique({ where: { pollId_canonicalEmail: { pollId: poll.id, canonicalEmail: canonical } }, select: { id: true } })) throw new ResizeVoteError('ALREADY_VOTED');
     const donations = await donationsOf(tx, poll.initiativeId, canonical);
+    if (await votedWith(tx, poll.id, canonical, [linked.contribution.id, ...donations.map((row) => row.id)])) throw new ResizeVoteError('ALREADY_VOTED');
     if (donations.length === 0) throw new ResizeVoteError('NOT_A_DONOR');
 
     const wantsRefund = input.choice.kind === 'REFUND';

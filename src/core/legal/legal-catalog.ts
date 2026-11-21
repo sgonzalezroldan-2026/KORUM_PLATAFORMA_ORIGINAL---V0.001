@@ -65,6 +65,13 @@ export const CONDITIONS_BY_SLUG: Readonly<Record<string, LegalDocument>> = {
 export const ENTITY_NOTICE_DOCUMENTS: readonly LegalDocument[] = ['condiciones-entidades', 'contrato-de-encargo'];
 export const ENTITY_NOTICE_DAYS = 30;
 
+/**
+ * Cambio importante de la política de privacidad (Sprint 5.10b, política §13; decisión 90): el único texto que lo admite, y cuántos días se avisa en una franja fija de
+ * *Mi cuenta* y del panel de la entidad (además del email a todas las cuentas).
+ */
+export const IMPORTANT_CHANGE_DOCUMENT: LegalDocument = 'privacidad';
+export const PRIVACY_CHANGE_NOTICE_DAYS = 30;
+
 /** El único texto que admite un cambio urgente: la lista de proveedores del contrato de encargo (Anexo III; cláusula 10; decisión 58). */
 export const URGENT_DOCUMENT: LegalDocument = 'contrato-de-encargo';
 
@@ -163,7 +170,7 @@ export function publishableMarkdown(fileText: string): string {
   return title ? `${title}\n\n${body}` : body;
 }
 
-/** La versión que declara el recuadro de un archivo (`**Versión:** 2026-11-20`), o `null`. */
+/** La versión que declara el recuadro de un archivo (`**Versión:** 2026-11-20`, o `2026-11-20.1` si hay otra del mismo día), o `null`. */
 export function declaredVersion(fileText: string): string | null {
-  return /\*\*Versión:\*\*\s*(\d{4}-\d{2}-\d{2})/.exec(fileText)?.[1] ?? null;
+  return /\*\*Versión:\*\*\s*(\d{4}-\d{2}-\d{2}(?:\.[1-9]\d{0,2})?)/.exec(fileText)?.[1] ?? null;
 }

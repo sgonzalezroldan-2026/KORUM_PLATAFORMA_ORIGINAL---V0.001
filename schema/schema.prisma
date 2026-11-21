@@ -676,6 +676,7 @@ model User {
   legalAcceptances      LegalAcceptance[]
   privacyRequests       PrivacyRequest[]
   escrowLedgerEntries   EscrowLedgerEntry[]
+  supportTickets        SupportTicket[]        @relation("SupportTicketSender")
 
   @@index([gdprAnonymizedAt, lastActiveAt])
 }
@@ -1881,6 +1882,9 @@ model SupportTicket {
   organizationId   String?
   originLabel      String
   senderEmail      String?
+  /// Cuenta que la escribió (Sprint 5.10b, `L-053`): la autoría no depende del email, que la persona puede cambiar. Las anteriores al 5.10b se rellenaron con la
+  /// cuenta que tenía ese email verificado. Al suprimirse la cuenta se queda vacía con el email.
+  senderUserId     String?
   target           SupportTarget       @default(SUPERADMIN)
   topic            SupportTopic        @default(OTHER)
   subject          String
@@ -1897,8 +1901,10 @@ model SupportTicket {
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
   organization     Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  sender           User?               @relation("SupportTicketSender", fields: [senderUserId], references: [id], onDelete: SetNull)
 
   @@index([senderEmail, createdAt])
+  @@index([senderUserId, createdAt])
   @@index([organizationId, target, fromOrganization, status])
 }
 
@@ -2078,6 +2084,8 @@ model LegalDocumentVersion {
   /// Qué cambia respecto a la versión anterior, en palabras del Super-Admin (obligatorio en una versión nueva de los textos de las entidades; va en el aviso).
   /// Quién la publicó no se guarda aquí, sino en la auditoría (`settings.update`), que sí se desvincula de la cuenta con su plazo.
   changeSummary String?
+  /// Solo la política de privacidad (Sprint 5.10b, política §13): un cambio importante se avisa en la plataforma 30 días y por email a todas las cuentas.
+  importantChange Boolean           @default(false)
   acceptances   LegalAcceptance[]
 
   @@unique([document, locale, version])
@@ -2102,6 +2110,21 @@ model LegalAcceptance {
 
   @@index([userId])
   @@index([organizationId, document])
+}
+
+/// Aviso de un cambio importante de la política de privacidad (Sprint 5.10b; política §13): una fila por versión publicada con la casilla «cambio importante». La tarea
+/// `SUPPORTER_BROADCAST` reparte el email por lotes a las cuentas que leen esa versión, siguiendo desde `cursorUserId`; `completedAt` cierra el reparto.
+model PrivacyPolicyNotice {
+  id           Int       @id @default(autoincrement())
+  locale       Locale
+  version      String
+  createdAt    DateTime  @default(now())
+  cursorUserId String    @default("")
+  queuedCount  Int       @default(0)
+  completedAt  DateTime?
+
+  @@unique([locale, version])
+  @@index([completedAt, id])
 }
 
 model PrivacyRequest {

@@ -4,7 +4,8 @@ import { codeTo, emailTo, uniqueEmail, withE2eDb } from './auth-support';
 import { expectMobileStackIsOneColumn, expectNoHorizontalOverflow, expectNoMissingTranslations, expectNoSeriousA11yViolations, trackConsoleErrors } from './helpers';
 
 /**
- * QA-F06 (Mi cuenta), QA-PRIV01 y QA-REG03 como una persona real (Sprint 3.7). Cada proyecto crea su propia familia: compra como invitada una
+ * QA-F06 (Mi cuenta), QA-PRIV01, QA-REG03 y, desde el Sprint 5.10b, QA-LEG03 (cambio de email) como una persona real (Sprint 3.7). Lo de diario está en
+ * `/mi-cuenta` y el email, los permisos, la copia de los datos, la supresión, las llaves y el idioma en `/mi-cuenta/privacidad` (`R-52`). Cada proyecto crea su propia familia: compra como invitada una
  * donación y una entrada en Cervantes (semilla, Ley 49/2002 verificada) y luego entra con el código de su email, así se comprueba también que lo
  * comprado con ese email aparece en su cuenta. Los códigos se leen de `.email-preview/`.
  */
@@ -16,7 +17,7 @@ const firstAction = expect.configure({ timeout: 120_000 });
 
 test.beforeAll(async ({ request }) => {
   test.setTimeout(600_000);
-  for (const path of ['/mi-cuenta', '/ca/mi-cuenta', '/mi-cuenta/certificados', '/login', '/acceso/continuar']) await request.get(path, { timeout: 120_000 }).catch(() => undefined);
+  for (const path of ['/mi-cuenta', '/ca/mi-cuenta', '/mi-cuenta/privacidad', '/ca/mi-cuenta/privacidad', '/mi-cuenta/certificados', '/login', '/acceso/continuar']) await request.get(path, { timeout: 120_000 }).catch(() => undefined);
 });
 
 /** Compras como invitada con `email` en Cervantes: una donación completada y una entrada con su pase. */
@@ -91,6 +92,16 @@ test.describe('Mi cuenta', () => {
     if (testInfo.project.name === 'mobile') await expectMobileStackIsOneColumn(page);
     await expectNoSeriousA11yViolations(page);
     await expectNoMissingTranslations(page);
+    // Lo que no es de diario vive en su propia página (Sprint 5.10b, `R-52`): la principal ya no lo carga.
+    await expect(page.locator('#privacy')).toHaveCount(0);
+    await page.getByTestId('privacy-access-link').click();
+    await server(page).toHaveURL(/\/mi-cuenta\/privacidad$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Privacidad y acceso' })).toBeVisible();
+    for (const section of ['#email', '#privacy', '#security', '#language']) await expect(page.locator(section)).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+    if (testInfo.project.name === 'mobile') await expectMobileStackIsOneColumn(page);
+    await expectNoSeriousA11yViolations(page);
+    await expectNoMissingTranslations(page);
     expect(errors).toEqual([]);
   });
 
@@ -122,7 +133,7 @@ test.describe('Mi cuenta', () => {
     const errors = trackConsoleErrors(page);
     const email = uniqueEmail('exporta');
     await seedPurchases(email);
-    await signIn(page, email);
+    await signIn(page, email, '/mi-cuenta/privacidad');
 
     const json = page.waitForEvent('download');
     await page.getByTestId('export-json').click();
@@ -151,11 +162,11 @@ test.describe('Mi cuenta', () => {
   test('idioma de la cuenta: pasa a catalán por URL y lo guarda para los emails', async ({ page }) => {
     const errors = trackConsoleErrors(page);
     const email = uniqueEmail('idioma');
-    await signIn(page, email);
+    await signIn(page, email, '/mi-cuenta/privacidad');
     await page.getByLabel('Idioma de la cuenta').selectOption('ca');
     await page.getByRole('button', { name: 'Guardar idioma' }).click();
-    await server(page).toHaveURL(/\/ca\/mi-cuenta/);
-    await expect(page.getByRole('heading', { level: 1, name: 'El meu compte' })).toBeVisible();
+    await server(page).toHaveURL(/\/ca\/mi-cuenta\/privacidad/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Privacitat i accés' })).toBeVisible();
     await expectNoMissingTranslations(page);
     await expectNoSeriousA11yViolations(page);
     const locale = await withE2eDb(async (db) => (await db.query(`SELECT locale FROM "User" WHERE email = $1`, [email])).rows[0].locale as string);
@@ -170,7 +181,7 @@ test.describe('Mi cuenta', () => {
     await cdp.send('WebAuthn.addVirtualAuthenticator', { options: { protocol: 'ctap2', transport: 'internal', hasResidentKey: true, hasUserVerification: true, isUserVerified: true, automaticPresenceSimulation: true } });
 
     const email = uniqueEmail('llave');
-    await signIn(page, email);
+    await signIn(page, email, '/mi-cuenta/privacidad');
     await page.getByLabel('Nombre de la llave (opcional)').fill('Ordenador de pruebas');
     const added = Date.now();
     await page.getByRole('button', { name: 'Añadir una llave en este dispositivo' }).click();
@@ -182,6 +193,8 @@ test.describe('Mi cuenta', () => {
     expect(audited).toBe(1);
     await expect(page.locator('#security')).toContainText('Ordenador de pruebas');
 
+    // «Cerrar sesión» está en la página principal de Mi cuenta (Sprint 5.10b, `R-52`).
+    await page.goto('/mi-cuenta');
     await page.getByRole('button', { name: 'Cerrar sesión' }).click();
     await server(page).toHaveURL(/\/$/);
     await page.goto(`/login?next=${encodeURIComponent('/mi-cuenta')}`);
@@ -198,9 +211,11 @@ test.describe('Mi cuenta', () => {
     const errors = trackConsoleErrors(page);
     const email = uniqueEmail('suprime');
     await seedPurchases(email);
-    await signIn(page, email);
+    await signIn(page, email, '/mi-cuenta/privacidad');
     const block = page.getByTestId('erase-account');
     await expect(block).toContainText('Por ley conservamos');
+    // Textos de la supresión (`L-010`): quién conserva los datos fiscales y por qué.
+    await expect(block).toContainText('KORUM conserva por cuenta de la entidad');
     const button = block.getByRole('button', { name: 'Suprimir mi cuenta' });
     await expect(button).toBeDisabled();
     await block.getByText('Entiendo que mi cuenta se borra para siempre').click();
@@ -210,6 +225,57 @@ test.describe('Mi cuenta', () => {
     const user = await withE2eDb(async (db) => (await db.query(`SELECT "gdprAnonymizedAt" FROM "User" WHERE "canonicalEmail" LIKE 'suprimida-%' AND id IN (SELECT "userId" FROM "PrivacyRequest" WHERE type = 'ERASURE' AND status = 'COMPLETED') ORDER BY "updatedAt" DESC LIMIT 1`)).rows[0]);
     expect(user.gdprAnonymizedAt).not.toBeNull();
     expect(await withE2eDb(async (db) => (await db.query(`SELECT count(*)::int AS n FROM "User" WHERE email = $1`, [email])).rows[0].n)).toBe(0);
+    await page.goto('/mi-cuenta');
+    await server(page).toHaveURL(/\/login\?next=%2Fmi-cuenta$/);
+    expect(errors).toEqual([]);
+  });
+
+  test('cambiar el email: código al email nuevo, lo comprado pasa con él, aviso al antiguo; accesible y en una columna', async ({ page }, testInfo) => {
+    const errors = trackConsoleErrors(page);
+    const email = uniqueEmail('cambia');
+    const { initiativeTitle } = await seedPurchases(email);
+    await signIn(page, email, '/mi-cuenta/privacidad');
+    const block = page.getByTestId('change-email');
+    await expect(block).toContainText(`Tu email: ${email}`);
+    await block.getByTestId('change-email-start').click();
+    const input = block.getByLabel('Tu email nuevo');
+    await expect(input).toBeFocused();
+    // Un email de correo temporal se rechaza con un aviso claro.
+    await input.fill(`${randomUUID().slice(0, 8)}@mailinator.com`);
+    await block.getByTestId('change-email-send').click();
+    await expect(block.getByRole('alert')).toContainText('correo temporal');
+    const newEmail = uniqueEmail('nuevo');
+    await input.fill(newEmail);
+    const since = Date.now();
+    await block.getByTestId('change-email-send').click();
+    await firstAction(block.getByRole('status')).toContainText(`Te hemos enviado un código a ${newEmail}`);
+    await expectNoSeriousA11yViolations(page);
+    if (testInfo.project.name === 'mobile') await expectMobileStackIsOneColumn(page);
+    await block.getByLabel('Código del email nuevo').fill(await codeTo(newEmail, since));
+    await block.getByTestId('change-email-confirm').click();
+    await firstAction(block.getByTestId('change-email-done')).toContainText(newEmail);
+    // El email antiguo recibe el aviso, y lo comprado con él aparece ahora con el nuevo.
+    const notice = await emailTo(email, since, (text) => text.includes('El email de tu cuenta de KORUM ha cambiado'));
+    expect(notice).not.toContain(newEmail);
+    const stored = await withE2eDb(async (db) => (await db.query(`SELECT email FROM "User" WHERE email = $1`, [newEmail])).rows.length);
+    expect(stored).toBe(1);
+    await page.goto('/mi-cuenta');
+    await expect(page.getByText(`Has entrado como ${newEmail}`)).toBeVisible();
+    await expect(page.locator('#contributions').getByRole('link', { name: initiativeTitle })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+    await expectNoMissingTranslations(page);
+
+    // «No he sido yo»: el enlace del aviso al email antiguo devuelve la cuenta a ese email y cierra todas las sesiones.
+    const revertPath = /\/cuenta\/recuperar-email#t=[\w.-]+/.exec(notice)?.[0];
+    expect(revertPath, 'el aviso lleva el enlace «No he sido yo»').toBeTruthy();
+    await page.goto(revertPath!);
+    await expect(page.getByRole('heading', { level: 1, name: 'No he sido yo' })).toBeVisible();
+    await expect(page).toHaveURL(/\/cuenta\/recuperar-email$/);
+    await expectNoSeriousA11yViolations(page);
+    if (testInfo.project.name === 'mobile') await expectMobileStackIsOneColumn(page);
+    await page.getByTestId('email-revert-confirm').click();
+    await firstAction(page.getByTestId('email-revert-done')).toContainText(email);
+    expect(await withE2eDb(async (db) => (await db.query(`SELECT count(*)::int AS n FROM "User" WHERE email = $1`, [email])).rows[0].n)).toBe(1);
     await page.goto('/mi-cuenta');
     await server(page).toHaveURL(/\/login\?next=%2Fmi-cuenta$/);
     expect(errors).toEqual([]);

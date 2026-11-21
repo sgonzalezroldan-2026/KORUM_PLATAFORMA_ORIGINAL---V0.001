@@ -1,9 +1,11 @@
+import { SECURITY_ACTIONS } from '@/core/audit/audit-catalog';
 import { CRYPTO_CONTEXT, DecryptionError, openValue, type Keyring } from '@/core/security/crypto';
 import { assertVerifiedActor, revalidateActor, type VerifiedAccountActor, type VerifiedSuperadminActor } from '@/core/security/verified-actor';
 import { openDonorTaxId } from '@/core/tax/tax-id-vault';
 import type { Prisma } from '@/generated/prisma/client';
 import type { Db } from '@/lib/db';
 import { writeAudit } from '@/services/audit/audit.service';
+import { daysBefore, RETENTION } from './retention-policy';
 
 /**
  * Derecho de acceso y portabilidad (RGPD arts. 15 y 20, QA-PRIV01): todo lo que KORUM guarda de una persona, en JSON. Incluye lo que
@@ -11,6 +13,10 @@ import { writeAudit } from '@/services/audit/audit.service';
  * solicitudes, cargos, firmas de ideas, mensajes, soporte y lo que el antifraude sabe de sus dispositivos. El NIF va descifrado: es suyo.
  * Nunca incluye secretos (tokens de tarjeta, contraseñas, códigos de 2FA) ni datos de otras personas. Un NIF que no se puede descifrar no
  * bloquea el derecho de acceso: aparece como no disponible (`unreadableTaxIds`).
+ *
+ * Desde el Sprint 5.10b (`L-067`, `QA-LEG04`) incluye también sus **rastros de seguridad de los últimos 12 meses** (intentos fallidos de entrar en su cuenta y accesos
+ * que se le denegaron), sin identificadores de entidades ni de nada ajeno: solo qué pasó, cuándo y el motivo. La «Información sobre el tratamiento» (`L-011`) la
+ * añade quien entrega el fichero, en el idioma de la persona (`account-privacy.service.ts`).
  */
 
 export const EXPORT_FORMAT_VERSION = 1;
@@ -69,6 +75,10 @@ export interface PersonalDataExport {
   }>;
   notifications: Array<{ template: string; status: string; createdAt: string; sentAt: string | null }>;
   supportTickets: Array<{ ticketCode: string; subject: string; message: string; status: string; reply: string | null; createdAt: string }>;
+  /** Votos en una votación de proyecto (Sprint 4.4b): la campaña, la opción elegida o la devolución, y la fecha. Por su email o por las donaciones desde las que votó. */
+  resizeVotes: Array<{ initiative: string; choice: string | null; wantsRefund: boolean; createdAt: string }>;
+  /** Rastros de seguridad de los últimos 12 meses (tabla de plazos §3.10): qué pasó, cuándo y el motivo. Nunca la entidad, el recurso ni la red. */
+  securityTraces: Array<{ action: string; occurredAt: string; reason: string | null; attempted: string | null; method: string | null; failures: number | null }>;
   /** NIF guardados que ninguna clave puede descifrar (se avisa a la plataforma; el resto de la exportación es completo). */
   unreadableTaxIds: number;
 }
@@ -87,7 +97,8 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
   // Lo que se compró como invitada con este email solo es de esta cuenta si el email está verificado.
   const verified = user.emailVerified;
   const ownContributions: Prisma.ContributionWhereInput = verified ? { OR: [{ userId }, { canonicalEmail: user.canonicalEmail }] } : { userId };
-  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys, proposals, acceptances] = await Promise.all([
+  const ownContributionIds = (await db.contribution.findMany({ where: ownContributions, select: { id: true } })).map((row) => row.id);
+  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys, proposals, acceptances, traces, votes] = await Promise.all([
     db.contribution.findMany({ where: ownContributions, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.ticketPass.findMany({ where: { OR: [{ contribution: ownContributions }, ...(verified ? [{ holderEmail: user.email }] : [])] }, orderBy: { id: 'asc' }, include: { initiative: { select: { title: true } } } }),
     db.consentRecord.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] }),
@@ -97,11 +108,23 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     db.deviceAccount.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { device: { select: { firstSeenAt: true, lastSeenAt: true, fingerprintHmac: true } } } }),
     db.paymentMethodToken.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { brand: true, last4: true, expiresMonth: true, expiresYear: true, createdAt: true, revokedAt: true } }),
     db.walletSubscription.findMany({ where: { userId }, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
-    db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
-    verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([]),
+    // Los emails de un email antiguo quedan unidos a la cuenta al cambiarlo (Sprint 5.10b): por la dirección solo los que no son de ninguna cuenta.
+    db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email, userId: null }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
+    db.supportTicket.findMany({ where: { OR: [{ senderUserId: userId }, ...(verified ? [{ senderUserId: null, senderEmail: user.email }] : [])] }, orderBy: { id: 'asc' } }),
     db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } }),
     verified ? db.idea.findMany({ where: { authorCanonicalEmail: user.canonicalEmail }, orderBy: { id: 'asc' }, include: { messages: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } } }) : Promise.resolve([]),
-    db.legalAcceptance.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { document: true, locale: true, version: true, source: true, acceptedAt: true, organization: { select: { name: true } } } })
+    db.legalAcceptance.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { document: true, locale: true, version: true, source: true, acceptedAt: true, organization: { select: { name: true } } } }),
+    db.auditLog.findMany({
+      where: { action: { in: [...SECURITY_ACTIONS] }, occurredAt: { gte: daysBefore(now, RETENTION.securityTraceDays) }, OR: [{ actorUserId: userId }, { targetType: 'User', targetId: userId }] },
+      orderBy: { id: 'asc' },
+      select: { action: true, occurredAt: true, metadataJson: true }
+    }),
+    db.resizeVote.findMany({
+      // Sin email verificado ni donaciones, la lista de condiciones queda vacía y Prisma no devuelve nada.
+      where: { OR: [...(verified ? [{ canonicalEmail: user.canonicalEmail }] : []), ...(ownContributionIds.length > 0 ? [{ contributionId: { in: ownContributionIds } }] : [])] },
+      orderBy: { id: 'asc' },
+      select: { optionIndex: true, wantsRefund: true, createdAt: true, poll: { select: { optionsJson: true, initiative: { select: { title: true } } } } }
+    })
   ]);
 
   let unreadableTaxIds = 0;
@@ -182,6 +205,16 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     })),
     notifications: messages.map((row) => ({ template: row.templateKey, status: row.status, createdAt: row.createdAt.toISOString(), sentAt: iso(row.sentAt) })),
     supportTickets: support.map((row) => ({ ticketCode: row.ticketCode, subject: row.subject, message: row.message, status: row.status, reply: row.replyMessage, createdAt: row.createdAt.toISOString() })),
+    resizeVotes: votes.map((row) => {
+      const options = Array.isArray(row.poll.optionsJson) ? (row.poll.optionsJson as unknown[]) : [];
+      const option = row.optionIndex !== null ? options[row.optionIndex] : undefined;
+      return { initiative: row.poll.initiative.title, choice: typeof option === 'string' ? option : null, wantsRefund: row.wantsRefund, createdAt: row.createdAt.toISOString() };
+    }),
+    securityTraces: traces.map((row) => {
+      const detail = (row.metadataJson && typeof row.metadataJson === 'object' && !Array.isArray(row.metadataJson) ? row.metadataJson : {}) as Record<string, unknown>;
+      const text = (key: string) => (typeof detail[key] === 'string' ? (detail[key] as string) : null);
+      return { action: row.action, occurredAt: row.occurredAt.toISOString(), reason: text('reason'), attempted: text('attempted'), method: text('method'), failures: typeof detail.failures === 'number' ? detail.failures : null };
+    }),
     unreadableTaxIds: 0
   };
   exported.unreadableTaxIds = unreadableTaxIds;

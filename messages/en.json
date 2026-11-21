@@ -171,7 +171,10 @@
         "supportTickets": "Support requests",
         "passkeys": "Passkeys",
         "ideaProposals": "Idea proposals and chat with the school",
-        "legalAcceptances": "Legal texts you have accepted"
+        "legalAcceptances": "Legal texts you have accepted",
+        "processingInfo": "Information about the processing",
+        "securityTraces": "Security traces (last 12 months)",
+        "resizeVotes": "Votes on project ballots"
       },
       "fields": {
         "name": "Name",
@@ -226,7 +229,11 @@
         "nextCharge": "Next charge",
         "alias": "Code",
         "sender": "Sender",
-        "document": "Document"
+        "document": "Document",
+        "securityEvent": "What happened",
+        "reason": "Reason",
+        "failures": "Failed attempts",
+        "choice": "Choice"
       },
       "types": {
         "DONATION": "Donation",
@@ -275,7 +282,55 @@
         "PAUSED": "Paused",
         "CANCELLED": "Cancelled",
         "FINISHED": "Finished"
-      }
+      },
+      "securityEvents": {
+        "signInFailed": "Failed attempts to sign in to your account",
+        "accessDenied": "Access denied"
+      },
+      "processingInfo": {
+        "privacyEmailMissing": "the privacy address given in the privacy policy",
+        "controller": {
+          "title": "Who is the controller",
+          "text": "{company} (\"KORUM\") is the controller for your account, your payments, fraud prevention and platform security. Each organisation is the controller for managing its own community (moderating ideas, its messages, who signs for it, its volunteers and the tax certificates it issues), and KORUM processes that data on the organisation’s behalf and following its instructions. Privacy contact: {privacyEmail}."
+        },
+        "purposes": {
+          "title": "What we use your data for",
+          "text": "To manage your account; to charge, refund and document your contributions and purchases (receipts, tickets, vouchers and certificates); to run the ideas box and protect it from repeated signatures; to answer your support requests; to send you notices about what you do on KORUM; and to protect the platform against improper access."
+        },
+        "legalBases": {
+          "title": "Legal basis",
+          "text": "Providing the service you ask for (account, payments, tickets, vouchers and support); complying with legal obligations (accounting, invoices and the tax details of donations with a certificate); our legitimate interest in security and preventing fraud (security traces and signature checks); and your consent when you give it (for example, the browser fingerprint), which you can withdraw at any time."
+        },
+        "recipients": {
+          "title": "Who receives your data",
+          "text": "The organisation you support, which does not know who contributed or how much unless you request a tax certificate; PAYCOMET, which processes payments and refunds; the Spanish Tax Agency, when the law requires it; and the providers that serve us under contract (hosting, database, email delivery, error tracking, cookie-free statistics and invoicing). We do not share your data with anyone else."
+        },
+        "transfers": {
+          "title": "Outside the European Union",
+          "text": "Your data is stored in the European Union. If a provider belonging to a US-based group could access it from outside, the GDPR safeguards apply (the EU-US Data Privacy Framework or standard contractual clauses)."
+        },
+        "retention": {
+          "title": "How long we keep it",
+          "text": "Anything involving money, 6 years from the end of the financial year, and then with nothing that identifies you; your account, while you use it (after 3 years without activity we warn you and it is deleted 30 days later); ideas and their messages, while the idea lasts and one more year; support requests, 2 years after they are resolved; security traces and the content of emails, 12 months; consents, while they are in force and 3 more years. The details are in section 8 of the privacy policy."
+        },
+        "source": {
+          "title": "Where it comes from",
+          "text": "From you, when you create your account, contribute, buy, sign an idea or write to us; from PAYCOMET, the result of each payment (never your card number); and from an organisation, only if it invites you to sign for it."
+        },
+        "automated": {
+          "title": "Automated decisions",
+          "text": "We do not take decisions that significantly affect you by automated means alone. The ideas box automatically puts some signatures on hold (more than two accounts on the same device, or many signatures in a row) until a person from the organisation reviews them."
+        },
+        "rights": {
+          "title": "Your rights",
+          "text": "You can access your data, correct it (you change your account email yourself in My account › Privacy and access; anything else, through the help form), erase it, object to processing, ask for it to be restricted, take it to another service and withdraw a consent. We reply within one month at most and it is free."
+        },
+        "complaint": {
+          "title": "If you disagree",
+          "text": "You can complain to the Spanish Data Protection Agency (www.aepd.es). We would be grateful if you wrote to us first at {privacyEmail}: we can almost always sort it out."
+        }
+      },
+      "refundChoice": "Refund my contribution"
     }
   },
   "email": {
@@ -556,6 +611,23 @@
         "body": "A passkey has just been added to your KORUM account: it can be used to sign in without an email or password. If it was you, there’s nothing you need to do.",
         "footnote": "If it wasn’t you, go to My account, remove the passkey and contact support.",
         "cta": "Review my passkeys"
+      },
+      "emailChangeCode": {
+        "subject": "Your code to change the email of your KORUM account",
+        "preheader": "It is a single-use code.",
+        "title": "Confirm your new email",
+        "body": "Someone with a KORUM account wants this to be their email. If it is you, enter this code in My account. It expires in {minutes} minutes.",
+        "codeLabel": "Code",
+        "footnote": "If you did not ask for it, ignore this message: without this code your email will not be used."
+      },
+      "emailChanged": {
+        "subject": "The email of your KORUM account has changed",
+        "preheader": "If it was not you, let us know.",
+        "title": "Your account no longer uses this email",
+        "body": "On {date} the email of your KORUM account was changed. Since then you cannot sign in with this email and you will no longer receive that account’s notices here.",
+        "notYou": "If it was not you, press \"It wasn’t me\": we will return the account to this email and close all its sessions. The link works once and for {days} days.",
+        "footnote": "For security, this notice does not include the new email.",
+        "cta": "It wasn’t me"
       }
     },
     "pledge": {
@@ -1024,6 +1096,16 @@
         "urgentOptions": "You can object to the change through the help form in the dashboard and, if you are not happy with it, leave the platform at no cost.",
         "summary": "What changes: {summary}",
         "campaigns": "The campaigns you had already published keep the terms they were published with."
+      },
+      "privacyChange": {
+        "subject": "Changes to the KORUM privacy policy",
+        "preheader": "Here is what changes.",
+        "title": "We have updated our privacy policy",
+        "body": "We have published a new version of our privacy policy with an important change.",
+        "summary": "What changes: {summary}",
+        "rights": "You can read it in full on the website. If you disagree, you can exercise your rights from My account or delete your account whenever you like.",
+        "version": "Version",
+        "cta": "Read the privacy policy"
       }
     }
   },
@@ -1746,6 +1828,23 @@
       "unknown": "That didn’t work. Try again in a few seconds.",
       "otherAccount": "You are signed in with another account. This invitation is for {email}: sign in with it and open the email link again.",
       "acceptRole": "Accept the role"
+    },
+    "emailRevert": {
+      "metaTitle": "Recover your account email",
+      "title": "It wasn’t me",
+      "intro": "If you did not change the email of your KORUM account, press the button: the account goes back to this email, all its sessions are closed and you will need to sign in again.",
+      "confirm": "Return the account to my email",
+      "working": "Returning…",
+      "done": "Done. Your account is {email} again and all its sessions have been closed. Sign in again and, if someone used your session, check your passkeys.",
+      "signIn": "Sign in to my account",
+      "errors": {
+        "INVALID": "This link is not valid or has already been used. If someone has changed your account email and you cannot undo it, write to the privacy email you will find in the privacy policy.",
+        "EXPIRED": "This link has expired (it lasts 14 days). If someone has changed your account email, write to the privacy email you will find in the privacy policy.",
+        "EMAIL_TAKEN": "Your previous email is already used by another KORUM account, so we cannot return it. Write to the privacy email you will find in the privacy policy.",
+        "FAILED": "We could not complete it. Please try again in a few minutes."
+      },
+      "removed": "For security we have also removed all passkeys from the account and any password or two-step verification added or changed after the email change. Add yours again in My account. The email cannot be changed again for 14 days.",
+      "help": "Read the privacy policy"
     }
   },
   "registration": {
@@ -5330,13 +5429,13 @@
       "rectification": {
         "title": "Personal data rectification request (GDPR)",
         "open": "It must be dealt with before {date}.",
-        "overdue": "The legal one-month deadline passed on {date}: deal with it today (if it is an email change, the technical team should resolve it today).",
+        "overdue": "The one-month legal deadline passed on {date}: deal with it today (if it is an email change, reply explaining how to do it from My account).",
         "done": "Request closed: {status}.",
         "status": {
           "COMPLETED": "done",
           "REJECTED": "rejected"
         },
-        "how": "From here you can correct the account name. Changing the email cannot be done yet: there is no procedure yet to check that the person controls the new email. Do not change the email by hand and do not reject the request for that reason: leave it open and write to KORUM’s technical team with the ticket code so it gets resolved, because the one-month legal deadline is running. Once the name is corrected, close the request.",
+        "how": "From here you can correct the account name. The person changes their email themselves in My account › Privacy and access, with a code to their current email and another to the new one: reply telling them so. Never change an email by hand. If they can no longer access their old email, the way forward is to open a new account with the new one. Then close the request.",
         "notes": "Internal note (optional, no personal data; at least 10 characters if you write one)",
         "markDone": "Change made: close the request",
         "markRejected": "Reject the request",
@@ -5351,7 +5450,7 @@
           "NO_ACCOUNT": "Whoever wrote no longer has an active account: there is no name to correct."
         },
         "rejectTitle": "Confirm you are rejecting the request",
-        "rejectText": "Rejecting closes the request without making the change: the person will not see their data corrected. Only do it if their identity could not be checked or the request is not valid. If what they ask for is to change their email, do not reject it: leave it open and tell the technical team.",
+        "rejectText": "Rejecting closes the request without making the change: the person will not see their data corrected. Only do it if their identity could not be checked or the request is not valid. If what they ask is to change their email, do not reject it: reply that they can do it from My account › Privacy and access and close it as done.",
         "rejectYes": "Yes, reject the request",
         "rejectBack": "No, go back",
         "nameLabel": "Correct name for the account",
@@ -5476,8 +5575,9 @@
         "WALLET_PROVIDER_LOCKED": "Some families still have a balance in the wallet: the entity that holds it cannot be changed until none is left.",
         "UNKNOWN_MARKER": "The text has a marker in double square brackets that does not exist. Valid ones are: [[RAZÓN SOCIAL]], [[NIF]], [[DOMICILIO SOCIAL]], [[EMAIL DE SOPORTE]], [[EMAIL DE PRIVACIDAD]], [[DATOS REGISTRALES]] and [[DOMINIO]].",
         "MISSING_COMPANY_DATA": "The text uses company details that are not yet in “Company details”. Fill them in before publishing: the page cannot say “pending”.",
-        "SUMMARY_REQUIRED": "Write what changes: it goes in the notice to signers.",
-        "URGENT_NOT_ONLY_PROVIDERS": "An urgent change can only touch the list of providers (Annex III). If anything else changes, publish it without marking it as urgent: it will apply after 30 days."
+        "SUMMARY_REQUIRED": "Write what changes: it goes in the notice.",
+        "URGENT_NOT_ONLY_PROVIDERS": "An urgent change can only touch the list of providers (Annex III). If anything else changes, publish it without marking it as urgent: it will apply after 30 days.",
+        "IMPORTANT_NOT_ALLOWED": "Only the privacy policy allows an important change, and only in a version that replaces one already published."
       },
       "fields": {
         "paycomet_merchantCode": {
@@ -5781,9 +5881,11 @@
         "archiveHash": "fingerprint {hash}…",
         "urgentLabel": "Urgent provider change: applies immediately",
         "urgentHint": "Only if a provider ceases its service or there is a security problem and the only change is the list of providers (Annex III). Any other change to the agreement takes its 30 days. Signers still receive the notice.",
-        "changeSummaryLabel": "What changes (required in a new version of the terms for organisations or the data processing agreement)",
+        "changeSummaryLabel": "What changes (required in a new version of the terms for organisations or the data processing agreement, and in an important change to the privacy policy)",
         "changeSummaryHint": "In a few words and with no personal data: it goes in the email to signers and on the page. If a provider changes, say which one comes in and which one goes out.",
-        "markerMissing": "Company details: {marker} is missing"
+        "markerMissing": "Company details: {marker} is missing",
+        "importantLabel": "Important change: notify every account",
+        "importantHint": "Privacy policy only. A notice banner is shown for 30 days in My account and in each organisation’s panel, and an email goes to every account with a verified email. \"What changes\" is required."
       },
       "team": {
         "intro": "These people can see and change everything in this console. Someone who receives an invitation only gets access once they accept it, with a password of at least 12 characters and the second factor enabled. An account that signs for an organization cannot be a Super-Admin.",
@@ -6829,7 +6931,7 @@
           "RECTIFICATION": "Correct my personal data",
           "OTHER": "Another question or a suggestion"
         },
-        "rectificationHint": "Tell us which piece of data needs correcting and what the right value is. To protect your account we will ask for a code by email, and we will open a rectification request with a one-month deadline.",
+        "rectificationHint": "Tell us which detail needs correcting and what the correct one is. To protect your account we will ask for a code by email, and we will open a correction request with a one-month deadline. You can change your account email yourself in My account › Privacy and access.",
         "subjectLabel": "Subject",
         "messageLabel": "Your message",
         "counter": "{count} of {max} characters",
@@ -7070,7 +7172,9 @@
       "security": "Passkeys",
       "language": "Language",
       "ideas": "Proposals and signatures",
-      "support": "My questions"
+      "support": "My questions",
+      "email": "Account email",
+      "privacyAccess": "Privacy and access"
     },
     "contributions": {
       "title": "My contributions",
@@ -7190,9 +7294,9 @@
     },
     "erase": {
       "title": "Delete my account",
-      "deleted": "We will delete your name, your email, your sessions, your passkeys and your saved cards, and remove your email from your purchases, tickets, signatures and ideas. This cannot be undone.",
-      "kept": "By law we keep, with nothing that identifies you, the amounts and dates of your contributions. And if you gave your tax ID for a tax certificate, the organisation must keep that tax ID, your name and your province for 6 years for the Spanish tax authority (Form 182).",
-      "signIn": "Afterwards you can create a new account with the same email, but it will start empty.",
+      "deleted": "We will delete your name, your email, your sessions, your passkeys and your saved cards; remove your email from your purchases, tickets, signatures and ideas; and delete your support requests and the conversations about your ideas. This cannot be undone.",
+      "kept": "By law we keep the amounts and dates of your contributions, with nothing that identifies you. And if you requested a tax certificate, KORUM keeps, on behalf of the organisation, your tax ID, your name and your province linked to that donation for 6 years from the end of the financial year, because the organisation must be able to prove it to the tax authorities (Form 182). After that they are deleted.",
+      "signIn": "Only an irreversible code remains, which does not say who you are, so that the same idea cannot be signed twice. You can create another account with the same email, but it will start empty.",
       "understand": "I understand my account will be deleted forever",
       "button": "Delete my account",
       "blocked": {
@@ -7205,7 +7309,7 @@
       "done": {
         "title": "Your account has been deleted",
         "text": "We no longer keep your name or your email. Only an irreversible code remains, which stops the same idea being signed twice. Thank you for adding up with us.",
-        "retained": "{count, plural, one {We no longer keep your name or your email. Only an irreversible code that stops the same idea being signed twice remains, plus the tax details of # donation with a certificate, which the law requires us to keep.} other {We no longer keep your name or your email. Only an irreversible code that stops the same idea being signed twice remains, plus the tax details of # donations with a certificate, which the law requires us to keep.}}",
+        "retained": "{count, plural, one {We no longer keep your name or your email. All that remains is an irreversible code that stops the same idea being signed twice, and the tax details of # donation with a certificate, which KORUM keeps on behalf of the organisation because the law requires it.} other {We no longer keep your name or your email. All that remains is an irreversible code that stops the same idea being signed twice, and the tax details of # donations with a certificate, which KORUM keeps on behalf of the organisation because the law requires it.}}",
         "home": "Go to the home page"
       },
       "erasing": "Deleting…"
@@ -7324,6 +7428,54 @@
         "open": "Go to the {entity} ideas box"
       },
       "refreshHint": "The school’s answers appear when you reopen or reload this page."
+    },
+    "privacyAccess": {
+      "metaTitle": "Privacy and access",
+      "title": "Privacy and access",
+      "intro": "Your email, your permissions, the copy of your data, deleting your account, your passkeys and the language of your emails.",
+      "sectionsLabel": "Privacy and access sections",
+      "back": "Back to My account",
+      "summary": "Your email, your permissions, the copy of your data, deleting your account, your passkeys and the language of your emails.",
+      "open": "Go to Privacy and access"
+    },
+    "email": {
+      "title": "Account email",
+      "current": "Your email: {email}",
+      "intro": "It is the one you use to sign in and where we send your receipts, tickets and notices. You can change it whenever you like.",
+      "start": "Change my email",
+      "whatMoves": "Everything you have under your current email moves to the new one: your contributions and purchases, your tickets and vouchers, your ideas and your support requests. When it is done we will sign you out on your other devices and let your current email know.",
+      "newLabel": "Your new email",
+      "hint": "We will send a code to your new email. If needed, we will first ask for another code sent to your current email to confirm it is you.",
+      "hintSigner": "We will send a code to your new email. Because you sign for an organisation, we will first ask for the code from your authenticator app.",
+      "send": "Send the code",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "codeSent": "We have sent a code to {email}. It expires in {minutes} minutes.",
+      "codeLabel": "Code from your new email",
+      "sessionsNote": "When you confirm, your email changes and you are signed out on your other devices.",
+      "confirm": "Confirm the change",
+      "confirming": "Confirming…",
+      "again": "Fix the email or request another code",
+      "done": {
+        "title": "Your email has changed",
+        "text": "From now on your account is {email}. We have let your previous email know."
+      },
+      "errors": {
+        "INVALID_EMAIL": "Please check the email: it does not look valid.",
+        "DISPOSABLE_EMAIL": "That email belongs to a temporary mail service. Please use one you will keep.",
+        "SAME_EMAIL": "That is already your account email.",
+        "RATE_LIMITED": "You have requested many codes today. Please try again tomorrow.",
+        "SECOND_FACTOR_REQUIRED": "The code from your authenticator app is needed.",
+        "NO_PENDING": "There is no pending change. Please enter your new email again.",
+        "EXPIRED": "The code has expired. Please request another one.",
+        "INVALID_CODE": "That code is not correct. Check it and try again.",
+        "TOO_MANY_ATTEMPTS": "Too many attempts with that code. Please request another one.",
+        "EMAIL_TAKEN": "That email already has a KORUM account. If it is yours, sign in with it; if you would rather keep just one, delete the one you do not use.",
+        "LOGIN_REQUIRED": "Your session has expired. Please sign in again.",
+        "FAILED": "We could not complete the change. Please try again in a few minutes.",
+        "RECENTLY_CHANGED": "You changed your account email recently. For security it cannot be changed again until {date}. If you made a mistake, use the \"It wasn’t me\" link we sent to your previous email.",
+        "RECENTLY_REVERTED": "For security, after an email change is undone the email cannot be changed again until {date}. If you need to change it sooner, write to the privacy email in the privacy policy."
+      }
     }
   },
   "hucha": {
@@ -7647,7 +7799,11 @@
         "passkey_delete_denied": "Attempt to remove another person’s passkey",
         "invitation_accepted": "Invitation accepted",
         "passkey_added": "Passkey added",
-        "passkey_deleted": "Passkey removed"
+        "passkey_deleted": "Passkey removed",
+        "email_change_requested": "Email change requested (code sent to the new email)",
+        "email_changed": "Account email changed",
+        "email_change_locked": "Email change code exhausted (too many attempts)",
+        "email_change_reverted": "Email change undone from the \"It wasn’t me\" link"
       },
       "api": {
         "panel_cover_denied": "Campaign cover upload denied",
@@ -7858,7 +8014,8 @@
         "erasure_completed": "Account deleted",
         "export": "Personal data exported",
         "request_closed": "Privacy request closed",
-        "request_opened": "Privacy request opened"
+        "request_opened": "Privacy request opened",
+        "unverified_signup_deleted": "Unverified sign-up deleted after 7 days"
       },
       "support": {
         "direct_email_sent": "Direct email from KORUM to the organisation",
@@ -8283,7 +8440,9 @@
           "inactivityNotice": "Inactive account notice"
         },
         "account": {
-          "passkeyAdded": "Passkey added notice"
+          "passkeyAdded": "Passkey added notice",
+          "emailChangeCode": "Code to change the account email",
+          "emailChanged": "Notice that the account email changed"
         },
         "support": {
           "received": "Enquiry received notice",
@@ -8330,7 +8489,8 @@
           "expiryReminder": "Reminder of vouchers about to expire"
         },
         "legal": {
-          "changeNotice": "Notice of a change to the terms for organisations or the data processing agreement"
+          "changeNotice": "Notice of a change to the terms for organisations or the data processing agreement",
+          "privacyChange": "Notice of an important change to the privacy policy"
         }
       },
       "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",
@@ -8414,6 +8574,12 @@
     "staleNotice": "The translation of this text is not up to date yet. The Spanish version is shown, and it is the one that applies.",
     "stillAppliesNotice": "You are reading version {version}, which still applies to organisations that had already signed up until {date}.",
     "changeSummaryTitle": "What changes in this version",
-    "versionCurrentFrom": "in force; for organisations already signed up, from {date}"
+    "versionCurrentFrom": "in force; for organisations already signed up, from {date}",
+    "privacyNotice": {
+      "title": "We have changed our privacy policy",
+      "text": "On {date} we published a new version with an important change.",
+      "read": "Read the privacy policy",
+      "summaryLabel": "What changes:"
+    }
   }
 }

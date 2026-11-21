@@ -3,9 +3,11 @@ import { anonymizedMarker } from './erasure.service';
 import { daysBefore, fiscalCutoff, lastExpiredFiscalYear, RETENTION } from './retention-policy';
 
 /**
- * Pasos de `DATA_RETENTION_PURGE` que solo tocan la base (QA-PRIV02). Cada uno trata como mucho `limit` filas y devuelve cuántas trató:
+ * Pasos de `DATA_RETENTION_PURGE` que solo tocan la base (QA-PRIV02). Los que desvinculan a una persona están en `retention-unlink.ts` y los que borran lo que
+ * ya no hace falta (alertas, tareas, solicitudes, descripciones de ideas y altas sin verificar), en `retention-cleanup.ts` (Sprint 5.10b). Cada uno trata como mucho `limit` filas y devuelve cuántas trató:
  * si llega al límite, la tarea vuelve a pasar. Solo anonimiza o borra lo que **ha superado su plazo**; nunca un asiento, una aportación
- * (sus importes), una factura, una firma de liquidación ni la auditoría (6 años, inmutable por trigger: solo admite vaciar IP y navegador).
+ * (sus importes), una factura, una firma de liquidación ni la auditoría (6 años, inmutable por trigger: solo admite vaciar IP y navegador y
+ * desvincular a la persona al vencer su plazo).
  */
 
 const ANONYMIZED_PREFIX = 'anonimizado:';
@@ -58,9 +60,12 @@ export async function anonymizeOldResizeVotes(db: Db, now: Date, limit: number):
   return rows.length;
 }
 
-/** Mensajes de la familia en el chat de ideas cerradas hace más de un año: texto libre que ya no hace falta. Las respuestas del centro se conservan. */
+/**
+ * Conversación de las ideas terminadas hace más de un año (tabla de plazos §3.4): los mensajes de la familia y, desde el Sprint 5.10b, también las respuestas de la
+ * entidad, que sin la pregunta no se entienden y pueden aludir a una familia.
+ */
 export async function purgeOldIdeaChats(db: Db, now: Date, limit: number): Promise<number> {
-  const rows = await db.ideaMessage.findMany({ where: { senderRole: 'FAMILY', idea: { expiresAt: { lt: daysBefore(now, RETENTION.ideaChatDaysAfterIdea) } } }, take: limit, select: { id: true } });
+  const rows = await db.ideaMessage.findMany({ where: { idea: { expiresAt: { lt: daysBefore(now, RETENTION.ideaChatDaysAfterIdea) } } }, take: limit, select: { id: true } });
   if (rows.length === 0) return 0;
   const { count } = await db.ideaMessage.deleteMany({ where: { id: { in: rows.map((row) => row.id) } } });
   return count;

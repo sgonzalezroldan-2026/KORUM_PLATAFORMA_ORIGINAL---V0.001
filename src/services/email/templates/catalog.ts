@@ -15,14 +15,14 @@ import {
 import { contributionReceipt, doubleCheckPending, refundIssued, ticketPass } from './definitions-transactions';
 import { voucherNoProductReceipt, voucherPass } from './definitions-vouchers';
 import { voucherCancelledBuyer, voucherChanged, voucherExpiryReminder, voucherSaleClosed, voucherValidityChanged } from './definitions-voucher-notices';
-import { accountPasskeyAdded, supportReceived, supportReplied } from './definitions-account';
+import { accountEmailChangeCode, accountEmailChanged, accountPasskeyAdded, supportReceived, supportReplied } from './definitions-account';
 import { ideaCenterReplied, ideaQuorumReached } from './definitions-ideas';
 import { pledgeCharged, pledgeFailed, pledgeSkipped } from './definitions-pledge';
 import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAwaitingDecision, sponsorLateReceived, sponsorToEntityFund } from './definitions-activity-fund';
 import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { orgKybStatus, signerHandover } from './definitions-team';
 import { platformMessage } from './definitions-platform';
-import { legalChangeNotice } from './definitions-legal';
+import { legalChangeNotice, legalPrivacyChange } from './definitions-legal';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
 import { eventCancelledBuyer, eventChanged, eventDateReached, eventRescheduledBuyer, gateRefundedPassUsed } from './definitions-events';
 import { expiredDecisionReminder, initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
@@ -101,10 +101,13 @@ const ENTRIES = [
   register('model182.reminder', model182Reminder),
   register('privacy.inactivityNotice', privacyInactivityNotice),
   register('account.passkeyAdded', accountPasskeyAdded),
+  register('account.emailChangeCode', accountEmailChangeCode),
+  register('account.emailChanged', accountEmailChanged),
   register('support.received', supportReceived),
   register('support.replied', supportReplied),
   register('platform.message', platformMessage),
   register('legal.changeNotice', legalChangeNotice),
+  register('legal.privacyChange', legalPrivacyChange),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed),

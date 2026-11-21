@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { EnvValidationError, parseEnv } from '@/config/env';
-import { renderPersonalDataPdf, type ExportTranslator } from '@/core/privacy/export-pdf';
+import { processingInfoSections, type PersonalDataFile, renderPersonalDataPdf, type ExportTranslator } from '@/core/privacy/export-pdf';
 import type { PersonalDataExport } from '@/core/privacy/personal-data-export';
 import { oneMonthAfter } from '@/core/privacy/privacy-requests';
 import { fiscalCutoff, lastExpiredFiscalYear } from '@/core/privacy/retention-policy';
@@ -185,13 +185,16 @@ function sampleExport(contributions = 1): PersonalDataExport {
     tickets: [], consents: [{ purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: '2026-11-05', policyLocale: 'es', source: 'cuenta', createdAt: '2026-11-02T00:00:00.000Z' }],
     privacyRequests: [], memberships: [], ideaSignatures: [], ideaProposals: [{ alias: "#FAM-4821", title: "Toldo en el patio", category: "Patio", description: "Falta sombra en el patio de infantil.", phase: "PUBLIC_VOTING", createdAt: "2026-11-01T10:00:00.000Z", messages: [{ from: "#FAM-4821", body: "Hola, ¿se ha visto?", createdAt: "2026-11-02T10:00:00.000Z" }] }], devices: [], savedCards: [], passkeys: [{ name: "Móvil de casa", createdAt: "2026-11-01T10:00:00.000Z", deviceType: "multiDevice", synced: true }], monthlyPledges: [],
     notifications: [{ template: 'contribution.receipt', status: 'SENT', createdAt: '2026-10-01T09:01:00.000Z', sentAt: '2026-10-01T09:01:05.000Z' }],
-    supportTickets: [], legalAcceptances: [], unreadableTaxIds: 0
+    supportTickets: [], legalAcceptances: [], resizeVotes: [{ initiative: 'Toldos del pati', choice: null, wantsRefund: true, createdAt: '2026-10-25T10:00:00.000Z' }], securityTraces: [{ action: 'auth.sign_in_failed_repeatedly', occurredAt: '2026-10-20T08:00:00.000Z', reason: null, attempted: null, method: 'email_code', failures: 5 }], unreadableTaxIds: 0
   };
 }
 
+/** La copia que se entrega: la información sobre el tratamiento y los datos (Sprint 5.10b). */
+const sampleFile = (contributions = 1): PersonalDataFile => ({ processingInfo: processingInfoSections(translate, { legalName: 'KORUM Plataforma SL', privacyEmail: 'privacidad@korum.example' }), ...sampleExport(contributions) });
+
 describe('QA-PRIV01 · PDF legible de la exportación', () => {
   it('es un PDF válido: cabecera, tabla de referencias con desplazamientos exactos y final', () => {
-    const pdf = Buffer.from(renderPersonalDataPdf(sampleExport(), translate, 'es'));
+    const pdf = Buffer.from(renderPersonalDataPdf(sampleFile(), translate, 'es'));
     const text = pdf.toString('latin1');
     expect(text.startsWith('%PDF-1.4\n')).toBe(true);
     expect(text.trimEnd().endsWith('%%EOF')).toBe(true);
@@ -202,17 +205,22 @@ describe('QA-PRIV01 · PDF legible de la exportación', () => {
   });
 
   it('escribe los acentos y el euro en WinAnsi y escapa los paréntesis y la barra', () => {
-    const text = Buffer.from(renderPersonalDataPdf(sampleExport(), translate, 'es')).toString('latin1');
+    const text = Buffer.from(renderPersonalDataPdf(sampleFile(), translate, 'es')).toString('latin1');
     expect(text).toContain('\\200'); // €
     expect(text).toContain('N\\372ria \\(P\\340rraga\\) \\\\ Ib\\341\\361ez'); // Núria (Pàrraga) \ Ibáñez
     expect(text).toContain('Tus datos en KORUM');
     expect(text).toContain('Huella del dispositivo \\(antifraude\\)');
     expect(text).toContain('Nombre del donante');
     expect(text).toContain('Emails que te hemos enviado');
+    // Sprint 5.10b: la información sobre el tratamiento (con el nombre y el email de privacidad) y los rastros de seguridad, en lenguaje llano.
+    expect(text).toContain('Informaci\\363n sobre el tratamiento');
+    expect(text).toContain('KORUM Plataforma SL');
+    expect(text).toContain('privacidad@korum.example');
+    expect(text).toContain('Intentos fallidos de entrar en tu cuenta');
   });
 
   it('reparte en varias páginas cuando no cabe', () => {
-    const text = Buffer.from(renderPersonalDataPdf(sampleExport(120), translate, 'es')).toString('latin1');
+    const text = Buffer.from(renderPersonalDataPdf(sampleFile(120), translate, 'es')).toString('latin1');
     expect(Number(/\/Count (\d+)/.exec(text)![1])).toBeGreaterThan(3);
   });
 });

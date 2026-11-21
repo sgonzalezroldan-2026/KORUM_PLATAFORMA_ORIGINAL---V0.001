@@ -2,6 +2,23 @@ import { formatCents } from '@/core/finance/money';
 import { renderLinesPdf, wrapPdfText as wrap, type PdfLine as Line } from '@/core/pdf/text-pdf';
 import type { PersonalDataExport } from './personal-data-export';
 
+/** «Información sobre el tratamiento» (RGPD art. 15.1, `L-011`; Sprint 5.10b): va al principio de la copia, en JSON y en PDF, en el idioma de la persona. */
+export interface ProcessingInfoSection {
+  title: string;
+  text: string;
+}
+
+/** Lo que se entrega: los datos y la información sobre el tratamiento. */
+export type PersonalDataFile = PersonalDataExport & { processingInfo: ProcessingInfoSection[] };
+
+/** Apartados de la información, en orden (catálogo `privacy.export.processingInfo.*`): responsable, fines, bases, destinatarios, transferencias, plazos, origen, decisiones automatizadas, derechos y reclamación. */
+export const PROCESSING_INFO_KEYS = ['controller', 'purposes', 'legalBases', 'recipients', 'transfers', 'retention', 'source', 'automated', 'rights', 'complaint'] as const;
+
+/** Con el nombre de la empresa y el email de privacidad de la consola (`platform.company`), los mismos que publica la política de privacidad. */
+export function processingInfoSections(t: ExportTranslator, company: { legalName: string; privacyEmail: string }): ProcessingInfoSection[] {
+  return PROCESSING_INFO_KEYS.map((key) => ({ title: t(`processingInfo.${key}.title`), text: t(`processingInfo.${key}.text`, { company: company.legalName, privacyEmail: company.privacyEmail }) }));
+}
+
 /**
  * Versión legible en PDF de la exportación de datos (QA-PRIV01). El escritor de PDF es `core/pdf/text-pdf.ts` (compartido con el informe de
  * medallas del Sprint 4.1). Todos los textos salen del catálogo de traducción (`privacy.export.*`) a través de `t`; aquí solo hay maquetación.
@@ -10,7 +27,7 @@ import type { PersonalDataExport } from './personal-data-export';
 export type ExportTranslator = (key: string, values?: Record<string, string>) => string;
 export type ExportLocale = 'es' | 'ca' | 'en';
 
-function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLocale): Line[] {
+function layout(data: PersonalDataFile, t: ExportTranslator, locale: ExportLocale): Line[] {
   const date = (value: string | null) => (value ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' }).format(new Date(value)) : '—');
   const money = (cents: number) => formatCents(cents, locale);
   const yesNo = (value: boolean) => t(value ? 'yes' : 'no');
@@ -27,6 +44,12 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
       lines.push({ style: 'body', text: '' });
     }
   };
+  lines.push({ style: 'heading', text: t('sections.processingInfo') });
+  for (const info of data.processingInfo) {
+    lines.push({ style: 'body', text: info.title });
+    for (const text of wrap(info.text)) lines.push({ style: 'body', text });
+    lines.push({ style: 'body', text: '' });
+  }
   const { account } = data;
   section('account', [
     [['name', account.name], ['email', account.email], ['locale', account.locale], ['taxId', account.taxId ?? ''], ['province', account.provinceCode ?? ''], ['postalCode', account.postalCode ?? '']],
@@ -55,10 +78,12 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
   section('passkeys', data.passkeys.map((row) => [['name', row.name ?? ''], ['date', date(row.createdAt)], ['synced', yesNo(row.synced)]]));
   section('notifications', data.notifications.map((row) => [['date', date(row.createdAt)], ['template', row.template], ['status', translated('emailStatuses', row.status)], ['completedAt', date(row.sentAt)]]));
   section('supportTickets', data.supportTickets.map((row) => [['date', date(row.createdAt)], ['serial', row.ticketCode], ['subject', row.subject], ['message', row.message], ['reply', row.reply ?? ''], ['status', row.status]]));
+  section('resizeVotes', data.resizeVotes.map((row) => [['date', date(row.createdAt)], ['initiative', row.initiative], ['choice', row.wantsRefund ? t('refundChoice') : (row.choice ?? '')]]));
+  section('securityTraces', data.securityTraces.map((row) => [['date', date(row.occurredAt)], ['securityEvent', t(row.action === 'auth.sign_in_failed_repeatedly' ? 'securityEvents.signInFailed' : 'securityEvents.accessDenied')], ['reason', row.reason ?? ''], ['failures', row.failures === null ? '' : String(row.failures)]]));
   section('monthlyPledges', data.monthlyPledges.map((row) => [['organization', row.organization ?? ''], ['monthly', money(row.monthlyAmountCents)], ['pledgeFee', money(row.feePerMonthCents)], ['progress', `${row.executedMonths}/${row.totalMonths}`], ['pledgeCampaign', row.preferredInitiative ?? ''], ['nextCharge', row.nextChargeAt ? date(row.nextChargeAt) : ''], ['status', translated('pledgeStatuses', row.status)]]));
   return lines;
 }
 
-export function renderPersonalDataPdf(data: PersonalDataExport, t: ExportTranslator, locale: ExportLocale): Uint8Array {
+export function renderPersonalDataPdf(data: PersonalDataFile, t: ExportTranslator, locale: ExportLocale): Uint8Array {
   return renderLinesPdf(layout(data, t, locale));
 }

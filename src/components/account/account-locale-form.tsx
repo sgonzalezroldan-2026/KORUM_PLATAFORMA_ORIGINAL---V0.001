@@ -29,7 +29,7 @@ export function AccountLocaleForm({ current }: { current: Locale }) {
       const result = await changeAccountLocaleAction({ locale: value });
       if (result.status !== 'SAVED') return setFailed(true);
       setSaved(true);
-      if (value !== pageLocale) router.replace('/mi-cuenta#language', { locale: value });
+      if (value !== pageLocale) router.replace('/mi-cuenta/privacidad#language', { locale: value });
     });
 
   return (

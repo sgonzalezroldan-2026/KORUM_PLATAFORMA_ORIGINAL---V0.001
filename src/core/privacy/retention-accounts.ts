@@ -1,5 +1,4 @@
 import { raiseAlert, resolveAlert, resolveAlertsNotIn } from '@/core/jobs/ops-alerts';
-import { KYB_RETENTION_YEARS } from '@/core/panel/entity-settings-rules';
 import type { Keyring } from '@/core/security/crypto';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import type { Prisma } from '@/generated/prisma/client';
@@ -126,7 +125,7 @@ export async function retryCardDeletions(db: Db, deps: { paymentProvider: () => 
  */
 export async function purgeExpiredFiles(db: Db, storage: () => StorageProvider, now: Date, limit: number): Promise<{ deleted: number; failed: number }> {
   const relationEnd = new Date(now.getTime());
-  relationEnd.setUTCFullYear(relationEnd.getUTCFullYear() - KYB_RETENTION_YEARS);
+  relationEnd.setUTCFullYear(relationEnd.getUTCFullYear() - RETENTION.ownerDocumentYears);
   const files = await db.fileAsset.findMany({
     where: { retainUntil: { lt: now }, deletedAt: null, NOT: { kybDocument: { is: { replacedAt: null, organization: { OR: [{ archivedAt: null }, { archivedAt: { gt: relationEnd } }] } } } } },
     take: limit,

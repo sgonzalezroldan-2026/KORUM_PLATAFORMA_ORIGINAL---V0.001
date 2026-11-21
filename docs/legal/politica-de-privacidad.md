@@ -1,6 +1,6 @@
 # Política de privacidad
 
-> **Documento:** `privacidad` · **Versión:** 2026-11-21 · **Estado:** VALIDADO por el promotor (2026-11-18; las condiciones aceptadas de los §3.3, §3.9 y §8, el 2026-11-21, Sprint 5.10a) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `privacidad` · **Versión:** 2026-11-21.1 · **Estado:** VALIDADO por el promotor (2026-11-18; las condiciones aceptadas de los §3.3, §3.9 y §8, el 2026-11-21, Sprint 5.10a; el cambio de email desde *Mi cuenta* del §10, el 2026-11-21, decisión 91, Sprint 5.10b) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** todas las personas que usan KORUM: familias, socios, comercios, firmantes de entidades y voluntarios.
 > **Se publica en:** `/privacidad` (Sprint 5.10a). Los plazos de conservación se resumen aquí; la tabla completa, que manda, es [tabla-de-plazos.md](tabla-de-plazos.md) (documento interno). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -212,7 +212,8 @@ Puedes **acceder** a tus datos, **rectificarlos**, **suprimirlos**, **oponerte**
 Cómo hacerlo:
 
 - **Desde *Mi cuenta*:** ver tus datos, descargar una copia completa (en PDF y en un formato que puedes llevar a otro servicio), retirar el consentimiento de la huella del navegador y suprimir tu cuenta. Para descargar o suprimir te pedimos antes un código por email, para comprobar que eres tú.
-- **Corregir un dato:** desde el formulario de ayuda, con el tema «Corregir mis datos personales».
+- **Cambiar el email de tu cuenta:** desde *Mi cuenta*, con un código que te enviamos al email nuevo.
+- **Corregir otro dato:** desde el formulario de ayuda, con el tema «Corregir mis datos personales».
 - **Si no tienes cuenta o no puedes entrar:** escribe a [[EMAIL DE PRIVACIDAD]]. Puede que te pidamos algún dato más para comprobar tu identidad.
 
 Te contestamos en el plazo máximo de **un mes**. Es gratis.

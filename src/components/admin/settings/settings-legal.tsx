@@ -7,7 +7,7 @@ import { focusLater } from '@/components/admin/rules-action';
 import { LEGAL_DOCUMENTS, LEGAL_LOCALES, legalKeyOf, legalToday, nextLegalVersion, parseLegalVersion } from '@/core/admin/settings-model';
 import { Link } from '@/i18n/navigation';
 import type { LegalArchiveRow, LegalOverviewRow, LegalSelected, SettingFieldView } from '@/services/admin/platform-settings-view';
-import { ENTITY_NOTICE_DOCUMENTS, legalPathOf, URGENT_DOCUMENT } from '@/core/legal/legal-catalog';
+import { ENTITY_NOTICE_DOCUMENTS, IMPORTANT_CHANGE_DOCUMENT, legalPathOf, URGENT_DOCUMENT } from '@/core/legal/legal-catalog';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import { FIELD, fieldErrorId, fieldId, OUTLINE, PRIMARY, SaveBar, SectionForm, SettingsOutcome, useFieldError, useSettingsAction, useUnsaved } from './settings-kit';
 
@@ -163,7 +163,10 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
   const [urgent, setUrgent] = useState(false);
   const urgentAllowed = selected.document === URGENT_DOCUMENT && published;
   // «Qué cambia» (auditoría legal del 5.10a; RGPD, art. 28.2): en los textos de las entidades va en el aviso y en la página. El servidor lo exige si la versión sustituye a otra.
-  const summaryAllowed = ENTITY_NOTICE_DOCUMENTS.includes(selected.document) && status === 'PUBLICADO';
+  // Cambio importante de la política de privacidad (Sprint 5.10b, política §13): solo al publicar una versión nueva; exige «qué cambia», que va en el email y en la franja.
+  const importantAllowed = selected.document === IMPORTANT_CHANGE_DOCUMENT && published;
+  const [important, setImportant] = useState(false);
+  const summaryAllowed = (ENTITY_NOTICE_DOCUMENTS.includes(selected.document) && status === 'PUBLICADO') || (importantAllowed && important);
   const [changeSummary, setChangeSummary] = useState('');
   const action = useSettingsAction({ failureFocusId: fieldId('markdown') });
   const errorOf = useFieldError(action.outcome);
@@ -189,7 +192,7 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
   };
   const submit = () =>
     action.run(
-      () => saveLegalTextAction({ document: selected.document, locale: selected.locale, version, status, markdown, expectedVersion: selected.settingVersion, urgent: urgentAllowed && urgent, changeSummary: summaryAllowed ? changeSummary : '' }),
+      () => saveLegalTextAction({ document: selected.document, locale: selected.locale, version, status, markdown, expectedVersion: selected.settingVersion, urgent: urgentAllowed && urgent, changeSummary: summaryAllowed ? changeSummary : '', importantChange: importantAllowed && important }),
       (result) => t(status === 'PUBLICADO' ? 'published' : 'saved', { version: result.detail ?? version }),
       afterSave,
       closeConfirmation
@@ -289,6 +292,17 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
           {t('characters', { count: markdown.length })}
         </p>
       </div>
+      {importantAllowed ? (
+        <div className="flex flex-col gap-1">
+          <label className="inline-flex min-h-11 items-start gap-2 font-semibold text-varsity-navy">
+            <input type="checkbox" className="korum-check korum-check-start" checked={important} onChange={(event) => setImportant(event.target.checked)} aria-describedby={`${ids}-important`} data-testid="legal-important" />
+            {t('importantLabel')}
+          </label>
+          <p id={`${ids}-important`} className="text-sm text-ink-soft">
+            {t('importantHint')}
+          </p>
+        </div>
+      ) : null}
       {summaryAllowed ? (
         <div className="flex flex-col gap-1">
           <label htmlFor={fieldId('changeSummary')} className="font-semibold text-varsity-navy">

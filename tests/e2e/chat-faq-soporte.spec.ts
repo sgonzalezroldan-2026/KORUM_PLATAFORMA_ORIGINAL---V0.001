@@ -165,6 +165,8 @@ test.describe('QA-F06 · escribir al soporte', () => {
     await expect(tickets).toContainText(code!);
     await expect(tickets).toContainText('No veo mi devolución');
     await expect(tickets).toContainText('Recibida');
+    // La solicitud se ve en «Mis solicitudes», en Privacidad y acceso (Sprint 5.10b).
+    await page.goto('/mi-cuenta/privacidad');
     await expect(page.locator('#privacy')).toContainText('Rectificación');
     await expectNoSeriousA11yViolations(page);
     await expectNoHorizontalOverflow(page);

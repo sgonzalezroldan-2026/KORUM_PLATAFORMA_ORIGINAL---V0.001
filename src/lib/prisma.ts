@@ -52,13 +52,31 @@ function entryGuard(params: AppendOnlyArgs) {
 }
 
 /**
- * Auditoría: solo-alta, con la única excepción que también admite su trigger: vaciar a la vez la IP (HMAC) y el navegador cuando vence su
- * plazo de conservación (`DATA_RETENTION_PURGE`, 12 meses). Cualquier otro campo en `data` se rechaza.
+ * Auditoría: solo-alta, con las dos excepciones que también admite su trigger (`DATA_RETENTION_PURGE`, tabla de plazos §3.10):
+ * - vaciar a la vez la IP (HMAC) y el navegador a los 12 meses (`updateMany`);
+ * - **desvincular a la persona** al vencer su plazo (Sprint 5.10b; `update` de una fila): la cuenta de quien actuó a vacío, la cuenta a la que se refiere a
+ *   `desvinculado` y los detalles sin las claves que guardan cuentas (`retention-unlink.ts`). El trigger comprueba que los detalles solo pierden esas claves.
+ * Cualquier otro campo en `data` se rechaza.
  */
 function auditGuard(params: AppendOnlyArgs) {
   const data = (params.args as { data?: Record<string, unknown> } | undefined)?.data;
   const onlyAnonymizes = params.operation === 'updateMany' && data !== undefined && Object.keys(data).sort().join(',') === 'ipHash,userAgent' && data.ipHash === null && data.userAgent === null;
-  return onlyAnonymizes ? params.query(params.args) : appendOnly(params);
+  const unlinks =
+    params.operation === 'update' &&
+    data !== undefined &&
+    data.actorUserId === null &&
+    Object.keys(data).every((key) => ['actorUserId', 'targetId', 'metadataJson'].includes(key)) &&
+    (data.targetId === undefined || data.targetId === 'desvinculado');
+  return onlyAnonymizes || unlinks ? params.query(params.args) : appendOnly(params);
+}
+
+/**
+ * Aceptaciones de los textos legales: solo altas y nunca se reescriben. Se borran únicamente cuando vence su plazo (tabla de plazos §3.9): la del alta de una entidad
+ * que nunca verificó su email, a los 7 días (Sprint 5.10b). La base (`LegalAcceptance_delete_guard`) solo admite borrar las de una cuenta sin verificar
+ * e impide vaciar la tabla; aquí solo se deja pasar el `deleteMany`.
+ */
+function acceptanceGuard(params: AppendOnlyArgs) {
+  return params.operation === 'deleteMany' ? params.query(params.args) : appendOnly(params);
 }
 
 export interface CreatePrismaClientOptions {
@@ -80,9 +98,9 @@ export function createPrismaClient({ connectionString, schema, maxConnections, t
       escrowLedgerEntry: { $allOperations: entryGuard },
       auditLog: { $allOperations: auditGuard },
       // Archivo de textos legales y aceptaciones (Sprint 5.10a): solo altas. La única modificación que admite su trigger (dejar una aceptación sin cuenta
-      // al borrarse la cuenta) la hace la propia base con su clave foránea, nunca la aplicación.
+      // al borrarse la cuenta) la hace la propia base con su clave foránea, nunca la aplicación; borrarla solo al vencer su plazo (5.10b).
       legalDocumentVersion: { $allOperations: appendOnly },
-      legalAcceptance: { $allOperations: appendOnly }
+      legalAcceptance: { $allOperations: acceptanceGuard }
     }
   });
 }

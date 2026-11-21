@@ -211,8 +211,8 @@ export type RectifyNameOutcome = { status: 'DONE' } | { status: 'INVALID' | 'NOT
 /**
  * Corrige el **nombre** de la cuenta de quien pidió la rectificación (RGPD art. 16): la única rectificación que se hace desde la consola. Exige el Super-Admin verificado, una
  * solicitud de rectificación **abierta** de esa consulta (no se puede renombrar una cuenta sin solicitud) y una cuenta viva (no anonimizada). Queda en la auditoría con la longitud
- * del nombre nuevo, nunca el nombre. **El cambio de email no se ofrece**: exige comprobar que la persona controla el nuevo y mover las consultas atadas al email antiguo; hasta que
- * exista ese trámite verificado se hace por el canal de privacidad (CUMPLIMIENTO §9, bloquea el paso a cobros reales).
+ * del nombre nuevo, nunca el nombre. **El email no se cambia desde aquí** (decisión 89): lo cambia la propia persona en *Mi cuenta*, con un código al email antiguo
+ * y otro al nuevo (`L-053`, Sprint 5.10b); la consola se lo indica al contestar.
  */
 export async function rectifyAccountName(db: KorumPrismaClient, actor: VerifiedSuperadminActor, payload: unknown, now: Date = new Date(), meta?: RequestMeta): Promise<RectifyNameOutcome> {
   assertVerifiedSuperadmin(actor, 'privacy.rectify_name', now);
@@ -222,11 +222,16 @@ export async function rectifyAccountName(db: KorumPrismaClient, actor: VerifiedS
   return inTransaction(db, async (tx): Promise<RectifyNameOutcome> => {
     await revalidateActor(tx, actor, 'privacy.rectify_name', now);
     const [ticket, request] = await Promise.all([
-      tx.supportTicket.findFirst({ where: { ticketCode, target: 'SUPERADMIN', topic: 'RECTIFICATION', fromOrganization: false }, select: { senderEmail: true } }),
+      tx.supportTicket.findFirst({ where: { ticketCode, target: 'SUPERADMIN', topic: 'RECTIFICATION', fromOrganization: false }, select: { senderEmail: true, senderUserId: true } }),
       tx.privacyRequest.findFirst({ where: { type: 'RECTIFICATION', status: { in: ['RECEIVED', 'IN_PROGRESS'] }, ...noteWhere(ticketCode) }, select: { id: true, userId: true } })
     ]);
     if (!ticket || !request) return { status: 'NOT_FOUND' };
-    const user = ticket.senderEmail ? await tx.user.findUnique({ where: { email: ticket.senderEmail }, select: { id: true, gdprAnonymizedAt: true } }) : null;
+    // La autora de la consulta (Sprint 5.10b); en las anteriores sin autora guardada, la cuenta con su email.
+    const user = ticket.senderUserId
+      ? await tx.user.findUnique({ where: { id: ticket.senderUserId }, select: { id: true, gdprAnonymizedAt: true } })
+      : ticket.senderEmail
+        ? await tx.user.findUnique({ where: { email: ticket.senderEmail }, select: { id: true, gdprAnonymizedAt: true } })
+        : null;
     if (!user || user.gdprAnonymizedAt) return { status: 'NO_ACCOUNT' };
     // La cuenta tiene que ser la de quien abrió la solicitud: si el email de la consulta ya no es suyo (cambiado fuera de la aplicación), no se renombra la de otra persona.
     if (request.userId !== user.id) return { status: 'NOT_FOUND' };

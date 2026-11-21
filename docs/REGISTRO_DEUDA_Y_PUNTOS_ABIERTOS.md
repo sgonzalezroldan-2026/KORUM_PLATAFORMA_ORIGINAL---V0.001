@@ -1,4 +1,4 @@
-# Registro maestro de deuda y puntos abiertos
+resuelto (Sprint 5.10b) |resuelto (Sprint 5.10b) |resuelto (Sprint 5.10b) |resuelto (Sprint 5.10b) |resuelto (Sprint 5.10b) |# Registro maestro de deuda y puntos abiertos
 
 > **Qué es:** la lista única, completa y ordenada de todo lo que queda por hacer, decidir o gestionar hasta cerrar el piloto. Reúne los puntos P1–P26 (barrido del 2026-11-17), los puntos N1–N22 que salieron de la revisión legal y fiscal del promotor (2026-11-17 y 2026-11-18) y de la escritura de los textos legales, la lista legal de [CUMPLIMIENTO §9](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) y la lista de preproducción de [DECISIONES_TECNICAS §8](DECISIONES_TECNICAS.md).
 > **Rehecho el 2026-11-18**, tras el traslado de las decisiones del promotor a los documentos que mandan. **Quién lo mantiene:** el asistente, al cerrar cada sprint; el promotor marca lo que decide o gestiona.
@@ -57,7 +57,7 @@
 | **P13** | Gamificación | 🟡 | Claude + Promotor | Sprint 5.27 |
 | **P14** | Dominio, datos de la empresa, cuentas de servicio y correo del dominio | 🔴 | Promotor | Gestión del promotor, antes del 6.1a |
 | **P15** | Entidades piloto y su acuerdo | 🟠 | Promotor | Gestión del promotor, desde ya; se usa en el 6.2 |
-| **P17** | Cumplimiento en el código | 🔴 | Claude | Sprints 5.10a (hecho), 5.10b, 5.10c y 5.10d |
+| **P17** | Cumplimiento en el código | 🔴 | Claude | Sprints 5.10a (hecho), 5.10b (hecho), 5.10c y 5.10d |
 | **P18** | Endurecimiento previo al despliegue | 🔴 | Claude | Sprints 5.11a y 5.11b (el Modelo 182, en el 5.22) |
 | **P19** | Medición del negocio | 🟠 | Claude | Sprint 5.26 |
 | **P20** | Revisión de nativo de catalán e inglés | 🟠 | Promotor + Externo | SESIÓN I1, con los textos congelados |
@@ -89,7 +89,7 @@
 | **N13** | Mi Hucha apagada al lanzar, condiciones propias y devolución de la gestión | 🟠 | Claude | Sprint 5.15 |
 | **N14** | Aportación voluntaria sin IVA ni factura (el enlace de devolución de 14 días se quita: decisión 80) | 🟠 | Claude | Sprint 5.15 (el IVA, en el 5.20a) |
 | **N15** | Aceptación: casilla obligatoria y ventana de resumen en cada pago, versión guardada y resumen en el recibo | 🔴 | Claude | Sprint 5.15 (la casilla de comercios, en el 5.16b) |
-| **N16** | Privacidad: copia de «mis datos» con rastros y desvinculación a los 12 meses | 🟠 | Claude | Sprint 5.10b |
+| **N16** | Privacidad: copia de «mis datos» con rastros y desvinculación a los 12 meses | 🟠 | Claude | ✅ Sprint 5.10b (hecho) |
 | **N17** | Colegios con ánimo de lucro: entradas, vales y patrocinio con publicidad | 🟠 | Claude | Sprint 5.22 |
 | **N18** | Modelo 182 contra el diseño oficial y en el entorno de pruebas de la Agencia Tributaria | 🔴 | Claude + Promotor | Sprint 5.22 (hace falta el certificado digital del promotor) |
 | **N19** | Los 53 cambios pequeños y los retoques de los puntos R | 🟠 | Claude | 48 repartidos por sprint (ver §3.3) y 5 sin objeto |
@@ -107,7 +107,7 @@
 | Destino | Puntos |
 | :--- | :--- |
 | Sprint 5.10a (hecho) | `L-057` (resuelto), `L-020` (la primera capa del alta y del acceso; lo demás, en el 5.15) |
-| Sprint 5.10b | `L-010`, `L-011`, `L-015`, `L-053`, `L-064` |
+| Sprint 5.10b (hecho) | `L-010`, `L-011`, `L-015`, `L-053`, `L-064` |
 | Sprint 5.10c | `L-004`, `L-005`, `L-007`, `L-018`, `L-042`, `L-045`, `L-049`, `L-054`, `L-059` |
 | Sprint 5.15 | `L-016`, `L-020` (aceptación en el pago) |
 | Sprint 5.16b | `L-040`, `L-081`, `L-082`, `L-088` |
@@ -177,7 +177,7 @@ Validar con precios reales y decidir el plan de cada servicio. Estimación de pa
 Todo lo que el código debe tener antes de que existan cobros reales y que hoy no está (verificado). Fichas en el [plan](PLAN_IMPLEMENTACION_ATOMICO.md).
 1. **5.10a (hecho, 2026-11-21):** páginas públicas de los textos legales en es/ca/en con archivo de versiones (`L-057`); primera capa del alta y del acceso (las de los pagos, en el 5.15 y el 5.16b; buzón e invitación, 5.10c; soporte, 5.24a); aceptación registrada del contrato de encargo y de las condiciones en el alta, y de las condiciones de uso al crear una cuenta; aviso de 30 días a las entidades (al momento si es un cambio urgente de proveedor); antiindexación de todo lo que no sea producción.
    **Avisos de cambio que prometen los textos y no construye el 5.10a (prerrevisión legal del 5.10a):** el de un cambio importante de la política de privacidad (política §13: aviso en la plataforma y email a las cuentas), en el **Sprint 5.10b**, con una casilla «cambio importante» al publicarla; y el de las condiciones de la aportación mensual (30 días y cancelación sin coste, §10), en el **Sprint 5.15**, con las condiciones propias de Mi Hucha.
-2. **5.10b:** trámite verificado para cambiar el email de una cuenta y autoría de las consultas (`senderUserId`); copia de «mis datos» con los rastros de seguridad y desvinculación a los 12 meses (N16); textos de la supresión; plazos que faltan; purgas pendientes (altas sin verificar en 7 días y auditoría; los ficheros públicos retirados se limpian en el 5.24a).
+2. **5.10b (hecho, 2026-11-21):** trámite verificado para cambiar el email de una cuenta y autoría de las consultas (`senderUserId`); copia de «mis datos» con los rastros de seguridad y desvinculación a los 12 meses (N16); textos de la supresión; plazos que faltan; purgas pendientes (altas sin verificar en 7 días y auditoría; los ficheros públicos retirados se limpian en el 5.24a). También el aviso de un cambio importante de la política de privacidad y *Mi cuenta* en dos páginas (`R-52`). Decisiones 88 a 91.
 3. **5.10c:** firma única también en el alta; KYB al publicar; documento de identidad de quien representa; invitación, relevo y consola; buzón de ideas (cookie, huella, firmas en revisión); retoques de los puntos R; y la verificación de la deuda heredada (P23).
 4. **5.10d (N22, añadida el 2026-11-18):** baja de la entidad desde el panel con una sola firma, 30 días para descargar sus datos, cierre del acceso y borrado o anonimización de lo que no tiene plazo legal; y suspensión por el Super-Admin: la entidad consulta su panel, pero no publica, cambia, firma ni mueve dinero hasta que el Super-Admin levanta la suspensión (decisiones 55 y 56).
 
@@ -332,7 +332,7 @@ El resumen de cada decisión está en [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PR
 - **N13 · Mi Hucha (5.15).** Apagada al lanzar; condiciones propias con versión; devolución automática de la gestión en 14 días.
 - **N14 · Aportación voluntaria (5.15 y 5.20a).** Sin IVA ni factura. El enlace de devolución de 14 días en el recibo **se quita** (decisión 80, 2026-11-20): solo se devuelve si la campaña no se consigue.
 - **N15 · Aceptación (5.15).** Casilla obligatoria y ventana de resumen en cada pago (decisión 48), versión guardada y resumen en el recibo.
-- **N16 · Privacidad (5.10b).** Copia de «mis datos» con los rastros de seguridad; desvincularlos de la cuenta a los 12 meses.
+- **N16 · Privacidad (5.10b, hecho 2026-11-21).** Copia de «mis datos» con los rastros de seguridad; desvincularlos de la cuenta a los 12 meses.
 - **N17 · Colegios con ánimo de lucro (5.22).** Entradas, vales y patrocinio con publicidad de comercios, que entra directo en su Fondo de actividades (decisiones 42 y 51).
 - **N18 · Modelo 182 (5.22).** Comprobarlo contra el diseño oficial y validarlo en el entorno de pruebas de la Agencia Tributaria (hace falta el certificado digital del promotor).
 - **N19 · Los 53 cambios pequeños y los retoques de los puntos R.** Repartidos por sprint en el §3.3 y, uno a uno, en el Anexo A.
@@ -401,17 +401,17 @@ Para que no se vuelvan a abrir por error. La lista completa, con fecha, está en
 | L-007 | Buzón de ideas (Sprint 3.6) · firmas sospechosas | varios | 236 | Claude | abierto → Sprint 5.10c |
 | L-008 | Fotos Antes / Después (Sprint 3.6) · menores y derechos de imagen | varios | 237 | Claude | abierto → Sprint 5.24a |
 | L-009 | Agradecimiento público del centro (Sprint 3.6) | varios | 238 | — | resuelto (2026-11-17) |
-| L-010 | Mi cuenta (Sprint 3.7) · supresión de la cuenta | varios | 239 | Claude | abierto → Sprint 5.10b |
-| L-011 | Mi cuenta (Sprint 3.7) · exportación de datos | varios | 240 | Claude | abierto → Sprint 5.10b |
+| L-010 | Mi cuenta (Sprint 3.7) · supresión de la cuenta | varios | 239 | Claude | resuelto (Sprint 5.10b) |
+| L-011 | Mi cuenta (Sprint 3.7) · exportación de datos | varios | 240 | Claude | resuelto (Sprint 5.10b) |
 | L-012 | Mi cuenta (Sprint 3.7) · rectificación | varios | 241 | — | resuelto (2026-11-17) |
 | L-013 | Chat anónimo de las ideas (Sprint 3.9) | varios | 242 | — | resuelto (2026-11-17) |
 | L-014 | Soporte (Sprint 3.9) | varios | 243 | — | resuelto (2026-11-17) |
-| L-015 | Soporte y chat (Sprint 3.9) · puntos que deja la auditoría de seguridad | varios | 244 | Claude | abierto → Sprint 5.10b |
+| L-015 | Soporte y chat (Sprint 3.9) · puntos que deja la auditoría de seguridad | varios | 244 | Claude | resuelto (Sprint 5.10b) |
 | L-016 | Mi Hucha (Sprint 3.8) · aportación mensual | varios | 245 | Claude | abierto → Sprint 5.15 |
 | L-017 | Llaves de acceso (Sprint 3.7) | varios | 246 | — | resuelto (2026-11-17) |
 | L-018 | Si, con el consentimiento de una persona, los dispositivos con la misma huella y red pueden contar también las cuentas de… | varios | 247 | Claude | abierto → Sprint 5.10c |
 | L-021 | Modo `REGULATED_WALLET` de Mi Hucha, si se quiere activar | varios | 250 | — | resuelto (2026-11-18) |
-| L-053 | Cambiar el email de una cuenta como rectificación (RGPD art. 16) — bloquea el paso a cobros reales (Sprint 6.1) | 5.3 | 306 | Claude | abierto → Sprint 5.10b |
+| L-053 | Cambiar el email de una cuenta como rectificación (RGPD art. 16) — bloquea el paso a cobros reales (Sprint 6.1) | 5.3 | 306 | Claude | resuelto (Sprint 5.10b) |
 | L-058 | Monedero con saldo (`REGULATED_WALLET`) | 5.4 | 314 | — | resuelto (2026-11-18) |
 | L-115 | El centro lee el texto libre de la familia sin conocer su identidad | 4.4c | 403 | Claude | abierto → Sprint 5.24a |
 | L-116 | Aviso por email «tienes una respuesta» sin consentimiento de comunicaciones | 4.4c | 404 | — | resuelto (2026-11-17) |
@@ -537,7 +537,7 @@ Para que no se vuelvan a abrir por error. La lista completa, con fecha, está en
 | L-061 | «Probar conexión» de Paycomet y del email (suposiciones hasta tener cuentas de pruebas) | 5.4 | 317 | Paycomet | abierto → Paycomet (P2a) · Sprint 6.1b |
 | L-062 | Qué ve cada entidad de su registro de actividad | 5.8a | 321 | — | resuelto (2026-11-17) |
 | L-063 | Rastros nuevos y su base jurídica | 5.8a | 322 | — | resuelto (2026-11-17) |
-| L-064 | Plazos | 5.8a | 323 | Claude | abierto → Sprint 5.10b |
+| L-064 | Plazos | 5.8a | 323 | Claude | resuelto (Sprint 5.10b) |
 | L-065 | Deber del encargado de informar de sus accesos (art. 28.3.h RGPD) | 5.8a | 324 | — | resuelto (2026-11-17) |
 | L-066 | Filas que nacen de las familias | 5.8a | 325 | — | resuelto (2026-11-17) |
 | L-067 | Derecho de acceso y supresión sobre los rastros de seguridad | 5.8a | 326 | — | resuelto (2026-11-17) |

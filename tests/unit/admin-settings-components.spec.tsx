@@ -368,7 +368,7 @@ describe('QA-A05 · textos legales y datos de la empresa', () => {
     expect(screen.queryByRole('group', { name: /Vas a publicar/ })).toBeNull();
     await user.click(screen.getByTestId('legal-save'));
     await user.click(screen.getByTestId('legal-confirm'));
-    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'terminos', locale: 'es', version: '2026-11-13.1', status: 'PUBLICADO', markdown: '# Términos\n\nTexto vigente. Y más.', expectedVersion: 2, urgent: false, changeSummary: '' }));
+    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'terminos', locale: 'es', version: '2026-11-13.1', status: 'PUBLICADO', markdown: '# Términos\n\nTexto vigente. Y más.', expectedVersion: 2, urgent: false, changeSummary: '', importantChange: false }));
   });
 
   it('un texto nuevo se guarda como borrador sin confirmación y sin texto no se puede guardar', async () => {
@@ -379,7 +379,7 @@ describe('QA-A05 · textos legales y datos de la empresa', () => {
     await user.type(screen.getByTestId('legal-markdown'), 'Galetes');
     expect(save.textContent).toBe('Guardar borrador');
     await user.click(save);
-    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'cookies', locale: 'ca', version: '2026-11-13', status: 'BORRADOR', markdown: 'Galetes', expectedVersion: 0, urgent: false, changeSummary: '' }));
+    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'cookies', locale: 'ca', version: '2026-11-13', status: 'BORRADOR', markdown: 'Galetes', expectedVersion: 0, urgent: false, changeSummary: '', importantChange: false }));
     // El texto en otro idioma que el de la pantalla se marca con su idioma para los lectores de pantalla.
     expect(screen.getByTestId('legal-markdown')).toHaveAttribute('lang', 'ca');
   });

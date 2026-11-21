@@ -117,7 +117,8 @@ describe('los textos validados de docs/legal tal como se publican', () => {
   it('los nueve declaran su versión, empiezan por su título, no tienen marcas inventadas ni notas internas y todo enlace lleva a un documento o a una página', () => {
     expect(texts.map((text) => text.document).sort()).toEqual([...LEGAL_DOCUMENTS].sort());
     for (const text of texts) {
-      expect(text.version, text.document).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // Una segunda versión del mismo día lleva `.1` (la política de privacidad, Sprint 5.10b).
+      expect(text.version, text.document).toMatch(/^\d{4}-\d{2}-\d{2}(?:\.[1-9]\d{0,2})?$/);
       expect(text.markdown.startsWith('# '), text.document).toBe(true);
       expect(text.markdown, text.document).not.toMatch(/Las notas de este recuadro no forman parte del texto publicado/);
       expect(unknownMarkers(text.markdown), text.document).toEqual([]);

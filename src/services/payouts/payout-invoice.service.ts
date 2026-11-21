@@ -1,3 +1,4 @@
+import { daysAfter, RETENTION } from '@/core/privacy/retention-policy';
 import { CampaignPayoutError } from '@/core/payouts/campaign-payout-rules';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import type { KorumPrismaClient } from '@/lib/prisma';
@@ -10,13 +11,12 @@ import { authorizePayoutAction, reservePayoutAttempt } from './campaign-payout.s
 /**
  * Factura (o proforma) del proveedor de una campaña (Sprint 4.4a). Se sube antes de pedir la liquidación y queda privada: solo la abren quienes firman en
  * la entidad (y el Super-Admin, con registro). Subirla no la adjunta a nada: es al pedir la liquidación cuando se elige, y entonces su contenido (SHA-256)
- * entra en lo que firman las dos personas y se conserva 6 años como justificante (CUMPLIMIENTO §6). Sin adjuntar, se borra a los 30 días (I2).
+ * entra en lo que firman las dos personas y se conserva 6 años desde el cierre del ejercicio como justificante. Sin adjuntar, `DATA_RETENTION_PURGE` la borra a
+ * los 30 días (I2). Los dos plazos, en la tabla de plazos §3.1 (`retention-policy.ts`).
  */
 
 /** 4 MB de fichero: el cuerpo de una función de Vercel no pasa de 4,5 MB (heredado del 4.2c). Para más, subida directa al almacén (6.1). */
 export const MAX_INVOICE_BYTES = 4 * 1024 * 1024;
-/** Una factura subida que no llega a adjuntarse a ninguna liquidación (DATA_RETENTION_PURGE la borra después). */
-export const UNATTACHED_INVOICE_DAYS = 30;
 
 export interface UploadInvoiceInput {
   organizationId: string;
@@ -39,7 +39,7 @@ export async function uploadPayoutInvoice(db: KorumPrismaClient, storage: Storag
     fileName: input.fileName,
     organizationId: input.organizationId,
     uploadedById: user.userId,
-    retainUntil: new Date(now.getTime() + UNATTACHED_INVOICE_DAYS * 86_400_000)
+    retainUntil: daysAfter(now, RETENTION.unattachedInvoiceDays)
   });
   await recordAudit(db, actor, { action: 'payout.invoice_uploaded', organizationId: input.organizationId, targetType: 'FileAsset', targetId: asset.id, metadata: { initiativeId: input.initiativeId, sizeBytes: input.bytes.length } }, { required: true });
   return { fileId: asset.id };

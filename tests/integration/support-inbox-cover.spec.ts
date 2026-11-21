@@ -142,7 +142,7 @@ describe('bandeja de soporte del centro', () => {
 
     const own = await ticket(organization.id, { senderEmail: person.email, target: 'SUPERADMIN', fromOrganization: true, subject: 'Pregunta de la entidad' });
     const mine = await ticket(null, { senderEmail: person.email, target: 'SUPERADMIN', topic: 'PAYMENT', subject: 'Mi pregunta personal' });
-    const listed = await listSupportTicketsOf(db, { email: person.email, emailVerified: true, gdprAnonymizedAt: null });
+    const listed = await listSupportTicketsOf(db, { id: person.id, email: person.email, emailVerified: true, gdprAnonymizedAt: null });
     expect(listed.map((row) => row.ticketCode)).toEqual([mine.ticketCode]);
     expect(listed.map((row) => row.ticketCode)).not.toContain(own.ticketCode);
   });

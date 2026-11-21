@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { DONATION_MAX_CENTS, DONATION_MIN_CENTS } from '@/core/checkout/checkout-limits';
 import { LINK_LIKE } from '@/core/onboarding/registration-rules';
+import { RETENTION, yearsAfter } from '@/core/privacy/retention-policy';
 import { validateTaxId } from '@/core/tax/tax-id';
 
 /**
@@ -45,13 +46,9 @@ export function kybReadiness(input: { ley49: boolean; cif: string | null; curren
   return { missing, missingTaxId, ready: missing.length === 0 && !missingTaxId };
 }
 
-/** Plazo legal de un documento KYB (CUMPLIMIENTO §6): mientras dure la relación + 6 años. Se cuenta desde que deja de ser el vigente. */
-export const KYB_RETENTION_YEARS = 6;
-
+/** Plazo legal de un documento del titular (tabla de plazos §3.9): mientras dure la relación + 6 años. Se cuenta desde que deja de ser el vigente. */
 export function kybRetainUntil(from: Date): Date {
-  const until = new Date(from.getTime());
-  until.setUTCFullYear(until.getUTCFullYear() + KYB_RETENTION_YEARS);
-  return until;
+  return yearsAfter(from, RETENTION.ownerDocumentYears);
 }
 
 // --- Datos del titular -------------------------------------------------------------------------------------------------------------------

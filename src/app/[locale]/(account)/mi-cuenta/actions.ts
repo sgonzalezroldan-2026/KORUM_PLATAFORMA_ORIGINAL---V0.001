@@ -11,6 +11,8 @@ import { isLocale } from '@/i18n/routing';
 import { currentRequestMeta, getAuthSession, requireVerifiedAccount } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { eraseOwnAccount, type EraseOutcome } from '@/services/account/account-privacy.service';
+import { confirmEmailChange, requestEmailChange, type EmailChangeConfirmOutcome, type EmailChangeRequestOutcome } from '@/services/account/email-change.service';
+import { dispatchOutboxSoon } from '@/lib/panel/outbox-soon';
 import { getPaymentProvider } from '@/services/payments/provider-factory';
 import { recordForeignPasskeyAttempt } from '@/services/audit/account-probes';
 import { writeAudit } from '@/services/audit/audit.service';
@@ -95,4 +97,43 @@ export async function deletePasskeyAction(payload: unknown): Promise<{ status: '
   }
   await writeAudit(db, { actorType: 'USER', actorUserId: session.userId, action: 'account.passkey_deleted', targetType: 'Passkey', targetId: parsed.data.id });
   return { status: 'DELETED' };
+}
+
+const emailChangeInput = z.object({ email: z.string().trim().min(3).max(254) });
+const emailCodeInput = z.object({ code: z.string().trim().regex(/^\d{6}$/) });
+
+/**
+ * La identidad confirmada de esta sesión para cambiar el email, sin dejar rastro si aún no la hay (preguntarlo no es un intento): primero se mira si la sesión se
+ * verificó hace poco y solo entonces se emite el actor (que sí anota un intento denegado).
+ */
+async function emailChangeActor() {
+  const session = await getAuthSession();
+  if (!session) return { status: 'LOGIN_REQUIRED' as const };
+  if (!(await accountReauthIsFresh(getPrisma(), { userId: session.userId, sessionId: session.sessionId }))) return { status: 'REAUTH_REQUIRED' as const };
+  try {
+    return { status: 'OK' as const, actor: await requireVerifiedAccount('account.email_change') };
+  } catch (error) {
+    if (error instanceof SuperadminRequiredError) return { status: 'REAUTH_REQUIRED' as const };
+    throw error;
+  }
+}
+
+const emailChangeDeps = () => ({ hmacSecret: getEnv().DATA_HMAC_SECRET, appUrl: getEnv().NEXT_PUBLIC_APP_URL, dispatch: (ids: readonly number[]) => dispatchOutboxSoon(getPrisma(), ids, 'outbox-after-email-change') });
+
+/** Cambiar el email de la cuenta, paso 1 (Sprint 5.10b, `L-053`): envía un código al email nuevo. */
+export async function requestEmailChangeAction(payload: unknown): Promise<EmailChangeRequestOutcome | { status: 'REAUTH_REQUIRED' | 'INVALID' } | LoginRequired> {
+  const parsed = emailChangeInput.safeParse(payload);
+  if (!parsed.success) return { status: 'INVALID' };
+  const verified = await emailChangeActor();
+  if (verified.status !== 'OK') return { status: verified.status };
+  return requestEmailChange(getPrisma(), emailChangeDeps(), { actor: verified.actor, newEmail: parsed.data.email });
+}
+
+/** Paso 2: con el código del email nuevo, el email cambia y todo lo que colgaba del antiguo pasa al nuevo. */
+export async function confirmEmailChangeAction(payload: unknown): Promise<EmailChangeConfirmOutcome | { status: 'REAUTH_REQUIRED' | 'INVALID' } | LoginRequired> {
+  const parsed = emailCodeInput.safeParse(payload);
+  if (!parsed.success) return { status: 'INVALID' };
+  const verified = await emailChangeActor();
+  if (verified.status !== 'OK') return { status: verified.status };
+  return confirmEmailChange(getPrisma(), emailChangeDeps(), { actor: verified.actor, code: parsed.data.code });
 }

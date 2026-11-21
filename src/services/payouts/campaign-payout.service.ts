@@ -9,7 +9,7 @@ import { inTransaction, type Db } from '@/lib/db';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { reserveAttempt } from '@/lib/rate-limit';
 import { CAMPAIGN_PAYOUT_RULE } from '@/lib/rate-limit-rules';
-import { kybRetainUntil } from '@/core/panel/entity-settings-rules';
+import { fiscalRetainUntil } from '@/core/privacy/retention-policy';
 import { authorizeTenant, recordAudit, recordCrossTenantAttempt, recordMissingResourceProbe, TenantAccessError, type SessionActor } from '@/repositories/tenant-guard';
 import { payoutBlockers, READINESS_INITIATIVE_SELECT } from './payout-readiness';
 
@@ -76,8 +76,8 @@ export interface PayoutRequestDeps {
 async function attachInvoice(tx: Db, organizationId: string, fileId: string, now: Date): Promise<void> {
   const file = await tx.fileAsset.findUnique({ where: { id: fileId }, select: { organizationId: true, purpose: true, deletedAt: true } });
   if (!file || file.organizationId !== organizationId || file.purpose !== 'PROVIDER_INVOICE' || file.deletedAt !== null) throw new CampaignPayoutError('INVOICE_INVALID');
-  // Adjuntada a una liquidación es el justificante de un pago: se conserva 6 años (CUMPLIMIENTO §6). Subida y sin adjuntar, solo 30 días (I2).
-  await tx.fileAsset.update({ where: { id: fileId }, data: { retainUntil: kybRetainUntil(now) } });
+  // Adjuntada a una liquidación es el justificante de un pago: 6 años desde el cierre del ejercicio en que se adjunta (tabla de plazos §3.1). Sin adjuntar, 30 días (I2).
+  await tx.fileAsset.update({ where: { id: fileId }, data: { retainUntil: fiscalRetainUntil(now) } });
 }
 
 /**

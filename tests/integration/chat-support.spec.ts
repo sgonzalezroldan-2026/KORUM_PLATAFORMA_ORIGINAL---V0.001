@@ -291,7 +291,7 @@ describe('privacidad del chat y de las consultas', () => {
     expect(data.ideaProposals[0]?.messages.map((message) => message.body)).toEqual(['Mensaje de la familia', 'Respuesta del centro']);
   });
 
-  it('suprimir la cuenta borra lo que la familia escribió en el chat, conserva las respuestas del centro y quita su email de las consultas', async () => {
+  it('suprimir la cuenta borra la conversación de sus ideas (también las respuestas del centro, Sprint 5.10b) y quita su email de las consultas', async () => {
     const { person, organization, idea } = await author();
     await say(person.id, idea.id, 'Soy Marta, de 2ºB');
     await centerSays(idea.id);
@@ -301,8 +301,8 @@ describe('privacidad del chat y de las consultas', () => {
     await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-ORG'), organizationId: organization.id, originLabel: organization.name, senderEmail: person.email, target: 'SUPERADMIN', fromOrganization: true, subject: 'Pregunta de la entidad', message: 'Texto que pertenece a la entidad.' } });
     const deps = { paymentProvider: async () => new MockPaycometProvider({ secrets: mockSecrets }), keyring: TEST_KEYRING, hmacSecret: TEST_HMAC_SECRET };
     expect((await eraseOwnAccount(db, deps, { actor: await verifiedFor(person.id) })).status).toBe('ERASED');
-    const messages = await db.ideaMessage.findMany({ where: { ideaId: idea.id } });
-    expect(messages.map((message) => message.senderRole)).toEqual(['ORGANIZATION']);
+    // Tabla de plazos §3.4 (Sprint 5.10b): sin la pregunta, la respuesta del centro no se entiende y puede aludir a la familia.
+    expect(await db.ideaMessage.count({ where: { ideaId: idea.id } })).toBe(0);
     expect(await db.supportTicket.count({ where: { senderEmail: person.email } })).toBe(0);
     // Y el texto de la consulta se va con el email (las de «Corregir mis datos» son las que más datos personales llevan).
     expect(await db.supportTicket.count({ where: { organizationId: organization.id, subject: 'Una sugerencia' } })).toBe(0);
@@ -310,14 +310,14 @@ describe('privacidad del chat y de las consultas', () => {
     expect(await db.supportTicket.findFirstOrThrow({ where: { organizationId: organization.id, fromOrganization: true } })).toMatchObject({ senderEmail: null, subject: 'Pregunta de la entidad', message: 'Texto que pertenece a la entidad.' });
   });
 
-  it('la conservación borra el chat de la familia de ideas cerradas hace más de un año y vacía las consultas resueltas hace más de dos', async () => {
+  it('la conservación borra la conversación de las ideas cerradas hace más de un año (también las respuestas del centro) y vacía las consultas resueltas hace más de dos', async () => {
     const old = await author();
     await db.idea.update({ where: { id: old.idea.id }, data: { expiresAt: new Date(NOW.getTime() - 400 * DAY) } });
     await db.ideaMessage.createMany({ data: [{ ideaId: old.idea.id, senderRole: 'FAMILY', senderLabel: '#FAM-4821', body: 'viejo' }, { ideaId: old.idea.id, senderRole: 'ORGANIZATION', senderLabel: 'Dirección', body: 'respuesta' }] });
     const recent = await author();
     await db.ideaMessage.create({ data: { ideaId: recent.idea.id, senderRole: 'FAMILY', senderLabel: '#FAM-4821', body: 'reciente' } });
     await purgeOldIdeaChats(db, NOW, 500);
-    expect((await db.ideaMessage.findMany({ where: { ideaId: old.idea.id } })).map((message) => message.senderRole)).toEqual(['ORGANIZATION']);
+    expect(await db.ideaMessage.count({ where: { ideaId: old.idea.id } })).toBe(0);
     expect(await db.ideaMessage.count({ where: { ideaId: recent.idea.id } })).toBe(1);
 
     const resolved = await db.supportTicket.create({ data: { ticketCode: uniqueId('TCK-OLD'), originLabel: 'Centro', senderEmail: 'vieja@pruebas.example', subject: 'Antigua', message: 'Consulta antigua resuelta', replyMessage: 'Hecho', status: 'RESOLVED', resolvedAt: new Date(NOW.getTime() - 800 * DAY) } });

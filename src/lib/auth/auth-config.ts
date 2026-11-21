@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { emailOTP, magicLink, twoFactor } from 'better-auth/plugins';
+import { RETENTION } from '@/core/privacy/retention-policy';
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { queueAuthEmail, type DispatchEmails } from './auth-emails';
 import { buildDatabaseHooks, buildIdentityProofHook, buildRateLimitStorage, buildSecondFactorGuard, localeFromContext } from './auth-hooks';
@@ -63,7 +64,8 @@ export function createKorumAuth(deps: KorumAuthDeps) {
         emailVerifiedAt: { type: 'date', required: false, input: false, returned: false }
       }
     },
-    session: { expiresIn: 30 * 24 * 3600, updateAge: 24 * 3600 },
+    // Tabla de plazos §3.3: la sesión dura 30 días desde la última visita.
+    session: { expiresIn: RETENTION.sessionDays * 24 * 3600, updateAge: 24 * 3600 },
     rateLimit: {
       enabled: true,
       window: 60,

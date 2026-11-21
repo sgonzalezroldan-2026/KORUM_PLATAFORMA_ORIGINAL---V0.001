@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { dataHmac } from '@/core/security/data-hmac';
+import { InvalidEmailError, normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import type { Locale } from '@/generated/prisma/enums';
 import type { Db } from '@/lib/db';
 import { reserveAttempt } from '@/lib/rate-limit';
@@ -14,8 +15,11 @@ import { AUTH_EMAIL_RULE } from '@/lib/rate-limit-rules';
  * superarlo no se escribe nada y no se avisa: la respuesta es la misma, para no revelar si la dirección existe.
  */
 
-/** `account.passkeyAdded`: aviso de seguridad al añadir una llave de acceso (Sprint 3.7). */
-export type AuthEmailTemplate = 'auth.magicLink' | 'auth.otp' | 'auth.invitation' | 'account.passkeyAdded';
+/**
+ * `account.passkeyAdded`: aviso de seguridad al añadir una llave de acceso (Sprint 3.7). `account.emailChangeCode`: código al email nuevo de una cuenta, y
+ * `account.emailChanged`: aviso al email antiguo de que ha cambiado (Sprint 5.10b).
+ */
+export type AuthEmailTemplate = 'auth.magicLink' | 'auth.otp' | 'auth.invitation' | 'account.passkeyAdded' | 'account.emailChangeCode' | 'account.emailChanged';
 
 export type DispatchEmails = (ids: readonly number[]) => void;
 
@@ -33,10 +37,20 @@ export interface AuthEmailInput {
   organizationId?: string | null;
 }
 
+function recipientKey(address: string): string {
+  try {
+    return normalizeCanonicalEmail(address);
+  } catch (error) {
+    if (error instanceof InvalidEmailError) return address;
+    throw error;
+  }
+}
+
 /** Escribe el email y lo manda a enviar. Devuelve `false` si el destinatario ha superado su límite (no se escribe nada). */
 export async function queueAuthEmail(deps: AuthEmailDeps, input: AuthEmailInput): Promise<boolean> {
   const address = input.to.trim().toLowerCase();
-  const allowed = await reserveAttempt(deps.db, `${AUTH_EMAIL_RULE.prefix}${dataHmac(deps.hmacSecret, 'auth-email-recipient', address)}`, AUTH_EMAIL_RULE);
+  // El tope va por la bandeja real (forma canónica, sin alias `+…`): `laura+1@` y `laura+2@` llegan al mismo buzón y comparten cupo (auditoría de seguridad del 5.10b).
+  const allowed = await reserveAttempt(deps.db, `${AUTH_EMAIL_RULE.prefix}${dataHmac(deps.hmacSecret, 'auth-email-recipient', recipientKey(address))}`, AUTH_EMAIL_RULE);
   if (!allowed) return false;
   const user = await deps.db.user.findUnique({ where: { email: address }, select: { id: true, locale: true, gdprAnonymizedAt: true } });
   if (user?.gdprAnonymizedAt) return false;

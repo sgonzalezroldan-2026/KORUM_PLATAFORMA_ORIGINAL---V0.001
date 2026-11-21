@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { ConsoleHeader } from '@/components/panel/console-header';
 import { PanelManagementHeader } from '@/components/panel/panel-management-header';
+import { PrivacyChangeBanner } from '@/components/legal/privacy-change-banner';
 import { routing } from '@/i18n/routing';
 import { requirePanelAccess } from '@/lib/auth/guards';
 import { loadPanelOverview } from '@/lib/panel/overview';
@@ -33,6 +34,8 @@ export default async function PanelLayout({ children, params }: { children: Reac
       <div className="print:hidden">
         <ConsoleHeader title={organization.name} subtitle={t('headerSubtitle')} />
         <PanelManagementHeader locale={locale} organization={overview.organization} signers={overview.signers} isDirector={isDirector} pendingApprovals={pendingApprovals} pendingSupport={pendingSupport} />
+        {/* Cambio importante de la política de privacidad: 30 días (Sprint 5.10b, decisión 90). */}
+        <PrivacyChangeBanner locale={locale} />
       </div>
       <main id="contenido" className="korum-paper-dots flex-1">
         {children}

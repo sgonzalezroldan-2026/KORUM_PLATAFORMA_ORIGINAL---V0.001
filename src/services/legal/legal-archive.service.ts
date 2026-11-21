@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { compareLegalVersions } from '@/core/admin/settings-model';
-import { effectiveDateFor, ENTITY_NOTICE_DOCUMENTS, LEGAL_BASE_LOCALE, type LegalDocument, type LegalLocale } from '@/core/legal/legal-catalog';
+import { effectiveDateFor, ENTITY_NOTICE_DOCUMENTS, IMPORTANT_CHANGE_DOCUMENT, LEGAL_BASE_LOCALE, type LegalDocument, type LegalLocale } from '@/core/legal/legal-catalog';
 import type { Db } from '@/lib/db';
 import { queueEntityNotices } from './legal-notices';
 
@@ -12,7 +12,7 @@ import { queueEntityNotices } from './legal-notices';
  */
 
 export class LegalVersionConflictError extends Error {
-  constructor(readonly reason: 'VERSION_IN_USE' | 'VERSION_OLDER' | 'URGENT_NOT_ONLY_PROVIDERS' | 'SUMMARY_REQUIRED') {
+  constructor(readonly reason: 'VERSION_IN_USE' | 'VERSION_OLDER' | 'URGENT_NOT_ONLY_PROVIDERS' | 'SUMMARY_REQUIRED' | 'IMPORTANT_NOT_ALLOWED') {
     super(`No se puede archivar esa versión del texto legal: ${reason}`);
     this.name = 'LegalVersionConflictError';
   }
@@ -40,6 +40,8 @@ export interface ArchivedLegalVersion {
   publishedAt: Date;
   effectiveAt: Date;
   changeSummary: string | null;
+  /** Cambio importante de la política de privacidad (Sprint 5.10b): se avisa 30 días en la plataforma y por email a todas las cuentas. */
+  importantChange: boolean;
 }
 
 export interface ResolvedLegalVersion extends ArchivedLegalVersion {
@@ -47,10 +49,10 @@ export interface ResolvedLegalVersion extends ArchivedLegalVersion {
   fallback: false | 'MISSING' | 'STALE';
 }
 
-const SELECT = { document: true, locale: true, version: true, markdown: true, contentSha256: true, publishedAt: true, effectiveAt: true, changeSummary: true } as const;
+const SELECT = { document: true, locale: true, version: true, markdown: true, contentSha256: true, publishedAt: true, effectiveAt: true, changeSummary: true, importantChange: true } as const;
 const NEWEST_FIRST = [{ publishedAt: 'desc' as const }, { id: 'desc' as const }];
 
-type Row = { document: string; locale: string; version: string; markdown: string; contentSha256: string; publishedAt: Date; effectiveAt: Date; changeSummary: string | null };
+type Row = { document: string; locale: string; version: string; markdown: string; contentSha256: string; publishedAt: Date; effectiveAt: Date; changeSummary: string | null; importantChange: boolean };
 const asArchived = (row: Row): ArchivedLegalVersion => ({ ...row, document: row.document as LegalDocument, locale: row.locale as LegalLocale });
 
 async function latestOf(db: Db, document: LegalDocument, locale: LegalLocale): Promise<ArchivedLegalVersion | null> {
@@ -116,6 +118,8 @@ export interface ArchiveInput {
   changeSummary?: string | null;
   /** Cambio urgente del contrato de encargo (decisión 58): solo la lista de proveedores; se aplica al momento y el aviso lo dice. */
   urgent?: boolean;
+  /** Cambio importante de la política de privacidad (política §13): exige «qué cambia» y deja el aviso por email a todas las cuentas que la leen. */
+  importantChange?: boolean;
 }
 
 /**
@@ -124,28 +128,33 @@ export interface ArchiveInput {
  * Una versión de las condiciones para entidades o del contrato de encargo que sustituye a la que leían sus firmantes (en su idioma o, en otro idioma, la del
  * castellano) se les aplica a los 30 días y les deja el aviso en la bandeja.
  */
-export async function archiveLegalVersion(tx: Db, input: ArchiveInput): Promise<{ created: boolean; effectiveAt: Date; notices: number }> {
+export async function archiveLegalVersion(tx: Db, input: ArchiveInput): Promise<{ created: boolean; effectiveAt: Date; notices: number; privacyNotice: boolean }> {
   const entityText = ENTITY_NOTICE_DOCUMENTS.includes(input.document);
   if (entityText) await lockEntityLegalTexts(tx, 'exclusive');
   const contentSha256 = legalContentHash(input.markdown);
   const existing = await tx.legalDocumentVersion.findUnique({ where: { document_locale_version: { document: input.document, locale: input.locale, version: input.version } }, select: { contentSha256: true, effectiveAt: true } });
   if (existing) {
     if (existing.contentSha256 !== contentSha256) throw new LegalVersionConflictError('VERSION_IN_USE');
-    return { created: false, effectiveAt: existing.effectiveAt, notices: 0 };
+    return { created: false, effectiveAt: existing.effectiveAt, notices: 0, privacyNotice: false };
   }
   const previous = await latestOf(tx, input.document, input.locale);
   if (previous && compareLegalVersions(input.version, previous.version) <= 0) throw new LegalVersionConflictError('VERSION_OLDER');
   // Lo que leían hasta ahora quienes leen este idioma: su versión anterior o, sin ella, la del castellano.
   const replaced = previous ?? (input.locale === LEGAL_BASE_LOCALE ? null : await latestOf(tx, input.document, LEGAL_BASE_LOCALE));
   const summary = input.changeSummary?.trim() || null;
-  if (entityText && replaced && !summary) throw new LegalVersionConflictError('SUMMARY_REQUIRED');
+  // Un cambio importante solo existe en la política de privacidad y sustituyendo a otra versión: la primera publicación no cambia nada que avisar.
+  const important = input.importantChange === true;
+  if (important && (input.document !== IMPORTANT_CHANGE_DOCUMENT || !replaced)) throw new LegalVersionConflictError('IMPORTANT_NOT_ALLOWED');
+  if (((entityText && replaced) || important) && !summary) throw new LegalVersionConflictError('SUMMARY_REQUIRED');
   if (input.urgent && replaced && !onlyProvidersChange(replaced.markdown, input.markdown)) throw new LegalVersionConflictError('URGENT_NOT_ONLY_PROVIDERS');
   const effectiveAt = effectiveDateFor(input.document, input.now, replaced !== null, input.urgent === true);
   await tx.legalDocumentVersion.create({
-    data: { document: input.document, locale: input.locale, version: input.version, markdown: input.markdown, contentSha256, publishedAt: input.now, effectiveAt, changeSummary: summary }
+    data: { document: input.document, locale: input.locale, version: input.version, markdown: input.markdown, contentSha256, publishedAt: input.now, effectiveAt, changeSummary: summary, importantChange: important }
   });
   const notices = entityText && replaced ? await queueEntityNotices(tx, { document: input.document, locale: input.locale, version: input.version, effectiveAt, changeSummary: summary, urgent: input.urgent === true }) : 0;
-  return { created: true, effectiveAt, notices };
+  // El email a todas las cuentas lo reparte por lotes la tarea `SUPPORTER_BROADCAST` (`privacy-policy-notices.ts`): aquí solo se deja pedido.
+  if (important) await tx.privacyPolicyNotice.create({ data: { locale: input.locale, version: input.version, createdAt: input.now } });
+  return { created: true, effectiveAt, notices, privacyNotice: important };
 }
 
 export type LegalAcceptanceSource = 'alta' | 'cuenta' | 'hucha';

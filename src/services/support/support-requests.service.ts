@@ -14,7 +14,8 @@ import { allocateTicketCode } from './ticket-code';
 /**
  * Consultas de soporte de las familias (Sprint 3.9, `fview-faq`). Quien escribe sale de la sesión y su email, de su cuenta con el email
  * verificado (nunca del formulario): así se evita que alguien abra consultas a nombre de otra persona, y la persona puede ver después las suyas
- * y exportarlas o borrarlas (las consultas se buscan por ese email, como ya hacen la exportación y la supresión). Una consulta sobre una iniciativa
+ * y exportarlas o borrarlas. Desde el Sprint 5.10b cada consulta guarda su autora (`senderUserId`, `L-053`) y se busca por ella: si la persona cambia el email
+ * de su cuenta, sus consultas siguen siendo suyas. Una consulta sobre una iniciativa
  * o un evento va al centro; el resto, a KORUM. Pedir **corregir datos personales** (RGPD art. 16) abre además una `PrivacyRequest` de
  * rectificación con plazo de un mes: la persona tiene que haber confirmado su identidad hace menos de 10 minutos (`actor`).
  */
@@ -69,7 +70,7 @@ export async function submitSupportTicket(deps: SupportDeps, input: { userId: st
 
     const target = targetOfTopic(ticket.topic);
     const created = await tx.supportTicket.create({
-      data: { ticketCode, organizationId: organization.id, originLabel: organization.name, senderEmail: user.email, target, topic: ticket.topic, subject: ticket.subject, message: ticket.message, createdAt: now }
+      data: { ticketCode, organizationId: organization.id, originLabel: organization.name, senderEmail: user.email, senderUserId: input.userId, target, topic: ticket.topic, subject: ticket.subject, message: ticket.message, createdAt: now }
     });
     // Una solicitud de rectificación abierta ya corre su plazo: una consulta más no abre otra (no hay solicitudes duplicadas con plazo legal).
     if (rectification && input.actor && !(await tx.privacyRequest.findFirst({ where: { userId: input.userId, type: 'RECTIFICATION', status: { in: ['RECEIVED', 'IN_PROGRESS'] } }, select: { id: true } }))) {
@@ -104,12 +105,12 @@ export async function submitSupportTicket(deps: SupportDeps, input: { userId: st
   return outcome;
 }
 
-/** Las consultas de una persona (por el email verificado de su cuenta), las más recientes primero. Sin datos de otras personas. */
-export async function listSupportTicketsOf(db: Db, user: { email: string; emailVerified: boolean; gdprAnonymizedAt: Date | null }, limit = 20) {
+/** Las consultas de una persona (por su autora y, en las anteriores al 5.10b sin autora guardada, por el email verificado), las más recientes primero. */
+export async function listSupportTicketsOf(db: Db, user: { id: string; email: string; emailVerified: boolean; gdprAnonymizedAt: Date | null }, limit = 20) {
   if (!user.emailVerified || user.gdprAnonymizedAt) return [];
   return db.supportTicket.findMany({
     // Las que escribió en nombre de su entidad (`fromOrganization`) son de la entidad: se ven en su panel, no en la cuenta de quien las firmó.
-    where: { senderEmail: user.email, fromOrganization: false },
+    where: { OR: [{ senderUserId: user.id }, { senderUserId: null, senderEmail: user.email }], fromOrganization: false },
     orderBy: { id: 'desc' },
     take: limit,
     select: { ticketCode: true, topic: true, target: true, subject: true, message: true, status: true, replyMessage: true, createdAt: true, originLabel: true, organization: { select: { slug: true } } }

@@ -497,7 +497,9 @@ describe('QA-A04 · bandeja de soporte de KORUM', () => {
     supportActions.rectifyNameAction.mockResolvedValue({ status: 'DONE' });
     card({ topic: 'RECTIFICATION', accountName: 'Ana Lopes Garcia', rectification: { requestId: 4, status: 'RECEIVED', dueAt: '2026-12-01T00:00:00.000Z', overdue: false } });
     const block = screen.getByTestId('rectification');
-    expect(block).toHaveTextContent('El cambio de email todavía no se puede hacer');
+    // Sprint 5.10b (decisión 89): el email lo cambia la propia persona en Mi cuenta; la consola nunca lo cambia a mano.
+    expect(block).toHaveTextContent('El email lo cambia la propia persona en Mi cuenta › Privacidad y acceso');
+    expect(block).toHaveTextContent('No cambies nunca un email a mano');
     expect(block).toHaveTextContent('Nombre actual de la cuenta: Ana Lopes Garcia');
     await userEvent.type(within(block).getByTestId('rectification-name'), 'Ana López García');
     await userEvent.click(within(block).getByTestId('rectification-rename'));

@@ -112,6 +112,19 @@ export const ACCOUNT_EXPORT_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy
 /** Intentos de suprimir la cuenta por persona: cada uno abre una solicitud y, si está bloqueado, deja rastro en la auditoría. */
 export const ACCOUNT_ERASURE_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:erase:user:', limit: 5, windowMs: 24 * 3_600_000 };
 
+/**
+ * Códigos para cambiar el email de la cuenta, por persona (Sprint 5.10b, `L-053`): cada uno sale a una dirección que escribe la propia persona. Cinco al día
+ * cubren una errata y un reenvío; más es un guion que usa KORUM para mandar emails a terceros (el tope por destinatario de `AUTH_EMAIL_RULE` también se aplica).
+ */
+export const ACCOUNT_EMAIL_CHANGE_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:email-change:user:', limit: 5, windowMs: 24 * 3_600_000 };
+
+/**
+ * Topes por **email de destino** del cambio de email (auditoría de seguridad del 5.10b), con la clave del HMAC de su forma canónica y contando todas las cuentas: cinco
+ * códigos al día y diez códigos equivocados al día. Sin ellos, muchas cuentas podrían probar códigos contra la bandeja de otra persona (`laura+1@`, `laura+2@`…).
+ */
+export const EMAIL_CHANGE_TARGET_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:email-change:target:', limit: 5, windowMs: 24 * 3_600_000 };
+export const EMAIL_CHANGE_TARGET_FAILURE_RULE: RateLimitRule & PurgeRule = { prefix: 'privacy:email-change:target-fail:', limit: 10, windowMs: 24 * 3_600_000 };
+
 /** Mensajes al centro por el chat anónimo de una idea, por persona (Sprint 3.9): el tope por idea lo aplica el servicio; este frena un guion. */
 export const IDEA_CHAT_RULE: RateLimitRule & PurgeRule = { prefix: 'idea:chat:user:', limit: 20, windowMs: 60 * 60_000 };
 

@@ -16,7 +16,7 @@ export const accountPasskeyAdded: TemplateDefinition<z.infer<typeof emptyPayload
     title: t('account.passkeyAdded.title'),
     paragraphs: [t('account.passkeyAdded.body')],
     facts: [],
-    button: { label: t('account.passkeyAdded.cta'), url: url('/mi-cuenta#security') },
+    button: { label: t('account.passkeyAdded.cta'), url: url('/mi-cuenta/privacidad#security') },
     footnote: t('account.passkeyAdded.footnote'),
     footer: 'account'
   })
@@ -64,6 +64,46 @@ export const supportReplied: TemplateDefinition<z.infer<typeof supportRepliedPay
     paragraphs: [t(payload.panelOrgSlug ? 'support.replied.bodyPanel' : 'support.replied.body', { organization: payload.organization })],
     facts: [{ label: t('support.received.code'), value: payload.ticketCode }],
     button: payload.panelOrgSlug ? { label: t('support.replied.ctaPanel'), url: url('/panel/' + payload.panelOrgSlug + '/soporte') } : { label: t('support.replied.cta'), url: url('/mi-cuenta#support') },
+    footer: 'account'
+  })
+};
+
+/**
+ * Cambio de email de la cuenta (Sprint 5.10b, `L-053`). `account.emailChangeCode`: el código de 6 dígitos al email **nuevo**, que demuestra que la persona lo controla;
+ * es un secreto (se borra de la bandeja al enviarse y no sale pasada una hora). `account.emailChanged`: aviso al email **antiguo** de que ya no es el de la cuenta, para
+ * que lo sepa aunque no haya sido ella. Ninguno de los dos lleva la otra dirección: un email puede reenviarse o leerse en una pantalla ajena.
+ */
+const emailChangeCodePayload = z.object({ code: z.string().regex(/^\d{6}$/), minutes: z.number().int().positive().max(60) });
+
+export const accountEmailChangeCode: TemplateDefinition<z.infer<typeof emailChangeCodePayload>> = {
+  schema: emailChangeCodePayload,
+  secretFields: ['code'],
+  build: (payload, { t }): EmailContent => ({
+    subject: t('account.emailChangeCode.subject'),
+    preheader: t('account.emailChangeCode.preheader'),
+    title: t('account.emailChangeCode.title'),
+    paragraphs: [t('account.emailChangeCode.body', { minutes: payload.minutes })],
+    facts: [],
+    highlight: { label: t('account.emailChangeCode.codeLabel'), value: payload.code },
+    footnote: t('account.emailChangeCode.footnote'),
+    footer: 'account'
+  })
+};
+
+/** `revertUrl`: el enlace «No he sido yo» (un solo uso, 14 días). Es un secreto: se borra de la bandeja al enviarse y no sale pasado `expiresAt`. */
+const emailChangedPayload = z.object({ changedAt: z.string().datetime(), revertUrl: z.url({ protocol: /^https?$/ }), expiresAt: z.string().datetime(), days: z.number().int().positive().max(30) });
+
+export const accountEmailChanged: TemplateDefinition<z.infer<typeof emailChangedPayload>> = {
+  schema: emailChangedPayload,
+  secretFields: ['revertUrl'],
+  build: (payload, { t, formatDateTime }): EmailContent => ({
+    subject: t('account.emailChanged.subject'),
+    preheader: t('account.emailChanged.preheader'),
+    title: t('account.emailChanged.title'),
+    paragraphs: [t('account.emailChanged.body', { date: formatDateTime(payload.changedAt) }), t('account.emailChanged.notYou', { days: payload.days })],
+    facts: [],
+    button: { label: t('account.emailChanged.cta'), url: payload.revertUrl },
+    footnote: t('account.emailChanged.footnote'),
     footer: 'account'
   })
 };

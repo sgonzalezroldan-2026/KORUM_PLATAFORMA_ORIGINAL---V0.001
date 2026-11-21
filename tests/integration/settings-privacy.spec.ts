@@ -4,7 +4,7 @@ import { dataRetentionPurgeHandler } from '@/core/jobs/handlers/data-retention-p
 import type { JobDeps } from '@/core/jobs/job-types';
 import { currentConsents, ConsentInputError, recordConsent } from '@/core/privacy/consents';
 import { anonymizedEmailOf, erasePersonalData, ErasureBlockedError } from '@/core/privacy/erasure.service';
-import { renderPersonalDataPdf } from '@/core/privacy/export-pdf';
+import { processingInfoSections, renderPersonalDataPdf } from '@/core/privacy/export-pdf';
 import { buildPersonalDataExport, type ExportRequester } from '@/core/privacy/personal-data-export';
 import { closePrivacyRequest, openPrivacyRequest, PrivacyRequestError } from '@/core/privacy/privacy-requests';
 import { retryCardDeletions } from '@/core/privacy/retention-accounts';
@@ -260,7 +260,7 @@ describe('QA-PRIV01 · exportación de datos personales', () => {
     expect(JSON.stringify(data)).not.toMatch(/otra@pruebas|tokenUser|idUserEnc|Enc"/);
     expect(data.unreadableTaxIds).toBe(0);
 
-    const pdf = Buffer.from(renderPersonalDataPdf(data, translate, 'es')).toString('latin1');
+    const pdf = Buffer.from(renderPersonalDataPdf({ processingInfo: processingInfoSections(translate, { legalName: 'KORUM', privacyEmail: 'privacidad@korum.example' }), ...data }, translate, 'es')).toString('latin1');
     expect(pdf.startsWith('%PDF-1.4')).toBe(true);
     expect(pdf).toContain('Marta Puig');
 

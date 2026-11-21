@@ -18,7 +18,7 @@ import { InvalidSettingError, SettingConflictError, deleteSecret, updateSecret, 
 import { isSecretKey, secretDefinition, settingDefinition, UnknownSettingError, type SecretKey } from '@/services/settings/setting-definitions';
 import { SECRET_REQUIRED_KEYS } from '@/core/admin/settings-model';
 import { writeAudit } from '@/services/audit/audit.service';
-import { fillMarkers, missingMarkers, unknownMarkers, URGENT_DOCUMENT, type LegalMarkerValues } from '@/core/legal/legal-catalog';
+import { fillMarkers, IMPORTANT_CHANGE_DOCUMENT, missingMarkers, unknownMarkers, URGENT_DOCUMENT, type LegalMarkerValues } from '@/core/legal/legal-catalog';
 import { parseLegalMarkdown } from '@/core/legal/legal-markdown';
 import { siteUrl } from '@/lib/seo/marketing-routes';
 import { archiveLegalVersion, LegalVersionConflictError } from '@/services/legal/legal-archive.service';
@@ -52,6 +52,7 @@ export type SettingsRejection =
   | 'MISSING_COMPANY_DATA'
   | 'SUMMARY_REQUIRED'
   | 'URGENT_NOT_ONLY_PROVIDERS'
+  | 'IMPORTANT_NOT_ALLOWED'
   | 'SECRET_REQUIRED';
 
 export class SettingsRejectedError extends Error {
@@ -268,8 +269,10 @@ const legalPayload = z.object({
   expectedVersion: z.number().int().min(0).max(1_000_000),
   /** Solo el contrato de encargo, al publicar: un cambio urgente de proveedor que se aplica al momento (decisión 58). */
   urgent: z.boolean().default(false),
-  /** Qué cambia (obligatorio al publicar una versión nueva de los textos de las entidades): va en el aviso a quienes firman y en la página. */
-  changeSummary: z.string().max(500).default('')
+  /** Qué cambia (obligatorio al publicar una versión nueva de los textos de las entidades o un cambio importante de la privacidad): va en el aviso y en la página. */
+  changeSummary: z.string().max(500).default(''),
+  /** Solo la política de privacidad, al publicar: cambio importante que se avisa 30 días en la plataforma y por email a todas las cuentas (Sprint 5.10b, política §13). */
+  importantChange: z.boolean().default(false)
 });
 
 type StoredLegal = { version: string; status: 'BORRADOR' | 'PUBLICADO'; markdown: string };
@@ -293,8 +296,9 @@ export async function saveLegalText(db: Db, actor: VerifiedSuperadminActor, raw:
   assertVerifiedSuperadmin(actor, 'settings.update', now);
   const payload = legalPayload.safeParse(raw);
   if (!payload.success) throw new SettingsRejectedError('INVALID');
-  const { document, locale, status, markdown, expectedVersion, urgent, changeSummary } = payload.data;
+  const { document, locale, status, markdown, expectedVersion, urgent, changeSummary, importantChange } = payload.data;
   if (urgent && (document !== URGENT_DOCUMENT || status !== 'PUBLICADO')) throw new SettingsRejectedError('INVALID', ['urgent']);
+  if (importantChange && (document !== IMPORTANT_CHANGE_DOCUMENT || status !== 'PUBLICADO')) throw new SettingsRejectedError('INVALID', ['importantChange']);
   const version = payload.data.version.trim();
   if (parseLegalVersion(version) === null) throw new SettingsRejectedError('INVALID', ['version']);
   const key = legalKeyOf(document, locale);
@@ -331,16 +335,19 @@ export async function saveLegalText(db: Db, actor: VerifiedSuperadminActor, raw:
         const values = await companyMarkerValues(tx);
         const missing = missingMarkers(markdown, values);
         if (missing.length > 0) throw new SettingsRejectedError('MISSING_COMPANY_DATA', missing.map((marker) => `marker:${marker}`));
-        archived = await archiveLegalVersion(tx, { document, locale, version, markdown: fillMarkers(markdown, values, ''), now, urgent, changeSummary });
+        archived = await archiveLegalVersion(tx, { document, locale, version, markdown: fillMarkers(markdown, values, ''), now, urgent, changeSummary, importantChange });
       }
-      const auditExtra = { legalVersion: version, legalStatus: status, characters: markdown.length, ...(archived?.created ? { archived: true, effectiveAt: archived.effectiveAt.toISOString(), notices: archived.notices, ...(urgent ? { urgent: true } : {}) } : {}) };
+      const auditExtra = { legalVersion: version, legalStatus: status, characters: markdown.length, ...(archived?.created ? { archived: true, effectiveAt: archived.effectiveAt.toISOString(), notices: archived.notices, ...(urgent ? { urgent: true } : {}), ...(archived.privacyNotice ? { importantChange: true } : {}) } : {}) };
       const saved = await updateSettings(tx, actor, [{ key, value, expectedVersion, auditExtra }], { now, operation: 'settings.update', audit: auditOf(meta) });
       return { version, settingVersion: saved.versions[key] ?? 0, notices: archived?.notices ?? 0 };
     });
     invalidateSettingsCache(key);
     return { version: result.version, settingVersion: result.settingVersion };
   } catch (error) {
-    if (error instanceof LegalVersionConflictError) throw new SettingsRejectedError(error.reason, [error.reason === 'SUMMARY_REQUIRED' ? 'changeSummary' : error.reason === 'URGENT_NOT_ONLY_PROVIDERS' ? 'urgent' : 'version']);
+    if (error instanceof LegalVersionConflictError) {
+      const field = { SUMMARY_REQUIRED: 'changeSummary', URGENT_NOT_ONLY_PROVIDERS: 'urgent', IMPORTANT_NOT_ALLOWED: 'importantChange', VERSION_IN_USE: 'version', VERSION_OLDER: 'version' }[error.reason];
+      throw new SettingsRejectedError(error.reason, [field]);
+    }
     throw asRejection(error);
   }
 }

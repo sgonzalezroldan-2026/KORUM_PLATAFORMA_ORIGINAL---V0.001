@@ -47,3 +47,27 @@ export const legalChangeNotice: TemplateDefinition<z.infer<typeof payload>> = {
     };
   }
 };
+
+/**
+ * Cambio importante de la política de privacidad (Sprint 5.10b, política §13): a todas las cuentas con el email verificado que leen esa versión (la del castellano,
+ * todas; una traducción, quien tiene la cuenta en ese idioma). Lo reparte por lotes la tarea `SUPPORTER_BROADCAST`. Lo escribe KORUM y no depende de ninguna entidad.
+ */
+const privacyChangePayload = z.object({
+  version: z.string().min(10).max(20),
+  /** Qué cambia, en palabras del Super-Admin: va en el email y en la franja de aviso. */
+  changeSummary: z.string().min(1).max(500).optional()
+});
+
+export const legalPrivacyChange: TemplateDefinition<z.infer<typeof privacyChangePayload>> = {
+  schema: privacyChangePayload,
+  sender: 'platform',
+  build: (input, { t, url }): EmailContent => ({
+    subject: t('legal.privacyChange.subject'),
+    preheader: t('legal.privacyChange.preheader'),
+    title: t('legal.privacyChange.title'),
+    paragraphs: [t('legal.privacyChange.body'), ...(input.changeSummary ? [t('legal.privacyChange.summary', { summary: input.changeSummary })] : []), t('legal.privacyChange.rights')],
+    facts: [{ label: t('legal.privacyChange.version'), value: input.version }],
+    button: { label: t('legal.privacyChange.cta'), url: url(legalPathOf('privacidad')) },
+    footer: 'account'
+  })
+};

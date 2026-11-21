@@ -18,6 +18,8 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'tenant.resource_not_found',
     'tenant.resource_outside_tenant',
     'auth.sign_in_failed_repeatedly',
+    'account.email_change_locked',
+    'account.email_change_reverted',
     'account.certificate_denied',
     'account.passkey_delete_denied',
     'api.panel_cover_denied',
@@ -182,6 +184,8 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
   account: [
     'account.passkey_added',
     'account.passkey_deleted',
+    'account.email_change_requested',
+    'account.email_changed',
     'privacy.account_name_rectified',
     'privacy.erasure_blocked',
     'privacy.erasure_completed',
@@ -210,7 +214,7 @@ const BY_CATEGORY: Record<AuditCategory, readonly string[]> = {
     'outbox.requeued',
     'PRICING_ALERT_ACKNOWLEDGED'
   ],
-  system: ['job.completed', 'job.failed']
+  system: ['job.completed', 'job.failed', 'privacy.unverified_signup_deleted']
 };
 
 const CATEGORY_OF = new Map<string, AuditCategory>(AUDIT_CATEGORIES.flatMap((category) => BY_CATEGORY[category].map((action) => [action, category] as const)));
@@ -232,6 +236,8 @@ export const PERSONAL_ACTIONS: readonly string[] = [
   'pledge.campaign_changed',
   'pledge.access_denied',
   'auth.sign_in_failed_repeatedly',
+  'account.email_change_locked',
+  'account.email_change_reverted',
   'account.certificate_denied',
   'account.passkey_delete_denied'
 ];
