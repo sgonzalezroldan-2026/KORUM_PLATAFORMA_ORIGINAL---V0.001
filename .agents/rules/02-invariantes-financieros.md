@@ -2,7 +2,7 @@
 
 > Fórmulas exactas: [korum-tco-calculator](../skills/korum-tco-calculator/SKILL.md). Flujos de cobro, asientos tipo y Paycomet: [korum-escrow-payments](../skills/korum-escrow-payments/SKILL.md). Marco legal y decisiones del negocio: [docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md).
 
-> **Decisiones del promotor del 2026-11-17 al 2026-11-20** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 81), pendientes de construir salvo las que ya dicen que están construidas. Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
+> **Decisiones del promotor del 2026-11-17 al 2026-11-21** ([CUMPLIMIENTO §8](../../docs/CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md), decisiones 21 a 84), pendientes de construir salvo las que ya dicen que están construidas. Esta regla ya recoge lo decidido. Donde dice **«pendiente de construir en el Sprint X»**, el código todavía hace lo anterior (se indica) y **no se cambia fuera de ese sprint**: quien construya otro sprint respeta el comportamiento actual y no adelanta la regla nueva.
 
 ## 1. Céntimos enteros y cuadre exacto de la meta (4 líneas públicas = meta)
 
@@ -24,6 +24,7 @@ Si la entidad activa `showPublicBreakdown`, la ficha pública **no muestra tramo
 
 - **Independencia de proveedores:** la entidad introduce el presupuesto de su proveedor; KORUM nunca cobra comisiones a proveedores.
 - **Reserva reversible de cupos:** el cupo exento anual, la beca de medalla y el tope anual de mantenimiento se reservan al pasar a `FUNDRAISING` y **se devuelven a la entidad** si la campaña se cancela o se reembolsa.
+- **Exención por recomendación (decisión 84, pendiente de construir en el Sprint 5.25e):** la entidad que recomienda a otra recibe un importe exento adicional para una siguiente campaña, que se reserva y se devuelve como los demás cupos y aparece en su propia línea de la pizarra, «Exención por recomendación». Es comisión que KORUM deja de cobrar, nunca dinero; su importe por defecto, su tope y cada exención concedida se controlan desde la consola del Super-Admin. Hasta ese sprint no existe y la pizarra no cambia.
 - **Modo `BUDGET`:** líneas separadas que cuadran al céntimo con `goalCents`:
   1. `Importe exento por defecto` (p. ej. `1.000,00 € al 0 %`).
   2. `Beca exenta por medalla` (Bronce, Plata u Oro al `0 %`, con el ahorro exacto en euros).

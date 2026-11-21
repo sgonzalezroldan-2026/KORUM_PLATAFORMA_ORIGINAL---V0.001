@@ -20,6 +20,37 @@
 
 ## Entradas
 
+### SESIÓN R1 — Revisión crítica de producto (P12) · 2026-11-21 · terminado
+
+- **Modelo y esfuerzo usados:** Claude Fable 5.2 · alto (el que pide la ficha). En contextos separados, `ux-school-director-reviewer` y `korum-community-target-psychologist`, con los modelos fijados en `.claude/agents/`.
+- **Duración:** estimada, 3–4 h; real, unos 30 minutos de reloj (los dos revisores trabajaron a la vez: 13 y 2 minutos). Del promotor: nada durante la sesión; ahora, leer el informe y contestar seis decisiones.
+- **Qué se ha hecho:** solo un informe, [INFORME_REVISION_CRITICA_R1.md](INFORME_REVISION_CRITICA_R1.md). No se tocó código de la aplicación ni ningún texto.
+  - **Recorrido real** de la compilación de producción con el MCP de Playwright a 430 y 1440 px (portada, ficha, pago de invitado, entradas, vales, Mi cuenta, alta, panel, firma, Estudio, liquidaciones, ajustes y consola), sobre un esquema propio (`korum_r1`) sembrado para la sesión y borrado al cerrarla.
+  - **Lectura** del catálogo en castellano, de las 61 plantillas de email y de los documentos de experiencia y de negocio.
+  - **Comprobación en el código** de lo que el informe da como hecho.
+  - **Resultado:** 52 hallazgos (`R-01` a `R-52`) en una tabla común (pantalla o flujo, problema o idea, impacto, esfuerzo, riesgo y recomendación), el veredicto de las nueve hipótesis de P12, la propuesta del Sprint 5.25 en cuatro entregas y una estimación del ingreso por entidad con el IVA dentro.
+- **Lo más importante que salió:**
+  - En el móvil, el avance y el botón «Aportar» de una campaña están a casi dos pantallas (1.473 y 1.615 px de 3.011).
+  - El panel de la entidad no tiene ninguna lista de «qué toca hoy» y su menú tiene 11 secciones.
+  - La ficha de un evento con entradas dice «Devolución del 100 % si no se logra la meta», que contradice la decisión 30 (`initiative-detail.tsx` e `initiative-card.tsx` usan el texto de las campañas). **Destino: Sprint 5.15.**
+  - El alta exige el teléfono de la cofirma y no lo guarda.
+  - No hay memoria del curso, ni recomendación entre entidades, ni avisos del ritmo de una campaña, ni resumen diario para el Super-Admin.
+  - Con el IVA dentro y una activación del 30 % de la aportación voluntaria, el ingreso por entidad y año baja de 1.114 € a unos 750 € (estimación propia; el recálculo ya está en el 5.20a).
+- **Decisiones del promotor (2026-11-21, con el formato «qué pasa hoy, ejemplo, opciones, recomendación», informe §6):**
+  1. **Entran las cuatro entregas propuestas** (5.25a a 5.25d).
+  2. **Email a quien ya aportó, a 72 horas del cierre:** aviso del servicio, una sola vez (decisión 82 de [CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md); 5.25a).
+  3. **Las ideas se firman dentro del panel** con la aplicación de verificación; liberar dinero no cambia (5.25f, con el auditor de seguridad).
+  4. **Eventos con entradas, sin ninguna frase de devolución** en la ficha ni en la tarjeta: las condiciones de devolución son las de la ley y las que acepta quien compra. Se propuso «si el evento se cancela» y el promotor prefirió no poner nada. Los demás cambios de texto, aprobados (decisión 83; Sprint 5.15).
+  5. **Las familias leen siempre «iniciativa»**; en el panel, «documentos de la entidad» y «segunda firma» (5.25b).
+  6. **Premio por recomendar: sí.** Se recomendó esperar al piloto y el promotor decidió hacerlo ya: la entidad que recomienda a otra recibe sola un importe exento para una siguiente campaña, se le avisa, y la consola lo informa y permite controlar el importe (decisión 84; 5.25c para el código y el alta, 5.25e para la exención y la consola).
+- **Qué se cambió con esas decisiones:** decisiones 82 a 84 en CUMPLIMIENTO §8; el Sprint 5.25 pasa de una ficha a **seis** (5.25a a 5.25f, entre 34 y 46 horas) con sus criterios `QA-PRD01` a `QA-PRD05` y `QA-SEC18`; la Regla 02 §2 anuncia la exención por recomendación como pendiente del 5.25e; `AGENTS.md` y el registro citan ya las decisiones 21 a 84; `.claude/` regenerado. De organización: los matices para sprints ya planificados están en cada ficha del plan («De la SESIÓN R1») y en el registro (P12).
+- **Pendiente / deuda:**
+  - **Del promotor, al abrir sus sprints:** en el 5.15, si la franja de una venta de vales conserva su frase de los 14 días; en el 5.25e, la condición que activa la exención, el importe por defecto (propuesta: 500 €), el tope por curso, el plazo de uso y el párrafo de las condiciones para entidades.
+  - **Sin deuda de código nueva sin destino:** `R-03` va al 5.15; los demás matices, a 5.10b, 5.10c, 5.15, 5.16b, 5.17, 5.18, 5.20a, 5.24b, 5.26, 5.27, SESIÓN V1, 5.29 y 6.1a; ocho puntos se miran en el piloto (6.2).
+- **Límites de la revisión:** sin capturas de pantalla (la herramienta no dejó guardarlas fuera del repositorio), así que no hay juicio de color ni de contraste (SESIÓN V1); sin cámara real en la portería y el puesto (piloto); sin catalán ni teclado (SESIÓN I1 y P21); la especialista en psicología trabajó sobre los textos, sin ver las pantallas.
+- **Puertas:** no aplican las de código (no se tocó). P1 ✅ en lo que sí aplica: invariantes y coherencia documental a 0 tras editar el plan, el registro y esta bitácora.
+- **Siguiente sprint:** 5.10a · Cumplimiento: textos legales publicados, versiones y aceptación · Claude Opus 5.5 · esfuerzo alto · 6–8 h.
+
 ### Sprint 5.14c — Vales: puesto con lector, devolución, caducidad, cierre, cancelación y liquidación (N3) · 2026-11-20 · terminado
 
 - **Modelo y esfuerzo usados:** Claude Opus 5.5 · alto (el que pide la ficha). Auditoría: `fintech-escrow-auditor`, `antifraud-legal-guardian`, `ux-school-director-reviewer` y `qa-e2e-verifier`, con los modelos fijados en `.claude/agents/`.
