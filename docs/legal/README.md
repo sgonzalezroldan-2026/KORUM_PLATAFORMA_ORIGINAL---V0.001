@@ -3,24 +3,24 @@
 > **Qué es esta carpeta:** los textos legales de la plataforma, escritos en la SESIÓN T1 del [plan](../PLAN_IMPLEMENTACION_ATOMICO.md) a partir de lo que la aplicación hace y de las decisiones del promotor ([CUMPLIMIENTO §8](../CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md)).
 > **Quién los valida:** el promotor (decisión 41). No son asesoramiento jurídico de un profesional colegiado.
 > **Idioma:** castellano. El catalán y el inglés se traducen en la SESIÓN I1, con los textos ya congelados.
-> **Dónde se publican:** el Sprint 5.10a los lleva a la consola (`/admin/ajustes`, textos legales versionados) y a sus páginas públicas. Hasta entonces, esta carpeta es la fuente.
+> **Dónde se publican:** desde el Sprint 5.10a, el Super-Admin los publica en la consola (`/admin/ajustes`, textos legales versionados), cada versión queda archivada tal como se publicó y se lee en su página pública (`/aviso-legal`, `/condiciones`, `/condiciones/{entradas-y-vales, aportacion-mensual, entidades, comercios}`, `/contrato-de-encargo`, `/privacidad` y `/cookies`). La semilla de demostración los carga de esta carpeta; en producción se publican a mano (Sprint 6.1). Esta carpeta sigue siendo la fuente de los textos.
 
 ## 1. Documentos
 
 | Documento | Archivo | Versión | Estado | Quién lo acepta y cuándo |
 | :--- | :--- | :-: | :--- | :--- |
 | Aviso legal | [aviso-legal.md](aviso-legal.md) | 2026-11-18 | Validado por el promotor | No se acepta: se publica |
-| Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-20 | Validado por el promotor (la campaña que supera la meta, la aportación mínima, el cierre de los pagos y la aportación voluntaria, decisiones 68, 73, 79 y 80, el 2026-11-20) | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
+| Condiciones de uso | [condiciones-generales.md](condiciones-generales.md) | 2026-11-21 | Validado por el promotor (la campaña que supera la meta, la aportación mínima, el cierre de los pagos y la aportación voluntaria, decisiones 68, 73, 79 y 80, el 2026-11-20) | Familias y personas usuarias, con casilla al pagar una donación, y al crear una cuenta |
 | Condiciones de entradas y vales | [condiciones-entradas-y-vales.md](condiciones-entradas-y-vales.md) | 2026-11-20 | Validado por el promotor (el añadido del 3.6, el 2026-11-19; la precisión del 4.5, el 2026-11-20; la validez máxima y el cierre de los pagos, decisiones 76 y 79, el 2026-11-20) | Quien compra, con casilla al pagar |
 | Condiciones de la aportación mensual | [condiciones-aportacion-mensual.md](condiciones-aportacion-mensual.md) | 2026-11-18 | Validado por el promotor | Quien activa Mi Hucha, con casilla (apagada en el lanzamiento) |
-| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-20 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19; la meta superada y quién paga las devoluciones, decisiones 68 a 70, y las deudas con KORUM, la validez de los vales, el comercio sin moderar y el cierre de los pagos, decisiones 75, 76, 78 y 79, el 2026-11-20) | La entidad, en el alta |
+| Condiciones para entidades | [condiciones-entidades.md](condiciones-entidades.md) | 2026-11-21 | Validado por el promotor (el cargo por cancelación, decisión 63, el 2026-11-19; la meta superada y quién paga las devoluciones, decisiones 68 a 70, y las deudas con KORUM, la validez de los vales, el comercio sin moderar y el cierre de los pagos, decisiones 75, 76, 78 y 79, el 2026-11-20) | La entidad, en el alta |
 | Condiciones para comercios | [condiciones-comercios.md](condiciones-comercios.md) | 2026-11-20 | Validado por el promotor (el patrocinio sin moderar, decisión 78, el 2026-11-20) | El comercio, con casilla, en cada pago y en cada renovación |
-| Política de privacidad | [politica-de-privacidad.md](politica-de-privacidad.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
+| Política de privacidad | [politica-de-privacidad.md](politica-de-privacidad.md) | 2026-11-21 | Validado por el promotor (las condiciones aceptadas de los §3.3, §3.9 y §8, el 2026-11-21) | No se acepta: se informa |
 | Política de cookies | [politica-de-cookies.md](politica-de-cookies.md) | 2026-11-18 | Validado por el promotor | No se acepta: se informa |
 | Primera capa de cada formulario | [primeras-capas.md](primeras-capas.md) | 2026-11-20 | Validado por el promotor (la aportación voluntaria y el patrocinio sin moderar, decisiones 78 y 80, el 2026-11-20) | Textos cortos de los formularios (van a los catálogos) |
 | Contrato de encargo del tratamiento | [contrato-de-encargo.md](contrato-de-encargo.md) | 2026-11-18 | Validado por el promotor | La entidad, en el alta |
 | Evaluación de impacto (modelo de la AEPD) | [evaluacion-de-impacto.md](evaluacion-de-impacto.md) | 2026-11-18 | Validado por el promotor | No se acepta ni se publica: documento interno |
-| Tabla única de plazos de conservación | [tabla-de-plazos.md](tabla-de-plazos.md) | 2026-11-18 | Validado por el promotor | No se acepta ni se publica: documento interno. Manda sobre CUMPLIMIENTO §6 y sobre la política de privacidad §8 |
+| Tabla única de plazos de conservación | [tabla-de-plazos.md](tabla-de-plazos.md) | 2026-11-21 | Validado por el promotor | No se acepta ni se publica: documento interno. Manda sobre CUMPLIMIENTO §6 y sobre la política de privacidad §8 |
 | Registro de actividades de tratamiento (RGPD, art. 30) | [registro-de-actividades.md](registro-de-actividades.md) | 2026-11-18 | Validado por el promotor | No se acepta ni se publica: documento interno |
 
 **Convenciones**
@@ -28,7 +28,7 @@
 - La **versión** es la fecha de redacción (`AAAA-MM-DD`), el mismo formato que usa la consola. Al validarse un texto, su versión pasa a ser la fecha de la validación.
 - El recuadro inicial de cada archivo (las líneas que empiezan por `>` antes de la primera raya) son notas internas: **no se publica**.
 - Los textos son Markdown sin HTML, que es lo que admite la página pública.
-- Los enlaces entre documentos apuntan a los archivos de esta carpeta; el Sprint 5.10a los cambia por las rutas públicas.
+- Los enlaces entre documentos apuntan a los archivos de esta carpeta; al pintar cada página se cambian por su ruta pública (Sprint 5.10a). Los documentos internos (tabla de plazos, evaluación de impacto y registro de actividades) no se enlazan: se quedan en texto.
 
 ## 2. Datos que faltan y rellena el promotor (P14)
 
@@ -41,10 +41,10 @@ Aparecen entre dobles corchetes y salen del ajuste `platform.company` de la cons
 | `[[DOMICILIO SOCIAL]]` | Domicilio | `platform.company.address` |
 | `[[EMAIL DE SOPORTE]]` | Buzón de ayuda | `platform.company.supportEmail` |
 | `[[EMAIL DE PRIVACIDAD]]` | Buzón de privacidad | `platform.company.privacyEmail` |
-| `[[DATOS REGISTRALES]]` | Registro Mercantil, tomo, folio y hoja | **No existe en la consola:** campo nuevo en el Sprint 5.10a |
+| `[[DATOS REGISTRALES]]` | Registro Mercantil, tomo, folio y hoja | `platform.company.registryData` (campo nuevo y opcional desde el Sprint 5.10a) |
 | `[[DOMINIO]]` | Dirección del sitio | `NEXT_PUBLIC_APP_URL` |
 
-## 3. Qué necesita el Sprint 5.10a para publicarlos
+## 3. Qué necesitaba el Sprint 5.10a para publicarlos (hecho el 2026-11-21)
 
 1. **Más tipos de documento.** La consola tiene hoy cuatro (`terminos`, `privacidad`, `cookies` y `aviso-legal`). Hacen falta nueve: los cuatro actuales (`terminos` pasa a ser las condiciones de uso), `condiciones-entidades`, `condiciones-comercios`, `condiciones-entradas-y-vales`, `condiciones-aportacion-mensual` y `contrato-de-encargo`. Cada uno con su versión, porque cada aceptación guarda la del texto que aceptó.
 2. **Un campo nuevo** en `platform.company`: los datos registrales. No hay cláusula de sumisión a unos juzgados concretos: en condiciones generales no tendría efecto (LEC, art. 54.2).
@@ -63,14 +63,14 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Aviso al voluntario, plazo de las lecturas de portería (1 año) y «no reenvíes el enlace» | Privacidad §3.10 y §8; primeras capas §8 | 5.13 (hecho) |
 | Vales (todo el apartado), con la validez que fija la entidad y la cancelación antes y después de liquidar | Entradas y vales §4; entidades §9 | 5.14a, 5.14b y 5.14c (hecho) |
 | Quién vende entradas y vales (una empresa o una entidad sin ánimo de lucro), dentro de la ventana de resumen | Entradas y vales §1; primeras capas §2 | 5.15 |
-| Páginas públicas, archivo de versiones, aceptación del alta, línea de la pantalla de acceso | Todos; primeras capas §4 y §11 | 5.10a |
+| Páginas públicas, archivo de versiones, aceptación del alta, línea de la pantalla de acceso | Todos; primeras capas §4 y §11 | 5.10a (hecho) |
 | Rastros de seguridad a 12 meses y dentro de la copia de datos; texto de la supresión | Privacidad §8, §9 y §10 | 5.10b |
 | Documento de identidad visible solo para quien lo sube, con aviso por email a la persona representante si lo sube otra; párrafo de la invitación; cookie del buzón con su plazo | Privacidad §3.9; primeras capas §4 y §5 | 5.10c |
 | Casilla obligatoria y ventana de resumen en cada pago, versión guardada y resumen en el recibo | Primeras capas §1, §2, §3 y §7 | 5.15 (comercios, 5.16b) |
 | Aportación voluntaria sin recuperación en 14 días (decisión 80); Mi Hucha apagada, con condiciones propias y devolución de la gestión | Generales §5; aportación mensual | 5.15 |
 | Comercios en dos modos, casilla, 14 días de moderación (sin decisión, admitido: decisión 78), ampliaciones, renovación doble, baja de los emails, datos que recibe la entidad (el contacto, en los dos modos), plazo del contacto (5 años si dona) | Comercios; entidades §10; privacidad §3.8 y §8 | 5.16 |
 | Campaña vencida: 14 días y devolución automática; email con la fecha exacta; vínculo del voto | Generales §4.3; entidades §7.3 | 5.17 |
-| Tarifas a 30 días y tarifa guardada; versión anterior de los textos de una campaña | Entidades §5.3 y §6.3 | 5.18 |
+| Tarifas aceptadas en cada campaña y guardadas (decisión 87); versión anterior de los textos de una campaña | Entidades §5.3 y §6.3 | 5.18 |
 | Liquidación solo a la entidad, entrega automática y aviso de cada liberación con firma única | Entidades §4.2 y §7.2 | 5.19 |
 | Contracargo de una campaña ya liquidada: revisión y decisión de KORUM, sin descuento automático | Entidades §7.4 | 5.19b |
 | IVA incluido y facturas; una sola factura a la entidad por todo lo retenido, pasarela incluida | Generales §11; entidades §6.1; comercios §8 | 5.20 |
@@ -78,7 +78,7 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Certificado al conseguirse la campaña (el de un comercio, desde el pago); colegios con ánimo de lucro con entradas, vales y patrocinio con publicidad, que entra en su Fondo de actividades | Generales §6; comercios §4 y §7; entidades §3, §10.4 y §12 | 5.22 |
 | Retirada de una imagen en 72 horas; denuncia de una respuesta; aviso del formulario de soporte; plantillas orientativas | Entidades §5.1 y §11; aviso legal §4; primeras capas §6 | 5.24a |
 | Estadísticas de visitas sin cookies | Privacidad §3.12; cookies §5 | 5.26 |
-| Contrato de encargo publicado con sus anexos y aceptado en el alta; aviso automático de 30 días al cambiar las condiciones para entidades, el contrato o la lista de proveedores | Contrato de encargo §1, §10 y §17; entidades §17 | 5.10a |
+| Contrato de encargo publicado con sus anexos y aceptado en el alta; aviso automático de 30 días al cambiar las condiciones para entidades, el contrato o la lista de proveedores (al momento, si es un cambio urgente de proveedor) | Contrato de encargo §1, §10 y §17; entidades §17 | 5.10a (hecho) |
 | Plazos nuevos: descripción de las ideas y respuestas de la entidad, solicitudes de derechos, altas sin verificar, alertas y tareas; auditoría, relevos, quién lanzó una votación y aportaciones desvinculados de la cuenta a los 6 años; todos los plazos reunidos en un archivo del código | Tabla de plazos §3.1, §3.3, §3.4, §3.9, §3.10 y §4 | 5.10b |
 | Compromiso de confidencialidad y revisión semestral de los accesos a la consola; las búsquedas de la consola que cruzan varias entidades anotan de qué entidad son | Contrato de encargo §7 y §8; tabla de plazos §3.10 | 5.10c |
 | Baja de la entidad con una sola firma: 30 días para descargar sus datos, cierre del acceso y borrado de lo que no tiene plazo legal. Suspensión por KORUM: la entidad consulta su panel, pero no publica, cambia, firma ni mueve dinero hasta que KORUM levanta la suspensión; cierre con 30 días de aviso | Contrato de encargo §3 y §14; entidades §2 y §15; comercios §5.3; tabla de plazos §3.9 | 5.10d |
@@ -96,7 +96,7 @@ Los textos describen la plataforma **como saldrá a cobrar dinero real**, con la
 | Cláusula (punto de CUMPLIMIENTO §9) | Dónde está |
 | :--- | :--- |
 | Firma única (`L-046`) | Entidades §4.2; primeras capas §9 |
-| Tarifas a 30 días y baja libre y sin coste (`L-056`) | Entidades §2, §6.3 y §15 |
+| Tarifas aceptadas en cada campaña (decisión 87) y baja libre y sin coste (`L-056`) | Entidades §2, §6.3 y §15 |
 | El dinero de un comercio admitido no se devuelve (`L-076`) | Comercios §5.3 y §6; entidades §10.3 |
 | KORUM no media si la entidad retira el anuncio (`L-091`) | Comercios §5.3; entidades §10.3 |
 | Textos que escribe la entidad (`L-037`) | Entidades §5.1; comercios §5.2 |
@@ -200,7 +200,7 @@ Los documentos de la segunda entrega son el [contrato de encargo](contrato-de-en
 - **Qué pasa hoy:** no está definido.
 - **Ejemplo:** KORUM cambia de proveedor de emails: el nuevo recibirá los emails de las familias de sus 160 entidades. ¿Hay que pedir permiso a cada entidad, o basta con avisarlas?
 - **Opciones:** (a) aviso por email 30 días antes y, si la entidad no está de acuerdo, puede irse sin coste; (b) pedir permiso a cada entidad antes de cada cambio.
-- **Recomendación:** (a), con una excepción para las urgencias (un proveedor que cierra o que tiene un problema de seguridad): se avisa en cuanto se produce. Es el mismo plazo que ya vale para los cambios de condiciones y de tarifas (decisiones 34 y 54).
+- **Recomendación:** (a), con una excepción para las urgencias (un proveedor que cierra o que tiene un problema de seguridad): se avisa en cuanto se produce. Es el mismo plazo que ya vale para los cambios de condiciones (decisión 54); las tarifas, desde la decisión 87, se aceptan en cada campaña y no llevan preaviso.
 - **Decidido por el promotor (decisión 58):** (a), con la excepción de las urgencias.
 
 ### 8.5 Auditorías de una entidad a KORUM

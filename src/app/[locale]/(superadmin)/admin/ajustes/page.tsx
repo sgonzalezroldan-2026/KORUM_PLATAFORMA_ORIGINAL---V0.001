@@ -110,7 +110,7 @@ export default async function AdminSettingsPage({ params, searchParams }: { para
         <BackToIndex label={t('backToIndex')} />
         <Block id="textos" title={t('sections.textos.title')} hint={t('sections.textos.hint')}>
           <CompanySettings field={view.fields['platform.company']} />
-          <LegalSettings overview={view.legal.overview} selected={view.legal.selected} policyVersion={view.legal.policyVersion} suggestedVersion={suggestedVersion} />
+          <LegalSettings overview={view.legal.overview} selected={view.legal.selected} archive={view.legal.archive} suggestedVersion={suggestedVersion} />
         </Block>
         <BackToIndex label={t('backToIndex')} />
         <Block id="limites" title={t('sections.limites.title')} hint={t('sections.limites.hint')}>

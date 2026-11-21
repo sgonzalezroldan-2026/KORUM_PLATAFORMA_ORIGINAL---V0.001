@@ -7,6 +7,7 @@ import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { safeNextPath } from '@/lib/auth/protected-paths';
 import { localizedPath } from '@/lib/seo/marketing-routes';
+import { AccountFirstLayer } from '@/components/legal/account-first-layer';
 
 type Params = { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -35,7 +36,7 @@ export default async function LoginPage({ params, searchParams }: Params) {
           {t('title')}
         </h1>
         <p className="text-ink-soft">{t('subtitle')}</p>
-        <LoginForm continueUrl={continueUrl} loginUrl={localizedPath(locale, '/login')} initialError={error} />
+        <LoginForm continueUrl={continueUrl} loginUrl={localizedPath(locale, '/login')} initialError={error} firstLayer={<AccountFirstLayer locale={locale} testId="login-first-layer" />} />
       </section>
       <p className="text-center text-ink-soft">
         {t('noAccount')}{' '}

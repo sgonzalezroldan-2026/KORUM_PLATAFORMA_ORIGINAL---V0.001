@@ -14,7 +14,7 @@ import { eraseOwnAccount, type EraseOutcome } from '@/services/account/account-p
 import { getPaymentProvider } from '@/services/payments/provider-factory';
 import { recordForeignPasskeyAttempt } from '@/services/audit/account-probes';
 import { writeAudit } from '@/services/audit/audit.service';
-import { getSetting } from '@/services/settings/settings.service';
+import { policyForUser } from '@/services/legal/legal-archive.service';
 
 /**
  * Acciones de *Mi cuenta* (Sprint 3.7). La persona sale siempre de la sesión: ninguna acción acepta un identificador de usuario. Exportar los
@@ -36,8 +36,8 @@ export async function withdrawFingerprintFromAccountAction(): Promise<{ status: 
   const session = await getAuthSession();
   if (!session) return { status: 'LOGIN_REQUIRED' };
   const db = getPrisma();
-  const policyVersion = (await getSetting(db, 'privacy.policyVersion')) ?? '2026-11-01';
-  await recordConsent(db, { userId: session.userId, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion, source: 'cuenta' });
+  const policy = await policyForUser(db, session.userId);
+  await recordConsent(db, { userId: session.userId, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: policy?.version ?? null, policyLocale: policy?.locale ?? null, source: 'cuenta' });
   return { status: 'WITHDRAWN' };
 }
 

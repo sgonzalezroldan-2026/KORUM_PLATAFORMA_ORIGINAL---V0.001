@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import pg from 'pg';
 import type { TestProject } from 'vitest/node';
 import { isKnownAuditAction } from '../../src/core/audit/audit-catalog';
+import { loadLegalSeedTexts } from '../../src/seed/legal-texts';
 import { DEFAULT_TEST_DATABASE_URL, TEST_SCHEMA, withSchema } from './test-schema';
 
 declare module 'vitest' {
@@ -56,6 +57,7 @@ export default async function setup(project: TestProject) {
   }
 
   await reserveSeedIdentifiers(baseUrl);
+  await publishLegalTexts(baseUrl);
   await resetSearchPath(baseUrl);
   project.provide('testDatabaseUrl', baseUrl);
   return () => assertAuditActionsAreCatalogued(baseUrl);
@@ -90,6 +92,29 @@ async function reserveSeedIdentifiers(connectionString: string) {
     await client.connect();
     for (const table of ['Initiative', 'Sponsor', 'Idea']) {
       await client.query(`ALTER SEQUENCE "${TEST_SCHEMA}"."${table}_id_seq" RESTART WITH 100000`);
+    }
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Los textos legales de docs/legal, publicados en castellano como en la semilla (Sprint 5.10a): sin ellos ninguna entidad se puede dar de alta y ningún
+ * consentimiento se puede registrar. Las pruebas que publican versiones propias usan otros idiomas o versiones posteriores.
+ */
+async function publishLegalTexts(connectionString: string) {
+  const client = new pg.Client({ connectionString });
+  try {
+    await client.connect();
+    for (const text of loadLegalSeedTexts()) {
+      await client.query(
+        `INSERT INTO "${TEST_SCHEMA}"."LegalDocumentVersion" ("document", "locale", "version", "markdown", "contentSha256", "publishedAt", "effectiveAt") VALUES ($1, $2::"${TEST_SCHEMA}"."Locale", $3, $4, $5, now(), now())`,
+        [text.document, text.locale, text.version, text.markdown, text.contentSha256]
+      );
+      await client.query(`INSERT INTO "${TEST_SCHEMA}"."PlatformSetting" ("key", "valueJson", "updatedAt") VALUES ($1, $2, now())`, [
+        `legal.${text.document}.${text.locale}`,
+        JSON.stringify({ version: text.version, status: 'PUBLICADO', markdown: text.template })
+      ]);
     }
   } finally {
     await client.end();

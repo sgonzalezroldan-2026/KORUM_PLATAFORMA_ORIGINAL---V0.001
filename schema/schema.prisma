@@ -673,6 +673,7 @@ model User {
   deviceAccounts        DeviceAccount[]
   signatureAudits       IdeaSignatureAudit[]
   consentRecords        ConsentRecord[]
+  legalAcceptances      LegalAcceptance[]
   privacyRequests       PrivacyRequest[]
   escrowLedgerEntries   EscrowLedgerEntry[]
 
@@ -868,6 +869,7 @@ model Organization {
   categories            OrganizationCategory[]
   initiatives           Initiative[]
   partialRefunds        PartialRefund[]
+  legalAcceptances      LegalAcceptance[]
   ideas                 Idea[]
   sponsors              Sponsor[]
   sponsorAllocations    SponsorAllocation[]
@@ -2050,12 +2052,56 @@ model ConsentRecord {
   purpose          ConsentPurpose
   granted          Boolean
   policyVersion    String
+  /// Idioma del texto de la política que se aceptó (Sprint 5.10a): con la versión, identifica el texto archivado. Vacío en los consentimientos anteriores.
+  policyLocale     Locale?
   source           String // "banner", "checkout", "ajustes"...
   createdAt        DateTime       @default(now())
   user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   device           Device?        @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   @@index([userId, purpose])
+}
+
+/// Archivo inmutable de cada versión publicada de un texto legal (Sprint 5.10a, `L-057`): el texto tal como se publicó, su huella SHA-256 y sus fechas.
+/// Lo escribe solo la publicación desde la consola (`legal.{documento}.{idioma}`), en la misma transacción. Un trigger impide reescribirlo y borrarlo.
+/// `effectiveAt`: desde cuándo se aplica a quien ya lo había aceptado. Es la fecha de publicación, salvo en las condiciones para entidades y el contrato
+/// de encargo, que llevan 30 días de aviso cuando sustituyen a una versión anterior (decisión 54; contrato de encargo, cláusulas 10 y 17).
+model LegalDocumentVersion {
+  id            Int               @id @default(autoincrement())
+  document      String
+  locale        Locale
+  version       String
+  markdown      String
+  contentSha256 String
+  publishedAt   DateTime
+  effectiveAt   DateTime
+  /// Qué cambia respecto a la versión anterior, en palabras del Super-Admin (obligatorio en una versión nueva de los textos de las entidades; va en el aviso).
+  /// Quién la publicó no se guarda aquí, sino en la auditoría (`settings.update`), que sí se desvincula de la cuenta con su plazo.
+  changeSummary String?
+  acceptances   LegalAcceptance[]
+
+  @@unique([document, locale, version])
+  @@index([document, locale, publishedAt])
+}
+
+/// Quién aceptó qué texto legal, en qué idioma y versión, y cuándo (Sprint 5.10a, `QA-LEG01` y `QA-LEG02`). La clave foránea a `LegalDocumentVersion`
+/// impide registrar una aceptación de una versión que no está publicada. No se reescribe: solo se desvincula de la cuenta si esta se borra.
+/// `source`: `alta` (la entidad acepta sus condiciones y el contrato de encargo), `cuenta` (cuenta nueva al entrar) o `hucha` (aportación mensual).
+model LegalAcceptance {
+  id             Int                  @id @default(autoincrement())
+  userId         String?
+  organizationId String?
+  document       String
+  locale         Locale
+  version        String
+  source         String
+  acceptedAt     DateTime             @default(now())
+  legalVersion   LegalDocumentVersion @relation(fields: [document, locale, version], references: [document, locale, version], onDelete: Restrict)
+  user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  organization   Organization?        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([organizationId, document])
 }
 
 model PrivacyRequest {

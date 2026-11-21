@@ -1,6 +1,7 @@
 import { isIP } from 'node:net';
 import { z } from 'zod';
 import { CRAWLER_USER_AGENT, LEGAL_DOCUMENTS, LEGAL_LOCALES, LEGAL_VERSION_PATTERN, SEARCH_VERIFICATION_TOKEN, type LegalDocument, type LegalLocale } from '@/core/admin/settings-model';
+import { LEGAL_KEY_PATTERN } from '@/core/legal/legal-catalog';
 import { validateTaxId } from '@/core/tax/tax-id';
 
 /**
@@ -24,7 +25,9 @@ const company = z.object({
   taxId,
   address: text(300),
   supportEmail: z.email(),
-  privacyEmail: z.email()
+  privacyEmail: z.email(),
+  /** Registro Mercantil, tomo, folio y hoja (Sprint 5.10a): sale en el aviso legal (`[[DATOS REGISTRALES]]`). Opcional: una sociedad recién constituida aún no los tiene. */
+  registryData: text(300).optional()
 });
 
 const acknowledgement = z.object({ code: text(80), fingerprint: text(200), acknowledgedById: text(80), acknowledgedAt: z.iso.datetime(), note: z.string().max(1000) });
@@ -72,8 +75,8 @@ export const SETTING_DEFINITIONS = {
   'seo.verification.google': def(z.string().trim().regex(SEARCH_VERIFICATION_TOKEN, 'El código de verificación solo lleva letras, cifras, guion y guion bajo (8 a 200)'), { auditValue: true }),
   'seo.verification.bing': def(z.string().trim().regex(SEARCH_VERIFICATION_TOKEN, 'El código de verificación solo lleva letras, cifras, guion y guion bajo (8 a 200)'), { auditValue: true }),
   'platform.company': def(company, { auditValue: false }),
-  'pricing.acknowledgements': def(z.array(acknowledgement), { defaultValue: [], auditValue: false }),
-  'privacy.policyVersion': def(z.string().regex(LEGAL_VERSION_PATTERN), { defaultValue: '2026-11-01', auditValue: true })
+  // `privacy.policyVersion` ya no existe (Sprint 5.10a): la versión de la política que guarda cada consentimiento sale del archivo de textos legales.
+  'pricing.acknowledgements': def(z.array(acknowledgement), { defaultValue: [], auditValue: false })
 } satisfies Record<string, SettingDefinition<unknown>>;
 
 export { LEGAL_DOCUMENTS, LEGAL_LOCALES };
@@ -82,7 +85,7 @@ export type LegalText = z.infer<typeof legalText>;
 
 /** Límites de intentos editables (`limits.gatePinMaxFailures`, `limits.otpMaxAttempts`…). Enteros positivos, nunca 0: un 0 bloquearía el servicio. */
 const LIMIT_KEY = /^limits\.[a-z][A-Za-z0-9]{2,60}$/;
-const LEGAL_KEY = new RegExp(`^legal\\.(${LEGAL_DOCUMENTS.join('|')})\\.(${LEGAL_LOCALES.join('|')})$`);
+const LEGAL_KEY = LEGAL_KEY_PATTERN;
 
 type ExactSettingKey = keyof typeof SETTING_DEFINITIONS;
 export type LegalSettingKey = `legal.${LegalDocument}.${LegalLocale}`;

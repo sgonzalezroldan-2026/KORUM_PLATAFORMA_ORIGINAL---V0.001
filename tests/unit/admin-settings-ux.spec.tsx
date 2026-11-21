@@ -147,7 +147,7 @@ describe('errores junto al campo y teclado', () => {
   it('un error al publicar un texto cierra la confirmación, nombra el campo («Versión») y lleva el foco a él con su mensaje', async () => {
     const user = userEvent.setup();
     actions.saveLegalTextAction.mockResolvedValue({ status: 'REJECTED', reason: 'VERSION_OLDER', fields: ['version'] });
-    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />);
     await user.type(screen.getByTestId('legal-markdown'), ' Más.');
     await user.click(screen.getByTestId('legal-save'));
     await user.click(screen.getByTestId('legal-confirm'));
@@ -174,7 +174,7 @@ describe('errores junto al campo y teclado', () => {
     expect(screen.queryByTestId('team-revoke-yes')).toBeNull();
     teamView.unmount();
 
-    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />);
     await user.type(screen.getByTestId('legal-markdown'), ' Más.');
     await user.click(screen.getByTestId('legal-save'));
     await waitFor(() => expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveFocus());
@@ -277,7 +277,7 @@ describe('segunda revisión de experiencia · foco tras el éxito, conflictos, c
 
   it('tras guardar o publicar un texto con éxito el foco pasa al título del editor (existe tras volver a montarlo), no al <body>', async () => {
     const user = userEvent.setup();
-    renderAll(<LegalSettings overview={OVERVIEW} selected={{ document: 'cookies', locale: 'es', settingVersion: 0, text: null }} policyVersion="2026-11-01" suggestedVersion="2026-11-13" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={{ document: 'cookies', locale: 'es', settingVersion: 0, text: null }} archive={[]} suggestedVersion="2026-11-13" />);
     await user.type(screen.getByTestId('legal-markdown'), 'Texto');
     await user.click(screen.getByTestId('legal-save'));
     await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalled());
@@ -290,12 +290,12 @@ describe('segunda revisión de experiencia · foco tras el éxito, conflictos, c
   it('un conflicto de versión de un texto legal nombra el texto en lenguaje llano y lleva el foco al aviso (el campo no existe)', async () => {
     const user = userEvent.setup();
     actions.saveLegalTextAction.mockResolvedValue({ status: 'REJECTED', reason: 'STALE', fields: ['legal.terminos.es'] });
-    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />);
     await user.type(screen.getByTestId('legal-markdown'), ' Más.');
     await user.click(screen.getByTestId('legal-save'));
     await user.click(screen.getByTestId('legal-confirm'));
     const alert = await screen.findByTestId('settings-outcome');
-    expect(alert.textContent).toContain('Revisa: Términos y condiciones · Castellano.');
+    expect(alert.textContent).toContain('Revisa: Condiciones de uso · Castellano.');
     expect(alert.textContent).not.toContain('legal.terminos.es');
     await waitFor(() => expect(alert).toHaveFocus());
   });
@@ -324,7 +324,7 @@ describe('segunda revisión de experiencia · foco tras el éxito, conflictos, c
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     renderAll(
       <UnsavedProvider>
-        <LegalSettings overview={OVERVIEW} selected={{ document: 'cookies', locale: 'es', settingVersion: 0, text: null }} policyVersion="2026-11-01" suggestedVersion="2026-11-13" />
+        <LegalSettings overview={OVERVIEW} selected={{ document: 'cookies', locale: 'es', settingVersion: 0, text: null }} archive={[]} suggestedVersion="2026-11-13" />
       </UnsavedProvider>
     );
     // Sin cambios no pregunta (la navegación del enlace en las pruebas no se completa, solo se comprueba la pregunta).

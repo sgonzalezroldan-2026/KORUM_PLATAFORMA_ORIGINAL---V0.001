@@ -17,6 +17,7 @@ import { writeAudit } from '@/services/audit/audit.service';
 import { startHostedRedirect } from '@/services/checkout/hosted-checkout';
 import type { PaymentProvider } from '@/services/payments/payment-provider';
 import { getSetting } from '@/services/settings/settings.service';
+import { recordLegalAcceptances, resolveLegalVersion } from '@/services/legal/legal-archive.service';
 
 /**
  * Aportación mensual de Mi Hucha (`PLEDGE`, Sprint 3.8, skill de pagos §7). La persona sale siempre de la sesión y la entidad de su `orgSlug`
@@ -49,9 +50,6 @@ export const openPledgeCampaigns = (now: Date) => ({ status: 'FUNDRAISING', form
 
 /** Estados en los que la aportación sigue viva: no se puede empezar otra con la misma entidad. */
 const LIVE_STATUSES = ['ACTIVE', 'PAUSED'] as const;
-
-/** Versión de los textos legales que acepta quien da de alta la aportación (prueba del mandato de los cobros sin la persona delante). */
-const FALLBACK_POLICY_VERSION = '2026-11-01';
 
 type PledgeAuditAction = 'pledge.started' | 'pledge.paused' | 'pledge.resumed' | 'pledge.campaign_changed' | 'pledge.cancelled';
 
@@ -121,7 +119,11 @@ export async function startPledge(deps: PledgeDeps, raw: unknown, context: { ses
   const feeCents = pledgeFeeCents(input.amountCents, rules);
   const order = newPledgeOrder();
   const fiscal = fiscalOf(input, deps);
-  const termsVersion = (await getSetting(db, 'privacy.policyVersion')) ?? FALLBACK_POLICY_VERSION;
+  // Versión publicada de las condiciones de uso en el idioma de la persona (prueba del mandato de los cobros sin la persona delante). Sin condiciones
+  // publicadas no se programa ningún cobro (Sprint 5.10a). Las condiciones propias de la aportación mensual, con su casilla, llegan en el Sprint 5.15.
+  const terms = await resolveLegalVersion(db, 'terminos', input.locale);
+  if (!terms) return { status: 'UNAVAILABLE' };
+  const termsVersion = terms.version;
 
   const subscriptionId = await inTransaction(db, async (tx) => {
     // Un alta anterior con esta entidad que nunca se pagó queda sustituida por esta: si aún se pagara, ese mes cuenta como donación y nada más.
@@ -161,6 +163,8 @@ export async function startPledge(deps: PledgeDeps, raw: unknown, context: { ses
         createdAt: now
       }
     });
+    // Con la versión y el idioma del texto, como cada aceptación (clave foránea al archivo de textos legales).
+    await recordLegalAcceptances(tx, { userId: context.session.userId, organizationId: null, source: 'hucha', items: [{ document: 'terminos', locale: terms.locale, version: terms.version }], now });
     // Programar una aportación es actividad de la cuenta (como aportar, heredado del 3.2).
     await tx.user.updateMany({ where: { id: context.session.userId, gdprAnonymizedAt: null }, data: { lastActiveAt: now } });
     return subscription.id;

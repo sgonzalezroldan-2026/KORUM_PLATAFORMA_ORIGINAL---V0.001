@@ -136,6 +136,8 @@ Varias propuestas **cambian decisiones ya tomadas** (CUMPLIMIENTO §8). Ninguna 
 
 **Decisión 10 · Cambios globales de tarifas (L-056): opción A con los matices del promotor, aprobada.**
 
+> **Sustituida el 2026-11-21 por la decisión 87** ([CUMPLIMIENTO §8](CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md)): ya no hay espera de 30 días; cada campaña se publica con las tarifas vigentes, que la entidad acepta expresamente, y las conserva hasta el final. Lo que sigue queda como registro.
+
 - **Todo cambio de tarifas, mejore o empeore, entra en vigor a los 30 días** de guardarse. Nada se aplica al momento.
 - Solo vale para las campañas **publicadas después** de esa fecha; las que ya recaudan conservan sus condiciones.
 - La entidad ve las tarifas vigentes al montar una iniciativa nueva: la pizarra se calcula sola con ellas.

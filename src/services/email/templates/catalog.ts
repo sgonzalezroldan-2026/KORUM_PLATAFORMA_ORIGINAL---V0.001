@@ -22,6 +22,7 @@ import { activityFundPaid, activityFundReceived, activityFundReminder, sponsorAw
 import { sponsorCreditPool, sponsorReassigned, sponsorRejected, sponsorRenewalInvite, sponsorRenewalLink, sponsorRenewalNotice, sponsorRenewed, sponsorWelcome } from './definitions-sponsors';
 import { orgKybStatus, signerHandover } from './definitions-team';
 import { platformMessage } from './definitions-platform';
+import { legalChangeNotice } from './definitions-legal';
 import { initiativeAchievementPhotos, initiativeGoalReachedSupporter, payoutChanged, payoutExecuted } from './definitions-achievements';
 import { eventCancelledBuyer, eventChanged, eventDateReached, eventRescheduledBuyer, gateRefundedPassUsed } from './definitions-events';
 import { expiredDecisionReminder, initiativeExpiredDecided, initiativeRefundingSupporter, initiativeResizeClosed, initiativeResizePoll, initiativeResizeResult } from './definitions-resize';
@@ -103,6 +104,7 @@ const ENTRIES = [
   register('support.received', supportReceived),
   register('support.replied', supportReplied),
   register('platform.message', platformMessage),
+  register('legal.changeNotice', legalChangeNotice),
   register('pledge.charged', pledgeCharged),
   register('pledge.skipped', pledgeSkipped),
   register('pledge.failed', pledgeFailed),

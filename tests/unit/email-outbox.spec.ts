@@ -72,6 +72,7 @@ const SAMPLES: Record<string, unknown> = {
   'account.passkeyAdded': {},
   'support.received': { ticketCode: 'TCK-7K3M9Q', rectification: true, answeredBy: 'SUPERADMIN' },
   'support.replied': { ticketCode: 'TCK-7K3M9Q', organization: 'CEIP Cervantes' },
+  'legal.changeNotice': { document: 'contrato-de-encargo', version: '2026-12-01', effectiveAt: '2026-12-31T09:00:00.000Z', urgent: true },
   'platform.message': { organization: 'CEIP Cervantes', subject: 'Una novedad sobre vuestra campaña', message: 'Hola.\n\nHemos revisado la documentación de vuestra entidad y todo está en orden.\n\nUn saludo.' },
   'pledge.charged': { initiativeId: 1, amountCents: 1_000, feeCents: 25, totalCents: 1_025, reference: 'KH0123456789ABCDEF', cycle: 2, totalMonths: 9, fiscalCertificate: true },
   'pledge.skipped': { amountCents: 1_000, cycle: 3, totalMonths: 9 },

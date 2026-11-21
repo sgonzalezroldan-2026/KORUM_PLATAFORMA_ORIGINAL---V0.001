@@ -11,6 +11,8 @@ import { trackSignInAttempt } from './failed-sign-in';
 import { guardPasskeyRegistration, PASSKEY_REGISTRATION_PATHS, recordPasskeyAdded, retirePreviousSession, SESSION_REPLACING_PATHS } from './passkey-hooks';
 import { hashAuditIp } from '@/services/audit/audit.service';
 import { dataHmac } from '@/core/security/data-hmac';
+import { reportError } from '@/lib/error-reporting';
+import { recordAccountTermsAcceptance } from '@/services/legal/legal-archive.service';
 
 /**
  * Ganchos de seguridad de Better Auth (Sprint 3.2). Todo lo que decide quién puede entrar y qué prueba deja cada inicio de sesión:
@@ -84,6 +86,11 @@ export function buildDatabaseHooks(deps: HookDeps) {
         before: async (user: { email: string; emailVerified?: boolean } & Record<string, unknown>, context: HookContext) => {
           const canonicalEmail = await canonicalEmailForNewUser(deps.db, user.email);
           return { data: { ...user, canonicalEmail, locale: localeFromContext(context), isSuperadmin: false, emailVerifiedAt: user.emailVerified ? now() : null } };
+        },
+        // Al entrar por primera vez se crea la cuenta y se aceptan las condiciones de uso (primeras capas §11, Sprint 5.10a). Si no se pudiera registrar,
+        // la persona entra igual y el fallo queda en el registro de errores: no se le cierra la puerta por algo que no depende de ella.
+        after: async (user: { id: string }) => {
+          await recordAccountTermsAcceptance(deps.db, user.id, now()).catch((error: unknown) => reportError(error, { area: 'auth.terms_acceptance' }));
         }
       },
       update: {

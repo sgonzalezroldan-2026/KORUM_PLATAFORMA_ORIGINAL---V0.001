@@ -6,12 +6,16 @@ import { saveLegalTextAction, saveSectionAction } from '@/app/[locale]/(superadm
 import { focusLater } from '@/components/admin/rules-action';
 import { LEGAL_DOCUMENTS, LEGAL_LOCALES, legalKeyOf, legalToday, nextLegalVersion, parseLegalVersion } from '@/core/admin/settings-model';
 import { Link } from '@/i18n/navigation';
-import type { LegalOverviewRow, LegalSelected, SettingFieldView } from '@/services/admin/platform-settings-view';
+import type { LegalArchiveRow, LegalOverviewRow, LegalSelected, SettingFieldView } from '@/services/admin/platform-settings-view';
+import { ENTITY_NOTICE_DOCUMENTS, legalPathOf, URGENT_DOCUMENT } from '@/core/legal/legal-catalog';
+import { localizedPath } from '@/lib/seo/marketing-routes';
 import { FIELD, fieldErrorId, fieldId, OUTLINE, PRIMARY, SaveBar, SectionForm, SettingsOutcome, useFieldError, useSettingsAction, useUnsaved } from './settings-kit';
 
-type Company = { legalName: string; taxId: string; address: string; supportEmail: string; privacyEmail: string };
-const COMPANY_FIELDS = ['legalName', 'taxId', 'address', 'supportEmail', 'privacyEmail'] as const;
-const EMPTY_COMPANY: Company = { legalName: '', taxId: '', address: '', supportEmail: '', privacyEmail: '' };
+type Company = { legalName: string; taxId: string; address: string; supportEmail: string; privacyEmail: string; registryData: string };
+const COMPANY_FIELDS = ['legalName', 'taxId', 'address', 'supportEmail', 'privacyEmail', 'registryData'] as const;
+const EMPTY_COMPANY: Company = { legalName: '', taxId: '', address: '', supportEmail: '', privacyEmail: '', registryData: '' };
+/** Los datos registrales son opcionales (una sociedad recién constituida aún no los tiene): vacíos, no se envían. */
+const companyPayload = (company: Company) => (company.registryData.trim() === '' ? { ...company, registryData: undefined } : company);
 const companyKey = (field: (typeof COMPANY_FIELDS)[number]) => `platform.company.${field}`;
 
 const companyOf = (value: unknown): Company => {
@@ -20,7 +24,7 @@ const companyOf = (value: unknown): Company => {
   return Object.fromEntries(COMPANY_FIELDS.map((key) => [key, typeof record[key] === 'string' ? record[key] : ''])) as Company;
 };
 
-/** Datos de la empresa. Todavía no los usa ninguna página, email ni factura (se conectan antes de abrir al público); con todos los campos vacíos se borran. */
+/** Datos de la empresa. Rellenan las marcas `[[…]]` de los textos legales publicados (Sprint 5.10a); con todos los campos vacíos se borran. */
 export function CompanySettings({ field }: { field: SettingFieldView | undefined }) {
   const t = useTranslations('admin.settings');
   const [company, setCompany] = useState<Company>(() => companyOf(field?.value));
@@ -36,7 +40,7 @@ export function CompanySettings({ field }: { field: SettingFieldView | undefined
       testId="company-form"
       onSubmit={() =>
         action.run(
-          () => saveSectionAction({ section: 'empresa', values: { 'platform.company': empty ? null : company }, versions: { 'platform.company': field?.version ?? 0 }, confirmations: [] }),
+          () => saveSectionAction({ section: 'empresa', values: { 'platform.company': empty ? null : companyPayload(company) }, versions: { 'platform.company': field?.version ?? 0 }, confirmations: [] }),
           (result) => (result.detail === '0' ? t('savedNoChanges') : t('saved')),
           () => setBaseline(JSON.stringify(company))
         )
@@ -52,7 +56,7 @@ export function CompanySettings({ field }: { field: SettingFieldView | undefined
             // Vacío: «Escribe…»; con algo escrito pero mal: qué revisar.
             const error = errorOf(companyKey(key)) ? (company[key].trim() === '' ? t(`company.required.${key}`) : t(`company.errors.${key}`)) : null;
             return (
-              <div key={key} className={`flex flex-col gap-1 ${key === 'address' ? 'md:col-span-2' : ''}`}>
+              <div key={key} className={`flex flex-col gap-1 ${key === 'address' || key === 'registryData' ? 'md:col-span-2' : ''}`}>
                 <label htmlFor={id} className="font-semibold text-varsity-navy">
                   {t(`company.fields.${key}`)}
                 </label>
@@ -62,7 +66,7 @@ export function CompanySettings({ field }: { field: SettingFieldView | undefined
                   inputMode={key.endsWith('Email') ? 'email' : 'text'}
                   autoComplete="off"
                   spellCheck={false}
-                  maxLength={key === 'address' ? 300 : key === 'supportEmail' || key === 'privacyEmail' ? 254 : 200}
+                  maxLength={key === 'address' || key === 'registryData' ? 300 : key === 'supportEmail' || key === 'privacyEmail' ? 254 : 200}
                   value={company[key]}
                   aria-invalid={error ? true : undefined}
                   aria-describedby={error ? fieldErrorId(companyKey(key)) : undefined}
@@ -155,6 +159,12 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
   const [status, setStatus] = useState<Status>(published ? 'PUBLICADO' : (selected.text?.status ?? 'BORRADOR'));
   const [markdown, setMarkdown] = useState(selected.text?.markdown ?? '');
   const [confirming, setConfirming] = useState(false);
+  // Cambio urgente de proveedor (decisión 58): solo al publicar una versión nueva del contrato de encargo; se aplica al momento en lugar de a los 30 días.
+  const [urgent, setUrgent] = useState(false);
+  const urgentAllowed = selected.document === URGENT_DOCUMENT && published;
+  // «Qué cambia» (auditoría legal del 5.10a; RGPD, art. 28.2): en los textos de las entidades va en el aviso y en la página. El servidor lo exige si la versión sustituye a otra.
+  const summaryAllowed = ENTITY_NOTICE_DOCUMENTS.includes(selected.document) && status === 'PUBLICADO';
+  const [changeSummary, setChangeSummary] = useState('');
   const action = useSettingsAction({ failureFocusId: fieldId('markdown') });
   const errorOf = useFieldError(action.outcome);
   const versionError = errorOf('version');
@@ -179,7 +189,7 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
   };
   const submit = () =>
     action.run(
-      () => saveLegalTextAction({ document: selected.document, locale: selected.locale, version, status, markdown, expectedVersion: selected.settingVersion }),
+      () => saveLegalTextAction({ document: selected.document, locale: selected.locale, version, status, markdown, expectedVersion: selected.settingVersion, urgent: urgentAllowed && urgent, changeSummary: summaryAllowed ? changeSummary : '' }),
       (result) => t(status === 'PUBLICADO' ? 'published' : 'saved', { version: result.detail ?? version }),
       afterSave,
       closeConfirmation
@@ -279,6 +289,37 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
           {t('characters', { count: markdown.length })}
         </p>
       </div>
+      {summaryAllowed ? (
+        <div className="flex flex-col gap-1">
+          <label htmlFor={fieldId('changeSummary')} className="font-semibold text-varsity-navy">
+            {t('changeSummaryLabel')}
+          </label>
+          <textarea
+            id={fieldId('changeSummary')}
+            rows={3}
+            maxLength={500}
+            value={changeSummary}
+            onChange={(event) => setChangeSummary(event.target.value)}
+            aria-describedby={`${ids}-summary`}
+            className="w-full rounded-lg border-2 border-varsity-navy/30 bg-white px-3 py-2 text-sm"
+            data-testid="legal-change-summary"
+          />
+          <p id={`${ids}-summary`} className="text-sm text-ink-soft">
+            {t('changeSummaryHint')}
+          </p>
+        </div>
+      ) : null}
+      {urgentAllowed ? (
+        <div className="flex flex-col gap-1">
+          <label className="inline-flex min-h-11 items-start gap-2 font-semibold text-varsity-navy">
+            <input type="checkbox" className="korum-check korum-check-start" checked={urgent} onChange={(event) => setUrgent(event.target.checked)} aria-describedby={`${ids}-urgent`} data-testid="legal-urgent" />
+            {t('urgentLabel')}
+          </label>
+          <p id={`${ids}-urgent`} className="text-sm text-ink-soft">
+            {t('urgentHint')}
+          </p>
+        </div>
+      ) : null}
       {confirming ? (
         <div
           role="group"
@@ -320,15 +361,44 @@ function LegalEditor({ selected, suggestedVersion }: { selected: LegalSelected; 
   );
 }
 
-export function LegalSettings({ overview, selected, policyVersion, suggestedVersion }: { overview: LegalOverviewRow[]; selected: LegalSelected; policyVersion: string; suggestedVersion: string }) {
+/** Lo publicado de verdad del texto elegido: cada versión del archivo, con su fecha, desde cuándo se aplica y el principio de su huella, y el enlace a su página. */
+function LegalArchive({ selected, archive }: { selected: LegalSelected; archive: LegalArchiveRow[] }) {
+  const t = useTranslations('admin.settings.legal');
+  const locale = useLocale();
+  const date = (value: Date) => new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' }).format(value);
+  const path = legalPathOf(selected.document);
+  return (
+    <section aria-labelledby="legal-archive-title" className="flex flex-col gap-2 rounded-xl bg-varsity-navy/5 p-3 text-sm" data-testid="legal-archive">
+      <h3 id="legal-archive-title" className="font-corp font-extrabold text-varsity-navy">
+        {t('archiveTitle', { document: t(`documents.${selected.document}`), locale: t(`locales.${selected.locale}`) })}
+      </h3>
+      {archive.length === 0 ? (
+        <p>{t('archiveEmpty')}</p>
+      ) : (
+        <ul className="flex flex-col gap-1">
+          {archive.map((row) => (
+            <li key={row.version} className="flex flex-wrap items-center gap-x-2">
+              <a href={`${localizedPath(selected.locale, path)}?version=${encodeURIComponent(row.version)}`} className="inline-flex min-h-11 items-center font-corp font-bold tabular-nums underline underline-offset-4">
+                {row.version}
+              </a>
+              <span>{t('archivePublished', { date: date(row.publishedAt) })}</span>
+              {row.effectiveAt.getTime() !== row.publishedAt.getTime() ? <span>{t('archiveEffective', { date: date(row.effectiveAt) })}</span> : null}
+              <span className="font-mono text-xs text-ink-soft">{t('archiveHash', { hash: row.contentSha256.slice(0, 12) })}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+export function LegalSettings({ overview, selected, archive, suggestedVersion }: { overview: LegalOverviewRow[]; selected: LegalSelected; archive: LegalArchiveRow[]; suggestedVersion: string }) {
   const t = useTranslations('admin.settings.legal');
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-ink-soft">{t('intro')}</p>
-      <p className="rounded-xl bg-varsity-navy/5 p-3 text-sm" data-testid="policy-version">
-        {t('policyVersion', { version: policyVersion })}
-      </p>
       <LegalMatrix overview={overview} selected={selected} />
+      <LegalArchive selected={selected} archive={archive} />
       <LegalEditor key={`${legalKeyOf(selected.document, selected.locale)}:${selected.settingVersion}`} selected={selected} suggestedVersion={suggestedVersion} />
     </div>
   );

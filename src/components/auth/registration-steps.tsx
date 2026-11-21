@@ -5,7 +5,12 @@ import { formatCents } from '@/core/finance/money';
 import { PROVINCES } from '@/core/onboarding/provinces';
 import { CONTENT_LOCALES, LEGAL_FORMS_BY_VERTICAL, VERTICALS } from '@/core/onboarding/registration-rules';
 import type { Locale } from '@/i18n/routing';
-import { CheckboxField, Field, SelectField } from './auth-ui';
+import { FirstLayer, FirstLayerLink } from '@/components/legal/first-layer';
+import { legalPathOf } from '@/core/legal/legal-catalog';
+import type { RegistrationLegalVersions } from '@/core/onboarding/community-registration';
+import type { ReactNode, Ref } from 'react';
+import { localizedPath } from '@/lib/seo/marketing-routes';
+import { CheckboxField, Field, FormAlert, primaryButton, SelectField } from './auth-ui';
 
 /**
  * Los tres pasos del alta (ARQUITECTURA_LANDING §3). Solo dibujan y avisan: las reglas viven en `registration-rules.ts` y el servidor las
@@ -147,7 +152,62 @@ export function SignersStep(props: StepProps) {
   );
 }
 
-export function ActivationStep({ draft, errors, update, exemptLimitCents, groupCount }: StepProps & { exemptLimitCents: number; groupCount: number }) {
+/**
+ * Confirmación de lo aceptado al terminar el alta (LSSI, art. 28; auditoría legal del 5.10a): qué versión de cada texto, en qué idioma y cuándo, con el enlace a esa
+ * versión exacta. Se puede guardar o imprimir con la página.
+ */
+/** Enlace a una versión exacta de un texto, en su idioma, en otra pestaña. */
+function VersionLink({ document, text, newTab, children }: { document: 'condiciones-entidades' | 'contrato-de-encargo'; text: RegistrationLegalVersions['entityTerms']; newTab: string; children: ReactNode }) {
+  return (
+    <a href={`${localizedPath(text.locale, legalPathOf(document))}?version=${encodeURIComponent(text.version)}`} target="_blank" rel="noopener" className="font-semibold text-varsity-navy underline underline-offset-4">
+      {children}
+      <span className="sr-only">{` (${newTab})`}</span>
+    </a>
+  );
+}
+
+export function AcceptedLegal({ legal, acceptedAt }: { legal: RegistrationLegalVersions; acceptedAt: string }) {
+  const t = useTranslations('registration');
+  const locale = useLocale() as Locale;
+  const date = new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Madrid' }).format(new Date(acceptedAt));
+  return (
+    <p className="text-sm text-ink" data-testid="registration-accepted">
+      {t.rich('verify.accepted', {
+        terms: (chunks) => <VersionLink document="condiciones-entidades" text={legal.entityTerms} newTab={t('firstLayer.newTab')}>{chunks}</VersionLink>,
+        contract: (chunks) => <VersionLink document="contrato-de-encargo" text={legal.processingContract} newTab={t('firstLayer.newTab')}>{chunks}</VersionLink>, termsVersion: legal.entityTerms.version, contractVersion: legal.processingContract.version, date })}
+    </p>
+  );
+}
+
+/**
+ * Pantalla final del alta cuando la cuenta de quien dirige ya estaba verificada (no hay código que pedir): confirma lo aceptado y lleva, con un botón, a la verificación en
+ * dos pasos (prerrevisión legal del 5.10a: sin ella, esta persona no veía nunca la confirmación).
+ */
+export function RegistrationReady({ ref, name, cosigner, result }: { ref?: Ref<HTMLHeadingElement>; name: string; cosigner: string; result: { slug: string; legal: RegistrationLegalVersions; acceptedAt: string } }) {
+  const t = useTranslations('registration');
+  const locale = useLocale() as Locale;
+  const next = localizedPath(locale, `/panel/${result.slug}?bienvenida=1`);
+  return (
+    <div className="flex flex-col gap-4">
+      <h2 id="verify-title" ref={ref} tabIndex={-1} className="font-joy text-2xl font-bold text-varsity-navy">
+        {t('verify.title', { name })}
+      </h2>
+      <FormAlert tone="success">{t('verify.createdExisting', { cosigner })}</FormAlert>
+      <AcceptedLegal legal={result.legal} acceptedAt={result.acceptedAt} />
+      <a href={`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(next)}`} className={`${primaryButton} inline-flex items-center`} data-testid="registration-continue">
+        {t('verify.continue')}
+      </a>
+    </div>
+  );
+}
+
+/** Datos de KORUM que cita la primera capa (`platform.company`): si aún no están en la consola, la frase se dice sin ellos. */
+export interface LegalContact {
+  company: string | null;
+  privacyEmail: string | null;
+}
+
+export function ActivationStep({ draft, errors, update, exemptLimitCents, groupCount, legalContact }: StepProps & { exemptLimitCents: number; groupCount: number; legalContact: LegalContact }) {
   const t = useTranslations('registration');
   const locale = useLocale() as Locale;
   return (
@@ -165,6 +225,19 @@ export function ActivationStep({ draft, errors, update, exemptLimitCents, groupC
         <p className="text-sm text-ink-soft">{t('activation.money')}</p>
       </section>
       <CheckboxField label={t('fields.representationDeclared', { legalName: draft.legalName })} checked={draft.representationDeclared} error={errors.representationDeclared} onChange={(event) => update({ representationDeclared: event.target.checked })} required />
+      {/* Primera capa del alta (primeras capas §4): al crear la entidad se aceptan sus condiciones y el contrato de encargo, junto al botón. */}
+      <FirstLayer
+        testId="registration-first-layer"
+        line={t.rich('firstLayer.line', {
+          terms: (chunks) => <FirstLayerLink href={legalPathOf('condiciones-entidades')} newTab={t('firstLayer.newTab')}>{chunks}</FirstLayerLink>,
+          contract: (chunks) => <FirstLayerLink href={legalPathOf('contrato-de-encargo')} newTab={t('firstLayer.newTab')}>{chunks}</FirstLayerLink>,
+          rights: (chunks) => <FirstLayerLink href={legalPathOf('privacidad')} newTab={t('firstLayer.newTab')}>{chunks}</FirstLayerLink>
+        })}
+        summary={t('firstLayer.summary')}
+        items={(['who', 'why', 'recipients', 'others', 'rights'] as const).map((key) => t.rich(`firstLayer.items.${key}`, { company: legalContact.company ?? 'none', email: legalContact.privacyEmail ?? 'none', strong: (chunks) => <strong>{chunks}</strong> }))}
+        privacyLabel={t('firstLayer.privacy')}
+        newTab={t('firstLayer.newTab')}
+      />
     </div>
   );
 }

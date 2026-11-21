@@ -1,5 +1,5 @@
 import { clearFingerprintsOf } from '@/core/security/device-quorum.service';
-import type { ConsentPurpose } from '@/generated/prisma/enums';
+import type { ConsentPurpose, Locale } from '@/generated/prisma/enums';
 import { inTransaction, type Db } from '@/lib/db';
 
 /**
@@ -27,8 +27,13 @@ export interface ConsentChange {
   userId: string;
   purpose: ConsentPurpose;
   granted: boolean;
-  /** Versión de la política vigente que la persona tenía delante (ajuste `privacy.policyVersion`). */
-  policyVersion: string;
+  /**
+   * Versión e idioma de la política de privacidad publicada que la persona tenía delante (`policyForUser`, Sprint 5.10a). Para **dar** un consentimiento son
+   * obligatorios y tienen que estar en el archivo de textos legales. Para **retirarlo** pueden faltar (aún no hay ninguna publicada): se guarda con la versión y
+   * el idioma con los que se dio y, si nunca se dio, no se escribe nada, pero sus efectos se aplican igual.
+   */
+  policyVersion: string | null;
+  policyLocale?: Locale | null;
   source: ConsentSource;
   deviceId?: string | null;
 }
@@ -36,17 +41,23 @@ export interface ConsentChange {
 /** Registra un consentimiento dado o retirado y aplica sus efectos. Repetir el mismo estado no crea filas nuevas. */
 export async function recordConsent(db: Db, change: ConsentChange, now: Date = new Date()): Promise<{ changed: boolean }> {
   if (!CONSENT_PURPOSES.includes(change.purpose)) throw new ConsentInputError('Finalidad de consentimiento desconocida');
-  if (!POLICY_VERSION.test(change.policyVersion)) throw new ConsentInputError('La versión de la política debe ser una fecha AAAA-MM-DD');
+  if (change.policyVersion !== null && !POLICY_VERSION.test(change.policyVersion)) throw new ConsentInputError('La versión de la política debe ser una fecha AAAA-MM-DD');
+  if (change.granted && (change.policyVersion === null || !change.policyLocale)) throw new ConsentInputError('No hay ninguna política de privacidad publicada');
+  if (change.policyVersion !== null && !change.policyLocale) throw new ConsentInputError('Falta el idioma de la política de privacidad');
   if (!CONSENT_SOURCES.includes(change.source)) throw new ConsentInputError('Origen de consentimiento desconocido');
   return inTransaction(db, async (tx) => {
     // Bloquea a la persona: dos cambios a la vez no pueden dejar un estado distinto del último que se pidió.
     const user = await tx.user.update({ where: { id: change.userId }, data: { updatedAt: now }, select: { gdprAnonymizedAt: true } });
     if (user.gdprAnonymizedAt) throw new ConsentInputError('La cuenta está suprimida');
-    const latest = await tx.consentRecord.findFirst({ where: { userId: change.userId, purpose: change.purpose }, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], select: { granted: true, policyVersion: true } });
-    const unchanged = latest !== null && latest.granted === change.granted && latest.policyVersion === change.policyVersion;
+    // Nunca se registra un consentimiento, dado o retirado, con una versión de la política que no esté publicada (Sprint 5.10a, `QA-LEG01`).
+    if (change.policyVersion !== null && change.policyLocale && (await tx.legalDocumentVersion.count({ where: { document: 'privacidad', locale: change.policyLocale, version: change.policyVersion } })) === 0) throw new ConsentInputError('Esa versión de la política de privacidad no está publicada');
+    const latest = await tx.consentRecord.findFirst({ where: { userId: change.userId, purpose: change.purpose }, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], select: { granted: true, policyVersion: true, policyLocale: true } });
+    const policyVersion = change.policyVersion ?? latest?.policyVersion ?? null;
+    const policyLocale = change.policyVersion !== null ? (change.policyLocale ?? null) : (latest?.policyLocale ?? null);
+    const unchanged = policyVersion === null || (latest !== null && latest.granted === change.granted && latest.policyVersion === policyVersion && latest.policyLocale === policyLocale);
     if (!unchanged) {
       await tx.consentRecord.create({
-        data: { userId: change.userId, deviceId: change.deviceId ?? null, purpose: change.purpose, granted: change.granted, policyVersion: change.policyVersion, source: change.source, createdAt: now }
+        data: { userId: change.userId, deviceId: change.deviceId ?? null, purpose: change.purpose, granted: change.granted, policyVersion, policyLocale, source: change.source, createdAt: now }
       });
     }
     // También si ya estaba retirado: garantiza que no queda ninguna huella aunque una versión anterior del código la hubiera dejado.

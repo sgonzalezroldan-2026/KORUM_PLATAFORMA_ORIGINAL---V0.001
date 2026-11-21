@@ -3,8 +3,12 @@ import { KorumLogo } from '@/components/brand/korum-logo';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { Link } from '@/i18n/navigation';
 import { ACCESSIBILITY_PATH, PILLAR_PAGES } from '@/lib/seo/marketing-routes';
+import { legalPathOf, type LegalDocument } from '@/core/legal/legal-catalog';
 
-/** Pie del Entorno 0: todas las páginas, el selector de idioma y la aclaración de quién es KORUM y quién gestiona el dinero (Regla 03 §4). */
+/** Textos legales del pie (Sprint 5.10a): los que lee cualquier persona. Las condiciones de cada servicio y el contrato de encargo se enlazan desde ellos y desde donde se aceptan. */
+const FOOTER_LEGAL: readonly LegalDocument[] = ['aviso-legal', 'terminos', 'privacidad', 'cookies'];
+
+/** Pie del Entorno 0: todas las páginas, los textos legales, el selector de idioma y la aclaración de quién es KORUM y quién gestiona el dinero (Regla 03 §4). */
 export function SiteFooter() {
   const t = useTranslations('nav');
   const common = useTranslations('common');
@@ -17,7 +21,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t-2 border-varsity-navy/10 bg-white print:hidden">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8">
-        <div className="mobile-stack grid gap-8 md:grid-cols-3">
+        <div className="mobile-stack grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3">
             <KorumLogo size={40} />
             <p className="text-ink-soft">{brand('tagline')}</p>
@@ -44,6 +48,18 @@ export function SiteFooter() {
               </ul>
             </nav>
           ))}
+          <nav aria-label={t('footerLegal')} data-testid="footer-legal">
+            <p className="font-corp font-extrabold text-varsity-navy">{t('footerLegal')}</p>
+            <ul className="mt-2 flex flex-col">
+              {FOOTER_LEGAL.map((document) => (
+                <li key={document}>
+                  <Link href={legalPathOf(document)} className="inline-flex min-h-11 min-w-11 items-center rounded-lg underline-offset-4 hover:underline">
+                    {t(`legal.${document}`)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
         <p className="text-sm text-ink-soft">{common('footerNote')}</p>
       </div>

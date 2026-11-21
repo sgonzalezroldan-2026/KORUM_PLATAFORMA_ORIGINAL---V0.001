@@ -170,7 +170,8 @@
         "notifications": "Correus que t’hem enviat",
         "supportTickets": "Consultes de suport",
         "passkeys": "Claus d’accés",
-        "ideaProposals": "Propostes d’idees i xat amb el centre"
+        "ideaProposals": "Propostes d’idees i xat amb el centre",
+        "legalAcceptances": "Textos legals que has acceptat"
       },
       "fields": {
         "name": "Nom",
@@ -224,7 +225,8 @@
         "pledgeCampaign": "Campanya preferida",
         "nextCharge": "Proper cobrament",
         "alias": "Codi",
-        "sender": "Remitent"
+        "sender": "Remitent",
+        "document": "Document"
       },
       "types": {
         "DONATION": "Donació",
@@ -1000,6 +1002,29 @@
         "where": "Ensenya el teu codi QR al punt de l’entitat per gastar-los.",
         "cta": "Veure els meus vals"
       }
+    },
+    "legal": {
+      "changeNotice": {
+        "subject": {
+          "condiciones-entidades": "Canvien les condicions per a entitats de KORUM",
+          "contrato-de-encargo": "Canvia el contracte d’encàrrec del tractament de KORUM"
+        },
+        "document": {
+          "condiciones-entidades": "les condicions per a entitats",
+          "contrato-de-encargo": "el contracte d’encàrrec del tractament"
+        },
+        "preheader": "S’aplicarà a {organization} des del {date}.",
+        "body": "Hem publicat una versió nova de {document}, que vau acceptar en donar d’alta {organization}. Se us aplicarà des del {date}; fins aleshores continua valent la versió anterior.",
+        "options": "Si el canvi no us convenç, podeu deixar la plataforma sense cap cost. Si canvia la llista de proveïdors (annex III del contracte d’encàrrec), també us hi podeu oposar fins a aquesta data des del formulari d’ajuda del panell.",
+        "version": "Versió nova",
+        "effective": "S’aplica des del",
+        "cta": "Llegir la versió nova",
+        "footnote": "Aquest avís és de KORUM, no de la vostra entitat. El reben les persones que signen per l’entitat.",
+        "urgentBody": "Hem publicat una versió nova de {document} per una urgència: un proveïdor deixa de prestar el servei o hi ha un problema de seguretat. S’aplica a {organization} des d’avui.",
+        "urgentOptions": "Us podeu oposar al canvi des del formulari d’ajuda del panell i, si no us convenç, deixar la plataforma sense cap cost.",
+        "summary": "Què canvia: {summary}",
+        "campaigns": "Les campanyes que ja teníeu publicades continuen amb les condicions amb què es van publicar."
+      }
     }
   },
   "nav": {
@@ -1020,7 +1045,14 @@
       "faq": "Preguntes freqüents",
       "accesibilidad": "Accessibilitat"
     },
-    "account": "El meu compte"
+    "account": "El meu compte",
+    "footerLegal": "Informació legal",
+    "legal": {
+      "aviso-legal": "Avís legal",
+      "terminos": "Condicions d’ús",
+      "privacidad": "Privacitat",
+      "cookies": "Galetes"
+    }
   },
   "cookies": {
     "title": "Galetes opcionals",
@@ -1617,7 +1649,20 @@
       "resetDone": "Contrasenya canviada. Ja pots entrar-hi.",
       "sendResetCode": "Envieu-me el codi",
       "passkey": "Entrar amb clau d’accés",
-      "passkeyIntro": "Vas desar una clau d’accés en aquest mòbil o ordinador? Entra amb l’empremta, la cara o el PIN."
+      "passkeyIntro": "Vas desar una clau d’accés en aquest mòbil o ordinador? Entra amb l’empremta, la cara o el PIN.",
+      "firstLayer": {
+        "line": "En entrar per primera vegada crees el teu compte i acceptes les <terms>condicions</terms>. KORUM fa servir el teu email per donar-te accés. <rights>Els teus drets</rights>",
+        "summary": "Les teves dades",
+        "items": {
+          "who": "<strong>Qui les tracta:</strong> KORUM{company, select, none {} other { ({company})}}.",
+          "why": "<strong>Per a què:</strong> enviar-te l’enllaç o el codi d’accés i mostrar-te les teves aportacions, les teves entrades i els teus documents.",
+          "recipients": "<strong>Qui més les rep:</strong> ningú, tret dels proveïdors tècnics que ens presten servei.",
+          "rights": "<strong>Els teus drets:</strong> des d’El meu compte{email, select, none {} other { o a {email}}}."
+        },
+        "privacy": "Política de privacitat",
+        "newTab": "s’obre en una altra pestanya",
+        "lineExisting": "En acceptar el càrrec, acceptes també les <terms>condicions</terms>, si encara no ho havies fet. KORUM fa servir el teu email per donar-te accés. <rights>Els teus drets</rights>"
+      }
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "El correu o la contrasenya no són correctes.",
@@ -1848,7 +1893,9 @@
       "DIRECTOR_EMAIL_IN_USE": "Aquest correu ja té compte a KORUM. Inicia sessió amb ell i torna a aquest formulari, o fes servir un altre correu.",
       "DISPOSABLE_EMAIL": "No admetem correus temporals. Fes servir un correu habitual.",
       "RATE_LIMITED": "S’han fet massa altes des d’aquesta connexió. Torna-ho a provar d’aquí a una hora.",
-      "UNKNOWN": "No hem pogut completar l’alta. Torna-ho a provar d’aquí a uns segons."
+      "UNKNOWN": "No hem pogut completar l’alta. Torna-ho a provar d’aquí a uns segons.",
+      "LEGAL_CHANGED": "Mentre ompliu el formulari hem publicat una versió nova de les condicions per a entitats o del contracte d’encàrrec. Reviseu-la amb els enllaços de sota i torneu a prémer el botó per crear l’entitat.",
+      "LEGAL_UNAVAILABLE": "Encara no podem donar d’alta entitats: falten per publicar les condicions per a entitats o el contracte d’encàrrec del tractament."
     },
     "verify": {
       "title": "{name} ja és a KORUM!",
@@ -1856,7 +1903,10 @@
       "resent": "T’hem enviat un codi nou.",
       "code": "Codi de 6 xifres",
       "submit": "Verificar i continuar",
-      "resend": "Envieu-me un altre codi"
+      "resend": "Envieu-me un altre codi",
+      "accepted": "Heu acceptat les <terms>condicions per a entitats (versió {termsVersion})</terms> i el <contract>contracte d’encàrrec del tractament (versió {contractVersion})</contract> el {date}. Podeu consultar sempre aquestes versions a la seva pàgina; deseu aquesta pantalla si en voleu una còpia.",
+      "createdExisting": "Hem enviat la invitació a {cosigner}. El teu compte ja estava verificat: només falta la verificació en dos passos.",
+      "continue": "Continuar: verificació en dos passos"
     },
     "codeErrors": {
       "INVALID_OTP": "El codi no és correcte. Revisa’l i torna-ho a provar.",
@@ -1864,6 +1914,20 @@
       "TOO_MANY_ATTEMPTS": "Massa intents amb aquest codi. Demana’n un altre.",
       "RATE_LIMITED": "Massa intents seguits. Espera uns minuts.",
       "UNKNOWN": "No ha funcionat. Torna-ho a provar d’aquí a uns segons."
+    },
+    "legalUnavailable": "L’alta d’entitats s’obrirà quan publiquem les condicions per a entitats i el contracte d’encàrrec del tractament. Torneu-ho a provar d’aquí a uns dies.",
+    "firstLayer": {
+      "line": "En crear l’entitat accepteu les <terms>condicions per a entitats</terms> i el <contract>contracte d’encàrrec del tractament</contract>. KORUM fa servir les vostres dades per a l’alta i les signatures. <rights>Els vostres drets</rights>",
+      "summary": "Les vostres dades",
+      "items": {
+        "who": "<strong>Qui les tracta:</strong> KORUM{company, select, none {} other { ({company})}}.",
+        "why": "<strong>Per a què:</strong> crear l’entitat i els vostres comptes de signant, comprovar la documentació del titular i avisar-vos del que requereix la vostra signatura.",
+        "recipients": "<strong>Qui més les rep:</strong> PAYCOMET, per donar d’alta l’entitat com a destinatària dels pagaments.",
+        "others": "<strong>Si escriviu les dades d’una altra persona</strong> (la cosignatura), li enviarem una invitació on se li explica qui la convida i per a què. Si no l’accepta, les seves dades s’esborren al cap de 30 dies.",
+        "rights": "<strong>Els vostres drets:</strong> des d’El meu compte{email, select, none {} other { o a {email}}}."
+      },
+      "privacy": "Política de privacitat",
+      "newTab": "s’obre en una altra pestanya"
     }
   },
   "panel": {
@@ -5409,7 +5473,11 @@
         "VERSION_NOT_TODAY": "Un text es publica amb la data d’avui (hora d’Espanya): ni futura ni endarrerida.",
         "SECRET_REQUIRED": "Amb cobraments de proves o reals aquesta clau és imprescindible i el servidor no en té cap altra de reserva: sense ella el servei s’aturaria.",
         "FIELD_REQUIRED": "Amb cobraments de proves o reals aquesta dada és imprescindible i el servidor no en té cap altra de reserva: sense ella els cobraments s’aturarien.",
-        "WALLET_PROVIDER_LOCKED": "Hi ha famílies amb saldo al moneder: no es pot canviar l’entitat que el custodia fins que no n’hi quedi cap."
+        "WALLET_PROVIDER_LOCKED": "Hi ha famílies amb saldo al moneder: no es pot canviar l’entitat que el custodia fins que no n’hi quedi cap.",
+        "UNKNOWN_MARKER": "El text té una marca entre claudàtors dobles que no existeix. Les que valen són: [[RAZÓN SOCIAL]], [[NIF]], [[DOMICILIO SOCIAL]], [[EMAIL DE SOPORTE]], [[EMAIL DE PRIVACIDAD]], [[DATOS REGISTRALES]] i [[DOMINIO]].",
+        "MISSING_COMPANY_DATA": "El text fa servir dades de l’empresa que encara no són a «Dades de l’empresa». Omple-les abans de publicar: la pàgina no pot dir «dada pendent».",
+        "SUMMARY_REQUIRED": "Escriu què canvia: va a l’avís a les persones signants.",
+        "URGENT_NOT_ONLY_PROVIDERS": "Un canvi urgent només pot tocar la llista de proveïdors (annex III). Si canvia res més, publica’l sense marcar-lo com a urgent: s’aplicarà al cap de 30 dies."
       },
       "fields": {
         "paycomet_merchantCode": {
@@ -5638,32 +5706,34 @@
       },
       "company": {
         "title": "Dades de l’empresa",
-        "hint": "Dades de l’empresa. Encara no les fa servir cap pàgina, correu ni factura: es desen per quan es connectin. Amb tots els camps buits s’esborren.",
+        "hint": "Omplen les dades entre claudàtors dobles dels textos legals en publicar-los. Els textos ja publicats conserven les dades amb què es van publicar: si canvien, publica una versió nova de cada text. Amb tots els camps buits s’esborren.",
         "fields": {
           "legalName": "Raó social",
           "taxId": "NIF o CIF",
           "address": "Domicili",
           "supportEmail": "Correu de suport",
-          "privacyEmail": "Correu de privacitat"
+          "privacyEmail": "Correu de privacitat",
+          "registryData": "Dades registrals (Registre Mercantil, tom, foli i full; obligatòries si KORUM és una societat)"
         },
         "errors": {
           "legalName": "Escriu la raó social.",
           "taxId": "El NIF o CIF no és vàlid: revisa l’última xifra o lletra.",
           "address": "Escriu el domicili.",
           "supportEmail": "El correu de suport no és vàlid.",
-          "privacyEmail": "El correu de privacitat no és vàlid."
+          "privacyEmail": "El correu de privacitat no és vàlid.",
+          "registryData": "Escriu les dades registrals en 300 caràcters com a màxim."
         },
         "required": {
           "legalName": "Escriu la raó social.",
           "taxId": "Escriu el NIF o CIF.",
           "address": "Escriu el domicili.",
           "supportEmail": "Escriu el correu de suport.",
-          "privacyEmail": "Escriu el correu de privacitat."
+          "privacyEmail": "Escriu el correu de privacitat.",
+          "registryData": "Escriu les dades registrals."
         }
       },
       "legal": {
-        "intro": "Cada text porta la seva versió (la data de publicació) i el seu estat. Un text publicat no es modifica sense canviar de versió: per canviar-lo es publica una versió nova, i cada consentiment desa la versió de la política que la persona va acceptar. La consola només desa el text vigent de cadascun.",
-        "policyVersion": "Versió vigent de la política de privacitat: {version}. La desa cada consentiment i puja sola quan la política està publicada en els tres idiomes (passa a la més antiga de les tres versions).",
+        "intro": "Cada text porta la seva versió (la data de publicació) i el seu estat. En publicar, la versió es guarda a l’arxiu tal com es va publicar, amb la seva empremta, i es veu a la seva pàgina pública; un text publicat no es modifica: se’n publica una versió nova. Mentre un text no estigui traduït, la seva pàgina en català o en anglès mostra el castellà amb un avís. En publicar una versió nova de les condicions per a entitats o del contracte d’encàrrec, les persones signants reben un email i se’ls aplica al cap de 30 dies.",
         "matrixTitle": "Textos legals per document i idioma",
         "colDocument": "Document",
         "locales": {
@@ -5672,10 +5742,15 @@
           "en": "Anglès"
         },
         "documents": {
-          "terminos": "Termes i condicions",
+          "terminos": "Condicions d’ús",
           "privacidad": "Política de privacitat",
           "cookies": "Política de galetes",
-          "aviso-legal": "Avís legal"
+          "aviso-legal": "Avís legal",
+          "condiciones-entradas-y-vales": "Condicions d’entrades i vals",
+          "condiciones-aportacion-mensual": "Condicions de l’aportació mensual",
+          "condiciones-entidades": "Condicions per a entitats",
+          "condiciones-comercios": "Condicions per a comerços",
+          "contrato-de-encargo": "Contracte d’encàrrec del tractament"
         },
         "openAria": "{document} en {locale}: ",
         "statusNone": "Sense crear",
@@ -5685,7 +5760,7 @@
         },
         "editing": "Editant: {document} · {locale}",
         "publishedHint": "Aquest text està publicat amb la versió {version}. Per canviar-lo, publica’n una versió nova.",
-        "draftHint": "Mentre sigui un esborrany, només es veu aquí. Quan hi hagi pàgines públiques, el text publicat serà la versió vigent.",
+        "draftHint": "Mentre sigui un esborrany, només es veu aquí. En publicar-lo passa a ser la versió vigent de la seva pàgina pública.",
         "version": "Versió",
         "versionHelp": "La data de publicació (AAAA-MM-DD); si n’hi ha diverses el mateix dia, afegeix «.1», «.2»… En publicar, la data és la d’avui.",
         "statusLabel": "Estat",
@@ -5698,7 +5773,17 @@
         "saved": "Text desat (versió {version}).",
         "published": "Text publicat (versió {version}).",
         "nothingToPublish": "No hi ha canvis al text: modifica’l per publicar-ne una versió nova.",
-        "publishFirst": "Publicar aquest text"
+        "publishFirst": "Publicar aquest text",
+        "archiveTitle": "Versions publicades: {document} · {locale}",
+        "archiveEmpty": "Encara no se n’ha publicat cap versió en aquest idioma.",
+        "archivePublished": "data de publicació: {date}",
+        "archiveEffective": "· a les entitats ja donades d’alta se’ls aplica des del {date}",
+        "archiveHash": "empremta {hash}…",
+        "urgentLabel": "Canvi urgent de proveïdor: s’aplica al moment",
+        "urgentHint": "Només si un proveïdor deixa de prestar el servei o hi ha un problema de seguretat i l’únic que canvia és la llista de proveïdors (annex III). Qualsevol altre canvi del contracte porta els seus 30 dies. Les persones signants reben l’avís igualment.",
+        "changeSummaryLabel": "Què canvia (obligatori en una versió nova de les condicions per a entitats o del contracte d’encàrrec)",
+        "changeSummaryHint": "En poques paraules i sense dades de persones: va a l’email a les persones signants i a la pàgina. Si canvia un proveïdor, digues quin entra i quin surt.",
+        "markerMissing": "Dades de l’empresa: falta {marker}"
       },
       "team": {
         "intro": "Aquestes persones poden veure i canviar tot el d’aquesta consola. Qui rep una invitació només té accés quan l’accepta, amb una contrasenya d’almenys 12 caràcters i el segon factor activat. Un compte que signa per una entitat no pot ser Super-Admin.",
@@ -8243,6 +8328,9 @@
           "cancelledBuyer": "Avís de venda de vals cancel·lada a qui té vals",
           "validityChanged": "Avís de canvi de validesa dels vals",
           "expiryReminder": "Recordatori de vals a punt de caducar"
+        },
+        "legal": {
+          "changeNotice": "Avís de canvi de les condicions per a entitats o del contracte d’encàrrec"
         }
       },
       "payoutGapMismatch": "ATENCIÓ: de la guardiola va sortir menys que l’import per al projecte i la comissió junts. Cal revisar el llibre major.",
@@ -8286,5 +8374,46 @@
       "invalidEntity": "No hem entès allò que demaneu. Trieu-ho de la llista.",
       "limited": "S’han demanat massa expedients en poc temps. Es podrà tornar a demanar d’aquí a una hora."
     }
+  },
+  "legal": {
+    "titles": {
+      "terminos": "Condicions d’ús",
+      "condiciones-entradas-y-vales": "Condicions d’entrades i vals",
+      "condiciones-aportacion-mensual": "Condicions de l’aportació mensual",
+      "condiciones-entidades": "Condicions per a entitats",
+      "condiciones-comercios": "Condicions per a comerços",
+      "contrato-de-encargo": "Contracte d’encàrrec del tractament",
+      "privacidad": "Política de privacitat",
+      "cookies": "Política de galetes",
+      "aviso-legal": "Avís legal"
+    },
+    "descriptions": {
+      "terminos": "Les condicions d’ús de KORUM per a famílies, socis i qualsevol persona que aporta, compra o hi participa.",
+      "condiciones-entradas-y-vales": "Què passa amb les teves entrades i els teus vals: devolucions, canvis de data, cancel·lacions i validesa.",
+      "condiciones-aportacion-mensual": "Com funciona l’aportació mensual a una entitat: cobraments, pauses, cancel·lació i devolucions.",
+      "condiciones-entidades": "Les condicions amb què AMPA, AFA, clubs i entitats culturals fan servir KORUM.",
+      "condiciones-comercios": "Les condicions amb què els comerços donen suport a una entitat a través de KORUM.",
+      "contrato-de-encargo": "El contracte amb què KORUM tracta per compte de cada entitat les dades de la seva comunitat (RGPD, art. 28).",
+      "privacidad": "Quines dades tractem a KORUM, per a què, durant quant de temps i com exercir els teus drets.",
+      "cookies": "Les galetes que fa servir KORUM: només pròpies i necessàries, sense publicitat ni seguiment.",
+      "aviso-legal": "Qui hi ha darrere de KORUM, què és la plataforma i com avisar-nos d’un contingut il·lícit."
+    },
+    "missingData": "(dada pendent)",
+    "versionLine": "Versió {version} · publicada el {date}",
+    "fallbackNotice": "Aquest text encara no està traduït al català. Es mostra la versió en castellà, que és la que s’aplica.",
+    "archivedNotice": "Estàs llegint una versió anterior ({version}): ja no és la vigent.",
+    "archivedCurrentLink": "Veure la versió vigent ({version})",
+    "effectiveNotice": "Per a les entitats que ja estaven donades d’alta, aquesta versió s’aplica des del {date}. Fins aleshores se’ls continua aplicant l’anterior.",
+    "effectivePreviousLink": "Veure la versió anterior ({version})",
+    "tableLabel": "Taula",
+    "versionsTitle": "Versions d’aquest text",
+    "versionsIntro": "Guardem cada versió tal com es va publicar, perquè sempre puguis consultar la que vas acceptar.",
+    "versionPublished": "data de publicació: {date}",
+    "versionCurrent": "vigent",
+    "hashLabel": "Empremta SHA-256 d’aquesta versió (serveix per comprovar que el text no ha canviat):",
+    "staleNotice": "La traducció d’aquest text encara no està al dia. Es mostra la versió en castellà, que és la que s’aplica.",
+    "stillAppliesNotice": "Estàs llegint la versió {version}, que es continua aplicant a les entitats que ja estaven donades d’alta fins al {date}.",
+    "changeSummaryTitle": "Què canvia en aquesta versió",
+    "versionCurrentFrom": "vigent; per a les entitats ja donades d’alta, des del {date}"
   }
 }

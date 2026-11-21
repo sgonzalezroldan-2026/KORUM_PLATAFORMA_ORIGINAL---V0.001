@@ -8,7 +8,7 @@ import { removeSecretValue, saveLegalText, saveSecretValue, saveSettingsSection,
 import { loadSettingsView } from '@/services/admin/platform-settings-view';
 import type { SettingsRuntime } from '@/services/admin/settings-runtime';
 import { cancelSuperadminInvitation, inviteSuperadmin } from '@/services/admin/superadmin-team.service';
-import { getSetting, invalidateSettingsCache } from '@/services/settings/settings.service';
+import { invalidateSettingsCache } from '@/services/settings/settings.service';
 import { createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, uniqueId, verifiedSuperadmin } from './test-database';
 
 /**
@@ -50,17 +50,14 @@ async function wipe() {
   invalidateSettingsCache();
 }
 
-let originalPolicy: unknown;
 beforeAll(async () => {
   db = createTestClient();
-  originalPolicy = (await db.platformSetting.findUnique({ where: { key: 'privacy.policyVersion' } }))?.valueJson;
   await wipe();
 }, 120_000);
 beforeEach(wipe);
 afterEach(() => invalidateSettingsCache());
 afterAll(async () => {
   await wipe();
-  if (originalPolicy !== undefined) await db.platformSetting.create({ data: { key: 'privacy.policyVersion', valueJson: originalPolicy as string } });
   await db.$disconnect();
 });
 
@@ -74,17 +71,18 @@ describe('textos legales', () => {
     expect((await rejection(saveLegalText(db, await verified(), text({ status: 'PUBLICADO', version: dayOffset(-1), markdown: 'Otro', expectedVersion: await currentVersion('legal.cookies.es') })))).reason).toBe('VERSION_OLDER');
   });
 
-  it('publicar la política de privacidad en los tres idiomas a la vez sube la versión vigente (cada publicación ve las otras ya confirmadas)', async () => {
+  it('publicar un texto en los tres idiomas a la vez archiva una versión por idioma y repetirlo no duplica nada (Sprint 5.10a)', async () => {
     for (let round = 0; round < 3; round += 1) {
-      await db.platformSetting.deleteMany({ where: { OR: [{ key: 'privacy.policyVersion' }, { key: { startsWith: 'legal.privacidad.' } }] } });
+      await db.platformSetting.deleteMany({ where: { key: { startsWith: 'legal.condiciones-entradas-y-vales.' } } });
       invalidateSettingsCache();
       const actors = [await verified(), await verified(), await verified()];
       const results = await Promise.allSettled(
-        (['es', 'ca', 'en'] as const).map((locale, index) => saveLegalText(db, actors[index]!, text({ document: 'privacidad', locale, status: 'PUBLICADO', markdown: `Texto ${locale}` })))
+        (['es', 'ca', 'en'] as const).map((locale, index) => saveLegalText(db, actors[index]!, text({ document: 'condiciones-entradas-y-vales', locale, status: 'PUBLICADO', markdown: `Texto ${locale}` })))
       );
       expect(results.filter((result) => result.status === 'rejected'), `ronda ${round}`).toEqual([]);
       invalidateSettingsCache();
-      expect(await getSetting(db, 'privacy.policyVersion'), `ronda ${round}`).toBe(today());
+      // Cada idioma queda archivado una sola vez con la versión de hoy, aunque se vuelva a publicar lo mismo en cada ronda.
+      expect(await db.legalDocumentVersion.count({ where: { document: 'condiciones-entradas-y-vales', version: today() } }), `ronda ${round}`).toBe(3);
     }
   });
 });

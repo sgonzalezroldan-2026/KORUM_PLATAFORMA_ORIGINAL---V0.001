@@ -1,6 +1,6 @@
 # Política de privacidad
 
-> **Documento:** `privacidad` · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `privacidad` · **Versión:** 2026-11-21 · **Estado:** VALIDADO por el promotor (2026-11-18; las condiciones aceptadas de los §3.3, §3.9 y §8, el 2026-11-21, Sprint 5.10a) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** todas las personas que usan KORUM: familias, socios, comercios, firmantes de entidades y voluntarios.
 > **Se publica en:** `/privacidad` (Sprint 5.10a). Los plazos de conservación se resumen aquí; la tabla completa, que manda, es [tabla-de-plazos.md](tabla-de-plazos.md) (documento interno). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -70,6 +70,7 @@ Es opcional. Tu NIF se guarda cifrado. De estos datos, y del importe de tu donat
 | Nombre, email e idioma | Identificarte, darte acceso a tus aportaciones, entradas y documentos, y escribirte en tu idioma | Ejecución de lo contratado (art. 6.1.b) |
 | Sesiones abiertas y fecha de tu última actividad | Mantener tu sesión y cerrar las cuentas que llevan años sin usarse | Ejecución de lo contratado e interés legítimo |
 | Llaves de acceso, si las activas | Entrar sin contraseña | Ejecución de lo contratado |
+| Versión, idioma y fecha de las condiciones que aceptaste al crear tu cuenta | Poder demostrar qué condiciones aceptaste | Ejecución de lo contratado (art. 6.1.b) |
 
 Con una llave de acceso, la huella, la cara o el PIN se comprueban **en tu dispositivo**. KORUM solo recibe una clave pública: nunca trata datos biométricos.
 
@@ -110,6 +111,7 @@ Los datos del comercio (nombre comercial, razón social, NIF, domicilio fiscal) 
 - Tu nombre, email, teléfono y cargo, para gestionar la entidad y avisarte de lo que requiere tu firma, de los cambios del servicio y de las facturas. Base legal: el interés legítimo de KORUM y de la entidad en mantener su relación a través de las personas que la representan (art. 6.1.f del RGPD y art. 19 de la LOPDGDD).
 - El documento de identidad de quien representa a la entidad, junto con el resto de la documentación del titular, para comprobar que la entidad existe y puede recibir pagos. **Solo lo ven quien lo sube y el equipo de KORUM**, y cada vez que se abre queda registrado. Si lo sube otra persona, te avisamos por email de que lo ha hecho y de dónde está esta política. Base legal: el interés legítimo en entregar el dinero solo a quien corresponde, en evitar el fraude y en cumplir lo que pide PAYCOMET para dar de alta a la entidad (art. 6.1.f).
 - Cada firma y cada decisión queda en el registro de actividad de la entidad.
+- La aceptación que haces en nombre de la entidad de sus condiciones y del contrato de encargo (versión, idioma y fecha), para poder demostrar qué se contrató. Se conserva mientras la entidad esté en KORUM y 6 años más; si suprimes tu cuenta, queda sin nada que te identifique.
 
 **Si te han invitado a firmar,** tu nombre y tu email nos los ha dado la persona de la entidad que te invita, para que puedas ocupar ese cargo. Si no aceptas la invitación, se borran a los 30 días.
 
@@ -182,6 +184,7 @@ Tus datos se alojan en la Unión Europea. Algunos de los proveedores anteriores 
 | Código que identifica tu navegador, si lo aceptaste | Hasta 12 meses después de la última vez que usas ese dispositivo en el buzón de ideas, o hasta que retires tu permiso |
 | Rastros de seguridad (intentos fallidos y accesos denegados) | A los 12 meses dejamos de poder relacionarlos con tu cuenta |
 | Registro de auditoría de lo que mueve dinero o lleva firma | 6 años |
+| Condiciones que aceptaste al crear tu cuenta | Mientras exista tu cuenta |
 | Tus firmas por una entidad y tu aportación mensual | Siguen unidas a tu cuenta mientras exista: las firmas no se pueden cambiar y la aportación mensual es tu historial. Al suprimir la cuenta quedan sin nada que te identifique |
 | Contenido de los emails que te enviamos | 12 meses |
 | Consentimientos | Mientras estén vigentes y 3 años más |

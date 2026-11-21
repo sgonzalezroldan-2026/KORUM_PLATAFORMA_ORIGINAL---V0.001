@@ -3,6 +3,7 @@ import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { InvitationForm } from '@/components/auth/invitation-form';
+import { AccountFirstLayer } from '@/components/legal/account-first-layer';
 import { routing } from '@/i18n/routing';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -25,7 +26,8 @@ export default async function InvitationPage({ params }: { params: Promise<{ loc
         <h1 id="invitation-title" className="font-corp text-3xl font-extrabold text-varsity-navy">
           {t('title')}
         </h1>
-        <InvitationForm />
+        {/* Al aceptar la invitación se crea la cuenta: misma primera capa que al entrar por primera vez (primeras capas §11), salvo para el Super-Admin. */}
+        <InvitationForm firstLayer={<AccountFirstLayer locale={locale} testId="invitation-first-layer" />} firstLayerExisting={<AccountFirstLayer locale={locale} testId="invitation-first-layer" existingAccount />} />
       </section>
     </div>
   );

@@ -12,6 +12,7 @@ import type { Locale } from '@/i18n/routing';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { ConnectionTarget } from '@/services/admin/connection-tests';
 import type { SettingFieldView, SettingSource } from '@/services/admin/platform-settings-view';
+import { LEGAL_KEY_PATTERN } from '@/core/legal/legal-catalog';
 
 /**
  * Mientras una acción está en marcha los botones **no se deshabilitan** (`aria-disabled` y se ignoran los clics): un botón `disabled` pierde el foco y el teclado y los lectores de pantalla
@@ -192,9 +193,12 @@ export function useLabelOf() {
     if (t.has(`fields.${id}.label`)) return t(`fields.${id}.label`);
     if (t.has(`secrets.${id}.label`)) return t(`secrets.${id}.label`);
     if (key.startsWith('platform.company.')) return t(`company.fields.${key.slice('platform.company.'.length)}` as 'company.fields.taxId');
-    const legal = /^legal\.(terminos|privacidad|cookies|aviso-legal)\.(es|ca|en)$/.exec(key);
+    const legal = LEGAL_KEY_PATTERN.exec(key);
     if (legal) return t('history.targets.legal', { document: t(`legal.documents.${legal[1] as 'terminos'}`), locale: t(`legal.locales.${legal[2] as 'es'}`) });
     if (key === 'version') return t('legal.version');
+    if (key === 'changeSummary') return t('legal.changeSummaryLabel');
+    if (key === 'urgent') return t('legal.urgentLabel');
+    if (key.startsWith('marker:')) return t('legal.markerMissing', { marker: key.slice('marker:'.length) });
     if (key === 'markdown') return t('legal.text');
     if (key === 'status') return t('legal.statusLabel');
     return key;

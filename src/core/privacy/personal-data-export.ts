@@ -40,7 +40,9 @@ export interface PersonalDataExport {
     asGuest: boolean;
   }>;
   tickets: Array<{ serialCode: string; initiative: string; quantity: number; checkedInCount: number; revokedAt: string | null; createdAt: string }>;
-  consents: Array<{ purpose: string; granted: boolean; policyVersion: string; source: string; createdAt: string }>;
+  consents: Array<{ purpose: string; granted: boolean; policyVersion: string; policyLocale: string | null; source: string; createdAt: string }>;
+  /** Textos legales que aceptó la persona, por su cuenta o por una entidad (Sprint 5.10a): cuál, en qué idioma y versión, y cuándo. */
+  legalAcceptances: Array<{ document: string; locale: string; version: string; source: string; organization: string | null; acceptedAt: string }>;
   privacyRequests: Array<{ type: string; status: string; createdAt: string; dueAt: string; completedAt: string | null }>;
   memberships: Array<{ organization: string; role: string; roleLabel: string | null; since: string }>;
   ideaSignatures: Array<{ idea: string; status: string; reasonKey: string; accountOrder: number; createdAt: string }>;
@@ -85,7 +87,7 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
   // Lo que se compró como invitada con este email solo es de esta cuenta si el email está verificado.
   const verified = user.emailVerified;
   const ownContributions: Prisma.ContributionWhereInput = verified ? { OR: [{ userId }, { canonicalEmail: user.canonicalEmail }] } : { userId };
-  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys, proposals] = await Promise.all([
+  const [contributions, tickets, consents, requests, memberships, signatures, devices, cards, pledges, messages, support, passkeys, proposals, acceptances] = await Promise.all([
     db.contribution.findMany({ where: ownContributions, orderBy: { id: 'asc' }, include: { organization: { select: { name: true } }, initiative: { select: { title: true } } } }),
     db.ticketPass.findMany({ where: { OR: [{ contribution: ownContributions }, ...(verified ? [{ holderEmail: user.email }] : [])] }, orderBy: { id: 'asc' }, include: { initiative: { select: { title: true } } } }),
     db.consentRecord.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] }),
@@ -98,7 +100,8 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
     db.outboxMessage.findMany({ where: { OR: [{ userId }, ...(verified ? [{ toAddress: user.email }] : [])] }, orderBy: { id: 'asc' }, select: { templateKey: true, status: true, createdAt: true, sentAt: true } }),
     verified ? db.supportTicket.findMany({ where: { senderEmail: user.email }, orderBy: { id: 'asc' } }) : Promise.resolve([]),
     db.passkey.findMany({ where: { userId }, orderBy: { createdAt: 'asc' }, select: { name: true, createdAt: true, deviceType: true, backedUp: true } }),
-    verified ? db.idea.findMany({ where: { authorCanonicalEmail: user.canonicalEmail }, orderBy: { id: 'asc' }, include: { messages: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } } }) : Promise.resolve([])
+    verified ? db.idea.findMany({ where: { authorCanonicalEmail: user.canonicalEmail }, orderBy: { id: 'asc' }, include: { messages: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } } }) : Promise.resolve([]),
+    db.legalAcceptance.findMany({ where: { userId }, orderBy: { id: 'asc' }, select: { document: true, locale: true, version: true, source: true, acceptedAt: true, organization: { select: { name: true } } } })
   ]);
 
   let unreadableTaxIds = 0;
@@ -147,7 +150,8 @@ export async function buildPersonalDataExport(db: Db, keyring: Keyring, requeste
       asGuest: row.userId === null
     })),
     tickets: tickets.map((pass) => ({ serialCode: pass.serialCode, initiative: pass.initiative.title, quantity: pass.quantity, checkedInCount: pass.checkedInCount, revokedAt: iso(pass.revokedAt), createdAt: pass.createdAt.toISOString() })),
-    consents: consents.map((row) => ({ purpose: row.purpose, granted: row.granted, policyVersion: row.policyVersion, source: row.source, createdAt: row.createdAt.toISOString() })),
+    consents: consents.map((row) => ({ purpose: row.purpose, granted: row.granted, policyVersion: row.policyVersion, policyLocale: row.policyLocale, source: row.source, createdAt: row.createdAt.toISOString() })),
+    legalAcceptances: acceptances.map((row) => ({ document: row.document, locale: row.locale, version: row.version, source: row.source, organization: row.organization?.name ?? null, acceptedAt: row.acceptedAt.toISOString() })),
     privacyRequests: requests.map((row) => ({ type: row.type, status: row.status, createdAt: row.createdAt.toISOString(), dueAt: row.dueAt.toISOString(), completedAt: iso(row.completedAt) })),
     memberships: memberships.map((row) => ({ organization: row.organization.name, role: row.role, roleLabel: row.roleLabel, since: row.createdAt.toISOString() })),
     ideaSignatures: signatures.map((row) => ({ idea: row.idea.title, status: row.status, reasonKey: row.reason, accountOrder: row.accountOrder, createdAt: row.createdAt.toISOString() })),

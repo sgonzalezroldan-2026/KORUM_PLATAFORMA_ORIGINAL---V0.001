@@ -58,6 +58,7 @@ Toda Server Action y Route Handler obtiene `organizationId` y rol **de la sesió
 | `NEXT_PUBLIC_APP_URL` | URL canónica pública |
 | `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_AUTH_TOKEN` | Registro de errores (el DSN es público por diseño; el token no) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Analítica sin cookies |
+| `SEARCH_INDEXING` | `allow` **solo en producción**; en cualquier otro entorno (o vacía), `robots.txt` lo bloquea todo y cada respuesta lleva `noindex` (Sprint 5.10a) |
 | `SUPERADMIN_BOOTSTRAP_EMAIL` | Alta del primer Super-Admin |
 
 - Opcionales como **respaldo** si la consola aún no tiene valor (CI, primer arranque): `PAYCOMET_API_KEY`, `PAYCOMET_MERCHANT_CODE`, `PAYCOMET_TERMINAL_ID`, `PAYCOMET_WEBHOOK_SECRET`, `EMAIL_API_KEY`, `VERIFACTU_ISSUER_NIF`, `VERIFACTU_ISSUER_NAME`. El valor de la consola siempre tiene prioridad.

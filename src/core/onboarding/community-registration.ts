@@ -6,6 +6,7 @@ import { InvalidEmailError, isDisposableEmail, normalizeCanonicalEmail } from '@
 import type { Locale } from '@/generated/prisma/enums';
 import { inTransaction, type Db } from '@/lib/db';
 import { queueAuthEmail, type DispatchEmails } from '@/lib/auth/auth-emails';
+import { lockEntityLegalTexts, recordLegalAcceptances, resolveLegalVersion } from '@/services/legal/legal-archive.service';
 import { createInvitation, INVITATION_HOURS, invitationUrl, listPendingCosignerInvitations } from './invitations';
 import { provinceByCode } from './provinces';
 import { ownershipFor, participationTemplate, registrationIssues, registrationSchema, type RegistrationInput, type RegistrationIssue } from './registration-rules';
@@ -19,6 +20,8 @@ import { ownershipFor, participationTemplate, registrationIssues, registrationSc
  * 2. La persona `DIRECTOR` (cuenta nueva con contraseña, pendiente de verificar el email con un código) y la invitación a la `COSIGNER`, que
  *    solo pasa a firmar cuando la acepta.
  * 3. El email de invitación al cofirmante, en la bandeja de salida.
+ * 4. La aceptación de las condiciones para entidades y del contrato de encargo (Sprint 5.10a, `QA-LEG02`): solo las versiones vigentes y publicadas, las
+ *    que la persona tenía delante; si mientras tanto se publicó otra, el alta se para y se le enseña la nueva.
  *
  * Una cuenta que ya existe nunca recibe una contraseña elegida por otra persona: si el email de quien dirige ya tiene cuenta, el alta exige
  * haber iniciado sesión con ella.
@@ -30,7 +33,39 @@ export type RegistrationFailure =
   | { code: 'SAME_INBOX' }
   | { code: 'DISPOSABLE_EMAIL'; field: 'director.email' | 'cosigner.email' }
   | { code: 'DIRECTOR_EMAIL_IN_USE' }
-  | { code: 'COSIGNER_UNAVAILABLE' };
+  | { code: 'COSIGNER_UNAVAILABLE' }
+  /** Se publicó otra versión de las condiciones o del contrato mientras se rellenaba el formulario: van las vigentes para enseñarlas. */
+  | { code: 'LEGAL_CHANGED'; legal: RegistrationLegalVersions }
+  /** Aún no hay condiciones para entidades o contrato de encargo publicados: sin ellos no se puede dar de alta ninguna entidad. */
+  | { code: 'LEGAL_UNAVAILABLE' };
+
+export interface RegistrationLegalText {
+  version: string;
+  locale: Locale;
+  contentSha256: string;
+}
+
+/** Los dos textos que se aceptan en el alta, tal como los ve la persona: versión, idioma (el castellano si aún no están traducidos) y huella. */
+export interface RegistrationLegalVersions {
+  entityTerms: RegistrationLegalText;
+  processingContract: RegistrationLegalText;
+}
+
+/** Las versiones vigentes de los dos textos que se aceptan en el alta, en el idioma de la página (o en castellano, si aún no están traducidos). */
+export async function currentRegistrationLegal(db: Db, locale: Locale) {
+  const [terms, contract] = await Promise.all([resolveLegalVersion(db, 'condiciones-entidades', locale), resolveLegalVersion(db, 'contrato-de-encargo', locale)]);
+  if (!terms || !contract) return null;
+  return {
+    versions: {
+      entityTerms: { version: terms.version, locale: terms.locale, contentSha256: terms.contentSha256 },
+      processingContract: { version: contract.version, locale: contract.locale, contentSha256: contract.contentSha256 }
+    } satisfies RegistrationLegalVersions,
+    items: [
+      { document: 'condiciones-entidades' as const, locale: terms.locale, version: terms.version },
+      { document: 'contrato-de-encargo' as const, locale: contract.locale, version: contract.version }
+    ]
+  };
+}
 
 export class RegistrationError extends Error {
   constructor(readonly failure: RegistrationFailure) {
@@ -56,6 +91,9 @@ export interface RegistrationResult {
   directorUserId: string;
   /** La cuenta de quien dirige es nueva: hay que verificar su email con el código antes de entrar. */
   directorNeedsVerification: boolean;
+  /** Lo que se aceptó y cuándo: la pantalla final lo confirma (LSSI, art. 28). */
+  legal: RegistrationLegalVersions;
+  acceptedAt: Date;
 }
 
 function canonical(email: string, field: 'director.email' | 'cosigner.email'): string {
@@ -87,6 +125,12 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
 
   const queued: number[] = [];
   const result = await inTransaction(db, async (tx) => {
+    // El bloqueo compartido ordena el alta con la publicación de una versión nueva de estos textos (auditoría de seguridad del 5.10a): o se publica antes y el alta
+    // la ve, o se publica después y esta entidad recibe su aviso de 30 días.
+    await lockEntityLegalTexts(tx, 'shared');
+    const legal = await currentRegistrationLegal(tx, context.locale);
+    if (!legal) throw new RegistrationError({ code: 'LEGAL_UNAVAILABLE' });
+    if (legal.versions.entityTerms.contentSha256 !== input.acceptedLegal.entityTerms || legal.versions.processingContract.contentSha256 !== input.acceptedLegal.processingContract) throw new RegistrationError({ code: 'LEGAL_CHANGED', legal: legal.versions });
     if (await tx.organization.findUnique({ where: { slug: input.slug }, select: { id: true } })) throw new RegistrationError({ code: 'SLUG_TAKEN' });
     const [existingDirector, existingCosigner] = await Promise.all([
       tx.user.findUnique({ where: { canonicalEmail: directorCanonical }, select: { id: true, isSuperadmin: true, gdprAnonymizedAt: true, accounts: { where: { providerId: 'credential', password: { not: null } }, select: { id: true } } } }),
@@ -158,6 +202,8 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
       await tx.user.create({ data: { id: cosignerUserId, name: input.cosigner.name, email: input.cosigner.email, canonicalEmail: cosignerCanonical, locale: input.contentLocale } });
     }
     await tx.organizationMember.create({ data: { organizationId, userId: directorUserId, role: 'DIRECTOR', roleLabel: input.director.roleLabel } });
+    // Quien crea la entidad acepta por ella sus condiciones y el contrato de encargo: queda quién, cuándo, en qué idioma y qué versión.
+    await recordLegalAcceptances(tx, { userId: directorUserId, organizationId, source: 'alta', items: legal.items, now });
     // La segunda firma no existe hasta que esa persona acepta la invitación (el cargo viaja en ella): nadie pasa a firmar por una entidad
     // que no conoce solo porque alguien escriba su email.
 
@@ -182,10 +228,10 @@ export async function registerCommunity(db: Db, raw: unknown, context: Registrat
         action: 'organization.registered',
         targetType: 'Organization',
         targetId: organizationId,
-        metadataJson: { vertical: input.vertical, legalForm: input.legalForm, centerOwnership: ownershipFor(input), ley49: input.ley49, representationDeclaredAt: now.toISOString() }
+        metadataJson: { vertical: input.vertical, legalForm: input.legalForm, centerOwnership: ownershipFor(input), ley49: input.ley49, representationDeclaredAt: now.toISOString(), entityTermsVersion: legal.versions.entityTerms.version, entityTermsLocale: legal.versions.entityTerms.locale, processingContractVersion: legal.versions.processingContract.version, processingContractLocale: legal.versions.processingContract.locale }
       }
     });
-    return { organizationId, slug: input.slug, directorUserId, directorNeedsVerification: !existingDirector };
+    return { organizationId, slug: input.slug, directorUserId, directorNeedsVerification: !existingDirector, legal: legal.versions, acceptedAt: now };
   });
   context.dispatch(queued);
   return result;

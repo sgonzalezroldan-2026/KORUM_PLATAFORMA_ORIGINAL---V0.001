@@ -8,7 +8,7 @@ import { IdeaSignatureRejectedError, signIdea, type IdeaSignatureRejection, type
 import type { KorumPrismaClient } from '@/lib/prisma';
 import { releaseAttempt, reserveAttempt } from '@/lib/rate-limit';
 import { IDEA_PROPOSAL_RULE, IDEA_SIGN_RULE } from '@/lib/rate-limit-rules';
-import { getSetting } from '@/services/settings/settings.service';
+import { policyForUser } from '@/services/legal/legal-archive.service';
 
 /**
  * Lo que el navegador puede pedir al buzón (Sprint 3.6): firmar y proponer. Quién firma sale siempre de la sesión; la entidad, de su `orgSlug`
@@ -76,8 +76,9 @@ export async function signIdeaForRequest(deps: IdeaServiceDeps, payload: unknown
 
   try {
     if (input.fingerprintConsent === true) {
-      const policyVersion = (await getSetting(db, 'privacy.policyVersion')) ?? '2026-11-01';
-      await recordConsent(db, { userId: context.userId, purpose: 'DEVICE_FINGERPRINT', granted: true, policyVersion, source: 'buzon' }, now);
+      // Sin una política de privacidad publicada no se puede consentir nada: la firma sigue, sin la huella (Sprint 5.10a).
+      const policy = await policyForUser(db, context.userId);
+      if (policy) await recordConsent(db, { userId: context.userId, purpose: 'DEVICE_FINGERPRINT', granted: true, policyVersion: policy.version, policyLocale: policy.locale, source: 'buzon' }, now);
     }
     const result = await signIdea(db, deps.hmacSecret, { ideaId: idea.id, userId: context.userId, deviceCookie: context.deviceCookie, ip: context.ip, fingerprint: input.fingerprint }, now);
     if (result.status === 'ALREADY_SIGNED') return { status: 'ALREADY_SIGNED' };

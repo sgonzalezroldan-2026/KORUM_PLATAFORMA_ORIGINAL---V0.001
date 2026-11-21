@@ -10,7 +10,7 @@ import { isLocale, routing, type Locale } from '@/i18n/routing';
 import { getAuthSession } from '@/lib/auth/session';
 import { getPrisma } from '@/lib/prisma';
 import { trustedClientIp } from '@/lib/trusted-ip';
-import { getSetting } from '@/services/settings/settings.service';
+import { policyForUser } from '@/services/legal/legal-archive.service';
 import { proposeIdeaForRequest, signIdeaForRequest, type ProposeOutcome, type SignActionResult } from '@/services/ideas/idea-requests.service';
 
 /**
@@ -57,7 +57,7 @@ export async function withdrawFingerprintConsentAction(): Promise<'WITHDRAWN' | 
   const session = await getAuthSession();
   if (!session) return 'LOGIN_REQUIRED';
   const db = getPrisma();
-  const policyVersion = (await getSetting(db, 'privacy.policyVersion')) ?? '2026-11-01';
-  await recordConsent(db, { userId: session.userId, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion, source: 'buzon' });
+  const policy = await policyForUser(db, session.userId);
+  await recordConsent(db, { userId: session.userId, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: policy?.version ?? null, policyLocale: policy?.locale ?? null, source: 'buzon' });
   return 'WITHDRAWN';
 }

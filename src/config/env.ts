@@ -68,6 +68,8 @@ const envSchema = z
     NEXT_PUBLIC_SENTRY_DSN: optional(z.url()),
     SENTRY_AUTH_TOKEN: optional(z.string()),
     NEXT_PUBLIC_PLAUSIBLE_DOMAIN: optional(z.string()),
+    // Solo producción lleva `allow` (Sprint 5.10a, QA-SEO04): sin ella, `robots.txt` lo bloquea todo y cada página responde con `noindex`.
+    SEARCH_INDEXING: z.preprocess(blankToUndefined, z.enum(['allow', 'block']).default('block')),
 
     // Arranque y demostración
     SUPERADMIN_BOOTSTRAP_EMAIL: optional(z.email()),

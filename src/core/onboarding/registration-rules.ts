@@ -30,7 +30,7 @@ export const LEGAL_FORMS_BY_VERTICAL: Record<(typeof VERTICALS)[number], readonl
 /** Primer tramo de la ruta que ya usa KORUM: una entidad no puede llamarse así. */
 export const RESERVED_SLUGS: ReadonlySet<string> = new Set([
   'es', 'ca', 'en', 'api', 'admin', 'panel', 'login', 'registro-comunidad', 'acceso', 'invitacion', 'dev', 'cuenta', 'mi-cuenta', 'mi-hucha',
-  'ayuda', 'soporte', 'legal', 'privacidad', 'cookies', 'condiciones', 'guias', 'blog', 'robots.txt', 'sitemap.xml', 'llms.txt', 'icon.svg', 'korum',
+  'ayuda', 'soporte', 'legal', 'privacidad', 'cookies', 'condiciones', 'aviso-legal', 'contrato-de-encargo', 'accesibilidad', 'guias', 'blog', 'robots.txt', 'sitemap.xml', 'llms.txt', 'icon.svg', 'korum',
   ...PILLAR_PAGES.map((page) => page.path.slice(1))
 ]);
 
@@ -53,6 +53,7 @@ export const LINK_LIKE = /https?:|www\.|@|\b[a-z0-9-]+\.(?:[a-z]{2,24})\b/i;
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
 const plainText = (min: number, max: number) => text(min, max).refine((value) => !LINK_LIKE.test(value));
 const phone = z.string().trim().regex(/^\+?[0-9 ]{9,16}$/);
+const SHA256 = /^[0-9a-f]{64}$/;
 
 const signer = {
   name: text(2, 80),
@@ -76,7 +77,12 @@ export const registrationSchema = z.object({
   slug: z.string().trim().toLowerCase(),
   director: z.object({ ...signer, password: z.string().min(12).max(128) }),
   cosigner: z.object(signer),
-  representationDeclared: z.literal(true)
+  representationDeclared: z.literal(true),
+  /**
+   * Huella SHA-256 de las condiciones para entidades y del contrato de encargo que la persona tenía delante al crear la entidad (Sprint 5.10a, primeras capas §4):
+   * identifica el texto exacto (versión e idioma), no solo su número de versión.
+   */
+  acceptedLegal: z.object({ entityTerms: z.string().regex(SHA256), processingContract: z.string().regex(SHA256) })
 });
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;

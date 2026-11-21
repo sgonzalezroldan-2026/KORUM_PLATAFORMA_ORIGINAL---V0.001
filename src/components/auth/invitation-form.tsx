@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { acceptInvitationAction, acceptInvitationWithSessionAction, inspectInvitationAction, type InvitationPageView } from '@/app/[locale]/(auth)/invitacion/actions';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import type { Locale } from '@/i18n/routing';
@@ -12,7 +12,11 @@ import { Field, useFocusFirstInvalid, FormAlert, SubmitButton } from './auth-ui'
  * Activación de la cuenta de la segunda persona firmante (o del primer Super-Admin). Lee el token del fragmento (`#t=`) y lo quita de la
  * barra de direcciones al momento: no queda en el historial ni se envía en el `Referer`.
  */
-export function InvitationForm() {
+/**
+ * `firstLayer` y `firstLayerExisting`: la primera capa de «crear una cuenta» (primeras capas §11), para una cuenta nueva y para quien ya la tenía. Solo se enseña a quien
+ * la acepta de verdad: no al equipo de KORUM (Super-Admin), que no la registra. Va antes del botón, como en el alta.
+ */
+export function InvitationForm({ firstLayer, firstLayerExisting }: { firstLayer?: ReactNode; firstLayerExisting?: ReactNode }) {
   const focusFirstInvalid = useFocusFirstInvalid();
   const t = useTranslations('auth.invitation');
   const locale = useLocale() as Locale;
@@ -56,6 +60,7 @@ export function InvitationForm() {
 
   if (view === 'loading') return <p role="status">{t('checking')}</p>;
   if (view === null || token === null) return <FormAlert>{t('invalid')}</FormAlert>;
+  const layer = view.purpose === 'SUPERADMIN' ? null : view.hasPassword ? firstLayerExisting : firstLayer;
   const destination = view.purpose === 'SUPERADMIN' ? '/admin' : view.organizationSlug ? `/panel/${view.organizationSlug}` : '/';
   if (view.hasPassword) {
     // Ya tiene cuenta: acepta el cargo con su propia sesión. Si no la ha iniciado (o es otra cuenta), entra y vuelve a abrir el enlace.
@@ -81,6 +86,7 @@ export function InvitationForm() {
       <div className="flex flex-col gap-4">
         <p className="text-lg text-ink">{t('intro', { email: view.email, organization: view.organizationName ?? '', role: view.roleLabel ?? '' })}</p>
         {error ? <FormAlert>{error}</FormAlert> : null}
+        {layer}
         <SubmitButton type="button" busy={busy} onClick={() => void acceptWithSession()}>
           {t('acceptRole')}
         </SubmitButton>
@@ -144,6 +150,7 @@ export function InvitationForm() {
         onBlur={() => setCheckRepeat(repeat !== '')}
         onChange={(event) => setRepeat(event.target.value)}
       />
+      {layer}
       <SubmitButton busy={busy}>{t('submit')}</SubmitButton>
     </form>
   );

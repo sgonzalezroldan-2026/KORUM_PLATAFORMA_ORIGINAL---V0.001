@@ -9,9 +9,13 @@ import { routing } from '@/i18n/routing';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { siteUrl } from '@/lib/seo/marketing-routes';
 import { getPublicPlatformConfig } from '@/services/marketing/public-config';
+import { currentRegistrationLegal } from '@/core/onboarding/community-registration';
+import { getPrisma } from '@/lib/prisma';
+import { legalMarkerValues } from '@/services/legal/legal-page-data';
 
-// Página pública e indexable (ficha 3.2): los primeros euros exentos salen del motor de reglas y se regeneran cada 10 minutos.
-export const revalidate = 600;
+// Página pública e indexable (ficha 3.2). Las versiones de los textos que se aceptan se leen en cada visita (Sprint 5.10a): una página guardada desde la
+// compilación, sin base de datos, diría que aún no hay condiciones publicadas. Si al enviar ya hay otra versión, el servidor la devuelve y el formulario la enseña.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -25,7 +29,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ local
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'registration' });
-  const { pricing } = await getPublicPlatformConfig();
+  const [{ pricing }, legal, markers] = await Promise.all([getPublicPlatformConfig(), currentRegistrationLegal(getPrisma(), locale), legalMarkerValues(getPrisma())]);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10">
@@ -40,7 +44,14 @@ export default async function RegisterPage({ params }: { params: Promise<{ local
         </p>
       </header>
       <section aria-label={t('formLabel')} className="korum-trust-vault p-5 md:p-8">
-        <RegistrationWizard exemptLimitCents={pricing.exemptLimitCents} appHost={siteUrl().replace(/^https?:\/\//, '')} />
+        {legal ? (
+          <RegistrationWizard exemptLimitCents={pricing.exemptLimitCents} appHost={siteUrl().replace(/^https?:\/\//, '')} legal={legal.versions} legalContact={{ company: markers.legalName ?? null, privacyEmail: markers.privacyEmail ?? null }} />
+        ) : (
+          // Sin condiciones para entidades ni contrato de encargo publicados no hay nada que aceptar: el alta espera (Sprint 5.10a).
+          <p role="status" className="text-ink" data-testid="registration-legal-unavailable">
+            {t('legalUnavailable')}
+          </p>
+        )}
       </section>
     </div>
   );

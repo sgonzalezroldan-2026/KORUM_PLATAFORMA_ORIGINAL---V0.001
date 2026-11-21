@@ -2,6 +2,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { FocusWhenChanged } from './settings-kit';
 import { Link } from '@/i18n/navigation';
 import { HISTORY_PAGE, type HistoryRow, type SecurityView, type SettingsView } from '@/services/admin/platform-settings-view';
+import { LEGAL_KEY_PATTERN } from '@/core/legal/legal-catalog';
 
 const WHEN = { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Madrid' } as const;
 const NOTICE = 'rounded-xl border-2 border-amber-600/40 bg-amber-50 p-3 text-sm font-semibold text-amber-950';
@@ -75,7 +76,7 @@ function targetOf(t: ReturnType<typeof useTranslations>, all: ReturnType<typeof 
   if (row.action.startsWith('superadmin.')) return t('person');
   const id = row.target.replaceAll('.', '_');
   if (row.target === 'privacy.policyVersion') return t('targets.policyVersion');
-  const legal = /^legal\.(terminos|privacidad|cookies|aviso-legal)\.(es|ca|en)$/.exec(row.target);
+  const legal = LEGAL_KEY_PATTERN.exec(row.target);
   if (legal) return t('targets.legal', { document: all(`legal.documents.${legal[1] as 'terminos'}`), locale: all(`legal.locales.${legal[2] as 'es'}`) });
   if (row.action === 'settings.connection_tested') return t.has(`targets.connection.${row.target}`) ? t(`targets.connection.${row.target}`) : row.target;
   if (all.has(`fields.${id}.label`)) return all(`fields.${id}.label`);

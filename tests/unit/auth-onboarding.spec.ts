@@ -63,7 +63,8 @@ describe('reglas del alta de una entidad', () => {
       publicIndexing: true,
       director: { name: 'Ana', email: 'ana@colegio.example', phone: '600111222', roleLabel: 'Dirección', password: 'una-contraseña-larga' },
       cosigner: { name: 'Pau', email: 'pau@colegio.example', phone: '600333444', roleLabel: 'Presidencia AFA' },
-      representationDeclared: true
+      representationDeclared: true,
+      acceptedLegal: { entityTerms: 'a'.repeat(64), processingContract: 'b'.repeat(64) }
     };
     expect(validateRegistration(raw).director.email).toBe('ana@colegio.example');
     expect(() => validateRegistration({ ...raw, representationDeclared: false })).toThrow(RegistrationError);

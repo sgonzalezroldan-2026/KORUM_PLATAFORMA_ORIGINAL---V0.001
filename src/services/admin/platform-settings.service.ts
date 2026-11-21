@@ -18,6 +18,10 @@ import { InvalidSettingError, SettingConflictError, deleteSecret, updateSecret, 
 import { isSecretKey, secretDefinition, settingDefinition, UnknownSettingError, type SecretKey } from '@/services/settings/setting-definitions';
 import { SECRET_REQUIRED_KEYS } from '@/core/admin/settings-model';
 import { writeAudit } from '@/services/audit/audit.service';
+import { fillMarkers, missingMarkers, unknownMarkers, URGENT_DOCUMENT, type LegalMarkerValues } from '@/core/legal/legal-catalog';
+import { parseLegalMarkdown } from '@/core/legal/legal-markdown';
+import { siteUrl } from '@/lib/seo/marketing-routes';
+import { archiveLegalVersion, LegalVersionConflictError } from '@/services/legal/legal-archive.service';
 import type { SettingsRuntime } from './settings-runtime';
 
 /**
@@ -44,6 +48,10 @@ export type SettingsRejection =
   | 'VERSION_IN_USE'
   | 'VERSION_NOT_TODAY'
   | 'PUBLISHED_TO_DRAFT'
+  | 'UNKNOWN_MARKER'
+  | 'MISSING_COMPANY_DATA'
+  | 'SUMMARY_REQUIRED'
+  | 'URGENT_NOT_ONLY_PROVIDERS'
   | 'SECRET_REQUIRED';
 
 export class SettingsRejectedError extends Error {
@@ -58,13 +66,12 @@ export class SettingsRejectedError extends Error {
 
 /**
  * Bloqueo consultivo de la transacción (se libera solo al confirmar o deshacer). Ordena las operaciones que se comprueban unas contra otras y que no comparten fila: el monedero con saldo
- * (modo, proveedor y clave) y la publicación de la política de privacidad en los tres idiomas. Ninguna otra parte los toma, así que no pueden bloquearse en cruz con el resto.
+ * (modo, proveedor y clave). Ninguna otra parte lo toma, así que no puede bloquearse en cruz con el resto.
  */
 const advisoryLock = async (tx: Db, name: string): Promise<void> => {
   await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${name}))::text`;
 };
 const HUCHA_LOCK = 'korum:settings:hucha';
-const PRIVACY_LOCK = 'korum:settings:privacy-policy';
 
 const auditOf = (meta?: RequestMeta) => ({ ipHash: meta?.ipHash ?? null, userAgent: coarseUserAgent(meta?.userAgent) });
 
@@ -258,27 +265,48 @@ const legalPayload = z.object({
   version: z.string().max(20),
   status: z.enum(['BORRADOR', 'PUBLICADO']),
   markdown: z.string().min(1).max(200_000),
-  expectedVersion: z.number().int().min(0).max(1_000_000)
+  expectedVersion: z.number().int().min(0).max(1_000_000),
+  /** Solo el contrato de encargo, al publicar: un cambio urgente de proveedor que se aplica al momento (decisión 58). */
+  urgent: z.boolean().default(false),
+  /** Qué cambia (obligatorio al publicar una versión nueva de los textos de las entidades): va en el aviso a quienes firman y en la página. */
+  changeSummary: z.string().max(500).default('')
 });
 
 type StoredLegal = { version: string; status: 'BORRADOR' | 'PUBLICADO'; markdown: string };
 
+/** Los datos de la empresa guardados ahora mismo (dentro de la transacción de la publicación) y el dominio de la web, para rellenar las marcas. */
+async function companyMarkerValues(tx: Db): Promise<LegalMarkerValues> {
+  const row = await tx.platformSetting.findUnique({ where: { key: 'platform.company' }, select: { valueJson: true } });
+  const parsed = settingDefinition('platform.company').schema.safeParse(row?.valueJson);
+  const company = parsed.success ? (parsed.data as LegalMarkerValues) : {};
+  return { ...company, domain: new URL(siteUrl()).host };
+}
+
 /**
  * Guarda un texto legal (`legal.{documento}.{idioma}`). Reglas: la versión es la fecha de publicación (`AAAA-MM-DD`, con `.1`, `.2`… si hay varias el mismo día, siempre en su forma canónica) y no
  * puede ser anterior a la guardada; un texto **publicado** no se edita bajo su misma versión (hay que publicar una nueva: lo que aceptó cada persona se identifica por la versión) ni vuelve a
- * borrador; **al publicar, la fecha es la de hoy en España** (ni futura ni atrasada: es la fecha de publicación y sirve de prueba). Al publicar la política de privacidad en los tres idiomas,
- * `privacy.policyVersion` sube a la **más antigua** de las tres (la guardan los consentimientos; para no registrar una versión **posterior** a la que vio la persona).
+ * borrador; **al publicar, la fecha es la de hoy en España** (ni futura ni atrasada: es la fecha de publicación y sirve de prueba). Un texto con una marca `[[…]]` que no existe no se guarda.
+ * **Al publicar, la versión se archiva** en la misma transacción (Sprint 5.10a): queda tal como se publicó, con su huella, y las páginas públicas la enseñan desde ese momento. Si es una
+ * versión nueva de las condiciones para entidades o del contrato de encargo, sale el aviso de 30 días a quienes firman.
  */
 export async function saveLegalText(db: Db, actor: VerifiedSuperadminActor, raw: unknown, meta?: RequestMeta, now: Date = new Date()): Promise<{ version: string; settingVersion: number }> {
   assertVerifiedSuperadmin(actor, 'settings.update', now);
   const payload = legalPayload.safeParse(raw);
   if (!payload.success) throw new SettingsRejectedError('INVALID');
-  const { document, locale, status, markdown, expectedVersion } = payload.data;
+  const { document, locale, status, markdown, expectedVersion, urgent, changeSummary } = payload.data;
+  if (urgent && (document !== URGENT_DOCUMENT || status !== 'PUBLICADO')) throw new SettingsRejectedError('INVALID', ['urgent']);
   const version = payload.data.version.trim();
   if (parseLegalVersion(version) === null) throw new SettingsRejectedError('INVALID', ['version']);
   const key = legalKeyOf(document, locale);
   const value: StoredLegal = { version, status, markdown };
   if (!settingDefinition(key).schema.safeParse(value).success) throw new SettingsRejectedError('INVALID', ['markdown']);
+  if (unknownMarkers(markdown).length > 0) throw new SettingsRejectedError('UNKNOWN_MARKER', ['markdown']);
+  // Se lee antes de guardar: un texto que no se pudiera pintar dejaría su página pública rota y el archivo no se corrige (auditoría de seguridad del 5.10a).
+  try {
+    parseLegalMarkdown(markdown);
+  } catch {
+    throw new SettingsRejectedError('INVALID', ['markdown']);
+  }
 
   try {
     const result = await inTransaction(db, async (tx) => {
@@ -295,33 +323,24 @@ export async function saveLegalText(db: Db, actor: VerifiedSuperadminActor, raw:
         if (before.status === 'PUBLICADO' && order === 0 && !identical) throw new SettingsRejectedError('VERSION_IN_USE', ['version']);
       }
       if (status === 'PUBLICADO' && !identical && parseLegalVersion(version)?.date !== legalToday(now)) throw new SettingsRejectedError('VERSION_NOT_TODAY', ['version']);
-      const changes: SettingChange[] = [{ key, value, expectedVersion, auditExtra: { legalVersion: version, legalStatus: status, characters: markdown.length } }];
-      if (document === 'privacidad' && status === 'PUBLICADO') {
-        // La versión que guarda cada consentimiento es una sola para los tres idiomas: solo sube cuando **los tres** están publicados y pasa a la más antigua de las tres, así una familia no
-        // queda registrada con una versión **posterior** a la que vio. Límite conocido (CUMPLIMIENTO §9): al publicar una versión nueva en un idioma, quien acepta en él se sigue registrando
-        // con la versión anterior mientras los otros no la alcanzan, y sin archivo de versiones ese texto anterior ya no se puede reproducir.
-        // Dos publicaciones a la vez (los tres idiomas) se ordenan con un bloqueo: cada una ve las demás ya confirmadas.
-        await advisoryLock(tx, PRIVACY_LOCK);
-        const published = [version];
-        let allPublished = true;
-        for (const other of LEGAL_LOCALES.filter((candidate) => candidate !== locale)) {
-          const row = await tx.platformSetting.findUnique({ where: { key: legalKeyOf('privacidad', other) }, select: { valueJson: true } });
-          const text = row?.valueJson as StoredLegal | undefined;
-          if (text?.status === 'PUBLICADO') published.push(text.version);
-          else allPublished = false;
-        }
-        const policy = await tx.platformSetting.findUnique({ where: { key: 'privacy.policyVersion' }, select: { version: true, valueJson: true } });
-        const currentPolicy = (policy?.valueJson as string | undefined) ?? (settingDefinition('privacy.policyVersion').defaultValue as string);
-        const oldest = [...published].sort(compareLegalVersions)[0] ?? version;
-        // Solo sube: nunca hace retroceder lo que ya aceptaron las personas.
-        if (allPublished && compareLegalVersions(oldest, currentPolicy) > 0) changes.push({ key: 'privacy.policyVersion', value: oldest, expectedVersion: policy?.version ?? 0, auditExtra: { reason: 'privacy_text_published' } });
+      // El archivo manda: una versión que ya se publicó (aunque el ajuste se haya perdido o vuelto a crear) no se reescribe ni se publica otra anterior.
+      // Lo que se archiva es el texto final, con los datos de la empresa de hoy: es lo que se enseña y lo que se acepta, y su huella lo identifica (auditoría legal del
+      // 5.10a). Un dato que falte no se publica como «pendiente»: hay que rellenarlo antes en «Datos de la empresa».
+      let archived: Awaited<ReturnType<typeof archiveLegalVersion>> | null = null;
+      if (status === 'PUBLICADO') {
+        const values = await companyMarkerValues(tx);
+        const missing = missingMarkers(markdown, values);
+        if (missing.length > 0) throw new SettingsRejectedError('MISSING_COMPANY_DATA', missing.map((marker) => `marker:${marker}`));
+        archived = await archiveLegalVersion(tx, { document, locale, version, markdown: fillMarkers(markdown, values, ''), now, urgent, changeSummary });
       }
-      const saved = await updateSettings(tx, actor, changes, { now, operation: 'settings.update', audit: auditOf(meta) });
-      return { version, settingVersion: saved.versions[key] ?? 0, keys: changes.map((change) => change.key) };
+      const auditExtra = { legalVersion: version, legalStatus: status, characters: markdown.length, ...(archived?.created ? { archived: true, effectiveAt: archived.effectiveAt.toISOString(), notices: archived.notices, ...(urgent ? { urgent: true } : {}) } : {}) };
+      const saved = await updateSettings(tx, actor, [{ key, value, expectedVersion, auditExtra }], { now, operation: 'settings.update', audit: auditOf(meta) });
+      return { version, settingVersion: saved.versions[key] ?? 0, notices: archived?.notices ?? 0 };
     });
-    for (const changedKey of result.keys) invalidateSettingsCache(changedKey);
+    invalidateSettingsCache(key);
     return { version: result.version, settingVersion: result.settingVersion };
   } catch (error) {
+    if (error instanceof LegalVersionConflictError) throw new SettingsRejectedError(error.reason, [error.reason === 'SUMMARY_REQUIRED' ? 'changeSummary' : error.reason === 'URGENT_NOT_ONLY_PROVIDERS' ? 'urgent' : 'version']);
     throw asRejection(error);
   }
 }

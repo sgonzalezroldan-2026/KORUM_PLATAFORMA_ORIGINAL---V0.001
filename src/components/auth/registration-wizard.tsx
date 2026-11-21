@@ -4,13 +4,14 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { registerCommunityAction, type RegisterActionResult } from '@/app/[locale]/(auth)/registro-comunidad/actions';
+import type { RegistrationLegalVersions } from '@/core/onboarding/community-registration';
 import { ISSUE_FIELD, LEGAL_FORMS_BY_VERTICAL, participationTemplate, registrationIssues, registrationSchema, suggestSlug } from '@/core/onboarding/registration-rules';
 import { InvalidEmailError, normalizeCanonicalEmail } from '@/core/security/email-normalizer';
 import type { Locale } from '@/i18n/routing';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
 import { localizedPath } from '@/lib/seo/marketing-routes';
 import { CodeField, useFocusFirstInvalid, FormAlert, linkButton, QuietFieldErrors, secondaryButton, SubmitButton } from './auth-ui';
-import { ActivationStep, CommunityStep, SignersStep, type RegistrationDraft } from './registration-steps';
+import { AcceptedLegal, ActivationStep, RegistrationReady, CommunityStep, SignersStep, type LegalContact, type RegistrationDraft } from './registration-steps';
 import { useFocusPainted } from '@/lib/use-focus-painted';
 
 /**
@@ -25,12 +26,12 @@ const STEP_FIELDS: ReadonlyArray<ReadonlyArray<string>> = [
   ['representationDeclared']
 ];
 
-function payloadOf(draft: RegistrationDraft) {
+function payloadOf(draft: RegistrationDraft, legal: RegistrationLegalVersions) {
   const { passwordRepeat: _repeat, ...director } = draft.director;
-  return { ...draft, centerOwnership: draft.vertical === 'SCHOOL' ? draft.centerOwnership : 'NOT_APPLICABLE', director };
+  return { ...draft, centerOwnership: draft.vertical === 'SCHOOL' ? draft.centerOwnership : 'NOT_APPLICABLE', director, acceptedLegal: { entityTerms: legal.entityTerms.contentSha256, processingContract: legal.processingContract.contentSha256 } };
 }
 
-export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitCents: number; appHost: string }) {
+export function RegistrationWizard({ exemptLimitCents, appHost, legal: initialLegal, legalContact }: { exemptLimitCents: number; appHost: string; legal: RegistrationLegalVersions; legalContact: LegalContact }) {
   const focusFirstInvalid = useFocusFirstInvalid();
   const focusPainted = useFocusPainted();
   const t = useTranslations('registration');
@@ -53,6 +54,8 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
     cosigner: { name: '', email: '', phone: '', roleLabel: roleDefaults('SCHOOL').cosigner },
     representationDeclared: false
   }));
+  // Versiones de los textos que la persona tiene delante: si al enviar ya hay otras, el servidor las devuelve y se aceptan al volver a pulsar.
+  const [legal, setLegal] = useState(initialLegal);
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -87,10 +90,10 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
 
   function validate(upTo: number): Record<string, string> {
     const found: Record<string, string> = {};
-    const parsed = registrationSchema.safeParse({ ...payloadOf(draft), representationDeclared: draft.representationDeclared || undefined });
+    const parsed = registrationSchema.safeParse({ ...payloadOf(draft, legal), representationDeclared: draft.representationDeclared || undefined });
     const allowed = new Set(STEP_FIELDS.slice(0, upTo + 1).flat());
     if (!parsed.success) for (const issue of parsed.error.issues) if (allowed.has(String(issue.path[0]))) found[issue.path.join('.')] ??= fieldMessage(issue.path.join('.'));
-    for (const issue of registrationIssues({ ...payloadOf(draft), legalForm: draft.legalForm as never, centerOwnership: payloadOf(draft).centerOwnership as never })) found[ISSUE_FIELD[issue]] ??= t(`issues.${issue}`);
+    for (const issue of registrationIssues({ ...payloadOf(draft, legal), legalForm: draft.legalForm as never, centerOwnership: payloadOf(draft, legal).centerOwnership as never })) found[ISSUE_FIELD[issue]] ??= t(`issues.${issue}`);
     if (upTo >= 1) {
       if (draft.director.passwordRepeat !== draft.director.password) found['director.passwordRepeat'] = t('fieldErrors.passwordRepeat');
       try {
@@ -125,10 +128,11 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
   async function submit() {
     setBusy(true);
     try {
-      const result = await registerCommunityAction(locale, payloadOf(draft));
+      const result = await registerCommunityAction(locale, payloadOf(draft, legal));
       if (result.ok) {
+        // Siempre se queda en la pantalla final, que confirma lo aceptado (LSSI, art. 28; condiciones para entidades §19). Con una cuenta ya verificada no hay
+        // código que pedir: un botón lleva a la verificación en dos pasos.
         setDone(result);
-        if (!result.needsVerification) router.push(`${localizedPath(locale, '/acceso/doble-factor')}?next=${encodeURIComponent(localizedPath(locale, `/panel/${result.slug}?bienvenida=1`))}`);
         return;
       }
       const failure = result.failure;
@@ -140,8 +144,10 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       else if (failure.code === 'SAME_INBOX' || failure.code === 'COSIGNER_UNAVAILABLE') found['cosigner.email'] = t(`failures.${failure.code}`);
       else if (failure.code === 'DIRECTOR_EMAIL_IN_USE') found['director.email'] = t('failures.DIRECTOR_EMAIL_IN_USE');
       else if (failure.code === 'DISPOSABLE_EMAIL') found[failure.field] = t('failures.DISPOSABLE_EMAIL');
+      else if (failure.code === 'LEGAL_CHANGED') setLegal(failure.legal);
       setErrors(found);
-      setFormError(failure.code === 'RATE_LIMITED' || failure.code === 'UNKNOWN' ? t(`failures.${failure.code}`) : t('fixErrors', { count: Object.keys(found).length }));
+      const general = failure.code === 'RATE_LIMITED' || failure.code === 'UNKNOWN' || failure.code === 'LEGAL_CHANGED' || failure.code === 'LEGAL_UNAVAILABLE';
+      setFormError(general ? t(`failures.${failure.code}`) : t('fixErrors', { count: Object.keys(found).length }));
       const target = firstStepWith(found);
       if (target >= 0 && target !== step) moveTo(target, { focusHeading: false });
       if (Object.keys(found).length > 0) focusFirstInvalid(formRef.current);
@@ -151,6 +157,8 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       setBusy(false);
     }
   }
+
+  if (done && !done.needsVerification) return <RegistrationReady ref={verifyHeadingRef} name={draft.name} cosigner={draft.cosigner.email} result={done} />;
 
   if (done) {
     const verify = async (event: FormEvent) => {
@@ -172,6 +180,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
           {t('verify.title', { name: draft.name })}
         </h2>
         <FormAlert tone="success">{t('verify.created', { email: done.email, cosigner: draft.cosigner.email })}</FormAlert>
+        <AcceptedLegal legal={done.legal} acceptedAt={done.acceptedAt} />
         {codeNotice ? <FormAlert tone="info">{codeNotice}</FormAlert> : null}
         {formError ? <FormAlert>{formError}</FormAlert> : null}
         <CodeField label={t('verify.code')} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))} />
@@ -202,7 +211,7 @@ export function RegistrationWizard({ exemptLimitCents, appHost }: { exemptLimitC
       <QuietFieldErrors>
         {step === 0 ? <CommunityStep {...stepProps} appHost={appHost} /> : null}
         {step === 1 ? <SignersStep {...stepProps} /> : null}
-        {step === 2 ? <ActivationStep {...stepProps} exemptLimitCents={exemptLimitCents} groupCount={participationTemplate(draft.vertical).flatMap((cluster) => cluster.items).length} /> : null}
+        {step === 2 ? <ActivationStep {...stepProps} exemptLimitCents={exemptLimitCents} groupCount={participationTemplate(draft.vertical).flatMap((cluster) => cluster.items).length} legalContact={legalContact} /> : null}
       </QuietFieldErrors>
       <div className="mobile-stack grid gap-3 md:grid-cols-2">
         {step > 0 ? (

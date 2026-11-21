@@ -11,6 +11,7 @@ import { testConnection } from '@/services/admin/connection-tests';
 import { loadPublicPlatformConfig, resetPublicConfigMemo } from '@/services/marketing/public-config';
 import { removeSecretValue, saveLegalText, saveSecretValue, saveSettingsSection, SettingsRejectedError } from '@/services/admin/platform-settings.service';
 import { loadSettingsView } from '@/services/admin/platform-settings-view';
+import { legalContentHash } from '@/services/legal/legal-archive.service';
 import type { SettingsRuntime } from '@/services/admin/settings-runtime';
 import { cancelSuperadminInvitation, inviteSuperadmin, revokeSuperadmin, type SuperadminTeamError } from '@/services/admin/superadmin-team.service';
 import { describeSecrets, getSecret, getSetting, invalidateSettingsCache } from '@/services/settings/settings.service';
@@ -33,7 +34,6 @@ const DAY_MS = 86_400_000;
 const dayOffset = (days: number, sequence?: number) => `${legalToday(new Date(Date.now() + days * DAY_MS))}${sequence ? `.${sequence}` : ''}`;
 
 let db: KorumPrismaClient;
-let originalPolicy: unknown;
 
 const verified = async (now: Date = new Date()): Promise<VerifiedSuperadminActor> => (await verifiedSuperadmin(db, now)).actor;
 const versionsOf = async (keys: string[]) => Object.fromEntries(await Promise.all(keys.map(async (key) => [key, (await db.platformSetting.findUnique({ where: { key }, select: { version: true } }))?.version ?? 0] as const)));
@@ -62,7 +62,6 @@ async function wipe() {
 
 beforeAll(async () => {
   db = createTestClient();
-  originalPolicy = (await db.platformSetting.findUnique({ where: { key: 'privacy.policyVersion' } }))?.valueJson;
   await wipe();
 }, 120_000);
 
@@ -70,7 +69,6 @@ afterEach(() => invalidateSettingsCache());
 
 afterAll(async () => {
   await wipe();
-  if (originalPolicy !== undefined) await db.platformSetting.create({ data: { key: 'privacy.policyVersion', valueJson: originalPolicy as string } });
   await db.$disconnect();
 });
 
@@ -341,7 +339,8 @@ describe('QA-SEC07 · quitar claves con las mismas reglas que vaciar un campo', 
 });
 
 describe('QA-A05 · textos legales versionados', () => {
-  const text = (over: Partial<{ document: string; locale: string; version: string; status: string; markdown: string; expectedVersion: number }> = {}) => ({ document: 'terminos', locale: 'es', version: dayOffset(0), status: 'BORRADOR', markdown: '# Términos\n\nTexto.', expectedVersion: 0, ...over });
+  // Un texto que ninguna otra prueba ni la base de pruebas publica en ese idioma: el archivo es compartido y una versión publicada no se reescribe (Sprint 5.10a).
+  const text = (over: Partial<{ document: string; locale: string; version: string; status: string; markdown: string; expectedVersion: number }> = {}) => ({ document: 'condiciones-aportacion-mensual', locale: 'en', version: dayOffset(0), status: 'BORRADOR', markdown: '# Términos\n\nTexto.', expectedVersion: 0, ...over });
   const current = async (key: string) => (await db.platformSetting.findUnique({ where: { key }, select: { version: true } }))?.version ?? 0;
 
   it('un texto nuevo se guarda como borrador, se publica y desde ese momento no se edita bajo la misma versión ni vuelve a borrador ni retrocede', async () => {
@@ -351,7 +350,7 @@ describe('QA-A05 · textos legales versionados', () => {
     await saveLegalText(db, await verified(), text({ markdown: '# Términos\n\nTexto corregido.', expectedVersion: 1 }));
     await saveLegalText(db, await verified(), text({ status: 'PUBLICADO', markdown: '# Términos\n\nTexto corregido.', expectedVersion: 2 }));
 
-    const key = 'legal.terminos.es';
+    const key = 'legal.condiciones-aportacion-mensual.en';
     expect((await rejection(saveLegalText(db, await verified(), text({ status: 'PUBLICADO', markdown: 'Otro texto', expectedVersion: await current(key) })))).reason).toBe('VERSION_IN_USE');
     // Ni escribiendo la misma versión de otra forma (con «.0»): no entra, y la guardada no cambia.
     expect((await rejection(saveLegalText(db, await verified(), text({ status: 'PUBLICADO', version: `${dayOffset(0)}.0`, markdown: 'Otro texto', expectedVersion: await current(key) })))).fields).toEqual(['version']);
@@ -361,7 +360,7 @@ describe('QA-A05 · textos legales versionados', () => {
     // Una versión nueva del mismo día se publica con «.n».
     const next = await saveLegalText(db, await verified(), text({ status: 'PUBLICADO', version: dayOffset(0, 1), markdown: 'Texto de la versión 2', expectedVersion: await current(key) }));
     expect(next.version).toBe(dayOffset(0, 1));
-    const stored = await getSetting(db, 'legal.terminos.es');
+    const stored = await getSetting(db, 'legal.condiciones-aportacion-mensual.en');
     expect(stored).toMatchObject({ version: dayOffset(0, 1), status: 'PUBLICADO' });
     // La auditoría guarda la versión y el estado, no el texto.
     const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'settings.setting.updated', targetId: key }, orderBy: { id: 'desc' } });
@@ -386,42 +385,38 @@ describe('QA-A05 · textos legales versionados', () => {
     await saveLegalText(db, await verified(), text({ document: 'cookies', version: '2099-01-01' }));
   });
 
-  it('la versión de la política que guardan los consentimientos solo sube cuando los tres idiomas están publicados, pasa a la más antigua de las tres y nunca retrocede', async () => {
-    await db.platformSetting.deleteMany({ where: { key: 'privacy.policyVersion' } });
+  it('publicar archiva la versión tal como se publicó, con su huella; volver a guardar lo mismo no la duplica y el archivo manda aunque se pierda el ajuste (QA-LEG01)', async () => {
+    const key = 'legal.condiciones-comercios.en';
+    const markdown = '# Condiciones para comercios\n\nTexto de prueba del archivo.';
+    await saveLegalText(db, await verified(), text({ document: 'condiciones-comercios', status: 'PUBLICADO', markdown }));
+    const archived = await db.legalDocumentVersion.findUniqueOrThrow({ where: { document_locale_version: { document: 'condiciones-comercios', locale: 'en', version: dayOffset(0) } } });
+    expect(archived.markdown).toBe(markdown);
+    expect(archived.contentSha256).toBe(legalContentHash(markdown));
+    // No es un texto que acepten las entidades: se aplica desde que se publica.
+    expect(archived.effectiveAt.getTime()).toBe(archived.publishedAt.getTime());
+    const view = await loadSettingsView(db, MOCK, { actorUserId: (await verified()).userId, text: { document: 'condiciones-comercios', locale: 'en' } });
+    expect(view.legal.archive.map((row) => row.version)).toContain(dayOffset(0));
+    // Si el ajuste se pierde, la consola no deja volver a publicar esa versión con otro texto ni una anterior: el archivo es la prueba.
+    await db.platformSetting.deleteMany({ where: { key } });
     invalidateSettingsCache();
-    const viewBefore = await loadSettingsView(db, MOCK, { actorUserId: (await verified()).userId });
-    expect(viewBefore.legal.policyVersion).toBe('2026-11-01');
-
-    // Publicar en un solo idioma no la mueve: una familia que acepta en castellano quedaría registrada con un texto catalán que no vio.
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', version: dayOffset(0), status: 'PUBLICADO' }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe('2026-11-01');
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'ca', version: dayOffset(0), status: 'PUBLICADO' }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe('2026-11-01');
-    // Un borrador del tercero tampoco.
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'en', version: dayOffset(0), status: 'BORRADOR' }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe('2026-11-01');
-    // Con los tres publicados pasa a la más antigua de las tres.
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'en', version: dayOffset(0), status: 'PUBLICADO', expectedVersion: await current('legal.privacidad.en') }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe(dayOffset(0));
-
-    // Una nueva versión en un idioma no la sube mientras los otros dos sigan en la anterior (la más antigua manda); cuando los tres la alcanzan, sube.
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', version: dayOffset(0, 1), status: 'PUBLICADO', markdown: 'Nueva', expectedVersion: await current('legal.privacidad.es') }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe(dayOffset(0));
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'ca', version: dayOffset(0, 1), status: 'PUBLICADO', markdown: 'Nova', expectedVersion: await current('legal.privacidad.ca') }));
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'en', version: dayOffset(0, 1), status: 'PUBLICADO', markdown: 'New', expectedVersion: await current('legal.privacidad.en') }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe(dayOffset(0, 1));
-    // Nunca retrocede, aunque el estado guardado diga otra cosa.
-    await db.platformSetting.update({ where: { key: 'legal.privacidad.ca' }, data: { valueJson: { version: '2026-01-01', status: 'PUBLICADO', markdown: 'Vieja' } } });
-    invalidateSettingsCache();
-    await saveLegalText(db, await verified(), text({ document: 'privacidad', locale: 'es', version: dayOffset(0, 2), status: 'PUBLICADO', markdown: 'Otra', expectedVersion: await current('legal.privacidad.es') }));
-    expect(await getSetting(db, 'privacy.policyVersion')).toBe(dayOffset(0, 1));
+    expect((await rejection(saveLegalText(db, await verified(), text({ document: 'condiciones-comercios', status: 'PUBLICADO', markdown: 'Otro texto' })))).reason).toBe('VERSION_IN_USE');
+    // Con el mismo texto, se vuelve a guardar sin duplicar nada.
+    await saveLegalText(db, await verified(), text({ document: 'condiciones-comercios', status: 'PUBLICADO', markdown }));
+    expect(await db.legalDocumentVersion.count({ where: { document: 'condiciones-comercios', locale: 'en', version: dayOffset(0) } })).toBe(1);
+    // Solo el contrato de encargo admite un cambio urgente que se aplica al momento (decisión 58).
+    expect((await rejection(saveLegalText(db, await verified(), { ...text({ document: 'condiciones-comercios', version: dayOffset(0, 1), status: 'PUBLICADO', markdown: 'Otro', expectedVersion: await current(key) }), urgent: true }))).fields).toEqual(['urgent']);
+    // Una marca que no existe no se guarda (la página enseñaría los corchetes).
+    expect((await rejection(saveLegalText(db, await verified(), text({ document: 'condiciones-comercios', version: dayOffset(0, 1), status: 'PUBLICADO', markdown: 'Titular: [[RAZON SOCIAL]]', expectedVersion: await current(key) })))).reason).toBe('UNKNOWN_MARKER');
+    // El archivo no se reescribe ni se borra, ni siquiera con acceso directo a la base.
+    await expect(db.legalDocumentVersion.update({ where: { id: archived.id }, data: { markdown: 'Cambiado' } })).rejects.toThrow(/KORUM_IMMUTABLE/);
+    await expect(db.legalDocumentVersion.delete({ where: { id: archived.id } })).rejects.toThrow(/KORUM_IMMUTABLE/);
   });
 
-  it('la vista lista las doce combinaciones con su versión y estado, y manda el texto solo del documento elegido', async () => {
+  it('la vista lista las veintisiete combinaciones con su versión y estado, y manda el texto solo del documento elegido', async () => {
     const actor = await verified();
-    const view = await loadSettingsView(db, MOCK, { actorUserId: actor.userId, text: { document: 'terminos', locale: 'es' } });
-    expect(view.legal.overview).toHaveLength(12);
-    expect(view.legal.overview.find((row) => row.document === 'terminos' && row.locale === 'es')).toMatchObject({ status: 'PUBLICADO', version: dayOffset(0, 1) });
+    const view = await loadSettingsView(db, MOCK, { actorUserId: actor.userId, text: { document: 'condiciones-aportacion-mensual', locale: 'en' } });
+    expect(view.legal.overview).toHaveLength(27);
+    expect(view.legal.overview.find((row) => row.document === 'condiciones-aportacion-mensual' && row.locale === 'en')).toMatchObject({ status: 'PUBLICADO', version: dayOffset(0, 1) });
     expect(view.legal.selected.text?.markdown).toBe('Texto de la versión 2');
     expect(JSON.stringify(view.legal.overview)).not.toContain('Texto de la versión 2');
   });

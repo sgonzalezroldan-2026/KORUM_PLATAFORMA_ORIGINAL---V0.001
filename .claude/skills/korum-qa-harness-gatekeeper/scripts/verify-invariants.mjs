@@ -212,7 +212,11 @@ if (fs.existsSync(migrationsDir)) {
     'Initiative_tickets_within_capacity',
     // La votación de redimensionamiento decide sobre el dinero de quienes donaron: ni ella ni sus votos se retocan ni se borran (Sprint 4.4b).
     'ResizePoll_keep_history',
-    'ResizeVote_keep_history'
+    'ResizeVote_keep_history',
+    // El archivo de los textos legales y las aceptaciones son la prueba de lo que se publicó y de lo que aceptó cada persona (Sprint 5.10a).
+    'LegalDocumentVersion_keep_history',
+    'LegalDocumentVersion_no_truncate',
+    'LegalAcceptance_keep_history'
   ];
   // Lo que cuenta es el estado FINAL de cada guarda: se recorren las migraciones en orden y gana el último evento (crear/eliminar).
   // Una migración puede eliminar una guarda y otra posterior restaurarla (ocurrió en 1.3); lo que no puede quedar es eliminada.
@@ -241,7 +245,7 @@ if (fs.existsSync(migrationsDir)) {
   if (/DISABLE\s+TRIGGER/i.test(allSql)) errors.push('[LEDGER-GUARD-DISABLED] a migration disables triggers');
   // Borrar la tabla, la función o la columna que protegen las guardas también las quita, sin nombrarlas (auditoría financiera del 5.12a): se vigila igual.
   // `CASCADE` arrastra objetos que no se ven en la migración; solo se admite para lo retirado con su función (las rifas, Sprint 5.12a).
-  const PROTECTED_TABLES = ['LedgerJournal', 'EscrowLedgerEntry', 'AuditLog', 'ResizePoll', 'ResizeVote', 'Initiative'];
+  const PROTECTED_TABLES = ['LedgerJournal', 'EscrowLedgerEntry', 'AuditLog', 'ResizePoll', 'ResizeVote', 'Initiative', 'LegalDocumentVersion', 'LegalAcceptance'];
   const CASCADE_ALLOWED = ['RaffleDraw', 'RaffleNumber'];
   migrationFiles.forEach((file) => {
     const rel = path.relative(ROOT, file);

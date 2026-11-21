@@ -7,6 +7,7 @@ import { seedFunding, type SeedSecrets } from './seed-funding';
 import { seedIdeas, seedInvoices, seedPayouts } from './seed-governance';
 import { loadSeedData } from './seed-types';
 import { verifySeed, type SeedReport } from './seed-verify';
+import { seedLegalTexts } from './legal-texts';
 
 export interface SeedOptions extends SeedSecrets {
   /** Esquema de PostgreSQL donde están las tablas (`public` por defecto; las pruebas usan `korum_test`). */
@@ -48,6 +49,8 @@ export async function seedDatabase(db: KorumPrismaClient, options: SeedOptions):
 
   log('Reglas globales, usuarios y entidades…');
   await seedPlatformConfig(db, seed);
+  // Textos legales de docs/legal (Sprint 5.10a): sin ellos no hay páginas legales ni se puede dar de alta una entidad.
+  await seedLegalTexts(db, clock.now);
   await seedOrganizations(db, seed, clock);
   log('Iniciativas y comercios…');
   await seedInitiatives(db, seed, plans);

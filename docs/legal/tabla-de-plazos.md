@@ -1,6 +1,6 @@
 # Tabla única de plazos de conservación
 
-> **Documento:** `tabla-de-plazos` (interno) · **Versión:** 2026-11-18 · **Estado:** VALIDADO por el promotor (2026-11-18) · **Idioma:** castellano
+> **Documento:** `tabla-de-plazos` (interno) · **Versión:** 2026-11-21 · **Estado:** VALIDADO por el promotor (2026-11-18; las tres filas de los textos legales aceptados y su archivo, el 2026-11-21, con la política de privacidad §3.3, §3.9 y §8, Sprint 5.10a) · **Idioma:** castellano
 > **Qué es:** la lista completa de cuánto tiempo se guarda cada dato personal en KORUM, qué pasa cuando vence su plazo y si la aplicación ya lo hace. **Manda sobre cualquier otro documento que hable de plazos:** [CUMPLIMIENTO §6](../CUMPLIMIENTO_LEGAL_Y_PRIVACIDAD.md) la resume y remite aquí, la [política de privacidad §8](politica-de-privacidad.md) es su versión para el público y el código la aplica (`src/core/privacy/retention-policy.ts`).
 > **Quién la valida:** el promotor (decisión 41). No se publica: es un documento interno que se enseña a la Agencia Española de Protección de Datos si lo pide, y a una entidad que lo solicite al amparo de su [contrato de encargo](contrato-de-encargo.md).
 
@@ -67,6 +67,7 @@ Un dato que alguien necesita para defenderse en una reclamación ya abierta se c
 | Contraseña (solo su huella), verificación en dos pasos y llaves de acceso | KORUM | Mientras exista la cuenta o hasta que la persona las quite | Borrado | Hecho |
 | Contadores que frenan los abusos (por ejemplo, demasiados intentos de entrar), ligados a un código seudónimo de la conexión | KORUM | Entre 1 minuto y 24 horas, según el límite | Borrado diario | Hecho |
 | Consentimientos (quién, para qué, cuándo y con qué versión del texto) | KORUM | Mientras estén vigentes y 3 años más | Borrado | Hecho |
+| Aceptación de las condiciones de uso al crear la cuenta (versión, idioma y fecha) | KORUM | Mientras exista la cuenta | Al suprimirse la cuenta queda sin nadie detrás, como la versión de la aportación mensual | Hecho (Sprint 5.10a) |
 | Solicitudes de derechos (tipo, fechas, resultado, notas de quien la atiende y un código seudónimo del email) | KORUM | 3 años desde que se cierran | Borrado | Sprint 5.10b (hoy se conservan sin plazo) |
 
 Los 3 años de las dos últimas filas son el plazo en que prescriben las infracciones más graves de la normativa de protección de datos (LOPDGDD, art. 72): durante ese tiempo KORUM tiene que poder demostrar que pidió el permiso y que atendió la solicitud.
@@ -132,6 +133,8 @@ Los datos de un comercio que es una sociedad no son datos personales. Sí lo son
 | Email y móvil de contacto que dio en el alta quien lleva la gestión principal | KORUM | Mientras ocupa el cargo | En el relevo, el email pasa a ser el de la persona nueva y el móvil se borra | Hecho |
 | Historial de relevos (quién propuso, quién salió y quién entró) | Entidad | 6 años desde el cierre del ejercicio | Se desvincula de las cuentas y se vacía el nombre escrito de la persona invitada. Ese nombre se anonimiza antes si la persona suprime su cuenta | Sprint 5.10b (hoy se conserva sin plazo; el nombre sí se anonimiza al suprimir la cuenta) |
 | Documentación del titular, incluido el documento de identidad de quien representa a la entidad | KORUM | Mientras la entidad esté en KORUM y 6 años más. El documento que se sustituye por otro, 6 años desde que se sustituye | Borrado | Hecho |
+| Aceptación por la entidad de sus condiciones y del contrato de encargo en el alta (quién la aceptó, versión, idioma y fecha) | KORUM | Mientras la entidad esté en KORUM y 6 años más: es la prueba del contrato | Borrado. Si antes se suprime la cuenta de quien la aceptó, queda sin nadie detrás. Si el alta nunca se verificó, se borra con ella a los 7 días | Hecho el registro (Sprint 5.10a); el borrado con el alta sin verificar, en el Sprint 5.10b, y a los 6 años de la baja, en el Sprint 5.10d |
+| Archivo de las versiones publicadas de los textos legales (texto, huella, fechas y qué cambia; sin datos personales: quién publicó cada versión consta en el registro de auditoría, con su plazo) | KORUM | Siempre: es lo que aceptó cada persona y cada entidad | — | Hecho (Sprint 5.10a) |
 | Datos y contenidos de la entidad tras su baja (una suspensión no es una baja: mientras dura, todo se conserva igual) | Entidad | 30 días para descargar una copia, contados desde que termina lo que tenía en marcha; después se cierra el acceso | Se borra o se anonimiza lo que no tenga un plazo legal en esta tabla. De lo que la entidad está obligada a conservar (datos fiscales de sus donantes y su registro de actividad), KORUM guarda una copia bloqueada (guardada sin uso, solo para una reclamación o una autoridad) hasta que vence el plazo que cada uno de esos datos tiene en esta tabla: 6 años desde el cierre del ejercicio. Base: LOPDGDD, art. 33.4, con el bloqueo del art. 32 ([contrato de encargo](contrato-de-encargo.md), cláusula 14) | Sprint 5.10d (hoy la aplicación no tiene baja de entidad) |
 
 ### 3.10 Seguridad y auditoría
@@ -231,6 +234,8 @@ La tabla anterior (CUMPLIMIENTO §6) tenía 22 filas; esta tiene 80. **El promot
 | 1 año tras caducar el distintivo | Contacto de un comercio con patrocinio | Nada: ya validado con la política de privacidad |
 | 2 años | Consultas de soporte | Confirmar: ya está en el código |
 | 3 años | Cuenta sin actividad; consentimientos | Confirmar: ya está en el código |
+| Mientras exista la cuenta | Condiciones de uso aceptadas al crear la cuenta (versión, idioma y fecha) | Nada: validado el 2026-11-21 con la política de privacidad |
+| Mientras la entidad esté en KORUM y 6 años más | Aceptación por la entidad de sus condiciones y del contrato de encargo | Nada: validado el 2026-11-21 con la política de privacidad |
 | 3 años | Solicitudes de derechos | Decidir: propuesta nueva |
 | 5 años | Contacto de un comercio que dona | Nada: ya decidido (decisión 52) |
 | 6 años desde el cierre del ejercicio | Todo lo que mueve dinero o lleva firma | Confirmar: lo fija el Código de Comercio |
@@ -247,12 +252,13 @@ Todo lo que no está hecho tiene sprint:
 | Alertas de operación y tareas del sistema, borradas a los 12 meses | 5.10b |
 | Factura de proveedor adjunta: 6 años desde el cierre del ejercicio | 5.10b |
 | Todos los plazos, reunidos en un solo archivo del código | 5.10b |
-| Altas sin verificar, borradas a los 7 días | 5.10b |
+| Altas sin verificar, borradas a los 7 días (con la aceptación de los textos que hicieron en el alta) | 5.10b |
 | Descripción de las ideas y respuestas de la entidad en su conversación, a 1 año del fin de la idea | 5.10b |
 | Solicitudes de derechos, 3 años desde que se cierran | 5.10b |
 | El comentario del código que cita esta tabla deja de decir «a validar por el abogado» | 5.10b |
 | Email directo de KORUM a una entidad, 12 meses | 5.10c |
 | Las búsquedas de la consola que cruzan varias entidades anotan de qué entidad son | 5.10c |
+| Aceptación de los textos por una entidad: borrada a los 6 años de su baja | 5.10d |
 | Baja de una entidad: copia de sus datos durante 30 días y cierre. Suspensión: la entidad consulta su panel, pero no publica, cambia, firma ni mueve dinero; no se borra nada | 5.10d |
 | Lecturas y sesiones de portería, 1 año desde la liquidación | 5.13 (hecho) |
 | Canjes de vales, 1 año desde la liquidación | 5.14c |

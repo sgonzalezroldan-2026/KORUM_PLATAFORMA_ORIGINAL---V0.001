@@ -318,13 +318,16 @@ describe('firmar una idea desde la petición', () => {
 
     await signIdeaForRequest(deps, { orgSlug: organization.slug, ideaId: ideaB.id, fingerprint, fingerprintConsent: true }, context(withConsent.id), NOW);
     const consent = await db.consentRecord.findFirstOrThrow({ where: { userId: withConsent.id, purpose: 'DEVICE_FINGERPRINT' } });
-    expect(consent).toMatchObject({ granted: true, source: 'buzon', policyVersion: '2026-11-01' });
+    // La versión es la de la política publicada en el idioma de la cuenta (Sprint 5.10a).
+    const { policyForUser } = await import('@/services/legal/legal-archive.service');
+    const policy = (await policyForUser(db, withConsent.id))!;
+    expect(consent).toMatchObject({ granted: true, source: 'buzon', policyVersion: policy.version, policyLocale: policy.locale });
     const device = await db.device.findFirstOrThrow({ where: { accounts: { some: { userId: withConsent.id } } } });
     expect(device.fingerprintHmac).toBe(dataHmac(SECRET, 'device-fingerprint', fingerprint));
     expect(device.fingerprintHmac).not.toContain(fingerprint);
 
     const { recordConsent } = await import('@/core/privacy/consents');
-    await recordConsent(db, { userId: withConsent.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: '2026-11-01', source: 'buzon' }, NOW);
+    await recordConsent(db, { userId: withConsent.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: policy.version, policyLocale: policy.locale, source: 'buzon' }, NOW);
     expect((await db.device.findUniqueOrThrow({ where: { id: device.id } })).fingerprintHmac).toBeNull();
   });
 

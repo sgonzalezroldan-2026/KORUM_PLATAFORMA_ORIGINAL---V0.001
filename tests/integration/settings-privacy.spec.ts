@@ -22,11 +22,14 @@ import { describeSecrets, getSecret, getSetting, invalidateSettingsCache, Invali
 import { UnknownSettingError } from '@/services/settings/setting-definitions';
 import { MemoryStorage } from '@/services/storage/memory-storage';
 import es from '../../messages/es.json';
+import { loadLegalSeedTexts } from '@/seed/legal-texts';
 import { createInitiative, createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, TEST_KEYRING, testJobDeps, uniqueId } from './test-database';
 
 /** Sprint 2.5 · QA-SEC07 (ajustes cifrados), QA-PRIV01 (exportación), QA-PRIV02 (consentimientos y conservación) y QA-REG03 (supresión). */
 
 let db: KorumPrismaClient;
+/** Versión de la política publicada en la base de pruebas (la de docs/legal): un consentimiento solo se registra con una versión publicada (Sprint 5.10a). */
+const SEED_POLICY = loadLegalSeedTexts().find((text) => text.document === 'privacidad')!.version;
 const MINUTE = 60_000;
 const DAY = 86_400_000;
 const TOUCHED_SETTINGS = ['paycomet.serverIp', 'hucha.mode', 'hucha.walletProvider', 'platform.company', 'email.fromAddress'];
@@ -190,16 +193,16 @@ describe('QA-PRIV02 · consentimientos', () => {
     const neighbourDevice = await db.device.create({ data: { cookieIdHash: uniqueId('cookie-n'), fingerprintHmac: 'huella-ajena' } });
     await db.deviceAccount.create({ data: { deviceId: neighbourDevice.id, userId: neighbour.id, canonicalEmail: neighbour.canonicalEmail, accountOrder: 1 } });
 
-    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: true, policyVersion: '2026-11-05', source: 'buzon' })).toEqual({ changed: true });
-    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: '2026-11-05', source: 'cuenta' })).toEqual({ changed: true });
+    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: true, policyVersion: SEED_POLICY, policyLocale: 'es', source: 'buzon' })).toEqual({ changed: true });
+    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: SEED_POLICY, policyLocale: 'es', source: 'cuenta' })).toEqual({ changed: true });
     expect(await db.device.count({ where: { id: { in: devices.map((device) => device.id) }, fingerprintHmac: { not: null } } })).toBe(0);
     expect((await db.device.findUniqueOrThrow({ where: { id: neighbourDevice.id } })).fingerprintHmac).toBe('huella-ajena');
 
     // Repetir el mismo estado no añade filas; el estado actual se lee del último registro.
-    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: '2026-11-05', source: 'cuenta' })).toEqual({ changed: false });
+    expect(await recordConsent(db, { userId: person.id, purpose: 'DEVICE_FINGERPRINT', granted: false, policyVersion: SEED_POLICY, policyLocale: 'es', source: 'cuenta' })).toEqual({ changed: false });
     expect(await db.consentRecord.count({ where: { userId: person.id } })).toBe(2);
     const state = await currentConsents(db, person.id);
-    expect(state.find((entry) => entry.purpose === 'DEVICE_FINGERPRINT')).toMatchObject({ granted: false, policyVersion: '2026-11-05' });
+    expect(state.find((entry) => entry.purpose === 'DEVICE_FINGERPRINT')).toMatchObject({ granted: false, policyVersion: SEED_POLICY });
     expect(state.find((entry) => entry.purpose === 'MARKETING_EMAILS')).toMatchObject({ granted: false, updatedAt: null });
     await expect(recordConsent(db, { userId: person.id, purpose: 'MARKETING_EMAILS', granted: true, policyVersion: 'v1', source: 'cuenta' })).rejects.toBeInstanceOf(ConsentInputError);
   });
@@ -225,7 +228,7 @@ describe('QA-PRIV01 · exportación de datos personales', () => {
     const asGuest = await contribution(organization.id, initiative.id, { type: 'TICKET', guestEmail: person.email, canonicalEmail: person.canonicalEmail });
     await db.ticketPass.create({ data: { contributionId: asGuest.id, initiativeId: initiative.id, serialCode: uniqueId('PASE'), holderEmail: person.email, qrHmacSignature: 'firma' } });
     await contribution(organization.id, initiative.id, { guestEmail: 'otra@pruebas.example', canonicalEmail: 'otra@pruebas.example' });
-    await recordConsent(db, { userId: person.id, purpose: 'MARKETING_EMAILS', granted: true, policyVersion: '2026-11-05', source: 'cuenta' });
+    await recordConsent(db, { userId: person.id, purpose: 'MARKETING_EMAILS', granted: true, policyVersion: SEED_POLICY, policyLocale: 'es', source: 'cuenta' });
     await tokenizeAndStoreCard(db, new MockPaycometProvider({ secrets: mockSecrets }), { jetToken: uniqueId('jet'), userId: person.id, brand: 'VISA', last4: '4242' }, TEST_KEYRING);
 
     const actor = await verifiedAccount(person.id);
@@ -362,7 +365,7 @@ describe('QA-REG03 · derecho de supresión', () => {
     await db.idea.update({ where: { id: idea.id }, data: { phase: 'PUBLIC_VOTING' } });
     expect(await signIdea(db, TEST_HMAC_SECRET, { ideaId: idea.id, userId: returning.id })).toEqual({ status: 'ALREADY_SIGNED' });
     // Una cuenta suprimida ya no da consentimientos.
-    await expect(recordConsent(db, { userId: person.id, purpose: 'MARKETING_EMAILS', granted: true, policyVersion: '2026-11-05', source: 'cuenta' })).rejects.toBeInstanceOf(ConsentInputError);
+    await expect(recordConsent(db, { userId: person.id, purpose: 'MARKETING_EMAILS', granted: true, policyVersion: SEED_POLICY, policyLocale: 'es', source: 'cuenta' })).rejects.toBeInstanceOf(ConsentInputError);
   });
 
   it('no se suprime a quien firma en una entidad ni al Super-Admin, y queda constancia', async () => {

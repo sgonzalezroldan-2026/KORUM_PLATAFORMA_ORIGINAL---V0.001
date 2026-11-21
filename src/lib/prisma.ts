@@ -4,7 +4,7 @@ import { getEnv } from '@/config/env';
 
 /**
  * Cliente de base de datos de KORUM (Prisma ORM 7 + adaptador `pg`).
- * La extensión `append-only` impide editar o borrar asientos, apuntes y auditoría desde la aplicación; la base de datos lo
+ * La extensión `append-only` impide editar o borrar asientos, apuntes, auditoría y el archivo de textos legales desde la aplicación; la base de datos lo
  * impide además con triggers (migración `*_ledger_immutability`), así que ni un SQL escrito a mano puede saltárselo.
  */
 
@@ -18,7 +18,7 @@ const LEDGER_BULK_OR_LOOSE_CREATES = new Set(['create', 'createMany', 'createMan
 
 export class ImmutableRecordError extends Error {
   constructor(model: string, operation: string) {
-    super(`KORUM_IMMUTABLE: ${operation} no está permitido en ${model}; la contabilidad y la auditoría solo admiten altas (corrige con un contra-asiento).`);
+    super(`KORUM_IMMUTABLE: ${operation} no está permitido en ${model}; la contabilidad, la auditoría y el archivo de textos legales solo admiten altas (corrige con un contra-asiento o publica una versión nueva).`);
     this.name = 'ImmutableRecordError';
   }
 }
@@ -78,7 +78,11 @@ export function createPrismaClient({ connectionString, schema, maxConnections, t
     query: {
       ledgerJournal: { $allOperations: journalGuard },
       escrowLedgerEntry: { $allOperations: entryGuard },
-      auditLog: { $allOperations: auditGuard }
+      auditLog: { $allOperations: auditGuard },
+      // Archivo de textos legales y aceptaciones (Sprint 5.10a): solo altas. La única modificación que admite su trigger (dejar una aceptación sin cuenta
+      // al borrarse la cuenta) la hace la propia base con su clave foránea, nunca la aplicación.
+      legalDocumentVersion: { $allOperations: appendOnly },
+      legalAcceptance: { $allOperations: appendOnly }
     }
   });
 }

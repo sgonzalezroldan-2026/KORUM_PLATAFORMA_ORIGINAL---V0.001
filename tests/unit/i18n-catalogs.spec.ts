@@ -148,6 +148,8 @@ describe('QA-C05 · catálogos de traducción', () => {
       // Expediente exportable (Sprint 5.8b): «no consta», «sí», «no», «Creada el», «Meta», «Enviada el», «cobrada», «enviada», «Entra», «Taquilla» y los medios de pago se escriben igual en catalán; los demás son patrones sin texto traducible.
       'audit.dossier.none', 'audit.dossier.yes', 'audit.dossier.no', 'audit.dossier.labels.createdAt', 'audit.dossier.labels.goal', 'audit.dossier.labels.executedAt', 'audit.dossier.values.refunded', 'audit.dossier.values.member', 'audit.dossier.values.targetNamed', 'audit.dossier.values.target', 'audit.dossier.formats.TICKETING', 'audit.dossier.contributionStatuses.COMPLETED', 'audit.dossier.methods.BIZUM', 'audit.dossier.methods.APPLE_PAY', 'audit.dossier.methods.GOOGLE_PAY', 'audit.dossier.payoutStatuses.EXECUTED', 'audit.dossier.journal.in', 'audit.dossier.statusChangeLine', 'audit.dossier.notificationLine', 'audit.dossier.values.period', 'audit.dossier.movementLineUncounted']);
     const SAME_IN_ENGLISH = new Set(['privacy.export.no',
+      // Pie de página (Sprint 5.10a): «Cookies» se escribe igual en inglés.
+      'nav.legal.cookies',
       // Consola (Sprint 5.2): el guion, «Total» y las unidades son iguales en inglés.
       'admin.entities.noValue', 'admin.org360.invoices.total', 'admin.org360.tariffs.unitEur', 'admin.org360.tariffs.unitPct', 'privacy.export.fields.idea', 'registration.fields.email',
       // BI de la consola (Sprint 5.1): el guion de «sin valor» es igual en inglés.

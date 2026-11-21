@@ -170,7 +170,8 @@
         "notifications": "Emails we have sent you",
         "supportTickets": "Support requests",
         "passkeys": "Passkeys",
-        "ideaProposals": "Idea proposals and chat with the school"
+        "ideaProposals": "Idea proposals and chat with the school",
+        "legalAcceptances": "Legal texts you have accepted"
       },
       "fields": {
         "name": "Name",
@@ -224,7 +225,8 @@
         "pledgeCampaign": "Preferred campaign",
         "nextCharge": "Next charge",
         "alias": "Code",
-        "sender": "Sender"
+        "sender": "Sender",
+        "document": "Document"
       },
       "types": {
         "DONATION": "Donation",
@@ -1000,6 +1002,29 @@
         "where": "Show your QR code at the organisation’s stand to spend them.",
         "cta": "See my vouchers"
       }
+    },
+    "legal": {
+      "changeNotice": {
+        "subject": {
+          "condiciones-entidades": "KORUM’s terms for organisations are changing",
+          "contrato-de-encargo": "KORUM’s data processing agreement is changing"
+        },
+        "document": {
+          "condiciones-entidades": "the terms for organisations",
+          "contrato-de-encargo": "the data processing agreement"
+        },
+        "preheader": "It will apply to {organization} from {date}.",
+        "body": "We have published a new version of {document}, which you accepted when you signed up {organization}. It will apply to you from {date}; until then, the previous version remains in force.",
+        "options": "If you are not happy with the change, you can leave the platform at no cost. If the list of providers changes (Annex III of the data processing agreement), you can also object until that date through the help form in the dashboard.",
+        "version": "New version",
+        "effective": "Applies from",
+        "cta": "Read the new version",
+        "footnote": "This notice comes from KORUM, not from your organisation. It is sent to the people who sign for the organisation.",
+        "urgentBody": "We have published a new version of {document} because of an emergency: a provider is ceasing its service or there is a security problem. It applies to {organization} from today.",
+        "urgentOptions": "You can object to the change through the help form in the dashboard and, if you are not happy with it, leave the platform at no cost.",
+        "summary": "What changes: {summary}",
+        "campaigns": "The campaigns you had already published keep the terms they were published with."
+      }
     }
   },
   "nav": {
@@ -1020,7 +1045,14 @@
       "faq": "Frequently asked questions",
       "accesibilidad": "Accessibility"
     },
-    "account": "My account"
+    "account": "My account",
+    "footerLegal": "Legal information",
+    "legal": {
+      "aviso-legal": "Legal notice",
+      "terminos": "Terms of use",
+      "privacidad": "Privacy",
+      "cookies": "Cookies"
+    }
   },
   "cookies": {
     "title": "Optional cookies",
@@ -1617,7 +1649,20 @@
       "resetDone": "Password changed. You can now sign in with it.",
       "sendResetCode": "Send me the code",
       "passkey": "Sign in with a passkey",
-      "passkeyIntro": "Saved a passkey on this phone or computer? Sign in with your fingerprint, face or PIN."
+      "passkeyIntro": "Saved a passkey on this phone or computer? Sign in with your fingerprint, face or PIN.",
+      "firstLayer": {
+        "line": "When you sign in for the first time you create your account and accept the <terms>terms</terms>. KORUM uses your email to give you access. <rights>Your rights</rights>",
+        "summary": "Your data",
+        "items": {
+          "who": "<strong>Who processes it:</strong> KORUM{company, select, none {} other { ({company})}}.",
+          "why": "<strong>What for:</strong> sending you the sign-in link or code and showing you your contributions, tickets and documents.",
+          "recipients": "<strong>Who else receives it:</strong> nobody, except the technical providers who serve us.",
+          "rights": "<strong>Your rights:</strong> from My account{email, select, none {} other { or at {email}}}."
+        },
+        "privacy": "Privacy policy",
+        "newTab": "opens in a new tab",
+        "lineExisting": "By accepting the role, you also accept the <terms>terms</terms>, if you had not already done so. KORUM uses your email to give you access. <rights>Your rights</rights>"
+      }
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "The email or password is not correct.",
@@ -1848,7 +1893,9 @@
       "DIRECTOR_EMAIL_IN_USE": "That email already has a KORUM account. Sign in with it and come back to this form, or use another email.",
       "DISPOSABLE_EMAIL": "We don’t accept temporary email addresses. Use a usual email.",
       "RATE_LIMITED": "Too many registrations from this connection. Try again in an hour.",
-      "UNKNOWN": "We couldn’t complete the registration. Try again in a few seconds."
+      "UNKNOWN": "We couldn’t complete the registration. Try again in a few seconds.",
+      "LEGAL_CHANGED": "While you were filling in the form we published a new version of the terms for organisations or of the data processing agreement. Review it with the links below and press the button again to create the organisation.",
+      "LEGAL_UNAVAILABLE": "We cannot sign up organisations yet: the terms for organisations or the data processing agreement have not been published."
     },
     "verify": {
       "title": "{name} is now on KORUM!",
@@ -1856,7 +1903,10 @@
       "resent": "We’ve sent you a new code.",
       "code": "6-digit code",
       "submit": "Verify and continue",
-      "resend": "Send me another code"
+      "resend": "Send me another code",
+      "accepted": "You accepted the <terms>terms for organisations (version {termsVersion})</terms> and the <contract>data processing agreement (version {contractVersion})</contract> on {date}. You can always check those versions on their page; save this screen if you want a copy.",
+      "createdExisting": "We have sent the invitation to {cosigner}. Your account was already verified: only two-step verification is left.",
+      "continue": "Continue: two-step verification"
     },
     "codeErrors": {
       "INVALID_OTP": "The code is not correct. Check it and try again.",
@@ -1864,6 +1914,20 @@
       "TOO_MANY_ATTEMPTS": "Too many attempts with this code. Ask for another one.",
       "RATE_LIMITED": "Too many attempts in a row. Wait a few minutes.",
       "UNKNOWN": "That didn’t work. Try again in a few seconds."
+    },
+    "legalUnavailable": "Sign-up for organisations will open as soon as we publish the terms for organisations and the data processing agreement. Please try again in a few days.",
+    "firstLayer": {
+      "line": "By creating the organisation you accept the <terms>terms for organisations</terms> and the <contract>data processing agreement</contract>. KORUM uses your data for sign-up and signatures. <rights>Your rights</rights>",
+      "summary": "Your data",
+      "items": {
+        "who": "<strong>Who processes it:</strong> KORUM{company, select, none {} other { ({company})}}.",
+        "why": "<strong>What for:</strong> creating the organisation and your signer accounts, checking the holder’s documents and letting you know what needs your signature.",
+        "recipients": "<strong>Who else receives it:</strong> PAYCOMET, to register the organisation as the recipient of payments.",
+        "others": "<strong>If you enter another person’s details</strong> (the co-signer), we will send them an invitation explaining who is inviting them and why. If they do not accept, their data is deleted after 30 days.",
+        "rights": "<strong>Your rights:</strong> from My account{email, select, none {} other { or at {email}}}."
+      },
+      "privacy": "Privacy policy",
+      "newTab": "opens in a new tab"
     }
   },
   "panel": {
@@ -5409,7 +5473,11 @@
         "VERSION_NOT_TODAY": "A text is published with today’s date (Spain time): neither in the future nor backdated.",
         "SECRET_REQUIRED": "With test or live payments this key is essential and the server has no fallback one: without it the service would stop.",
         "FIELD_REQUIRED": "With test or live payments this detail is essential and the server has no fallback one: without it payments would stop.",
-        "WALLET_PROVIDER_LOCKED": "Some families still have a balance in the wallet: the entity that holds it cannot be changed until none is left."
+        "WALLET_PROVIDER_LOCKED": "Some families still have a balance in the wallet: the entity that holds it cannot be changed until none is left.",
+        "UNKNOWN_MARKER": "The text has a marker in double square brackets that does not exist. Valid ones are: [[RAZÓN SOCIAL]], [[NIF]], [[DOMICILIO SOCIAL]], [[EMAIL DE SOPORTE]], [[EMAIL DE PRIVACIDAD]], [[DATOS REGISTRALES]] and [[DOMINIO]].",
+        "MISSING_COMPANY_DATA": "The text uses company details that are not yet in “Company details”. Fill them in before publishing: the page cannot say “pending”.",
+        "SUMMARY_REQUIRED": "Write what changes: it goes in the notice to signers.",
+        "URGENT_NOT_ONLY_PROVIDERS": "An urgent change can only touch the list of providers (Annex III). If anything else changes, publish it without marking it as urgent: it will apply after 30 days."
       },
       "fields": {
         "paycomet_merchantCode": {
@@ -5638,32 +5706,34 @@
       },
       "company": {
         "title": "Company details",
-        "hint": "Company details. No page, email or invoice uses them yet: they are stored for when they are connected. With every field empty they are deleted.",
+        "hint": "They fill in the details in double square brackets in the legal texts when they are published. Texts already published keep the details they were published with: if they change, publish a new version of each text. With every field empty, they are deleted.",
         "fields": {
           "legalName": "Legal name",
           "taxId": "Tax ID",
           "address": "Registered address",
           "supportEmail": "Support email",
-          "privacyEmail": "Privacy email"
+          "privacyEmail": "Privacy email",
+          "registryData": "Registry details (Companies Register volume, folio and sheet; required if KORUM is a company)"
         },
         "errors": {
           "legalName": "Enter the legal name.",
           "taxId": "The tax ID is not valid: check the last digit or letter.",
           "address": "Enter the registered address.",
           "supportEmail": "The support email is not valid.",
-          "privacyEmail": "The privacy email is not valid."
+          "privacyEmail": "The privacy email is not valid.",
+          "registryData": "Write the registry details in 300 characters or fewer."
         },
         "required": {
           "legalName": "Enter the legal name.",
           "taxId": "Enter the tax ID.",
           "address": "Enter the registered address.",
           "supportEmail": "Enter the support email.",
-          "privacyEmail": "Enter the privacy email."
+          "privacyEmail": "Enter the privacy email.",
+          "registryData": "Write the registry details."
         }
       },
       "legal": {
-        "intro": "Each text has its version (the publication date) and its status. A published text is not modified without changing its version: to change it a new version is published, and each consent records the version of the policy the person accepted. The console only keeps the current text of each one.",
-        "policyVersion": "Current privacy policy version: {version}. Each consent records it, and it goes up by itself once the policy is published in all three languages (it becomes the oldest of the three versions).",
+        "intro": "Each text has its version (the publication date) and its status. When you publish, the version is stored in the archive exactly as published, with its fingerprint, and appears on its public page; a published text is never edited: you publish a new version. While a text is not translated, its Catalan or English page shows the Spanish one with a notice. When a new version of the terms for organisations or of the data processing agreement is published, signers receive an email and it applies to them after 30 days.",
         "matrixTitle": "Legal texts by document and language",
         "colDocument": "Document",
         "locales": {
@@ -5672,10 +5742,15 @@
           "en": "English"
         },
         "documents": {
-          "terminos": "Terms and conditions",
+          "terminos": "Terms of use",
           "privacidad": "Privacy policy",
           "cookies": "Cookie policy",
-          "aviso-legal": "Legal notice"
+          "aviso-legal": "Legal notice",
+          "condiciones-entradas-y-vales": "Terms for tickets and vouchers",
+          "condiciones-aportacion-mensual": "Terms for monthly contributions",
+          "condiciones-entidades": "Terms for organisations",
+          "condiciones-comercios": "Terms for local businesses",
+          "contrato-de-encargo": "Data processing agreement"
         },
         "openAria": "{document} in {locale}: ",
         "statusNone": "Not created",
@@ -5685,7 +5760,7 @@
         },
         "editing": "Editing: {document} · {locale}",
         "publishedHint": "This text is published with version {version}. To change it, publish a new version.",
-        "draftHint": "While it is a draft it is only visible here. Once there are public pages, the published text will be the current version.",
+        "draftHint": "While it is a draft, it is only visible here. Once published it becomes the version in force on its public page.",
         "version": "Version",
         "versionHelp": "The publication date (YYYY-MM-DD); if there are several on the same day, add “.1”, “.2”… When publishing, the date is today’s.",
         "statusLabel": "Status",
@@ -5698,7 +5773,17 @@
         "saved": "Text saved (version {version}).",
         "published": "Text published (version {version}).",
         "nothingToPublish": "The text has not changed: edit it to publish a new version.",
-        "publishFirst": "Publish this text"
+        "publishFirst": "Publish this text",
+        "archiveTitle": "Published versions: {document} · {locale}",
+        "archiveEmpty": "No version has been published in this language yet.",
+        "archivePublished": "published on {date}",
+        "archiveEffective": "· applies to organisations already signed up from {date}",
+        "archiveHash": "fingerprint {hash}…",
+        "urgentLabel": "Urgent provider change: applies immediately",
+        "urgentHint": "Only if a provider ceases its service or there is a security problem and the only change is the list of providers (Annex III). Any other change to the agreement takes its 30 days. Signers still receive the notice.",
+        "changeSummaryLabel": "What changes (required in a new version of the terms for organisations or the data processing agreement)",
+        "changeSummaryHint": "In a few words and with no personal data: it goes in the email to signers and on the page. If a provider changes, say which one comes in and which one goes out.",
+        "markerMissing": "Company details: {marker} is missing"
       },
       "team": {
         "intro": "These people can see and change everything in this console. Someone who receives an invitation only gets access once they accept it, with a password of at least 12 characters and the second factor enabled. An account that signs for an organization cannot be a Super-Admin.",
@@ -8243,6 +8328,9 @@
           "cancelledBuyer": "Voucher sale cancelled notice to voucher holders",
           "validityChanged": "Voucher validity change notice",
           "expiryReminder": "Reminder of vouchers about to expire"
+        },
+        "legal": {
+          "changeNotice": "Notice of a change to the terms for organisations or the data processing agreement"
         }
       },
       "payoutGapMismatch": "WARNING: less left the piggy bank than the amount for the project and the fee together. The ledger needs to be reviewed.",
@@ -8286,5 +8374,46 @@
       "invalidEntity": "We did not understand what you asked for. Choose it from the list.",
       "limited": "Too many case files have been requested in a short time. You can ask again in an hour."
     }
+  },
+  "legal": {
+    "titles": {
+      "terminos": "Terms of use",
+      "condiciones-entradas-y-vales": "Terms for tickets and vouchers",
+      "condiciones-aportacion-mensual": "Terms for monthly contributions",
+      "condiciones-entidades": "Terms for organisations",
+      "condiciones-comercios": "Terms for local businesses",
+      "contrato-de-encargo": "Data processing agreement",
+      "privacidad": "Privacy policy",
+      "cookies": "Cookie policy",
+      "aviso-legal": "Legal notice"
+    },
+    "descriptions": {
+      "terminos": "KORUM terms of use for families, members and anyone who contributes, buys or takes part.",
+      "condiciones-entradas-y-vales": "What happens with your tickets and vouchers: refunds, date changes, cancellations and validity.",
+      "condiciones-aportacion-mensual": "How a monthly contribution to an organisation works: charges, pauses, cancellation and refunds.",
+      "condiciones-entidades": "The terms under which parent associations, clubs and cultural organisations use KORUM.",
+      "condiciones-comercios": "The terms under which local businesses support an organisation through KORUM.",
+      "contrato-de-encargo": "The agreement under which KORUM processes each organisation’s community data on its behalf (GDPR, art. 28).",
+      "privacidad": "What data we process at KORUM, why, for how long and how to exercise your rights.",
+      "cookies": "The cookies KORUM uses: first-party and strictly necessary only, with no advertising or tracking.",
+      "aviso-legal": "Who is behind KORUM, what the platform is and how to report unlawful content."
+    },
+    "missingData": "(pending)",
+    "versionLine": "Version {version} · published on {date}",
+    "fallbackNotice": "This text has not been translated into English yet. The Spanish version is shown, and it is the one that applies.",
+    "archivedNotice": "You are reading an earlier version ({version}): it is no longer in force.",
+    "archivedCurrentLink": "See the version in force ({version})",
+    "effectiveNotice": "For organisations that had already signed up, this version applies from {date}. Until then, the previous one still applies to them.",
+    "effectivePreviousLink": "See the previous version ({version})",
+    "tableLabel": "Table",
+    "versionsTitle": "Versions of this text",
+    "versionsIntro": "We keep every version exactly as it was published, so you can always check the one you accepted.",
+    "versionPublished": "published on {date}",
+    "versionCurrent": "in force",
+    "hashLabel": "SHA-256 fingerprint of this version (it lets you check that the text has not changed):",
+    "staleNotice": "The translation of this text is not up to date yet. The Spanish version is shown, and it is the one that applies.",
+    "stillAppliesNotice": "You are reading version {version}, which still applies to organisations that had already signed up until {date}.",
+    "changeSummaryTitle": "What changes in this version",
+    "versionCurrentFrom": "in force; for organisations already signed up, from {date}"
   }
 }

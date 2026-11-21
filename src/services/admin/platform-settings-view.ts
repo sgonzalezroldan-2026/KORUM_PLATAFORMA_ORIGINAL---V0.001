@@ -23,6 +23,7 @@ import {
 import type { SettingsRuntime } from './settings-runtime';
 import { describeSecrets, type SecretSummary } from '@/services/settings/settings.service';
 import { settingDefinition, SECRET_DEFINITIONS, type SecretKey } from '@/services/settings/setting-definitions';
+import { listLegalVersions } from '@/services/legal/legal-archive.service';
 
 /**
  * Lo que enseña `/admin/ajustes` (Sprint 5.4). Lee la base directamente (sin la caché de 30 s del servicio de ajustes: quien edita tiene que ver lo último guardado y su versión).
@@ -52,6 +53,14 @@ export interface LegalSelected {
   locale: LegalLocale;
   settingVersion: number;
   text: { version: string; status: 'BORRADOR' | 'PUBLICADO'; markdown: string } | null;
+}
+
+/** Una versión del archivo de textos legales (Sprint 5.10a): lo que está publicado de verdad, con su huella y desde cuándo se aplica. */
+export interface LegalArchiveRow {
+  version: string;
+  publishedAt: Date;
+  effectiveAt: Date;
+  contentSha256: string;
 }
 
 export interface TeamMember {
@@ -103,7 +112,7 @@ export interface SettingsView {
   paycometMode: 'mock' | 'sandbox' | 'live';
   fields: Record<string, SettingFieldView>;
   secrets: Record<string, SecretSummary>;
-  legal: { overview: LegalOverviewRow[]; selected: LegalSelected; policyVersion: string };
+  legal: { overview: LegalOverviewRow[]; selected: LegalSelected; archive: LegalArchiveRow[] };
   team: { members: TeamMember[]; invitations: TeamInvitation[] };
   security: SecurityView;
   history: { rows: HistoryRow[]; hasMore: boolean; limit: number };
@@ -173,11 +182,11 @@ async function loadLegal(db: Db, selected: { document: LegalDocument; locale: Le
   );
   const row = byKey.get(legalKeyOf(selected.document, selected.locale));
   const value = row?.valueJson as { version: string; status: 'BORRADOR' | 'PUBLICADO'; markdown: string } | undefined;
-  const policy = await db.platformSetting.findUnique({ where: { key: 'privacy.policyVersion' }, select: { valueJson: true } });
+  const archive = await listLegalVersions(db, selected.document, selected.locale);
   return {
     overview,
     selected: { ...selected, settingVersion: row?.version ?? 0, text: value ? { version: value.version, status: value.status, markdown: value.markdown } : null },
-    policyVersion: (policy?.valueJson as string | undefined) ?? (settingDefinition('privacy.policyVersion').defaultValue as string)
+    archive: archive.map((item) => ({ version: item.version, publishedAt: item.publishedAt, effectiveAt: item.effectiveAt, contentSha256: item.contentSha256 }))
   };
 }
 

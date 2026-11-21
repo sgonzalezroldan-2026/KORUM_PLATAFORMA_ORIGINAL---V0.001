@@ -170,7 +170,8 @@
         "notifications": "Emails que te hemos enviado",
         "supportTickets": "Consultas de soporte",
         "passkeys": "Llaves de acceso",
-        "ideaProposals": "Propuestas de ideas y chat con el centro"
+        "ideaProposals": "Propuestas de ideas y chat con el centro",
+        "legalAcceptances": "Textos legales que has aceptado"
       },
       "fields": {
         "name": "Nombre",
@@ -224,7 +225,8 @@
         "pledgeCampaign": "Campaña preferida",
         "nextCharge": "Próximo cobro",
         "alias": "Código",
-        "sender": "Remitente"
+        "sender": "Remitente",
+        "document": "Documento"
       },
       "types": {
         "DONATION": "Donación",
@@ -1000,6 +1002,29 @@
         "where": "Enseña tu código QR en el puesto de la entidad para gastarlos.",
         "cta": "Ver mis vales"
       }
+    },
+    "legal": {
+      "changeNotice": {
+        "subject": {
+          "condiciones-entidades": "Cambian las condiciones para entidades de KORUM",
+          "contrato-de-encargo": "Cambia el contrato de encargo del tratamiento de KORUM"
+        },
+        "document": {
+          "condiciones-entidades": "las condiciones para entidades",
+          "contrato-de-encargo": "el contrato de encargo del tratamiento"
+        },
+        "preheader": "Se aplicará a {organization} desde el {date}.",
+        "body": "Hemos publicado una versión nueva de {document}, que aceptasteis al dar de alta {organization}. Se os aplicará desde el {date}; hasta entonces sigue valiendo la versión anterior.",
+        "options": "Si el cambio no os convence, podéis dejar la plataforma sin ningún coste. Si cambia la lista de proveedores (Anexo III del contrato de encargo), también podéis oponeros hasta esa fecha desde el formulario de ayuda del panel.",
+        "version": "Versión nueva",
+        "effective": "Se aplica desde",
+        "cta": "Leer la versión nueva",
+        "footnote": "Este aviso es de KORUM, no de vuestra entidad. Lo reciben las personas que firman por la entidad.",
+        "urgentBody": "Hemos publicado una versión nueva de {document} por una urgencia: un proveedor deja de prestar el servicio o hay un problema de seguridad. Se aplica a {organization} desde hoy.",
+        "urgentOptions": "Podéis oponeros al cambio desde el formulario de ayuda del panel y, si no os convence, dejar la plataforma sin ningún coste.",
+        "summary": "Qué cambia: {summary}",
+        "campaigns": "Las campañas que ya teníais publicadas siguen con las condiciones con las que se publicaron."
+      }
     }
   },
   "nav": {
@@ -1020,7 +1045,14 @@
       "faq": "Preguntas frecuentes",
       "accesibilidad": "Accesibilidad"
     },
-    "account": "Mi cuenta"
+    "account": "Mi cuenta",
+    "footerLegal": "Legal",
+    "legal": {
+      "aviso-legal": "Aviso legal",
+      "terminos": "Condiciones de uso",
+      "privacidad": "Privacidad",
+      "cookies": "Cookies"
+    }
   },
   "cookies": {
     "title": "Cookies opcionales",
@@ -1617,7 +1649,20 @@
       "resetDone": "Contraseña cambiada. Ya puedes entrar con ella.",
       "sendResetCode": "Enviarme el código",
       "passkey": "Entrar con llave de acceso",
-      "passkeyIntro": "¿Guardaste una llave de acceso en este móvil u ordenador? Entra con tu huella, tu cara o tu PIN."
+      "passkeyIntro": "¿Guardaste una llave de acceso en este móvil u ordenador? Entra con tu huella, tu cara o tu PIN.",
+      "firstLayer": {
+        "line": "Al entrar por primera vez creas tu cuenta y aceptas las <terms>condiciones</terms>. KORUM usa tu email para darte acceso. <rights>Tus derechos</rights>",
+        "summary": "Tus datos",
+        "items": {
+          "who": "<strong>Quién los trata:</strong> KORUM{company, select, none {} other { ({company})}}.",
+          "why": "<strong>Para qué:</strong> enviarte el enlace o el código de acceso y enseñarte tus aportaciones, tus entradas y tus documentos.",
+          "recipients": "<strong>Quién más los recibe:</strong> nadie, salvo los proveedores técnicos que nos prestan servicio.",
+          "rights": "<strong>Tus derechos:</strong> desde Mi cuenta{email, select, none {} other { o en {email}}}."
+        },
+        "privacy": "Política de privacidad",
+        "newTab": "se abre en otra pestaña",
+        "lineExisting": "Al aceptar el cargo, aceptas también las <terms>condiciones</terms>, si aún no lo habías hecho. KORUM usa tu email para darte acceso. <rights>Tus derechos</rights>"
+      }
     },
     "errors": {
       "INVALID_EMAIL_OR_PASSWORD": "El email o la contraseña no son correctos.",
@@ -1848,7 +1893,9 @@
       "DIRECTOR_EMAIL_IN_USE": "Ese email ya tiene cuenta en KORUM. Inicia sesión con él y vuelve a este formulario, o usa otro email.",
       "DISPOSABLE_EMAIL": "No admitimos emails temporales. Usa un email habitual.",
       "RATE_LIMITED": "Se han hecho demasiadas altas desde esta conexión. Inténtalo dentro de una hora.",
-      "UNKNOWN": "No hemos podido completar el alta. Inténtalo de nuevo en unos segundos."
+      "UNKNOWN": "No hemos podido completar el alta. Inténtalo de nuevo en unos segundos.",
+      "LEGAL_CHANGED": "Mientras rellenabais el formulario hemos publicado una versión nueva de las condiciones para entidades o del contrato de encargo. Revisadla con los enlaces de abajo y pulsad otra vez el botón para crear la entidad.",
+      "LEGAL_UNAVAILABLE": "Aún no podemos dar de alta entidades: faltan por publicar las condiciones para entidades o el contrato de encargo del tratamiento."
     },
     "verify": {
       "title": "¡{name} ya está en KORUM!",
@@ -1856,7 +1903,10 @@
       "resent": "Te hemos enviado un código nuevo.",
       "code": "Código de 6 dígitos",
       "submit": "Verificar y continuar",
-      "resend": "Enviarme otro código"
+      "resend": "Enviarme otro código",
+      "accepted": "Habéis aceptado las <terms>condiciones para entidades (versión {termsVersion})</terms> y el <contract>contrato de encargo del tratamiento (versión {contractVersion})</contract> el {date}. Podéis consultar siempre esas versiones en su página; guardad esta pantalla si queréis una copia.",
+      "createdExisting": "Hemos enviado la invitación a {cosigner}. Tu cuenta ya estaba verificada: solo falta la verificación en dos pasos.",
+      "continue": "Continuar: verificación en dos pasos"
     },
     "codeErrors": {
       "INVALID_OTP": "El código no es correcto. Revísalo e inténtalo de nuevo.",
@@ -1864,6 +1914,20 @@
       "TOO_MANY_ATTEMPTS": "Demasiados intentos con este código. Pide otro.",
       "RATE_LIMITED": "Demasiados intentos seguidos. Espera unos minutos.",
       "UNKNOWN": "No ha funcionado. Inténtalo de nuevo en unos segundos."
+    },
+    "legalUnavailable": "El alta de entidades se abrirá en cuanto publiquemos las condiciones para entidades y el contrato de encargo del tratamiento. Volved a intentarlo en unos días.",
+    "firstLayer": {
+      "line": "Al crear la entidad aceptáis las <terms>condiciones para entidades</terms> y el <contract>contrato de encargo del tratamiento</contract>. KORUM usa vuestros datos para el alta y las firmas. <rights>Vuestros derechos</rights>",
+      "summary": "Vuestros datos",
+      "items": {
+        "who": "<strong>Quién los trata:</strong> KORUM{company, select, none {} other { ({company})}}.",
+        "why": "<strong>Para qué:</strong> crear la entidad y vuestras cuentas de firmante, comprobar la documentación del titular y avisaros de lo que requiere vuestra firma.",
+        "recipients": "<strong>Quién más los recibe:</strong> PAYCOMET, para dar de alta a la entidad como destinataria de los pagos.",
+        "others": "<strong>Si escribís los datos de otra persona</strong> (la cofirma), le enviaremos una invitación en la que se le explica quién la invita y para qué. Si no acepta, sus datos se borran a los 30 días.",
+        "rights": "<strong>Vuestros derechos:</strong> desde Mi cuenta{email, select, none {} other { o en {email}}}."
+      },
+      "privacy": "Política de privacidad",
+      "newTab": "se abre en otra pestaña"
     }
   },
   "panel": {
@@ -5409,7 +5473,11 @@
         "VERSION_NOT_TODAY": "Un texto se publica con la fecha de hoy (hora de España): ni futura ni atrasada.",
         "SECRET_REQUIRED": "Con cobros de pruebas o reales esta clave es imprescindible y el servidor no tiene otra de respaldo: sin ella el servicio se pararía.",
         "FIELD_REQUIRED": "Con cobros de pruebas o reales este dato es imprescindible y el servidor no tiene otro de respaldo: sin él los cobros se pararían.",
-        "WALLET_PROVIDER_LOCKED": "Hay familias con saldo en el monedero: no se puede cambiar la entidad que lo custodia hasta que no quede ninguno."
+        "WALLET_PROVIDER_LOCKED": "Hay familias con saldo en el monedero: no se puede cambiar la entidad que lo custodia hasta que no quede ninguno.",
+        "UNKNOWN_MARKER": "El texto tiene una marca entre dobles corchetes que no existe. Las que valen son: [[RAZÓN SOCIAL]], [[NIF]], [[DOMICILIO SOCIAL]], [[EMAIL DE SOPORTE]], [[EMAIL DE PRIVACIDAD]], [[DATOS REGISTRALES]] y [[DOMINIO]].",
+        "MISSING_COMPANY_DATA": "El texto usa datos de la empresa que aún no están en «Datos de la empresa». Rellénalos antes de publicar: la página no puede decir «dato pendiente».",
+        "SUMMARY_REQUIRED": "Escribe qué cambia: va en el aviso a quienes firman.",
+        "URGENT_NOT_ONLY_PROVIDERS": "Un cambio urgente solo puede tocar la lista de proveedores (Anexo III). Si cambia algo más, publícalo sin marcarlo como urgente: se aplicará a los 30 días."
       },
       "fields": {
         "paycomet_merchantCode": {
@@ -5638,32 +5706,34 @@
       },
       "company": {
         "title": "Datos de la empresa",
-        "hint": "Datos de la empresa. Todavía no los usa ninguna página, email ni factura: se guardan para cuando se conecten. Con todos los campos vacíos se borran.",
+        "hint": "Rellenan los datos entre dobles corchetes de los textos legales al publicarlos. Los textos ya publicados conservan los datos con los que se publicaron: si cambian, publica una versión nueva de cada texto. Con todos los campos vacíos se borran.",
         "fields": {
           "legalName": "Razón social",
           "taxId": "NIF o CIF",
           "address": "Domicilio",
           "supportEmail": "Email de soporte",
-          "privacyEmail": "Email de privacidad"
+          "privacyEmail": "Email de privacidad",
+          "registryData": "Datos registrales (Registro Mercantil, tomo, folio y hoja; obligatorios si KORUM es una sociedad)"
         },
         "errors": {
           "legalName": "Escribe la razón social.",
           "taxId": "El NIF o CIF no es válido: revisa la última cifra o letra.",
           "address": "Escribe el domicilio.",
           "supportEmail": "El email de soporte no es válido.",
-          "privacyEmail": "El email de privacidad no es válido."
+          "privacyEmail": "El email de privacidad no es válido.",
+          "registryData": "Escribe los datos registrales en 300 caracteres como máximo."
         },
         "required": {
           "legalName": "Escribe la razón social.",
           "taxId": "Escribe el NIF o CIF.",
           "address": "Escribe el domicilio.",
           "supportEmail": "Escribe el email de soporte.",
-          "privacyEmail": "Escribe el email de privacidad."
+          "privacyEmail": "Escribe el email de privacidad.",
+          "registryData": "Escribe los datos registrales."
         }
       },
       "legal": {
-        "intro": "Cada texto lleva su versión (la fecha de publicación) y su estado. Un texto publicado no se modifica sin cambiar de versión: para cambiarlo se publica una versión nueva, y cada consentimiento guarda la versión de la política que la persona aceptó. La consola guarda solo el texto vigente de cada uno.",
-        "policyVersion": "Versión vigente de la política de privacidad: {version}. La guarda cada consentimiento y sube sola cuando la política está publicada en los tres idiomas (pasa a la más antigua de las tres versiones).",
+        "intro": "Cada texto lleva su versión (la fecha de publicación) y su estado. Al publicar, la versión se guarda en el archivo tal como se publicó, con su huella, y pasa a verse en su página pública; un texto publicado no se modifica: se publica una versión nueva. Mientras un texto no esté traducido, su página en catalán o en inglés enseña el castellano con un aviso. Al publicar una versión nueva de las condiciones para entidades o del contrato de encargo, quienes firman reciben un email y se les aplica a los 30 días.",
         "matrixTitle": "Textos legales por documento e idioma",
         "colDocument": "Documento",
         "locales": {
@@ -5672,10 +5742,15 @@
           "en": "Inglés"
         },
         "documents": {
-          "terminos": "Términos y condiciones",
+          "terminos": "Condiciones de uso",
           "privacidad": "Política de privacidad",
           "cookies": "Política de cookies",
-          "aviso-legal": "Aviso legal"
+          "aviso-legal": "Aviso legal",
+          "condiciones-entradas-y-vales": "Condiciones de entradas y vales",
+          "condiciones-aportacion-mensual": "Condiciones de la aportación mensual",
+          "condiciones-entidades": "Condiciones para entidades",
+          "condiciones-comercios": "Condiciones para comercios",
+          "contrato-de-encargo": "Contrato de encargo del tratamiento"
         },
         "openAria": "{document} en {locale}: ",
         "statusNone": "Sin crear",
@@ -5685,7 +5760,7 @@
         },
         "editing": "Editando: {document} · {locale}",
         "publishedHint": "Este texto está publicado con la versión {version}. Para cambiarlo, publica una versión nueva.",
-        "draftHint": "Mientras sea un borrador, solo se ve aquí. Cuando haya páginas públicas, el texto publicado será la versión vigente.",
+        "draftHint": "Mientras sea un borrador, solo se ve aquí. Al publicarlo pasa a ser la versión vigente de su página pública.",
         "version": "Versión",
         "versionHelp": "La fecha de publicación (AAAA-MM-DD); si hay varias el mismo día, añade «.1», «.2»… Al publicar, la fecha es la de hoy.",
         "statusLabel": "Estado",
@@ -5698,7 +5773,17 @@
         "saved": "Texto guardado (versión {version}).",
         "published": "Texto publicado (versión {version}).",
         "nothingToPublish": "No hay cambios en el texto: modifícalo para publicar una versión nueva.",
-        "publishFirst": "Publicar este texto"
+        "publishFirst": "Publicar este texto",
+        "archiveTitle": "Versiones publicadas: {document} · {locale}",
+        "archiveEmpty": "Aún no se ha publicado ninguna versión en este idioma.",
+        "archivePublished": "publicada el {date}",
+        "archiveEffective": "· a las entidades ya dadas de alta se les aplica desde el {date}",
+        "archiveHash": "huella {hash}…",
+        "urgentLabel": "Cambio urgente de proveedor: se aplica al momento",
+        "urgentHint": "Solo si un proveedor deja de prestar el servicio o hay un problema de seguridad y lo único que cambia es la lista de proveedores (Anexo III). Cualquier otro cambio del contrato lleva sus 30 días. Quienes firman reciben el aviso igual.",
+        "changeSummaryLabel": "Qué cambia (obligatorio en una versión nueva de las condiciones para entidades o del contrato de encargo)",
+        "changeSummaryHint": "En pocas palabras y sin datos de personas: va en el email a quienes firman y en la página. Si cambia un proveedor, di cuál entra y cuál sale.",
+        "markerMissing": "Datos de la empresa: falta {marker}"
       },
       "team": {
         "intro": "Estas personas pueden ver y cambiar todo lo de esta consola. Quien recibe una invitación solo tiene acceso cuando la acepta, con una contraseña de al menos 12 caracteres y el segundo factor activado. Una cuenta que firma por una entidad no puede ser Super-Admin.",
@@ -8243,6 +8328,9 @@
           "cancelledBuyer": "Aviso de venta de vales cancelada a quien tiene vales",
           "validityChanged": "Aviso de cambio de validez de los vales",
           "expiryReminder": "Recordatorio de vales a punto de caducar"
+        },
+        "legal": {
+          "changeNotice": "Aviso de cambio de las condiciones para entidades o del contrato de encargo"
         }
       },
       "payoutGapMismatch": "ATENCIÓN: de la hucha salió menos que el importe para el proyecto y la comisión juntos. Hay que revisar el libro mayor.",
@@ -8286,5 +8374,46 @@
       "invalidEntity": "No hemos entendido lo que pedíais. Elegidlo de la lista.",
       "limited": "Se han pedido demasiados expedientes en poco tiempo. Se podrá volver a pedir dentro de una hora."
     }
+  },
+  "legal": {
+    "titles": {
+      "terminos": "Condiciones de uso",
+      "condiciones-entradas-y-vales": "Condiciones de entradas y vales",
+      "condiciones-aportacion-mensual": "Condiciones de la aportación mensual",
+      "condiciones-entidades": "Condiciones para entidades",
+      "condiciones-comercios": "Condiciones para comercios",
+      "contrato-de-encargo": "Contrato de encargo del tratamiento",
+      "privacidad": "Política de privacidad",
+      "cookies": "Política de cookies",
+      "aviso-legal": "Aviso legal"
+    },
+    "descriptions": {
+      "terminos": "Las condiciones de uso de KORUM para familias, socios y cualquier persona que aporta, compra o participa.",
+      "condiciones-entradas-y-vales": "Qué pasa con tus entradas y tus vales: devoluciones, cambios de fecha, cancelaciones y validez.",
+      "condiciones-aportacion-mensual": "Cómo funciona la aportación mensual a una entidad: cobros, pausas, cancelación y devoluciones.",
+      "condiciones-entidades": "Las condiciones con las que AMPA, AFA, clubes y entidades culturales usan KORUM.",
+      "condiciones-comercios": "Las condiciones con las que los comercios apoyan a una entidad a través de KORUM.",
+      "contrato-de-encargo": "El contrato con el que KORUM trata por cuenta de cada entidad los datos de su comunidad (RGPD, art. 28).",
+      "privacidad": "Qué datos tratamos en KORUM, para qué, durante cuánto tiempo y cómo ejercer tus derechos.",
+      "cookies": "Las cookies que usa KORUM: solo propias y necesarias, sin publicidad ni seguimiento.",
+      "aviso-legal": "Quién está detrás de KORUM, qué es la plataforma y cómo avisarnos de un contenido ilícito."
+    },
+    "missingData": "(dato pendiente)",
+    "versionLine": "Versión {version} · publicada el {date}",
+    "fallbackNotice": "Este texto aún no está traducido. Se muestra la versión en castellano, que es la que se aplica.",
+    "archivedNotice": "Estás leyendo una versión anterior ({version}): ya no es la vigente.",
+    "archivedCurrentLink": "Ver la versión vigente ({version})",
+    "effectiveNotice": "Para las entidades que ya estaban dadas de alta, esta versión se aplica desde el {date}. Hasta entonces se les sigue aplicando la anterior.",
+    "effectivePreviousLink": "Ver la versión anterior ({version})",
+    "tableLabel": "Tabla",
+    "versionsTitle": "Versiones de este texto",
+    "versionsIntro": "Guardamos cada versión tal como se publicó, para que siempre puedas consultar la que aceptaste.",
+    "versionPublished": "publicada el {date}",
+    "versionCurrent": "vigente",
+    "hashLabel": "Huella SHA-256 de esta versión (sirve para comprobar que el texto no ha cambiado):",
+    "staleNotice": "La traducción de este texto aún no está al día. Se muestra la versión en castellano, que es la que se aplica.",
+    "stillAppliesNotice": "Estás leyendo la versión {version}, que se sigue aplicando a las entidades que ya estaban dadas de alta hasta el {date}.",
+    "changeSummaryTitle": "Qué cambia en esta versión",
+    "versionCurrentFrom": "vigente; para las entidades ya dadas de alta, desde el {date}"
   }
 }

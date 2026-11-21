@@ -9,6 +9,7 @@ import { loadUserActor } from '@/repositories/actor';
 import { listSigners } from '@/repositories/organization.repository';
 import { secretFromTotpUri, totpCode } from '../support/totp';
 import { createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, uniqueId } from './test-database';
+import { currentRegistrationLegal, type RegistrationLegalVersions } from '@/core/onboarding/community-registration';
 
 /**
  * Autenticación por rol y alta autónoma (Sprint 3.2, QA-M02) contra PostgreSQL real, llamando a Better Auth como lo hace la aplicación.
@@ -17,12 +18,15 @@ import { createOrganization, createTestClient, createUser, TEST_HMAC_SECRET, uni
 
 let db: KorumPrismaClient;
 let auth: KorumAuth;
+/** Versiones vigentes de las condiciones para entidades y del contrato de encargo (las que enseña el formulario): se leen al empezar, por si otro archivo publicó otras. */
+let SEED_LEGAL: RegistrationLegalVersions;
 const APP = 'http://localhost:3000';
 
 beforeAll(async () => {
   db = createTestClient();
   auth = createKorumAuth({ db, secret: 'integration-better-auth-secret-0123456789', hmacSecret: TEST_HMAC_SECRET, baseURL: APP, production: false, dispatch: () => undefined });
   await db.globalConfig.upsert({ where: { id: 'GLOBAL' }, create: { id: 'GLOBAL' }, update: {} });
+  SEED_LEGAL = (await currentRegistrationLegal(db, 'es'))!.versions;
 });
 
 afterAll(async () => {
@@ -158,6 +162,7 @@ function registration(overrides: Record<string, unknown> = {}) {
     director: { name: 'Carla Puig', email: email('direccion'), phone: '600 111 222', roleLabel: 'Dirección del centro', password: 'contraseña-larga-1' },
     cosigner: { name: 'Marta Soler', email: email('afa'), phone: '600 333 444', roleLabel: 'Presidencia del AFA' },
     representationDeclared: true,
+    acceptedLegal: { entityTerms: SEED_LEGAL.entityTerms.contentSha256, processingContract: SEED_LEGAL.processingContract.contentSha256 },
     ...overrides
   };
 }
@@ -184,6 +189,29 @@ describe('alta autónoma de una entidad (QA-M02)', () => {
     expect(invitation).toMatchObject({ organizationName: 'CEIP Pruebas', roleLabel: 'Presidencia del AFA', hours: 72 });
     expect(invitation.url).toMatch(/\/invitacion#t=[0-9a-f-]{36}\.[A-Za-z0-9_-]{43}$/);
     expect(await db.auditLog.count({ where: { action: 'organization.registered', targetId: result.organizationId } })).toBe(1);
+  });
+
+  it('QA-LEG02 · el alta registra quién aceptó por la entidad sus condiciones y el contrato de encargo, en qué idioma y qué versión; con otra versión ya publicada se para y devuelve la vigente', async () => {
+    const now = new Date();
+    const input = registration();
+    const result = await registerCommunity(db, input, { ...context(), locale: 'ca', now });
+    const accepted = await db.legalAcceptance.findMany({ where: { organizationId: result.organizationId }, orderBy: { document: 'asc' } });
+    // En catalán aún no hay traducción: se acepta el texto en castellano, y así queda.
+    expect(accepted.map(({ document, locale, version, source, userId }) => ({ document, locale, version, source, userId }))).toEqual([
+      { document: 'condiciones-entidades', locale: 'es', version: SEED_LEGAL.entityTerms.version, source: 'alta', userId: result.directorUserId },
+      { document: 'contrato-de-encargo', locale: 'es', version: SEED_LEGAL.processingContract.version, source: 'alta', userId: result.directorUserId }
+    ]);
+    const audit = await db.auditLog.findFirstOrThrow({ where: { organizationId: result.organizationId, action: 'organization.registered' } });
+    expect(audit.metadataJson).toMatchObject({ entityTermsVersion: SEED_LEGAL.entityTerms.version, entityTermsLocale: 'es', processingContractVersion: SEED_LEGAL.processingContract.version });
+    expect(result).toMatchObject({ legal: SEED_LEGAL, acceptedAt: now });
+
+    // El formulario enseñaba otra versión (por ejemplo, la anterior): no se crea nada y se devuelven las vigentes para enseñarlas.
+    // Basta con que cambie el texto (por ejemplo, la traducción publicada con la misma versión): se compara la huella.
+    const stale = registration({ acceptedLegal: { entityTerms: SEED_LEGAL.entityTerms.contentSha256, processingContract: 'c'.repeat(64) } });
+    await expect(registerCommunity(db, stale, context())).rejects.toMatchObject({ failure: { code: 'LEGAL_CHANGED', legal: SEED_LEGAL } });
+    expect(await db.organization.count({ where: { slug: stale.slug } })).toBe(0);
+    // Sin la versión no hay alta: el servidor no acepta un formulario que no diga qué se aceptó.
+    await expect(registerCommunity(db, { ...registration(), acceptedLegal: undefined }, context())).rejects.toMatchObject({ failure: { code: 'INVALID' } });
   });
 
   it('un colegio público solo entra por su AMPA/AFA y un titular de colegio no marca la Ley 49', async () => {
@@ -287,6 +315,8 @@ describe('firmantes: contraseña + TOTP, e invitación al cofirmante', () => {
     const accepted = await acceptInvitation(db, token, 'otra-contraseña-larga');
     expect(await db.user.findUniqueOrThrow({ where: { email: input.cosigner.email } })).toMatchObject({ emailVerified: true });
     expect(await db.organizationMember.findFirst({ where: { userId: accepted.userId, role: 'COSIGNER' } })).toMatchObject({ roleLabel: 'Presidencia del AFA' });
+    // Al aceptar se estrena la cuenta: acepta las condiciones de uso vigentes, como al entrar por primera vez (primeras capas §11, Sprint 5.10a).
+    expect(await db.legalAcceptance.findMany({ where: { userId: accepted.userId }, select: { document: true, source: true } })).toEqual([{ document: 'terminos', source: 'cuenta' }]);
     await expect(acceptInvitation(db, token, 'otra-contraseña-larga')).rejects.toBeInstanceOf(InvitationError);
     expect(await inspectInvitation(db, `${token.split('.')[0]}.manipulado`)).toBeNull();
     const signedIn = await auth.api.signInEmail({ body: { email: input.cosigner.email, password: 'otra-contraseña-larga' }, headers: requestHeaders() });

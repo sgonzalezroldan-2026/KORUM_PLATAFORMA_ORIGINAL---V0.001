@@ -1,3 +1,4 @@
+import type { LegalDocument, LegalLocale } from '@/core/legal/legal-catalog';
 import type { SecretKey } from '@/services/settings/setting-definitions';
 
 /**
@@ -90,13 +91,8 @@ export const SEARCH_VERIFICATION_TOKEN = /^[A-Za-z0-9_-]{8,200}$/;
 // Textos legales versionados
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-export const LEGAL_DOCUMENTS = ['terminos', 'privacidad', 'cookies', 'aviso-legal'] as const;
-export const LEGAL_LOCALES = ['es', 'ca', 'en'] as const;
-export type LegalDocument = (typeof LEGAL_DOCUMENTS)[number];
-export type LegalLocale = (typeof LEGAL_LOCALES)[number];
-
-export const isLegalDocument = (value: unknown): value is LegalDocument => typeof value === 'string' && (LEGAL_DOCUMENTS as readonly string[]).includes(value);
-export const isLegalLocale = (value: unknown): value is LegalLocale => typeof value === 'string' && (LEGAL_LOCALES as readonly string[]).includes(value);
+// Los nueve documentos (Sprint 5.10a) y sus idiomas viven en el catálogo de textos legales; la consola los usa tal cual.
+export { isLegalDocument, isLegalLocale, LEGAL_DOCUMENTS, LEGAL_LOCALES, type LegalDocument, type LegalLocale } from '@/core/legal/legal-catalog';
 export const legalKeyOf = (document: LegalDocument, locale: LegalLocale) => `legal.${document}.${locale}` as const;
 
 /** Forma canónica de una versión: la secuencia empieza en 1 y no lleva ceros a la izquierda (`.0` o `.01` serían la misma versión escrita de otra forma y esquivarían las comprobaciones). */

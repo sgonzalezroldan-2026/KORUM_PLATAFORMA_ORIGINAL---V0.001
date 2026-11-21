@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useHydrated } from '@/components/ui/use-hydrated';
 import { authClient, authErrorCode, localeHeaders } from '@/lib/auth/auth-client';
 import { CodeField, Field, useFocusFirstInvalid, FormAlert, linkButton, secondaryButton, SubmitButton } from './auth-ui';
@@ -38,7 +38,8 @@ const KNOWN_ERRORS = new Set([
 const EMAIL_FIELD_ERRORS = new Set(['INVALID_EMAIL', 'KORUM_INVALID_EMAIL', 'KORUM_DISPOSABLE_EMAIL']);
 const CODE_FIELD_ERRORS = new Set(['INVALID_OTP', 'OTP_EXPIRED']);
 
-export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl: string; loginUrl: string; initialError: string | null }) {
+/** `firstLayer`: primera capa de «crear una cuenta» (primeras capas §11); va junto a los botones que la crean (enlace o código), no en «Firmantes y equipo». */
+export function LoginForm({ continueUrl, loginUrl, initialError, firstLayer }: { continueUrl: string; loginUrl: string; initialError: string | null; firstLayer?: ReactNode }) {
   const focusFirstInvalid = useFocusFirstInvalid();
   const focusPainted = useFocusPainted();
   const t = useTranslations('auth.login');
@@ -194,6 +195,7 @@ export function LoginForm({ continueUrl, loginUrl, initialError }: { continueUrl
           <button type="button" className={secondaryButton} disabled={busy || email === ''} onClick={() => void sendCode()}>
             {t('sendCode')}
           </button>
+          {firstLayer}
         </form>
       ) : null}
 

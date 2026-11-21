@@ -22,5 +22,8 @@ export const E2E_SERVER_ENV: Record<string, string> = {
   NEXT_PUBLIC_APP_URL: E2E_BASE_URL,
   NEXT_TELEMETRY_DISABLED: '1',
   // Los emails de la vista previa se escriben en .email-preview/ también con la compilación de producción: las pruebas leen ahí los códigos.
-  KORUM_EMAIL_PREVIEW_FILES: '1'
+  KORUM_EMAIL_PREVIEW_FILES: '1',
+  // Las pruebas de SEO comprueban la web tal como la verán los buscadores en producción (Sprint 5.10a): sin esto, robots.txt lo bloquearía todo.
+  // El caso contrario (preproducción) lo cubren las pruebas unitarias de `proxy.ts` y `robots.ts`.
+  SEARCH_INDEXING: 'allow'
 };

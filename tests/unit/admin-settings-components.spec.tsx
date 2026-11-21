@@ -335,22 +335,23 @@ const PUBLISHED: LegalSelected = { document: 'terminos', locale: 'es', settingVe
 const EMPTY_TEXT: LegalSelected = { document: 'cookies', locale: 'ca', settingVersion: 0, text: null };
 
 describe('QA-A05 · textos legales y datos de la empresa', () => {
-  it('la matriz lista las doce combinaciones con su versión y estado y marca la que se edita', () => {
-    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />);
+  it('la matriz lista las veintisiete combinaciones con su versión y estado, marca la que se edita y enseña las versiones archivadas', () => {
+    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />);
     const matrix = within(screen.getByTestId('legal-matrix'));
-    expect(matrix.getAllByRole('row')).toHaveLength(5);
+    expect(matrix.getAllByRole('row')).toHaveLength(10);
     const current = screen.getByTestId('legal-terminos-es');
     expect(current).toHaveAttribute('aria-current', 'true');
     // El nombre accesible empieza por el contexto (documento e idioma, solo para lectores de pantalla) y termina con lo que se ve.
-    expect(current.textContent).toBe('Términos y condiciones en Castellano: 2026-11-13 Publicado');
+    expect(current.textContent).toBe('Condiciones de uso en Castellano: 2026-11-13 Publicado');
     expect(within(current).getByText('2026-11-13').textContent).toBe('2026-11-13');
     expect(screen.getByTestId('legal-cookies-ca').textContent).toBe('Política de cookies en Catalán: Sin crear');
-    expect(screen.getByTestId('policy-version').textContent).toMatch(/2026-11-01/);
+    // Sin versiones en el archivo, lo dice; la página pública aún no existe.
+    expect(screen.getByTestId('legal-archive').textContent).toMatch(/Aún no se ha publicado ninguna versión/);
   });
 
   it('un texto publicado propone la versión siguiente, no deja volver a borrador y pide una confirmación aparte antes de publicar', async () => {
     const user = userEvent.setup();
-    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />);
     expect((screen.getByTestId('legal-version') as HTMLInputElement).value).toBe('2026-11-13.1');
     expect(screen.getByRole('radio', { name: 'Borrador' })).toBeDisabled();
     expect(screen.getByRole('radio', { name: 'Publicado' })).toBeChecked();
@@ -367,18 +368,18 @@ describe('QA-A05 · textos legales y datos de la empresa', () => {
     expect(screen.queryByRole('group', { name: /Vas a publicar/ })).toBeNull();
     await user.click(screen.getByTestId('legal-save'));
     await user.click(screen.getByTestId('legal-confirm'));
-    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'terminos', locale: 'es', version: '2026-11-13.1', status: 'PUBLICADO', markdown: '# Términos\n\nTexto vigente. Y más.', expectedVersion: 2 }));
+    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'terminos', locale: 'es', version: '2026-11-13.1', status: 'PUBLICADO', markdown: '# Términos\n\nTexto vigente. Y más.', expectedVersion: 2, urgent: false, changeSummary: '' }));
   });
 
   it('un texto nuevo se guarda como borrador sin confirmación y sin texto no se puede guardar', async () => {
     const user = userEvent.setup();
-    renderAll(<LegalSettings overview={OVERVIEW} selected={EMPTY_TEXT} policyVersion="2026-11-01" suggestedVersion="2026-11-13" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={EMPTY_TEXT} archive={[]} suggestedVersion="2026-11-13" />);
     const save = screen.getByTestId('legal-save');
     expect(save).toHaveAttribute('aria-disabled', 'true');
     await user.type(screen.getByTestId('legal-markdown'), 'Galetes');
     expect(save.textContent).toBe('Guardar borrador');
     await user.click(save);
-    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'cookies', locale: 'ca', version: '2026-11-13', status: 'BORRADOR', markdown: 'Galetes', expectedVersion: 0 }));
+    await waitFor(() => expect(actions.saveLegalTextAction).toHaveBeenCalledWith({ document: 'cookies', locale: 'ca', version: '2026-11-13', status: 'BORRADOR', markdown: 'Galetes', expectedVersion: 0, urgent: false, changeSummary: '' }));
     // El texto en otro idioma que el de la pantalla se marca con su idioma para los lectores de pantalla.
     expect(screen.getByTestId('legal-markdown')).toHaveAttribute('lang', 'ca');
   });
@@ -386,7 +387,7 @@ describe('QA-A05 · textos legales y datos de la empresa', () => {
   it('un rechazo de versión se dice con su texto y marca el campo de la versión', async () => {
     const user = userEvent.setup();
     actions.saveLegalTextAction.mockResolvedValue({ status: 'REJECTED', reason: 'VERSION_OLDER', fields: ['version'] });
-    renderAll(<LegalSettings overview={OVERVIEW} selected={EMPTY_TEXT} policyVersion="2026-11-01" suggestedVersion="2026-11-13" />);
+    renderAll(<LegalSettings overview={OVERVIEW} selected={EMPTY_TEXT} archive={[]} suggestedVersion="2026-11-13" />);
     await user.type(screen.getByTestId('legal-markdown'), 'Texto');
     await user.click(screen.getByTestId('legal-save'));
     const alert = await screen.findByTestId('settings-outcome');
@@ -527,7 +528,7 @@ describe('Los tres idiomas', () => {
         <AutoBoostSettings fields={FIELDS} />
         <SeoSettings fields={FIELDS} secrets={SECRETS} defaultPolicy={crawlers} />
         <CompanySettings field={undefined} />
-        <LegalSettings overview={OVERVIEW} selected={PUBLISHED} policyVersion="2026-11-01" suggestedVersion="2026-11-13.1" />
+        <LegalSettings overview={OVERVIEW} selected={PUBLISHED} archive={[]} suggestedVersion="2026-11-13.1" />
         <LimitsSettings fixedLimits={[{ id: 'authEmail', limit: 5, windowMs: 900_000 }]} />
         <TeamSettings members={MEMBERS} invitations={INVITATIONS} />
         <SecurityPanel security={SECURITY} />

@@ -1,6 +1,6 @@
 # Condiciones de uso de KORUM
 
-> **Documento:** `condiciones-generales` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; la campaña que supera la meta del §4.1, decisión 68, y la aportación mínima, el cierre de los pagos y la aportación voluntaria de los §4.1, §4.2 y §5, decisiones 73, 79 y 80, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-generales` · **Versión:** 2026-11-21 · **Estado:** VALIDADO por el promotor (2026-11-18; los idiomas del §19, el 2026-11-21, Sprint 5.10a; la campaña que supera la meta del §4.1, decisión 68, y la aportación mínima, el cierre de los pagos y la aportación voluntaria de los §4.1, §4.2 y §5, decisiones 73, 79 y 80, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** familias, socios, vecinos y cualquier persona que aporta, compra, firma una idea o escribe a soporte.
 > **Se publica en:** `/condiciones` (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -193,7 +193,7 @@ Puedes suprimir tu cuenta en cualquier momento desde *Mi cuenta*, sin coste. Lo 
 - **Corregir un error.** Antes de pagar ves un resumen con el total. Puedes cambiar cualquier dato volviendo atrás.
 - **Lo que guardamos.** Guardamos cada pago con la versión de las condiciones que aceptaste, y te enviamos el recibo por email al instante.
 - **Tu copia.** Puedes guardar o imprimir estas condiciones desde esta página, y pedirnos la versión que aceptaste en un pago concreto.
-- **Idiomas.** Puedes contratar en castellano, en catalán o en inglés.
+- **Idiomas.** Puedes contratar en castellano, en catalán o en inglés. Si un texto aún no está traducido a tu idioma, te lo enseñamos en castellano con un aviso, y es esa versión la que se aplica.
 
 ## 20. Ayuda, reclamaciones y ley aplicable
 

@@ -38,7 +38,8 @@ function layout(data: PersonalDataExport, t: ExportTranslator, locale: ExportLoc
     ['group', row.group ?? ''], ['donorName', row.donorFullName ?? ''], ['taxId', row.donorTaxId ?? ''], ['province', row.donorProvinceCode ?? ''], ['asGuest', yesNo(row.asGuest)]
   ]));
   section('tickets', data.tickets.map((row) => [['serial', row.serialCode], ['initiative', row.initiative], ['quantity', String(row.quantity)], ['checkedIn', String(row.checkedInCount)], ['revoked', date(row.revokedAt)]]));
-  section('consents', data.consents.map((row) => [['date', date(row.createdAt)], ['purpose', translated('purposes', row.purpose)], ['granted', yesNo(row.granted)], ['policyVersion', row.policyVersion], ['source', row.source]]));
+  section('consents', data.consents.map((row) => [['date', date(row.createdAt)], ['purpose', translated('purposes', row.purpose)], ['granted', yesNo(row.granted)], ['policyVersion', row.policyLocale ? `${row.policyVersion} (${row.policyLocale})` : row.policyVersion], ['source', row.source]]));
+  section('legalAcceptances', data.legalAcceptances.map((row) => [['date', date(row.acceptedAt)], ['document', row.document], ['policyVersion', `${row.version} (${row.locale})`], ['organization', row.organization ?? ''], ['source', row.source]]));
   section('privacyRequests', data.privacyRequests.map((row) => [['date', date(row.createdAt)], ['type', translated('requestTypes', row.type)], ['status', translated('requestStatuses', row.status)], ['dueAt', date(row.dueAt)], ['completedAt', date(row.completedAt)]]));
   section('memberships', data.memberships.map((row) => [['organization', row.organization], ['role', row.roleLabel ?? row.role], ['date', date(row.since)]]));
   section('ideaSignatures', data.ideaSignatures.map((row) => [['date', date(row.createdAt)], ['idea', row.idea], ['status', row.status], ['accountOrder', String(row.accountOrder)]]));

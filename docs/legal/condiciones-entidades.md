@@ -1,6 +1,6 @@
 # Condiciones para entidades
 
-> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-20 · **Estado:** VALIDADO por el promotor (2026-11-18; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, y lo que debáis a KORUM de los §7.6 y §15.2, la validez máxima de los vales del §9 el comercio sin moderar del §10 y el cierre de los pagos del §7.1, decisiones 75, 76, 78 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
+> **Documento:** `condiciones-entidades` · **Versión:** 2026-11-21 · **Estado:** VALIDADO por el promotor (2026-11-18; el apartado «Cómo se contrata» del §19, el 2026-11-21, Sprint 5.10a; las condiciones de cada campaña de los §5.2 y §6.3 y el punto 7 de «Lo esencial», decisión 87, el 2026-11-21; el cargo por cancelación de los §8 y §9, decisión 63, el 2026-11-19; la campaña que supera la meta del §7.2 y quién paga las devoluciones de los §8 y §9, decisiones 68 a 70, y lo que debáis a KORUM de los §7.6 y §15.2, la validez máxima de los vales del §9 el comercio sin moderar del §10 y el cierre de los pagos del §7.1, decisiones 75, 76, 78 y 79, el 2026-11-20) · **Idioma:** castellano (catalán e inglés, en la SESIÓN I1)
 > **A quién va dirigido:** AMPA y AFA, titulares de colegios, clubes deportivos, entidades culturales, fundaciones y asociaciones que se dan de alta, y las personas que firman por ellas.
 > **Se acepta en:** el alta de la entidad, junto con el contrato de encargo del tratamiento (Sprint 5.10a). Las notas de este recuadro no forman parte del texto publicado.
 
@@ -14,6 +14,7 @@
 4. **Si una campaña vence sin llegar a la meta y no decidís en 14 días**, la plataforma devuelve el 100 % a las familias.
 5. **Si nadie pide el dinero de una campaña conseguida**, la plataforma lo entrega a vuestra cuenta cinco días antes de que venza el plazo de 90 días.
 6. **Los impuestos, las facturas y los permisos de la entidad son vuestros.** KORUM no asesora.
+7. **Cada campaña tiene su precio.** Al publicarla veis en euros lo que cuesta, con las tarifas de ese momento, y lo aceptáis expresamente; ese precio ya no cambia hasta el final.
 
 ## 1. Qué es KORUM y qué no es
 
@@ -82,7 +83,7 @@ La entidad responde de todo lo que publica: títulos, descripciones, presupuesto
 
 - La pizarra del Estudio (la calculadora de vuestra campaña) calcula la meta al céntimo a partir de vuestro presupuesto y de las tarifas vigentes, y os la enseña completa antes de publicar.
 - Una campaña dura como máximo el plazo que fija la plataforma, que hoy es de **60 días**. Ese límite existe porque PAYCOMET solo puede repartir un cobro durante los 90 días siguientes.
-- Las categorías con tarifa reducida o sin comisión son para los proyectos que de verdad encajan en ellas. KORUM puede revisar su uso y corregir la tarifa de las campañas futuras, con el aviso del punto 6.3.
+- Las categorías con tarifa reducida o sin comisión son para los proyectos que de verdad encajan en ellas. KORUM puede revisar su uso y corregir la tarifa de las campañas futuras (punto 6.3).
 
 ### 5.3 Cambios con la campaña en marcha
 
@@ -108,11 +109,14 @@ En cada liquidación KORUM os emite **una sola factura** por todo lo que retiene
 
 KORUM no os cobra nada por adelantado ni os pasa recibos. Sus importes se descuentan en el reparto que hace PAYCOMET cuando una campaña se consigue y se liquida, o cuando se liquida una venta de entradas o de vales. **Si una campaña no se consigue y se devuelve, no pagáis nada.**
 
-### 6.3 Cambios de tarifas
+### 6.3 Las condiciones de cada campaña
 
-- **Todo cambio de tarifas entra en vigor a los 30 días** de anunciarse. Os lo avisamos por email a quienes firmáis y con un aviso en el Estudio durante esos 30 días.
-- **Solo se aplica a lo que publiquéis después** de esa fecha. Cada campaña, cada evento y cada venta de vales conserva hasta el final la tarifa con la que se publicó.
-- Si KORUM concede a vuestra entidad unas condiciones mejores que las generales, valen desde el momento en que se conceden.
+- **Las tarifas pueden cambiar**, al alza o a la baja, según la evolución del servicio. Las vigentes están siempre en la [página de precios](/precios), con la fecha desde la que se aplican.
+- **Cada campaña, cada evento y cada venta de vales tiene sus propias condiciones.** Al publicarlo, el Estudio os muestra lo que cuesta con las tarifas vigentes en ese momento (la comisión, el mantenimiento, el coste de la pasarela y el total que retiene KORUM, en euros) y quien firma lo acepta expresamente. Sin esa aceptación no se publica. KORUM guarda lo aceptado, con su fecha.
+- **Lo aceptado no cambia.** Lo publicado conserva hasta el final las condiciones que aceptasteis, aunque después las tarifas cambien a mejor o a peor.
+- **Si las tarifas cambian mientras preparáis una campaña**, el Estudio os avisa y recalcula el importe antes de la firma. Con doble firma, la segunda persona firma las condiciones nuevas y avisamos a la primera.
+- **Lo concedido se respeta.** El importe exento del curso, el tope anual del mantenimiento, la beca de vuestra medalla y cualquier exención o condición mejor que KORUM os conceda valen durante el plazo para el que se concedieron; un cambio solo afecta a lo que se conceda después.
+- Cuando cambien las tarifas generales os lo contamos por email a quienes firmáis, para que lo sepáis antes de vuestra próxima campaña.
 - Si un cambio no os convence, podéis dejar la plataforma cuando queráis y sin coste (punto 15).
 
 ### 6.4 Cuando KORUM completa una campaña
@@ -307,3 +311,11 @@ Cada versión lleva su fecha y se conserva. Los cambios se avisan por email a qu
 
 - **Contacto:** el formulario de ayuda del panel o [[EMAIL DE SOPORTE]].
 - **Ley aplicable:** la española. Los conflictos se resolverán en los juzgados que correspondan según la ley; si la entidad tiene la consideración de consumidora, en los de su domicilio.
+
+## 19. Cómo se contrata
+
+- **Los pasos.** El alta es un formulario de tres pasos: la entidad, las personas que firman y la activación. Al final, junto al botón para crear la entidad, una línea dice que al crearla aceptáis estas condiciones y el [contrato de encargo del tratamiento](contrato-de-encargo.md).
+- **Corregir un error.** Antes de crear la entidad podéis volver a cualquier paso y cambiar lo que hayáis escrito. Después, lo corregís desde el panel.
+- **Lo que guardamos.** Guardamos quién aceptó por la entidad, qué versión de cada texto, en qué idioma y cuándo. Cada versión publicada se conserva tal como se publicó y la podéis consultar siempre en su página.
+- **Vuestra confirmación.** Al terminar el alta, la pantalla dice qué versiones habéis aceptado y cuándo, con su enlace. Podéis guardarla o imprimirla.
+- **Idiomas.** Podéis contratar en castellano, en catalán o en inglés. Si un texto aún no está traducido a vuestro idioma, os lo enseñamos en castellano con un aviso, y es esa versión la que se aplica.

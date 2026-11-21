@@ -423,7 +423,11 @@ describe('Auditoría del Sprint 3.8: tarjetas, contracargos, pausas y rastro', (
   it('queda rastro: el alta con la versión de los textos aceptada, cada cambio y el intento sobre una aportación ajena', async () => {
     const { pledge, family } = await activePledge();
     const stranger = await createUser(db);
-    expect(pledge.termsVersion).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    // La versión vigente de las condiciones de uso en el idioma de la persona, publicada en el archivo (Sprint 5.10a); puede llevar «.1», «.2»… si se publicaron varias el mismo día.
+    expect(pledge.termsVersion).toMatch(/^\d{4}-\d{2}-\d{2}(\.[1-9]\d{0,2})?$/);
+    expect(await db.legalDocumentVersion.count({ where: { document: 'terminos', version: pledge.termsVersion ?? '' } })).toBeGreaterThan(0);
+    // Y queda la aceptación con su idioma, apuntando al texto archivado.
+    expect(await db.legalAcceptance.findFirst({ where: { userId: family.id, source: 'hucha' }, select: { document: true, version: true } })).toEqual({ document: 'terminos', version: pledge.termsVersion });
     await pausePledge(db, family.id, pledge.id);
     await pausePledge(db, stranger.id, pledge.id);
     const actions = await db.auditLog.findMany({ where: { targetType: 'WalletSubscription', targetId: String(pledge.id) }, orderBy: { id: 'asc' }, select: { action: true, actorUserId: true, metadataJson: true } });

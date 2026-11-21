@@ -1,7 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { RegistrationError, registerCommunity, type RegistrationFailure } from '@/core/onboarding/community-registration';
+import { RegistrationError, registerCommunity, type RegistrationFailure, type RegistrationLegalVersions } from '@/core/onboarding/community-registration';
 import { getEnv } from '@/config/env';
 import { dataHmac } from '@/core/security/data-hmac';
 import { isLocale } from '@/i18n/routing';
@@ -22,7 +22,7 @@ import { after } from 'next/server';
  */
 
 export type RegisterActionResult =
-  | { ok: true; slug: string; email: string; needsVerification: boolean }
+  | { ok: true; slug: string; email: string; needsVerification: boolean; legal: RegistrationLegalVersions; acceptedAt: string }
   | { ok: false; failure: RegistrationFailure | { code: 'RATE_LIMITED' } | { code: 'UNKNOWN' } };
 
 export async function registerCommunityAction(locale: string, payload: unknown): Promise<RegisterActionResult> {
@@ -50,7 +50,7 @@ export async function registerCommunityAction(locale: string, payload: unknown):
       requestHeaders.set('x-korum-locale', locale);
       await getAuth().api.sendVerificationOTP({ body: { email: director.email, type: 'email-verification' }, headers: requestHeaders });
     }
-    return { ok: true, slug: result.slug, email: director.email, needsVerification: result.directorNeedsVerification };
+    return { ok: true, slug: result.slug, email: director.email, needsVerification: result.directorNeedsVerification, legal: result.legal, acceptedAt: result.acceptedAt.toISOString() };
   } catch (error) {
     if (error instanceof RegistrationError) return { ok: false, failure: error.failure };
     throw error;

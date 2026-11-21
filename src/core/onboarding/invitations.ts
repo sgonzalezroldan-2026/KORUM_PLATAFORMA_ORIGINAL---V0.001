@@ -4,6 +4,7 @@ import { safeEqual } from '@/core/security/data-hmac';
 import { SIGNER_ROLES } from '@/core/security/double-check-evaluation';
 import { lockGatePinInitiatives } from '@/core/ticketing/gate-revoke';
 import { inTransaction, type Db } from '@/lib/db';
+import { recordAccountTermsAcceptance } from '@/services/legal/legal-archive.service';
 import { completeHandoverInTx, handoverStillValid, HandoverCompletionError } from './signer-handover-completion';
 
 /**
@@ -205,6 +206,9 @@ async function consume(tx: Db, invitation: StoredInvitation & { id: string }, no
     if ((await tx.organizationMember.count({ where: { userId: invitation.userId, role: { in: [...SIGNER_ROLES] } } })) > 0) throw new InvitationError('INVALID_LINK');
     await tx.user.update({ where: { id: invitation.userId }, data: { isSuperadmin: true } });
   }
+  // Al aceptar se crea la cuenta (o se estrena): se aceptan las condiciones de uso vigentes, como al entrar por primera vez (primeras capas §11, Sprint 5.10a).
+  // El equipo de KORUM (Super-Admin) no es una persona usuaria de la plataforma: no las acepta.
+  if (invitation.purpose !== 'SUPERADMIN') await recordAccountTermsAcceptance(tx, invitation.userId, now);
   await tx.auditLog.create({
     data: { actorType: 'USER', actorUserId: invitation.userId, organizationId: invitation.organizationId, action: 'account.invitation_accepted', targetType: 'User', targetId: invitation.userId, metadataJson: { purpose: invitation.purpose } }
   });
